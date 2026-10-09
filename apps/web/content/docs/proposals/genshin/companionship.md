@@ -18,9 +18,11 @@ The Friendship Level and the EXP that raises it are built, with the Original Res
 
 ## Decisions
 
+- **The namecard's name shows now, its description waits.** The name is read from the name chunk the stat tables already share, so the view needs no chunk of its own; the description and art wait on the static-data host the pending design picks.
 - **Each source states its own.** Commissions give their share by Adventure Rank, the day's bonus its own, and random events theirs up to ten a day, as the wiki lists them. Each source's page gives its amounts; none is set here.
 - **Each level opens what the game opens.** Level 2 to 6 open the character's stories in turn and their voice-overs tied to Friendship, level 4 and 7 a dialogue when they are a companion in the Serenitea Pot, and level 10 their namecard. A story or line that also waits on a quest waits on both. The stories and lines are the game's own by text id ([game text](/docs/genshin/game-text)), which `FettersExcelConfigData` and `FetterStoryExcelConfigData` file under each character.
 - **The namecard is a material the game's tables join to the character.** `FetterCharacterCardExcelConfigData`, which AnimeGameData holds and the dump lacks, names each character's Friendship 10 reward (`avatarId`, `fetterLevel` 10, `rewardId`). `RewardExcelConfigData` gives that reward's one item, and `MaterialExcelConfigData` holds the item as a `MATERIAL_NAMECARD` with its name, description, `icon` and `picPath`: Amber's reward 241001 is item 210003, `UI_NameCardIcon_Ambor`. No namecard table is owed.
+- **The namecards share the levels' file.** `friendship.json` holds the levels and the namecards together, one chunk the world imports on demand, rather than a file of its own for the namecards, since a file of one row a character is the per-entity slice the static-data host is being designed to replace.
 - **A namecard is held by the level, never stored.** A character at Friendship Level 10 holds its namecard, read from its total EXP as the level is, so the save keeps nothing new and the two cannot disagree.
 - **A namecard is shown by its words, never its picture.** Its art is the game's texture, which is never served, so the view sets its name and description on a plate of our own; the extracted art is a reference only, and no extraction gates the view.
 - **Settled while building the level.** The levels are the dump's `AvatarFettersLevelExcelConfigData`, each row's EXP the cost to leave its level, so the top row is never spent and level 10 totals 29,100, the wiki's figure. A character keeps its total EXP and the level is read from it. The first claim amounts are provisional at the low end of each wiki range, measured by the Recordings owed clips.
@@ -36,18 +38,12 @@ flowchart LR
 
 ## Scope and order
 
-**Built:** the level, its total EXP, the party's grant and the Original Resin claims' amounts, as the [companionship](/docs/genshin/companionship) page shows.
+**Built:** the level, its total EXP, the party's grant, the Original Resin claims' amounts, and the namecard a level 10 holds with its name on the Profile tab, as the [companionship](/docs/genshin/companionship) page shows.
 
 **This adds, in order:**
 
-1. **The namecard at 10, as data and a rule.**
-   - Add `FetterCharacterCardExcelConfigData` to `DUMP_TABLE_NAMES` in `scripts/src/services/genshinText/constants.ts` and fetch it with `pnpm -C scripts genshin:text fetch`.
-   - `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts` joins each card row at `fetterLevel` 10 to its reward's first item and that item's material row, as `{ characterId, itemId, nameTextId }`, and throws where the item is no `MATERIAL_NAMECARD`. `writeFriendshipNamecards.ts` beside it, run by `genshin:assets friendship` after the levels, writes `packages/genshin-world/src/generated/friendship/namecards.json`, one small file of a row a character.
-   - `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts` with its schema, `services/friendship/readFriendshipNamecards.ts` importing the file on demand as `readFriendshipLevels` does, and `services/friendship/computeHeldNamecardItemIds.ts`, the item ids of the namecards the given characters' Friendship has opened.
-   - The proof: `toFriendshipNamecards.test.ts` joins Amber's row (10000021, reward 241001) to item 210003 and throws on a reward whose item is no namecard; `computeHeldNamecardItemIds.test.ts` lists Amber's at 29,100 EXP and none at 29,099.
-2. **The namecard's view** on the Profile tab of `Character/Screen`, its name from the name-text chunk (`genshin:text names` gains the namecards' name ids) and its description delivered through the static-data host the pending design picks; until then, behind a dynamic import of one existing chunk at most.
-3. **The Serenitea Pot dialogue at 4 and 7**, with the [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)'s companions, whose talk it is.
-4. **The commissions and random events' EXP.** The commissions' claim returns its Companionship EXP item, and routing it to the [friendship grant](/docs/genshin/companionship) is the claim caller's, built in the [commissions](/docs/proposals/genshin/commissions) proposal's routing step. Random events have no page yet.
+1. **The Serenitea Pot dialogue at 4 and 7**, with the [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)'s companions, whose talk it is.
+2. **The commissions and random events' EXP.** The commissions' claim returns its Companionship EXP item, and routing it to the [friendship grant](/docs/genshin/companionship) is the claim caller's, built in the [commissions](/docs/proposals/genshin/commissions) proposal's routing step. Random events have no page yet.
 
 ## Data and measures
 
@@ -55,9 +51,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role after the change                       |
-| :----------------------------------------------------------------- | :------------------------------------------ |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue` | The Profile tab, opening what a level opens |
+| File                                                                       | Role after the change                       |
+| :------------------------------------------------------------------------- | :------------------------------------------ |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`         | The Profile tab, opening what a level opens |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`        | The namecard's name, read with the stories  |
+| `packages/genshin-interface/src/components/CharacterMenuProfile/Index.vue` | The namecard's name plate under the list    |
 
 ## Sources
 

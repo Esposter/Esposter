@@ -22,7 +22,12 @@ await runMain(
       const profile = readRequiredMachineProfile();
       const holder = { machine: profile.id, worker: requireFleetWorker(args.worker) };
       const sample = await readMachineSample();
-      const load = formatMachineLoad(sample.cpuPercentage, sample.gpuPercentage, sample.freeGigabytes);
+      const load = formatMachineLoad(
+        sample.cpuPercentage,
+        sample.gpuPercentage,
+        sample.freeGigabytes,
+        process.platform,
+      );
       const { attempt, claimed } = claimFleetEntry(args.id, holder, load);
       if (attempt === ClaimAttempt.Held) {
         console.info(`${args.id} is held by ${formatClaimHolder(claimed.message)}, so it is not held here`);

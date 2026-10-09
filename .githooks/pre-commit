@@ -18,6 +18,7 @@ TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd)
 node "$TOOLS_ROOT/scripts/src/hooks/stagedImports/index.ts"
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
 xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
+# GNU xargs's -d is missing from macOS's BSD xargs, so each newline list is turned NUL-separated for -0, which both read.
 # CI's Lint job reads the formatted copies this hook is about to commit, so the lint reads them too. oxlint takes every
 # script and component at once; ESLint runs from the package whose own config owns each file, since the root config
 # ignores apps, packages and scripts. The groups are independent and run side by side. A warning passes: only an error fails
@@ -26,11 +27,11 @@ lintPids=
 tr '\0' '\n' < "$STAGED_FILE" | grep -E '\.(ts|js|mjs|cjs|vue)$' > "$LINT_FILE" || true
 if [ -s "$LINT_FILE" ]; then
   if [ -n "$OWN_INSTALL" ]; then
-    xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/vp" lint --disable-nested-config < "$LINT_FILE" &
+    tr '\n' '\0' < "$LINT_FILE" | xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/vp" lint --disable-nested-config &
   else
     # The worktree's own vite and oxlint configs import packages it has not installed, so the main install's oxlint reads
     # the main checkout's config, and finds its type-aware linter on the PATH the main install provides
-    PATH="$TOOLS_ROOT/node_modules/.bin:$PATH" xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/oxlint" -c "$TOOLS_ROOT/oxlint.config.ts" < "$LINT_FILE" &
+    tr '\n' '\0' < "$LINT_FILE" | PATH="$TOOLS_ROOT/node_modules/.bin:$PATH" xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxlint" -c "$TOOLS_ROOT/oxlint.config.ts" &
   fi
   lintPids="$lintPids $!"
   if [ -n "$OWN_INSTALL" ]; then
@@ -41,7 +42,7 @@ if [ -s "$LINT_FILE" ]; then
     done < "$LINT_FILE" > "$OWNER_FILE"
     for dir in $(cut -d ' ' -f 1 "$OWNER_FILE" | sort -u); do
       files=$(awk -v directory="$dir" '$1 == directory { path = $2; if (directory != ".") path = substr(path, length(directory) + 2); print path }' "$OWNER_FILE")
-      (cd "$dir" && printf '%s\n' "$files" | xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/eslint") &
+      (cd "$dir" && printf '%s\n' "$files" | tr '\n' '\0' | xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/eslint") &
       lintPids="$lintPids $!"
     done
   else

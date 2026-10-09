@@ -5,7 +5,7 @@ description: The bench's recipes from the game's combine table — three of a ma
 
 # Crafting
 
-The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction. This page is the first build of the [crafting](/docs/proposals/genshin/crafting) proposal, covering the tiers, potions, baits and Condensed Resin. The bench's place in the world, its screen, the gadgets, and the characters' crafting talents are not built yet and stay in the proposal.
+The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction. This page is the first build of the [crafting](/docs/proposals/genshin/crafting) proposal, covering the tiers, potions, baits and Condensed Resin. The characters' crafting talents are built as well, their doubles and refunds. The bench's place in the world, its screen, the regional talent materials and the gadgets are not built yet and stay in the proposal.
 
 ## How it works
 
@@ -41,21 +41,24 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - **Open.** A recipe is offered once the player's Adventure Rank reaches its rank, and, for a recipe an instruction opens, once it is learned.
 - **Count.** The times a recipe can be crafted is the least of what each material and the Mora pays for. Original Resin is paid from the wallet, regenerated to the moment of the craft; every other material from the bag.
 - **Craft.** A batch is crafted whole or refused. Its materials, resin and Mora are spent and its results put in the bag, and a batch the bag has no stack room for every result of is refused. That is how Condensed Resin stops at the five it holds.
+- **Talent.** A character's crafting talent, from the wiki's Crafting Talents category, draws on each craft of a recipe of the combine types it names: a double of the result at 10%, or a refund of the recipe's first material at 25% (20% for potions). A craft's draw is taken from the world's seeded random source, and a character with no talent crafts plainly. A regional talent material is not drawn yet.
 - **Learn.** Using an instruction takes one from the bag and records the recipe as learned. The instruction must be one the recipe names, held by the bag, and the recipe not learned already.
 
 ## Key files
 
-| File                                                                    | Role                                                                          |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/crafting/writeCraftingRecipes.ts`   | The recipe slice written from the combine table                               |
-| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`       | One row as a recipe, refusing a tier that is not three of one material        |
-| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`       | Each recipe's instruction items, read off the material table                  |
-| `packages/genshin-world/src/services/crafting/craftRecipe.ts`           | A batch crafted whole, or refused with nothing spent                          |
-| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts` | How many of a recipe the bag, wallet and regenerated resin pay for            |
-| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`     | Whether a recipe is open at a rank, and learned where an instruction opens it |
-| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`   | A recipe learned from an instruction in the bag                               |
-| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`   | The slice imported on demand and checked against its shape                    |
-| `packages/genshin-world/src/generated/crafting/recipes.json`            | The bench's recipes, a few hundred of them                                    |
+| File                                                                           | Role                                                                          |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/crafting/writeCraftingRecipes.ts`          | The recipe slice written from the combine table                               |
+| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`              | One row as a recipe, refusing a tier that is not three of one material        |
+| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`              | Each recipe's instruction items, read off the material table                  |
+| `packages/genshin-world/src/services/crafting/CharacterIdCraftingTalentMap.ts` | The thirteen characters' crafting talents, by avatar id                       |
+| `packages/genshin-world/src/services/crafting/rollCraftingTalent.ts`           | The extra results and refunds a character's talent adds to a batch            |
+| `packages/genshin-world/src/services/crafting/craftRecipe.ts`                  | A batch crafted whole, or refused with nothing spent                          |
+| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts`        | How many of a recipe the bag, wallet and regenerated resin pay for            |
+| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`            | Whether a recipe is open at a rank, and learned where an instruction opens it |
+| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`          | A recipe learned from an instruction in the bag                               |
+| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`          | The slice imported on demand and checked against its shape                    |
+| `packages/genshin-world/src/generated/crafting/recipes.json`                   | The bench's recipes, a few hundred of them                                    |
 
 ## Notes
 

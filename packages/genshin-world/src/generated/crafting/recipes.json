@@ -1,5 +1,6 @@
 [
   {
+    "combineType": 1,
     "id": 11001,
     "kind": "Tier",
     "materials": [
@@ -16,6 +17,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11002,
     "kind": "Tier",
     "materials": [
@@ -32,6 +34,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11003,
     "kind": "Tier",
     "materials": [
@@ -48,6 +51,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11004,
     "kind": "Tier",
     "materials": [
@@ -64,6 +68,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11005,
     "kind": "Tier",
     "materials": [
@@ -80,6 +85,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11006,
     "kind": "Tier",
     "materials": [
@@ -96,6 +102,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11007,
     "kind": "Tier",
     "materials": [
@@ -112,6 +119,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11008,
     "kind": "Tier",
     "materials": [
@@ -128,6 +136,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11009,
     "kind": "Tier",
     "materials": [
@@ -144,6 +153,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11010,
     "kind": "Tier",
     "materials": [
@@ -160,6 +170,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11013,
     "kind": "Tier",
     "materials": [
@@ -176,6 +187,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11014,
     "kind": "Tier",
     "materials": [
@@ -192,6 +204,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11015,
     "kind": "Tier",
     "materials": [
@@ -208,6 +221,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11016,
     "kind": "Tier",
     "materials": [
@@ -224,6 +238,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11017,
     "kind": "Tier",
     "materials": [
@@ -240,6 +255,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11018,
     "kind": "Tier",
     "materials": [
@@ -256,6 +272,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11019,
     "kind": "Tier",
     "materials": [
@@ -272,6 +289,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11020,
     "kind": "Tier",
     "materials": [
@@ -288,6 +306,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11021,
     "kind": "Tier",
     "materials": [
@@ -304,6 +323,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11022,
     "kind": "Tier",
     "materials": [
@@ -320,6 +340,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11023,
     "kind": "Tier",
     "materials": [
@@ -336,6 +357,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11024,
     "kind": "Tier",
     "materials": [
@@ -352,6 +374,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11025,
     "kind": "Tier",
     "materials": [
@@ -368,6 +391,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11026,
     "kind": "Tier",
     "materials": [
@@ -384,6 +408,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11027,
     "kind": "Tier",
     "materials": [
@@ -400,6 +425,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11028,
     "kind": "Tier",
     "materials": [
@@ -416,6 +442,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11029,
     "kind": "Tier",
     "materials": [
@@ -432,6 +459,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11030,
     "kind": "Tier",
     "materials": [
@@ -448,6 +476,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11031,
     "kind": "Tier",
     "materials": [
@@ -464,6 +493,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11032,
     "kind": "Tier",
     "materials": [
@@ -480,6 +510,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11033,
     "kind": "Tier",
     "materials": [
@@ -496,6 +527,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11034,
     "kind": "Tier",
     "materials": [
@@ -512,6 +544,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11035,
     "kind": "Tier",
     "materials": [
@@ -528,6 +561,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11036,
     "kind": "Tier",
     "materials": [
@@ -544,6 +578,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11037,
     "kind": "Tier",
     "materials": [
@@ -560,6 +595,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11038,
     "kind": "Tier",
     "materials": [
@@ -576,6 +612,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11039,
     "kind": "Tier",
     "materials": [
@@ -592,6 +629,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11040,
     "kind": "Tier",
     "materials": [
@@ -608,6 +646,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11041,
     "kind": "Tier",
     "materials": [
@@ -624,6 +663,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11042,
     "kind": "Tier",
     "materials": [
@@ -640,6 +680,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11043,
     "kind": "Tier",
     "materials": [
@@ -656,6 +697,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11044,
     "kind": "Tier",
     "materials": [
@@ -672,6 +714,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11045,
     "kind": "Tier",
     "materials": [
@@ -688,6 +731,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11046,
     "kind": "Tier",
     "materials": [
@@ -704,6 +748,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11047,
     "kind": "Tier",
     "materials": [
@@ -720,6 +765,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11048,
     "kind": "Tier",
     "materials": [
@@ -736,6 +782,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11049,
     "kind": "Tier",
     "materials": [
@@ -752,6 +799,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11050,
     "kind": "Tier",
     "materials": [
@@ -768,6 +816,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11051,
     "kind": "Tier",
     "materials": [
@@ -784,6 +833,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11052,
     "kind": "Tier",
     "materials": [
@@ -800,6 +850,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11053,
     "kind": "Tier",
     "materials": [
@@ -816,6 +867,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11054,
     "kind": "Tier",
     "materials": [
@@ -832,6 +884,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11055,
     "kind": "Tier",
     "materials": [
@@ -848,6 +901,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11056,
     "kind": "Tier",
     "materials": [
@@ -864,6 +918,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11057,
     "kind": "Tier",
     "materials": [
@@ -880,6 +935,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11058,
     "kind": "Tier",
     "materials": [
@@ -896,6 +952,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11059,
     "kind": "Tier",
     "materials": [
@@ -912,6 +969,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11060,
     "kind": "Tier",
     "materials": [
@@ -928,6 +986,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11061,
     "kind": "Tier",
     "materials": [
@@ -944,6 +1003,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11062,
     "kind": "Tier",
     "materials": [
@@ -960,6 +1020,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11063,
     "kind": "Tier",
     "materials": [
@@ -976,6 +1037,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11064,
     "kind": "Tier",
     "materials": [
@@ -992,6 +1054,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11065,
     "kind": "Tier",
     "materials": [
@@ -1008,6 +1071,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11066,
     "kind": "Tier",
     "materials": [
@@ -1024,6 +1088,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11067,
     "kind": "Tier",
     "materials": [
@@ -1040,6 +1105,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11068,
     "kind": "Tier",
     "materials": [
@@ -1056,6 +1122,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11069,
     "kind": "Tier",
     "materials": [
@@ -1072,6 +1139,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11070,
     "kind": "Tier",
     "materials": [
@@ -1088,6 +1156,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11071,
     "kind": "Tier",
     "materials": [
@@ -1104,6 +1173,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11072,
     "kind": "Tier",
     "materials": [
@@ -1120,6 +1190,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11073,
     "kind": "Tier",
     "materials": [
@@ -1136,6 +1207,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11074,
     "kind": "Tier",
     "materials": [
@@ -1152,6 +1224,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11075,
     "kind": "Tier",
     "materials": [
@@ -1168,6 +1241,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11076,
     "kind": "Tier",
     "materials": [
@@ -1184,6 +1258,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11077,
     "kind": "Tier",
     "materials": [
@@ -1200,6 +1275,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11078,
     "kind": "Tier",
     "materials": [
@@ -1216,6 +1292,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11079,
     "kind": "Tier",
     "materials": [
@@ -1232,6 +1309,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11080,
     "kind": "Tier",
     "materials": [
@@ -1248,6 +1326,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11081,
     "kind": "Tier",
     "materials": [
@@ -1264,6 +1343,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11082,
     "kind": "Tier",
     "materials": [
@@ -1280,6 +1360,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11083,
     "kind": "Tier",
     "materials": [
@@ -1296,6 +1377,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11084,
     "kind": "Tier",
     "materials": [
@@ -1312,6 +1394,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11201,
     "kind": "Tier",
     "materials": [
@@ -1328,6 +1411,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11202,
     "kind": "Tier",
     "materials": [
@@ -1344,6 +1428,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11203,
     "kind": "Tier",
     "materials": [
@@ -1360,6 +1445,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11204,
     "kind": "Tier",
     "materials": [
@@ -1376,6 +1462,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11205,
     "kind": "Tier",
     "materials": [
@@ -1392,6 +1479,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11206,
     "kind": "Tier",
     "materials": [
@@ -1408,6 +1496,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11207,
     "kind": "Tier",
     "materials": [
@@ -1424,6 +1513,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11208,
     "kind": "Tier",
     "materials": [
@@ -1440,6 +1530,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11209,
     "kind": "Tier",
     "materials": [
@@ -1456,6 +1547,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11210,
     "kind": "Tier",
     "materials": [
@@ -1472,6 +1564,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11211,
     "kind": "Tier",
     "materials": [
@@ -1488,6 +1581,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 1,
     "id": 11212,
     "kind": "Tier",
     "materials": [
@@ -1504,6 +1598,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12001,
     "kind": "Tier",
     "materials": [
@@ -1520,6 +1615,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12002,
     "kind": "Tier",
     "materials": [
@@ -1536,6 +1632,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12003,
     "kind": "Tier",
     "materials": [
@@ -1552,6 +1649,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12004,
     "kind": "Tier",
     "materials": [
@@ -1568,6 +1666,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12005,
     "kind": "Tier",
     "materials": [
@@ -1584,6 +1683,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12006,
     "kind": "Tier",
     "materials": [
@@ -1600,6 +1700,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12007,
     "kind": "Tier",
     "materials": [
@@ -1616,6 +1717,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12008,
     "kind": "Tier",
     "materials": [
@@ -1632,6 +1734,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12009,
     "kind": "Tier",
     "materials": [
@@ -1648,6 +1751,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12010,
     "kind": "Tier",
     "materials": [
@@ -1664,6 +1768,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12011,
     "kind": "Tier",
     "materials": [
@@ -1680,6 +1785,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12012,
     "kind": "Tier",
     "materials": [
@@ -1696,6 +1802,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12013,
     "kind": "Tier",
     "materials": [
@@ -1712,6 +1819,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12014,
     "kind": "Tier",
     "materials": [
@@ -1728,6 +1836,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12015,
     "kind": "Tier",
     "materials": [
@@ -1744,6 +1853,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12016,
     "kind": "Tier",
     "materials": [
@@ -1760,6 +1870,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12017,
     "kind": "Tier",
     "materials": [
@@ -1776,6 +1887,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12018,
     "kind": "Tier",
     "materials": [
@@ -1792,6 +1904,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12019,
     "kind": "Tier",
     "materials": [
@@ -1808,6 +1921,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12020,
     "kind": "Tier",
     "materials": [
@@ -1824,6 +1938,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12021,
     "kind": "Tier",
     "materials": [
@@ -1840,6 +1955,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12022,
     "kind": "Tier",
     "materials": [
@@ -1856,6 +1972,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12023,
     "kind": "Tier",
     "materials": [
@@ -1872,6 +1989,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12024,
     "kind": "Tier",
     "materials": [
@@ -1888,6 +2006,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12025,
     "kind": "Tier",
     "materials": [
@@ -1904,6 +2023,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12026,
     "kind": "Tier",
     "materials": [
@@ -1920,6 +2040,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12027,
     "kind": "Tier",
     "materials": [
@@ -1936,6 +2057,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12028,
     "kind": "Tier",
     "materials": [
@@ -1952,6 +2074,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12029,
     "kind": "Tier",
     "materials": [
@@ -1968,6 +2091,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12030,
     "kind": "Tier",
     "materials": [
@@ -1984,6 +2108,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12031,
     "kind": "Tier",
     "materials": [
@@ -2000,6 +2125,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12032,
     "kind": "Tier",
     "materials": [
@@ -2016,6 +2142,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12033,
     "kind": "Tier",
     "materials": [
@@ -2032,6 +2159,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12034,
     "kind": "Tier",
     "materials": [
@@ -2048,6 +2176,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12035,
     "kind": "Tier",
     "materials": [
@@ -2064,6 +2193,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12036,
     "kind": "Tier",
     "materials": [
@@ -2080,6 +2210,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12037,
     "kind": "Tier",
     "materials": [
@@ -2096,6 +2227,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12038,
     "kind": "Tier",
     "materials": [
@@ -2112,6 +2244,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12039,
     "kind": "Tier",
     "materials": [
@@ -2128,6 +2261,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12040,
     "kind": "Tier",
     "materials": [
@@ -2144,6 +2278,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12041,
     "kind": "Tier",
     "materials": [
@@ -2160,6 +2295,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12042,
     "kind": "Tier",
     "materials": [
@@ -2176,6 +2312,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12043,
     "kind": "Tier",
     "materials": [
@@ -2192,6 +2329,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12044,
     "kind": "Tier",
     "materials": [
@@ -2208,6 +2346,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12045,
     "kind": "Tier",
     "materials": [
@@ -2224,6 +2363,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12046,
     "kind": "Tier",
     "materials": [
@@ -2240,6 +2380,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12047,
     "kind": "Tier",
     "materials": [
@@ -2256,6 +2397,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12048,
     "kind": "Tier",
     "materials": [
@@ -2272,6 +2414,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12049,
     "kind": "Tier",
     "materials": [
@@ -2288,6 +2431,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12050,
     "kind": "Tier",
     "materials": [
@@ -2304,6 +2448,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12051,
     "kind": "Tier",
     "materials": [
@@ -2320,6 +2465,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12052,
     "kind": "Tier",
     "materials": [
@@ -2336,6 +2482,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12053,
     "kind": "Tier",
     "materials": [
@@ -2352,6 +2499,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12054,
     "kind": "Tier",
     "materials": [
@@ -2368,6 +2516,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12055,
     "kind": "Tier",
     "materials": [
@@ -2384,6 +2533,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12056,
     "kind": "Tier",
     "materials": [
@@ -2400,6 +2550,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12057,
     "kind": "Tier",
     "materials": [
@@ -2416,6 +2567,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12058,
     "kind": "Tier",
     "materials": [
@@ -2432,6 +2584,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12059,
     "kind": "Tier",
     "materials": [
@@ -2448,6 +2601,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12060,
     "kind": "Tier",
     "materials": [
@@ -2464,6 +2618,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12061,
     "kind": "Tier",
     "materials": [
@@ -2480,6 +2635,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12062,
     "kind": "Tier",
     "materials": [
@@ -2496,6 +2652,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 2,
     "id": 12063,
     "kind": "Tier",
     "materials": [
@@ -2512,6 +2669,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13001,
     "kind": "Tier",
     "materials": [
@@ -2528,6 +2686,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13002,
     "kind": "Tier",
     "materials": [
@@ -2544,6 +2703,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13003,
     "kind": "Tier",
     "materials": [
@@ -2560,6 +2720,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13004,
     "kind": "Tier",
     "materials": [
@@ -2576,6 +2737,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13005,
     "kind": "Tier",
     "materials": [
@@ -2592,6 +2754,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13006,
     "kind": "Tier",
     "materials": [
@@ -2608,6 +2771,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13007,
     "kind": "Tier",
     "materials": [
@@ -2624,6 +2788,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13008,
     "kind": "Tier",
     "materials": [
@@ -2640,6 +2805,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13009,
     "kind": "Tier",
     "materials": [
@@ -2656,6 +2822,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13010,
     "kind": "Tier",
     "materials": [
@@ -2672,6 +2839,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13011,
     "kind": "Tier",
     "materials": [
@@ -2688,6 +2856,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13012,
     "kind": "Tier",
     "materials": [
@@ -2704,6 +2873,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13013,
     "kind": "Tier",
     "materials": [
@@ -2720,6 +2890,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13014,
     "kind": "Tier",
     "materials": [
@@ -2736,6 +2907,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13015,
     "kind": "Tier",
     "materials": [
@@ -2752,6 +2924,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13016,
     "kind": "Tier",
     "materials": [
@@ -2768,6 +2941,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13017,
     "kind": "Tier",
     "materials": [
@@ -2784,6 +2958,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13018,
     "kind": "Tier",
     "materials": [
@@ -2800,6 +2975,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13019,
     "kind": "Tier",
     "materials": [
@@ -2816,6 +2992,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13020,
     "kind": "Tier",
     "materials": [
@@ -2832,6 +3009,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13021,
     "kind": "Tier",
     "materials": [
@@ -2848,6 +3026,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13022,
     "kind": "Tier",
     "materials": [
@@ -2864,6 +3043,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13023,
     "kind": "Tier",
     "materials": [
@@ -2880,6 +3060,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13024,
     "kind": "Tier",
     "materials": [
@@ -2896,6 +3077,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13025,
     "kind": "Tier",
     "materials": [
@@ -2912,6 +3094,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13026,
     "kind": "Tier",
     "materials": [
@@ -2928,6 +3111,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13027,
     "kind": "Tier",
     "materials": [
@@ -2944,6 +3128,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13028,
     "kind": "Tier",
     "materials": [
@@ -2960,6 +3145,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13029,
     "kind": "Tier",
     "materials": [
@@ -2976,6 +3162,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13030,
     "kind": "Tier",
     "materials": [
@@ -2992,6 +3179,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13031,
     "kind": "Tier",
     "materials": [
@@ -3008,6 +3196,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13032,
     "kind": "Tier",
     "materials": [
@@ -3024,6 +3213,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13033,
     "kind": "Tier",
     "materials": [
@@ -3040,6 +3230,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13034,
     "kind": "Tier",
     "materials": [
@@ -3056,6 +3247,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13035,
     "kind": "Tier",
     "materials": [
@@ -3072,6 +3264,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13036,
     "kind": "Tier",
     "materials": [
@@ -3088,6 +3281,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13037,
     "kind": "Tier",
     "materials": [
@@ -3104,6 +3298,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13038,
     "kind": "Tier",
     "materials": [
@@ -3120,6 +3315,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13039,
     "kind": "Tier",
     "materials": [
@@ -3136,6 +3332,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13040,
     "kind": "Tier",
     "materials": [
@@ -3152,6 +3349,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13041,
     "kind": "Tier",
     "materials": [
@@ -3168,6 +3366,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 3,
     "id": 13042,
     "kind": "Tier",
     "materials": [
@@ -3184,6 +3383,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14001,
     "kind": "Potion",
     "materials": [
@@ -3204,6 +3404,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14002,
     "kind": "Potion",
     "materials": [
@@ -3224,6 +3425,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14003,
     "kind": "Potion",
     "materials": [
@@ -3244,6 +3446,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14004,
     "kind": "Potion",
     "materials": [
@@ -3264,6 +3467,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14005,
     "kind": "Potion",
     "materials": [
@@ -3284,6 +3488,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14006,
     "kind": "Potion",
     "materials": [
@@ -3304,6 +3509,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14007,
     "kind": "Potion",
     "materials": [
@@ -3324,6 +3530,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14008,
     "kind": "Potion",
     "materials": [
@@ -3344,6 +3551,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14009,
     "kind": "Potion",
     "materials": [
@@ -3364,6 +3572,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14010,
     "kind": "Potion",
     "materials": [
@@ -3384,6 +3593,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14011,
     "kind": "Potion",
     "materials": [
@@ -3404,6 +3614,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14012,
     "kind": "Potion",
     "materials": [
@@ -3424,6 +3635,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14013,
     "kind": "Potion",
     "materials": [
@@ -3444,6 +3656,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 4,
     "id": 14014,
     "kind": "Potion",
     "materials": [
@@ -3464,6 +3677,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 12,
     "id": 14101,
     "kind": "Potion",
     "materials": [
@@ -3490,6 +3704,7 @@
     ]
   },
   {
+    "combineType": 12,
     "id": 14102,
     "kind": "Potion",
     "materials": [
@@ -3512,6 +3727,7 @@
     ]
   },
   {
+    "combineType": 5,
     "id": 15001,
     "kind": "Tier",
     "materials": [
@@ -3528,6 +3744,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15002,
     "kind": "Tier",
     "materials": [
@@ -3544,6 +3761,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15003,
     "kind": "Tier",
     "materials": [
@@ -3560,6 +3778,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15004,
     "kind": "Tier",
     "materials": [
@@ -3576,6 +3795,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15005,
     "kind": "Tier",
     "materials": [
@@ -3592,6 +3812,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15006,
     "kind": "Tier",
     "materials": [
@@ -3608,6 +3829,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15007,
     "kind": "Tier",
     "materials": [
@@ -3624,6 +3846,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15008,
     "kind": "Tier",
     "materials": [
@@ -3640,6 +3863,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15009,
     "kind": "Tier",
     "materials": [
@@ -3656,6 +3880,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15010,
     "kind": "Tier",
     "materials": [
@@ -3672,6 +3897,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15011,
     "kind": "Tier",
     "materials": [
@@ -3688,6 +3914,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15012,
     "kind": "Tier",
     "materials": [
@@ -3704,6 +3931,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15013,
     "kind": "Tier",
     "materials": [
@@ -3720,6 +3948,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15014,
     "kind": "Tier",
     "materials": [
@@ -3736,6 +3965,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15015,
     "kind": "Tier",
     "materials": [
@@ -3752,6 +3982,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15016,
     "kind": "Tier",
     "materials": [
@@ -3768,6 +3999,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15017,
     "kind": "Tier",
     "materials": [
@@ -3784,6 +4016,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15018,
     "kind": "Tier",
     "materials": [
@@ -3800,6 +4033,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15019,
     "kind": "Tier",
     "materials": [
@@ -3816,6 +4050,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15020,
     "kind": "Tier",
     "materials": [
@@ -3832,6 +4067,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 5,
     "id": 15021,
     "kind": "Tier",
     "materials": [
@@ -3848,6 +4084,7 @@
     "unlockItemIds": []
   },
   {
+    "combineType": 6,
     "id": 22007,
     "kind": "CondensedResin",
     "materials": [
@@ -3871,6 +4108,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22033,
     "kind": "Bait",
     "materials": [
@@ -3893,6 +4131,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22034,
     "kind": "Bait",
     "materials": [
@@ -3915,6 +4154,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22035,
     "kind": "Bait",
     "materials": [
@@ -3937,6 +4177,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22036,
     "kind": "Bait",
     "materials": [
@@ -3959,6 +4200,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22037,
     "kind": "Bait",
     "materials": [
@@ -3981,6 +4223,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22038,
     "kind": "Bait",
     "materials": [
@@ -4003,6 +4246,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22039,
     "kind": "Bait",
     "materials": [
@@ -4025,6 +4269,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22040,
     "kind": "Bait",
     "materials": [
@@ -4047,6 +4292,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22041,
     "kind": "Bait",
     "materials": [
@@ -4069,6 +4315,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22042,
     "kind": "Bait",
     "materials": [
@@ -4091,6 +4338,7 @@
     ]
   },
   {
+    "combineType": 10,
     "id": 22043,
     "kind": "Bait",
     "materials": [

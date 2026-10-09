@@ -56,16 +56,17 @@ A save gains one compression, and every server read gains one decompression. Nei
 
 ## Key files
 
-| File                                                                 | Role                                                    |
-| -------------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/db/src/services/azure/container/writeJsonBlob.ts`          | async compress and upload with `Content-Encoding: zstd` |
-| `packages/db/src/services/azure/container/readJsonBlob.ts`           | download and async decompress, a 404 read as undefined  |
-| `packages/db/src/services/azure/container/constants.ts`              | `JSON_BLOB_COMPRESSION_LEVEL` and the RFC 9659 window   |
-| `apps/web/server/services/resource/saveResourceContent.ts`           | writes a resource's content, charges the stored length  |
-| `apps/web/server/services/resource/readSerializedResourceContent.ts` | the web server's content reads                          |
-| `apps/web/server/services/resource/readResourceContentDelta.ts`      | the delta commit's dictionary                           |
-| `apps/functions/src/handlers/sendTodoReminderHandler.ts`             | the reminder's re-check of a TodoList's content         |
-| `apps/web/server/trpc/procedure/blobState/`                          | every game's save and load                              |
+| File                                                                 | Role                                                                    |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `packages/db/src/services/azure/container/writeJsonBlob.ts`          | async compress and upload with `Content-Encoding: zstd`                 |
+| `packages/db/src/services/azure/container/readJsonBlob.ts`           | download and async decompress, a 404 read as undefined                  |
+| `packages/db/src/services/azure/container/decompressJsonBlob.ts`     | the zstd decode both readers share, a body read off a download included |
+| `packages/db/src/services/azure/container/constants.ts`              | `JSON_BLOB_COMPRESSION_LEVEL` and the RFC 9659 window                   |
+| `apps/web/server/services/resource/saveResourceContent.ts`           | writes a resource's content, charges the stored length                  |
+| `apps/web/server/services/resource/readSerializedResourceContent.ts` | the web server's content reads                                          |
+| `apps/web/server/services/resource/readResourceContentDelta.ts`      | the delta commit's dictionary                                           |
+| `apps/functions/src/handlers/sendTodoReminderHandler.ts`             | the reminder's re-check of a TodoList's content                         |
+| `apps/web/server/trpc/procedure/blobState/`                          | every game's save and load                                              |
 
 ## Sources
 

@@ -5,6 +5,7 @@ import { computeAttackShares } from "#src/services/genshinParity/music/computeAt
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
 import {
   LISTEN_BAND_CENTRES,
@@ -23,8 +24,12 @@ export const attacksCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async () => {
     for (const { game, id, ours } of await renderMusicSegments(DerivedAssetComponent.Login, LOGIN_MUSIC_SCREEN)) {
-      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
-      const attackSharesList = computeAttackShares(computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames), frames);
+      const gameSpectrogram = computeChromaSpectrogram(game, LISTEN_SAMPLE_RATE);
+      const frames = computeAudibleFrames(computeChroma(gameSpectrogram).loudness);
+      const attackSharesList = computeAttackShares(
+        computeBandLevels(computeChromaSpectrogram(ours, LISTEN_SAMPLE_RATE), gameSpectrogram, frames),
+        frames,
+      );
       console.log(`segment ${id}: share of frames that jump, ours against the game's`);
       for (const [band, centre] of LISTEN_BAND_CENTRES.entries()) {
         const attackShares = attackSharesList[band];

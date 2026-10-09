@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-export const useReadData = async (unauthedReader: () => Promisable<void>, authedReader: () => Promise<void>) => {
+export const useReadData = async (unauthedReader: () => Promisable<void>, authedReader: () => Promisable<void>) => {
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await useAuthSession();

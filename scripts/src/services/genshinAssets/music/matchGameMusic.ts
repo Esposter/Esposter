@@ -2,6 +2,7 @@ import type { MusicMatchWindow } from "#src/models/genshinAssets/music/MusicMatc
 
 import { readGameMusicChroma } from "#src/services/genshinAssets/music/readGameMusicChroma";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { scoreChromaWindow } from "#src/services/genshinParity/music/scoreChromaWindow";
 import {
   CHROMA_HOP_LENGTH,
@@ -19,7 +20,9 @@ const MATCH_COUNT = 3;
 export const matchGameMusic = async (recordingPath: string): Promise<MusicMatchWindow[]> => {
   const framesPerSecond = CHROMA_SAMPLE_RATE / CHROMA_HOP_LENGTH;
   const windowLength = CHROMA_MATCH_SECONDS * framesPerSecond;
-  const recording = computeChroma(await readAudioSamples(recordingPath, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE);
+  const recording = computeChroma(
+    computeChromaSpectrogram(await readAudioSamples(recordingPath, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE),
+  );
   const soundChromaMap = await readGameMusicChroma();
   const windows: MusicMatchWindow[] = [];
   for (let start = 0; start + windowLength <= recording.loudness.length; start += windowLength) {

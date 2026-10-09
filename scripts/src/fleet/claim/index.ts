@@ -20,7 +20,12 @@ await runMain(
       const profile = readRequiredMachineProfile();
       const worker = requireFleetWorker(args.worker);
       const sample = await readMachineSample();
-      const load = formatMachineLoad(sample.cpuPercentage, sample.gpuPercentage, sample.freeGigabytes);
+      const load = formatMachineLoad(
+        sample.cpuPercentage,
+        sample.gpuPercentage,
+        sample.freeGigabytes,
+        process.platform,
+      );
       const { attempt, claimed } = claimFleetEntry(args.id, { machine: profile.id, worker }, load);
       if (attempt === ClaimAttempt.Won) {
         console.info(`claimed ${args.id} as worker ${worker}`);

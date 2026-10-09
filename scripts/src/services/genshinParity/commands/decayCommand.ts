@@ -6,6 +6,7 @@ import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData"
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { computeGapsByOnsetAge } from "#src/services/genshinParity/music/computeGapsByOnsetAge";
 import { formatOnsetAgeSpan } from "#src/services/genshinParity/music/formatOnsetAgeSpan";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
@@ -29,12 +30,13 @@ export const decayCommand: SubCommandsDef[string] = defineCommand({
       DerivedAssetComponent.Login,
       LOGIN_MUSIC_SCREEN,
     )) {
-      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
+      const gameSpectrogram = computeChromaSpectrogram(game, LISTEN_SAMPLE_RATE);
+      const frames = computeAudibleFrames(computeChroma(gameSpectrogram).loudness);
       const frameTimes = frames.map((frame) => getFrameSeconds(frame, LISTEN_SAMPLE_RATE));
       const onsets = music.segments[index]?.voices.flatMap(({ notes }) => notes.map(({ start }) => start)) ?? [];
       console.log(`segment ${id}: seconds since the last note began, share of frames, each band's mean gap in dB`);
       for (const [span, { bandGaps, share }] of computeGapsByOnsetAge(
-        computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
+        computeBandLevels(computeChromaSpectrogram(ours, LISTEN_SAMPLE_RATE), gameSpectrogram, frames),
         frameTimes,
         onsets,
       ).entries())

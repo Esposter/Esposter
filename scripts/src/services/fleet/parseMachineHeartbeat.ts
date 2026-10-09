@@ -14,7 +14,8 @@ const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>
   typeof value.cpu === "number" &&
   "freeMemory" in value &&
   typeof value.freeMemory === "number" &&
-  (!("gpu" in value) || typeof value.gpu === "number");
+  (!("gpu" in value) || typeof value.gpu === "number") &&
+  (!("platform" in value) || typeof value.platform === "string");
 
 // The heartbeat a machine's commit carries, or undefined for a commit that is not one
 export const parseMachineHeartbeat = (message: string): MachineHeartbeat | undefined =>

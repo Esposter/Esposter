@@ -7,17 +7,28 @@ import { GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
 // Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door, and
-// Draws no frames while the opening covers it, though its first view's ground still streams in. Its code arriving and
-// That ground and the regions in reach of it having arrived are the two steps loading can see, since neither reports
-// Any finer progress
+// Draws no frames while the opening covers it, though its first view's ground still streams in. Its code arriving,
+// The player's save being loaded, and that ground and the regions in reach of it having arrived are the three steps
+// Loading can see, since none reports any finer progress
 const isLoaded = ref(false);
 const isReady = ref(false);
-const progress = computed(() => (Number(isLoaded.value) + Number(isReady.value)) / 2);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
 const gameText = await useGameText();
-// The player's save, which the world starts from once it is loaded, and the lease the page holds for it
-const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs, takeBack } = await useGenshinSave();
+// The player's save, which the world starts from once it is loaded, and the lease the page holds for it. A start that
+// Fails is retried until it takes, the page waiting on its save meanwhile
+const {
+  initialSave,
+  isReplaced,
+  isSaveLoaded,
+  isStartRetrying,
+  onWorldGrant,
+  onWorldSave,
+  retryStart,
+  serverClockOffsetMs,
+  takeBack,
+} = await useGenshinSave();
+const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.value) + Number(isReady.value)) / 3);
 // The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
 const emit = defineEmits<{ load: []; ready: [] }>();
 </script>
@@ -26,7 +37,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
   <div size-full relative of-hidden>
     <ClientOnly>
       <LazyGenshinWorld
-        v-if="isDoorOpened"
+        v-if="isDoorOpened && isSaveLoaded"
         :game-text="gameText.text"
         :is-paused="isOpeningShown || isReplaced || undefined"
         :language="gameText.language"
@@ -55,6 +66,20 @@ const emit = defineEmits<{ load: []; ready: [] }>();
         <p>This game was started in another session, which now holds your save.</p>
         <footer flex justify-end>
           <UiButton :variant="UiButtonVariant.Accent" @click="takeBack()">Take back</UiButton>
+        </footer>
+      </div>
+    </UiDialog>
+    <!-- A start that could not take the lease is retried with backoff, and the page's retry asks for it at once -->
+    <UiDialog
+      :model-value="isStartRetrying"
+      :placement="UiDialogPlacement.Middle"
+      title="Save not loaded"
+      w="[min(32rem,90vw)]"
+    >
+      <div p-3 flex flex-col gap-3>
+        <p>Your save could not be loaded. The game waits here and tries again.</p>
+        <footer flex justify-end>
+          <UiButton :variant="UiButtonVariant.Accent" @click="retryStart()">Retry</UiButton>
         </footer>
       </div>
     </UiDialog>

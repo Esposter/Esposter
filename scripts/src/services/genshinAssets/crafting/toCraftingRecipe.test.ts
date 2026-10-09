@@ -47,6 +47,7 @@ describe(toCraftingRecipe, () => {
     expect.hasAssertions();
 
     expect(toCraftingRecipe(createRow({}), { materialMap, unlockItemIds: [] })).toStrictEqual({
+      combineType: TIER_COMBINE_TYPE,
       id: 11_002,
       kind: CraftingRecipeKind.Tier,
       materials: [{ count: 3, id: 112_002 }],
@@ -91,6 +92,7 @@ describe(toCraftingRecipe, () => {
     });
 
     expect(toCraftingRecipe(condensedResinRow, { materialMap, unlockItemIds: [221_007] })).toStrictEqual({
+      combineType: 6,
       id: 11_002,
       kind: CraftingRecipeKind.CondensedResin,
       materials: [

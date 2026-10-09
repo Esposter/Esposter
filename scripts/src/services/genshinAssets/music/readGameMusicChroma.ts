@@ -3,6 +3,7 @@ import type { Chroma } from "#src/models/genshinParity/music/Chroma";
 import { decodeGameSounds } from "#src/services/genshinAssets/music/decodeGameSounds";
 import { MUSIC_DIRECTORY, MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { CHROMA_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { readAudioSamples } from "#src/services/genshinParity/shared/readAudioSamples";
 import { existsSync, readdirSync } from "node:fs";
@@ -28,7 +29,9 @@ export const readGameMusicChroma = async (): Promise<Map<number, Chroma>> => {
     DECODE_DIRECTORY,
   )) {
     // oxlint-disable-next-line no-await-in-loop -- as above
-    const { classes, loudness } = computeChroma(await readAudioSamples(path, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE);
+    const { classes, loudness } = computeChroma(
+      computeChromaSpectrogram(await readAudioSamples(path, CHROMA_SAMPLE_RATE), CHROMA_SAMPLE_RATE),
+    );
     // Written beside its name and renamed onto it, so a write cut short is never read as a whole sound's chroma
     const partialPath = join(CHROMA_DIRECTORY, `${id}.bin.partial`);
     // oxlint-disable-next-line no-await-in-loop -- as above

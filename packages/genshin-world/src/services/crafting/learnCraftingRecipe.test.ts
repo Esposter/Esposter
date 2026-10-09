@@ -20,6 +20,7 @@ describe(learnCraftingRecipe, () => {
   const INSTRUCTION_ID = 221_007;
   const OTHER_INSTRUCTION_ID = 221_067;
   const recipe: CraftingRecipe = {
+    combineType: 6,
     id: 22_007,
     kind: CraftingRecipeKind.CondensedResin,
     materials: [{ count: 60, id: 106 }],

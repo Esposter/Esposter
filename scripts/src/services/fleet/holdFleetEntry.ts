@@ -35,7 +35,7 @@ const renewClaim = async (entry: string, holder: ClaimHolder): Promise<RenewalDe
   const sample = await readMachineSample();
   const message = {
     ...remote.message,
-    load: formatMachineLoad(sample.cpuPercentage, sample.gpuPercentage, sample.freeGigabytes),
+    load: formatMachineLoad(sample.cpuPercentage, sample.gpuPercentage, sample.freeGigabytes, process.platform),
     renewedAt: Temporal.Now.instant().toString(),
   };
   const outcome = pushFleetRef(`${CLAIM_REF_PREFIX}${entry}`, createFleetCommit(message), remote.sha);

@@ -1,3 +1,4 @@
+import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
 
 import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
@@ -13,14 +14,20 @@ import { computeChromaAgreement } from "#src/services/genshinParity/music/comput
 // Charges a timbre's balance and a loudness alike, a level far under the game's loudest in its band read as that floor
 // So a band quiet on both sides costs nothing, and the mean of the bands. Each band's bias is the same gap signed,
 // Which tells a band ours leaves short from one it overfills
-export const scoreMusicSegment = (ours: Float32Array, game: Float32Array, sampleRate: number): MusicScore => {
-  const length = Math.min(ours.length, game.length);
-  const ourSamples = ours.subarray(0, length);
-  const gameSamples = game.subarray(0, length);
-  const ourChroma = computeChroma(ourSamples, sampleRate);
-  const gameChroma = computeChroma(gameSamples, sampleRate);
+// Both are read over the frames of the stretch the shorter of the two lasts, so each keeps only its first frames
+export const scoreMusicSegment = (ours: Spectrogram, game: Spectrogram): MusicScore => {
+  const frameCount = Math.min(ours.frameCount, game.frameCount);
+  const truncate = (spectrogram: Spectrogram): Spectrogram => ({
+    ...spectrogram,
+    frameCount,
+    magnitudes: spectrogram.magnitudes.subarray(0, frameCount * spectrogram.binCount),
+  });
+  const ourSpectrogram = truncate(ours);
+  const gameSpectrogram = truncate(game);
+  const ourChroma = computeChroma(ourSpectrogram);
+  const gameChroma = computeChroma(gameSpectrogram);
   const loudFrames = computeAudibleFrames(gameChroma.loudness);
-  const bandGaps = computeBandLevels(ourSamples, gameSamples, sampleRate, loudFrames).map((levels) =>
+  const bandGaps = computeBandLevels(ourSpectrogram, gameSpectrogram, loudFrames).map((levels) =>
     computeBandGaps(levels, 0),
   );
   const bandDistances = bandGaps.map((gaps) => computeMean(gaps.map((gap) => Math.abs(gap))));

@@ -129,6 +129,8 @@ flowchart TD
 
 A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit filled it (a mesh's triangles, a texture's thresholded channel), and a part drawn at several levels of detail is fitted from its finest by one `readLevelOfDetailParts`, save a level painted with other materials than its finest (every login tower's and most bridges' coarsest, the ground's stone alone), which the game stands where the part is far and is a part of its own, fitted from its own mesh. Each set of materials the finest level itself is drawn with is a part of its own too, so a placement painted otherwise fits its own facade. Every number is kept to the centimetre (`roundFitted`).
 
+Every step runs AnimeStudio through one runner, which fails a run that exits 0 yet logged an exception: AnimeStudio catches what an asset throws, logs it and carries on, so without that check a native that fails on a block reads as a clean run with its assets silently missing.
+
 ## Building AnimeStudio on macOS arm64
 
 `pnpm -C scripts genshin:animestudio:build` fetches AnimeStudio and Texture2DDecoder at their pinned commits, builds the CLI for `osx-arm64` and its natives as dylibs, and prints the path to set as `GENSHIN_ANIMESTUDIO_CLI`. The sources and builds stay under `~/Esposter/tools` (`--directory` to move them), outside the repository, and nothing it fetches is committed.

@@ -2,6 +2,7 @@
 title: Follow camera
 description: Proposal — what the follow camera still lacks past its orbit, its pull-in and its photo mode: its pivot, distances, field of view, pitch limits and easing solved off recordings of the game's camera in play, the game's camera settings, and photo mode's range within the game's own.
 model: claude-opus-5-5
+waiting: "a camera solve off recordings, the genshin:parity pose command, which is not built; and the Settings Controls tab, which waits on the interface export"
 touches:
   [
     "packages/genshin-engine/src/models/camera/**",

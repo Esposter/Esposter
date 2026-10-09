@@ -43,13 +43,17 @@ const emit = defineEmits<{ quit: [] }>();
       screenKind !== ScreenKind.World &&
       screenKind !== ScreenKind.Dialogue &&
       screenKind !== ScreenKind.GcgDuel &&
+      screenKind !== ScreenKind.Forge &&
       slots[screenKind]
     "
     :name="screenKind"
   />
   <MenuPlaceholder
     v-else-if="
-      screenKind !== ScreenKind.World && screenKind !== ScreenKind.Dialogue && screenKind !== ScreenKind.GcgDuel
+      screenKind !== ScreenKind.World &&
+      screenKind !== ScreenKind.Dialogue &&
+      screenKind !== ScreenKind.GcgDuel &&
+      screenKind !== ScreenKind.Forge
     "
     :game-text
     :title="gameText[ScreenKindGameTextKeyMap[screenKind]]"

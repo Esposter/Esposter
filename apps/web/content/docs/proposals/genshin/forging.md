@@ -22,13 +22,12 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 ## Scope and order
 
-**Built:** the [forging page](/docs/genshin/forging) records what is built.
+**Built:** the [forging page](/docs/genshin/forging) records what is built, and the forge screen itself (`ScreenKind.Forge`, its Materials and Forge Queues tabs in `genshin-interface`) is built on the public clip, its frames under the reference folder `forge-screen`. Its layout is provisional until the owed `forge-order-queue.mkv` re-measures it, and its visual image is approved by the user, which is owed.
 
 **Still to build, in order:**
 
-1. **The forge screen, built now from the public clip.** Take its frames with `pnpm -C scripts genshin:parity frame` from `captures/yt-AVnbm8fESr0` (the recipe list, the order queue with its timers, and the claim state) into `references/forge-screen/` with their source noted. Then build `ScreenKind.Forge` and its component in the interface package on those frames, with its words by text id. Fixture the component, and queue its comparison for the user's eyes. The owed `forge-order-queue.mkv` re-measures it later; it does not gate the build.
-2. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen is reached through its fixture, since the game's menus hold no forge.
-3. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them.
+1. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen is reached through its fixture, since the game's menus hold no forge.
+2. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them. The Start and Obtain words wait on their text ids, which the game's own map does not yet key (the forge tab's words are keyed in `GameTextKey`).
 
 ## Data and measures
 
@@ -36,9 +35,11 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 ## Key files
 
-| File                                                     | Role after the change    |
-| :------------------------------------------------------- | :----------------------- |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts` | Gains the forge's screen |
+| File                                                                     | Role after the change                                          |
+| :----------------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | Gains the forge's screen                                       |
+| `packages/genshin-interface/src/components/ForgeScreen/Index.vue`        | The forge screen, its two tabs                                 |
+| `packages/genshin-interface/src/components/ForgeScreen/Index.fixture.ts` | The screen's fixture, the Materials tab and the queues variant |
 
 ## Sources
 

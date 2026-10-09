@@ -11,6 +11,7 @@ export enum ScreenKind {
   CoOp = "CoOp",
   Dialogue = "Dialogue",
   Events = "Events",
+  Forge = "Forge",
   Friends = "Friends",
   GcgDuel = "GcgDuel",
   Inventory = "Inventory",

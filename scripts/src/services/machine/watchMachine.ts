@@ -72,6 +72,7 @@ export const watchMachine = async (): Promise<void> => {
             freeMemory: freeGigabytes,
             ...(gpuPercentage === undefined ? {} : { gpu: gpuPercentage }),
             machine: profile.id,
+            platform: process.platform,
           },
           heartbeatParentSha,
         ),

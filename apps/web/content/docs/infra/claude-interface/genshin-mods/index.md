@@ -1,20 +1,21 @@
 ---
 title: Genshin mods
-description: A Claude Code plugin of six mods — five drawn as one band above the prompt in the session character's colour, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), each switched by its own command, and a delegation guard that nudges a run of lookups toward a haiku agent.
+description: A Claude Code plugin of seven mods — five drawn as one band above the prompt in the session character's colour, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), each switched by its own command, a delegation guard that nudges a run of lookups toward a haiku agent, and a disk-scan guard that refuses a Bash scan from a root or a home folder.
 ---
 
 # Genshin mods
 
-Claude Code loads **mods**: plugins whose hooks are a TypeScript module the engine runs in-process, so a plugin can draw a band above the prompt, show toasts, register commands, ask a question, rewrite a tool call before it runs and read the session's usage. `genshin-mods` carries six of them, each one answering something this repository's sessions do every day: several sessions share one checkout, long turns work through task lists, the context of a long session is what costs, and a run of lookups belongs to a subagent. How any mod is written here, and the engine rules that shape every file of this one, is the [Claude Code mods](/docs/architecture/claude-mods) standard.
+Claude Code loads **mods**: plugins whose hooks are a TypeScript module the engine runs in-process, so a plugin can draw a band above the prompt, show toasts, register commands, ask a question, rewrite a tool call before it runs and read the session's usage. `genshin-mods` carries seven of them, each one answering something this repository's sessions do every day: several sessions share one checkout, long turns work through task lists, the context of a long session is what costs, and a run of lookups belongs to a subagent. How any mod is written here, and the engine rules that shape every file of this one, is the [Claude Code mods](/docs/architecture/claude-mods) standard.
 
-| Mod                                                                      | What it does                                                                                                |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| [Waypoints](/docs/infra/claude-interface/genshin-mods/waypoints)         | After each answer, up to three next steps the session suggests, one press each                              |
-| [Resin](/docs/infra/claude-interface/genshin-mods/resin)                 | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff     |
-| [Veil](/docs/infra/claude-interface/genshin-mods/veil)                   | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them |
-| [Commission](/docs/infra/claude-interface/genshin-mods/commission)       | A goal's task list, how far it is and how long it has run                                                   |
-| [Ward](/docs/infra/claude-interface/genshin-mods/ward)                   | A question before editing a file another session changed in the last half hour                              |
-| [Delegation guard](/docs/infra/claude-interface/genshin-mods/delegation) | After every third lookup in a row, a note to hand the chain to a haiku agent                                |
+| Mod                                                                      | What it does                                                                                                   |
+| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| [Waypoints](/docs/infra/claude-interface/genshin-mods/waypoints)         | After each answer, up to three next steps the session suggests, one press each                                 |
+| [Resin](/docs/infra/claude-interface/genshin-mods/resin)                 | The cache's countdown, the context, the limits and the cost, with warm, compact and a one-click handoff        |
+| [Veil](/docs/infra/claude-interface/genshin-mods/veil)                   | Recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model reads them    |
+| [Commission](/docs/infra/claude-interface/genshin-mods/commission)       | A goal's task list, how far it is and how long it has run                                                      |
+| [Ward](/docs/infra/claude-interface/genshin-mods/ward)                   | A question before editing a file another session changed in the last half hour                                 |
+| [Delegation guard](/docs/infra/claude-interface/genshin-mods/delegation) | After every third lookup in a row, a note to hand the chain to a haiku agent                                   |
+| [Disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan)   | Refuses a Bash `find`, `du`, `grep -r` or `ls -R` that starts at a root or a home folder, naming where to look |
 
 ## How to use it
 

@@ -231,6 +231,26 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
+  test("adds a hit's own DMG Bonus to the damage bonus it is priced at", () => {
+    expect.hasAssertions();
+
+    const HIT_DAMAGE_BONUS = 0.5845;
+    const enemy = createSturdyEnemy();
+    const hit: KitHit = { ...TRAVELER_KIT.plungeCollision, damageBonus: HIT_DAMAGE_BONUS };
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: HIT_DAMAGE_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: hit.talentMultiplier,
+    });
+
+    strikeEnemy(enemy, hit, createCombatant(), NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
   test("gives the enemy a hit's status before the hit's damage is taken", () => {
     expect.hasAssertions();
 

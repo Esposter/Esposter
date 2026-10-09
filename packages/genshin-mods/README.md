@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A Claude Code plugin of six mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), and a delegation guard that nudges a run of lookups toward a haiku agent.
+A Claude Code plugin of seven mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), a delegation guard that nudges a run of lookups toward a haiku agent, and a disk-scan guard that refuses a Bash scan from a root or a home folder.
 
 - **Waypoints** — after each answered turn, up to three next steps the session suggests, each a button that sends it as the next prompt.
 - **Resin** — the prompt cache's time left, the context window, the five-hour and weekly limits and the cost so far, with **Warm**, **Compact** and **Handoff**, a toast before the cache goes cold, and a usage reserve past nine-tenths of a limit window that has the session wind down until the window resets.
@@ -13,6 +13,7 @@ A Claude Code plugin of six mods: five drawn as one band above the prompt, in th
 - **Commission** — a goal meter over the session's task list: the goal, tasks done, the share complete and the minutes since it started.
 - **Ward** — before an edit to a file another session changed in the last half hour, a question: proceed, move to a worktree, or cancel.
 - **Delegation guard** — after every third lookup in a row with no decision between them, a note on that call's result that the chain goes to a haiku agent as one bounded question.
+- **Disk-scan guard** — a Bash `find`, `du`, `grep -r` or `ls -R` that starts at `/`, a drive, `~` or a home folder is refused, with the known place to look for the file.
 
 ## Table of Contents
 

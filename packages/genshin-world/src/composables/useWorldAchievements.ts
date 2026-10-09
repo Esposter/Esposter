@@ -18,18 +18,18 @@ import { getResultAsync } from "@esposter/shared";
 // Screen opens rather than with the world. A finished step or quest moves the achievements whatever screen is open, and
 // The Primogems of those finished are paid into the wallet
 export const useWorldAchievements = ({
+  achievementProgressMap,
   events,
   getWorldNow,
   language,
-  savedAchievementProgressMap,
   screenKind,
   setWallet,
   wallet,
 }: {
+  achievementProgressMap: Ref<ReadonlyMap<number, AchievementProgress>>;
   events: WorldEvents;
   getWorldNow: () => Temporal.Instant;
   language: GameLanguage;
-  savedAchievementProgressMap: ReadonlyMap<number, AchievementProgress>;
   screenKind: Ref<ScreenKind>;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
@@ -39,7 +39,6 @@ export const useWorldAchievements = ({
     categories: AchievementCategory[];
     textMap: Readonly<Record<string, string>>;
   }>();
-  const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(savedAchievementProgressMap);
   watch(screenKind, (newScreenKind) => {
     if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -80,5 +79,5 @@ export const useWorldAchievements = ({
     );
   };
   events.on("achievementEvents", advanceAchievementsWith);
-  return { achievementData, achievementProgressMap };
+  return { achievementData };
 };

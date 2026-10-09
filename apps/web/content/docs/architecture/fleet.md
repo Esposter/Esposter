@@ -67,7 +67,7 @@ An entry is one unit of work a machine may take, from two sources, read in this 
 
 ## Load
 
-The watcher (`pnpm ai:machine:watch`, under Monitor) pushes `refs/machines/<id>` every ten minutes, a parentless commit whose message is `{ machine, at, cpu, gpu, freeMemory }` from its latest minute's readings. A failed push prints one line and never stops the watcher. `pnpm ai:fleet:status` fetches every claim and heartbeat with pruning, then prints each machine's last sample and age, and each claim's holder, age and state. It is the coordinator's whole view, and it reads a fixed number of refs regardless of how many machines there are.
+The watcher (`pnpm ai:machine:watch`, under Monitor) pushes `refs/machines/<id>` every ten minutes, a parentless commit whose message is `{ machine, at, cpu, gpu, freeMemory, platform }` from its latest minute's readings. A failed push prints one line and never stops the watcher. `pnpm ai:fleet:status` fetches every claim and heartbeat with pruning, then prints each machine's last sample and age, and each claim's holder, age and state. A machine's GPU figure is named by the platform that wrote its heartbeat, `GPU` for macOS and `GPU 3D` for Windows, so the label reads the same on whichever machine runs the status. It is the coordinator's whole view, and it reads a fixed number of refs regardless of how many machines there are.
 
 ## Game data crosses the local network only
 

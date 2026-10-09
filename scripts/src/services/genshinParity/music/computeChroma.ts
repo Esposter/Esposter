@@ -1,29 +1,19 @@
 import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { Chroma } from "#src/models/genshinParity/music/Chroma";
 
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { normalizeChromaClasses } from "#src/services/genshinParity/music/normalizeChromaClasses";
 import {
   CHROMA_FRAME_LENGTH,
-  CHROMA_HOP_LENGTH,
   CHROMA_MAX_FREQUENCY,
   CHROMA_MIN_FREQUENCY,
 } from "#src/services/genshinParity/shared/constants";
 
-// A signal's pitch classes frame by frame: each Hann-windowed frame's spectrum folded onto the twelve semitones of
-// The equal-tempered scale about A440 between the lowest and highest frequency read, normalised
-// (`normalizeChromaClasses`). A frame's loudness is kept beside its classes, so a quiet frame is left out of a
-// Comparison. A caller already holding the signal's spectrogram in these frames passes it, so it is not taken twice
-export const computeChroma = (
-  samples: Float32Array,
-  sampleRate: number,
-  { binCount, frameCount, magnitudes }: Spectrogram = computeSpectrogram(
-    samples,
-    sampleRate,
-    CHROMA_FRAME_LENGTH,
-    CHROMA_HOP_LENGTH,
-  ),
-): Chroma => {
+// A signal's pitch classes frame by frame, read from its spectrogram in the pitch classes' frames
+// (`computeChromaSpectrogram`):
+// Each frame's spectrum folded onto the twelve semitones of the equal-tempered scale about A440 between the lowest and
+// Highest frequency read, normalised (`normalizeChromaClasses`). A frame's loudness is kept beside its classes, so a
+// Quiet frame is left out of a comparison
+export const computeChroma = ({ binCount, frameCount, magnitudes, sampleRate }: Spectrogram): Chroma => {
   const classes = new Float32Array(frameCount * 12);
   const loudness = new Float32Array(frameCount);
   const binClasses = Int8Array.from({ length: binCount }, (_value, bin) => {

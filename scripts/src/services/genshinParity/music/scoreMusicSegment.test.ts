@@ -1,3 +1,4 @@
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { scoreMusicSegment } from "#src/services/genshinParity/music/scoreMusicSegment";
 import { LISTEN_BAND_CENTRES, LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { describe, expect, test } from "vitest";
@@ -14,7 +15,10 @@ describe(scoreMusicSegment, () => {
   test("scores a render identical to the game's as agreeing wholly, no band apart", () => {
     expect.hasAssertions();
 
-    const { distance, pitchAgreement } = scoreMusicSegment(chord, chord, LISTEN_SAMPLE_RATE);
+    const { distance, pitchAgreement } = scoreMusicSegment(
+      computeChromaSpectrogram(chord, LISTEN_SAMPLE_RATE),
+      computeChromaSpectrogram(chord, LISTEN_SAMPLE_RATE),
+    );
 
     expect(pitchAgreement).toBeCloseTo(1);
     expect(distance).toBeCloseTo(0);
@@ -24,7 +28,10 @@ describe(scoreMusicSegment, () => {
     expect.hasAssertions();
 
     const louder = chord.map((sample) => sample * 2);
-    const { bandBiases, bandDistances, pitchAgreement } = scoreMusicSegment(chord, louder, LISTEN_SAMPLE_RATE);
+    const { bandBiases, bandDistances, pitchAgreement } = scoreMusicSegment(
+      computeChromaSpectrogram(chord, LISTEN_SAMPLE_RATE),
+      computeChromaSpectrogram(louder, LISTEN_SAMPLE_RATE),
+    );
 
     expect(pitchAgreement).toBeCloseTo(1);
     expect(bandDistances.map((distance) => Number(distance.toFixed(1)))).toStrictEqual(
