@@ -41,6 +41,7 @@ export const AYAKA_CHARACTER_ID = 10_000_002;
 export const JEAN_CHARACTER_ID = 10_000_003;
 export const BARBARA_CHARACTER_ID = 10_000_014;
 export const RAZOR_CHARACTER_ID = 10_000_020;
+export const VENTI_CHARACTER_ID = 10_000_022;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
