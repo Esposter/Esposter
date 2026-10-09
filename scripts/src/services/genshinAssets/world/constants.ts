@@ -20,6 +20,20 @@ export const WORLD_JSON_NAME = "world.json";
 // The community's asset index (the one published per version up to 2.6), which names every asset by its path and so
 // Turns a placement's 64-bit path hash back into the prefab's name. Read by the derivation alone
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "tmp", "asset-index", "gi-2.6.0.json");
+// The prefab paths this derivation names by hashing (`buildDerivedPathNames`), beside the community's index
+export const DERIVED_ASSET_PATH_INDEX_PATH: string = join(
+  PARITY_DIRECTORY,
+  "tmp",
+  "asset-index",
+  "gi-7.1.0-derived.json",
+);
+// A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's tree
+export const PREFAB_ROOT_MAP: Record<string, string> = {
+  Area: "ART/Stages/Area",
+  Indoor: "ART/Stages/Indoor",
+  Level: "ART/Stages/Level",
+};
+export const PREFAB_STEM_REGEX: RegExp = /^(?:Area|Indoor|Level)_/;
 // A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is known by
 export const CITY_AREA_PREFIX = "Area_";
 export const CITY_AREA_SUFFIX = "_City";
