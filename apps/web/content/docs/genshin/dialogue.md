@@ -59,7 +59,7 @@ Where a talk stands is a `TalkProgress`: the id of the line on screen, empty onc
 
 ### Residents
 
-A region's data lists its residents beside its landmarks. Each resident has the game's own id, a name by text id, the spot they idle at and the way they face there, their catalogue area, and the talk F begins with them. The [quests](/docs/genshin/quests) page's navigation finds a resident by their id or by their talk's id.
+A region's data lists its residents beside its landmarks. Each resident has the game's own id, a name by text id, their day and night spots (either one absent for a resident the game shows at one time only), their catalogue area, and the talk F begins with them. The [resident schedules](/docs/genshin/resident-schedules) page places them at the hour. The [quests](/docs/genshin/quests) page's navigation finds a resident by their id or by their talk's id.
 
 ## Parity
 
