@@ -61,6 +61,8 @@ describe(readHeldSignature, () => {
   const skippedRun = { conclusion: "skipped", jobConclusion: "", line: "" };
   // A green collect job whose run reads as cancelled, since a newer run's guard replaced its waiting retrigger
   const supersededGreen = { ...green, conclusion: RUN_CANCELLED_CONCLUSION };
+  // A red GitHub's rate limit caused, as Octokit words the refusal in an action's failure
+  const rateLimitedRed = { ...red, line: "API rate limit exceeded for installation ID 1." };
 
   // Three in four runs are an event the filter skipped and most of the rest a fire superseded while pending, so a list
   // Of the newest runs held one collect job the streak could read
@@ -68,6 +70,15 @@ describe(readHeldSignature, () => {
     expect.hasAssertions();
 
     answerRuns([ownRed, ...Array.from({ length: GUARD_RUN_LIST_LIMIT }, () => skippedRun), supersededRun, red, red]);
+
+    expect(readHeldSignature()).toStrictEqual(getFailureSignature("", [red.line]));
+  });
+
+  // GitHub's rate limit lifts by itself, so a red it caused neither counts towards the streak nor ends it
+  test("holds on the red the newest runs all failed on, past a red GitHub's rate limit caused", () => {
+    expect.hasAssertions();
+
+    answerRuns([ownRed, rateLimitedRed, red, red]);
 
     expect(readHeldSignature()).toStrictEqual(getFailureSignature("", [red.line]));
   });
@@ -82,6 +93,7 @@ describe(readHeldSignature, () => {
     ],
     ["they failed on different lines", [ownRed, { ...red, line: " " }, red]],
     ["fewer of them failed than the streak", [ownRed, red]],
+    ["GitHub's rate limit failed them all", [{ ...rateLimitedRed, conclusion: "" }, rateLimitedRed, rateLimitedRed]],
   ])("holds nothing when %s", (_title, runs) => {
     expect.hasAssertions();
 

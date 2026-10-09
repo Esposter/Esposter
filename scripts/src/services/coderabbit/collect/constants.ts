@@ -296,8 +296,9 @@ export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 
 // Commit's re-land a run left for the next, and one returned to the owed set, are woken for the same way
 // (`relandHeldCommits`)
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
-// How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
-// Hours, so a run a minute apart would spend a runner per minute learning it is still down
+// How soon a run GitHub failed with a server error, or with a rate limit that states no wait, is retried
+// (`GITHUB_OUTAGE_REGEX`): an outage is minutes to hours, so a run a minute apart would spend a runner per minute
+// Learning it is still down
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
 // How soon a window whose ask the re-read check withheld is read again (`settleReviewAsk`): a check that moved under
 // The run may have sent its status event while the run held the group, and one that could not be read sends none
