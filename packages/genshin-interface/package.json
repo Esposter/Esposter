@@ -35,12 +35,17 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./save": {
+      "source": "./src/save.ts",
+      "default": "./dist/save.js"
+    },
     "./package.json": "./package.json",
     "./style.css": "./dist/style.css"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./save": "./dist/save.js",
       "./package.json": "./package.json",
       "./style.css": "./dist/style.css"
     },
