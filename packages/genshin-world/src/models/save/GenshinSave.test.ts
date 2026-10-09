@@ -80,6 +80,7 @@ describe("genshinSaveSchema", () => {
           },
         ]),
       ),
+      worldLevelAdjustment: { changedAt: maxInstant, isLowered: true },
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);

@@ -15,6 +15,9 @@ interface Props {
   adventureRank: number;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the World Level can be lowered or restored now, and whether it is lowered
+  isWorldLevelAdjustable: boolean;
+  isWorldLevelLowered: boolean;
   worldLevel: number;
 }
 
@@ -22,7 +25,7 @@ interface Props {
 const slots = defineSlots<Partial<Record<TitledScreenKind, () => VNode>>>();
 const screenKind = defineModel<ScreenKind>("screenKind", { required: true });
 const { gameText } = defineProps<Props>();
-const emit = defineEmits<{ quit: [] }>();
+const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
 </script>
 
 <template>
@@ -34,10 +37,13 @@ const emit = defineEmits<{ quit: [] }>();
     :adventure-rank
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
     :game-text
+    :is-world-level-adjustable
+    :is-world-level-lowered
     :world-level
     @close="screenKind = ScreenKind.World"
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @quit="emit('quit')"
+    @toggle-world-level="emit('toggleWorldLevel')"
   />
   <slot
     v-else-if="

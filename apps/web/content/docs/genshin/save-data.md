@@ -17,7 +17,8 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - each achievement's count and the moment it finished, by achievement id;
 - the bench's recipes learned from instructions, and each recipe's crafted count, by recipe id ([crafting](/docs/genshin/crafting));
 - each kind of wish's counters;
-- Adventure EXP, Mondstadt's Reputation (its level and EXP) and each character's Companionship EXP, by character id.
+- Adventure EXP, Mondstadt's Reputation (its level and EXP) and each character's Companionship EXP, by character id;
+- the World Level adjustment: whether the player has lowered the World Level, and the ISO instant it last changed, left out until it has ([adventure rank](/docs/genshin/adventure-rank)).
 
 It does not hold:
 
@@ -186,6 +187,7 @@ Paths relative to the repository root.
 | `packages/genshin-world/src/models/save/numericSaveIdSchema.ts`                        | a record's numeric id key, the id's own decimal                                                   |
 | `packages/genshin-world/src/models/achievement/AchievementProgressSave.ts`             | the achievements' progress slice, each finish moment an ISO string                                |
 | `packages/genshin-world/src/models/adventureRank/AdventureExpSave.ts`                  | the Adventure EXP slice                                                                           |
+| `packages/genshin-world/src/models/adventureRank/WorldLevelAdjustmentSave.ts`          | the World Level adjustment slice, its change moment as an ISO string                              |
 | `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`                 | the Companionship EXP slice, by character id                                                      |
 | `packages/genshin-world/src/models/reputation/ReputationProgressSave.ts`               | Mondstadt's Reputation slice                                                                      |
 | `packages/genshin-world/src/models/wish/WishPityMapSave.ts`                            | the wish counters' slice, keyed by the kind of wish                                               |

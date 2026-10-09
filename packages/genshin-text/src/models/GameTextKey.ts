@@ -393,6 +393,9 @@ export enum GameTextKey {
   WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
+  // The profile card's World Level button: lowering it by one, and restoring it once lowered
+  WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
+  WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
   ZaytunPeach = "492153948",
 }
 

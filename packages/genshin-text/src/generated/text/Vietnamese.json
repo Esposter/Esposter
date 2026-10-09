@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Chỉ Dẫn",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Nhà Lữ Hành",
   "UI_TRAININGGUIDE_TITLE": "Chỉ Dẫn Bồi Dưỡng",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Giảm Cấp Thế Giới",
   "UI_WORLDLEVEL_TITLE": "Cấp Thế Giới",
+  "UI_WORLDLEVEL_UP_BUTTON": "Quay Lại Cấp Thế Giới Gốc",
   "VIDEO_RETREAT": "Lùi Lại",
   "tips_enter_game": "Chào mừng %s"
 }

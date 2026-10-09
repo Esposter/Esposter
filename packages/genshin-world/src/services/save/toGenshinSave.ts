@@ -4,6 +4,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
+import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
 
 // The save the world's systems are written to, each system's slice beside its model
 export const toGenshinSave = ({
@@ -18,6 +19,7 @@ export const toGenshinSave = ({
   unlockedLandmarkIds,
   wallet,
   wishPityMap,
+  worldLevelAdjustment,
 }: GenshinSaveState): GenshinSave => ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
@@ -29,4 +31,5 @@ export const toGenshinSave = ({
   unlockedLandmarks: [...unlockedLandmarkIds],
   wallet: toWalletSave(wallet),
   wishPity: wishPityMap,
+  worldLevelAdjustment: toWorldLevelAdjustmentSave(worldLevelAdjustment),
 });

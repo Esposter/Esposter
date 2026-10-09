@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Гид",
   "UI_TEXT_QUEST_GUIDE_LABEL": "{M#Путешественник}{F#Путешественница}",
   "UI_TRAININGGUIDE_TITLE": "Руководство по улучшению",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Понизить уровень мира",
   "UI_WORLDLEVEL_TITLE": "Уровень мира",
+  "UI_WORLDLEVEL_UP_BUTTON": "Восстановить уровень мира",
   "VIDEO_RETREAT": "Назад",
   "tips_enter_game": "Добро пожаловать, %s!"
 }

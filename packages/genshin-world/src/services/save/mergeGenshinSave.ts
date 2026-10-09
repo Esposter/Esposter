@@ -1,4 +1,5 @@
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
+import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
@@ -37,6 +38,17 @@ const mergeQuestProgress = (
 // Mondstadt's Reputation is the further of the two, by its level and then by the EXP toward the next
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   reputation.level === than.level ? reputation.exp > than.exp : reputation.level > than.level;
+// The World Level adjustment is the one changed later, one never changed being the earliest
+const checkIsLaterWorldLevelAdjustment = (
+  adjustment: WorldLevelAdjustmentSave,
+  than: WorldLevelAdjustmentSave,
+): boolean => {
+  if (adjustment.changedAt === undefined) return false;
+  if (than.changedAt === undefined) return true;
+  return (
+    Temporal.Instant.compare(Temporal.Instant.from(adjustment.changedAt), Temporal.Instant.from(than.changedAt)) > 0
+  );
+};
 
 // A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
 // Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A quest keeps the further of the two steps, since a step is never
@@ -44,7 +56,8 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 // Adventure EXP keep the larger, as a counter only grows. Each kind of
 // Wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never mixed.
 // The Reputation keeps the further. The bag and the wallet are the account's copy, except that a Primogem refill count
-// From the same game day takes the larger, as a count of refills within a day only grows
+// From the same game day takes the larger, as a count of refills within a day only grows. The World Level adjustment is
+// The copy changed later, since the one change of it the player made last is the one they still stand by
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -88,5 +101,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         : account.wallet.primogemResinRefillCount,
     },
     wishPity,
+    worldLevelAdjustment: checkIsLaterWorldLevelAdjustment(guest.worldLevelAdjustment, account.worldLevelAdjustment)
+      ? guest.worldLevelAdjustment
+      : account.worldLevelAdjustment,
   };
 };

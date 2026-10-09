@@ -5,6 +5,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import { toAchievementProgressMap } from "#src/services/save/toAchievementProgressMap";
 import { toInventory } from "#src/services/save/toInventory";
 import { toWallet } from "#src/services/save/toWallet";
+import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
 // The world's systems read from a save, the derived ones left to the rules that read them on load. The bag's definitions
 // Are read by the item's id, the one thing a save does not hold about an item, and its names from the name-text chunks
@@ -20,6 +21,7 @@ export const readGenshinSave = (
     unlockedLandmarks,
     wallet,
     wishPity,
+    worldLevelAdjustment,
   }: GenshinSave,
   nameText: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
@@ -39,4 +41,5 @@ export const readGenshinSave = (
   unlockedLandmarkIds: new Set(unlockedLandmarks),
   wallet: toWallet(wallet),
   wishPityMap: wishPity,
+  worldLevelAdjustment: toWorldLevelAdjustment(worldLevelAdjustment),
 });

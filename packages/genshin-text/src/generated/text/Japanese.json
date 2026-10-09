@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "ガイド",
   "UI_TEXT_QUEST_GUIDE_LABEL": "旅人",
   "UI_TRAININGGUIDE_TITLE": "育成ガイド",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "世界ランクを下げる",
   "UI_WORLDLEVEL_TITLE": "世界ランク",
+  "UI_WORLDLEVEL_UP_BUTTON": "世界ランクを戻す",
   "VIDEO_RETREAT": "戻る",
   "tips_enter_game": "%s、ようこそ"
 }

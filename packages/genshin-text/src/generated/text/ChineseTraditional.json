@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "嚮導",
   "UI_TEXT_QUEST_GUIDE_LABEL": "旅行者",
   "UI_TRAININGGUIDE_TITLE": "提升指南",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "降低世界等級",
   "UI_WORLDLEVEL_TITLE": "世界等級",
+  "UI_WORLDLEVEL_UP_BUTTON": "還原世界等級",
   "VIDEO_RETREAT": "後退",
   "tips_enter_game": "%s，歡迎進入遊戲"
 }

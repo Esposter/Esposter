@@ -18,6 +18,7 @@ describe(useWorldAdventureRank, () => {
     const adventureRank = useWorldAdventureRank({
       finishedMainQuestIds: computed(() => finishedMainQuestIds),
       savedAdventureExp,
+      savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
       setWallet: (nextWallet) => {
         wallet.value = nextWallet;
       },
