@@ -1,12 +1,12 @@
 ---
 title: Gathering
-description: Proposal — the ores struck until they break, each region's mining outcrops of Magical Crystal Chunks, which come daily from Adventure Rank 30, and the investigation spots that give artifacts, ingredients, ores or Mora. The plants and specialties are built as gathering points, back on the wiki's respawns.
+description: Proposal — the ores struck until they break, each region's mining outcrops of Magical Crystal Chunks, which come daily from Adventure Rank 30, and the investigation spots that give artifacts, ingredients, ores or Mora. The plants and specialties are built as gathering points, back on the wiki's respawns, all but five the world's types do not name yet.
 model: claude-haiku-5-5
 ---
 
 # Gathering
 
-The plants and specialties the map marks are built as gathering points, picked with F and back on the wiki's respawns: see the [gathering](/docs/genshin/gathering) page. This proposal keeps what is not built yet, the ores, the mining outcrops and the investigation spots, each of which waits on a measure or on a system the points do not have yet.
+The plants and specialties the map marks are built as gathering points, picked with F and back on the wiki's respawns, all but four cooking ingredients and one specialty the [gathering](/docs/genshin/gathering) page's notes name. This proposal keeps what is not built yet, the ores, the mining outcrops and the investigation spots, each of which waits on a measure or on a system the points do not have yet.
 
 ## Decisions
 
@@ -25,7 +25,7 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the plants and specialties, as [gathering](/docs/genshin/gathering) records.
+**Built:** the plants and specialties, as [gathering](/docs/genshin/gathering) records, but for the four cooking ingredients and one specialty its notes name as left out.
 
 **This adds, in order:**
 
