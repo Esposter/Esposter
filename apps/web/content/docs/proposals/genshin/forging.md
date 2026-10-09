@@ -3,7 +3,7 @@ title: Forging
 description: Proposal — the blacksmith's forge screen and place. The recipes, queues by rank, real-time orders, the daily cap, the four-star weapons from billets, the drop-table Mystic Enhancement Ore, the forging talents and the Serenitea Pot's refusal of Magical Crystal Chunks are built.
 model: claude-haiku-5-5
 needs: [game-exports]
-waiting: "the blacksmith's place waits on the scene group export (Lua/Scene/3 positions), and the forge screen's wiring on the Start, Obtain and Materials text ids, which the game map does not key"
+waiting: "the blacksmith's place waits on the scene group export (Lua/Scene/3 positions)"
 touches:
   [
     "packages/genshin-interface/src/components/ForgeScreen/**",
@@ -28,7 +28,7 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 **Still to build, in order:**
 
 1. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen is reached through its fixture, since the game's menus hold no forge.
-2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. It waits on the Start, Obtain and Materials words: the English map holds no key for them, so the screen has no label to show them with.
+2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. Its words are the forge page's own, under the manual ids `find --id "^UI_FORGE_PAGE_"` lists: `UI_FORGE_PAGE_OK_BUTTON` (Start), `UI_FORGE_PAGE_FORMULA_BUTTON` (Materials), `UI_FORGE_PAGE_ITEM_GET` (Obtained), the queue's `UI_FORGE_PAGE_QUEUE_*` and the rest.
 
 ## Data and measures
 
