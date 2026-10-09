@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A Claude Code plugin of seven mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), a delegation guard that nudges a run of lookups toward a haiku agent, and a disk-scan guard that refuses a Bash scan from a root or a home folder.
+A Claude Code plugin of mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), a delegation guard that nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or a home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.
 
 - **Waypoints** — after each answered turn, up to three next steps the session suggests, each a button that sends it as the next prompt.
 - **Resin** — the prompt cache's time left, the context window, the five-hour and weekly limits and the cost so far, with **Warm**, **Compact** and **Handoff**, a toast before the cache goes cold, and a usage reserve past nine-tenths of a limit window that has the session wind down until the window resets.
@@ -14,6 +14,7 @@ A Claude Code plugin of seven mods: five drawn as one band above the prompt, in 
 - **Ward** — before an edit to a file another session changed in the last half hour, a question: proceed, move to a worktree, or cancel.
 - **Delegation guard** — after every third lookup in a row with no decision between them, a note on that call's result that the chain goes to a haiku agent as one bounded question.
 - **Disk-scan guard** — a Bash `find`, `du`, `grep -r` or `ls -R` that starts at `/`, a drive, `~` or a home folder is refused, with the known place to look for the file.
+- **Whole-index guard** — while another session edits this checkout, a Bash `git add .`, `git add -A`, `git reset` with no path, `git stash`, `git checkout .` or `git clean` is refused, with the path-scoped form to use instead.
 
 ## Table of Contents
 
@@ -49,13 +50,13 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 Each mod is switched by its own slash command; bare, it flips, and the choice is kept across sessions:
 
-| Command                   | What it does                                                        |
-| :------------------------ | :------------------------------------------------------------------ |
-| `/waypoints [on \| off]`  | Suggests the next steps after each answered turn, or stops          |
-| `/resin [on \| off]`      | Shows the cache, context, limits and cost row and its warning toast |
-| `/veil [on \| off]`       | Turns recording mode on or off; off by default                      |
-| `/commission [on \| off]` | Shows the goal meter while a turn works through a task list         |
-| `/ward [on \| off]`       | Asks before an edit to a file another session just changed          |
+| Command                   | What it does                                                                                                                    |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------ |
+| `/waypoints [on \| off]`  | Suggests the next steps after each answered turn, or stops                                                                      |
+| `/resin [on \| off]`      | Shows the cache, context, limits and cost row and its warning toast                                                             |
+| `/veil [on \| off]`       | Turns recording mode on or off; off by default                                                                                  |
+| `/commission [on \| off]` | Shows the goal meter while a turn works through a task list                                                                     |
+| `/ward [on \| off]`       | Asks before an edit to a file another session just changed, and refuses a whole-index git command while one shares the checkout |
 
 With the band focused (a click or `ctrl+x tab`), `w`, `c` and `h` warm, compact and hand off, `1` to `3` send a waypoint and `g` opens or closes the whole task list.
 

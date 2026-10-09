@@ -48,6 +48,7 @@ Answer the question:
 
 ## Notes
 
+- The same records gate the [whole-index guard](/docs/infra/claude-interface/genshin-mods/whole-index): a git command over the whole index is refused, not asked, while another session's record shows it editing this checkout.
 - The question is the point: a guard that only blocked would stop the case where two sessions are meant to work on one file, which happens on purpose here.
 - An edit made outside Claude Code, in an editor or by a script, is not recorded. Ward guards sessions from each other, and git is the record of everything else.
 - The record is a file rather than the engine's store because every running session must read the newest one, and a file is read afresh on every edit.

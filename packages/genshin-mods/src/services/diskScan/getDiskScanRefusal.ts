@@ -1,20 +1,13 @@
+import type { CommandRefusal } from "../shell/getShellRefusal";
+
+import { getShellRefusal } from "../shell/getShellRefusal";
+
 // A root in any spelling is a folder whose scan reads the whole disk: the drive's folders, the users' folders and the
 // Home folder by name, once Windows drive letters and backslashes are read as Git Bash's `/c/...` form
 const ROOT_REGEX =
   /^(?:\/[a-z]?|\/(?:c\/)?Users(?:\/[^/]+)?|\/home(?:\/[^/]+)?|~|\$HOME|\$\{HOME\}|\$USERPROFILE|%USERPROFILE%)$/u;
 
 const SCAN_COMMANDS: ReadonlySet<string> = new Set(["du", "find", "grep", "ls"]);
-
-// A shell command passed as one argument (`bash -c "…"`) is read again on its own, to this depth at most
-const MAX_NESTING_DEPTH = 3;
-
-// A segment runs up to a separator outside quotes, so a quoted argument such as a `bash -c` command stays whole
-const SEGMENT_REGEX = /(?:"[^"]*"|'[^']*'|[^\n"&'();`|])+/gu;
-// A command substitution runs even inside double quotes, so its body is read again on its own
-const SUBSTITUTION_REGEX = /\$\((?<dollar>[^()]*)\)|`(?<backtick>[^`]*)`/gu;
-const SHELL_FLAG_REGEX = /^-[a-zA-Z]*c$|^eval$/u;
-const TOKEN_REGEX = /"(?<double>[^"]*)"|'(?<single>[^']*)'|(?<bare>\S+)/gu;
-const PATH_SEPARATOR_REGEX = /[/\\]/u;
 
 // Backslashes become slashes, a drive letter becomes its `/c` folder, and a trailing glob and slash go, so "C:\", "/c/",
 // "C:/" and "/c/*" all name "/c": a folder's glob expands to its entries, whose scan reads the whole folder
@@ -61,37 +54,12 @@ const getScanRefusal = (name: string, args: string[]): string | undefined => {
   return getGrepPaths(args).some((path) => isRoot(path)) ? name : undefined;
 };
 
-// A quoted argument keeps its inner spaces, so a shell command passed as one argument is read again on its own
-const tokenize = (segment: string) =>
-  Array.from(
-    segment.matchAll(TOKEN_REGEX),
-    (match) => match.groups?.double ?? match.groups?.single ?? match.groups?.bare ?? "",
-  );
-
-const getCommandRefusal = (command: string, depth: number): string | undefined => {
-  if (depth < MAX_NESTING_DEPTH)
-    for (const match of command.matchAll(SUBSTITUTION_REGEX)) {
-      const nested = getCommandRefusal(match.groups?.dollar ?? match.groups?.backtick ?? "", depth + 1);
-      if (nested !== undefined) return nested;
-    }
-  for (const segment of command.match(SEGMENT_REGEX) ?? []) {
-    const tokens = tokenize(segment);
-    for (const [index, token] of tokens.entries()) {
-      const name = token.split(PATH_SEPARATOR_REGEX).pop() ?? "";
-      const refusal = SCAN_COMMANDS.has(name) ? getScanRefusal(name, tokens.slice(index + 1)) : undefined;
-      if (refusal !== undefined) return refusal;
-      const previous = tokens[index - 1];
-      if (depth < MAX_NESTING_DEPTH && previous !== undefined && SHELL_FLAG_REGEX.test(previous) && /\s/u.test(token)) {
-        const nested = getCommandRefusal(token, depth + 1);
-        if (nested !== undefined) return nested;
-      }
-    }
-  }
-  return undefined;
-};
+const getScanCommandRefusal: CommandRefusal = (name, args) =>
+  SCAN_COMMANDS.has(name) ? getScanRefusal(name, args) : undefined;
 
 // The scan a Bash command runs from a root or a home folder, named by its command, undefined for every other command
-export const getDiskScanRefusal = (command: string): string | undefined => getCommandRefusal(command, 0);
+export const getDiskScanRefusal = (command: string): string | undefined =>
+  getShellRefusal(command, getScanCommandRefusal);
 
 // The known homes the refusal names. The mod ships without @esposter/shared, so the product's name is spelled here
 // As the folder it is on the person's disk

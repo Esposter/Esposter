@@ -1,7 +1,7 @@
 {
   "name": "genshin-mods",
   "version": "4.0.0",
-  "description": "A Claude Code plugin of seven mods: five under one band above the prompt (the next steps, the cache and usage with a one-click handoff, recording mode, a goal's task list and a question before editing a file another session just changed) a delegation guard that nudges a run of lookups toward a haiku agent, and a disk-scan guard that refuses a Bash scan from a root or a home folder.",
+  "description": "A Claude Code plugin of mods: five under one band above the prompt (the next steps, the cache and usage with a one-click handoff, recording mode, a goal's task list and a question before editing a file another session just changed) a delegation guard that nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or a home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.",
   "keywords": [
     "claude-code",
     "claude-code-plugin",
