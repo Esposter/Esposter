@@ -6,6 +6,7 @@ import type { VNode } from "vue";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import MenuPlaceholder from "#src/components/Menu/Placeholder/Index.vue";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { checkIsNpcScreenKind } from "#src/services/screen/checkIsNpcScreenKind";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 
 interface Props {
@@ -42,18 +43,14 @@ const emit = defineEmits<{ quit: [] }>();
     v-else-if="
       screenKind !== ScreenKind.World &&
       screenKind !== ScreenKind.Dialogue &&
-      screenKind !== ScreenKind.GcgDuel &&
-      screenKind !== ScreenKind.Forge &&
+      !checkIsNpcScreenKind(screenKind) &&
       slots[screenKind]
     "
     :name="screenKind"
   />
   <MenuPlaceholder
     v-else-if="
-      screenKind !== ScreenKind.World &&
-      screenKind !== ScreenKind.Dialogue &&
-      screenKind !== ScreenKind.GcgDuel &&
-      screenKind !== ScreenKind.Forge
+      screenKind !== ScreenKind.World && screenKind !== ScreenKind.Dialogue && !checkIsNpcScreenKind(screenKind)
     "
     :game-text
     :title="gameText[ScreenKindGameTextKeyMap[screenKind]]"

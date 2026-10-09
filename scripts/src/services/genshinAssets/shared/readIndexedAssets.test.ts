@@ -1,4 +1,5 @@
 import { parseIndexLine, readIndexedAssetsFrom } from "#src/services/genshinAssets/shared/readIndexedAssets";
+import { takeOne } from "@esposter/shared";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -15,7 +16,7 @@ describe(parseIndexLine, () => {
   test("reads a line's name, type, block and path ID", () => {
     expect.hasAssertions();
 
-    expect(parseIndexLine(FIXTURE_LINES[0])).toStrictEqual({
+    expect(parseIndexLine(takeOne(FIXTURE_LINES))).toStrictEqual({
       block: "00/00000890.blk",
       name: "Level_Ndkl_Prop_Deer_A_02_Diffuse",
       pathId: "5392588180762424420",
@@ -26,7 +27,7 @@ describe(parseIndexLine, () => {
   test("reads no asset from a line with no block", () => {
     expect.hasAssertions();
 
-    expect(parseIndexLine(FIXTURE_LINES[2])).toBeUndefined();
+    expect(parseIndexLine(takeOne(FIXTURE_LINES, 2))).toBeUndefined();
   });
 });
 
