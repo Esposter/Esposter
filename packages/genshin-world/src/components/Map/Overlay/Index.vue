@@ -2,6 +2,7 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameText } from "genshin-text";
@@ -36,6 +37,8 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   camera: MapCamera;
+  // The regions and their areas, which the map draws and names
+  catalogue: Catalogue;
   // The areas whose exploration the map counts, each area's progress shown on its name once the area is filled in
   explorationAreas: ExplorationArea[];
   // The game's words in the reader's language
@@ -47,7 +50,15 @@ interface Props {
   wallet: Wallet;
 }
 
-const { camera, explorationAreas, gameText, landmarks, serverClockOffsetMs = 0, wallet } = defineProps<Props>();
+const {
+  camera,
+  catalogue,
+  explorationAreas,
+  gameText,
+  landmarks,
+  serverClockOffsetMs = 0,
+  wallet,
+} = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
@@ -132,7 +143,7 @@ const explorationProgressMap = computed(
     ),
 );
 const areaLabels = computed(() =>
-  computeAreaLabels(landmarks).map(({ id, name, x, z }) => ({
+  computeAreaLabels(catalogue, landmarks).map(({ id, name, x, z }) => ({
     id,
     name,
     progress: explorationProgressMap.value.get(id),
@@ -175,7 +186,7 @@ onMounted(() => {
       @pointerup="onMapPointerUp()"
       @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
-      <MapDrawing :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
+      <MapDrawing :catalogue :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
       <template v-for="{ id, name, progress, x, z } of areaLabels" :key="id">
         <text
           class="area-name"
@@ -222,7 +233,13 @@ onMounted(() => {
         {{ name }} {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
       </li>
     </ul>
-    <MapJumpList class="jumps" :game-text :landmarks @jump="(landmark) => emit('jump', computeJumpPose(landmark))" />
+    <MapJumpList
+      class="jumps"
+      :catalogue
+      :game-text
+      :landmarks
+      @jump="(landmark) => emit('jump', computeJumpPose(landmark))"
+    />
     <p class="resin">
       <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
       <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>

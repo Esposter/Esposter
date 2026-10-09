@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
-import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
+import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
+import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 import type { LightUniforms, TerrainOptions, TerrainSelection, WaterUniforms, WindUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { useLoop, useTres } from "@tresjs/core";
 import {
@@ -39,6 +41,8 @@ interface Props {
   // How far from the eye the sun's shadows reach, past which a ring's tiles are drawn into no shadow map
   shadowReach: number;
   terrainOptions: TerrainOptions;
+  // The records each worker computes its tiles over, loaded into it as it starts
+  terrainWorkerGround: TerrainWorkerGround;
   // The region's water, whose caustics shimmer on the ground under it
   waterUniforms?: WaterUniforms;
   // The wind the flowers scattered on the finest tiles sway in
@@ -53,6 +57,7 @@ const {
   rampTexture,
   shadowReach,
   terrainOptions,
+  terrainWorkerGround,
   waterUniforms,
   windUniforms,
 } = defineProps<Props>();
@@ -70,7 +75,15 @@ const tileVertexCount = (cellsPerSide + 1) ** 2;
 const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();
-const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => createTerrainWorker());
+// Each worker is loaded with its ground as it starts. A worker takes its messages in the order they were posted, so its
+// Ground is loaded before any tile asked of it, with nothing to wait for
+const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
+  const worker = createTerrainWorker();
+  const message: TerrainWorkerMessage = { ground: terrainWorkerGround, kind: TerrainWorkerMessageKind.Load };
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
+  worker.postMessage(message);
+  return worker;
+});
 let requestCount = 0;
 // The rings past the shadows' reach hold their tiles' arrays, not meshes: each such level is one mesh over every tile of
 // The level held, its index naming the tiles drawn in it, rebuilt when a tile of the level arrives or leaves
@@ -97,8 +110,11 @@ const tileStreamer = createTileStreamer<Mesh | PlantedTerrainTile>({
   maxCachedCount: TILE_SELECTION_CAPACITY,
   maxPendingCount: MAX_PENDING_TILE_COUNT,
   requestTile: (key) => {
-    const request: TerrainTileRequest = { cellsPerSide, finestTileSize, key };
-    workers[requestCount % workers.length]?.postMessage(request);
+    const message: TerrainWorkerMessage = {
+      kind: TerrainWorkerMessageKind.Tile,
+      request: { cellsPerSide, finestTileSize, key },
+    };
+    workers[requestCount % workers.length]?.postMessage(message);
     requestCount++;
   },
 });

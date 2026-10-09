@@ -11,7 +11,6 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
 import type { Object3D } from "three";
 
-import water from "#src/data/windrise/water.json";
 import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
@@ -25,7 +24,6 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
 import {
@@ -52,6 +50,8 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The game's enemy tables, which each strike on an enemy reads its defence and resistances from
   enemyTables: EnemyTables;
+  // The world's ground at a point in its own coordinates, which the body stands and walks on
+  getGroundHeight: (x: number, z: number) => number;
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
@@ -72,6 +72,8 @@ interface Props {
   // The world's one seeded random source, which the strikes' CRIT rolls and the kit's own rolls draw on, so a session's
   // Rolls repeat
   random: () => number;
+  // The water's level, below which the body swims
+  waterLevel: number;
 }
 
 const {
@@ -79,6 +81,7 @@ const {
   characterIdCombatantMap,
   enemyMap,
   enemyTables,
+  getGroundHeight,
   inputState,
   isHeld,
   isOrbiting,
@@ -88,6 +91,7 @@ const {
   origin,
   party,
   random,
+  waterLevel,
 } = defineProps<Props>();
 // The party went down through a drown, which the world screen answers with the respawn
 const emit = defineEmits<{ clearKitEffects: []; drown: []; strikeOre: [body: KitBody, hit: OreHit] }>();
@@ -95,7 +99,7 @@ const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating
 // Origin moves only what is drawn
-const ground = createGroundQuery((x, z) => getWorldHeight(x, z), water.level);
+const ground = createGroundQuery(getGroundHeight, waterLevel);
 // Whether the character on the field has Anemo's resonance, which Impetuous Winds is, read as it is asked
 const checkIsImpetuousWinds = (): boolean =>
   characterIdCombatantMap.get(getActiveCharacterId(party))?.elementalResonances.includes(Element.Anemo) ?? false;
@@ -106,7 +110,7 @@ const characterController = createCharacterController({
   landmarkCollider,
   position: new Vector3(
     WINDRISE_START_POINT.x,
-    getWorldHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z),
+    getGroundHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z),
     WINDRISE_START_POINT.z,
   ),
   staminaMaximum: STAMINA_MAX,
@@ -220,7 +224,7 @@ const placedPosition = new Vector3();
 // Jump ends an action in progress. The party's stamina is read by the HUD's meter
 defineExpose({
   place: ({ point, yaw }: WorldJumpPose) => {
-    characterController.place(placedPosition.set(point.x, getWorldHeight(point.x, point.z), point.z), yaw);
+    characterController.place(placedPosition.set(point.x, getGroundHeight(point.x, point.z), point.z), yaw);
     kitState = createKitState();
     emit("clearKitEffects");
     followCamera?.reset(yaw);

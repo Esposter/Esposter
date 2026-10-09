@@ -3,19 +3,20 @@ import type { BuildingLandmark } from "#src/models/world/BuildingLandmark";
 import type { ToonNodeMaterial } from "genshin-engine";
 
 import { BuildingKitPartsMap } from "#src/services/world/BuildingKitPartsMap";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { setObjectSurface } from "genshin-engine";
 import { Mesh } from "three";
 
 interface Props {
+  // The world's ground at a point in its own coordinates, which the building stands on
+  getGroundHeight: (x: number, z: number) => number;
   landmark: BuildingLandmark;
   // The one material every landmark's part draws in, each in the surface its mesh carries
   partMaterial: ToonNodeMaterial;
 }
 
-const { landmark, partMaterial } = defineProps<Props>();
+const { getGroundHeight, landmark, partMaterial } = defineProps<Props>();
 const { building, heightOffset, position, rotation } = landmark;
-const groundHeight = getWorldHeight(position.x, position.z);
+const groundHeight = getGroundHeight(position.x, position.z);
 // The building's region kit decides its parts, each drawn in its own colour
 const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never).map(({ color, geometry }) => {
   const mesh = new Mesh(geometry, partMaterial);

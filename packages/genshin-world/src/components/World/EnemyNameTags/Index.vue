@@ -10,7 +10,6 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { checkIsInSightReach } from "#src/services/elementalSight/checkIsInSightReach";
 import { ENEMY_CAPSULE_HEIGHT } from "#src/services/enemy/constants";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { useRafFn } from "@vueuse/core";
 import { Vector3 } from "three";
 
@@ -22,13 +21,15 @@ interface Props {
   enemyMap: Map<string, Enemy>;
   // The camera the world is drawn through, none until the canvas has one
   getCamera: () => Camera | undefined;
+  // The world's ground at a point in its own coordinates, which each enemy stands on
+  getGroundHeight: (x: number, z: number) => number;
   // The game's names by text id in the reader's language, which an enemy's name is read from once they arrive
   nameText?: Readonly<Record<string, string>>;
   // The world coordinate the scene's origin stands on, taken off each enemy's place before it is projected through the camera
   origin: Vector3;
 }
 
-const { elementalSight, enemyKindMap, enemyMap, getCamera, nameText, origin } = defineProps<Props>();
+const { elementalSight, enemyKindMap, enemyMap, getCamera, getGroundHeight, nameText, origin } = defineProps<Props>();
 const nameTags = shallowRef<SightNameTag[]>([]);
 const point = new Vector3();
 // Each living enemy within the sight's reach that has a name is projected through the camera where it stands, its head
@@ -43,7 +44,7 @@ useRafFn(() => {
     const name = nameText?.[String(getEnemyKind(enemyKindMap, enemyKindId).nameTextId)] ?? "";
     if (state === EnemyState.Dead || !name || !checkIsInSightReach(elementalSight, position)) return [];
     point
-      .set(position.x - origin.x, getWorldHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT, position.z - origin.z)
+      .set(position.x - origin.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT, position.z - origin.z)
       .project(camera);
     if (Math.abs(point.z) > 1) return [];
     return [{ key, left: ((point.x + 1) / 2) * 100, name, top: ((1 - point.y) / 2) * 100 }];

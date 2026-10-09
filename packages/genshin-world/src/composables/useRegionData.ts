@@ -1,8 +1,8 @@
+import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
 import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
-import { catalogue } from "#src/services/world/catalogue";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
@@ -14,7 +14,7 @@ import { computeOutlineDistance } from "genshin-engine";
 // Region whose data fails its schema or does not arrive in time is logged and left undrawn while the rest of the world
 // Loads. The data is settled whenever every region in reach has arrived or failed, which the first view's settling
 // Marks as the world ready to be shown
-export const useRegionData = (origin: Vector3, regionDataBaseUrl: string) => {
+export const useRegionData = (origin: Vector3, regionDataBaseUrl: string, catalogue: Catalogue) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const regionDataMap = shallowReactive(new Map<string, RegionData>());

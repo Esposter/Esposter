@@ -55,7 +55,7 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
-import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import {
@@ -78,6 +78,7 @@ interface Props extends WorldScreenProps, WorldTables {}
 const {
   adventureRankTables,
   cameraPose,
+  catalogue,
   characterPackBaseUrl,
   createTerrainWorker,
   enemyTables,
@@ -96,6 +97,8 @@ const {
   serverClockOffsetMs = 0,
   startingTalentMultipliers,
   statTables,
+  wildlifePlaces,
+  windriseData,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
@@ -208,6 +211,8 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
+// The world's one ground, Windrise's base raised at every region's plateaus, which everything in the world stands on
+const getGroundHeight = createWorldHeight(windriseData.baseGround, windriseData.regionGrounds);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
@@ -240,6 +245,7 @@ const {
   events,
   gameDataBaseUrl,
   gameText,
+  getGroundHeight,
   getWorldNow,
   inventory,
   materialDataMap,
@@ -278,6 +284,7 @@ const {
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
+  getGroundHeight,
   getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
   questsInProgress,
@@ -288,6 +295,7 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
   useWorldMap({
+    catalogue,
     events,
     gainWorldAdventureExp,
     gameDataBaseUrl,
@@ -325,7 +333,7 @@ const interactables = computed<Interactable[]>(() => {
       id,
       kind: InteractionKind.Activate,
       name: gameText[GameTextKey.StatueOfTheSeven],
-      position: { x, y: getWorldHeight(x, z), z },
+      position: { x, y: getGroundHeight(x, z), z },
     }));
   return [...pickUpInteractables.value, ...residentInteractables.value, ...statues];
 });
@@ -468,6 +476,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :kit-effect-state
           :enemy-map
           :enemy-tables
+          :get-ground-height
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
@@ -476,19 +485,23 @@ defineExpose({ jumpTo, readCameraPosition });
           :origin
           :party
           :random="worldRandom"
+          :water-level="windriseData.water.level"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
           @strike-ore="(body, hit) => strikeGatheringOres(body, hit, worldRandom)"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
+          :get-ground-height
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
           :origin
+          :water-level="windriseData.water.level"
         />
       </template>
       <WorldWindrise
         ref="windrise"
+        :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-id="getActiveCharacterId(party)"
         :character-locomotion="locomotion"
@@ -498,6 +511,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :elemental-sight
         :enemy-map
         :enemy-tables
+        :get-ground-height
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
@@ -507,6 +521,8 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        :wildlife-places
+        :windrise-data
         :world-level
         :world-level-rows="adventureRankTables.worldLevelRows"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
@@ -519,6 +535,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :enemy-kind-map="enemyTables.enemyKindMap"
       :enemy-map
       :get-camera
+      :get-ground-height
       :name-text
       :origin
     />
@@ -526,6 +543,7 @@ defineExpose({ jumpTo, readCameraPosition });
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
       :camera="mapCamera"
+      :catalogue
       :character-data-map="statTables.characterDataMap"
       :frame="hudFrame"
       :game-text
@@ -562,6 +580,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Map]>
         <MapOverlay
           :camera="mapCamera"
+          :catalogue
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
