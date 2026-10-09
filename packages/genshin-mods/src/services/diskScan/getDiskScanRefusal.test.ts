@@ -25,6 +25,11 @@ describe(getDiskScanRefusal, () => {
     ["a scan behind a pipe", "ls packages | xargs find /"],
     ["a scan behind an AND", "cd packages && du -s ~"],
     ["a scan inside a shell command", 'bash -c "find / -name yt-dlp"'],
+    ["a scan inside a shell command with a separator of its own", 'bash -c "find /; echo done"'],
+    ["a scan inside a command substitution in double quotes", 'echo "$(find / -name x)"'],
+    ["find from the root's glob", "find /* -name x"],
+    ["find from a drive's glob", "find /c/* -name x"],
+    ["grep -r from the root after a long pattern flag", "grep -r --regexp=needle /"],
   ])("refuses %s", (_description, command) => {
     expect.hasAssertions();
 
@@ -42,10 +47,12 @@ describe(getDiskScanRefusal, () => {
     ["a grep -r with no path", "grep -r needle"],
     ["a grep with the root but no recursion", "grep needle /"],
     ["a grep -r with the root as its pattern", "grep -r / src"],
+    ["a grep -r with the root as its pattern flag's operand", "grep -r -e / packages"],
     ["an ls -R over a package", "ls -R packages"],
     ["an ls -r over the root, which is only a reverse sort", "ls -r /"],
     ["an rg over the repo", "rg needle packages"],
     ["a commit message that names a scan", 'git commit -m "docs: find / is refused now"'],
+    ["a commit message that names a scan after a separator", 'git commit -m "docs; find / is refused now"'],
   ])("allows %s", (_description, command) => {
     expect.hasAssertions();
 

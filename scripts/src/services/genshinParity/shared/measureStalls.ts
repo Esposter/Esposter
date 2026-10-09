@@ -1,3 +1,4 @@
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
@@ -5,7 +6,7 @@ import type { Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
@@ -72,7 +73,7 @@ const hookRenderer = () => {
   });
 };
 
-const orbit = (page: Page, durationMs: number) =>
+const orbit = (page: Page, orbitDurationMs: number) =>
   page.evaluate(
     ({ durationMs, eventMs, mousePixels }) =>
       new Promise<void>((resolve) => {
@@ -92,7 +93,7 @@ const orbit = (page: Page, durationMs: number) =>
           resolve();
         }, eventMs);
       }),
-    { durationMs, eventMs: ORBIT_EVENT_MS, mousePixels: ORBIT_MOUSE_PIXELS },
+    { durationMs: orbitDurationMs, eventMs: ORBIT_EVENT_MS, mousePixels: ORBIT_MOUSE_PIXELS },
   );
 
 const walk = async (page: Page, durationMs: number) => {
@@ -124,14 +125,13 @@ const measureState = async (page: Page, name: string, drive: () => Promise<void>
 // The states of one run, in order: the cold orbit straight after load, where the first sight of each pipeline lands, then
 // A second orbit, then a walk, each after a pause so one state's frames do not run into the next
 const measureStates = async (page: Page): Promise<StallState[]> => {
-  const states: StallState[] = [];
-  states.push(await measureState(page, "cold orbit", () => orbit(page, ORBIT_MS)));
+  const coldOrbit = await measureState(page, "cold orbit", () => orbit(page, ORBIT_MS));
   await page.waitForTimeout(PAUSE_MS);
-  states.push(await measureState(page, "second orbit", () => orbit(page, ORBIT_MS)));
+  const secondOrbit = await measureState(page, "second orbit", () => orbit(page, ORBIT_MS));
   await page.waitForTimeout(PAUSE_MS);
-  states.push(await measureState(page, `walk ${WALK_MS / 1000} s`, () => walk(page, WALK_MS)));
+  const walked = await measureState(page, `walk ${WALK_MS / 1000} s`, () => walk(page, WALK_MS));
 
-  return states;
+  return [coldOrbit, secondOrbit, walked];
 };
 
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
@@ -157,7 +157,7 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
     await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor({ timeout: LOAD_TIMEOUT_MS });
     const parityError = await page.evaluate(() => window.document.body.dataset.parityError);
-    if (parityError) throw new Error(`page failed: ${parityError}`);
+    if (parityError) throw new InvalidOperationError(Operation.Read, screen, `page failed: ${parityError}`);
     const loadEnd = Date.now();
     await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
     await page.evaluate(hookRenderer);

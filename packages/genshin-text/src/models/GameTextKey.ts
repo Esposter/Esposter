@@ -85,6 +85,13 @@ export enum GameTextKey {
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
+  // The crafting bench: its title and Craft button, the amount slider beside the picked recipe, the Crafting Performed
+  // Count, the Required line over its Mora, and the Crafting Materials heading
+  CraftingAmount = "UI_COOKING_Cooking_Quantity",
+  CraftingCrafted = "UI_SYNTHESIS_PAGE_ITEM_COUNT",
+  CraftingMaterials = "UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE",
+  CraftingRequired = "UI_COMMON_ITEM_NEED",
+  CraftingTitle = "UI_SYNTHESIS_RECONFIRM_PAGE_TITLE",
   CrystalChunk = "1448077684",
   CrystalCore = "2435040556",
   CrystalMarrow = "307506436",

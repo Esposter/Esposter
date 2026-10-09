@@ -53,6 +53,16 @@ describe(mergeGenshinSave, () => {
     });
   });
 
+  test("keeps an objective of a quest on the same step that only the guest counts", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [], stepIndex: 2 } } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, quests: { [QUEST_ID]: { objectiveCounts: [3], stepIndex: 2 } } };
+
+    expect(mergeGenshinSave(account, guest).quests).toStrictEqual({
+      [QUEST_ID]: { objectiveCounts: [3], stepIndex: 2 },
+    });
+  });
+
   test("keeps the account's wallet, taking the larger refill count of the same day", () => {
     expect.hasAssertions();
     const account = {

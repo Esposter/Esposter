@@ -5,10 +5,11 @@ import type { WitnessView } from "genshin-world/parity/models/witness/WitnessVie
 import type { Page } from "playwright";
 
 import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
-import { ARRANGEMENT_CROSS_RATIO_TOLERANCE } from "#src/services/genshinAssets/shared/constants";
+import { checkLandmarkRoots } from "#src/services/genshinAssets/scene/checkLandmarkRoots";
+import { ARRANGEMENT_CROSS_RATIO_TOLERANCE, WINDRISE_REGION_FILE } from "#src/services/genshinAssets/shared/constants";
 import { computeLayoutFrameMeasure } from "#src/services/genshinParity/passes/computeLayoutFrameMeasure";
 import { computeProjectedGaps } from "#src/services/genshinParity/passes/computeProjectedGaps";
-import { PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
+import { LANDMARK_ROOT_GATE_METRES, PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -35,6 +36,7 @@ const shift = (point: Readonly<Vector>, [x, y, z]: Readonly<Vector>): Vector => 
 // Alone
 export const measureLayout = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   const { explainedOffsets, families, ratios } = await checkArrangement(component);
+  const landmarkRoots = await checkLandmarkRoots(component, WINDRISE_REGION_FILE);
   const { close, page } = await openComponentWitnessPage(component);
   const familyOffsets = await withFinalizerAsync(
     () => readFamilyOffsets(page),
@@ -90,6 +92,12 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
         value: Math.abs(fitted - measured),
       })),
       ...families.map(({ largest, name }) => ({ gate: PART_GATE_METRES, name, unit: "m", value: largest })),
+      ...landmarkRoots.map(({ distance, id }) => ({
+        gate: LANDMARK_ROOT_GATE_METRES,
+        name: `${id} root`,
+        unit: "m",
+        value: distance,
+      })),
       ...Object.entries(familyOffsets).flatMap(([family, [x, y]]) => {
         const [explainedX, explainedY] = explainedOffsets[family] ?? [0, 0];
         return [

@@ -22,23 +22,24 @@ import { describe, expect, test } from "vitest";
 
 const JEAN_KIT = createJeanKit(await readTalentMultipliers([JEAN_CHARACTER_ID]));
 
-const MAX_HEALTH = 10_000;
-const BASE_ATTACK = 200;
-
-const createJeanCombatant = (ascension: number, constellationCount: number): Combatant => ({
-  ascension,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-    { attribute: Attribute.BaseAttack, value: BASE_ATTACK },
-  ]),
-  characterId: JEAN_CHARACTER_ID,
-  constellationCount,
-  elementalResonances: [],
-  kit: JEAN_KIT,
-  level: 90,
-});
-
 describe(createJeanKit, () => {
+  const MAX_HEALTH = 10_000;
+
+  const BASE_ATTACK = 200;
+
+  const createJeanCombatant = (ascension: number, constellationCount: number): Combatant => ({
+    ascension,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+      { attribute: Attribute.BaseAttack, value: BASE_ATTACK },
+    ]),
+    characterId: JEAN_CHARACTER_ID,
+    constellationCount,
+    elementalResonances: [],
+    kit: JEAN_KIT,
+    level: 90,
+  });
+
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

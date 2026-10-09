@@ -13,30 +13,33 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NOELLE_KIT = createNoelleKit(await readTalentMultipliers([NOELLE_CHARACTER_ID]));
-const NOELLE_HIT = takeOne(NOELLE_KIT.elementalSkill.hits);
-const SHIELD: KitEffect = {
-  characterId: NOELLE_CHARACTER_ID,
-  element: undefined,
-  health: 1000,
-  kind: "shield",
-  secondsRemaining: 12,
-};
-const MEMBER_ID = 10_000_032;
-
-const createCombatant = (characterId: number, maxHealth: number): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseDefense, value: 800 },
-    { attribute: Attribute.BaseHealth, value: maxHealth },
-  ]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: NOELLE_KIT,
-  level: 90,
-});
 
 describe(healKitParty, () => {
+  const NOELLE_HIT = takeOne(NOELLE_KIT.elementalSkill.hits);
+
+  const SHIELD: KitEffect = {
+    characterId: NOELLE_CHARACTER_ID,
+    element: undefined,
+    health: 1000,
+    kind: "shield",
+    secondsRemaining: 12,
+  };
+
+  const MEMBER_ID = 10_000_032;
+
+  const createCombatant = (characterId: number, maxHealth: number): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseDefense, value: 800 },
+      { attribute: Attribute.BaseHealth, value: maxHealth },
+    ]),
+    characterId,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: NOELLE_KIT,
+    level: 90,
+  });
+
   test("heals each party member by the flat HP and DEF share, each over its own Max HP, on a passing roll under a shield", () => {
     expect.hasAssertions();
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);

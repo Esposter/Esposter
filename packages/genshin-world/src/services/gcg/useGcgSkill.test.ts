@@ -15,8 +15,6 @@ import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
 const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -35,19 +33,21 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
   usedSkillIds: [],
 });
 
-const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  round: 1,
-  rule: TEST_RULE,
-  sides: [attacker, defender],
-  winnerSideIndex: undefined,
-});
-
 describe(useGcgSkill, () => {
+  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
+
+  const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
+    actingSideIndex: 0,
+    firstSideIndex: 0,
+    nextFirstSideIndex: 0,
+    outcome: undefined,
+    phase: GcgPhase.Action,
+    round: 1,
+    rule: TEST_RULE,
+    sides: [attacker, defender],
+    winnerSideIndex: undefined,
+  });
+
   const MAX_ENERGY = 3;
   const NORMAL_ATTACK_ID = 13_011;
   const BURST_ID = 13_013;

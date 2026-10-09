@@ -29,6 +29,8 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **Crafted many at once.** A recipe is crafted as many times as the bag and wallet can pay for, checked whole before anything is spent, and refused whole where the bag has no room for every result. This is built.
 - **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, or where the [spawned places](/docs/proposals/genshin/spawned-places) fit it if they do not, and is used through the [interaction](/docs/proposals/genshin/interaction) prompts. The official map marks no crafting bench, so the spawned places cannot place one; the streaming records must, which the scene's extraction reads and which is not read yet.
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
+- **The screen's words are the game's own.** The title and the Craft button read the reconfirm page's title, the Crafting Performed line `UI_SYNTHESIS_PAGE_ITEM_COUNT`, the Crafting Materials heading `UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE`, the Required line `UI_COMMON_ITEM_NEED`, and the amount slider's name the cooking page's Quantity, as `GameTextKey` records them. Each recipe's name is the names chunk's entry for its `nameTextId`.
+- **The bench's crafter is picked on the screen.** The party's characters are listed and one is picked to cook the batch; with none picked the batch crafts plainly.
 - **A gadget's instructions come from the wiki.** The table holds each gadget's recipe hidden with no instruction item to open it. The wiki's Gadgets pages answer through the persona reader, which is how the instructions are read; their reputation and Frostbearing Tree sources are the wiki's too. Until they are read, the gadgets are not offered.
 
 ## How it works
@@ -42,27 +44,22 @@ flowchart TD
   PAY -->|"no"| REFUSE["Refused, nothing spent"]
   PAY -->|"yes"| MAKE["Spent and made"]
   MAKE --> BONUS{"The crafting character's talent applies?"}
-  BONUS -->|"yes"| EXTRA["A refund at 25% or a double at 10%"]
+  BONUS -->|"yes"| EXTRA["A double at 10%, a refund at 25%, or at 20% on potions, or an extra regional talent material at 25% or 10%"]
   BONUS -->|"no"| DONE["Into the bag"]
   EXTRA --> DONE
 ```
 
 ## Scope and order
 
-**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, and the characters' crafting talents' doubles and refunds, as the [crafting](/docs/genshin/crafting) page records.
+**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles and refunds, and the bench's screen through its fixture, as the [crafting](/docs/genshin/crafting) page records.
 
 **Still to build, in order:**
 
-```text
-packages/
-├── genshin-interface/src/components/CraftingScreen/
-└── genshin-world/src/components/Crafting/Screen/
-```
-
-1. **The bench's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=qQILsaJKlsI --name crafting-table --from 0 --to 105` (Crafting Table, 105 seconds), then `genshin:parity frames <the path clip prints> 1`, of which the builder keeps the clearest frame of the recipe list by tab, the count and the craft with `genshin:parity frame yt-qQILsaJKlsI-crafting-table.mp4 --at <second> --name crafting-screen`. Then `ScreenKind.Crafting`, `CraftingScreen/` and its world wrapper `Screen/`, each with its fixture, each result named from the names chunk its recipe's `nameTextId` cites, the crafter chosen on it and `rollCraftingTalent`'s items added to the bag. Its comparison is queued for the user's eyes; until the bench stands it is reached through its fixture.
+1. **The recipe tabs.** The screen lists the open recipes in one column. The tabs are the combine types, with the labels `COMBINE_TYPE_NAME1` to `COMBINE_TYPE_NAME5` and `COMBINE_TYPE_NAME10` already found; the labels of combine types 6 (Condensed Resin) and 12 (the second potion type) are not yet found, so they wait on their keys.
 2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
 3. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
 4. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
+5. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
 
 ## Data and measures
 
@@ -71,10 +68,10 @@ packages/
 
 ## Key files
 
-| File                                                              | Role after the change                                |
-| :---------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`          | Gains the crafting bench's screen                    |
-| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts` | Reads the bench's streaming placements for Mondstadt |
+| File                                                                 | Role after the change                                |
+| :------------------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/genshin-interface/src/components/CraftingScreen/Index.vue` | Gains the recipe tabs by combine type                |
+| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts`    | Reads the bench's streaming placements for Mondstadt |
 
 ## Sources
 

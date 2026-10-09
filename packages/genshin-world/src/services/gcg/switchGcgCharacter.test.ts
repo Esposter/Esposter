@@ -16,26 +16,26 @@ import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const SEED = 5;
-const PLAYER_DECK_ID = 7;
-const DILUC_INDEX = 0;
-const KAEYA_INDEX = 1;
-const DAWN_WINERY_ID = 321_004;
-const ICICLE_ID = 111_031;
-const LEAVE_IT_TO_ME_ID = 332_006;
-
-// A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the given dice
-const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
-  const random = createSeededRandom(SEED);
-  const deck = await readGcgDeck(PLAYER_DECK_ID);
-  const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
-  for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
-  for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
-  takeOne(duel.sides, 0).dice = dice;
-  return duel;
-};
-
 describe("switching characters under the field's cards", () => {
+  const SEED = 5;
+  const PLAYER_DECK_ID = 7;
+  const DILUC_INDEX = 0;
+  const KAEYA_INDEX = 1;
+  const DAWN_WINERY_ID = 321_004;
+  const ICICLE_ID = 111_031;
+  const LEAVE_IT_TO_ME_ID = 332_006;
+
+  // A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the given dice
+  const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
+    const random = createSeededRandom(SEED);
+    const deck = await readGcgDeck(PLAYER_DECK_ID);
+    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
+    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
+    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
+    takeOne(duel.sides, 0).dice = dice;
+    return duel;
+  };
+
   test("should let a switch cost no die under Dawn Winery, and Icicle deal 2 Cryo DMG after it", async () => {
     expect.hasAssertions();
 

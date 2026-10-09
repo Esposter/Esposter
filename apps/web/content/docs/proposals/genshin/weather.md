@@ -36,7 +36,7 @@ packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts
 - **Each weather's colours.** From the environment scripts' fields once the inventory names them, each weather's colours by the hour, fitted into `WEATHER_SETTINGS_MAP`.
 - **The particles' and splashes' look.** Density, streak length and speed, colour, and the splashes' size, life and count, matched to a recording of each weather by their statistics and never pixel for pixel.
 - **The blend and the lightning.** How long a change takes, read off a recording of the weather turning; how often a thunderstorm strikes, its flash's pulses and colour, and its bolt's shape and distance, read off a recording of one; and the sandstorm's haze colour, off a recording of the Desert of Hadramaveth's storm.
-- **The areas' weather.** The catalogue's weathers per area are the wiki's; the game's own area and weather data replace them where the inventory finds it, Snezhnaya's first, which the wiki does not give. The turn's change interval and its order are the stand-ins until that data and a recording of an area's weather changing over minutes settle them.
+- **The areas' weather.** The catalogue's weathers per area are the wiki's; the game's own area and weather data replace them where the inventory finds it, Snezhnaya's first, which the wiki does not give. The turn's change interval is the stand-in until a recording of an area's weather changing over minutes settles it, and the order of an area whose template is not `Weather_Standard` or `Weather_City` until its own rows are read; the standard and city chains are the game's, as the Decisions read them.
 
 ## Key files
 

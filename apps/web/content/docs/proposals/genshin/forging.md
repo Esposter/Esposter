@@ -22,7 +22,7 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 ## Scope and order
 
-**Built:** the [forging page](/docs/genshin/forging) records what is built, and the forge screen itself (`ScreenKind.Forge`, its Materials and Forge Queues tabs in `genshin-interface`) is built on the public clip, its frames under the reference folder `forge-screen`. Its layout is provisional until the owed `forge-order-queue.mkv` re-measures it, and its visual image is approved by the user, which is owed.
+**Built:** the [forging page](/docs/genshin/forging) records what is built, and so is the forge screen: `ScreenKind.Forge` in `genshin-world`, and the screen with its Materials and Forge Queues tabs in `genshin-interface`, built on the public clip, its frames under the reference folder `forge-screen`. Its layout is provisional until the owed `forge-order-queue.mkv` re-measures it, and its visual image is approved by the user, which is owed.
 
 **Still to build, in order:**
 

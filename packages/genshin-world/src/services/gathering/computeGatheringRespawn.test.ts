@@ -18,10 +18,10 @@ describe(computeGatheringRespawn, () => {
     );
   });
 
-  test("an ore comes back one day or three days after it breaks, whatever the hour", () => {
+  test("an ore comes back two days or three days after it breaks, whatever the hour", () => {
     expect.hasAssertions();
-    expect(computeGatheringRespawn(epoch.add({ hours: 10 }), GatheringRespawn.OneDay)).toStrictEqual(
-      epoch.add({ hours: 34 }),
+    expect(computeGatheringRespawn(epoch.add({ hours: 10 }), GatheringRespawn.TwoDays)).toStrictEqual(
+      epoch.add({ hours: 58 }),
     );
     expect(computeGatheringRespawn(epoch.add({ hours: 10 }), GatheringRespawn.ThreeDays)).toStrictEqual(
       epoch.add({ hours: 82 }),

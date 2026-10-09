@@ -17,6 +17,14 @@ describe(readAnimeStudioExceptions, () => {
     ).toStrictEqual(["System.ArgumentOutOfRangeException: Index was out of range. (Parameter 'index')"]);
   });
 
+  test("reads the base exception's line", () => {
+    expect.hasAssertions();
+
+    expect(readAnimeStudioExceptions("Loading 00/05054155.blk\nSystem.Exception: Unknown block flags")).toStrictEqual([
+      "System.Exception: Unknown block flags",
+    ]);
+  });
+
   test("reads none from a clean run", () => {
     expect.hasAssertions();
 

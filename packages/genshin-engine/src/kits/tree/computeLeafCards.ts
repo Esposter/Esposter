@@ -2,6 +2,7 @@ import type { LeafCards } from "#src/models/kits/tree/LeafCards";
 import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 
+import { sampleTreeNormalField } from "#src/kits/tree/sampleTreeNormalField";
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
 const VERTICES_PER_CARD = 4;
@@ -17,7 +18,12 @@ const CORNER_SIGNS = [
 // Mass with a clean terminator, which is how the game's crowns read
 export const computeLeafCards = (
   clusters: readonly TreeCluster[],
-  { cardSize, cardsPerCluster, seed }: Pick<TreeOptions, "cardSize" | "cardsPerCluster" | "seed">,
+  {
+    cardSize,
+    cardsPerCluster,
+    normalField,
+    seed,
+  }: Pick<TreeOptions, "cardSize" | "cardsPerCluster" | "normalField" | "seed">,
 ): LeafCards => {
   const random = createSeededRandom(seed + 1);
   const cardCount = clusters.length * cardsPerCluster;
@@ -54,9 +60,9 @@ export const computeLeafCards = (
         const x = cardX + (tangentX * tangentSign + bitangentX * bitangentSign) * cardSize;
         const y = cardY + bitangentY * bitangentSign * cardSize;
         const z = cardZ + (tangentZ * tangentSign + bitangentZ * bitangentSign) * cardSize;
-        const normalX = x - centerX;
-        const normalY = y - centerY;
-        const normalZ = z - centerZ;
+        // Where the field gives none, the cluster's radial normal stands in
+        const fieldNormal = normalField ? sampleTreeNormalField(normalField, [x, y, z]) : undefined;
+        const [normalX, normalY, normalZ] = fieldNormal ?? [x - centerX, y - centerY, z - centerZ];
         const length = Math.hypot(normalX, normalY, normalZ) || 1;
         positions[vertex * 3] = x;
         positions[vertex * 3 + 1] = y;

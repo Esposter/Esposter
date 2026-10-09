@@ -20,14 +20,17 @@ const mergeAchievementProgress = (
   return { count, finishedAt: isGuestFirst ? guest.finishedAt : account.finishedAt };
 };
 // A quest's progress from both copies: the further step, and on the same step each objective's count takes the larger, as
-// A count of doings only grows
+// A count of doings only grows, an objective only one copy counts kept at its count
 const mergeQuestProgress = (
   account: QuestProgressSave[string],
   guest: QuestProgressSave[string],
 ): QuestProgressSave[string] => {
   if (guest.stepIndex !== account.stepIndex) return guest.stepIndex > account.stepIndex ? guest : account;
   return {
-    objectiveCounts: account.objectiveCounts.map((count, index) => Math.max(count, guest.objectiveCounts[index] ?? 0)),
+    objectiveCounts: Array.from(
+      { length: Math.max(account.objectiveCounts.length, guest.objectiveCounts.length) },
+      (_value, index) => Math.max(account.objectiveCounts[index] ?? 0, guest.objectiveCounts[index] ?? 0),
+    ),
     stepIndex: account.stepIndex,
   };
 };

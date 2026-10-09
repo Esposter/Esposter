@@ -27,6 +27,13 @@ describe(checkTouchesOverlap, () => {
     expect(checkTouchesOverlap(["extracted/natlan/**"], ["extracted/liyue/world.json"])).toBe(false);
   });
 
+  test("reads a glob wildcarded mid-name as the directory holding it", () => {
+    expect.hasAssertions();
+
+    expect(checkTouchesOverlap(["packages/foo*.ts"], ["packages/foobar.ts"])).toBe(true);
+    expect(checkTouchesOverlap(["*.md"], ["README.md"])).toBe(true);
+  });
+
   test("reads an empty touch set as overlapping nothing", () => {
     expect.hasAssertions();
 

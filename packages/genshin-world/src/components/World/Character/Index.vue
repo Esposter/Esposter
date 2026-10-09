@@ -236,6 +236,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
+      hit.onStrike?.({ body: strikeBody, combatant: strikeCombatant, kitEffectState });
       if (!isPartyHealed)
         isPartyHealed = healKitParty(
           party,

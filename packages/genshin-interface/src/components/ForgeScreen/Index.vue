@@ -10,6 +10,8 @@ interface Props {
   amountLabel: string;
   // The amount the selected recipe forges, between one and the most its queue holds
   amountMaximum: number;
+  // The close button's name for assistive tech, the game's "Back" line
+  closeLabel: string;
   // The coins the wallet holds
   coins: number;
   // The Materials tab's label
@@ -37,6 +39,7 @@ const tab = defineModel<ForgeTab>("tab", { default: ForgeTab.Materials });
 const {
   amountLabel,
   amountMaximum,
+  closeLabel,
   coins,
   materialsLabel,
   obtainLabel,
@@ -68,7 +71,7 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
         </button>
       </div>
       <p class="coins">{{ coins }}</p>
-      <button class="close" type="button" @click="emit('close')">×</button>
+      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
     </header>
     <template v-if="tab === ForgeTab.Materials">
       <ul class="recipes">
@@ -126,5 +129,10 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
   color: #ece5d8;
+}
+
+.head,
+.queues {
+  grid-column: 1 / -1;
 }
 </style>

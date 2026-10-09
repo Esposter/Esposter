@@ -52,18 +52,22 @@ export const writeWitnessLayout = async (
   const drawn = selectFinestLevels(placements, (mesh) => checkHasFile(AssetType.Mesh, mesh, "obj"));
   const referencedIds = new Set([
     ...drawn.flatMap(({ materials: drawnMaterials }) => drawnMaterials),
-    ...materials.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId)),
+    ...materials.flatMap(({ shaderPathId, textures }) => [
+      shaderPathId,
+      ...Object.values(textures).map(({ pathId }) => pathId),
+    ]),
   ]);
   const pathIdNameMap = await readAssetNames(referencedIds);
   const layout: SceneLayout = {
     materials: Object.fromEntries(
-      materials.map(({ colors, floats, keywords, name, textures }) => [
+      materials.map(({ colors, floats, keywords, name, shaderPathId, textures }) => [
         name,
         {
           colors,
           floats,
           keywords,
           name,
+          shader: pathIdNameMap.get(shaderPathId) ?? "",
           textures: Object.fromEntries(
             Object.entries(textures).flatMap(([slot, { offset, pathId, scale }]) => {
               const textureName = pathIdNameMap.get(pathId) ?? "";

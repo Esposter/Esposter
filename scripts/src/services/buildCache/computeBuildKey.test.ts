@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-const LOCKFILE = `lockfileVersion: '9.0'
+describe(computeBuildKey, () => {
+  const LOCKFILE = `lockfileVersion: '9.0'
 
 importers:
 
@@ -34,7 +35,6 @@ snapshots:
   inner@2.0.0: {}
 `;
 
-describe(computeBuildKey, () => {
   let repositoryRoot: string;
   const writeRepositoryFile = (path: string, content: string) => {
     const filePath = join(repositoryRoot, path);
@@ -81,6 +81,17 @@ describe(computeBuildKey, () => {
 
     expect(getKey()).not.toBe(before);
     writeRepositoryFile("packages/b/src/index.ts", "export const b = 1;\n");
+  });
+
+  test("changing a workspace dependency's declarations changes the dependent's key", () => {
+    expect.hasAssertions();
+
+    writeRepositoryFile("packages/b/types/global.d.ts", "declare const b: number;\n");
+    const before = getKey();
+    writeRepositoryFile("packages/b/types/global.d.ts", "declare const b: string;\n");
+
+    expect(getKey()).not.toBe(before);
+    rmSync(join(repositoryRoot, "packages/b/types"), { force: true, recursive: true });
   });
 
   test("a transitive version change in the lockfile changes the key while the importer is unchanged", () => {

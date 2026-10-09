@@ -11,18 +11,6 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const FULL_HP = 10;
-
-const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
-  aura,
-  character: { descriptionTextId: 2, element, hp: FULL_HP, id: 1, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
-  energy: 0,
-  equipments: [],
-  hp: FULL_HP,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -42,6 +30,28 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 describe(runGcgEndPhase, () => {
+  const FULL_HP = 10;
+
+  const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
+    aura,
+    character: {
+      descriptionTextId: 2,
+      element,
+      hp: FULL_HP,
+      id: 1,
+      maxEnergy: 3,
+      nameTextId: 1,
+      skills: [],
+      weapon: "",
+    },
+    energy: 0,
+    equipments: [],
+    hp: FULL_HP,
+    isFrozen: false,
+    shield: 0,
+    statuses: [],
+  });
+
   test("should deal Burning Flame's one Pyro at the end phase, then take the summon off once its usage is spent", async () => {
     expect.hasAssertions();
 

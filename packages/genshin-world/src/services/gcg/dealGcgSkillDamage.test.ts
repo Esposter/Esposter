@@ -11,19 +11,6 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const FULL_HP = 10;
-const PYRO_VALUE = 2;
-
-const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
-  aura,
-  character: { descriptionTextId: 2, element, hp: FULL_HP, id: 1, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
-  energy: 0,
-  equipments: [],
-  hp: FULL_HP,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -43,6 +30,29 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 describe(dealGcgSkillDamage, () => {
+  const FULL_HP = 10;
+  const PYRO_VALUE = 2;
+
+  const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAura.None): GcgCharacterState => ({
+    aura,
+    character: {
+      descriptionTextId: 2,
+      element,
+      hp: FULL_HP,
+      id: 1,
+      maxEnergy: 3,
+      nameTextId: 1,
+      skills: [],
+      weapon: "",
+    },
+    energy: 0,
+    equipments: [],
+    hp: FULL_HP,
+    isFrozen: false,
+    shield: 0,
+    statuses: [],
+  });
+
   test("should add Dendro Core's two to the next Pyro skill damage and spend its usage", async () => {
     expect.hasAssertions();
 

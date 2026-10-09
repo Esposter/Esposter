@@ -6,5 +6,7 @@ export interface SceneMaterial {
   floats: Record<string, number>;
   keywords: string[];
   name: string;
+  // The asset name of the shader it draws with, which says which of its values and keywords the variant reads
+  shader?: string;
   textures: Record<string, { name: string; offset: [number, number]; scale: [number, number] }>;
 }

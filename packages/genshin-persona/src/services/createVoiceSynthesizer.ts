@@ -126,8 +126,9 @@ export const createVoiceSynthesizer = async (
       },
     };
     const generation: { outcome?: PromiseSettledResult<VoiceTensor> } = {};
-    // oxlint-disable-next-line typescript/no-floating-promises -- the generation settles into `outcome` and wakes the loop
-    (async () => {
+    // The generation settles into `outcome` and wakes the loop. A sentence dropped mid-generation waits on it before the
+    // Ladder moves down, since moving down disposes the model the generation still runs on
+    const generationSettled = (async () => {
       const [outcome] = await Promise.allSettled([
         model.generate({
           ...inputs,
@@ -158,6 +159,8 @@ export const createVoiceSynthesizer = async (
       if (bodyLength < MIN_CHECKED_SAMPLES || checkIsSpeech({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
         return { clip, isFailed: false };
 
+      isDropped = true;
+      await generationSettled;
       await stepDown(`synthesized silence on ${label}, chunk ${chunkIndex}`);
       return { isFailed: true };
     };
@@ -177,6 +180,8 @@ export const createVoiceSynthesizer = async (
         if (vocoded?.status === "rejected") {
           isDropped = true;
           // oxlint-disable-next-line no-await-in-loop -- The sentence ends at its first failure, so nothing follows this
+          await generationSettled;
+          // oxlint-disable-next-line no-await-in-loop -- The sentence ends at its first failure, so nothing follows this
           await failGeneration(String(vocoded.reason));
           return;
         }
@@ -188,10 +193,7 @@ export const createVoiceSynthesizer = async (
           false,
           speechShare,
         );
-        if (result.isFailed) {
-          isDropped = true;
-          return;
-        }
+        if (result.isFailed) return;
 
         if (result.clip) yield result.clip;
         continue;

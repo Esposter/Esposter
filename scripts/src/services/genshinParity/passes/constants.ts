@@ -19,6 +19,9 @@ export const PARITY_PASS_ORDER: readonly ParityPass[] = [
 // Exports' object it stands for, and the motion pass's piece of where its clip carries it, twice the centimetre the
 // Fitted data is written to
 export const PART_GATE_METRES = 0.02;
+// The gate a landmark's root is held to, the scene's where it stands against its export's, both in metres: a fifth of
+// The 0.97 metres a hand offset once stood the statue under its export's root, which read as most of its outline
+export const LANDMARK_ROOT_GATE_METRES = 0.05;
 // The gate a place on the frame is held to, in a reference's own pixels, a 1080-line recording's edges softening over
 // About two: the layout pass's each fitted part from the export it stands for, both projected at the reference's
 // Camera; the camera pass's landmarks, root mean square, from where the scene's camera projects them (a reference's own

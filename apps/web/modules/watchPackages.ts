@@ -14,6 +14,7 @@ const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("mill
 // The lines tsdown prints as a build starts and as it has written its `dist`
 const BUILD_START_TEXT = "Build start";
 const BUILD_COMPLETE_TEXT = "Build complete";
+const BUILD_MARKER_REGEX = new RegExp(`${BUILD_START_TEXT}|${BUILD_COMPLETE_TEXT}`, "gu");
 // The published-shape checks read what `build` packs, which a dev watcher never publishes, so `build` alone runs them
 const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-attw", "--no-publint"];
 const WORKSPACE_PROTOCOL = "workspace:";
@@ -106,19 +107,24 @@ export default defineNuxtModule({
         cwd: packageDirectoryMap.get(packageName),
         stdio: ["ignore", "pipe", "inherit"],
       });
-      // The watcher's output still reaches the console; a tail of the last chunk is kept so the marker is found even
-      // When a chunk boundary splits it
+      // The watcher's output still reaches the console. Its markers are read in the order printed, and the tail kept for
+      // A chunk boundary that splits one is too short to hold a whole marker, so no marker is read twice: a completion
+      // Read again as the next build starts would prune that build's `dist` before it is written
       let outputTail = "";
       let buildStartMs = Date.now();
       watcher.stdout?.on("data", (chunk: Buffer) => {
         process.stdout.write(chunk);
         const output = outputTail + chunk.toString();
-        if (output.includes(BUILD_START_TEXT)) buildStartMs = Date.now();
-        if (output.includes(BUILD_COMPLETE_TEXT)) {
-          pruneStaleFiles(packageName, buildStartMs);
-          resolveFirstBuild(packageName);
+        let markerEnd = 0;
+        for (const match of output.matchAll(BUILD_MARKER_REGEX)) {
+          if (match[0] === BUILD_START_TEXT) buildStartMs = Date.now();
+          else {
+            pruneStaleFiles(packageName, buildStartMs);
+            resolveFirstBuild(packageName);
+          }
+          markerEnd = match.index + match[0].length;
         }
-        outputTail = output.slice(-BUILD_COMPLETE_TEXT.length);
+        outputTail = output.slice(Math.max(markerEnd, output.length - BUILD_COMPLETE_TEXT.length + 1));
       });
       watcher.on("exit", (code, signal) => {
         resolveFirstBuild(packageName);

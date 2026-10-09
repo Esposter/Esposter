@@ -24,53 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const BENNETT_KIT = createBennettKit(await readTalentMultipliers([BENNETT_CHARACTER_ID]));
 
-const MAX_HEALTH = 10_000;
-const BASE_ATTACK = 200;
-
-const createBennettCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-    { attribute: Attribute.BaseAttack, value: BASE_ATTACK },
-  ]),
-  characterId: BENNETT_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: BENNETT_KIT,
-  level: 90,
-});
-
-// Passion Overload pressed or held and released by the kit, its party member's cooldown read after the release
-const releaseSkill = (
-  heldSeconds: number,
-  { ascension, body, effects }: { ascension: number; body: GroundPoint; effects: KitEffect[] },
-) => {
-  const kitState = createKitState();
-  const partyMember = createPartyMember();
-  const stamina = createStamina(STAMINA_MAX);
-  const landedHits: KitHit[] = [];
-  const idleInput: KitInput = {
-    height: 0,
-    isAttackHeld: false,
-    isAttackPressed: false,
-    isBurstPressed: false,
-    isSkillHeld: false,
-    isSkillPressed: false,
-    locomotionState: LocomotionState.Idle,
-  };
-  const context: KitStepContext = {
-    body: { facing: 0, height: 0, position: body },
-    combatant: { ...createBennettCombatant(), ascension },
-    kitEffectState: { effects },
-  };
-  for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
-    stepKit(kitState, BENNETT_KIT, { ...idleInput, isSkillHeld: true }, partyMember, stamina, 0.1, landedHits, context);
-  const action = stepKit(kitState, BENNETT_KIT, idleInput, partyMember, stamina, 0.1, landedHits, context);
-  return { action, partyMember };
-};
-const NO_EFFECT_STATE = { ascension: 0, body: { x: 0, z: 0 }, effects: [] };
-
-// The effects Bennett's field leaves on the team at its first tick, for the character on it at the health share given
 const readFirstFieldTick = (combatant: Combatant, fieldCharacterId: number, healthShare: number): KitEffect[] => {
   const body = { x: 0, z: 0 };
   const party = createParty([BENNETT_CHARACTER_ID, MONA_CHARACTER_ID]);
@@ -86,6 +39,66 @@ const readFirstFieldTick = (combatant: Combatant, fieldCharacterId: number, heal
 };
 
 describe("bennett kit", () => {
+  const MAX_HEALTH = 10_000;
+
+  const BASE_ATTACK = 200;
+
+  const createBennettCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+      { attribute: Attribute.BaseAttack, value: BASE_ATTACK },
+    ]),
+    characterId: BENNETT_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: BENNETT_KIT,
+    level: 90,
+  });
+
+  // Passion Overload pressed or held and released by the kit, its party member's cooldown read after the release
+
+  const releaseSkill = (
+    heldSeconds: number,
+    { ascension, body, effects }: { ascension: number; body: GroundPoint; effects: KitEffect[] },
+  ) => {
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const landedHits: KitHit[] = [];
+    const idleInput: KitInput = {
+      height: 0,
+      isAttackHeld: false,
+      isAttackPressed: false,
+      isBurstPressed: false,
+      isSkillHeld: false,
+      isSkillPressed: false,
+      locomotionState: LocomotionState.Idle,
+    };
+    const context: KitStepContext = {
+      body: { facing: 0, height: 0, position: body },
+      combatant: { ...createBennettCombatant(), ascension },
+      kitEffectState: { effects },
+    };
+    for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
+      stepKit(
+        kitState,
+        BENNETT_KIT,
+        { ...idleInput, isSkillHeld: true },
+        partyMember,
+        stamina,
+        0.1,
+        landedHits,
+        context,
+      );
+    const action = stepKit(kitState, BENNETT_KIT, idleInput, partyMember, stamina, 0.1, landedHits, context);
+    return { action, partyMember };
+  };
+
+  const NO_EFFECT_STATE = { ascension: 0, body: { x: 0, z: 0 }, effects: [] };
+
+  // The effects Bennett's field leaves on the team at its first tick, for the character on it at the health share given
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

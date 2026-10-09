@@ -61,6 +61,8 @@ the change that moved it, as a bench's report is committed.
 | Pass | Reading | Value | Gate | Unit | Held |
 | :--- | :------ | ----: | ---: | :--- | :--- |
 | Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+| Layout | windrise-great-oak root | 0.0021 | 0.0500 | m | yes |
+| Layout | windrise-statue-of-the-seven root | 0.0003 | 0.0500 | m | yes |
 | Layout | Statue row across | 0 | 0.0200 | m | yes |
 | Layout | Statue row up | 0 | 0.0200 | m | yes |
 | Layout | Oak row across | 0 | 0.0200 | m | yes |
@@ -70,15 +72,15 @@ the change that moved it, as a bench's report is committed.
 | Layout | Ground row across | 0 | 0.0200 | m | yes |
 | Layout | Ground row up | 0 | 0.0200 | m | yes |
 | Camera | windrise-statue-day | 7.0178 | 7.5000 | px | yes |
-| Shape | windrise-statue-day Statue outline | 2.6741 | 1 | px | no |
-| Shape | windrise-statue-day Statue depth | 0.0084 | 0.0100 | share | yes |
-| Shape | windrise-statue-day Statue normal | 37.5360 | 10 | degrees | no |
-| Shape | windrise-statue-day Oak outline | 8.4073 | 1 | px | no |
-| Shape | windrise-statue-day Oak depth | 0.1639 | 0.0100 | share | no |
-| Shape | windrise-statue-day Oak normal | 47.6588 | 10 | degrees | no |
+| Shape | windrise-statue-day Statue outline | 2.4380 | 1 | px | no |
+| Shape | windrise-statue-day Statue depth | 0.0079 | 0.0100 | share | yes |
+| Shape | windrise-statue-day Statue normal | 35.4595 | 10 | degrees | no |
+| Shape | windrise-statue-day Oak outline | 8.0799 | 1 | px | no |
+| Shape | windrise-statue-day Oak depth | 0.1744 | 0.0100 | share | no |
+| Shape | windrise-statue-day Oak normal | 47.3571 | 10 | degrees | no |
 | Shape | windrise-statue-day Paving outline | 3.6744 | 1 | px | no |
 | Shape | windrise-statue-day Paving depth | 0.0008 | 0.0100 | share | yes |
 | Shape | windrise-statue-day Paving normal | 6.8099 | 10 | degrees | yes |
-| Shape | windrise-statue-day Ground outline | 8.6707 | 1 | px | no |
-| Shape | windrise-statue-day Ground depth | 0.0373 | 0.0100 | share | no |
-| Shape | windrise-statue-day Ground normal | 9.5726 | 10 | degrees | yes |
+| Shape | windrise-statue-day Ground outline | 8.3368 | 1 | px | no |
+| Shape | windrise-statue-day Ground depth | 0.0372 | 0.0100 | share | no |
+| Shape | windrise-statue-day Ground normal | 9.6302 | 10 | degrees | yes |

@@ -41,19 +41,22 @@ export const UNDERWATER_FOG_DENSITY = 0.08;
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;
 // Windrise's ground as a temperate meadow paints it: the layers say where grass, bare earth, rock, sand, snow and path
-// Lie, and every layer paints the one colour the ground's terrain base maps hold, as fitted into `surfaces.json` (the
-// Ground's mean colour, read against the exports in the surface pass). Its layers' weights still place the plants
-const GROUND_COLOR = new Color(surfaces.Ground.color).getHex();
-const GROUND_LAYER_COLORS = { color: GROUND_COLOR, patchColor: GROUND_COLOR };
+// Lie, and each layer paints the colour the terrain base maps hold on the faces its own rule paints, as fitted into
+// `surfaces.json`'s `Ground.layers` (a layer no face paints takes the ground's mean). Its layers' weights still place
+// The plants
+const getGroundLayerColors = (layer: GroundLayer) => {
+  const color = new Color(surfaces.Ground.layers[layer] ?? surfaces.Ground.color).getHex();
+  return { color, patchColor: color };
+};
 export const WINDRISE_GROUND_PAINT: GroundPaint = {
   earthSlope: { end: 0.3, start: 0.2 },
   layerColors: {
-    [GroundLayer.Earth]: GROUND_LAYER_COLORS,
-    [GroundLayer.Grass]: GROUND_LAYER_COLORS,
-    [GroundLayer.Path]: GROUND_LAYER_COLORS,
-    [GroundLayer.Rock]: GROUND_LAYER_COLORS,
-    [GroundLayer.Sand]: GROUND_LAYER_COLORS,
-    [GroundLayer.Snow]: GROUND_LAYER_COLORS,
+    [GroundLayer.Earth]: getGroundLayerColors(GroundLayer.Earth),
+    [GroundLayer.Grass]: getGroundLayerColors(GroundLayer.Grass),
+    [GroundLayer.Path]: getGroundLayerColors(GroundLayer.Path),
+    [GroundLayer.Rock]: getGroundLayerColors(GroundLayer.Rock),
+    [GroundLayer.Sand]: getGroundLayerColors(GroundLayer.Sand),
+    [GroundLayer.Snow]: getGroundLayerColors(GroundLayer.Snow),
   },
   patchScale: 18,
   pathFalloff: 0.6,

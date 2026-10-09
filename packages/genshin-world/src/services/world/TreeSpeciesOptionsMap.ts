@@ -17,6 +17,7 @@ export const TreeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions> = {
     cardsPerCluster: 800,
     clusters: oak.clusters,
     mainBranchCount: 7,
+    normalField: oak.normalField,
     seed: 0,
     trunk: [oakTrunkFoot, oakTrunkNext, ...oakTrunkRest],
   },

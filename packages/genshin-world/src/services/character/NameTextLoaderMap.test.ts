@@ -2,11 +2,6 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const dataFiles = import.meta.glob(["#src/data/**/*.json", "#src/generated/**/*.json", "!#src/generated/nameText/**"], {
-  eager: true,
-  import: "default",
-});
-
 // Adds the `nameTextId` of every row at any depth, as the writer's discovery does
 const collectNameTextIds = (value: unknown, textIds: Set<string>): void => {
   if (Array.isArray(value)) {
@@ -20,6 +15,11 @@ const collectNameTextIds = (value: unknown, textIds: Set<string>): void => {
 };
 
 describe("name text loader map", () => {
+  const dataFiles = import.meta.glob(
+    ["#src/data/**/*.json", "#src/generated/**/*.json", "!#src/generated/nameText/**"],
+    { eager: true, import: "default" },
+  );
+
   test("every nameTextId in the world's data files is in the English name chunk", async () => {
     expect.hasAssertions();
     const names = await NameTextLoaderMap[GameLanguage.English]();
