@@ -3,6 +3,7 @@
 export interface FailureSignature {
   // A short digest of `text`, which the attempt markers and the exhausted issue are keyed by (`getMarker`)
   hash: string;
-  // The workflow and its failing jobs, as a person reads them in the issue
+  // The workflow and its failing jobs — or a collector run's failed step and error line — as a person reads them in the
+  // Issue
   text: string;
 }

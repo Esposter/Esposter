@@ -22,6 +22,7 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
+import { writeErrorAnnotation } from "#src/services/coderabbit/collect/writeErrorAnnotation";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { GITHUB_OUTAGE_REGEX, REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -134,6 +135,7 @@ await runMain(
               reason: error.message,
               retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
             };
+          writeErrorAnnotation(error);
           throw error;
         },
       );

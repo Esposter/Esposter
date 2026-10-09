@@ -341,8 +341,9 @@ bottom one is based on `main` and each later one on the window below. A window o
 frees one of the plan's hourly reviews, however many are already open. CodeRabbit reviews each window once, on
 creation, and the bottom window merges as soon as its review completes, whatever it found. A drain session holding no
 credential then fixes or rejects every finding onto `ai/review-fixes`; a finding still open past the drain's attempts
-gets a `Deferred` reply and one issue lists them, and the walk goes on. The fixes lead the next window, `ai/queue` is
-rewritten onto them, and the collector replies once per finding — a bot reply to that reply is never drained again
+gets a `Deferred` reply and one issue lists them, and the walk goes on. The fixes lead the next window — cut over
+several when they alone pass the cap, a fix alone over it parked — `ai/queue` is rewritten onto them, and the
+collector replies once per finding — a bot reply to that reply is never drained again
 unless it carries a new suggestion. A review the bot skips or a rate limit refused past its stated deadline, a bottom
 window with no check, or one whose check stays pending past `PENDING_CHECK_WAIT_MS`, is asked for a wait apart up to
 the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut again — a skip at half the cap. A commit no window can carry past its
@@ -357,8 +358,9 @@ carries one window under the cap, so a backlog of hundreds of queue commits take
 person: billing — a CodeRabbit plan or usage credits that refuse every review, under which windows keep being cut
 smaller, and the Claude Code subscription every session runs on; the tokens — the collector's `gh` login, which
 `gh auth logout` on its machine stops and only a person refreshes, and the Claude Code token only a person mints; a
-red run, kept for fixes that alone overflow the cap, a fork or gap in the stack's chain of bases and the collector's
-own errors; a window a person closes, which pauses the collector until it is reopened; and the issues the collector
+red run, kept for a fork or gap in the stack's chain of bases and the collector's own errors, which the guard stops
+waking once the newest runs fail alike and hands to one issue; a window a person closes, which pauses the collector
+until it is reopened; and the issues the collector
 opens, none of which holds the pipeline, each waiting for a session to take it up. An external contributor's pull
 request enters at the same door: opened from an `external/*` branch against `ai/queue` — never `main`, where it would
 spend one of the plan's hourly reviews on arrival — and squash-merged onto the queue by a maintainer, where the
