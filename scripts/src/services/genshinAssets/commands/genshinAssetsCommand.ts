@@ -5,9 +5,11 @@ import { chestsCommand } from "#src/services/genshinAssets/commands/chestsComman
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
+import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
+import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
@@ -23,6 +25,7 @@ import { pointsCommand } from "#src/services/genshinAssets/commands/pointsComman
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
 import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesCommand";
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
+import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -67,6 +70,9 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gcg: gcgCommand,
+    gadgets: gadgetsCommand,
     shops: shopsCommand,
+    reputation: reputationCommand,
+    expeditions: expeditionsCommand,
   },
 });

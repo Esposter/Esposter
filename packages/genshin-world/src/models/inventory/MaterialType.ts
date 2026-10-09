@@ -2,4 +2,5 @@
 // Materials, the type the bag files among its Character Development Items
 export enum MaterialType {
   CharacterDevelopmentMaterial = "MATERIAL_AVATAR_MATERIAL",
+  Exchange = "MATERIAL_EXCHANGE",
 }

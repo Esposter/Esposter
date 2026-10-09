@@ -1,0 +1,712 @@
+{
+  "bounties": [
+    {
+      "difficulty": "HUNTING_DIFFICULTY_EASY",
+      "id": 1,
+      "regionId": 101,
+      "reward": {
+        "exp": 120,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_MEDIUM",
+      "id": 2,
+      "regionId": 101,
+      "reward": {
+        "exp": 160,
+        "items": [
+          {
+            "count": 25000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_HARD",
+      "id": 3,
+      "regionId": 101,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 30000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_EASY",
+      "id": 4,
+      "regionId": 102,
+      "reward": {
+        "exp": 120,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_MEDIUM",
+      "id": 5,
+      "regionId": 102,
+      "reward": {
+        "exp": 160,
+        "items": [
+          {
+            "count": 25000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_HARD",
+      "id": 6,
+      "regionId": 102,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 30000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_EASY",
+      "id": 7,
+      "regionId": 103,
+      "reward": {
+        "exp": 120,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_MEDIUM",
+      "id": 8,
+      "regionId": 103,
+      "reward": {
+        "exp": 160,
+        "items": [
+          {
+            "count": 25000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_HARD",
+      "id": 9,
+      "regionId": 103,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 30000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_EASY",
+      "id": 10,
+      "regionId": 104,
+      "reward": {
+        "exp": 120,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_MEDIUM",
+      "id": 11,
+      "regionId": 104,
+      "reward": {
+        "exp": 160,
+        "items": [
+          {
+            "count": 25000,
+            "id": 202
+          }
+        ]
+      }
+    },
+    {
+      "difficulty": "HUNTING_DIFFICULTY_HARD",
+      "id": 12,
+      "regionId": 104,
+      "reward": {
+        "exp": 200,
+        "items": [
+          {
+            "count": 30000,
+            "id": 202
+          }
+        ]
+      }
+    }
+  ],
+  "levels": [
+    {
+      "functionIds": [],
+      "goodsIds": [],
+      "level": 1,
+      "nextLevelExp": 400,
+      "requestGroupId": 5,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 109431
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [
+        1001
+      ],
+      "goodsIds": [],
+      "level": 2,
+      "nextLevelExp": 420,
+      "requestGroupId": 5,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 221001
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [],
+      "goodsIds": [],
+      "level": 3,
+      "nextLevelExp": 440,
+      "requestGroupId": 5,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 221004
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [
+        1002
+      ],
+      "goodsIds": [],
+      "level": 4,
+      "nextLevelExp": 460,
+      "requestGroupId": 5,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 210047
+          },
+          {
+            "count": 1,
+            "id": 109430
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [],
+      "goodsIds": [
+        202007
+      ],
+      "level": 5,
+      "nextLevelExp": 480,
+      "requestGroupId": 1,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 221008
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [],
+      "goodsIds": [],
+      "level": 6,
+      "nextLevelExp": 500,
+      "requestGroupId": 1,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 221009
+          },
+          {
+            "count": 1,
+            "id": 221005
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [],
+      "goodsIds": [],
+      "level": 7,
+      "nextLevelExp": 520,
+      "requestGroupId": 1,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 210048
+          },
+          {
+            "count": 1,
+            "id": 109429
+          }
+        ]
+      }
+    },
+    {
+      "functionIds": [],
+      "goodsIds": [],
+      "level": 8,
+      "nextLevelExp": 0,
+      "requestGroupId": 1,
+      "reward": {
+        "exp": 0,
+        "items": [
+          {
+            "count": 1,
+            "id": 140004
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "groupId": 1,
+      "questId": 7070101,
+      "requestId": 1001,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070001,
+      "requestId": 1002,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070201,
+      "requestId": 1003,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070301,
+      "requestId": 1004,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070401,
+      "requestId": 1005,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070501,
+      "requestId": 1006,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7070601,
+      "requestId": 1007,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 50
+    },
+    {
+      "groupId": 1,
+      "questId": 7070701,
+      "requestId": 1008,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 50
+    },
+    {
+      "groupId": 1,
+      "questId": 7070801,
+      "requestId": 1009,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 50
+    },
+    {
+      "groupId": 1,
+      "questId": 7070901,
+      "requestId": 1010,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7071001,
+      "requestId": 1011,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7071101,
+      "requestId": 1012,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7071201,
+      "requestId": 1013,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 50
+    },
+    {
+      "groupId": 1,
+      "questId": 7071301,
+      "requestId": 1014,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 1,
+      "questId": 7071401,
+      "requestId": 1015,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070101,
+      "requestId": 1061,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070001,
+      "requestId": 1062,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070201,
+      "requestId": 1063,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070301,
+      "requestId": 1064,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070401,
+      "requestId": 1065,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070501,
+      "requestId": 1066,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7070901,
+      "requestId": 1067,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7071001,
+      "requestId": 1068,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7071101,
+      "requestId": 1069,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7071301,
+      "requestId": 1070,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    },
+    {
+      "groupId": 5,
+      "questId": 7071401,
+      "requestId": 1071,
+      "reward": {
+        "exp": 80,
+        "items": [
+          {
+            "count": 20000,
+            "id": 202
+          }
+        ]
+      },
+      "weight": 20
+    }
+  ]
+}

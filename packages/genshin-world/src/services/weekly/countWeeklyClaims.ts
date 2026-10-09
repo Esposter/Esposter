@@ -1,8 +1,8 @@
-import { computeWeeklyResetTime } from "#src/services/bosses/computeWeeklyResetTime";
+import { computeWeeklyResetTime } from "#src/services/weekly/computeWeeklyResetTime";
 
-// How many claims, of any weekly boss, were made since the week's reset and by `now`, a claim at the reset counting
-// Toward the new week. The first three of them in a week cost the cheap price
-export const countWeeklyBossClaims = (
+// How many claims, across every kind counted weekly together, were made since the week's reset and by `now`, a claim at
+// The reset counting toward the new week
+export const countWeeklyClaims = (
   claimedAts: readonly Temporal.ZonedDateTime[],
   now: Temporal.ZonedDateTime,
 ): number => {

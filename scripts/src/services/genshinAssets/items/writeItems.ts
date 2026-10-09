@@ -1,24 +1,32 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
+import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TABLE_FILENAME, MATERIALS_PATH } from "#src/services/genshinAssets/items/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameTextKeys } from "genshin-text";
-import { EnemyDropFamilyDropTableMap } from "genshin-world";
+import { EnemyDropFamilyDropTableMap, MORA_ITEM_ID } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The items every drop family's table names, each read from the game's material table with its name's text id, which
-// Must be a key of the game text so the world can show it. An item the table lacks, or a name no key holds, is an
-// Error. Returns the file's path
+// The items every drop family's table names and every expedition's reward preview gives, each read from the game's
+// Material table with its name's text id, which must be a key of the game text so the world can show it. Mora is a
+// Currency the wallet holds, so it is no item here. An item the table lacks, or a name no key holds, is an error.
+// Returns the file's path
 export const writeItems = async (): Promise<string> => {
+  const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
+    durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
+  );
   const itemIds = [
-    ...new Set(
-      Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
-    ),
-  ].toSorted((firstId, secondId) => firstId - secondId);
+    ...new Set([
+      ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
+      ...expeditionItemIds,
+    ]),
+  ]
+    .filter((itemId) => itemId !== MORA_ITEM_ID)
+    .toSorted((firstId, secondId) => firstId - secondId);
   const materialRows = parseMachineJson<MaterialRow[]>(
     await readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
   );

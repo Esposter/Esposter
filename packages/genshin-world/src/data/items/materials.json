@@ -1,5 +1,77 @@
 [
   {
+    "id": 100012,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1330975132",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100013,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3407195260",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100014,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1137755308",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100061,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2492759196",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100062,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2577348708",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100064,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1695194124",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101001,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "4060716292",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101002,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1747175596",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101003,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1448077684",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
     "id": 112005,
     "materialType": "MATERIAL_AVATAR_MATERIAL",
     "nameTextId": "461826100",

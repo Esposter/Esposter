@@ -7,12 +7,17 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
+| `character-attributes` | `CharacterScreen` | 8.10% | 0.758 | 5.59% | 0.3570 |
+| `character-attributes-panel` | `CharacterScreen` | 7.96% | 0.573 | 4.63% | 0.3422 |
+| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 5.99% | 0.3337 |
+| `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
 | `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `hud-world-pickup` | `HudScreen` | 0.95% | 0.942 | 0.73% | 0.0488 |
-| `interaction-prompts-pickup` | `InteractionPromptList` | 8.27% | 0.887 | 4.08% | 0.2813 |
-| `inventory-weapons` | `InventoryScreen` | 9.14% | 0.612 | 7.41% | 0.3080 |
+| `interaction-prompts-pickup` | `InteractionPromptList` | 6.88% | 0.898 | 3.75% | 0.2645 |
+| `inventory-food` | `InventoryScreen` | 2.41% | 0.967 | 0.92% | 0.0774 |
+| `inventory-weapons` | `InventoryScreen` | 9.13% | 0.614 | 7.40% | 0.3076 |
 | `loading-startup` | `LoadingStartup` | 0.03% | 0.989 | 0.00% | 0.0013 |
 | `login-dawn-title` | `LoginScreen` | 10.34% | 0.468 | 7.35% | 0.4133 |
 | `login-day-title` | `LoginScreen` | 12.92% | 0.336 | 9.86% | 0.4688 |
@@ -31,7 +36,7 @@ committed.
 | `settings-graphics` | `MenuSettings` | 2.01% | 1.000 | 1.29% | 0.1037 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
-| `windrise-statue-day` | `WorldScreen` | 43.15% | 0.161 | 45.35% | 0.8676 |
+| `windrise-statue-day` | `WorldScreen` | 44.10% | 0.256 | 46.43% | 0.8854 |
 
 ## Layers
 
@@ -75,9 +80,9 @@ drawn away from the reference shows on its own row.
 | `login-night-title/Towers` | 37.7% | 9.57 | 8.51% | 0.4547 |
 | `login-night-title/Walkway` | 9.9% | 28.49 | 12.68% | 0.6356 |
 | `login-night-title/sky` | 49.9% | 8.72 | 7.29% | 0.3492 |
-| `windrise-statue-day/frame` | 100.0% | 37.19 | 45.35% | 0.8583 |
-| `windrise-statue-day/Statue` | 0.7% | 55.31 | 0.00% | 0.9080 |
-| `windrise-statue-day/Oak` | 36.5% | 59.74 | 48.50% | 0.9495 |
-| `windrise-statue-day/Paving` | 0.4% | 26.44 | 0.00% | 0.6628 |
-| `windrise-statue-day/Ground` | 52.8% | 29.14 | 0.00% | 0.7989 |
-| `windrise-statue-day/sky` | 9.6% | 37.11 | 34.56% | 0.8423 |
+| `windrise-statue-day/frame` | 100.0% | 38.06 | 46.43% | 0.8854 |
+| `windrise-statue-day/Statue` | 0.8% | 44.71 | 26.30% | 0.8216 |
+| `windrise-statue-day/Oak` | 32.9% | 60.49 | 64.87% | 0.9511 |
+| `windrise-statue-day/Paving` | 0.5% | 48.00 | 29.00% | 0.8831 |
+| `windrise-statue-day/Ground` | 58.8% | 31.34 | 36.37% | 0.8477 |
+| `windrise-statue-day/sky` | 7.0% | 45.66 | 47.61% | 0.9002 |

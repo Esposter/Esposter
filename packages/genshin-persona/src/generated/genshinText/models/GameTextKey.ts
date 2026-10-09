@@ -41,8 +41,10 @@ export enum GameTextKey {
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
+  BirdEgg = "2577348708",
   // The label over a character's birthday on their profile
   Birthday = "INFORMATION_AVATAR_BIRTHDAY",
+  Carrot = "3407195260",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
@@ -60,6 +62,8 @@ export enum GameTextKey {
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
+  CrystalChunk = "1448077684",
+  DadaupaGorge = "3497395333",
   // The enemies' drops by their item names
   DamagedMask = "461826100",
   // The dialogue's auto-play button, as it reads while off and while playing
@@ -75,6 +79,7 @@ export enum GameTextKey {
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
+  Fowl = "1695194124",
   Friends = "UI_FRIEND_TITLE",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
@@ -109,6 +114,7 @@ export enum GameTextKey {
   InventoryPreciousItems = "ITEM_CONSUME",
   InventoryQuest = "ITEM_QUEST",
   InventoryWeapons = "ITEM_WEAPON",
+  IronChunk = "4060716292",
   // An item and its count, its name in place of `{0}` and the count in place of `{1}`
   ItemCount = "SHOP_ITEM_NAME_AND_COUNT",
   // The touch controls' jump button, which a screen reader says in place of its glyph
@@ -161,6 +167,8 @@ export enum GameTextKey {
   QuestNavigate = "TASK_TRACK_ENSURE",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
+  Radish = "1137755308",
+  RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
@@ -176,6 +184,9 @@ export enum GameTextKey {
   Stamina = "133358079",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
+  StormbearerMountains = "490004829",
+  StormterrorsLair = "775762325",
+  SweetFlower = "1330975132",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
   // The map's way to a place, as its button says
@@ -187,6 +198,9 @@ export enum GameTextKey {
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Uid = "UI_PLAYER_PROFILE_UID",
+  WhisperingWoods = "2498537973",
+  WhiteIronChunk = "1747175596",
+  Windrise = "3796215893",
   Wish = "UI_GACHA_TITLE",
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`
@@ -197,6 +211,7 @@ export enum GameTextKey {
   WishFatePoint = "UI_GACHA_WISH_POINT",
   WishStandard = "UI_GACHA_TYPE_02",
   WishWeaponEvent = "UI_GACHA_TYPE_04",
+  Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
 }
 
