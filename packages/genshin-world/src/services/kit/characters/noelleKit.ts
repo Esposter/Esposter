@@ -158,6 +158,7 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     onStart: ({ combatant, effects }) =>
       addKitEffect(effects, {
         characterId: combatant.characterId,
+        element: Element.Geo,
         health:
           getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 6) +
           getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 0) *

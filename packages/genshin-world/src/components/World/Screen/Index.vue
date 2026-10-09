@@ -18,6 +18,7 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
@@ -90,9 +91,8 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { CharacterIdCreateKitMap } from "#src/services/kit/CharacterIdCreateKitMap";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
@@ -249,32 +249,38 @@ const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // Character's chunk on demand, and the characters whose chunks have arrived. Each kit is built from them once its
 // Character's chunk arrives, and nothing is priced until then
 const talentMultipliers = shallowRef<TalentMultiplierMap>();
-const talentMultiplierCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
+const loadedCharacterIds = shallowRef<number[]>([]);
 const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
 watchImmediate(deployedCharacterIds, (characterIds) => {
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readTalentMultipliers(characterIds)).match(
+  // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
+  getResultAsync(() => readTalentMultipliers([...new Set([TRAVELER_CHARACTER_ID, ...characterIds])])).match(
     (newTalentMultipliers) => {
       talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
-      talentMultiplierCharacterIds.value = new Set([...talentMultiplierCharacterIds.value, ...characterIds]);
+      loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, TRAVELER_CHARACTER_ID, ...characterIds])];
     },
     (error) => {
       console.error(error);
     },
   );
 });
-const travelerKit = computed(() => (talentMultipliers.value ? createTravelerKit(talentMultipliers.value) : undefined));
+const characterIdKitMap = computed(() => {
+  const kitMap = new Map<number, Kit>();
+  if (!talentMultipliers.value) return kitMap;
+  for (const characterId of loadedCharacterIds.value)
+    kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
+  return kitMap;
+});
 // How the character on the field moves, its body type's, once the roster has arrived
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
-// Each character's combat once the roster has arrived, priced by its own kit where its module is built and by the
-// Traveler's otherwise. A character with a module has no combat until its multipliers arrive. The character on the
-// Field's combat and its party member are what the HUD's health and skills read
+// Each character's combat once the roster has arrived and its kit is built from its loaded multipliers, a character whose
+// Chunk has not arrived having none yet. The character on the field's combat and its party member are what the HUD's
+// Health and skills read
 const characterIdCombatantMap = computed(() => {
   const combatantMap = new Map<number, Combatant>();
-  const talentMultiplierMap = talentMultipliers.value;
-  if (!statTables.value || !talentMultiplierMap || !travelerKit.value) return combatantMap;
+  if (!statTables.value) return combatantMap;
   // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
   const { characterDataMap } = statTables.value;
   const elementalResonances = getElementalResonances(
@@ -284,19 +290,19 @@ const characterIdCombatantMap = computed(() => {
     }),
   );
   for (const character of characters.value) {
-    const createKit = CharacterIdCreateKitMap[character.id];
-    if (createKit && !talentMultiplierCharacterIds.value.has(character.id)) continue;
-    combatantMap.set(character.id, {
-      ascension: character.ascension,
-      attributes: computeCharacterAttributes(
-        getCharacterAttributeLines(character, statTables.value),
+    const kit = characterIdKitMap.value.get(character.id);
+    if (kit)
+      combatantMap.set(character.id, {
+        ascension: character.ascension,
+        attributes: computeCharacterAttributes(
+          getCharacterAttributeLines(character, statTables.value),
+          elementalResonances,
+        ),
+        characterId: character.id,
         elementalResonances,
-      ),
-      characterId: character.id,
-      elementalResonances,
-      kit: createKit?.(talentMultiplierMap) ?? travelerKit.value,
-      level: character.level,
-    });
+        kit,
+        level: character.level,
+      });
   }
   return combatantMap;
 });

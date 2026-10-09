@@ -195,6 +195,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     poiseDamage: 5,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, LISA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
   },
-  // Violet Arc's press cooldown is the wiki's 1 second. The skill table's 16 seconds is the hold's
+  // Violet Arc's press cooldown is the wiki's 1 second (https://genshin-impact.fandom.com/wiki/Violet_Arc); the dump holds
+  // Only the hold's skill row, whose 16 seconds is the hold's
   skillCooldownSeconds: 1,
 });

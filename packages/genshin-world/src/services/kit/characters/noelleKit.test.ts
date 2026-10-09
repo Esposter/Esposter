@@ -58,6 +58,7 @@ describe("noelle kit", () => {
     expect(effects).toStrictEqual([
       {
         characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
         health: 1.6 * combatant.attributes.defense + 769.7851,
         kind: "shield",
         secondsRemaining: 12,
