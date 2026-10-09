@@ -31,6 +31,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 - **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB`) and wait while it is under an eighth of the machine's RAM, about 4 GB here. A machine that swaps slows every run more than one that waits.
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
+- **Measure a run's Node CPU from its own process tree.** Sum the node processes under the launched one, sampled as the run goes: a match on the command line counts another session's run too, and a browser's CPU is not the Node CPU.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
   - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once that process itself has burnt more than half a minute of CPU. On Windows its MSYS parent decides only whether it is orphaned, since a Git tool's Win32 parent can exit while its bash lives. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.

@@ -42,16 +42,20 @@ flowchart TD
 | `rg` over `grep -r` from the repository root          | Kept     | More than 200× faster: `rg` takes about 4 s, while `grep -r` ran over 900 s in two runs without printing a match                                                                                                                               |
 | GPU video decode for a whole-video scan               | Kept     | 2.4× faster: a luma scan of the first 60 s of a capture takes about 65 s on the GPU at 64 pixels wide, against about 155 s decoding on the CPU at full size                                                                                    |
 | GPU vocoder for the persona's spoken lines (DirectML) | Kept     | About 85% less CPU time for five lines (a median of 379 CPU-seconds in the process on the CPU rung, 57 on the top rung), and each line's wall time the same or lower; the language model stays on WebGPU, since DirectML rejects a slice in it |
+| Surface statistics on the parity page's GPU           | Kept     | 3.1× less wall time for the Surface pass (427 s to 137 s) and 6× less Node CPU (352 s to 58 s), every figure matching the CPU run                                                                                                              |
+| Colour pass's label similarity on the same GPU        | Kept     | The Surface pass 16% less wall time (109 s to 92 s) and about half its Node CPU (46 s to 24 s), medians of three, every printed figure unchanged                                                                                               |
 
 The shared Edge saved time while it was kept, and it was removed once its growth was measured. Its growth was not traced to a cause, so a relaunch every few pages was not added: each page launches its own browser, which closes back to nothing, so there is no growth to bound. The GPU row measures the scan's time alone; the peak memory of the two decodes was not captured.
 
 ## Key files
 
-| File                                                          | Role                                                                                                                         |
-| :------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
-| `.agents/skills/throughput/references/machine-efficiency.md`  | The rules an agent follows: slots, one check per package, search and long-run placement                                      |
-| `.agents/skills/throughput/scripts/run-in-slot.sh`            | Runs one heavy command in one of four machine-wide slots, taken only above the memory gate                                   |
-| `scripts/src/machine/watch/index.ts`                          | Watches the CPU, GPU and free memory under Monitor, prints the idle and tight lines, sweeps orphans and pushes the heartbeat |
-| `scripts/src/services/genshinParity/shared/openParityPage.ts` | Launches the page's own Edge with the flags an unlimited frame rate needs, and closes it with the page                       |
-| `scripts/src/services/genshinParity/shared/constants.ts`      | The page's port, `GENSHIN_PARITY_PORT`, 3011 for the shared checkout and 3002 for a runner                                   |
-| `packages/genshin-world/parity/vite.config.ts`                | The parity page's dev server, which each worktree serves on its own port                                                     |
+| File                                                                          | Role                                                                                                                         |
+| :---------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `.agents/skills/throughput/references/machine-efficiency.md`                  | The rules an agent follows: slots, one check per package, search and long-run placement                                      |
+| `.agents/skills/throughput/scripts/run-in-slot.sh`                            | Runs one heavy command in one of four machine-wide slots, taken only above the memory gate                                   |
+| `scripts/src/machine/watch/index.ts`                                          | Watches the CPU, GPU and free memory under Monitor, prints the idle and tight lines, sweeps orphans and pushes the heartbeat |
+| `scripts/src/services/genshinParity/shared/openParityPage.ts`                 | Launches the page's own Edge with the flags an unlimited frame rate needs, and closes it with the page                       |
+| `scripts/src/services/genshinParity/shared/constants.ts`                      | The page's port, `GENSHIN_PARITY_PORT`, 3011 for the shared checkout and 3002 for a runner                                   |
+| `packages/genshin-world/parity/vite.config.ts`                                | The parity page's dev server, which each worktree serves on its own port                                                     |
+| `packages/genshin-world/parity/surfaceStatistics/computeSurfaceStatistics.ts` | The surface statistics reduced on the parity page's WebGPU device: the blurs as compute passes, only partial sums read back  |
+| `packages/genshin-world/parity/surfaceStatistics/computeLabelSimilarity.ts`   | The colour pass's label similarity on the same device, each scale's term map read back                                       |
