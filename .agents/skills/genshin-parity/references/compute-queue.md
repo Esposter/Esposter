@@ -48,11 +48,11 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 
 ## Running one
 
-1. **Claim it.** Start `pnpm ai:fleet:hold <id>` in the background for the item that `pnpm ai:fleet:next --lane <lane>` hands you, where `<lane>` is your runner's lane. The claim is a ref on origin, not a commit on `ai/queue`, and the hold renews it every ten minutes until the release below.
+1. **Claim it.** Run `pnpm ai:fleet:next --lane <lane>`, where `<lane>` is your runner's lane. It prints `claimed <id> as worker <worker>`, and that worker id is yours for the item. Start `pnpm ai:fleet:hold <id> --worker <worker>` in the background for it. The claim is a ref on origin, not a commit on `ai/queue`, and the hold renews it every ten minutes until the release below.
 2. **Check the memory first.** If free physical memory is under an eighth of the machine's RAM, about 4 GB here (read off `Get-CimInstance Win32_OperatingSystem`, in kilobytes), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
-4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item's line from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output. Then `pnpm ai:fleet:release <id>` deletes the claim, and the hold ends.
-5. **If the measure misses,** commit nothing and change no parameter. Run `pnpm ai:fleet:release <id> --miss "<number>"` with the number, which keeps the claim as the miss, and report it. A miss is a call for the main session, never a second run with a guessed value.
+4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item's line from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output. Then `pnpm ai:fleet:release <id> --worker <worker>` deletes the claim, and that worker's hold ends.
+5. **If the measure misses,** commit nothing and change no parameter. Run `pnpm ai:fleet:release <id> --worker <worker> --miss "<number>"` with the number, which keeps the claim as the miss, and report it. A miss is a call for the main session, never a second run with a guessed value.
 6. **Start the next runnable item of the lane** whenever the memory gate leaves room, beside the ones still running, until none is left. Then report and end.
 
 ## Keeping it busy

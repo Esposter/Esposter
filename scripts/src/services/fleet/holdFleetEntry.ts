@@ -1,7 +1,10 @@
+import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
+
 import { FleetPushOutcome } from "#src/models/fleet/FleetPushOutcome";
 import { RenewalDecision } from "#src/models/fleet/RenewalDecision";
 import { CLAIM_REF_PREFIX, LOCAL_HOLD_POLL_MILLISECONDS, RENEW_MILLISECONDS } from "#src/services/fleet/constants";
 import { createFleetCommit } from "#src/services/fleet/createFleetCommit";
+import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
 import { getHoldFilePath } from "#src/services/fleet/getHoldFilePath";
 import { getRenewalDecision } from "#src/services/fleet/getRenewalDecision";
@@ -19,15 +22,15 @@ const RENEWAL_STOP_REASONS: Record<Exclude<RenewalDecision, RenewalDecision.Rene
   [RenewalDecision.Deleted]: "its ref was deleted",
   [RenewalDecision.Missed]: "it was missed",
   [RenewalDecision.Moved]: "its claim moved during the renewal",
-  [RenewalDecision.TakenOver]: "another machine holds it",
+  [RenewalDecision.TakenOver]: "another machine or worker holds it",
 };
 
-// Renews the claim this machine holds, judging it from the remote's claim at each renewal, and returns the decision
-// When the claim is no longer this machine's to renew. A push leased from the claim just read, so a renewal that
-// Races another machine's write is refused rather than overwriting it
-const renewClaim = async (entry: string, machine: string): Promise<RenewalDecision> => {
+// Renews the claim `holder` holds, judging it from the remote's claim at each renewal, and returns the decision
+// When the claim is no longer this worker's to renew. A push leased from the claim just read, so a renewal that
+// Races another worker's write is refused rather than overwriting it
+const renewClaim = async (entry: string, holder: ClaimHolder): Promise<RenewalDecision> => {
   const remote = readClaimedRefs().get(entry);
-  const decision = getRenewalDecision(remote, machine);
+  const decision = getRenewalDecision(remote, holder);
   if (decision !== RenewalDecision.Renew || remote === undefined) return decision;
   const sample = await readMachineSample();
   const message = {
@@ -42,8 +45,8 @@ const renewClaim = async (entry: string, machine: string): Promise<RenewalDecisi
 
 // The reason a renewal stops the hold, or undefined when the hold goes on. A renewal that cannot reach the remote is
 // Logged and retried on the next interval, so a network failure never ends the hold
-const renewOrStop = async (entry: string, machine: string): Promise<string | undefined> =>
-  (await getResultAsync(() => renewClaim(entry, machine))).match(
+const renewOrStop = async (entry: string, holder: ClaimHolder): Promise<string | undefined> =>
+  (await getResultAsync(() => renewClaim(entry, holder))).match(
     (decision) => (decision === RenewalDecision.Renew ? undefined : RENEWAL_STOP_REASONS[decision]),
     (error) => {
       console.error(`renewing ${entry} failed, retrying next interval: ${error.message}`);
@@ -51,22 +54,22 @@ const renewOrStop = async (entry: string, machine: string): Promise<string | und
     },
   );
 
-// Holds `entry` for `machine` until its hold file is deleted here or a renewal finds the claim no longer this machine's.
+// Holds `entry` for `holder` until its hold file is deleted here or a renewal finds the claim no longer this worker's.
 // The file is polled, so a local release stops the hold within one poll, and the claim is renewed every renewal interval
-export const holdFleetEntry = async (entry: string, machine: string): Promise<void> => {
-  writeHoldFile(entry);
+export const holdFleetEntry = async (entry: string, holder: ClaimHolder): Promise<void> => {
+  writeHoldFile(entry, holder.worker);
   let renewedMilliseconds = Temporal.Now.instant().epochMilliseconds;
   let stopReason: string | undefined;
   do {
     // oxlint-disable-next-line no-await-in-loop -- each poll waits for the one before it
     await sleep(LOCAL_HOLD_POLL_MILLISECONDS);
-    if (!existsSync(getHoldFilePath(entry))) stopReason = RELEASED_HERE_REASON;
+    if (!existsSync(getHoldFilePath(entry, holder.worker))) stopReason = RELEASED_HERE_REASON;
     else if (Temporal.Now.instant().epochMilliseconds - renewedMilliseconds >= RENEW_MILLISECONDS) {
       renewedMilliseconds = Temporal.Now.instant().epochMilliseconds;
       // oxlint-disable-next-line no-await-in-loop -- a renewal runs once its interval is due, after the poll before it
-      stopReason = await renewOrStop(entry, machine);
+      stopReason = await renewOrStop(entry, holder);
     }
   } while (stopReason === undefined);
-  removeHoldFile(entry);
-  console.info(`${machine} stopped holding ${entry}: ${stopReason}`);
+  removeHoldFile(entry, holder.worker);
+  console.info(`${formatClaimHolder(holder)} stopped holding ${entry}: ${stopReason}`);
 };

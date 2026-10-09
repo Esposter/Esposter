@@ -13,6 +13,7 @@ const createClaim = (overrides: Partial<ClaimMessage>): ClaimMessage => ({
   load: "",
   machine: "pc",
   renewedAt: RENEWED_AT,
+  worker: "7f3a",
   ...overrides,
 });
 

@@ -7,6 +7,7 @@ const CLAIM = {
   load: "CPU 4%",
   machine: "pc",
   renewedAt: Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 10 }).toString(),
+  worker: "7f3a",
 };
 
 describe(parseClaimMessage, () => {
@@ -14,6 +15,12 @@ describe(parseClaimMessage, () => {
     expect.hasAssertions();
 
     expect(parseClaimMessage(JSON.stringify(CLAIM))).toStrictEqual(CLAIM);
+  });
+
+  test('reads a claim written before workers as held by the worker ""', () => {
+    expect.hasAssertions();
+
+    expect(parseClaimMessage(JSON.stringify({ ...CLAIM, worker: undefined }))).toStrictEqual({ ...CLAIM, worker: "" });
   });
 
   test("reads a missed claim's text with it", () => {
