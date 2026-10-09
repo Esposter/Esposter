@@ -5,11 +5,13 @@ import {
   AMBER_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
   DILUC_CHARACTER_ID,
+  KAEYA_CHARACTER_ID,
   MONA_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
@@ -18,5 +20,6 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [AMBER_CHARACTER_ID]: createAmberKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
+  [KAEYA_CHARACTER_ID]: createKaeyaKit,
   [MONA_CHARACTER_ID]: createMonaKit,
 };
