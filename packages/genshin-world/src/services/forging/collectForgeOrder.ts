@@ -50,27 +50,26 @@ export const collectForgeOrder = (
     const result = drawForgeResult(recipe.results, random());
     return random() < 1 - missChance ? { ...result, count: result.count * 2 } : result;
   });
-  let addition = { adventureExp: 0, collectedCount: 0, inventory };
+  let adventureExp = 0;
+  let collectedCount = 0;
+  let collectedInventory = inventory;
   for (const { count, itemId } of yields) {
     if (itemId === ADVENTURE_EXP_ITEM_ID) {
-      addition = {
-        ...addition,
-        adventureExp: addition.adventureExp + count,
-        collectedCount: addition.collectedCount + 1,
-      };
+      adventureExp += count;
+      collectedCount++;
       continue;
     }
-    const added = addInventoryItem(addition.inventory, toResultDefinition(recipe, itemId, definitions, weapons), count);
+    const added = addInventoryItem(collectedInventory, toResultDefinition(recipe, itemId, definitions, weapons), count);
     if (added.overflow > 0) break;
-    addition = { ...addition, collectedCount: addition.collectedCount + 1, inventory: added.inventory };
+    collectedCount++;
+    collectedInventory = added.inventory;
   }
-  const { adventureExp, collectedCount } = addition;
   if (collectedCount === 0) return { adventureExp: 0, inventory, order };
   const remainingCount = order.count - collectedCount;
-  if (remainingCount === 0) return { adventureExp, inventory: addition.inventory };
+  if (remainingCount === 0) return { adventureExp, inventory: collectedInventory };
   return {
     adventureExp,
-    inventory: addition.inventory,
+    inventory: collectedInventory,
     order: {
       count: remainingCount,
       recipeId: order.recipeId,

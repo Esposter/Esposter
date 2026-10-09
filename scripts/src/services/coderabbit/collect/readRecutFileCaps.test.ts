@@ -12,17 +12,18 @@ const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
 
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
+const getWindow = (number: number, state: WindowPullRequestState): WindowPullRequest => ({
+  baseRefName: MAIN_BRANCH,
+  createdAt: new Date(0).toISOString(),
+  headRefName: getWindowBranch(number),
+  headRefOid: "",
+  number,
+  state,
+});
+
 describe(readRecutFileCaps, () => {
   const viewerLogin = "viewerLogin";
   const fileCap = 1;
-  const getWindow = (number: number, state: WindowPullRequestState): WindowPullRequest => ({
-    baseRefName: MAIN_BRANCH,
-    createdAt: new Date(0).toISOString(),
-    headRefName: getWindowBranch(number),
-    headRefOid: "",
-    number,
-    state,
-  });
   const getRecutComment = (login: string): GitHubEntry => ({
     body: `<!-- ${WINDOW_RECUT_MARKER} cap:${fileCap} -->`,
     id: 0,
