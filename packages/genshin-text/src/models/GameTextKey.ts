@@ -50,6 +50,7 @@ export enum GameTextKey {
   Audio = "UI_SETTING_PAGE_SOUND_CATEGORY",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
+  BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
   BambooShoot = "4238416012",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
   BerylConch = "1859043748",
@@ -302,6 +303,7 @@ export enum GameTextKey {
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`
   WishBeginners = "UI_GACHA_SHOW_PANEL_A016_TITLE",
+  WishBuyFate = "UI_GACHAPAGE_BUYFATE_DIRECT",
   WishCharacterEvent = "UI_GACHA_TYPE_03",
   WishCount = "UI_GACHAPAGE_DOGACHA",
   WishEpitomizedPath = "UI_GACHA_WISH",
