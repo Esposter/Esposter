@@ -4,6 +4,8 @@ import type { Element } from "#src/models/Element";
 export interface KitInfusion {
   characterId: number;
   element: Element;
+  // Whether the infusion converts the attacks it infuses, so each hit with a converted poise deals that instead
+  isConverted?: true;
   kind: "infusion";
   secondsRemaining: number;
 }

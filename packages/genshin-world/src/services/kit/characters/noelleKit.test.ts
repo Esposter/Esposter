@@ -66,7 +66,7 @@ describe("noelle kit", () => {
     ]);
   });
 
-  test("its Sweeping Time infuses her attacks with Geo and adds 40% of her DEF to her ATK", () => {
+  test("its Sweeping Time converts her attacks to Geo and adds 40% of her DEF to her ATK", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
     const effects: KitEffect[] = [];
@@ -83,7 +83,13 @@ describe("noelle kit", () => {
         kind: "buff",
         secondsRemaining: 15 + 80 / 60,
       },
-      { characterId: NOELLE_CHARACTER_ID, element: Element.Geo, kind: "infusion", secondsRemaining: 15 + 80 / 60 },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        kind: "infusion",
+        secondsRemaining: 15 + 80 / 60,
+      },
     ]);
   });
 });

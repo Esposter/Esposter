@@ -1,14 +1,16 @@
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
-import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
+import { DILUC_CHARACTER_ID, NOELLE_CHARACTER_ID } from "#src/services/character/constants";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
+const NOELLE_KIT = createNoelleKit(await readTalentMultipliers([NOELLE_CHARACTER_ID]));
 
 describe(infuseKitHits, () => {
   test("infuses a normal attack and a collision at their gauges, and leaves a skill's hit as it was", () => {
@@ -17,11 +19,35 @@ describe(infuseKitHits, () => {
     const skillHit = takeOne(DILUC_KIT.elementalSkill.hits);
     const collisionHit = DILUC_KIT.plungeCollision;
     const landedHits: KitHit[] = [normalHit, skillHit, collisionHit];
-    infuseKitHits(DILUC_KIT, Element.Pyro, landedHits, 0);
+    infuseKitHits(
+      DILUC_KIT,
+      { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 1 },
+      landedHits,
+      0,
+    );
     expect(landedHits).toStrictEqual([
       { ...normalHit, element: Element.Pyro, gauge: 1 },
       skillHit,
       { ...collisionHit, element: Element.Pyro, gauge: 0 },
     ]);
+  });
+
+  test("an infusion that converts its attacks gives a normal attack its converted poise", () => {
+    expect.hasAssertions();
+    const normalHit = takeOne(takeOne(NOELLE_KIT.normalAttacks).hits);
+    const landedHits: KitHit[] = [normalHit];
+    infuseKitHits(
+      NOELLE_KIT,
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        kind: "infusion",
+        secondsRemaining: 1,
+      },
+      landedHits,
+      0,
+    );
+    expect(landedHits[0]?.poiseDamage).toBeCloseTo(132.25, 2);
   });
 });
