@@ -5,7 +5,7 @@ description: The plants and specialties the official map marks, placed by the fi
 
 # Gathering
 
-The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. Ores, mining outcrops and investigation spots wait in the proposal.
+The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. The ores' rules are built beside them, though nothing in the world reads them yet. Ores in the world, mining outcrops and investigation spots wait in the proposal.
 
 ## How it works
 
@@ -42,6 +42,10 @@ The gather table's refresh ids do not name a policy in the dump. The ground rows
 
 A point is kept as picked with the instant of the pick, and stands again once its respawn has come. Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks once a minute while it is open.
 
+## The ores' rules
+
+An ore is struck until it breaks, and its rules are built as pure functions the world does not call yet. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks at a share of one. A hit that is neither blunt nor melee adds nothing. A broken ore drops its certain piece, and one more for each of two draws that comes under 10%. An ore comes back one day after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, both as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
+
 ## The pick
 
 F on a gathering point's row picks one of its item into the bag, through the same `addInventoryItem` a drop uses. The point is kept as picked only when the bag takes the item, so a full bag leaves it standing. The picked points are kept for the page's life only, as the drops are.
@@ -54,6 +58,9 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 | `scripts/src/services/genshinAssets/gathering/writeGatheringPlaces.ts`           | Each region's points written as a slice, and the items table   |
 | `scripts/src/services/genshinAssets/gathering/constants.ts`                      | The categories, their respawns and the generated folder        |
 | `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`       | The instant a picked point is back                             |
+| `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`        | Each ore's poise to break from blunt and from melee hits       |
+| `packages/genshin-world/src/services/gathering/strikeOre.ts`                     | An ore's broken share after one hit                            |
+| `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`              | The pieces an ore drops                                        |
 | `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                           |
 | `packages/genshin-world/src/composables/useGatheringPoints.ts`                   | Mondstadt's points and items, read as the world opens          |
 | `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops |
