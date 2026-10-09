@@ -3,6 +3,7 @@ import type { Kit } from "#src/models/kit/Kit";
 
 import {
   AMBER_CHARACTER_ID,
+  AYAKA_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
   DILUC_CHARACTER_ID,
   KAEYA_CHARACTER_ID,
@@ -11,6 +12,7 @@ import {
   NOELLE_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
+import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
@@ -22,6 +24,7 @@ import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 // Character with none falls back to the Traveler's kit, as the roster does
 export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMap: TalentMultiplierMap) => Kit>> = {
   [AMBER_CHARACTER_ID]: createAmberKit,
+  [AYAKA_CHARACTER_ID]: createAyakaKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
