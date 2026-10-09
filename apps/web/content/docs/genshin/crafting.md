@@ -1,11 +1,11 @@
 ---
 title: Crafting
-description: The bench's recipes from the game's combine table — three of a material for one of the tier above, potions, baits and Condensed Resin — each opened by its rank and, where an instruction opens it, by learning it, paid from the bag and the wallet, and crafted whole or refused, on a screen the bench's fixture reaches. The bench is not placed in the world.
+description: The bench's recipes from the game's combine table — three of a material for one of the tier above, potions, baits, Condensed Resin and gadgets — each opened by its rank and, where an instruction opens it, by learning it, paid from the bag and the wallet, and crafted whole or refused, on a screen the bench's fixture reaches. The bench is not placed in the world.
 ---
 
 # Crafting
 
-The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction. This page is the first build of the [crafting](/docs/proposals/genshin/crafting) proposal, covering the tiers, potions, baits and Condensed Resin. The characters' crafting talents are built as well, their doubles, refunds and regional talent materials. The bench's screen is built, with its recipe tabs and the crafter's talent rolled into a batch, and reached through its fixture. The bench's place in the world and the gadgets are not built yet and stay in the proposal.
+The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction. This page is the first build of the [crafting](/docs/proposals/genshin/crafting) proposal, covering the tiers, potions, baits, Condensed Resin and the gadgets. The characters' crafting talents are built as well, their doubles, refunds and regional talent materials. The bench's screen is built, with its recipe tabs and the crafter's talent rolled into a batch, and reached through its fixture. The bench's place in the world is not built yet and stays in the proposal.
 
 ## How it works
 
@@ -31,8 +31,9 @@ flowchart TD
 - **Potions**, the combine types for Heatshield and Desiccant potions and for the formulas of Pure Water and Strength Tonic.
 - **Baits**, each making ten from its two ingredients.
 - **Condensed Resin**, the one recipe whose result is item 220007, from one crystal core and 60 Original Resin.
+- **Gadgets**, the seven combine type 6 rows beside Condensed Resin: the Portable Waypoint and the six Resonance Stones. Each is opened by its instruction item, which the material table names, so an instruction is read from the dump.
 
-Left out, each for its own reason: the convert rows, which turn a boss material into another with Dream Solvent and are not three-for-one; the homeworld's rows, which belong to the Serenitea Pot; the resonance stones and Portable Waypoint, which the statues and exploring pages will place; the gadget recipes and the essential oils, whose instructions the table does not name; and the Xiao Lantern, a quest's item.
+Left out, each for its own reason: the convert rows, which turn a boss material into another with Dream Solvent and are not three-for-one; the homeworld's rows, which belong to the Serenitea Pot; the essential oils, whose instructions the table does not name; and the Xiao Lantern, a quest's item.
 
 A recipe the table shows from the start is open from the start. One it hides is written with the instruction items that open it, read off the material table's use of each instruction. A hidden recipe no instruction opens is an error, so a table change cannot hide a recipe silently.
 
@@ -70,7 +71,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 - **Each recipe carries its result's name.** A recipe's `nameTextId` is the text id of the item it makes, read from the material table, and `genshin:text names` writes it into the world's names chunk per language, so a bench screen can show it without a game text key.
 - **The bench is not placed.** The official map marks no crafting bench, and the scene's streaming records, which place one in a city, are not read yet, so no bench stands in the world and no prompt offers a craft.
-- **The gadget recipes are unsourced.** The table holds the gadgets' recipes hidden with no instruction to open them. The wiki was not reachable from this build to name the source, so they are left out until one does.
+- **The gadget instructions' sources are not read.** Each gadget's recipe is offered once its instruction is learned, but where the instruction is obtained in the world is left to the pages that place those sources.
 - **The screen is reached through its fixture.** The recipe list, the crafter's pick, the count and the craft are the `CraftingScreen` unit under `genshin-interface`, wrapped by the world's `Crafting/Screen`, which opens as an NPC screen. Its words are the game's own text ids, and its look waits on the bench's passes against the clip.
 - **A batch's talent extra with no room is left out.** The craft is checked whole first, so the bag's room goes to the craft's own results before a talent's extra is added, and an extra that finds no room is dropped rather than refusing the craft.
 - **Crafting Performed counts this visit.** The save holds no count of crafts yet, so the line counts the batches crafted since the bench opened.

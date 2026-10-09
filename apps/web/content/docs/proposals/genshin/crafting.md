@@ -1,6 +1,6 @@
 ---
 title: Crafting
-description: Proposal — the crafting bench's parts still to build: its place in the city, the gadgets from their wiki instructions, and the save's craft count. The recipes, their rules, the instruction unlocks, the characters' crafting talents with their regional materials and the screen with its tabs are built, as the crafting page records.
+description: Proposal — the crafting bench's parts still to build: its place in the city and the save's craft count. The recipes, their rules, the instruction unlocks, the gadgets, the characters' crafting talents with their regional materials and the screen with its tabs are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -18,7 +18,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 
 ## Decisions
 
-- **Every recipe is the game's own.** `CombineExcelConfigData` holds each one: its materials, its Mora (`scoinCost`), its result and how many, the Adventure Rank it needs (`playerLevel`), and its kind. Nothing about a recipe is typed by hand. The kinds the bench crafts are the tiers, potions, baits and Condensed Resin, as the [crafting](/docs/genshin/crafting) page lists them.
+- **Every recipe is the game's own.** `CombineExcelConfigData` holds each one: its materials, its Mora (`scoinCost`), its result and how many, the Adventure Rank it needs (`playerLevel`), and its kind. Nothing about a recipe is typed by hand. The kinds the bench crafts are the tiers, potions, baits, Condensed Resin and gadgets, as the [crafting](/docs/genshin/crafting) page lists them.
 - **Three make one of the tier above.** Ascension and talent materials are crafted from three of the same material a tier below, as the recipes hold them. A tier row that does not take exactly three of one material is an error, not a recipe.
 - **Recipes are learned, where the table hides them.** The [crafting page](/docs/genshin/crafting) settles how each recipe opens. This covers the baits, Condensed Resin, and the Pure Water and Strength Tonic formulas. It supersedes the earlier wording that every potion waits on its instructions, because the table shows the Heatshield and Desiccant potions from the start, with no instruction to open them. Revised 2026-10-08 by the build that wrote the [crafting](/docs/genshin/crafting) page.
 - **Condensed Resin** is crafted from 60 Original Resin, and one crystal core, as the [crafting page](/docs/genshin/crafting) counts them. Five are held at most, which is the item's own stack limit in the bag, as [Original Resin](/docs/proposals/genshin/original-resin) decides.
@@ -33,7 +33,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **The screen's words are the game's own.** The title and the Craft button read the reconfirm page's title, the Crafting Performed line `UI_SYNTHESIS_PAGE_ITEM_COUNT`, the Crafting Materials heading `UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE`, the Required line `UI_COMMON_ITEM_NEED`, and the amount slider's name the cooking page's Quantity, as `GameTextKey` records them. Each recipe's name is the names chunk's entry for its `nameTextId`.
 - **The recipe tabs are the combine types the open recipes fall under.** One tab per combine type, in ascending combine type order, named by the game's own text key for it, `COMBINE_TYPE_NAME1` to `COMBINE_TYPE_NAME12`. The labels of 6 and 12 are in the medium English text map, `Consumable` and `Food`, so every combine type a recipe carries has its key; the first tab shows until one is picked. The fixture's earlier note called the Condensed Resin's tab the Gadget tab, which the game's own label for combine type 6 does not match, so the note now says Consumable. A check of the clip by eye is the one thing left to settle.
 - **The bench's crafter is picked on the screen.** The party's characters are listed and one is picked to cook the batch; with none picked the batch crafts plainly.
-- **A gadget's instructions come from the wiki.** The table holds each gadget's recipe hidden with no instruction item to open it. The wiki's Gadgets pages answer through the persona reader, which is how the instructions are read; their reputation and Frostbearing Tree sources are the wiki's too. Until they are read, the gadgets are not offered.
+- **The gadgets are the combine type 6 rows beside Condensed Resin.** Seven recipes: the Portable Waypoint and the six Resonance Stones, each made from its materials and Mora, with a kind of its own, `CraftingRecipeKind.Gadget`. Each is opened by its instruction item, which the material table names through its `ITEM_USE_UNLOCK_COMBINE` use, so the instructions are read from the dump, not the wiki. Where a player gets an instruction is not settled here; a gadget's recipe is offered only once its instruction is learned, as every hidden recipe is.
 
 ## How it works
 
@@ -53,17 +53,16 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles, refunds and regional materials, the bench's screen with its recipe tabs through its fixture, as the [crafting](/docs/genshin/crafting) page records.
+**Built:** the recipes of the tiers, potions, baits, Condensed Resin and the gadgets, their rules, the instructions that open them, the characters' crafting talents' doubles, refunds and regional materials, the bench's screen with its recipe tabs through its fixture, as the [crafting](/docs/genshin/crafting) page records.
 
 **Still to build, in order:**
 
-1. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
-2. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
-3. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. Once the two steps above are built, the unit carries a `waiting:` line for this one.
+1. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. Once the step above is built, the unit carries a `waiting:` line for this one.
 
 ## Data and measures
 
-- **Read from the wiki:** the crafting talents and the regions' talent book series (built into the Decisions above), and the gadgets' instructions, from the wiki's gadget pages.
+- **Read from the wiki:** the crafting talents and the regions' talent book series (built into the Decisions above).
 - **Not measured.** Crafting takes no time in the game and has no timed state, so no compute-queue item is owed.
 
 ## Key files

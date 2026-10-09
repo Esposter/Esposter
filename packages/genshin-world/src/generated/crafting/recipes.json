@@ -4085,6 +4085,87 @@
   },
   {
     "combineType": 6,
+    "id": 22001,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 100057
+      },
+      {
+        "count": 5,
+        "id": 100023
+      },
+      {
+        "count": 1,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "3352332780",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220001,
+    "unlockItemIds": [
+      221001
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22002,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 100058
+      },
+      {
+        "count": 5,
+        "id": 100030
+      },
+      {
+        "count": 1,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "1817146444",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220002,
+    "unlockItemIds": [
+      221002
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22005,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 1,
+        "id": 112021
+      },
+      {
+        "count": 2,
+        "id": 100082
+      },
+      {
+        "count": 5,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "3435779492",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220005,
+    "unlockItemIds": [
+      221005
+    ]
+  },
+  {
+    "combineType": 6,
     "id": 22007,
     "kind": "CondensedResin",
     "materials": [
@@ -4105,6 +4186,33 @@
     "unlockItemIds": [
       221007,
       221067
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22032,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 101205
+      },
+      {
+        "count": 5,
+        "id": 101202
+      },
+      {
+        "count": 1,
+        "id": 101008
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "3519591740",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220032,
+    "unlockItemIds": [
+      221032
     ]
   },
   {
@@ -4358,6 +4466,87 @@
     "resultItemId": 111036,
     "unlockItemIds": [
       221069
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22057,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 101215
+      },
+      {
+        "count": 5,
+        "id": 101213
+      },
+      {
+        "count": 1,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "977791436",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220057,
+    "unlockItemIds": [
+      221057
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22086,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 101233
+      },
+      {
+        "count": 5,
+        "id": 101236
+      },
+      {
+        "count": 1,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "1713263004",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220086,
+    "unlockItemIds": [
+      221059
+    ]
+  },
+  {
+    "combineType": 6,
+    "id": 22103,
+    "kind": "Gadget",
+    "materials": [
+      {
+        "count": 5,
+        "id": 101249
+      },
+      {
+        "count": 5,
+        "id": 101247
+      },
+      {
+        "count": 1,
+        "id": 101003
+      }
+    ],
+    "mora": 500,
+    "nameTextId": "1157747836",
+    "playerLevel": 10,
+    "resultCount": 1,
+    "resultItemId": 220103,
+    "unlockItemIds": [
+      221063
     ]
   }
 ]
