@@ -30,7 +30,7 @@ Container names live in the `AzureContainer` enum (`packages/db-schema/src/model
 
 | Container (`AzureContainer`) | Contents                                                                                                                                      |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppAssets`                  | App-owned static assets                                                                                                                       |
+| `AppAssets`                  | App-owned static assets, and the published game data under `genshin/data/` ([hosted game data](/docs/genshin/hosted-game-data))               |
 | `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                     |
 | `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) |
 | `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                    |

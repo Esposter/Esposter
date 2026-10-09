@@ -1,6 +1,6 @@
 import type { ExportsGeneration } from "#src/models/ExportsGeneration";
 
-import { CHUNK_SUFFIX, NON_SOURCE_SUFFIXES } from "#src/constants";
+import { NON_SOURCE_SUFFIXES } from "#src/constants";
 import { getComponentName } from "#src/getComponentName";
 import { existsSync, globSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -47,7 +47,6 @@ const generateSourceBarrel = (sourceDirectory: string): void => {
         path !== BARREL_FILE &&
         !path.endsWith(".d.ts") &&
         !NON_SOURCE_SUFFIXES.some((suffix) => path.endsWith(suffix)) &&
-        !path.endsWith(CHUNK_SUFFIX) &&
         checkHasExport(join(sourceDirectory, path)),
     );
   // Each module keeps its `.ts` extension, which a bundler takes as it is and which node's own resolution — the one the

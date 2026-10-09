@@ -8,7 +8,6 @@ import type { ComputedRef, Ref } from "vue";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
-import { BookBodyLoaderMap } from "#src/services/archive/BookBodyLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
 import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
@@ -16,8 +15,10 @@ import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
 import { readArchiveEntries } from "#src/services/archive/readArchiveEntries";
 import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
+import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getResultAsync } from "@esposter/shared";
+import { z } from "zod";
 
 // The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
 // Is done, as the game opens it, and its progress starts empty, the bag's items and the defeats opening its entries as they
@@ -25,11 +26,13 @@ import { getResultAsync } from "@esposter/shared";
 export const useWorldArchive = ({
   events,
   finishedMainQuestIds,
+  gameDataBaseUrl,
   language,
   screenKind,
 }: {
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
+  gameDataBaseUrl: string;
   language: GameLanguage;
   screenKind: Ref<ScreenKind>;
 }) => {
@@ -50,11 +53,12 @@ export const useWorldArchive = ({
     if (!archiveData.value) return;
     const { sectionEntriesMap, textMap } = archiveData.value;
     const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
-    const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
-    if (!book || !loadBody) return;
+    if (!book) return;
     loadingBookId = bookId;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(async () => (await loadBody())[language]()).match(
+    getResultAsync(() =>
+      readGameDataEntry(gameDataBaseUrl, `bookBody/${language}`, String(book.bodyId), z.string()),
+    ).match(
       (body) => {
         if (loadingBookId !== bookId) return;
         loadingBookId = undefined;

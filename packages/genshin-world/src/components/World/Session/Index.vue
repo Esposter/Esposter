@@ -85,6 +85,7 @@ const {
   cameraPose,
   characterPackBaseUrl,
   createTerrainWorker,
+  gameDataBaseUrl,
   gameText,
   heldMinutes,
   isPaused,
@@ -152,6 +153,7 @@ const adventureExpProgress = computeAdventureRankProgress(savedState.adventureEx
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
   events,
   finishedMainQuestIds,
+  gameDataBaseUrl,
   language,
   screenKind,
 });
@@ -576,6 +578,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :companionship-exp-map="savedState.companionshipExpMap"
+          :game-data-base-url
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
           :language

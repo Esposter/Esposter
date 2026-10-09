@@ -69,6 +69,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
 export const props = {
   activeCharacterId: XILONEN_ID,
   characters: roster,
+  gameDataBaseUrl: "game-data",
   gameText: ENGLISH_GAME_TEXT,
   initialTab: CharacterMenuTab.Attributes,
   maxStamina: STAMINA,

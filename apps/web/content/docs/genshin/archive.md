@@ -22,8 +22,8 @@ flowchart TD
   SLICES --> SCREEN["Archive screen: sections, their entries, a name or a ?"]
   WORDS --> SCREEN
   PROGRESS --> SCREEN
-  SCREEN -->|"an opened volume"| READER["Book reader: title and text, its body's chunk loaded on demand"]
-  BODIES["generated/bookBody: each volume's text, one chunk a language"] --> READER
+  SCREEN -->|"an opened volume"| READER["Book reader: title and text, its body read from the hosted game data"]
+  BODIES["hosted game data: one bookBody index a language, each volume's text by its body id"] --> READER
   DONE["Main quest 353 finished"] --> UNLOCK{"Unlocked the first time?"}
   UNLOCK -->|"yes"| LOAD["Slices and names read on demand"]
   LOAD --> MENU["Paimon menu's Archive entry enabled"]
@@ -54,7 +54,7 @@ A defeated enemy opens its Living Beings entry and counts one more kill under it
 
 ## Books
 
-A volume's entry is its codex row, and its body is the readable text its document names. `BooksCodexExcelConfigData` joins to the material's name, to `DocumentExcelConfigData`'s quest text id for the body, and to `LocalizationExcelConfigData`'s readable file for each language; `toBookCandidates` keeps a row only when all of them resolve. `genshin:assets archive` writes two things: the Books slice, each volume with its `materialId` and `bodyId`, and one chunk per body and language under `generated/bookBody/<bodyId>/<Language>.json`, and a module per body, `generated/bookBody/<bodyId>/index.chunk.ts`, holding its fifteen loaders. `services/archive/BookBodyLoaderMap.ts` has one entry a body, importing that module on demand, so the entry bundle carries 267 lines and no language. Opening a volume downloads two small files: its module, then the one chunk of its game language: about 3.5 KB raw on average, against about 53 KB for the volume's chunk of all fifteen languages before the split (the 267 volumes come to about 14 MB in all, of which a reader takes one language's).
+A volume's entry is its codex row, and its body is the readable text its document names. `BooksCodexExcelConfigData` joins to the material's name, to `DocumentExcelConfigData`'s quest text id for the body, and to `LocalizationExcelConfigData`'s readable file for each language; `toBookCandidates` keeps a row only when all of them resolve. `genshin:assets archive` writes two things: the Books slice, each volume with its `materialId` and `bodyId`, and publishes every body to the hosted game data, one index a language that maps each body's id to its text. Opening a volume fetches its one record in its game language, about 3.5 KB raw on average, through [hosted game data](/docs/genshin/hosted-game-data); the 267 volumes come to about 14 MB in all, of which a reader takes one language's.
 
 The wiki's rule is that a collected volume goes straight into the Archive rather than the bag, so `pickUpWorldDrop` opens the volume's entry through `openArchiveBook` and drops the item. The volume's entry is opened by its id, and the reader opens from the Books tab: the title and the body in the reader's language, on one page, through the `GameScreen` pattern of `components/Archive/BookReader`.
 
@@ -106,10 +106,9 @@ The Archive screen has no parity measure yet. Its places follow the achievements
 | `packages/genshin-world/src/services/archive/countArchiveDefeat.ts`       | One more defeat counted under a Living Being's entry                             |
 | `packages/genshin-world/src/services/archive/openArchiveEntry.ts`         | One entry of a section opened, idempotently                                      |
 | `packages/genshin-world/src/services/archive/openArchiveBook.ts`          | A picked up volume's material opens its Books entry                              |
-| `packages/genshin-world/src/services/archive/BookBodyLoaderMap.ts`        | Each volume's body chunk, imported on demand                                     |
 | `packages/genshin-world/src/components/Archive/BookReader/Index.vue`      | The reader: a volume's title and its text on one page                            |
 | `scripts/src/services/genshinAssets/archive/toBookCandidates.ts`          | The codex rows joined to their material's name and their document's body         |
-| `scripts/src/services/genshinAssets/archive/writeBookBodies.ts`           | Each volume's body in every language, one chunk a body and the loader map        |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`  | Each volume's body in every language, one index a language, published            |
 
 ## Sources
 

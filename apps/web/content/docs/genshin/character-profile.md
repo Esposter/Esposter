@@ -11,13 +11,13 @@ The character screen's Profile tab lists a character's stories down its left, `C
 
 ```mermaid
 flowchart LR
-  OPEN["Profile tab opened for a character"] --> LOAD["Its profile chunk and the Friendship Levels, read on demand"]
+  OPEN["Profile tab opened for a character"] --> LOAD["Its profile record, fetched from the hosted game data, and the Friendship Levels"]
   LOAD --> LEVEL["The level its total Companionship EXP has reached"]
   LEVEL --> LIST["Each story open at its level, or locked with the unlock line"]
   LIST --> PANEL["The chosen story's title and text beside the list"]
 ```
 
-`pnpm -C scripts genshin:assets profile` writes each playable character's stories, voice-overs and namecard from the dump, in every language, one chunk a character and language. The panel reads the chunk of the language the screen is in, so a reader downloads only its own language's text.
+`pnpm -C scripts genshin:assets profile` builds each playable character's stories, voice-overs and namecard from the dump, in every language, and publishes them to the hosted game data as one index a language, each character keyed by its id ([hosted game data](/docs/genshin/hosted-game-data)). The panel reads the record of its character in the language the screen is in, so a reader downloads only that one record.
 
 ## Decisions
 
@@ -38,12 +38,11 @@ flowchart LR
 
 | File                                                                       | Role                                                                                         |
 | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/profile/writeProfileText.ts`           | Writes each character's profile chunks and the loader map from the dump                      |
+| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`    | Builds each character's profile in every language from the dump, one index a language        |
 | `scripts/src/services/genshinAssets/profile/toProfileStory.ts`             | A story row's open conditions and its text in one language                                   |
 | `scripts/src/models/genshinAssets/profile/ExcelFetterVoiceRow.ts`          | A voice-over row of the fetters table, read as a story row                                   |
 | `scripts/src/services/genshinAssets/profile/getNamecardIconName.ts`        | The namecard convention and the characters with none                                         |
-| `packages/genshin-world/src/services/profile/ProfileTextLoaderMap.ts`      | The generated loader of each character's chunk, imported on demand                           |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile, its Friendship Level and its namecard's name text id            |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile record, its Friendship Level and its namecard's name text id     |
 | `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.ts` | The unlock rule                                                                              |
 | `packages/genshin-world/src/services/profile/toCharacterProfileEntries.ts` | Turns the stories and voice-overs into the panel's entries, locked ones with the unlock line |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`        | The wrapper that loads the profile for the screen's character                                |

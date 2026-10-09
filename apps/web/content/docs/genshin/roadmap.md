@@ -364,4 +364,4 @@ Not part of the recreation passes: how the game's generated data reaches the bro
 
 ### Next
 
-- [ ] **Hosted game data.** The tables and words genshin-world reads are published to Blob storage and fetched on demand, and the package keeps only a lock of their hashes ([hosted game data](/docs/proposals/genshin/hosted-game-data)). Phase one is the profile and book bodies, with the local mirror their node suites read through; phase two is the other folders and the three synchronous imports they remove. Done when `pnpm -C scripts genshin:data verify` passes against both accounts and the bundle holds no generated record.
+- [ ] **Hosted game data, the remaining datasets.** The other generated tables and words genshin-world bundles are published to Blob storage as the profiles and book bodies are, and the three synchronous imports they remove change with them. Done when `pnpm -C scripts genshin:data verify` passes against both accounts and the bundle holds no generated record ([hosted game data](/docs/proposals/genshin/hosted-game-data)).

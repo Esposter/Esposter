@@ -124,6 +124,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Sound effects](/docs/genshin/sound-effects)               | the game's sounds beside its music, found by a recording and played as our own noise                                                                                                                                                                                                                                                       |
 | [Game data formats](/docs/genshin/game-data-formats)       | how each kind of the game's data reads, and the shortcuts to reach for first                                                                                                                                                                                                                                                               |
 | [Game text](/docs/genshin/game-text)                       | `genshin-text`: every language the game ships, and its strings by the game's own text id                                                                                                                                                                                                                                                   |
+| [Hosted game data](/docs/genshin/hosted-game-data)         | the character profiles and book bodies published to Blob storage and fetched when opened, with only a lock of their hashes committed                                                                                                                                                                                                       |
 
 What is still to build is the [Genshin proposal](/docs/proposals/genshin), and the open work on what is built is the [roadmap](/docs/genshin/roadmap). Decided ideas: [deferred](/docs/genshin/deferred) and [rejected](/docs/genshin/rejected).
 
@@ -165,6 +166,7 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 - Commissions: Mondstadt's daily tasks read from the game's tables, four dealt a day from the areas reached and held back where a quest stands, each claimed for the reward of the rank it was dealt at, Katheryne's bonus on the fourth claim, and Encounter Points claiming one unfinished, with the scene swap, the handbook's tab and the kept day not yet built.
 - The official map's fleeing birds and beasts, White Pigeon, Crimson Fox and Squirrel, stood in Windrise's scene and running from the character in reach, on provisional flight numbers, with no strike, drop or pick-up yet.
 - Fishing's points fitted by region, its fish, rods and pools read from the game's tables, and its rules for a stock's day and night and refill, a draw, a lure's reaction and the reel's tension, with nothing cast or on a screen yet.
+- Hosted game data, first phase: the character profiles and book bodies published to Blob storage by a keyless publisher and read on the Profile tab and in the book reader, so the package no longer bundles their generated JSON.
 
 ## Key files
 

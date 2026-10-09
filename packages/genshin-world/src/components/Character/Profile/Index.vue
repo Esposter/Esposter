@@ -13,6 +13,8 @@ interface Props {
   avatarId: number;
   // The character's total Companionship EXP, from which its Friendship Level is read
   friendshipExp: number;
+  // Where the host serves the game's published data, which the profile's record is read from
+  gameDataBaseUrl: string;
   // The game's words in the reader's language, the unlock line among them
   gameText: GameText;
   // The reader's language, whose text the profile is read in
@@ -21,11 +23,11 @@ interface Props {
   nameText: Readonly<Record<string, string>>;
 }
 
-const { avatarId, friendshipExp, gameText, language, nameText } = defineProps<Props>();
+const { avatarId, friendshipExp, gameDataBaseUrl, gameText, language, nameText } = defineProps<Props>();
 const entries = ref<CharacterMenuProfileEntry[]>([]);
 const namecardName = ref("");
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readCharacterProfile(avatarId, language, friendshipExp)).match(
+getResultAsync(() => readCharacterProfile(gameDataBaseUrl, avatarId, language, friendshipExp)).match(
   ({ friendshipLevel, namecardNameTextId, profileText }) => {
     entries.value = toCharacterProfileEntries(
       [...profileText.stories, ...profileText.voices],
