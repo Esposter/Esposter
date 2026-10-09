@@ -14,7 +14,8 @@ New-Item -ItemType Directory -Force $logs | Out-Null
 while ($true) {
   $running = Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -match "tsc" -and $_.CommandLine -match "--watch" }
   foreach ($package in $Packages) {
-    $directory = Join-Path $root $package
+    # Normalized to the separators a watcher's command line carries, or a live watcher is never matched
+    $directory = [System.IO.Path]::GetFullPath((Join-Path $root $package))
     $name = Split-Path -Leaf $package
     $isAlive = $running | Where-Object { $_.CommandLine -match [regex]::Escape((Join-Path $directory "node_modules")) }
     $log = Join-Path $logs "$name.log"
