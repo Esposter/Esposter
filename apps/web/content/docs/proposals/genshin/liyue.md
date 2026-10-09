@@ -27,7 +27,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
   Liyue Harbor is a set of landmarks on authored stepped streets up the cliff, with its wharves below. Wangshu Inn is a tower on a rock pillar. Qingce Village is terraced paddies of still water around a great tree.
 
-- **Liyue Harbor's witness claims are its own**, built as [Inazuma](/docs/proposals/genshin/inazuma)'s decision on a capital's claims sets out, its buildings found by the region's own code in their mesh names, `Area_Ly_Build_` and `Area_LY_Build_`.
+- **Liyue Harbor claims its own witness**, by the rule [Inazuma](/docs/proposals/genshin/inazuma) settles for a capital; its houses are the meshes the region's code names, `Area_Ly_Build_` and `Area_LY_Build_`.
 - **The Chasm is a layer.** The surface Chasm is a vast open-pit mine with scaffolding, lifts and ruins in the heightfield and its meshes. The underground mines are their own layer in the [world map](/docs/genshin/world-map), dark except for the lamps and the glowing ore.
 - **Chenyu Vale is tea and mist.** It has terraced tea slopes, waterfalls, low mist in the valley, and villages in white walls with dark tiles and stepped gables.
 
@@ -46,12 +46,12 @@ The catalogue holds Liyue's areas as the game names them: Bishui Plain, Minlin, 
 ## Still to build
 
 1. **Liyue Harbor's witness claims, next**, which the roadmap's `liyue-every-renderer` item waits on.
-   - The claims by component first, if `ScreenFixture` has no `witnessComponents` yet, exactly as [Inazuma](/docs/proposals/genshin/inazuma)'s first step specifies them.
+   - If no region has given `ScreenFixture` its `witnessComponents` yet, that comes first, per [Inazuma](/docs/proposals/genshin/inazuma)'s first step.
    - `models/liyue/LiyuePartFamily.ts` (`Ground`, `Buildings`) and `services/liyue/LiyuePartFamilyMeshRegexMap.ts`: `Ground` is `/^BigWorldTerrain_/u` and `Buildings` is `/^Area_(?:Ly|LY)_Build_/u`.
-   - `services/liyue/LiyueUndrawnMeshRegexMap.ts`, one entry per kind of mesh the export holds (`~/Esposter/genshin-parity/extracted/liyue/`): `props` `/^(?:Area_(?:Ly|Common)_Props?|Area_MdProps|Indoor_Ly)_/u`, `lights` `/^Area_(?:Ly|Common)_Light_/u`, `rocks` `/^(?:Area_Ly_Rock_|Stages_MDSRock)/u`, `plants` `/^(?:Area_Ly_Grass_|Stages_(?:Lvy|LYLvy|MdSGrass|SGrass|MdGrass|Deadbush))/u`, `plot` `/^Area_Ly_(?:Stairs|Plot)_/u`, `water` `/^Area_Ly_Water_/u`, `commonBuildings` `/^(?:Area_Common_Build_|Stages_Build)/u`, `dungeon` `/^Level_MdDungeon/u`, `items` `/^Item_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^(?:Eff_|Area_Common_Effect_)/u`. Together with the families they match every mesh today's export names, each once.
-   - The `World/Screen` fixture's `witnessComponents` gains `liyue`, with these two maps as its `witnessFamilies` and `witnessUndrawn`.
-   - Proved by `pnpm -C scripts genshin:parity passes liyue --pass Inventory` printing 0 renderers unclaimed on today's witness. The maps are data, so no unit test is owed.
-2. **The karst and stone-forest generators**, in `packages/genshin-world/src/services/liyue/`, each fitted against its exports when the passes reach its shape.
+   - `services/liyue/LiyueUndrawnMeshRegexMap.ts`, one entry per kind of mesh the export holds (`~/Esposter/genshin-parity/extracted/liyue/`): `props` `/^(?:Area_(?:Ly|Common)_Props?|Area_MdProps|Indoor_Ly)_/u`, `lights` `/^Area_(?:Ly|Common)_Light_/u`, `rocks` `/^(?:Area_Ly_Rock_|Stages_MDSRock)/u`, `plants` `/^(?:Area_Ly_Grass_|Stages_(?:Lvy|LYLvy|MdSGrass|SGrass|MdGrass|Deadbush))/u`, `plot` `/^Area_Ly_(?:Stairs|Plot)_/u`, `water` `/^Area_Ly_Water_/u`, `commonBuildings` `/^(?:Area_Common_Build_|Stages_Build)/u`, `dungeon` `/^Level_MdDungeon/u`, `items` `/^Item_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^(?:Eff_|Area_Common_Effect_)/u`. Between them and the two families, each mesh in today's export is claimed once.
+   - `witnessComponents.liyue` in the `World/Screen` fixture takes these two maps as `witnessFamilies` and `witnessUndrawn`.
+   - Proof: the Inventory pass (`pnpm -C scripts genshin:parity passes liyue --pass Inventory`) reports 0 unclaimed renderers on today's witness; as data, the maps owe no unit test.
+2. **The karst and stone-forest generators**, under `packages/genshin-world/src/services/liyue/`, each fitted to its exports once the passes come to shape.
 
 ## Build order
 

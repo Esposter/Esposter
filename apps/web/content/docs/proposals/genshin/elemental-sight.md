@@ -38,7 +38,7 @@ flowchart TD
 ## Data and measures
 
 - **Read from the wiki:** which ends leave a trail, and that the sight leads toward them.
-- **Measured:** the trail's width and how it fades toward its end, off the recording owed in the roadmap beside the sight's own measures, provisional until then.
+- **Measured:** the trail's width and how it fades toward its end, off the recording owed in the roadmap beside the sight's own measures, each provisional until it lands.
 
 ## Key files
 

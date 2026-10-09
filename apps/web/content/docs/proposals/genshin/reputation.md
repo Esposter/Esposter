@@ -46,7 +46,7 @@ flowchart TD
    - Code: `ScreenKind.Reputation` in `packages/genshin-world/src/models/screen/ScreenKind.ts`, with its title in `ScreenKindGameTextKeyMap`; `packages/genshin-interface/src/components/ReputationScreen/Index.vue` and `Index.fixture.ts` laid out on those frames inside `GameScreen`, as `InventoryScreen` is; and its world wrapper `packages/genshin-world/src/components/Reputation/Screen/Index.vue` with `Index.fixture.ts`, fed `readMondstadtReputation()`'s levels and a `ReputationProgress`.
    - Words: every label by `GameTextKey`, each found with `pnpm -C scripts genshin:text find` and written with `genshin:text write`.
    - Proof: the fixture renders on the parity page; the comparison against the frames is queued for the user's eyes under the roadmap's Awaiting the user, and nothing scores it yet.
-2. **Mondstadt's keeper**, placed in region data, opening the screen and offering its requests from level 2. Waits on the scene group export the other machine is making, which places Hertha.
+2. **Mondstadt's keeper**, placed in region data, opening the screen and offering its requests from level 2. Waits on Hertha's place, which the other machine's scene group export gives.
 3. **Requests**, as world quests the quest reader carries.
 4. **Bounties**, once Elemental Sight draws a trail and the target spawns.
 5. **The discount at the shops**, once the shops page has a screen.

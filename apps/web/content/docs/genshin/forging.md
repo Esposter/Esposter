@@ -24,7 +24,8 @@ flowchart TD
   PAY -->|"yes"| RUN["Started: materials and Mora taken, points counted, the party's talents applied"]
   RUN --> U["Units run one after another, each its seconds, less a talent's share"]
   U --> C{"Done by now, and room in the bag?"}
-  C -->|"yes"| IN["By weight, talent's chance of a copy<br/>Adventure EXP returned, a weapon bagged as one"]
+  C -->|"yes"| IN["By weight, talent's chance of a copy"]
+  IN --> PAID["Adventure EXP returned, a weapon into the bag as a weapon"]
   C -->|"no"| WQ["Waits in the queue"]
 ```
 
