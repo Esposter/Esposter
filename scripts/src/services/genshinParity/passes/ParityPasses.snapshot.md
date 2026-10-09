@@ -61,6 +61,8 @@ the change that moved it, as a bench's report is committed.
 | Pass | Reading | Value | Gate | Unit | Held |
 | :--- | :------ | ----: | ---: | :--- | :--- |
 | Inventory | renderers unclaimed | 0 | 0 | renderers | yes |
+| Layout | Grass | 0 | 0.0200 | m | yes |
+| Layout | Trees | 0 | 0.0200 | m | yes |
 | Layout | windrise-great-oak root | 0.0021 | 0.0500 | m | yes |
 | Layout | windrise-statue-of-the-seven root | 0.0003 | 0.0500 | m | yes |
 | Layout | Statue row across | 0 | 0.0200 | m | yes |
@@ -71,6 +73,8 @@ the change that moved it, as a bench's report is committed.
 | Layout | Paving row up | 0 | 0.0200 | m | yes |
 | Layout | Ground row across | 0 | 0.0200 | m | yes |
 | Layout | Ground row up | 0 | 0.0200 | m | yes |
+| Layout | windrise-statue-day Grass | 0 | 2 | px | yes |
+| Layout | windrise-statue-day Trees | 0 | 2 | px | yes |
 | Camera | windrise-statue-day | 7.0178 | 7.5000 | px | yes |
 | Shape | windrise-statue-day Statue outline | 0.4953 | 1 | px | yes |
 | Shape | windrise-statue-day Statue depth | 0.0017 | 0.0100 | share | yes |
