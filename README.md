@@ -349,7 +349,9 @@ limit refused past its stated deadline, a bottom window with no check, or one wh
 skipped window's replacement at half its cap while it stands where that window did, and a release from `develop` a
 person opened into windows cut from its commits — and a window off the stack's chain of bases is closed and cut again. A
 commit no window can carry past its attempts is parked on `ai/held/<short-sha>` with an issue, and re-landed by the
-collector itself, on the next run at the `main` head it was parked at and then once at every later one. A commit
+collector itself, on the next run at the `main` head it was parked at, then at every later one and after a lengthening
+wait at one that does not move (`RELAND_RETRY_WAITS_MS`), up to its attempts; one the queue still holds is let go for
+the step that parked it to try again under its own caps, each let-go counted among the re-land's attempts. A commit
 carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and
 is parked instead once no cut applies it past its attempts — counted by its patch, which the queue's rewrites keep — or
 at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the openings — unless the
@@ -389,7 +391,7 @@ flowchart LR
   C -->|one reply per finding| W
   C -->|past the attempts: deferred findings, a park,<br/>a red signature, the same collector red repeated| I[Issues]
   C -->|parked: a commit no cut carries| H[(ai/held/*)]
-  H -->|re-landed: next run at the head it was parked at,<br/>then once per main head| Q
+  H -->|re-landed or let go: next run at the head it was parked at,<br/>then each new main head or after a wait| Q
   C -->|Express commits, unverified| M
   M -->|push event, or CI red on its head:<br/>fast-forward develop| C
   C -->|after the walk, repair a red head — unless the queue<br/>passes a job it failed, a transit gap the windows heal| M
