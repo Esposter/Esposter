@@ -1,50 +1,38 @@
 <script setup lang="ts">
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
-import type { LightUniforms } from "genshin-engine";
-import type { DataTexture } from "three";
+import type { ToonNodeMaterial } from "genshin-engine";
 
 import statue from "#src/data/windrise/statue.json";
 import { getStatuePartColor, getStatuePartDetail } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { createStatueGeometries, createToonMaterial } from "genshin-engine";
+import { createStatueGeometries, setObjectSurface } from "genshin-engine";
+import { Mesh } from "three";
 
 interface Props {
   landmark: StatueLandmark;
-  lightUniforms: LightUniforms;
-  rampTexture: DataTexture;
+  // The one material every landmark's part draws in, each in the surface its mesh carries
+  partMaterial: ToonNodeMaterial;
 }
 
-const { landmark, lightUniforms, rampTexture } = defineProps<Props>();
+const { landmark, partMaterial } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
 const groundHeight = getWorldHeight(position.x, position.z);
-// Each part of the statue is drawn in its own colour, as its export mesh's textures paint it
-const statueParts = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => ({
-  geometry,
-  material: createToonMaterial({
-    color: getStatuePartColor(part),
-    detail: getStatuePartDetail(part),
-    lightUniforms,
-    rampTexture,
-  }),
-}));
+// Each part of the statue is drawn in its own colour and detail, as its export mesh's textures paint it
+const statueMeshes = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => {
+  const mesh = new Mesh(geometry, partMaterial);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  setObjectSurface(mesh, getStatuePartColor(part), getStatuePartDetail(part));
+  return mesh;
+});
 
 onUnmounted(() => {
-  for (const { geometry, material } of statueParts) {
-    geometry.dispose();
-    material.dispose();
-  }
+  for (const { geometry } of statueMeshes) geometry.dispose();
 });
 </script>
 
 <template>
-  <TresMesh
-    v-for="({ geometry, material }, index) in statueParts"
-    :key="index"
-    :geometry
-    :material
-    :position="[position.x, groundHeight + heightOffset, position.z]"
-    :rotation-y="rotation"
-    cast-shadow
-    receive-shadow
-  />
+  <TresGroup :position="[position.x, groundHeight + heightOffset, position.z]" :rotation-y="rotation">
+    <primitive v-for="(mesh, index) of statueMeshes" :key="index" :object="mesh" />
+  </TresGroup>
 </template>
