@@ -50,7 +50,7 @@ packages/genshin-world/src/
 2. **Scene tasks**, swapping their area's camp while open. Waits on the area's groups, which the scene group export the other machine is making carries.
 3. **Quest tasks**: a quest's completion reaching its commission, once the quests report a completion.
 4. **The handbook's Commissions tab** and the commissions' words.
-5. **Routing and the other regions**: the claim's items to the wallet, the bag, the Adventure Rank and the [friendship grant](/docs/genshin/companionship), the other regions' pools, and the sources of Encounter Points.
+5. **Routing and the other regions**: a claim's Mora, items and EXP each sent where it is kept, Companionship EXP through the [friendship grant](/docs/genshin/companionship), the other regions' pools, and the sources of Encounter Points.
 
 ## Data and measures
 
