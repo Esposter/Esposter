@@ -31,11 +31,11 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the map's points are read and fitted, the chests are written into their slices by [chests](/docs/genshin/chests), the Oculi into theirs by the [spawned places](/docs/genshin/spawned-places) page, and region data holds what the client's data places, with the enemy camps written into it.
+**Today:** the map's points are read and fitted, the chests are written into their slices by [chests](/docs/genshin/chests), the Oculi into theirs by the [spawned places](/docs/genshin/spawned-places) page, and region data holds what the client's data places, beside one stand-in enemy camp in Mondstadt, written by hand with the enemies.
 
 **Still to add:**
 
-1. **The camps**, for [enemies](/docs/genshin/enemies): each scene group's monsters written into its region's `enemyCamps` as camps, each member with its monster id as `EnemyKindId`, its level at World Level 0 and its place, through the same region-axes step `placeMapPoints` takes. Waits on the scene group export the other machine is making; nothing else on this page is left to build before it. The gathering points are placed by the [gathering](/docs/genshin/gathering) page.
+1. **The camps**, for [enemies](/docs/genshin/enemies): each scene group's monsters written into its region's `enemyCamps` as camps, replacing Mondstadt's stand-in camp, each member with its monster id as `EnemyKindId`, its level at World Level 0 and its place, through the same region-axes step `placeMapPoints` takes. Waits on the scene group export the other machine is making; nothing else on this page is left to build before it. The gathering points are placed by the [gathering](/docs/genshin/gathering) page.
 
 ## Data and measures
 

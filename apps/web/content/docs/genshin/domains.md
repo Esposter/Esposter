@@ -32,7 +32,7 @@ flowchart TD
 - **The days each kind sets.** They sit in DailyDungeonConfigData, which the dump does not hold, so no caller passes them yet. DungeonExcelConfigData and DungeonEntryExcelConfigData are missing from the dump too, so the levels wait on the same reader.
 - **The levels, challenges and scenes.** Waves, time limits, ley line disorders and the domain's own scene wait on those tables and on scene derivation.
 - **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](/docs/genshin/original-resin)). Its reward rows wait on BlossomChestExcelConfigData, which the dump does not hold.
-- **One-time domains and the quest's earlier rank.** The first-clear rewards come with their table rows, and the earlier rank waits on the wiki.
+- **One-time domains and the quests' unlocks.** The first-clear rewards come with their table rows. A kind opens by its rank alone here, and an unlock by a quest, apart from the rank checks, waits on the wiki's quest rows being read.
 
 ## Key files
 
@@ -46,5 +46,5 @@ flowchart TD
 
 ## Sources
 
-- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks and quests, and the weekday schedule. Not yet read; the wiki refused the fetch when this was built.
+- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks, read since they were built and the same three, and the quests and weekday schedule, not yet read.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the Domains of Forgery and Mastery turning at the reset. Not yet read, for the same reason.

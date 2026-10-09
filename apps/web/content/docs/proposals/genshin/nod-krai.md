@@ -66,7 +66,7 @@ The two kits' generators and the region's data file are built, as [Nod-Krai's ki
    - `models/nod-krai/NodKraiPartFamily.ts` (`Ground`, `Buildings`) and `services/nod-krai/NodKraiPartFamilyMeshRegexMap.ts`: `Ground` `/^BigWorldTerrain_/u`, and `Buildings` `/^Area_Ndkl_Build_/u`, the works the dieselpunk kit stands in for.
    - `services/nod-krai/NodKraiUndrawnMeshRegexMap.ts`, from the names under `~/Esposter/genshin-parity/extracted/nod-krai/`: `props` `/^(?:Area_(?:Ndkl|Common)_Prop|Area_Ly_Props?|Area_MdProps)_/u`, `lights` `/^Area_Ndkl_Light_/u`, `plants` `/^Area_Ndkl_Grass_/u`, `rocks` `/^Area_Nt_Rock_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^Eff_/u`; every mesh the export names is matched.
    - The fixture's `witnessComponents` gains `nod-krai` with both.
-   - Proof: the region's Inventory pass (`genshin:parity passes nod-krai --pass Inventory`, from `scripts`) leaves 0 renderers unclaimed.
+   - Proof: the region's Inventory pass (`pnpm -C scripts genshin:parity passes nod-krai --pass Inventory`) leaves 0 renderers unclaimed.
 2. **The kits' fitted values**, as the passes after the inventory read them.
 
 ## Sources
