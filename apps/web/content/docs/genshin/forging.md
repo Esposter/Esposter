@@ -41,7 +41,7 @@ flowchart TD
 
 - **Open.** Recipes open as the [crafting](/docs/genshin/crafting) page sets out. Using a diagram takes it from the bag and records the recipe as learned.
 - **Queues by rank.** One queue opens at first, a second at rank five, a third at ten and a fourth at fifteen, as the forge update table holds them. Splitting one recipe across queues forges it in parallel: each queue holds one order, of up to the recipe's queue size.
-- **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Its units then run one after another, each taking its seconds. Finished units go to the bag as [cooking](/docs/genshin/cooking) describes, and a unit the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
+- **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Original Resin is paid from the wallet, regenerated to the start, as [crafting](/docs/genshin/crafting) pays it, so the Mystic's ten are never taken from the bag. Its units then run one after another, each taking its seconds. Finished units go to the bag as [cooking](/docs/genshin/cooking) describes, and a unit the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
 - **Results.** A unit's result is drawn by the weight each of its recipe's results holds. A recipe with one result always yields it. Adventure EXP is a virtual item, so it is returned to the Adventure Rank rather than put in the bag.
 - **Real time, at any blacksmith.** A queue is kept with when its order began and the seconds each unit takes, so it finishes while the page is closed, and the forge is one state: what is forged is collected at any blacksmith.
 - **A daily cap.** An order's forge points count toward the game day's 400,000 when it is started, Normal, Fine and Mystic together. An order that would pass the cap is refused until the game day turns at four in the morning in the game's time zone, and the day's points restart with it. A weapon counts none.
@@ -61,6 +61,7 @@ flowchart TD
 | `scripts/src/services/genshinAssets/forging/toForgeResults.ts`                    | A row's results: its fixed result, or the random table its drop names |
 | `scripts/src/services/genshinAssets/forging/constants.ts`                         | The drop id that names each random table                              |
 | `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`                 | Each recipe's diagrams, read off the material table's uses            |
+| `scripts/src/services/genshinAssets/items/writeItems.ts`                          | The enhancement ores' items written into the items slice              |
 | `packages/genshin-world/src/models/forging/ForgeProgress.ts`                      | The learned recipes, the queues' orders and the day's forge points    |
 | `packages/genshin-world/src/models/forging/ForgeResult.ts`                        | One result a unit yields, its count and its weight                    |
 | `packages/genshin-world/src/models/forging/ForgeTalent.ts`                        | A forging talent: its kind, its forge type and its ratio              |
@@ -75,7 +76,7 @@ flowchart TD
 | `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`           | The queues an Adventure Rank opens                                    |
 | `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`                 | A recipe learned from a diagram in the bag                            |
 | `packages/genshin-world/src/generated/forging/recipes.json`                       | The blacksmith's recipes, a few dozen of them                         |
-| `packages/genshin-text/src/models/GameTextKey.ts`                                 | The three enhancement ores' refusal words                             |
+| `packages/genshin-text/src/models/GameTextKey.ts`                                 | The enhancement ores' refusal words and item names                    |
 
 ## Notes
 
@@ -85,7 +86,8 @@ flowchart TD
 - **The talents' parameters are read as the game's own.** Each talent's table row holds a first parameter, a second and a third. The first is the forge type a talent applies to, one for the enhancement ores and the weapon's type for the refund talents, read off the same field as the claymore, polearm and bow types (5, 7 and 4). The second is the chance in ten thousandths for the extra result, two thousand, and the ratio for the others. A refund's chance of ten thousand is certain, so it is applied each time.
 - **The Mystic's drop id names no table in the dump.** The row's drop id, 208001500, is in neither the dump nor the repository's other tables, so the writer maps it to the forge random table whose Mystic Enhancement Ore count is the row's own, six, which is the table 20001. The split between the two results is the table's weights. A game check of that split is not owed; it is read off the table.
 - **The Adventure EXP outcome is returned, not granted.** The collection returns the EXP a unit yields, and the Adventure Rank that takes it is not called yet.
-- **Mystic result definitions are not in the items slice.** The bag takes a result by its item definition, and the Mystic ore's and the Magical Crystal Chunk's definitions are not written to the items slice yet, so a screen that forges the Mystic supplies them.
+- **The enhancement ores' items are in the items slice.** The bag takes a result by its item definition, so `pnpm -C scripts genshin:assets items` writes every item the enhancement recipes name, the Mystic ore and the Magical Crystal Chunk among them, into the items slice beside the drop and expedition items.
+- **The weapons' items are not, yet.** A weapon's billets and ores name text ids the game text has no key for, and a weapon is in the weapon table, not the material table. A weapon unit's result therefore has no definition in the bag, and [collecting](/docs/genshin/forging) it throws until the weapons' definitions are written.
 
 ## Sources
 
