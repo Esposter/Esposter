@@ -1,6 +1,7 @@
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
+import { CycleBudgetSpentError } from "#src/models/coderabbit/collect/CycleBudgetSpentError";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { SessionUnstartedError } from "#src/models/coderabbit/collect/SessionUnstartedError";
@@ -93,20 +94,21 @@ await runMain(
         });
       }
 
-      // A counted attempt that failed, a session that never started, or GitHub answering a server error, ends the run
-      // Idle and wakes the next one rather than red: the retry is owed and automatic, and red is kept for what only a
-      // Person can restart (docs: Infra/review-collector). The session that never started is the one path every step
-      // Launching one takes — sync, reshape, fold, drain, repair, the merge probe and any later step — so none of them
-      // Branches on it: nobody made an attempt, and the launch waits out the outage's delay. A limit Claude Code hit is
-      // Marked on the newest release with the instant it lifts, which every run reads to hold the merge and the port
-      // Until then, and the run wakes the cycle at that instant: the sessions that push the queue draw on the same
+      // A counted attempt that failed, a session that never started or that the run's budget cannot hold, or GitHub
+      // Answering a server error, ends the run idle and wakes the next one rather than red: the retry is owed and
+      // Automatic, and red is kept for what only a person can restart (docs: Infra/review-collector). The session that
+      // Never started is the one path every step launching one takes — sync, reshape, fold, drain, repair, the merge
+      // Probe and any later step — so none of them branches on it: nobody made an attempt, and the launch waits out the
+      // Outage's delay. A session past the budget waits a minute, for the next run's fresh budget. A limit Claude Code
+      // Hit is marked on the newest release with the instant it lifts, which every run reads to hold the merge and the
+      // Port until then, and the run wakes the cycle at that instant: the sessions that push the queue draw on the same
       // Account, so no push may come to wake it
       const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
         runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
       ).match(
         (outcome) => outcome,
         (error): CycleOutcome => {
-          if (error instanceof AttemptFailedError)
+          if (error instanceof AttemptFailedError || error instanceof CycleBudgetSpentError)
             return {
               kind: CycleOutcomeKind.Idle,
               reason: error.message,

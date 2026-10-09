@@ -1,5 +1,6 @@
 import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import { SITE_NAME } from "@esposter/shared";
 
 export const MAIN_BRANCH = "main";
 
@@ -175,6 +176,14 @@ export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
 // One repair attempt's deadline, covering the regenerators, their verify, the session and the repair step's verify
 export const REPAIR_ATTEMPT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
+// How long one run may spend from its job's start before it launches no further session: a session that could end
+// Past it ends the run idle with the minute's retrigger instead (`assertCycleBudget`). A run its job's timeout kills
+// Writes no retrigger, so that timeout sits above this plus the longest step that launches one
+export const CYCLE_BUDGET_MS: number = Temporal.Duration.from({ minutes: 100 }).total("milliseconds");
+// The job's start in epoch milliseconds, which the job's first step records for every step after it. Unset outside the
+// Job, where no timeout ends the run, so nothing is budgeted there
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
+export const JOB_STARTED_AT_ENVIRONMENT_VARIABLE: string = `${SITE_NAME.toUpperCase()}_COLLECTOR_JOB_STARTED_AT_MS`;
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,

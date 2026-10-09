@@ -28,7 +28,9 @@ jobs:
       (github.event_name != 'workflow_run' ||
       (github.event.workflow_run.head_repository.full_name == github.repository && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'failure'))
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # Above the cycle's budget plus its longest step that launches a session (`assertCycleBudget.test.ts`): no such
+    # step starts that could end past the budget, and a run this kills writes no retrigger, which the guard answers
+    timeout-minutes: 190
     permissions:
       contents: read
     # A fire waits for the one ahead and re-reads the remote, and GitHub holds one pending run per group — so a
@@ -39,8 +41,18 @@ jobs:
       group: review-collector
       cancel-in-progress: false
     outputs:
+      isStarted: ${{ steps.start.outputs.isStarted }}
       retriggerDelaySeconds: ${{ steps.collect.outputs.retriggerDelaySeconds }}
     steps:
+      # First, so the setup below is spent from the cycle's budget too; `GITHUB_ENV` reaches only the steps after it.
+      # The output tells the guard this job ran, since a pending run another event superseded is cancelled before any
+      # step and owes no wake
+      - name: ⏱️ Record the job's start
+        id: start
+        run: |
+          echo "ESPOSTER_COLLECTOR_JOB_STARTED_AT_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
+          echo "isStarted=true" >> "$GITHUB_OUTPUT"
+
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -133,6 +145,32 @@ jobs:
       # The dispatch's ref only picks which copy of the caller's triggers runs — the caller pins this file. Asked
       # until it lands, within the job's timeout: a retrigger an outage set is the one most likely to meet it still
       # down, and a dispatch lost here is a pipeline idle until the next push
+      - name: ♻️ Run the cycle again
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: until gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue; do sleep 60; done
+
+  # A run that failed or was killed writes no retrigger, so nothing would wake the cycle until an unrelated event: this
+  # wakes it five minutes later, a red the platform caused most likely clear by then and one the collector's own code
+  # causes retried at a pace that costs a public repository nothing. A cancelled run is woken only once it started:
+  # one superseded while pending is a run the newer one in its group already carries
+  guard:
+    name: Guard
+    needs: collect
+    if: always() && (needs.collect.result == 'failure' || (needs.collect.result == 'cancelled' && needs.collect.outputs.isStarted == 'true'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: write
+    # The retrigger's group: one wake waits at a time, and the newest run's — a guard or a deadline — replaces the
+    # waiting one, so a streak of red runs never multiplies its wakes
+    concurrency:
+      group: review-collector-retrigger
+      cancel-in-progress: true
+    steps:
+      - name: ⏳ Wait before waking
+        run: sleep 300
+
       - name: ♻️ Run the cycle again
         env:
           GH_TOKEN: ${{ github.token }}

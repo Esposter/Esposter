@@ -3,6 +3,7 @@ import type { SessionRun } from "#src/models/coderabbit/collect/SessionRun";
 
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { SessionUnstartedError } from "#src/models/coderabbit/collect/SessionUnstartedError";
+import { assertCycleBudget } from "#src/services/coderabbit/collect/assertCycleBudget";
 import { CLAUDE_CODE_PACKAGE, SESSION_TIMEOUT_MS } from "#src/services/coderabbit/collect/constants";
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
 import { getSessionLimitResetMs } from "#src/services/coderabbit/collect/getSessionLimitResetMs";
@@ -23,9 +24,13 @@ const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
 // The one launcher every role goes through, its model handed in rather than fixed here (`SessionRoleModelMap`).
 // Stdout is streamed rather than inherited: each event is logged as it lands, and the sentence Claude Code
 // Prints on its way out — parsed off its own lines, never the model's narration — is what separates a session
-// That failed from one Claude Code refused. A limit and a launch that wrote nothing throw rather than return: no step
-// Can go on without a session, so the pass ends where it stood and the entry point decides when the next one runs.
+// That failed from one Claude Code refused. A limit, a launch that wrote nothing and a session the run's budget cannot
+// Hold throw rather than return: no step can go on without a session, so the pass ends where it stood and the entry
+// Point decides when the next one runs.
 export const runSession = async ({ cwd, model, prompt, signal }: SessionInput): Promise<SessionRun> => {
+  // A caller handing its own sooner deadline budgets it itself: the repair before its attempt, and the queue push's
+  // Carry runs in no job
+  if (signal === undefined) assertCycleBudget(SESSION_TIMEOUT_MS);
   const environment = Object.fromEntries(
     Object.keys(process.env)
       .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_REGEX.test(key))
