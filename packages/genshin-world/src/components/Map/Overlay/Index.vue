@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -9,12 +10,16 @@ import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import MapJumpList from "#src/components/Map/JumpList/Index.vue";
 import MapPointer from "#src/components/Map/Pointer/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
+import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
+import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import {
   MAP_LABEL_OUTLINE_SHARE,
   MAP_LABEL_SHARE,
   MAP_OVERLAY_MARK_SHARE,
+  MAP_PROGRESS_OFFSET_SHARE,
+  MAP_PROGRESS_SHARE,
   MAP_VIEW_METRES,
 } from "#src/services/map/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
@@ -24,6 +29,8 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   camera: MapCamera;
+  // The areas whose exploration the map counts, each area's progress shown on its name once the area is filled in
+  explorationAreas: ExplorationArea[];
   // The game's words in the reader's language
   gameText: GameText;
   landmarks: Landmark[];
@@ -31,13 +38,31 @@ interface Props {
   wallet: Wallet;
 }
 
-const { camera, gameText, landmarks, wallet } = defineProps<Props>();
+const { camera, explorationAreas, gameText, landmarks, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
 // The open map is centred on the player, the drawn metres across its width at the zoom slider's default
 const view = computed(() => ({ x: camera.x - MAP_VIEW_METRES / 2, z: camera.z - MAP_VIEW_METRES / 2 }));
 const markRadius = MAP_VIEW_METRES * MAP_OVERLAY_MARK_SHARE;
-const areaLabels = computed(() => computeAreaLabels(landmarks));
+// Each counted area's progress as the unlocked landmarks leave it, keyed by its catalogue area
+const explorationProgressMap = computed(
+  () =>
+    new Map(
+      explorationAreas.map((area) => [
+        area.areaId,
+        computeExplorationProgress(area, computeExploredDoingIds(area, landmarks)),
+      ]),
+    ),
+);
+const areaLabels = computed(() =>
+  computeAreaLabels(landmarks).map(({ id, name, x, z }) => ({
+    id,
+    name,
+    progress: explorationProgressMap.value.get(id),
+    x,
+    z,
+  })),
+);
 const originalResin = computed(() => regenerateOriginalResin(wallet, Temporal.Now.instant())[Currency.OriginalResin]);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
@@ -57,17 +82,27 @@ onMounted(() => {
       aria-hidden="true"
     >
       <MapDrawing :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
-      <text
-        v-for="{ id, name, x, z } of areaLabels"
-        :key="id"
-        class="area-name"
-        :font-size="MAP_VIEW_METRES * MAP_LABEL_SHARE"
-        :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
-        :x
-        :y="z"
-      >
-        {{ name }}
-      </text>
+      <template v-for="{ id, name, progress, x, z } of areaLabels" :key="id">
+        <text
+          class="area-name"
+          :font-size="MAP_VIEW_METRES * MAP_LABEL_SHARE"
+          :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
+          :x
+          :y="z"
+        >
+          {{ name }}
+        </text>
+        <text
+          v-if="progress"
+          class="area-progress"
+          :font-size="MAP_VIEW_METRES * MAP_PROGRESS_SHARE"
+          :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
+          :x
+          :y="z + MAP_VIEW_METRES * MAP_PROGRESS_OFFSET_SHARE"
+        >
+          {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
+        </text>
+      </template>
       <MapPointer :size="markRadius" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
     </svg>
     <svg class="zoom" viewBox="0 0 56 270" aria-hidden="true">
@@ -114,7 +149,8 @@ onMounted(() => {
   height: 100%;
 }
 
-.area-name {
+.area-name,
+.area-progress {
   fill: #ece5d7;
   paint-order: stroke;
   stroke: rgb(0 0 0 / 0.5);

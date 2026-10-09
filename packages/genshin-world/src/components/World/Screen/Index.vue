@@ -35,6 +35,7 @@ import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
+import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -276,6 +277,8 @@ const talkMap = new Map(quests.flatMap(({ talks }) => talks.map((questTalk) => [
 // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
 // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
+// The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
+const explorationAreas = useExplorationAreas();
 const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(new Set());
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
@@ -536,6 +539,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Map]>
         <MapOverlay
           :camera="mapCamera"
+          :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
           :wallet

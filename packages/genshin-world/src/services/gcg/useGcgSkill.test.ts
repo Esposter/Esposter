@@ -1,0 +1,109 @@
+import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgSideState } from "#src/models/gcg/GcgSideState";
+import type { GcgSkill } from "#src/models/gcg/GcgSkill";
+
+import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
+import { describe, expect, test } from "vitest";
+
+const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSideState => ({
+  activeIndex: 0,
+  characters: [character],
+  dice,
+  drawPile: [],
+  hand: [],
+  hasDeclaredEnd: false,
+  hasPrepared: true,
+  hasRolled: true,
+  isReplacementPending: false,
+});
+
+const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
+  actingSideIndex: 0,
+  firstSideIndex: 0,
+  nextFirstSideIndex: 0,
+  outcome: undefined,
+  phase: GcgPhase.Action,
+  round: 1,
+  sides: [attacker, defender],
+  winnerSideIndex: undefined,
+});
+
+describe(useGcgSkill, () => {
+  const MAX_ENERGY = 3;
+  const NORMAL_ATTACK_ID = 13_011;
+  const BURST_ID = 13_013;
+  const normalAttack: GcgSkill = {
+    costs: [{ count: 1, element: Element.Pyro, kind: GcgCostKind.Dice }],
+    damage: { damageType: GcgDamageKind.Physical, value: 1 },
+    energyGain: 1,
+    id: NORMAL_ATTACK_ID,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const burst: GcgSkill = {
+    costs: [{ count: 2, kind: GcgCostKind.Energy }],
+    damage: { damageType: Element.Pyro, value: 3 },
+    energyGain: 0,
+    id: BURST_ID,
+    kind: GcgSkillKind.ElementalBurst,
+  };
+  const createCharacterState = (skills: GcgSkill[]): GcgCharacterState => ({
+    aura: GcgAura.None,
+    character: { element: Element.Pyro, hp: 10, id: 1, maxEnergy: MAX_ENERGY, skills },
+    energy: 0,
+    hp: 10,
+    isFrozen: false,
+    shield: 0,
+  });
+
+  test("should pay the skill's dice, gain its energy, and pass the turn to the other side", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const attacker = createSideState(createCharacterState([normalAttack]), [Element.Pyro, Element.Hydro]);
+    const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
+    const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0], rule);
+
+    expect({
+      actingSideIndex: duel.actingSideIndex,
+      dice: attacker.dice,
+      energy: attacker.characters[0]?.energy,
+      result,
+    }).toStrictEqual({ actingSideIndex: 1, dice: [Element.Hydro], energy: 1, result: GcgActionResult.Done });
+  });
+
+  test("should refuse a skill its active character cannot use while Frozen, leaving the duel as it was", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const character = createCharacterState([normalAttack]);
+    character.isFrozen = true;
+    const attacker = createSideState(character, [Element.Pyro]);
+    const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
+
+    expect({ dice: attacker.dice, result: useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0], rule) }).toStrictEqual({
+      dice: [Element.Pyro],
+      result: GcgActionResult.Frozen,
+    });
+  });
+
+  test("should refuse a burst its character has not the energy for", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const character = createCharacterState([burst]);
+    character.energy = 1;
+    const attacker = createSideState(character, []);
+    const duel = createDuel(attacker, createSideState(createCharacterState([]), []));
+
+    expect(useGcgSkill(duel, 0, BURST_ID, [], rule)).toBe(GcgActionResult.Unpayable);
+  });
+});

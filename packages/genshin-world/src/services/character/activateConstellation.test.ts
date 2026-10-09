@@ -10,6 +10,7 @@ describe(activateConstellation, () => {
     artifacts: [],
     ascension: 0,
     constellationCount: 2,
+    friendshipExp: 0,
     id: 1,
     level: 1,
     stellaFortunaCount: 1,
