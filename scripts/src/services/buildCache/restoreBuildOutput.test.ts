@@ -6,11 +6,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-const BARREL_PATH = "src/index.ts";
-const BARREL_CONTENT = "export * from './a';\n";
-const DIST_CONTENT = "export {};\n";
-
 describe(restoreBuildOutput, () => {
+  const BARREL_PATH = "src/index.ts";
+  const BARREL_CONTENT = "export * from './a';\n";
+  const DIST_CONTENT = "export {};\n";
+
   let temporaryDirectory: string;
   const packageDirectory = () => join(temporaryDirectory, "package");
   const keyDirectory = () => join(temporaryDirectory, "cache", "key");

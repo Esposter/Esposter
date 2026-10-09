@@ -9,28 +9,28 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const ORE_ID = 104_011;
-const MORA_ID = 202;
-const ORE_STACK_LIMIT = 99_999;
-
-const createWeapon = (id: number, rarity: number, destroyRule: DestroyRule): InventoryItem => ({
-  definition: {
-    category: ItemCategory.Weapon,
-    destroyReturnMaterial: destroyRule === DestroyRule.ReturnMaterial ? ORE_ID : 0,
-    destroyReturnMaterialCount: destroyRule === DestroyRule.ReturnMaterial ? rarity : 0,
-    destroyRule,
-    id: 11_101,
-    name: "",
-    rank: 0,
-    rarity,
-    stackLimit: 1,
-  },
-  id,
-  level: 1,
-  quantity: 1,
-});
-
 describe(destroyInventoryItems, () => {
+  const ORE_ID = 104_011;
+  const MORA_ID = 202;
+  const ORE_STACK_LIMIT = 99_999;
+
+  const createWeapon = (id: number, rarity: number, destroyRule: DestroyRule): InventoryItem => ({
+    definition: {
+      category: ItemCategory.Weapon,
+      destroyReturnMaterial: destroyRule === DestroyRule.ReturnMaterial ? ORE_ID : 0,
+      destroyReturnMaterialCount: destroyRule === DestroyRule.ReturnMaterial ? rarity : 0,
+      destroyRule,
+      id: 11_101,
+      name: "",
+      rank: 0,
+      rarity,
+      stackLimit: 1,
+    },
+    id,
+    level: 1,
+    quantity: 1,
+  });
+
   test("destroys a 3-star weapon and returns its enhancement ore into the bag", () => {
     expect.hasAssertions();
 
