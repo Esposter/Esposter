@@ -9,9 +9,11 @@ import {
   COLLECTOR_SOURCE_PATH,
   DRY_RUN_WORKTREE_PREFIX,
   OUTAGE_RETRY_DELAY_SECONDS,
+  RETRIGGER_BUFFER_MS,
   RETRIGGER_DELAY_OUTPUT,
 } from "#src/services/coderabbit/collect/constants";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
+import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { postSessionLimited } from "#src/services/coderabbit/collect/postSessionLimited";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -88,7 +90,8 @@ await runMain(
       // A counted attempt that failed, or GitHub answering a server error, ends the run idle and wakes the next
       // One rather than red: the retry is owed and automatic, and red is kept for what only a person can restart
       // (docs: Infra/review-collector). A limit Claude Code hit is marked on the newest release with the instant it
-      // Lifts, which every run reads to hold the merge and the port until then
+      // Lifts, which every run reads to hold the merge and the port until then, and the run wakes the cycle at that
+      // Instant: the sessions that push the queue draw on the same account, so no push may come to wake it
       const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
         runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
       ).match(
@@ -103,7 +106,11 @@ await runMain(
           else if (error instanceof SessionLimitedError) {
             const newestWindow = getNewestWindowPullRequest(readWindowPullRequests(WindowPullRequestListState.All));
             if (newestWindow && !isDryRun) postSessionLimited(newestWindow.number, error.limitResetAtMs);
-            return { kind: CycleOutcomeKind.Idle, reason: error.message };
+            return {
+              kind: CycleOutcomeKind.Idle,
+              reason: error.message,
+              retriggerDelaySeconds: getRetriggerDelaySeconds(error.limitResetAtMs - Date.now() + RETRIGGER_BUFFER_MS),
+            };
           } else if (GITHUB_OUTAGE_REGEX.test(error.message))
             return {
               kind: CycleOutcomeKind.Idle,

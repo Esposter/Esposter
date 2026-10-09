@@ -38,7 +38,7 @@ Every trigger runs the same cycle. Which event it was is irrelevant, because the
 flowchart TD
   A[ai/queue pushed<br/>by a working session] --> C
   F[Review submitted or a window closed<br/>on a review/ branch] --> C
-  D[Manual dispatch] --> C
+  D[Manual dispatch, or the retrigger<br/>at an instant a run stated] --> C
   MN[main pushed<br/>a window merged or a bump landed] --> C
   CM[Bot comment<br/>answering a retrigger] --> C
   CI[CI red on main<br/>the repair's event] --> C
@@ -47,7 +47,7 @@ flowchart TD
   RS -->|yes| FF[Fast-forward develop to main]
   RS -->|no| LM
   FF --> LM{Claude Code's limit<br/>marked and not lifted}
-  LM -->|yes| LX[Exit — nothing merges or ports<br/>until a session can follow it]
+  LM -->|yes| LX[Exit, waking at the reset — nothing merges<br/>or ports until a session can follow it]
   LM -->|no| E{Any owed commit claims<br/>nothing to review}
   E -->|yes| EP[Cherry-pick onto main<br/>push unverified, exit — no window spent]
   E -->|no| MR{main red on CI}
@@ -61,7 +61,8 @@ flowchart TD
   BW -->|no window open| SY
   SY[Rewrite ai/queue onto develop or the fixes] --> OB{Budget left, stacking allowed,<br/>something owed}
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
-  OB -->|no| X[Exit]
+  OB -->|no, the hourly ceiling| XC[Exit, waking as the hour's<br/>oldest opening ages out]
+  OB -->|no, anything else| X[Exit]
 ```
 
 Three properties make the picture safe to fire from anything:
@@ -72,7 +73,7 @@ Three properties make the picture safe to fire from anything:
 
 ## Parameters
 
-The review budget reads two figures off the CodeRabbit plan the repository is on, both in one file. The file cap bounds each window. The plan's hourly review figure bounds how many window pull requests may be open at once and how many may open in an hour. Both sit beside the plan line in `scripts/src/services/coderabbit/shared/constants.ts`, so a trial starting or ending is one line naming the plan, live on the first cycle after it reaches `ai/queue`. No prose restates either figure as a number. There is no further knob: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, the window branch prefix, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute a review completes, and a rate limit is waited out to the deadline the bot states.
+The review budget reads two figures off the CodeRabbit plan the repository is on, both in one file. The file cap bounds each window. The plan's hourly review figure bounds how many window pull requests may be open at once and how many may open in an hour. Both sit beside the plan line in `scripts/src/services/coderabbit/shared/constants.ts`, so a trial starting or ending is one line naming the plan, live on the first cycle after it reaches `ai/queue`. No prose restates either figure as a number. There is no further knob: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, the window branch prefix, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute a review completes, and a rate limit is waited out to the deadline the bot states, the hourly ceiling to the moment its oldest opening ages out.
 
 ## Key files
 

@@ -4,6 +4,7 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
+import { getSoonestDelay } from "#src/services/coderabbit/collect/getSoonestDelay";
 import { mergeBottomWindow } from "#src/services/coderabbit/collect/mergeBottomWindow";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readPullRequestHeadSha } from "#src/services/coderabbit/collect/readPullRequestHeadSha";
@@ -99,10 +100,4 @@ export const walkWindowStack = async ({
 
   if (heldReason) throw new InvalidOperationError(Operation.Read, "coderabbit", heldReason);
   return { blockReasons, drainedPullRequests, retriggerDelaySeconds };
-};
-
-const getSoonestDelay = (current: number | undefined, next: number | undefined): number | undefined => {
-  if (current === undefined) return next;
-  else if (next === undefined) return current;
-  return Math.min(current, next);
 };

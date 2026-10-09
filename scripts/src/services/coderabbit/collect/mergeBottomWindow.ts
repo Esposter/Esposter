@@ -7,6 +7,7 @@ import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWin
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   MAIN_BRANCH,
+  OUTAGE_RETRY_DELAY_SECONDS,
   SESSION_PROBE_PROMPT,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
@@ -59,6 +60,7 @@ export const mergeBottomWindow = async ({
           kind: CycleOutcomeKind.Idle,
           reason: "no session could start — the window waits for one that can drain its findings",
         },
+        retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
         reviewFixesSha,
       };
     else if (!isEnded)
@@ -103,7 +105,12 @@ export const mergeBottomWindow = async ({
   });
   // A retarget that did not land holds the walk once the drain has run: the window above is still on this branch, which
   // The next run retargets before it reads the stack, so nothing is merged or cut over it first
-  if (drain.outcome) return { outcome: drain.outcome, reviewFixesSha: drain.reviewFixesSha };
+  if (drain.outcome)
+    return {
+      outcome: drain.outcome,
+      retriggerDelaySeconds: drain.outcome.retriggerDelaySeconds,
+      reviewFixesSha: drain.reviewFixesSha,
+    };
   else if (next && !isRetargeted)
     return {
       outcome: {

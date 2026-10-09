@@ -27,6 +27,7 @@ import {
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
+  OUTAGE_RETRY_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
   QUEUE_BRANCH,
@@ -34,9 +35,12 @@ import {
   REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_COMMANDS,
   RESHAPE_FAILED_MARKER,
+  RETRIGGER_BUFFER_MS,
+  RETRIGGER_SLEEP_CAP_MS,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SESSION_LIMITED_MARKER,
+  WINDOW_OPENING_WINDOW_MS,
   WINDOW_TITLE,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
@@ -46,11 +50,11 @@ import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrai
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { PROBE_COMMENT, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { PROBE_COMMENT, REVIEW_FILE_CAP, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
   readCheckStatus: vi.fn<typeof baseReadCheckStatus>(),
@@ -177,6 +181,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     id: 0,
     updated_at: "",
     user: { login: viewerLogin },
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // The stroke spends nothing, so the pass goes on against the develop it made: a push to develop fires no run,
@@ -913,13 +921,17 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([getWindowPullRequest(WindowPullRequestState.Merged)]);
-    const drainOutcome = { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" };
+    const drainOutcome = {
+      kind: CycleOutcomeKind.Idle,
+      reason: "the drain could not start — the findings stay open",
+      retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
+    };
     runDrainStep.mockResolvedValue({ outcome: drainOutcome, reviewFixesSha: undefined } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(runDrainStep).toHaveBeenCalledTimes(1);
     expect(runDrainStep.mock.calls[0]?.[0]?.pullRequest).toBe(pullRequest);
-    expect(outcome).toStrictEqual({ ...drainOutcome, retriggerDelaySeconds: undefined, targetSha: undefined });
+    expect(outcome).toStrictEqual(drainOutcome);
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
@@ -954,7 +966,20 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
-  test("leaves a reviewed window open when its session probe exits non-zero", async () => {
+  // A launcher that wrote nothing is retried as an outage is, a probe that tried as a failed attempt is: neither lifts
+  // With an event behind it
+  test.each([
+    [
+      "no session could start — the window waits for one that can drain its findings",
+      false,
+      OUTAGE_RETRY_DELAY_SECONDS,
+    ],
+    [
+      "the session probe exited non-zero — the window waits for a session that can drain its findings",
+      true,
+      ATTEMPT_RETRY_DELAY_SECONDS,
+    ],
+  ])("leaves a reviewed window open and wakes the cycle when %s", async (reason, isStarted, retriggerDelaySeconds) => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -962,12 +987,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: false, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: false, isStarted });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "the session probe exited non-zero — the window waits for a session that can drain its findings",
-      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
+      reason,
+      retriggerDelaySeconds,
       targetSha: undefined,
     });
     expect(getPrCalls("merge")).toHaveLength(0);
@@ -984,12 +1009,43 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     readCheckStatus.mockReturnValue(completedCheck);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
-    expect(outcome.reason).toBe(
-      `the session is limited until ${resetAt} — nothing merges or ports until a session can follow it`,
-    );
+    // The reset is an hour and its buffer out, so the wake is one longest sleep, relayed to what is left
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `the session is limited until ${resetAt} — nothing merges or ports until a session can follow it`,
+      retriggerDelaySeconds: Temporal.Duration.from({ milliseconds: RETRIGGER_SLEEP_CAP_MS }).total("seconds"),
+      targetSha: undefined,
+    });
     expect(runSession).not.toHaveBeenCalled();
     expect(getPrCalls("merge")).toHaveLength(0);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  // The ceiling turns over on the clock and no event reports it, so the run that finds every opening of the hour spent
+  // Wakes the cycle once the oldest of them ages out
+  test("wakes the cycle when the hourly ceiling turns over while it holds the queue's next window", async () => {
+    expect.hasAssertions();
+
+    const nowMs = Temporal.Duration.from({ minutes: 50 }).total("milliseconds");
+    vi.useFakeTimers({ now: nowMs, toFake: ["Date"] });
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(
+      Array.from({ length: REVIEWS_PER_HOUR }, (_value, index) =>
+        getWindowPullRequest(WindowPullRequestState.Merged, index),
+      ),
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: Temporal.Duration.from({
+        milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
+      }).total("seconds"),
+      targetSha: undefined,
+    });
+    expect(getPrCalls("create")).toHaveLength(0);
   });
 
   // A named pull request picks which merged window to drain when none is open, never a window past an open one:

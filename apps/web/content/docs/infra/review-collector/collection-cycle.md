@@ -54,7 +54,8 @@ flowchart TD
   ST -->|pass, incremental pass declined| SK{The full review read the head}
   SK -->|no, commits landed after it| X2
   SK -->|yes| PB{A session starts}
-  PB -->|no, the account's limit| X3[Mark the instant it lifts, exit — the window stays open]
+  PB -->|no, the account's limit| X3[Mark the instant it lifts, exit and wake then — the window stays open]
+  PB -->|no, nothing launched| XL[Exit, retried five minutes later — the window stays open]
   PB -->|started, exited non-zero| X4[Exit, retried a minute later — the window stays open]
   PB -->|yes| FC{main conflicts with the bottom window}
   FC -->|no| MG[Merge it as administrator<br/>at the head the review read]
@@ -158,6 +159,8 @@ After the walk, the sync and the port, a run opens windows one at a time, cuttin
 
 The decision is a pure count, `getWindowOpenCount`, that returns how many more may open; the loop also stops when a cut comes out empty. The figures are the plan's, read from the constants file (see [key files](#key-files)), never restated here. Each window is cut exactly as the port cuts it, measured against the file cap, and the cut is pushed to its own branch — `review/<n>`, the number one above the highest any window pull request has carried, open or closed — through the same compare-and-swap as every collector push. `develop` is then fast-forwarded to that head, so the next cut is built on it and carries the window below. The window's pull request is opened with its base at the top window's branch, or at `main` when none is open, and titled with its number. Its one review reads the window's own diff against that base.
 
+**The ceiling turning over wakes the cycle.** It counts by creation time, so a slot comes back on the clock with no push or review to report it, and a queue that still owes commits would wait on a push that may never come. A run that ends with the hour's openings spent and fewer windows open than the plan's figure sets the [retrigger](/docs/infra/review-collector/runner) to the moment the oldest of them ages out of the hour, or to a rate limit's deadline when that comes first.
+
 **The guard.** CodeRabbit reviews a pull request by itself only when its base is `main` or a base the `.coderabbit.yaml` it reads lists under `reviews.auto_review.base_branches`. A window stacked on the window below it has that window's branch as its base, so the list has to name the window branches. `.coderabbit.yaml` carries that entry, with a comment saying why. The guard reads the copy of the file on the base a window is cut over (`git show origin/<base>:.coderabbit.yaml`): the top window's branch, or `main` when none is open. It is asked again before each cut, and a window stacks only when one of that copy's patterns matches the base's branch name. A window's copy comes from `develop`, which follows `main`, so until `main` carries the list the windows open one at a time, as they did before there was a stack.
 
 ## Push, reply, open
@@ -176,6 +179,7 @@ The pull request is opened once its branch is on the remote. A run that pushed a
 | `scripts/src/services/coderabbit/collect/getGateDecision.ts`               | the gate — one window's check read as running, complete, rate limited, skipped or missing                                             |
 | `scripts/src/services/coderabbit/collect/settleRateLimit.ts`               | a rate limit — the stated deadline slept out, then the review asked for once per block                                                |
 | `scripts/src/services/coderabbit/collect/settleSkippedReview.ts`           | a skip — the review asked for once per window, and held for a person once the bot skips again                                         |
+| `scripts/src/services/coderabbit/collect/getOpeningWaitMs.ts`              | how long until the hourly ceiling gives a slot back — the oldest opening of the hour aging out                                        |
 | `scripts/src/services/coderabbit/collect/getWindowOpenCount.ts`            | how many more windows the budget lets open, from the open count, the hourly count and the guard                                       |
 | `scripts/src/services/coderabbit/collect/checkIsStackingAllowed.ts`        | the guard — whether the base's `.coderabbit.yaml` lists a pattern matching the base's branch: the top window's, or `main`'s           |
 | `scripts/src/services/coderabbit/collect/pushBranch.ts`                    | the compare-and-swap every window and `develop` push goes through                                                                     |

@@ -4,8 +4,8 @@ import type { RateLimitSettlement } from "#src/models/coderabbit/collect/RateLim
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
-import { RETRIGGER_SLEEP_CAP_MS } from "#src/services/coderabbit/collect/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
+import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
@@ -20,10 +20,7 @@ export const settleRateLimit = ({
 }: RateLimitInput): RateLimitSettlement => {
   const waitMs = getRateLimitWaitMs(issueComments, Date.now());
   if (waitMs) {
-    // A deadline past one job's longest sleep is slept in relays, the dispatched run reading what is left
-    const retriggerDelaySeconds = Math.ceil(
-      Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
-    );
+    const retriggerDelaySeconds = getRetriggerDelaySeconds(waitMs);
     console.info(`rate limited — retrigger in ${retriggerDelaySeconds}s, the deadline the bot stated`);
     return { retriggerDelaySeconds };
   }
