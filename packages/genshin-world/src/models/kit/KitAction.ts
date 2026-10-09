@@ -10,5 +10,7 @@ export interface KitAction {
   hits: KitHit[];
   onStart?: (start: { body: KitBody; combatant: Combatant; effects: KitEffect[] }) => void;
   seconds: number;
+  // The stamina the action drains each second it plays, if it drains any
+  staminaPerSecond?: number;
   targetingArea: AttackArea;
 }

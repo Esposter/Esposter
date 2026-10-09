@@ -53,7 +53,7 @@ A hit can name its own element, which strikes the enemy as that element whatever
 
 Each character with a module has one file under `services/kit/characters/`, exporting a factory that builds its kit from the loaded multipliers, as `createTravelerKit` does. `CharacterIdCreateKitMap` keys them by avatar id, the world builds a character's kit once its chunk has arrived, and a character with none fights with the Traveler's kit.
 
-- **Diluc** (`createDilucKit`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
+- **Diluc** (`createDilucKit`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's three presses, and Dawn's slashing hit with its phoenix's ticks and explosion. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion, its phoenix and the A4 passive are built, as the shared effects below.
 - **Amber** (`createAmberKit`, avatar 10000021): five arrows, a fully charged aimed shot, a collision and two plunges, Explosive Puppet's Baron Bunny and Fiery Rain. Its multipliers are read from proud skill groups 2131, 2132 and 2139, and match the wiki's Sharpshooter, Explosive Puppet and Fiery Rain values to two decimal places. Baron Bunny is a taunt, built as the shared effects below, and Fiery Rain is a summon of eighteen arrows, with Ascension 1's CRIT Rate and AoE.
 - **Kaeya** (`createKaeyaKit`, avatar 10000025): five strikes, a charged attack, a collision and two plunges, Frostgnaw and Glacial Waltz's thirteen icicles. Its multipliers are read from proud skill groups 1531, 1532 and 1539, and match the wiki's Ceremonial Bladework, Frostgnaw and Glacial Waltz values to two decimal places. Glacial Waltz's icicles are a summon, built as the shared effects above.
 - **Lisa** (`createLisaKit`, avatar 10000006): four strikes, a charged attack, a collision and two plunges, Violet Arc's press and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, and match the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the shared effects above.
@@ -71,8 +71,8 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
 - **Energy** is the party's `gainPartyEnergy`, which an enemy's drop already calls.
 - **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
-- **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's.
-- **Dawn's damage-over-time and explosion** are not built. They move with a box a fixed summon does not hold.
+- **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's. A summon may travel: its body moves forward at its speed from its start on its clock, and its hits are reached from where it is then.
+- **Dawn's phoenix** is a travelling summon launched at the slash's hitmark, a metre ahead of the body and moving 14 metres a second. It strikes eight ticks, every 0.2 seconds from its launch, and explodes 1.7 seconds on, 24.8 metres out.
 - **A shield** is a character's health that takes damage before the character does, for the seconds left of it, recast over one it already holds. It is a combat shield, so `absorbKitShield` hands the damage to the combat's `absorbShieldDamage`, and it is dropped once its health is spent. An enemy's strike is taken by it first, and the damage past its health is what the character loses.
 - **A taunt** is an entity placed where its character cast it, with health, which draws the enemies' strikes while it stands. It explodes once, from its body and priced by the combatant that cast it, when its seconds run out or its health is gone. An enemy within its aggro range strikes it instead of the character, and each strike is taken from its health by `damageKitTaunt`.
 
@@ -80,10 +80,10 @@ Each effect is on the party, in a list the character component holds, so a switc
 
 - **A kit's action carries its start.** A kit action may name an `onStart` that adds its effects, given the body and the character's combatant, so a module writes what its burst or skill sets going without the framework knowing which.
 - **A character's ascension phase is on its combatant.** A passive reads `combatant.ascension` against the phase its table names, so the Diluc A4 gate is `ascension >= 4`.
-- **Searing Onslaught's presses share one action.** The first press is the kit's skill. The second and third presses, and the four-second window that holds them, are not built, so the skill is one press at its cooldown.
-- **Dawn's slash is the burst's only hit.** Its damage-over-time and explosion land later from a moving box, which a summon would hold; they wait on the summons above.
+- **Searing Onslaught's cooldown starts on its first press.** The second and third presses are a chain: each is pressed within four seconds of the one before, and a press inside that window plays its follow-up whatever the cooldown, which the first press set at 10 seconds. The third press closes the chain, and a window that lapses ends it. gcsim sets the cooldown on the first use, and the wiki's lapse path ends a chain with the cooldown already running, so the cooldown always starts on the first press.
+- **Dawn's phoenix is priced by the same ICD as its slash.** Its ticks and explosion are 2U of Pyro each under the Elemental Burst internal cooldown, and carry the slash's 100 poise, as gcsim's copy of the attack does. Their area is a circle to the far corner of gcsim's box, provisional until areas hold boxes. gcsim places tick _i_ at 1 + 2.8*i* metres; the phoenix's own clock puts it 2.8 metres further, which the kit follows.
 - **The charged attack's timing is provisional.** gcsim does not model it and the wiki's talent page gives no frames, so its slashes land at half a second and a second, and it ends at a second and a fifth. Its damage is the wiki's cyclic 68.8% and final 124.7%, and its poise the wiki's 60 and 120.
-- **Its stamina is one cost.** The wiki's charged attack drains 40 stamina a second for up to 5 seconds. The kit charges 40 once, since a drain is not built.
+- **Its stamina drains a second as it plays.** The table's 40 a second is drained each step of the charge, so its 1.2 seconds cost 48 in all, and the charge starts with any stamina. The game holds the charge up to 5 seconds and stops it when the stamina runs out, which the kit does not model.
 - **Boxes are circles.** An area holds a fan or a circle, so a box is priced as the circle to its farthest corner, provisional until areas hold boxes.
 - **Poise is the wiki's where gcsim gives none.** gcsim sets no poise on Diluc's skill, burst or collision; the wiki's advanced properties give 120, 100 and 35.
 - **A collision infused at 0U still deals the element.** A hit's element no longer needs a gauge, so the collision's Pyro damage lands with no aura, as the wiki's table gives it.
@@ -114,40 +114,41 @@ Each effect is on the party, in a list the character component holds, so a switc
 
 ## Key files
 
-| File                                                                    | Role                                                                                   |
-| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/SkillDepot.ts`             | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element  |
-| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                            |
-| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                          |
-| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                   |
-| `scripts/src/services/genshinAssets/stats/toTalentTables.ts`            | Each character's talent groups: their levels, parameters and labels, apart             |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`         | Each character's chunk and the loader map the world imports them through               |
-| `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                              |
-| `packages/genshin-world/src/generated/talentMultipliers/`               | Each character's multipliers per level, loaded on demand as the character joins        |
-| `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`      | The loaded characters' multipliers, checked and merged by proud skill group            |
-| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                          |
-| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                        |
-| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers              |
-| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Fantastic Voyage's field                        |
-| `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it              |
-| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                            |
-| `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon         |
-| `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                            |
-| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`           | The nearest live taunt in an enemy's aggro range, which it strikes                     |
-| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`        | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                             |
-| `packages/genshin-world/src/services/kit/characters/lisaKit.ts`         | `createLisaKit`, Lisa's kit with Lightning Rose's discharges                           |
-| `packages/genshin-world/src/services/kit/characters/noelleKit.ts`       | `createNoelleKit`, Noelle's kit with Breastplate's shield and Sweeping Time's buffs    |
-| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | A shield takes the strike's damage through the combat's absorption                     |
-| `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                |
-| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Dawn's infusion and A4                              |
-| `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                    |
-| `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                       |
-| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                            |
-| `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with  |
-| `packages/genshin-world/src/services/kit/effects/infuseKitHits.ts`      | Infuses a step's landed hits from the kit's normal attacks, charged attack and plunges |
-| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts` | The combatant with its buffs added to the pricing                                      |
-| `packages/genshin-world/src/services/kit/constants.ts`                  | The targeting weights and the kit's shared timing constants                            |
-| `packages/genshin-world/src/services/party/healPartyMember.ts`          | Heals a standing member up to all its HP                                               |
+| File                                                                    | Role                                                                                      |
+| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/SkillDepot.ts`             | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element     |
+| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                               |
+| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                             |
+| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                      |
+| `scripts/src/services/genshinAssets/stats/toTalentTables.ts`            | Each character's talent groups: their levels, parameters and labels, apart                |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`         | Each character's chunk and the loader map the world imports them through                  |
+| `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                                 |
+| `packages/genshin-world/src/generated/talentMultipliers/`               | Each character's multipliers per level, loaded on demand as the character joins           |
+| `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`      | The loaded characters' multipliers, checked and merged by proud skill group               |
+| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                             |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                           |
+| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers                 |
+| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Fantastic Voyage's field                           |
+| `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it                 |
+| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                               |
+| `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon            |
+| `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                               |
+| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`           | The nearest live taunt in an enemy's aggro range, which it strikes                        |
+| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`        | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                                |
+| `packages/genshin-world/src/services/kit/characters/lisaKit.ts`         | `createLisaKit`, Lisa's kit with Lightning Rose's discharges                              |
+| `packages/genshin-world/src/services/kit/characters/noelleKit.ts`       | `createNoelleKit`, Noelle's kit with Breastplate's shield and Sweeping Time's buffs       |
+| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | A shield takes the strike's damage through the combat's absorption                        |
+| `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                   |
+| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Searing Onslaught's chain, Dawn's infusion and phoenix |
+| `packages/genshin-world/src/models/kit/KitSkillChain.ts`                | A skill's follow-up presses and the window each press leaves open                         |
+| `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                       |
+| `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                          |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                               |
+| `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with     |
+| `packages/genshin-world/src/services/kit/effects/infuseKitHits.ts`      | Infuses a step's landed hits from the kit's normal attacks, charged attack and plunges    |
+| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts` | The combatant with its buffs added to the pricing                                         |
+| `packages/genshin-world/src/services/kit/constants.ts`                  | The targeting weights and the kit's shared timing constants                               |
+| `packages/genshin-world/src/services/party/healPartyMember.ts`          | Heals a standing member up to all its HP                                                  |
 
 ## Sources
 

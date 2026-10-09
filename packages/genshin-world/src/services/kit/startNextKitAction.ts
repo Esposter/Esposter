@@ -41,9 +41,20 @@ export const startNextKitAction = (
     return startKitAction(kitState, kit.elementalBurst, landedHits);
   }
 
+  // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set
   const isSkillReady = partyMember.skillCooldownSeconds <= 0;
-  if (isSkillPressed && isSkillOrBurstState && isSkillReady) {
+  const isChaining = kitState.skillChainCount > 0;
+  if (isSkillPressed && isSkillOrBurstState && (isChaining || isSkillReady)) {
+    if (isChaining) {
+      const followUps = kit.elementalSkillChain?.followUps ?? [];
+      const followUp = takeOne(followUps, kitState.skillChainCount - 1);
+      kitState.skillChainCount = kitState.skillChainCount < followUps.length ? kitState.skillChainCount + 1 : 0;
+      kitState.skillChainSeconds = 0;
+      return startKitAction(kitState, followUp, landedHits);
+    }
     partyMember.skillCooldownSeconds = kit.skillCooldownSeconds;
+    kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
+    kitState.skillChainSeconds = 0;
     return startKitAction(kitState, kit.elementalSkill, landedHits);
   }
 

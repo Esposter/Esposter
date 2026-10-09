@@ -36,6 +36,9 @@ export const stepKit = (
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
+  kitState.skillChainSeconds += stepSeconds;
+  if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
+    kitState.skillChainCount = 0;
 
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
@@ -59,13 +62,17 @@ export const stepKit = (
   let isStrikeEnded = false;
   const { action } = kitState;
   if (action) {
-    const isSkillOrBurst = action === kit.elementalSkill || action === kit.elementalBurst;
+    const isSkillOrBurst =
+      action === kit.elementalSkill ||
+      action === kit.elementalBurst ||
+      kit.elementalSkillChain?.followUps.includes(action) === true;
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
     if (isAllowed) {
       const fromSeconds = kitState.actionSeconds;
       kitState.actionSeconds += stepSeconds;
+      if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
       landKitHits(action, fromSeconds, kitState.actionSeconds, landedHits);
       if (kitState.actionSeconds < action.seconds) {
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
