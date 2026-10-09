@@ -3,12 +3,13 @@ import { computeBuildKey } from "#src/services/buildCache/computeBuildKey";
 import {
   BUILD_CACHE_DIRECTORY,
   BUILD_CACHE_RUN_IN_SLOT_PATH,
+  BUILD_CACHE_TEMPORARY_PREFIX,
   BUILD_OUTPUT_DIRECTORY,
 } from "#src/services/buildCache/constants";
 import { pruneBuildCache } from "#src/services/buildCache/pruneBuildCache";
 import { readPackageName } from "#src/services/buildCache/readPackageName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, renameSync, rmSync, utimesSync } from "node:fs";
 import { join } from "node:path";
@@ -20,12 +21,31 @@ export const buildPackageCached = (packageDirectory: string): BuildCacheOutcome 
   const keyDirectory = join(packageCacheDirectory, key);
   const outputDirectory = join(packageDirectory, BUILD_OUTPUT_DIRECTORY);
 
+  // A hit is copied into the package's own ignored `node_modules`, on the output's disk, and renamed into place, so a key
+  // Another worktree's prune removes under the copy leaves the current `dist` standing and falls through to a build
   if (existsSync(keyDirectory)) {
-    rmSync(outputDirectory, { force: true, recursive: true });
-    cpSync(keyDirectory, outputDirectory, { recursive: true });
+    const stagingDirectory = join(
+      packageDirectory,
+      "node_modules",
+      `${BUILD_CACHE_TEMPORARY_PREFIX}${BUILD_OUTPUT_DIRECTORY}-${process.pid}`,
+    );
     const now = new Date();
-    utimesSync(keyDirectory, now, now);
-    return BuildCacheOutcome.Hit;
+    const isRestored = getResult(() => {
+      utimesSync(keyDirectory, now, now);
+      cpSync(keyDirectory, stagingDirectory, { recursive: true });
+    }).match(
+      () => true,
+      (error) => {
+        console.warn(`The cached build ${keyDirectory} could not be restored, so it is built: ${error.message}`);
+        return false;
+      },
+    );
+    if (isRestored) {
+      rmSync(outputDirectory, { force: true, recursive: true });
+      renameSync(stagingDirectory, outputDirectory);
+      return BuildCacheOutcome.Hit;
+    }
+    rmSync(stagingDirectory, { force: true, recursive: true });
   }
 
   // A stale `dist` left by an earlier commit would be stored with this build's output, so the build starts from none
