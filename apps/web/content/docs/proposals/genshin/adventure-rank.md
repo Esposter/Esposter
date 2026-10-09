@@ -1,6 +1,6 @@
 ---
 title: Adventure Rank
-description: Proposal — the parts of the player's Adventure Rank still unbuilt: the Adventure EXP each source gives, Katheryne's rewards for each rank, and the systems each rank opens. The rank, its holds, the World Level, the enemies it raises, the profile card and the World Level button's panel are built.
+description: Proposal — the parts of the player's Adventure Rank still unbuilt: the Adventure EXP each source gives, Katheryne's rewards for each rank, and the systems each rank opens. The rank, its holds, the World Level, the enemies it raises, the profile card and the World Level dialog are built.
 model: claude-opus-5-5
 waiting: "the Adventure EXP sources of the quests, chests, unlocks, commissions and resin pages, Katheryne among Mondstadt's residents from resident-schedules, and the systems' own pages"
 touches:
@@ -13,7 +13,7 @@ touches:
 
 # Adventure Rank
 
-The rank, its holds, the World Level, the enemies it raises, the profile card and the World Level button's panel are built ([Adventure Rank](/docs/genshin/adventure-rank)). What remains reaches the player through other pages: the Adventure EXP that quests, chests, unlocks, commissions and spent resin give, the rewards each rank hands out, and the systems a rank opens. Each waits on its own page, so each is built there.
+The rank, its holds, the World Level, the enemies it raises, the profile card and the World Level dialog are built ([Adventure Rank](/docs/genshin/adventure-rank)). What remains reaches the player through other pages: the Adventure EXP that quests, chests, unlocks, commissions and spent resin give, the rewards each rank hands out, and the systems a rank opens. Each waits on its own page, so each is built there.
 
 ## Decisions
 

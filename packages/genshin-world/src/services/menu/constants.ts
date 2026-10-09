@@ -39,3 +39,6 @@ export const PAIMON_MENU_SIDE_BAR: readonly { icon: MenuFrameIcon; screenKind: T
   { icon: FrameIcon.Time, screenKind: ScreenKind.Time },
   { icon: FrameIcon.Settings, screenKind: ScreenKind.Settings },
 ];
+// The mirrorings over a dialog frame's middle that turn its top left ornament into each of its four corners', as CSS
+// Scales: the frame is symmetric, so one traced ornament stands for every corner
+export const MENU_DIALOG_CORNER_SCALES: readonly string[] = ["1 1", "-1 1", "1 -1", "-1 -1"];
