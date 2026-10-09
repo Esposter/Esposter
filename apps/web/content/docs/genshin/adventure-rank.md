@@ -16,6 +16,7 @@ flowchart TD
   G --> ST
   ST --> R["Rank: the EXP's rank, held at the cap the last open World Level sets"]
   ST --> WL["World Level unlocked"]
+  ST --> CARD["Profile card: rank, EXP bar, World Level"]
   WL --> L["Lowered by one from World Level 3, once a day"]
   L --> W["World Level played at"]
   W --> S["Each camp's enemy stands at its level under that World Level"]
@@ -56,7 +57,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 ## Notes
 
 - Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
-- The world holds the player's Adventure EXP at 0 and no quest done, since no source counts either yet, so its World Level stands at 0. The Paimon menu's profile card still shows its labels without values, as the [menu screens](/docs/proposals/genshin/menu-screens) page builds them.
+- The world holds the player's Adventure EXP at 0 and no quest done, since no source counts either yet, so its World Level stands at 0. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The card's lowering waits on its tooltip's words in the game text.
 - The rank's rewards are not read yet. Katheryne, who hands them out, is not yet placed in Mondstadt's region data.
 
 ## Key files
@@ -71,7 +72,9 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts` | the rank, its cap and the World Level from EXP and quests        |
 | `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`             | the EXP gain, its cap and the Mora past rank 60                  |
 | `packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`     | the lowering and its 24 hour cooldown                            |
+| `packages/genshin-world/src/services/adventureRank/computeAdventureRankProgress.ts` | the EXP's share of the bar toward the next rank                  |
 | `packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`            | a camp's enemy level at a World Level                            |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                       | the profile card's rank, EXP bar and World Level                 |
 | `packages/genshin-world/src/services/enemy/createEnemy.ts`                          | spawns an enemy at its World Level's level                       |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`                     | spawns the camps, and respawns them when the World Level changes |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`                      | the World Level the world plays at, handed down to its enemies   |

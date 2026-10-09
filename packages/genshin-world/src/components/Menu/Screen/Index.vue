@@ -9,8 +9,12 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 
 interface Props {
+  // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
+  adventureExpProgress: number;
+  adventureRank: number;
   // The game's words in the reader's language
   gameText: GameText;
+  worldLevel: number;
 }
 
 // Each built screen, by its kind, as its host draws it with what it needs and closes it by setting the world back
@@ -25,8 +29,11 @@ const emit = defineEmits<{ quit: [] }>();
        World does not have yet under its title, every one closing back to the world -->
   <MenuPaimon
     v-if="screenKind === ScreenKind.PaimonMenu"
+    :adventure-exp-progress
+    :adventure-rank
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"
     :game-text
+    :world-level
     @close="screenKind = ScreenKind.World"
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @quit="emit('quit')"
