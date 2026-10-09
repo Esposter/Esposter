@@ -1,10 +1,10 @@
 import { BannerKind } from "#src/models/BannerKind";
 
 const BANNER_LABELS = {
-  [BannerKind.Beginners]: "Beginners' wish",
-  [BannerKind.CharacterEvent]: "Character Event Wish",
-  [BannerKind.Standard]: "Standard Wish",
-  [BannerKind.WeaponEvent]: "Weapon Event Wish",
+  [BannerKind.Beginners]: [{ text: "Beginners' " }, { color: "#C8A078FF", text: "wish" }],
+  [BannerKind.CharacterEvent]: [{ text: "Character Event Wish" }],
+  [BannerKind.Standard]: [{ text: "Standard Wish" }],
+  [BannerKind.WeaponEvent]: [{ text: "Weapon Event Wish" }],
 };
 
 // The weapon wish open with its pool and its Epitomized Path, one Intertwined Fate held, and a draw shown over it, the
@@ -18,7 +18,7 @@ export const props = {
     { id: "Primogem", name: "Primogem", quantity: 0 },
     { id: "IntertwinedFate", name: "Intertwined Fate", quantity: 1 },
   ],
-  fatePoints: "Fate Point: 0/1",
+  fatePoints: [{ text: "Fate Point: " }, { color: "#f39000", text: "0" }, { text: "/1" }],
   pathLabel: "Epitomized Path",
   pool: [
     { id: 15_502, isFeatured: true, name: "Amos' Bow", rarity: 5 },

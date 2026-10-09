@@ -10,8 +10,8 @@ import {
 import { getCharacterLinesLoaderMapSource } from "#src/services/genshinText/getCharacterLinesLoaderMapSource";
 import { getGameTextHash } from "#src/services/genshinText/getGameTextHash";
 import { getGameTextLoaderMapSource } from "#src/services/genshinText/getGameTextLoaderMapSource";
+import { getInterfaceGameText } from "#src/services/genshinText/getInterfaceGameText";
 import { getPersonaModuleSource } from "#src/services/genshinText/getPersonaModuleSource";
-import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
 import { getVoiceLines } from "#src/services/genshinText/getVoiceLines";
 import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readSdkText } from "#src/services/genshinText/readSdkText";
@@ -26,9 +26,9 @@ import { dirname, join } from "node:path";
 
 // Every string `GameTextKey` names, in every language, into `genshin-text`; the lines of every character the
 // Game-data package has none for yet, in every language, into the persona; and the persona's copy of the modules
-// It runs. A key the account kit files is read from the kit's strings, every other from the text map. A key missing
-// From one language's strings shows English there and says so, since a dump that lost a string is the dump's fault
-// Rather than a reason to ship none
+// It runs. A key the account kit files is read from the kit's strings, every other from the text map, its colour tags
+// Kept for the screen to draw. A key missing from one language's strings shows English there and says so, since a
+// Dump that lost a string is the dump's fault rather than a reason to ship none
 export const writeGameText = (): string[] => {
   const notes: string[] = [];
   const manualTextMap = readManualTextMap();
@@ -69,7 +69,7 @@ export const writeGameText = (): string[] => {
         const hash = idHashMap.get(id) ?? "";
         const text = textMap.get(hash);
         if (!text) notes.push(`${id} has no ${language} text; English stands in`);
-        return [id, getPlainGameText(text || (englishTextMap.get(hash) ?? ""))];
+        return [id, getInterfaceGameText(text || (englishTextMap.get(hash) ?? ""))];
       }),
     );
     // A character the game has no lines for yet either — announced, not yet out — is left out rather than written
