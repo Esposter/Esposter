@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Character kits
 
-The Traveler's first kit is built on [combat](/docs/genshin/combat): its five strikes, charged attack and plunges land their hits on the enemies in reach, its skill and burst are placeholders, and every character on the roster fights with that kit until the kits run gives each its own. This page is the framework those are written on. The skill sets each character's table holds, and the targeting a kit's action turns to, are built, as [character kits](/docs/genshin/character-kits) records. What is left is the talent multipliers, the element a statue gives the Traveler, the shared effects and each character's module, and the passives. It comes before the rest of the game's systems that act through a kit, such as talents, constellations, weapons' and artifacts' effects, and every challenge after them. It builds on [character attributes](/docs/genshin/character-attributes), whose sums price a hit, and on the [character controller](/docs/genshin/character-controller), whose body a kit acts from.
+The Traveler's first kit is built on [combat](/docs/genshin/combat): its five strikes, charged attack and plunges land their hits on the enemies in reach, its skill and burst are placeholders, and every character on the roster fights with that kit until the kits run gives each its own. This page is the framework those are written on. The skill sets each character's table holds, and the targeting a kit's action turns to, are built, as [character kits](/docs/genshin/character-kits) records. The talent multipliers, Diluc's, Bennett's and Mona's modules, and every shared effect but the shield are built too: a hit, a hit's own element, a heal, a field, a summon, a buff and an infusion. What is left is the element a statue gives the Traveler, the shield, the other characters' modules, and the passives. It comes before the rest of the game's systems that act through a kit, such as talents, constellations, weapons' and artifacts' effects, and every challenge after them. It builds on [character attributes](/docs/genshin/character-attributes), whose sums price a hit, and on the [character controller](/docs/genshin/character-controller), whose body a kit acts from.
 
 ## Decisions
 
@@ -17,7 +17,7 @@ The Traveler's first kit is built on [combat](/docs/genshin/combat): its five st
 - **Catalysts and bows as the game deals them.** A catalyst's every attack deals its element, a bow's only its charged shot, and every other weapon physical damage unless an infusion changes it. A bow's `R` aims instead of targeting, as the controls already bind it.
 - **Targeting's further coefficients wait.** The wiki's score is the distance, the angle and the altitude, as built. Its view, current-target and priority coefficients wait for a camera's frustum, a kept target and a boss.
 - **Passives are one shape too.** Each passive is written with its character's module and opened by the ascension phase its table names, so a character's passives add to its kit without a change to the framework.
-- **Hits, a heal and a hit's own element are built ahead of a kit.** The Traveler's kit uses a hit, and a heal and a hit's element are small enough to sit with the party's damage, as built. A field, summon, buff, infusion or shield is built by the first module that needs it, never before, since no combat state holds one yet.
+- **A shared effect is built by the first module that needs it, never before.** The Traveler's kit uses a hit, and a heal and a hit's element sit with the party's damage; Diluc's infusion, Bennett's field and buff and Mona's summon were each built with their module. The shield waits for the first module that raises one.
 
 ## How it works
 
@@ -33,14 +33,14 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the Traveler's normal attack, charged attack and plunges, and its placeholder skill and burst, run on the framework's action state machine and land their hits on combat. The Traveler's kit reads its multipliers from the generated talent table, and its hits can deal their own element. Every other character on the roster fights with the Traveler's kit until its own module is written. Each character's skill sets and talent multipliers are read beside the stats, and only the Traveler's kit reads them.
+**Today:** the Traveler's normal attack, charged attack and plunges, and its placeholder skill and burst, run on the framework's action state machine and land their hits on combat. The Traveler's kit reads its multipliers from the generated talent table, and its hits can deal their own element. Diluc, Bennett and Mona fight with their own modules, and every other character on the roster with the Traveler's kit until its own module is written. Each character's skill sets and talent multipliers are read beside the stats.
 
 **This adds, in order:**
 
 1. **The Traveler's skill and burst** for the element a statue gives them, once the [statues page](/docs/proposals/genshin/statues-of-the-seven) holds the resonance, then one module per character as the [characters](/docs/genshin/characters) page draws each.
-2. **The shared effects still unbuilt**, each built by the first module that uses it: a field, a summon, a buff, an infusion and a shield.
+2. **The shield**, built by the first module that raises one.
 3. **Passives**, each written with its character's module and opened by the phase its table names.
-4. **The other characters' modules**, in the dump's order, each over the same effects and its multipliers from the table. Only the Traveler's exists.
+4. **The other characters' modules**, in the dump's order, each over the same effects and its multipliers from the table. The Traveler's, Diluc's, Bennett's and Mona's exist.
 
 ## Data and measures
 
