@@ -1,6 +1,6 @@
 ---
 title: Character attributes
-description: The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats and loaded on demand as chunks of their own, and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
+description: The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats and fetched from the hosted game data as the world opens, and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
 ---
 
 # Character attributes
@@ -12,7 +12,8 @@ Every number the character screen's Attributes tab shows is computed the way the
 ```mermaid
 flowchart LR
   DUMP["The dump's game tables, outside the repository"] -->|"genshin:assets stats"| TABLES["generated/stats: roster, weapons, sets, curves"]
-  TABLES -->|"readStatTables, a chunk each, as the world starts"| STAT_TABLES["StatTables: each table by id or name"]
+  TABLES -->|"published under stats/ keys"| HOSTED["The hosted game data"]
+  HOSTED -->|"readStatTables, fetched by key as the world starts"| STAT_TABLES["StatTables: each table by id or name"]
   STAT_TABLES -->|"the roster"| CREATE["createCharacter"]
   CREATE --> CHARACTER["A Character: level, ascension, weapon, artifacts"]
   CHARACTER --> LINES["getCharacterAttributeLines"]
@@ -26,8 +27,8 @@ flowchart LR
 - **The data keeps the game's shapes.** A `CharacterData` is a character of the roster by the game's id: its element, its weapon type, its rarity, its region, its body, the weapon it comes with, the attributes that grow with its level, its ascension phases and the attributes every level of it starts with (5% CRIT Rate, 50% CRIT DMG and 100% Energy Recharge). A `WeaponData` is a weapon's growth and phases, an `ArtifactSetData` a set's bonus at each piece count, and an `ArtifactMainAffixCurve` what a main affix gives at a rarity and each level from +0.
 - **Every name is the game's own.** `Attribute`, `BodyType`, `WeaponType`, `ArtifactSlot` and `Element` take the game's own ids as their values (`FIGHT_PROP_BASE_HP`, `BODY_GIRL`, `EQUIP_BRACER`, `Fire`), so a table parses straight into them, and the game's own name for each attribute is filed under the same id in its text ([game text](/docs/genshin/game-text)).
 - **A character's region is the catalogue's.** The game files a character under an association, a nation's or another; the region is the [world map](/docs/genshin/world-map)'s region the association names, the Fatui counted as Snezhnaya's as the wiki counts them, and none for the Traveler's, a visitor's or any other. The Traveler has no element until they resonate with a statue, as the game's own tables leave their default skills without one.
-- **Written by one command, checked as they load.** `pnpm -C scripts genshin:assets stats` reads the tables from the dump the [game text](/docs/genshin/game-text) is read from, keeps the curves the roster and the weapons name, and writes them as JSON under `packages/genshin-world/src/generated/stats/`, each checked against the world's schema as it is written and again as the world loads it. A property no attribute names is left out and printed.
-- **Loaded on demand, never with the package.** The tables run to hundreds of kilobytes, and the package is one bundle every page of the opening downloads, so nothing imports them statically. `readStatTables` imports each dynamically, which the build splits into a chunk of its own, and parses it into a `StatTables`. The world screen reads them before it opens: `World/Screen` loads the tables and the names together, and only then makes the world, whose party's Traveler is made from the roster, and the character screen is handed the tables to sum from. A table that fails to load is logged and the world stays shut, though it still reports itself ready, as a world that cannot start does, so the host waiting on it moves on. Only the loading is asynchronous: every function over the tables takes them as an argument and runs synchronously.
+- **Written by one command, checked as they load.** `pnpm -C scripts genshin:assets stats` reads the tables from the dump the [game text](/docs/genshin/game-text) is read from, keeps the curves the roster and the weapons name, and writes them as JSON under `packages/genshin-world/src/generated/stats/`, each checked against the world's schema as it is written and again as the world loads it. Each file is published to the [hosted game data](/docs/genshin/hosted-game-data) under its own key, `stats/characters` for the roster. A property no attribute names is left out and printed.
+- **Fetched as the world opens, never with the package.** The tables run to hundreds of kilobytes, and the package is one bundle every page of the opening downloads, so nothing imports them. `readStatTables` fetches the nine at once, each by its key from the base URL the world is given, and parses them into a `StatTables`. The world screen reads them before it opens: `World/Screen` loads the tables and the names together, and only then makes the world, whose party's Traveler is made from the roster, and the character screen is handed the tables to sum from. A table that fails to load is logged and the world stays shut, though it still reports itself ready, as a world that cannot start does, so the host waiting on it moves on. Only the loading is asynchronous: every function over the tables takes them as an argument and runs synchronously.
 
 ### A character's attributes
 
@@ -45,7 +46,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 | `packages/genshin-world/src/models/character/CharacterData.ts`                 | A character of the roster as the tables hold it                                   |
 | `packages/genshin-world/src/models/character/Character.ts`                     | A character the player has: level, phase, weapon, artifacts and Companionship EXP |
 | `packages/genshin-world/src/models/character/StatTables.ts`                    | Every table a character is made and summed from                                   |
-| `packages/genshin-world/src/services/character/readStatTables.ts`              | The tables imported on demand and checked against their schemas                   |
+| `packages/genshin-world/src/services/character/readStatTables.ts`              | The tables fetched by their keys and checked against their schemas                |
 | `packages/genshin-world/src/services/character/getGrownAttributeLines.ts`      | A base grown along its curve, and its phase's lines                               |
 | `packages/genshin-world/src/services/character/getCharacterAttributeLines.ts`  | Every line a character carries                                                    |
 | `packages/genshin-world/src/services/character/computeCharacterAttributes.ts`  | The lines summed, and Max HP, ATK and DEF built from their bases                  |

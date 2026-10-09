@@ -3,22 +3,14 @@ import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import artifactExpMaterials from "#src/generated/stats/artifactExpMaterials.json";
-import artifactMainAffixCurves from "#src/generated/stats/artifactMainAffixCurves.json";
-import artifactMainAffixPools from "#src/generated/stats/artifactMainAffixPools.json";
-import artifactRarities from "#src/generated/stats/artifactRarities.json";
-import artifactSets from "#src/generated/stats/artifactSets.json";
-import characterGrowCurves from "#src/generated/stats/characterGrowCurves.json";
-import characters from "#src/generated/stats/characters.json";
-import weaponGrowCurves from "#src/generated/stats/weaponGrowCurves.json";
-import weapons from "#src/generated/stats/weapons.json";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
-import { parseStatTables } from "#src/services/character/parseStatTables";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { CharacterMenuTab } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
 // Beside fourteen of the player's other characters, the Traveler among them, their weapons held at the first level
@@ -77,17 +69,7 @@ export const props = {
   initialTab: CharacterMenuTab.Attributes,
   maxStamina: STAMINA,
   nameText: englishNameText,
-  statTables: parseStatTables({
-    artifactExpMaterials,
-    artifactMainAffixCurves,
-    artifactMainAffixPools,
-    artifactRarities,
-    artifactSets,
-    characterGrowCurves,
-    characters,
-    weaponGrowCurves,
-    weapons,
-  }),
+  statTables,
 };
 
 // The other tabs the English client shows at the same level, each opened on its own, the panel under it not drawn yet

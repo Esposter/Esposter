@@ -1,11 +1,11 @@
 ---
 title: Hosted game data
-description: Every dataset genshin-world reads is published to Azure Blob Storage as content-addressed objects under a committed lock of their hashes; the Profile tab's character records, the book reader's volume bodies, the combat's talent multipliers and the world's names, tables and words are fetched by the browser when they are needed, so the package no longer bundles about 90 MB of them, and the suites read the same objects through a local mirror.
+description: Every dataset genshin-world reads is published to Azure Blob Storage as content-addressed objects under a committed lock of their hashes; the Profile tab's character records, the book reader's volume bodies, the combat's talent multipliers, the stat tables and the world's names, tables and words are fetched by the browser when they are needed, so the package no longer bundles about 90 MB of them, and the suites read the same objects through a local mirror.
 ---
 
 # Hosted game data
 
-Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
+Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
 
 ## How it works
 
@@ -79,7 +79,7 @@ The first publish stored 5,765 objects in each account: the 5,735 distinct recor
 
 `readGameData` reads the lock, then the record its key names; `readGameDataEntry` reads the lock, then the index object, then the one record. Each fetch is memoized by URL for the page's life. A failed fetch is dropped from the memo, so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS`, ten seconds. A reader parses the value with its own schema each time, so each caller holds a value of its own.
 
-The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names from it and hands it to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
+The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names and the stat tables from it and hands it to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
 
 A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, `readPublishedGameDataEntry`), never through genshin-world's build, which a step running under `tsx` may load stale. A fitted data file the package still keeps is read from disk first (`readWorldData`), since the fit that last wrote it holds its freshest copy, and from the dev account under its path less `.json` once it is published and gone.
 
@@ -159,6 +159,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **The mirror checks the bytes it downloaded.** The account stores the compact JSON the publisher hashed, so the downloaded bytes hash to their name with no re-serialization.
 - **A kept world data file is read before its published record.** Until a fit publishes its keys instead of writing its file, the file it last wrote is the freshest copy, and a parity loop that rewrites `login/music.json` reads its own last write.
 - **The coverage shards only restore the mirror.** A shard reads a subset of what the lock names, and one exact key saved by whichever shard finished first would hold that subset for every later run.
+- **A combatant carries its weapon type.** The world's combat fills `weaponType` from the roster's table it already holds, so Bennett's field and the ores read the wielder off the combatant and nothing holds a copy of the table for a synchronous lookup. The field is optional: a character the roster's table does not hold wields nothing, and a test's combatant whose rules read no weapon leaves it out.
 - **A record holding several tables is parsed per field.** The friendship record carries the levels and the namecards, and each reader's schema takes only its own field, so a reader holds what it returns and nothing else.
 - **A step publishes its builders' records in one call.** Fishing's two builders share one scope, and a publish replaces every key under its scope, so a call per builder would drop the other builder's keys until its own call ran. Offerings publishes its two scopes in one call for the same reason.
 
@@ -201,6 +202,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                                                  |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`                   | The Profile tab, which reads its character's record                                                                  |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and stat tables arrive, with the base URL among its props                             |
+| `packages/genshin-world/src/services/character/readStatTables.ts`                     | The stat tables, each fetched by its `stats/` key as the world opens                                                 |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`                    | Hands the base URL to the Profile tab                                                                                |
 | `packages/genshin-world/tsconfig.build.json`                                          | Maps the lock's exact path ahead of the generated stand-in                                                           |
 | `apps/web/app/components/Genshin/World.vue`                                           | Passes the AppAssets game data path to the world                                                                     |

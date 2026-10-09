@@ -15,7 +15,9 @@ const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const loaded = shallowRef<{ nameText: Readonly<Record<string, string>>; statTables: StatTables }>();
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => Promise.all([NameTextLoaderMap[props.language](props.gameDataBaseUrl), readStatTables()])).match(
+getResultAsync(() =>
+  Promise.all([NameTextLoaderMap[props.language](props.gameDataBaseUrl), readStatTables(props.gameDataBaseUrl)]),
+).match(
   ([nameText, statTables]) => {
     loaded.value = { nameText, statTables };
   },
