@@ -1,20 +1,15 @@
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
 
-import {
-  FROSTBEARING_TREE_LEVELS_PATH,
-  FROSTBEARING_TREE_OFFERING_ID,
-  OFFERING_LEVELS_GENERATED_DIRECTORY,
-} from "#src/services/genshinAssets/offerings/constants";
+import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/genshinAssets/offerings/constants";
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
-// The Frostbearing Tree's levels, each row's reward joined from the reward table, written as one slice in the World's
-// Generated folder. An unlisted reward is an error, since a level without its reward would level silently wrong
-export const writeFrostbearingTreeLevels = (): void => {
+// The Frostbearing Tree's levels, each row's reward joined from the reward table, as one record of the offerings
+// Dataset. An unlisted reward is an error, since a level without its reward would level silently wrong
+export const buildFrostbearingTreeLevels = (): Record<string, unknown> => {
   const rewardMap = readRewardMap();
   const levels = readExcelTable<ExcelOfferingLevelupRow>("OfferingLevelUpExcelConfigData")
     .filter(({ offeringId }) => offeringId === FROSTBEARING_TREE_OFFERING_ID)
@@ -29,6 +24,5 @@ export const writeFrostbearingTreeLevels = (): void => {
         );
       return toOfferingLevelRow(levelRow, reward);
     });
-  mkdirSync(OFFERING_LEVELS_GENERATED_DIRECTORY, { recursive: true });
-  writeJsonFile(FROSTBEARING_TREE_LEVELS_PATH, levels);
+  return { [`${GameDataset.Offerings}/frostbearingTree`]: levels };
 };

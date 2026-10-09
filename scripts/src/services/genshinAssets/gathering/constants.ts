@@ -1,6 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GatheringRespawn } from "genshin-world";
-import { join } from "node:path";
 
 // The game's gather table in the dump beside its material table
 export const GATHER_TABLE_FILENAME = "GatherExcelConfigData.json";
@@ -37,13 +35,3 @@ export const LABEL_RESPAWN_MAP: Record<number, GatheringRespawn> = {
   // Condessence Crystal
   507: GatheringRespawn.ThreeDays,
 };
-// Where the gathering slices are written, one per region, and the items they give, in the world's generated folder
-export const GATHERING_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-  "gathering",
-);
-export const GATHERING_ITEMS_PATH: string = join(GATHERING_GENERATED_DIRECTORY, "items.json");
