@@ -96,8 +96,9 @@ const {
   serverClockOffsetMs = 0,
   statTables,
 } = defineProps<Props>();
-// Quitting the game leaves the world, which its host does. A grant is a change to the bag or the wallet the host saves
-// At once, and a save is every change to what the world holds, which the host saves on its own cadence
+// Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
+// The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
+// Which the host saves on its own cadence
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
@@ -114,7 +115,7 @@ const screenKind = ref(ScreenKind.World);
 const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTables.weaponDataMap);
 // The cross-system reactions of this screen, one emitter the systems share
 const events = createWorldEvents();
-const { inventory, setInventory, setWallet, wallet, wishPityMap } = useWorldSave({
+const { achievementProgressMap, inventory, setInventory, setWallet, wallet, wishPityMap } = useWorldSave({
   emitGrant: () => emit("grant"),
   events,
   savedState,
@@ -187,11 +188,11 @@ const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, sp
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
-const { achievementData, achievementProgressMap } = useWorldAchievements({
+const { achievementData } = useWorldAchievements({
+  achievementProgressMap,
   events,
   getWorldNow,
   language,
-  savedAchievementProgressMap: savedState.achievementProgressMap,
   screenKind,
   setWallet,
   wallet,
