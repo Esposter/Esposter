@@ -139,7 +139,7 @@ export const deriveCapitalWorld = async (
   });
   const placementCount = viewPlacements.reduce((count, placements) => count + placements.length, 0);
   lines.unshift(
-    `${streamsWithPrefabs.length} streams, ${placementCount} placements in view`,
+    `${streamsWithPrefabs.length} streams, ${placementCount} placements selected`,
     `${prefabIdRootMap.size} of ${prefabNames.size} named prefabs rooted${unrootedNames.size > 0 ? `, unrooted: ${[...unrootedNames].join(", ")}` : ""}`,
   );
   return {
