@@ -15,8 +15,6 @@ import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -56,6 +54,8 @@ import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
+import { useWorldSave } from "#src/composables/useWorldSave";
+import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { Currency } from "#src/models/inventory/Currency";
@@ -117,7 +117,6 @@ import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
-import { toGenshinSave } from "#src/services/save/toGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
@@ -125,6 +124,7 @@ import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatu
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
+import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { useEventListener, useIntervalFn, useNow, useRafFn, watchImmediate } from "@vueuse/core";
@@ -334,9 +334,13 @@ const hudMember = computed<HudMember | undefined>(() => {
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
 // Names are the game's own in the reader's language, so the definitions are read from the game's tables as it loads
 const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, (itemId) => getItemDefinition(itemId, gameText));
-const inventory = ref<Inventory>(savedState.inventory);
-const wallet = ref<Wallet>(savedState.wallet);
-const wishPityMap = ref(savedState.wishPityMap);
+// The cross-system reactions of this screen, one emitter the systems share
+const events = createWorldEvents();
+const { inventory, setInventory, setWallet, wallet, wishPityMap } = useWorldSave({
+  emitGrant: () => emit("grant"),
+  events,
+  savedState,
+});
 // The player's characters' copies, which no save holds yet
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
@@ -539,10 +543,10 @@ const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback,
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedState.unlockedLandmarkIds);
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
-// The systems as the save holds them, emitted on every change at once, so a grant's emit after its change carries it. The
-// Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
-const gameSave = computed(() =>
-  toGenshinSave({
+// The Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
+useWorldSaveSync({
+  emitSave: (newSave) => emit("save", newSave),
+  getSaveState: () => ({
     achievementProgressMap: achievementProgressMap.value,
     adventureExp: savedState.adventureExp,
     companionshipExpMap: savedState.companionshipExpMap,
@@ -553,8 +557,7 @@ const gameSave = computed(() =>
     wallet: wallet.value,
     wishPityMap: wishPityMap.value,
   }),
-);
-watch(gameSave, (newGameSave) => emit("save", newGameSave), { flush: "sync" });
+});
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point
@@ -693,17 +696,10 @@ const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
   doQuestEvent({ kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
 };
-// Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in
-const setInventory = (nextInventory: Inventory) => {
-  inventory.value = nextInventory;
+// The Archive opens the entries of what the bag takes in
+events.on("bagChange", (nextInventory) => {
   archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
-  emit("grant");
-};
-// Every change to the wallet goes through here, as the bag's does, so a grant or a purchase is saved at once
-const setWallet = (nextWallet: Wallet) => {
-  wallet.value = nextWallet;
-  emit("grant");
-};
+});
 // The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
 const bagFullHint = ref("");
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
