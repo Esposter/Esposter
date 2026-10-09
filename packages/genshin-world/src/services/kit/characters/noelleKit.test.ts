@@ -114,23 +114,24 @@ describe("noelle kit", () => {
     expect(healParty?.chance({ ...combatant, constellationCount: 0 }, [sweepingTime])).toBeCloseTo(0.5, 5);
   });
 
-  test("with To Be Cleaned, her shield explodes as it ends for 4 times her ATK of Geo, from where it was cast, from four constellations", () => {
+  test("with To Be Cleaned, her shield explodes as it ends for 4 times her ATK of Geo, on the character on the field, from four constellations", () => {
     expect.hasAssertions();
-    const body = { facing: 0, height: 0, position: { x: 10, z: 0 } };
+    const castBody = { facing: 0, height: 0, position: { x: 10, z: 0 } };
+    const fieldPosition = { x: -4, z: 7 };
     const party = createParty([NOELLE_CHARACTER_ID]);
     const explodeAfterShield = (constellationCount: number) => {
       const kitEffectState: KitEffectState = { effects: [] };
       const combatant = { ...createNoelleCombatant(), constellationCount };
-      NOELLE_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState });
+      NOELLE_KIT.elementalSkill.onStart?.({ body: castBody, combatant, kitEffectState });
       // Breastplate lasts 12 seconds, so 13 seconds run it out
-      return stepKitEffects(kitEffectState, 13, { activeCombatant: combatant, body: body.position, party });
+      return stepKitEffects(kitEffectState, 13, { activeCombatant: combatant, body: fieldPosition, party });
     };
 
     expect(explodeAfterShield(3)).toStrictEqual([]);
     const [explosion] = explodeAfterShield(4);
     expect(explosion?.hit.talentMultiplier).toBe(4);
     expect(explosion?.hit.element).toBe(Element.Geo);
-    expect(explosion?.body.position).toStrictEqual({ x: 10, z: 0 });
+    expect(explosion?.body.position).toStrictEqual({ x: -4, z: 7 });
   });
 
   test("recasting Breastplate ends the shield she holds, whose explosion goes off on the next step", () => {

@@ -1,12 +1,9 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -107,13 +104,6 @@ const createBreastplateHeal = (talentMultiplierMap: TalentMultiplierMap): KitPar
   };
 };
 
-// To Be Cleaned's explosion, from the place the shield was cast, priced by Noelle as she stood when she cast it
-const createToBeCleanedStrike = (body: KitBody, combatant: Combatant): KitStrike => ({
-  body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
-  combatant,
-  hit: TO_BE_CLEANED_HIT,
-});
-
 // Noelle's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Breastplate and
 // Sweeping Time. Its multipliers are read from its proud skill groups. Breastplate's heal and its C1 and C4 are built,
 // Gated on the constellations the combatant holds, and A1's and A4's effects are not, so the charged attack is one cycle
@@ -213,13 +203,14 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 5),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Geo,
-          // To Be Cleaned explodes the shield where Noelle cast it, as it ends, and its explosion is priced by her as she stood
+          // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character on
+          // The field as the shield ends, whoever holds it then
           ...(combatant.constellationCount >= TO_BE_CLEANED_CONSTELLATION && {
-            explosion: createToBeCleanedStrike(body, combatant),
+            explosion: { combatant, hit: TO_BE_CLEANED_HIT },
           }),
           health:
             getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 6) +

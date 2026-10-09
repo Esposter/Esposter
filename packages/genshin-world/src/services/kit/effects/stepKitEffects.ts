@@ -13,7 +13,7 @@ import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 // The effects on the team run on by a step, written in place: each effect's seconds run down, each field's schedule runs
 // On, and those that have run out are dropped from the list. A field's tick reads the character on the field and its
 // Body, and an effect a tick adds starts at its full seconds. It returns the hits the summons land, and the explosions of
-// The taunts, bubbles and shields that end this step
+// The taunts, bubbles and shields that end this step, a shield's from the body on the field
 export const stepKitEffects = (
   kitEffectState: KitEffectState,
   stepSeconds: number,
@@ -27,7 +27,7 @@ export const stepKitEffects = (
     if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds);
     if (effect.kind === "taunt") return stepKitTaunt(effect);
     if (effect.kind === "bubble") return stepKitBubble(effect);
-    if (effect.kind === "shield") return stepKitShield(effect);
+    if (effect.kind === "shield") return stepKitShield(effect, body);
     return [];
   });
   kitEffectState.effects = kitEffectState.effects.filter(({ secondsRemaining }) => secondsRemaining > 0);

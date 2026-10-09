@@ -7,8 +7,8 @@ import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDa
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
-// An enemy's strike on a party member: its damage is first taken by the member's shield, and what the shield does not
-// Absorb is taken from the member as the share of its Max HP it is
+// An enemy's strike on a party member: its damage is first taken by the team's shields, and what none of them absorbs is
+// Taken from the member as the share of its Max HP it is
 export const strikePartyMember = (
   party: Party,
   enemy: Enemy,

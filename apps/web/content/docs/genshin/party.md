@@ -35,7 +35,7 @@ flowchart TD
 
 The world screen keeps the player's characters and their party. A new player's is the Traveler alone, made by `createCharacter` once the roster arrives, at level 1 with the weapon the game gives them ([character attributes](/docs/genshin/character-attributes)). Once a frame, in play with no screen over the world, the first party key pressed is passed to `switchPartyMember` at the canvas clock's elapsed seconds, so a screen over the world holds the keys as it holds the rest of play.
 
-The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](/docs/genshin/combat)). An enemy's strike, past the member's shield, and a drowning take HP from the party, and a team that has all fallen revives at 35% and is jumped to the Statue of The Seven nearest the body, or left where it fell when none is loaded.
+The character on the field fights through its kit, which prices every character's hits from its attributes with the Traveler's kit until the kits run gives each its own ([combat](/docs/genshin/combat)). An enemy's strike, past the team's shields, and a drowning take HP from the party, and a team that has all fallen revives at 35% and is jumped to the Statue of The Seven nearest the body, or left where it fell when none is loaded.
 
 ## Key files
 
