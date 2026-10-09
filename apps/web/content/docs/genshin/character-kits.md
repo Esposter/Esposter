@@ -212,7 +212,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 | `packages/genshin-world/src/models/enemy/EnemyStatus.ts`                  | An enemy's status: its id, the seconds left of it, the DMG taken it adds to each hit and the RES it takes off                     |
 | `packages/genshin-world/src/services/enemy/addEnemyStatus.ts`             | Gives an enemy a status, restarting the one it already holds of its id                                                            |
 | `packages/genshin-world/src/services/kit/effects/stepKitField.ts`         | A field's schedule, run on each step, ticking while the body stands in it                                                         |
-| `packages/genshin-world/src/services/kit/characters/monaKit.ts`           | `createMonaKit`, Mona's kit with Mirror Reflection's summon, the bubble and its Omen, A1's phantom and A4's bonus                 |     |
+| `packages/genshin-world/src/services/kit/characters/monaKit.ts`           | `createMonaKit`, Mona's kit with Mirror Reflection's summon, the bubble and its Omen, A1's phantom and A4's bonus                 |
 | `packages/genshin-world/src/services/kit/characters/amberKit.ts`          | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon                                                    |
 | `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`         | A taunt's explosion, once its seconds or its health run out                                                                       |
 | `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`             | The taunt an enemy's aggro picks, as the [enemies](/docs/genshin/enemies) page sets out                                           |
