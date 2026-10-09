@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
+
 import { readCharacterTerms } from "#src/services/character/readCharacterTerms";
 
 interface Props {
-  characterId: number;
-  characterPackBaseUrl: string;
+  // Where the character's pack is read from, the browser's kept copy or the host's
+  characterPackReader: CharacterPackReader;
 }
 
-const { characterId, characterPackBaseUrl } = defineProps<Props>();
+const { characterPackReader } = defineProps<Props>();
 const terms = ref("");
 const isFailed = ref(false);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
-readCharacterTerms(characterPackBaseUrl, characterId).match(
+readCharacterTerms(characterPackReader).match(
   (text) => {
     terms.value = text;
   },

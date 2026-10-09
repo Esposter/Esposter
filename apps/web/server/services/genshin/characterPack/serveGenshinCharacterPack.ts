@@ -43,15 +43,8 @@ export const serveGenshinCharacterPack = async (
   const modelPath = await readCharacterPackModelPath(folder, filePaths, Number(folderName), gameDataBaseUrl);
   if (path === CHARACTER_MODEL_PATH)
     return createResponse(await readFile(join(folder, modelPath)), CHARACTER_MODEL_PATH);
-  // Every path a model names is relative to the model's own folder
-  const modelFolder = modelPath.slice(0, modelPath.lastIndexOf("/") + 1);
-  const [texture] = resolveCharacterPackTextures(
-    [path],
-    filePaths
-      .filter((filePath) => filePath.startsWith(modelFolder))
-      .map((filePath) => filePath.slice(modelFolder.length)),
-  ).files;
+  const [texture] = resolveCharacterPackTextures([path], filePaths, modelPath).files;
   return texture === undefined
     ? new Response(null, { status: 404 })
-    : createResponse(await readFile(join(folder, modelFolder, texture.filePath)), texture.filePath);
+    : createResponse(await readFile(join(folder, texture.filePath)), texture.filePath);
 };

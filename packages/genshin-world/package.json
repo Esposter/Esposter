@@ -79,6 +79,10 @@
     "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "vue-tsc"
   },
+  "dependencies": {
+    "fflate": "catalog:",
+    "idb": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@fontsource/signika": "catalog:",
