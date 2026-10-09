@@ -12,6 +12,7 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { ARCHITECTURE_VIEW_METRES } from "#src/services/genshinAssets/world/constants";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
 import { selectArchitectureInView } from "#src/services/genshinAssets/world/selectArchitectureInView";
+import { selectLostArchitectureInView } from "#src/services/genshinAssets/world/selectLostArchitectureInView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -69,7 +70,7 @@ export const treeCommand: SubCommandsDef[string] = defineCommand({
       const placements = await readComponentPlacements(component, { isCopied: true });
       lines.push(
         `architecture placed within ${ARCHITECTURE_VIEW_METRES} metres of the capital: ${selectArchitectureInView(placements, place).length}`,
-        `architecture lost fathers within ${ARCHITECTURE_VIEW_METRES} metres of the capital: ${selectArchitectureInView(lostFathers, place).length}`,
+        `architecture lost fathers within ${ARCHITECTURE_VIEW_METRES} metres of the capital: ${selectLostArchitectureInView(lostFathers, place).length}`,
       );
     }
     console.log(lines.join("\n"));
