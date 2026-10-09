@@ -3,6 +3,16 @@ title: Spiral Abyss
 description: Proposal — what is left of the Spiral Abyss once its floors, chambers, clock, stars, unlocks, rewards and the Moon Spire's period are built from the game's tower tables: the chambers' enemies and scenes, the screen that enters them, the wormhole at Cape Oath, and the blessings of the Corridor and the Moon Spire.
 model: claude-opus-5-5
 needs: [game-exports]
+touches:
+  [
+    "scripts/src/services/genshinAssets/spiralAbyss/**",
+    "packages/genshin-world/src/models/spiralAbyss/**",
+    "packages/genshin-world/src/services/spiralAbyss/**",
+    "packages/genshin-world/src/generated/spiralAbyss/**",
+    "packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts",
+    "packages/genshin-world/src/services/interaction/pickUpDroppedItem.test.ts",
+    "packages/genshin-world/src/services/inventory/constants.ts",
+  ]
 ---
 
 # Spiral Abyss
@@ -13,6 +23,8 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 - **A chamber's waves are camps of its scene.** Each half's enemies are the table's list for that half, placed as the enemy camps of the chamber's own domain scene, and a half is defeated when its camps are. A two-team chamber with no second list, as the monolith chambers have none, takes its second half's enemies from its scene the same way.
 - **The chamber's end is carried on.** Each character's health and energy at the moment a chamber is cleared are what they start the next chamber with, as the game records them. The party holds them between chambers, so nothing resets them.
+- **A reward id is its reward row's items, written beside the floors' rewards.** The tower table's rewards name about two hundred reward ids, each resolved through the shared reward reader to its items (floor one's nine-star reward is 100 Primogems and 25,000 Mora), and the items go into the existing rewards slice rather than a new one. A claim gives each item as a pick up does, every wallet currency into the wallet and the rest into the bag, refused whole when the bag has no room for all of it, as an expedition's claim is.
+- **A pick up files every currency the wallet counts.** `pickUpDroppedItem` takes Mora into the wallet and everything else into the bag, so Primogems would land in the bag. It reads the wallet's own `CurrencyItemIdMap` instead, exported for it, so a reward's or a chest's Primogems are wallet grants as Mora is.
 - **The Moon Spire's blessing is a module over the kits' shared effects.** Each period names its blessing by a text hash and an icon, and its effect is written as a module once a source gives it.
 
 ## Scope and order
@@ -21,10 +33,11 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 **This adds, in order:**
 
-1. **The chambers' scenes and their enemy camps**, with each half's wave defeated by its camps, once the domain scene is derived ([scene derivation](/docs/genshin/scene-derivation)).
-2. **The screen and the chamber's loop**: entering a chamber with the party set, the clock run over real play, a half advanced on its last enemy defeated, and the health and energy carried into the next chamber.
-3. **The blessings**: the Moon Spire's blessing of each period, and the Corridor's blessing choices, each written once its effect is read from a source.
-4. **The wormhole at Cape Oath**, once Musk Reef's scene is derived.
+1. **The rewards' items.** `writeSpiralAbyss.ts` writes `generated/spiralAbyss/rewards.json` as `{ floorRewards, rewardItems }`: the floor rewards as now, and every reward id they name resolved through `readRewardMap` and `toRewardItems` (`scripts/src/services/genshinAssets/rewards/`) to its items, each `{ count, itemId }`, keyed by reward id. `readAbyssFloorRewards.ts` parses the new shape. `services/inventory/constants.ts` exports `CurrencyItemIdMap`, and `services/interaction/pickUpDroppedItem.ts` files any item that map names into its currency, not Mora alone. A new `services/spiralAbyss/claimAbyssRewards.ts` takes a clear's `givenRewardIds`, the items map, the bag, the wallet and the names, and gives every item through `pickUpDroppedItem`, returning nothing changed when any item overflows the bag. Tests: `claimAbyssRewards.test.ts` (a reward of Primogems and Mora lands both in the wallet and nothing in the bag, a material goes into the bag, and a bag with no room refuses the whole claim) and a Primogem case in `pickUpDroppedItem.test.ts`.
+2. **The chambers' scenes and their enemy camps**, with each half's wave defeated by its camps, once the domain scene is derived ([scene derivation](/docs/genshin/scene-derivation)).
+3. **The screen and the chamber's loop**: entering a chamber with the party set, the clock run over real play, a half advanced on its last enemy defeated, and the health and energy carried into the next chamber.
+4. **The blessings**: the Moon Spire's blessing of each period, and the Corridor's blessing choices, each written once its effect is read from a source.
+5. **The wormhole at Cape Oath**, once Musk Reef's scene is derived.
 
 ## Data and measures
 

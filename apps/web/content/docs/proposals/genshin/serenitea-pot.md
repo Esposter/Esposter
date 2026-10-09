@@ -2,7 +2,7 @@
 title: Serenitea Pot
 description: Proposal — the Serenitea Pot's realm: a gadget that opens a realm of its own scene from the game's layouts, a placement editor that furnishes it within each area's load, the Realm Depot, gardens and ponds, the Adeptal Mirror, and characters who live there as companions. Tubby's furnishings, Trust Rank, Adeptal Energy and the realm's stores are built.
 model: claude-opus-5-5
-needs: [game-exports]
+touches: ["packages/genshin-world/src/models/home/**", "packages/genshin-world/src/services/home/**"]
 ---
 
 # Serenitea Pot
@@ -22,6 +22,9 @@ Tubby's making, the Trust Rank, Adeptal Energy and the realm's Realm Currency an
 - **The Realm Depot and the Adeptal Mirror.** Tubby's depot sells blueprints, furnishings and materials for Realm Currency from the game's shop rows, and the Adeptal Mirror's missions reward blueprints as the handbook rewards its chapters.
 - **Gardens and ponds.** A garden's fields grow seeds over real time and a pond holds fish, by `HomeWorldFarmFieldExcelConfigData`, `HomeWorldPlantExcelConfigData` and `HomeWorldRaiseFishExcelConfigData`.
 - **Opened at Adventure Rank 28** with its quests.
+- **A companion is invited within the Trust Rank's count.** Any character the player owns but the Traveler may live in the realm, one character once, as many as the Trust Rank's `npcCount` in the built `levels.json` allows, from one at rank one to eight at rank ten. Inviting takes no furnishing; the gift sets are the furnishing sets' and wait on the placement editor.
+- **The Realm Depot is the shop table's.** Its goods are shops 213 and 214 of `ShopGoodsExcelConfigData` (goods ids 213xxx and 214xxx, filed under `shopType` 1048 in the goods rows), split by `subTabId` as the wiki's Realm Depot page lists them: 1 the weekly Realm Treasures (eight goods), 2 the daily Furnishings, 3 the Furnishing Blueprints, 4 Riches of the Realm, 5 the weekly Creatures of the Realm and 6 the weekly Wood. Every good is priced in Realm Currency, item 204, so the depot waits on Realm Currency joining the wallet, whose save holds every currency as a key of its record.
+- **A furnishing's load is its `cost`.** `HomeWorldFurnitureExcelConfigData` gives each furnishing its `comfort` and its `cost`, the load it counts against its area. The area's own limit is still in no table read, so the editor's refusal waits on it.
 
 ## How it works
 
@@ -42,11 +45,12 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The gadget and one realm layout**, entered and left.
-2. **The placement editor and its load.** Waits on the load each area holds, which the realm tables read so far do not carry.
-3. **The Realm Depot**, once the shop rows for its goods are read.
-4. **Companions and gift sets**, invited up to the Trust Rank's count.
-5. **Gardens, ponds, the other layouts and the Adeptal Mirror.**
+1. **Companions invited.** `models/home/HomeProgress.ts` gains `companionIds`, the characters living in the realm. A new `services/home/inviteHomeCompanion.ts` adds one, refusing the Traveler (`TRAVELER_CHARACTER_ID`), a character the player does not own, one already living there, and one past the `npcCount` of the Trust Rank `computeHomeTrustRank` reads from the progress's Trust EXP; `services/home/dismissHomeCompanion.ts` takes one out. Test: `inviteHomeCompanion.test.ts` (a rank-one realm takes one companion and refuses a second, the Traveler is refused, and a character already living there is refused).
+2. **The Realm Depot.** Realm Currency joins the wallet as a currency, item 204 in `CurrencyItemIdMap` and `ShopItemCurrencyMap`, its name a `GameTextKey` written by `genshin:text`, and the save's currencies record with it; then the depot's tabs are written from the goods rows the Decisions name through the shops' `writeShopGoodSlice`, and bought through `buyShopGood` at each tab's refresh.
+3. **The gadget and one realm layout**, entered and left, once the first layout's scene (world scene 2001 of `HomeworldModuleExcelConfigData`) is extracted as a region's is.
+4. **The placement editor and its load.** Waits on the load each area holds, which the realm tables read so far do not carry.
+5. **Gift sets**, once the editor places the furnishing sets they are.
+6. **Gardens, ponds, the other layouts and the Adeptal Mirror.**
 
 ## Data and measures
 
