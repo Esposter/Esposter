@@ -1,10 +1,13 @@
-import walkway from "#src/data/login/walkway.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readLoginData } from "#src/services/login/readLoginData";
 import { createLoginWalkwayPieces } from "#src/services/login/walkway/createLoginWalkwayPieces";
 import { Box3, DoubleSide, Group, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
+const { walkway } = await readLoginData(GAME_DATA_LOCAL_BASE_URL);
+
 describe(createLoginWalkwayPieces, () => {
-  const pieces = createLoginWalkwayPieces();
+  const pieces = createLoginWalkwayPieces(walkway);
   const group = new Group().add(
     ...pieces.map(({ geometry }) => new Mesh(geometry, new MeshBasicMaterial({ side: DoubleSide }))),
   );

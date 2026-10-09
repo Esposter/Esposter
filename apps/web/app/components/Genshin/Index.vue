@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
+import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
@@ -15,6 +16,8 @@ const isReady = ref(false);
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
 const gameText = await useGameText();
+// The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
+const containerBaseUrl = useContainerBaseUrl();
 // The player's save, which the world starts from once it is loaded, and the lease the page holds for it. A start that
 // Fails is retried until it takes, the page waiting on its save meanwhile
 const {
@@ -85,6 +88,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
+        :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
         :game-text="gameText.text"
         :language="gameText.language"
         :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
@@ -93,7 +97,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
         @finish="isOpeningShown = false"
       />
       <!-- A progressbar is no live region, so its reaching the end is announced by nothing of its own. The world being
-        Ready is said here to a screen reader alone, and only then, since the splashes and login load nothing -->
+        Ready is said here to a screen reader alone, and only then, since the splashes and login load none of it -->
       <p role="status" sr-only>{{ isReady ? gameText.text[GameTextKey.Ready] : "" }}</p>
     </div>
   </div>

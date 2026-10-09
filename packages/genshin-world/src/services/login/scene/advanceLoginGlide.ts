@@ -1,4 +1,5 @@
 import type { LoginGlide } from "#src/models/login/LoginGlide";
+import type { LoginScrollRow } from "#src/models/login/LoginScrollRow";
 
 import { LoginStage } from "#src/models/login/LoginStage";
 import {
@@ -6,7 +7,6 @@ import {
   LOGIN_GLIDE_ACCELERATION,
   LOGIN_GLIDE_PREPARING_SPEED,
   LOGIN_GLIDE_TITLE_SPEED,
-  LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 
@@ -15,9 +15,10 @@ const DOOR_LEAD = LOGIN_WALKWAY_SUNK_DISTANCE - LOGIN_DOOR_REST_DISTANCE;
 
 // The glide a frame on: toward the title's speed while the title waits and the preparing speed once the game prepares,
 // Gathering or losing speed at the glide's acceleration. Once the door is due it keeps its pace, never faster, until
-// The first copy of the walkway at least the door's lead away has come within the walkway's far end, where the door
-// Rises, then slows evenly to rest on that copy, so the door's copy stands where the camera's pose has it
+// The first copy of the walkway's row at least the door's lead away has come within the walkway's far end, where the
+// Door rises, then slows evenly to rest on that copy, so the door's copy stands where the camera's pose has it
 export const advanceLoginGlide = (
+  walkwayRow: LoginScrollRow,
   { scrolled, speed, stopAt }: LoginGlide,
   stage: LoginStage,
   deltaSeconds: number,
@@ -29,7 +30,7 @@ export const advanceLoginGlide = (
       Math.sign(target - speed) * Math.min(Math.abs(target - speed), LOGIN_GLIDE_ACCELERATION * deltaSeconds);
     return { scrolled: scrolled + speed * deltaSeconds, speed: speed + change };
   }
-  const stop = stopAt ?? Math.ceil((scrolled + DOOR_LEAD) / LOGIN_WALKWAY_ROW.length) * LOGIN_WALKWAY_ROW.length;
+  const stop = stopAt ?? Math.ceil((scrolled + DOOR_LEAD) / walkwayRow.length) * walkwayRow.length;
   const remaining = stop - scrolled;
   if (remaining <= 0 || speed === 0) return { scrolled: stop, speed: 0, stopAt: stop };
   if (remaining > DOOR_LEAD) return { scrolled: scrolled + speed * deltaSeconds, speed, stopAt: stop };

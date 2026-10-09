@@ -1,38 +1,44 @@
 <script setup lang="ts">
+import type { LoginCloudsData } from "#src/models/login/LoginCloudsData";
+import type { LoginDoor } from "#src/models/login/LoginDoor";
 import type { LoginGlide } from "#src/models/login/LoginGlide";
+import type { LoginHulls } from "#src/models/login/LoginHulls";
+import type { LoginPavingData } from "#src/models/login/LoginPavingData";
+import type { LoginScroll } from "#src/models/login/LoginScroll";
+import type { LoginSky } from "#src/models/login/LoginSky";
+import type { LoginStone } from "#src/models/login/LoginStone";
+import type { LoginStoneLight } from "#src/models/login/LoginStoneLight";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
-import type { QualityTier } from "genshin-engine";
+import type { LoginTowers } from "#src/models/login/LoginTowers";
+import type { LoginWalkway } from "#src/models/login/LoginWalkway";
+import type { CloudLayerTextureProfiles, QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
-import cloudLayerTextures from "#src/data/login/cloudLayerTextures.json";
-import door from "#src/data/login/door.json";
-import sky from "#src/data/login/sky.json";
-import stone from "#src/data/login/stone.json";
-import stoneLight from "#src/data/login/stoneLight.json";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap";
 import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
 import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift";
+import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
 import {
   LOGIN_DOOR_GLOW_COLOR,
-  LOGIN_DOOR_LIFT_MS,
   LOGIN_DOOR_PANEL_STRENGTH,
-  LOGIN_DOOR_POSITION,
   LOGIN_DOOR_SLIT_STRENGTH,
   LOGIN_DOOR_SLIT_WIDTH,
 } from "#src/services/login/door/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
+import { getLoginDoorPosition } from "#src/services/login/door/getLoginDoorPosition";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
+import { computeLoginCameraHeight } from "#src/services/login/scene/computeLoginCameraHeight";
+import { computeLoginCameraZ } from "#src/services/login/scene/computeLoginCameraZ";
+import { computeLoginGlideTitleScrolled } from "#src/services/login/scene/computeLoginGlideTitleScrolled";
 import {
   LOGIN_CAMERA_FAR,
-  LOGIN_CAMERA_HEIGHT,
   LOGIN_CAMERA_PITCH,
   LOGIN_CAMERA_YAW,
-  LOGIN_CAMERA_Z,
   LOGIN_CLOUD_COVERAGE,
   LOGIN_CLOUD_SEA_EDGE_END,
   LOGIN_CLOUD_SEA_EDGE_START,
@@ -46,7 +52,6 @@ import {
   LOGIN_FOG_SCATTER_STRENGTH,
   LOGIN_FOG_START_DISTANCE,
   LOGIN_GLIDE_DOOR_SCROLLED,
-  LOGIN_GLIDE_TITLE_SCROLLED,
   LOGIN_GLIDE_TITLE_SPEED,
   LOGIN_LIGHT_DISTANCE,
   LOGIN_RIM_STRENGTH,
@@ -54,9 +59,7 @@ import {
   LOGIN_SHADOW_EXTENT,
   LOGIN_SHADOW_MAP_SIZE,
   LOGIN_SHADOW_NORMAL_BIAS,
-  LOGIN_TOWERS_ROW,
   LOGIN_TOWERS_ROW_OFFSET,
-  LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { getLoginCameraFov } from "#src/services/login/scene/getLoginCameraFov";
 import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
@@ -108,16 +111,55 @@ import {
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
+  // The statistics of the game's cloud layer textures, which our own are synthesized from
+  cloudLayerTextures: CloudLayerTextureProfiles;
+  // The sky's three cloud bands as their fit traced them
+  clouds: LoginCloudsData;
+  // The door's pieces and their lifts, where it stands and its relief
+  door: LoginDoor;
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
   heldScrolled?: number;
+  // The bridges' and the pillars' hulls, and where each stands
+  hulls: LoginHulls;
   isDoorLit: boolean;
+  // The walkway's paving, carved and painted over its tops
+  paving: LoginPavingData;
   qualityTier: QualityTier;
+  // The rows the scene scrolls past the camera: the walkway's copies and the towers'
+  scroll: LoginScroll;
+  // The sky's gradient and its cloud layer
+  sky: LoginSky;
   // The login screen's stage, which sets the glide's pace and, from the door's, brings it to rest at the door
   stage: LoginStage;
+  // The stone each family of parts is carved from
+  stone: LoginStone;
+  // The stone's light at each hour
+  stoneLight: LoginStoneLight;
   timeOfDay: LoginTimeOfDay;
+  // The towers' facades, and where each stands
+  towers: LoginTowers;
+  // The walkway's pieces and the heights it spans
+  walkway: LoginWalkway;
 }
 
-const { heldScrolled, isDoorLit, qualityTier, stage, timeOfDay } = defineProps<Props>();
+const {
+  cloudLayerTextures,
+  clouds,
+  door,
+  heldScrolled,
+  hulls,
+  isDoorLit,
+  paving,
+  qualityTier,
+  scroll,
+  sky,
+  stage,
+  stone,
+  stoneLight,
+  timeOfDay,
+  towers,
+  walkway,
+} = defineProps<Props>();
 const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // The witness render's parts, drawn in place of the fitted ones of each family it names when the parity page provides
 // Them, alone when it asks
@@ -127,6 +169,14 @@ const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.fa
 const { scene, sizes } = useTres();
 const cameraFov = computed(() => getLoginCameraFov(sizes.aspectRatio.value));
 const { onRender } = useLoop();
+// Where the door stands and how long it takes to rise, the camera's pose over the walkway and short of the door, and
+// The walkway's and the towers' rows the glide wraps by, each read once from the records the scene is built from
+const doorRestPosition = getLoginDoorPosition(door);
+const doorLiftMs = computeLoginDoorLiftMs(door);
+const cameraHeight = computeLoginCameraHeight(walkway);
+const cameraRestZ = computeLoginCameraZ(door);
+const walkwayRow = scroll.LoginScene_Bridge01_Vo;
+const towersRow = scroll.LoginScene_Build_All;
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = LOGIN_RIM_STRENGTH;
 const light = new DirectionalLight();
@@ -184,7 +234,7 @@ cloudLayer.curlSpeed.value = sky.cloudLayerMaterial.curlSpeed;
 cloudLayer.curlTiling.value = sky.cloudLayerMaterial.curlTiling;
 cloudLayer.wispsOpacity.value = sky.cloudLayerMaterial.wispsOpacity;
 scene.value.backgroundNode = createSkyNode(skyUniforms, skyGradient, cloudLayer);
-const loginClouds = createLoginClouds(skyUniforms);
+const loginClouds = createLoginClouds(clouds, walkway, skyUniforms);
 watchImmediate(
   () => timeOfDay,
   (newTimeOfDay) => {
@@ -206,17 +256,17 @@ watchImmediate(
 const towersMaterial = createStoneMaterial(stone.towers, loginStoneLight);
 // The towers' surfaces drawn over their lathes: each band's tone, its paint, its recesses and its gilding, and where a
 // Tower stands open its colonnade lets the sky through
-const towerAtlas = computeLoginTowerAtlas();
-const towerFacade = createLoginTowerFacade(towerAtlas);
+const towerAtlas = computeLoginTowerAtlas(towers);
+const towerFacade = createLoginTowerFacade(towers, towerAtlas);
 towersMaterial.colorNode = towerFacade.shade.mul(color(stone.towers.albedo));
 towersMaterial.opacityNode = towerFacade.solid;
 towersMaterial.alphaTest = 0.5;
 const bridgesMaterial = createStoneMaterial(stone.bridges, loginStoneLight);
 const walkwayMaterial = createStoneMaterial(stone.walkway, loginStoneLight);
 // The walkway's tops painted in its textures' tones and carved with its paving, its rims tilted to the light
-const paving = createLoginPaving();
-walkwayMaterial.colorNode = paving.shade.mul(color(stone.walkway.albedo));
-walkwayMaterial.normalNode = paving.normalNode;
+const walkwayPaving = createLoginPaving(paving);
+walkwayMaterial.colorNode = walkwayPaving.shade.mul(color(stone.walkway.albedo));
+walkwayMaterial.normalNode = walkwayPaving.normalNode;
 const doorFrameMaterial = createStoneMaterial(stone.door, loginStoneLight);
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it
 const doorGlow = uniform(0);
@@ -232,40 +282,40 @@ const doorMaterial = createStoneMaterial(
   ),
 );
 // The door's front painted with its panel's raised bands and its feet's gilding over its stone
-const doorAlbedo = createLoginDoorRelief().mul(color(stone.door.albedo));
+const doorAlbedo = createLoginDoorRelief(door).mul(color(stone.door.albedo));
 doorFrameMaterial.colorNode = doorAlbedo;
 doorMaterial.colorNode = doorAlbedo;
-const towersGeometry = createLoginTowersGeometry(towerAtlas);
-const hullsGeometry = createLoginHullsGeometry();
-const walkwayPieces = createLoginWalkwayPieces();
+const towersGeometry = createLoginTowersGeometry(towers, towerAtlas);
+const hullsGeometry = createLoginHullsGeometry(hulls);
+const walkwayPieces = createLoginWalkwayPieces(walkway);
 // The walkway's row drawn as one batch, every piece of every copy an instance of its own, so each rises into place on
 // Its own in one draw, and the toon outline, which places a batch's instances before it extrudes them, follows it. The
 // Batch itself scrolls with the row, so only a rising piece's own place changes
-const walkway = new BatchedMesh(
-  LOGIN_WALKWAY_ROW.count * walkwayPieces.length,
+const walkwayBatch = new BatchedMesh(
+  walkwayRow.count * walkwayPieces.length,
   walkwayPieces.reduce((total, { geometry }) => total + geometry.getAttribute("position").count, 0),
   0,
   walkwayMaterial,
 );
-walkway.castShadow = true;
-walkway.receiveShadow = true;
+walkwayBatch.castShadow = true;
+walkwayBatch.receiveShadow = true;
 // The batch's own bounding sphere is read once and never follows its instances as they move, so the batch is never
 // Culled as one; each piece is still culled on its own
-walkway.frustumCulled = false;
-walkway.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Walkway;
+walkwayBatch.frustumCulled = false;
+walkwayBatch.userData[SCENE_FAMILY_KEY] = LoginPartFamily.Walkway;
 const walkwayInstances = walkwayPieces.flatMap(({ depth, geometry, seed }) => {
-  const geometryId = walkway.addGeometry(geometry);
-  return Array.from({ length: LOGIN_WALKWAY_ROW.count }, (_value, copy) => ({
+  const geometryId = walkwayBatch.addGeometry(geometry);
+  return Array.from({ length: walkwayRow.count }, (_value, copy) => ({
     copy,
     depth,
-    instanceId: walkway.addInstance(geometryId),
+    instanceId: walkwayBatch.addInstance(geometryId),
     seed,
   }));
 });
 const walkwayMatrix = new Matrix4();
 // The door's pieces, each carried along its own lift as the door rises, off Vue's reactivity: a part a piece holds none
 // Of is left out, and none is culled, as the door is not
-const doorPieceGeometries = createLoginDoorGeometry();
+const doorPieceGeometries = createLoginDoorGeometry(door);
 const doorPieces = doorPieceGeometries.map(({ frame, panel }) => {
   const piece = new Group();
   for (const [geometry, material] of [
@@ -322,36 +372,36 @@ const getStartGlide = (): LoginGlide => {
   if (heldScrolled !== undefined) return { scrolled: heldScrolled, speed: 0 };
   else if (checkIsDoorDue())
     return { scrolled: LOGIN_GLIDE_DOOR_SCROLLED, speed: 0, stopAt: LOGIN_GLIDE_DOOR_SCROLLED };
-  else return { scrolled: LOGIN_GLIDE_TITLE_SCROLLED, speed: LOGIN_GLIDE_TITLE_SPEED };
+  else return { scrolled: computeLoginGlideTitleScrolled(walkwayRow), speed: LOGIN_GLIDE_TITLE_SPEED };
 };
 let glide = getStartGlide();
 // The towers' row, scrolled with the glide each frame off Vue's reactivity, which would otherwise draw the
 // Template anew
-const towers = new Group();
+const towersGroup = new Group();
 // How far past its place of rest the door is, riding on the walkway's copy it comes to rest on
 const doorAhead = shallowRef(0);
 const doorPosition = computed((): [number, number, number] => {
-  const [x, y, z] = LOGIN_DOOR_POSITION;
+  const [x, y, z] = doorRestPosition;
   return [x, y, z + doorAhead.value];
 });
 // The camera holds its pose, and on the click rushes on toward the door
 const cameraZ = computed(() => {
   const share = Math.min(LOGIN_DOOR_RUSH_SHARE * (rushMs.value / LOGIN_DOOR_RUSH_MS) ** 2, LOGIN_DOOR_RUSH_LIMIT);
-  return LOGIN_CAMERA_Z - share * (LOGIN_CAMERA_Z - LOGIN_DOOR_POSITION[2]);
+  return cameraRestZ - share * (cameraRestZ - doorRestPosition[2]);
 });
 onRender(({ delta: frameDelta }) => {
   // A tool holding the witness's clock holds the scene's time too, so one view draws one frame
   const delta = witness?.isClockHeld.value ? 0 : frameDelta;
-  if (heldScrolled === undefined) glide = advanceLoginGlide(glide, stage, delta);
+  if (heldScrolled === undefined) glide = advanceLoginGlide(walkwayRow, glide, stage, delta);
   const { scrolled, stopAt = scrolled } = glide;
   // Read once a frame, where every walkway piece would otherwise ask again
   const isDoorDue = checkIsDoorDue();
-  const walkwayScrolled = scrolled % LOGIN_WALKWAY_ROW.length;
+  const walkwayScrolled = scrolled % walkwayRow.length;
   const [rowX, rowY, rowZ] = LOGIN_TOWERS_ROW_OFFSET;
-  towers.position.set(rowX, rowY, rowZ - (scrolled % LOGIN_TOWERS_ROW.length));
+  towersGroup.position.set(rowX, rowY, rowZ - (scrolled % towersRow.length));
   doorAhead.value = stopAt - scrolled;
   // Once the door is due the walkway ends at it, and nothing past it is built
-  const doorAheadOfCamera = LOGIN_DOOR_POSITION[2] + doorAhead.value - cameraZ.value;
+  const doorAheadOfCamera = doorRestPosition[2] + doorAhead.value - cameraZ.value;
   // The witness's parts ride the glide with ours, off by whatever offset a tool sets them: its towers and bridges the
   // Row, its walkway the walkway's copies, assembling as ours does, and its door ours as it rises, standing only where
   // Ours does, so a frame of the title compares no door against none
@@ -359,10 +409,10 @@ onRender(({ delta: frameDelta }) => {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
-      group.position.add(towers.position);
+      group.position.add(towersGroup.position);
     else if (group.name === LoginPartFamily.Walkway) {
       group.position.z -= walkwayScrolled;
-      sinkLoginWitnessWalkway(group, walkwayPieces, {
+      sinkLoginWitnessWalkway(walkwayRow, group, walkwayPieces, {
         cameraZ: cameraZ.value,
         doorAheadOfCamera: isDoorDue ? doorAheadOfCamera : undefined,
       });
@@ -371,14 +421,14 @@ onRender(({ delta: frameDelta }) => {
       group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
     }
   }
-  walkway.position.z = -walkwayScrolled;
+  walkwayBatch.position.z = -walkwayScrolled;
   for (const { copy, depth, instanceId, seed } of walkwayInstances) {
-    const z = copy * LOGIN_WALKWAY_ROW.length;
-    const ahead = walkway.position.z + z + depth - cameraZ.value;
+    const z = copy * walkwayRow.length;
+    const ahead = walkwayBatch.position.z + z + depth - cameraZ.value;
     const sink = getLoginWalkwaySink(ahead, seed);
     // A piece stands only once it has begun to rise, so neither it nor its shadow shows before its turn
-    walkway.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
-    walkway.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
+    walkwayBatch.setVisibleAt(instanceId, sink < LOGIN_WALKWAY_RISE_DEPTH && (!isDoorDue || ahead < doorAheadOfCamera));
+    walkwayBatch.setMatrixAt(instanceId, walkwayMatrix.makeTranslation(0, -sink, z));
   }
   cloudSeaScrolled.value = scrolled;
   loginClouds.scroll(scrolled);
@@ -395,9 +445,9 @@ onRender(({ delta: frameDelta }) => {
   riseMs = isDoorRising.value ? riseMs + delta * 1000 : 0;
   if (!isDoorFormed)
     for (const [index, piece] of doorPieces.entries())
-      applyLoginDoorLift(piece, door.pieces[index]?.lift ?? [], riseMs);
+      applyLoginDoorLift(door, piece, door.pieces[index]?.lift ?? [], riseMs);
   // The door's own interface waits on the door, once its last piece has risen into place
-  if (!isDoorFormed && isDoorRising.value && riseMs >= LOGIN_DOOR_LIFT_MS) {
+  if (!isDoorFormed && isDoorRising.value && riseMs >= doorLiftMs) {
     isDoorFormed = true;
     emit("doorFormed");
   }
@@ -405,7 +455,7 @@ onRender(({ delta: frameDelta }) => {
   if (
     isReadyEmitted ||
     renderedFrameCount < LOGIN_SCENE_READY_FRAME_COUNT ||
-    (isDoorDue && riseMs < LOGIN_DOOR_LIFT_MS) ||
+    (isDoorDue && riseMs < doorLiftMs) ||
     // The parity page's tools read the cloud layer over our own textures, so a scene they open waits on them
     (witness && !isCloudLayerSynthesized)
   )
@@ -431,7 +481,7 @@ onUnmounted(() => {
   cloudSeaMaterial.dispose();
   loginClouds.dispose();
   for (const { geometry } of walkwayPieces) geometry.dispose();
-  walkway.dispose();
+  walkwayBatch.dispose();
   towersGeometry.dispose();
   hullsGeometry.dispose();
   for (const { frame, panel } of doorPieceGeometries) {
@@ -447,7 +497,7 @@ onUnmounted(() => {
   <TresPerspectiveCamera
     :far="LOGIN_CAMERA_FAR"
     :fov="cameraFov"
-    :position="[0, LOGIN_CAMERA_HEIGHT, cameraZ]"
+    :position="[0, cameraHeight, cameraZ]"
     :rotation="[LOGIN_CAMERA_PITCH, LOGIN_CAMERA_YAW, 0]"
     rotation-order="YXZ"
   />
@@ -456,10 +506,10 @@ onUnmounted(() => {
   <primitive :object="hemisphere" />
   <primitive v-if="!witness?.isAlone.value" :object="loginClouds.group" />
   <primitive v-if="witness" :object="witness.parts" />
-  <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkway" />
+  <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkwayBatch" />
   <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->
-  <primitive :object="towers">
-    <template v-for="copy in LOGIN_TOWERS_ROW.count" :key="copy">
+  <primitive :object="towersGroup">
+    <template v-for="copy in towersRow.count" :key="copy">
       <TresMesh
         v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Towers)"
         :geometry="towersGeometry"
@@ -467,7 +517,7 @@ onUnmounted(() => {
         cast-shadow
         receive-shadow
         :material="towersMaterial"
-        :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
+        :position="[0, 0, (copy - 1) * towersRow.length]"
       />
       <TresMesh
         v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Bridges)"
@@ -476,7 +526,7 @@ onUnmounted(() => {
         cast-shadow
         receive-shadow
         :material="bridgesMaterial"
-        :position="[0, 0, (copy - 1) * LOGIN_TOWERS_ROW.length]"
+        :position="[0, 0, (copy - 1) * towersRow.length]"
       />
     </template>
   </primitive>

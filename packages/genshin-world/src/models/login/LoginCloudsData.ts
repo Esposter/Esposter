@@ -1,11 +1,8 @@
+import { LoginCloudBand } from "#src/models/login/LoginCloudBand";
 import { z } from "zod";
 
 // The login sky's three cloud bands as its fit traced them: the sea's billows, the middle cumulus and the top cumulus
-export interface LoginCloudsData {
-  bottom: LoginCloudBandData;
-  middle: LoginCloudBandData;
-  top: LoginCloudBandData;
-}
+export type LoginCloudsData = Record<LoginCloudBand, LoginCloudBandData>;
 // One of the login sky's cloud bands: its width over its height in its own atlas, and its sprites
 interface LoginCloudBandData {
   aspect: number;
@@ -27,7 +24,7 @@ const loginCloudBandDataSchema = z.object({
 }) satisfies z.ZodType<LoginCloudBandData>;
 
 export const loginCloudsDataSchema = z.object({
-  bottom: loginCloudBandDataSchema,
-  middle: loginCloudBandDataSchema,
-  top: loginCloudBandDataSchema,
+  [LoginCloudBand.Bottom]: loginCloudBandDataSchema,
+  [LoginCloudBand.Middle]: loginCloudBandDataSchema,
+  [LoginCloudBand.Top]: loginCloudBandDataSchema,
 }) satisfies z.ZodType<LoginCloudsData>;

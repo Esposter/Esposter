@@ -1,8 +1,11 @@
-import stoneLight from "#src/data/login/stoneLight.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { readLoginData } from "#src/services/login/readLoginData";
 import { computeStoneHarmonics, STONE_HARMONIC_COUNT } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-describe("stoneLight", () => {
+const { stoneLight } = await readLoginData(GAME_DATA_LOCAL_BASE_URL);
+
+describe("loginStoneLight", () => {
   // Faces turned every way round the sphere, by a golden-angle spiral
   const normals = Array.from({ length: 200 }, (_value, index) => {
     const y = 1 - (2 * (index + 0.5)) / 200;

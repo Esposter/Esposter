@@ -1,3 +1,4 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import GameOpening from "#src/components/Game/Opening/Index.vue";
 import { MARKS_FADE_MS, WHITE_HOLD_MS } from "#src/services/loading/constants";
 import {
@@ -7,11 +8,21 @@ import {
   LOGIN_STATUS_STEPS,
   LOGIN_TITLE_START_MS,
 } from "#src/services/login/constants";
-import { LOGIN_DOOR_LIFT_MS } from "#src/services/login/door/constants";
-import { LOGIN_GLIDE_TITLE_SPEED, LOGIN_WALKWAY_ROW } from "#src/services/login/scene/constants";
+import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
+import { readLoginData } from "#src/services/login/readLoginData";
+import { LOGIN_GLIDE_TITLE_SPEED } from "#src/services/login/scene/constants";
+import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
+import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
+
+// The opening's own reads made first, so each of its reads is answered by the page's one fetch of it within a frame of
+// Its mount rather than whenever the mirror answers
+const [, { door, scroll }] = await Promise.all([
+  readTitleLogoPath(GAME_DATA_LOCAL_BASE_URL, GameLanguageTitleLogoMap[GameLanguage.English]),
+  readLoginData(GAME_DATA_LOCAL_BASE_URL),
+]);
 
 // Waits on the browser's own frame, kept before the clock is faked: a CSS animation's or transition's end is sent on a
 // Rendering frame, which the faked frame clock never reaches
@@ -40,10 +51,37 @@ describe("gameOpening", () => {
   const timeoutMs = 240_000;
   // The longest from the door being due to the door standing formed, which its click waits on: a copy of the walkway
   // At the glide's slowest pace before the door's copy reaches the walkway's far end, then the door's rise
-  const doorArrivalMs = (LOGIN_WALKWAY_ROW.length / LOGIN_GLIDE_TITLE_SPEED) * 1000 + LOGIN_DOOR_LIFT_MS;
+  const doorArrivalMs =
+    (scroll.LoginScene_Bridge01_Vo.length / LOGIN_GLIDE_TITLE_SPEED) * 1000 + computeLoginDoorLiftMs(door);
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  // The title logo and the login's records are read from the hosted game data, so until they arrive the opening holds
+  // The white its splashes play on rather than a title splash with no logo
+  test("holds the splashes' white while its reads are in flight", async () => {
+    expect.hasAssertions();
+
+    // Every fetch held, under a base the page has read nothing from, so no read is answered by one made before
+    const { promise } = Promise.withResolvers<Response>();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>(() => promise),
+    );
+    const { container } = await render(GameOpening, {
+      props: {
+        gameDataBaseUrl: "/held",
+        gameText: ENGLISH_GAME_TEXT,
+        language: GameLanguage.English,
+        musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
+        progress: 1,
+      },
+    });
+
+    expect(container.querySelector(".splash-sequence")).toBeNull();
+    expect(container.querySelector(".game-screen")).not.toBeNull();
   });
 
   // The game's opening end to end with the page already loaded, the order a console that loads quickly sees it in:
@@ -60,6 +98,7 @@ describe("gameOpening", () => {
       const onFinish = vi.fn<() => void>();
       const { container } = await render(GameOpening, {
         props: {
+          gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
           gameText: ENGLISH_GAME_TEXT,
           language: GameLanguage.English,
           musicRecordingBaseUrl: LOGIN_MUSIC_RECORDING_DIRECTORY,
@@ -67,6 +106,8 @@ describe("gameOpening", () => {
           progress: 1,
         },
       });
+      // The title logo's read resolves on the page's own fetch of it before the next frame, and the first splash mounts
+      await waitForRealFrame(requestRealFrame);
       await nextTick();
       for (let splash = 0; splash < splashCount; splash++) {
         expect(container.querySelector(".splash-sequence")).not.toBeNull();

@@ -1,22 +1,26 @@
 import type { LoginGlide } from "#src/models/login/LoginGlide";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LoginStage } from "#src/models/login/LoginStage";
+import { readLoginData } from "#src/services/login/readLoginData";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import {
   LOGIN_DOOR_REST_DISTANCE,
   LOGIN_GLIDE_ACCELERATION,
   LOGIN_GLIDE_PREPARING_SPEED,
   LOGIN_GLIDE_TITLE_SPEED,
-  LOGIN_WALKWAY_ROW,
 } from "#src/services/login/scene/constants";
 import { LOGIN_WALKWAY_SUNK_DISTANCE } from "#src/services/login/walkway/constants";
 import { describe, expect, test } from "vitest";
 
+const { scroll } = await readLoginData(GAME_DATA_LOCAL_BASE_URL);
+
 describe(advanceLoginGlide, () => {
+  const walkwayRow = scroll.LoginScene_Bridge01_Vo;
   const deltaSeconds = 1 / 60;
   const run = (glide: LoginGlide, stage: LoginStage, seconds: number): LoginGlide[] =>
     Array.from({ length: Math.round(seconds / deltaSeconds) }).reduce<LoginGlide[]>(
-      (glides) => [...glides, advanceLoginGlide(glides.at(-1) ?? glide, stage, deltaSeconds)],
+      (glides) => [...glides, advanceLoginGlide(walkwayRow, glides.at(-1) ?? glide, stage, deltaSeconds)],
       [glide],
     );
 
@@ -42,7 +46,7 @@ describe(advanceLoginGlide, () => {
     const cruising = glides.filter((glide) => scrolled - glide.scrolled > doorLead);
 
     expect(speed).toBe(0);
-    expect(scrolled % LOGIN_WALKWAY_ROW.length).toBe(0);
+    expect(scrolled % walkwayRow.length).toBe(0);
     // Never faster than the pace it had, and that pace held until the door rises
     expect(Math.max(...glides.map((glide) => glide.speed))).toBe(LOGIN_GLIDE_PREPARING_SPEED);
     expect(cruising.every((glide) => glide.speed === LOGIN_GLIDE_PREPARING_SPEED)).toBe(true);

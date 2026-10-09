@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { MusicPlayer } from "genshin-engine";
+import type { LoginSounds } from "#src/models/login/LoginSounds";
+import type { Music, MusicPlayer } from "genshin-engine";
 
-import music from "#src/data/login/music.json";
-import sounds from "#src/data/login/sounds.json";
 import {
   LOGIN_DOOR_SOUND_DELAY_MS,
   LOGIN_EFFECTS_COMPRESSOR_OPTIONS,
@@ -16,11 +15,15 @@ import { createMusicPlayer, createSoundEffectBuffer } from "genshin-engine";
 interface Props {
   // The door has been clicked open, which plays its sound once
   isDoorOpened?: true;
+  // The login's music as its fit and the parity loops solved it: its playlist, its instruments and its voices
+  music: Music;
   // Where the music's recordings are served from, which its voices play over their synthesized notes
   musicRecordingBaseUrl: string;
+  // The login's sounds by their names, the door's among them, as its fit matched them among the game's own
+  sounds: LoginSounds;
 }
 
-const { isDoorOpened, musicRecordingBaseUrl } = defineProps<Props>();
+const { isDoorOpened, music, musicRecordingBaseUrl, sounds } = defineProps<Props>();
 // The login's music, rendering nothing: its playlist from the start, looping as the game's does, for as long as the
 // Screen shows, and the door's sound once the door opens through the effects bus's compressor and the master's limiter
 // As the game's mix passes it, both through one context. The browser's autoplay policy may
