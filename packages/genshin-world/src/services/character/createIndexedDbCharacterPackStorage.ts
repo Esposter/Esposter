@@ -5,6 +5,7 @@ import {
   CHARACTER_PACK_STORE_NAME,
   CHARACTER_PACK_STORE_VERSION,
 } from "#src/services/character/constants";
+import { getCharacterPackStorageNames } from "#src/services/character/getCharacterPackStorageNames";
 import { openDB } from "idb";
 
 // The packs' files in IndexedDB, for a browser whose private file system cannot be written: one store of blobs keyed by
@@ -16,6 +17,13 @@ export const createIndexedDbCharacterPackStorage = async (): Promise<CharacterPa
     },
   });
   return {
+    list: async (path) => {
+      const storedPaths = await database.getAllKeys(CHARACTER_PACK_STORE_FILES_NAME);
+      return getCharacterPackStorageNames(
+        storedPaths.filter((storedPath) => typeof storedPath === "string"),
+        path,
+      );
+    },
     read: async (path) => {
       const blob: unknown = await database.get(CHARACTER_PACK_STORE_FILES_NAME, path.join("/"));
       return blob instanceof Blob ? blob : undefined;

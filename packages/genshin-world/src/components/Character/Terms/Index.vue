@@ -23,8 +23,7 @@ readCharacterTerms(characterPackReader).match(
 </script>
 
 <template>
-  <section>
-    <p v-if="isFailed">The model's terms could not be loaded.</p>
-    <pre v-else-if="terms">{{ terms }}</pre>
-  </section>
+  <!-- One element, so it takes the styles of the panel its host lays it in -->
+  <p v-if="isFailed">The model's terms could not be loaded.</p>
+  <pre v-else-if="terms">{{ terms }}</pre>
 </template>

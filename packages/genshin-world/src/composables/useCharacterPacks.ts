@@ -8,8 +8,8 @@ import { openCharacterPackStore } from "#src/services/character/openCharacterPac
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The characters' packs the world draws from: the ones the browser keeps, which a player loads and removes on the
-// Character screen, ahead of the host's. Every change to the kept packs is logged where it fails, leaving the packs as
-// They were, so a character keeps whatever it was drawn with
+// Character screen, ahead of the host's. A change to the kept packs that fails leaves them as they were, so a character
+// Keeps whatever it was drawn with: a removal's failure is logged, and a keep's rejects for the loader to show
 export const useCharacterPacks = ({
   characterPackBaseUrl,
   getActiveCharacterId,
@@ -28,17 +28,15 @@ export const useCharacterPacks = ({
       storedCharacterPacks.map(({ characterId, packHash }) => [characterId, packHash]),
     );
   };
-  const changeStoredCharacterPacks = (change: (store: CharacterPackStore) => Promise<StoredCharacterPack[]>) =>
-    getResultAsync(async () => {
-      setStoredCharacterPacks(await change(await characterPackStorePromise));
-    }).match(noop, (error) => {
-      console.error(error);
-    });
+  const changeStoredCharacterPacks = async (change: (store: CharacterPackStore) => Promise<StoredCharacterPack[]>) => {
+    setStoredCharacterPacks(await change(await characterPackStorePromise));
+  };
+  // The store is set before its index is read, so a read that fails still leaves the packs kept from here on drawn
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(async () => {
     const store = await characterPackStorePromise;
-    setStoredCharacterPacks(await store.readIndex());
     characterPackStore.value = store;
+    setStoredCharacterPacks(await store.readIndex());
   }).match(noop, (error) => {
     console.error(error);
   });
@@ -56,7 +54,10 @@ export const useCharacterPacks = ({
     activeCharacterPackReader,
     characterIdPackHashMap,
     getCharacterPackReader,
-    removeCharacterPack: (characterId: number) => changeStoredCharacterPacks((store) => store.remove(characterId)),
+    removeCharacterPack: (characterId: number) =>
+      getResultAsync(() => changeStoredCharacterPacks((store) => store.remove(characterId))).match(noop, (error) => {
+        console.error(error);
+      }),
     storeCharacterPack: (characterPack: CharacterPack) =>
       changeStoredCharacterPacks((store) => store.put(characterPack)),
   };
