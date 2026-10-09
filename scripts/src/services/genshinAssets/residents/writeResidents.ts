@@ -5,7 +5,11 @@ import type { Resident } from "genshin-world";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
-import { REGION_DATA_DIRECTORY, RESIDENT_REGION_MAX_DISTANCE } from "#src/services/genshinAssets/residents/constants";
+import {
+  REGION_DATA_DIRECTORY,
+  RESIDENT_DUEL_GAME_ID_MAP,
+  RESIDENT_REGION_MAX_DISTANCE,
+} from "#src/services/genshinAssets/residents/constants";
 import { findNearestLandmarkAreaId } from "#src/services/genshinAssets/residents/findNearestLandmarkAreaId";
 import { joinResidents } from "#src/services/genshinAssets/residents/joinResidents";
 import { mapSpeakerTalkIds } from "#src/services/genshinAssets/residents/mapSpeakerTalkIds";
@@ -61,7 +65,13 @@ export const writeResidents = async (): Promise<string> => {
   );
   const reports = await Promise.all(
     regionFiles.map(async ({ data, path, region }) => {
-      const residents: Resident[] = residentSchema.array().parse(residentJoin.regions.get(region) ?? []);
+      const residents: Resident[] = residentSchema
+        .array()
+        .parse(
+          (residentJoin.regions.get(region) ?? []).map((resident) =>
+            Object.assign(resident, { duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id) }),
+          ),
+        );
       if (JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
         await writeFile(path, `${JSON.stringify({ ...data, residents }, undefined, 2)}\n`);
       const withNight = residents.filter(({ night }) => night !== undefined).length;

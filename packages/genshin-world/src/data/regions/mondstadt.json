@@ -386,6 +386,7 @@
     {
       "areaId": "galesong-hill",
       "day": { "position": { "x": 676.13, "z": 56.62 }, "rotation": 2.8978 },
+      "duelGameId": 12,
       "id": "1201",
       "nameTextId": "3921969453",
       "talkId": "31141"

@@ -15,3 +15,6 @@ export const REGION_DATA_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "regions
 // A placed NPC is a resident of the region of the nearest mapped point, when that point lies within this many game units
 // Of it; the nearest mapped point of nine in ten placed NPCs lies within about twenty
 export const RESIDENT_REGION_MAX_DISTANCE = 100;
+// The residents who duel the player, each by its resident id and the game of the card game's table it duels with. The
+// Seat is provisional: the game's own NPC link is not read yet, so the resident is the starting region's, chosen by the build
+export const RESIDENT_DUEL_GAME_ID_MAP: ReadonlyMap<string, number> = new Map([["1201", 12]]);
