@@ -47,7 +47,7 @@ flowchart TD
   PAY -->|"no"| REFUSE["Refused, nothing spent"]
   PAY -->|"yes"| MAKE["Spent and made"]
   MAKE --> BONUS{"The crafting character's talent applies?"}
-  BONUS -->|"yes"| EXTRA["A double at 10%, a refund at 25%, or at 20% on potions, or an extra regional talent material at 25% or 10%"]
+  BONUS -->|"yes"| EXTRA["A talent bonus: a double, a refund or a regional material"]
   BONUS -->|"no"| DONE["Into the bag"]
   EXTRA --> DONE
 ```
