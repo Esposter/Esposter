@@ -25,7 +25,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets crafting` writes the recipe slice from the game text dump's combine and material tables. The combine table is fetched rather than read from the dump, as [game data formats](/docs/genshin/game-data-formats) records. A row is written when it is a craft at the bench and of one of these kinds:
+`pnpm -C scripts genshin:assets crafting` builds the recipe record from the game text dump's combine and material tables and publishes it to the hosted game data as `crafting/recipes`. The combine table is fetched rather than read from the dump, as [game data formats](/docs/genshin/game-data-formats) records. A row is kept when it is a craft at the bench and of one of these kinds:
 
 - **Tiers**, the combine types that make three of a material for one of the next. Every tier row takes exactly three of one material for one item, and a row that does not is an error.
 - **Potions**, the combine types for Heatshield and Desiccant potions and for the formulas of Pure Water and Strength Tonic.
@@ -50,7 +50,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 | File                                                                            | Role                                                                                        |
 | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/crafting/writeCraftingRecipes.ts`           | The recipe slice written from the combine table                                             |
+| `scripts/src/services/genshinAssets/crafting/buildCraftingRecipes.ts`           | The recipe record built from the combine table, for publishing                              |
 | `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`               | One row as a recipe, refusing a tier that is not three of one material                      |
 | `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`               | Each recipe's instruction items, read off the material table                                |
 | `packages/genshin-world/src/services/crafting/CharacterIdCraftingTalentMap.ts`  | The thirteen characters' crafting talents, by avatar id                                     |

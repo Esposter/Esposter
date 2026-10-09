@@ -51,7 +51,7 @@ packages/
 ```
 
 1. **The cooking talents.**
-   - `CookingRecipe` (`packages/genshin-world/src/models/cooking/CookingRecipe.ts`) gains `foodType: CookingFoodType`, a new enum in `models/cooking/CookingFoodType.ts` of the table's four values, written by `toCookingRecipe` from the row's `foodType`; `pnpm -C scripts genshin:assets cooking` rewrites the existing `generated/cooking/recipes.json`, which gains the field and nothing else.
+   - `CookingRecipe` (`packages/genshin-world/src/models/cooking/CookingRecipe.ts`) gains `foodType: CookingFoodType`, a new enum in `models/cooking/CookingFoodType.ts` of the table's four values, written by `toCookingRecipe` from the row's `foodType`; `pnpm -C scripts genshin:assets cooking` republishes the existing `cooking/recipes` record, which gains the field and nothing else.
    - `CharacterIdCookingTalentMap.ts`: the ten talents of the Decisions, each `{ chance, effect, foodTypes }`, the effect a new `CookingTalentEffect` (`DoubleProduct`, `SuspiciousDish`).
    - `cookRecipeByHand` draws once more from `random` on a Delicious dish, and `autoCookRecipe` once per dish, each adding the cook's talent's one dish to the bag where the draw is under its chance; the room check counts the added dishes.
    - Tests: `cookRecipeByHand.test.ts` gains Xiangling's attack dish doubled at a draw of 0.05 and not at 0.5, Hu Tao's Suspicious dish added, and a heal dish Xiangling cooks left single; `autoCookRecipe.test.ts` gains a batch whose draws double some dishes; `toCookingRecipe.test.ts` gains the field.

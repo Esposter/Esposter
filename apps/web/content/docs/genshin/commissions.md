@@ -49,7 +49,7 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 ## Data
 
-`pnpm -C scripts genshin:assets commissions` writes `packages/genshin-world/src/generated/commissions/mondstadt.json` from the game text dump outside the repository. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. The slice is imported on demand by `readMondstadtCommissions` and checked against its schema as it arrives.
+`pnpm -C scripts genshin:assets commissions` builds Mondstadt's daily tasks from the game text dump outside the repository and publishes them to the hosted game data as `commissions/mondstadt`; the bundle still imports the committed `packages/genshin-world/src/generated/commissions/mondstadt.json`. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. The slice is imported on demand by `readMondstadtCommissions` and checked against its schema as it arrives.
 
 The dump at its revision lacked the three daily task tables, which the [game data formats](/docs/genshin/game-data-formats) page covers, and nothing from them is committed.
 
@@ -76,7 +76,7 @@ The dump at its revision lacked the three daily task tables, which the [game dat
 | `packages/genshin-world/src/services/commission/computeCommissionBand.ts`             | The band an Adventure Rank falls in                                  |
 | `packages/genshin-world/src/services/commission/readMondstadtCommissions.ts`          | Imports the slice on demand                                          |
 | `packages/genshin-world/src/models/reward/RewardItem.ts`                              | An item a reward gives, with the least and the most a claim may draw |
-| `scripts/src/services/genshinAssets/commissions/writeMondstadtCommissions.ts`         | The writer: the dump's tables into the slice                         |
+| `scripts/src/services/genshinAssets/commissions/buildMondstadtCommissions.ts`         | The builder: the dump's tables into the record, for publishing       |
 | `scripts/src/services/genshinAssets/commissions/toCommissionTask.ts`                  | One dump task read into a commission                                 |
 | `scripts/src/services/genshinAssets/rewards/toPreviewItems.ts`                        | A reward preview's items, shared with the expeditions                |
 

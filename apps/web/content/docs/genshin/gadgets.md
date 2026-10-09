@@ -11,7 +11,7 @@ The game's tools are the widget config's entries: the Wind Catcher, the Treasure
 
 ```mermaid
 flowchart TD
-  CFG["The widget config, written into the generated gadgets slice"] --> KIND{"Its widget type is one this page builds?"}
+  CFG["The widget config, built into the gadgets record"] --> KIND{"Its widget type is one this page builds?"}
   KIND -->|"no"| LEFT["Left out of the slice until its own page"]
   KIND -->|"yes"| ROW["A row: kind, cooldowns, cooldown group and whether it is equipable"]
   ROW --> READY{"Its cooldown group ready at this moment?"}
@@ -54,7 +54,7 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 | `packages/genshin-world/src/services/gadget/readGadgetRows.ts`        | Reads the slice on demand                                          |
 | `packages/genshin-world/src/generated/gadgets/gadgets.json`           | The slice of the gadgets the config builds                         |
 | `scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`          | Each config widget of a built type as a row                        |
-| `scripts/src/services/genshinAssets/gadgets/writeGadgetRows.ts`       | Writes the slice from the widget config                            |
+| `scripts/src/services/genshinAssets/gadgets/buildGadgetRows.ts`       | Builds the slice from the widget config, for publishing            |
 | `scripts/src/services/genshinAssets/commands/gadgetsCommand.ts`       | `genshin:assets gadgets`                                           |
 
 ## Sources

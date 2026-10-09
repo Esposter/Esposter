@@ -26,7 +26,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **A cooldown runs on while paused.** A gadget that is not used up has a cooldown, shared within its cooldown group, which keeps counting while the world is paused under a menu, unlike every combat cooldown. It is kept as the moment it is ready, so it is read rather than ticked. The wiki states this; a recording confirms it ([Recordings owed](/docs/genshin/roadmap#recordings-owed)).
 - **Where a gadget may be used is the game's.** `WidgetUseableExcelConfigData` says where each may not be used: in another player's world, which waits on [co-op](/docs/genshin/deferred/co-op) being deferred, and in a domain's type or scene, which the [domains](/docs/proposals/genshin/domains) page supplies. The open world refuses none, so this check is not yet built.
 - **Made from instructions.** Most are crafted at the bench or forged once their instructions or diagram are used, which reputation and offerings give; a few come from quests and are kept.
-- **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (`generated/gadgets/gadgets.json`, eleven at this revision) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
+- **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, eleven at this revision) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
 
 ## How it works
 

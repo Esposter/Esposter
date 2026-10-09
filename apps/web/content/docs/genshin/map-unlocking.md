@@ -23,7 +23,7 @@ flowchart TD
 - **Kept with the player's progress, as the bag and the wallet are.** The unlocked ids are a slice of the [save](/docs/genshin/save-data), so they last across a reload.
 - **An area is filled while a landmark in it is unlocked.** `computeFilledAreaIds` gives the areas unlocked landmarks stand in. The map's drawing outlines only filled areas, `computeAreaLabels` names only filled areas, and the marks drawn are the unlocked landmarks alone, so the minimap shows the same.
 - **Only unlocked places are jumps.** The jump list, the map's marks and the minimap receive the unlocked landmarks, and a party that falls is jumped to the unlocked landmark nearest its body. With none unlocked it is left where it fell.
-- **A first unlock pays its point's Primogems.** `pnpm -C scripts genshin:assets trans-points` writes the open world's transport point rewards into a slice, each point's Adventure EXP and Primogems joined from its reward row. Windrise's statue is the one statue the world holds with its point (point 4, in `LandmarkIdStatuePointIdMap`), so its first unlock adds five Primogems to the wallet, once, since only a locked landmark is offered to resonate with. Its fifty Adventure EXP wait on the Adventure EXP the adventure rank keeps, which no screen holds yet.
+- **A first unlock pays its point's Primogems.** `pnpm -C scripts genshin:assets trans-points` builds the open world's transport point rewards and publishes them as `transPoints/scene3`, each point's Adventure EXP and Primogems joined from its reward row. Windrise's statue is the one statue the world holds with its point (point 4, in `LandmarkIdStatuePointIdMap`), so its first unlock adds five Primogems to the wallet, once, since only a locked landmark is offered to resonate with. Its fifty Adventure EXP wait on the Adventure EXP the adventure rank keeps, which no screen holds yet.
 
 ## Key files
 
@@ -34,7 +34,7 @@ flowchart TD
 | `packages/genshin-world/src/components/Map/Drawing/Index.vue`                      | Draws the outlines of filled areas and the marks of the unlocked landmarks  |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                    | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
 | `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept |
-| `scripts/src/services/genshinAssets/transPoints/writeTransPointRewards.ts`         | Writes the open world's transport point rewards into the slice              |
+| `scripts/src/services/genshinAssets/transPoints/buildTransPointRewards.ts`         | Builds the open world's transport point rewards, for publishing             |
 | `packages/genshin-world/src/generated/transPoints/scene3.json`                     | The written slice, imported on demand                                       |
 | `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Loads the slice, checking it against its shape as it arrives                |
 
