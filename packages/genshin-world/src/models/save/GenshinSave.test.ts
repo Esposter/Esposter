@@ -83,8 +83,6 @@ describe("genshinSaveSchema", () => {
 
   // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
   // Would only hide a save nobody brought to it
-  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
-  // Would only hide a save nobody brought to it
   test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {
