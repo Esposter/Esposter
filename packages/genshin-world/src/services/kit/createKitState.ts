@@ -13,4 +13,7 @@ export const createKitState = (): KitState => ({
   plungeStartHeight: 0,
   skillChainCount: 0,
   skillChainSeconds: 0,
+  skillHeldSeconds: 0,
+  skillReleasedSeconds: 0,
+  sprintSeconds: 0,
 });

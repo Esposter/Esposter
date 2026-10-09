@@ -30,7 +30,7 @@ import {
   GCG_SPREAD_DAMAGE,
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
-import { findGcgNextCharacterIndex } from "#src/services/gcg/findGcgNextCharacterIndex";
+import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
@@ -114,7 +114,7 @@ const applyGcgReactionEffects = (
     const user = sourceSide.characters.at(sourceSide.activeIndex);
     if (user) user.shield = Math.min(GCG_SHIELD_LIMIT, user.shield + GCG_CRYSTALLIZE_SHIELD);
   } else if (reaction === GcgReactionKind.Overloaded && hit.hp > 0) {
-    const nextIndex = findGcgNextCharacterIndex(targetSide, targetSide.activeIndex);
+    const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, 1);
     if (nextIndex !== undefined) targetSide.activeIndex = nextIndex;
   }
 };

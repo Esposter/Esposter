@@ -15,9 +15,12 @@ import water from "#src/data/windrise/water.json";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { KIT_RANDOM_SEED } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { getInfusedElement } from "#src/services/kit/effects/getInfusedElement";
+import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
+import { healKitParty } from "#src/services/kit/effects/healKitParty";
+import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -39,6 +42,7 @@ import {
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
+  createSeededRandom,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   InputAction,
   LocomotionState,
@@ -53,11 +57,11 @@ interface Props {
   body: Object3D;
   // Each character of the deployed team's combat, by its id, which the kit on the field is priced and struck by
   characterIdCombatantMap: Map<number, Combatant>;
-  // The enemies in the world by their spawn key, which the kit on the field strikes and aims at
-  enemyMap: Map<string, Enemy>;
   // The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
   // Drown or a jump
   effects: KitEffect[];
+  // The enemies in the world by their spawn key, which the kit on the field strikes and aims at
+  enemyMap: Map<string, Enemy>;
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
@@ -110,6 +114,8 @@ let kitState = createKitState();
 let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
+// The stream the kit's own rolls read, such as a shield's heal, seeded so a session's rolls repeat
+const kitRandom = createSeededRandom(KIT_RANDOM_SEED);
 // The input an action plays under: the same presses with no move, so the body holds still while it plays
 const stillInput: InputState = { ...inputState, moveForward: 0, moveRight: 0 };
 const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
@@ -149,6 +155,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     isAttackHeld: inputState.heldActions.has(InputAction.NormalAttack),
     isAttackPressed,
     isBurstPressed,
+    isSkillHeld: inputState.heldActions.has(InputAction.ElementalSkill),
     isSkillPressed,
     locomotionState: phase.state,
   };
@@ -158,7 +165,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     body: kitBody.position,
     party,
   });
-  const infusedElement = getInfusedElement(effects, characterId);
+  const infusion = getKitInfusion(effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
     kitState,
@@ -168,16 +175,23 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     characterController.stamina,
     FIXED_STEP_SECONDS,
     landedHits,
+    { body: kitBody, combatant, effects },
   );
-  if (infusedElement !== undefined) infuseKitHits(combatant.kit, infusedElement, landedHits, landedStart);
+  if (infusion !== undefined) infuseKitHits(combatant.kit, infusion, landedHits, landedStart);
   if (action) {
-    // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body
-    const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
-    if (target) {
-      const dx = target.position.x - position.x;
-      const dz = target.position.z - position.z;
-      characterController.face(Math.atan2(-dx, -dz));
+    // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
+    // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
+    if (action.isAimed && inputState.heldActions.has(InputAction.Aim)) {
+      characterController.face(followCamera?.yaw ?? 0);
       kitBody.facing = characterController.facing;
+    } else {
+      const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
+      if (target) {
+        const dx = target.position.x - position.x;
+        const dz = target.position.z - position.z;
+        characterController.face(Math.atan2(-dx, -dz));
+        kitBody.facing = characterController.facing;
+      }
     }
   }
 
@@ -191,6 +205,8 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   landedHits.length = 0;
   for (const { body: strikeBody, combatant: strikeCombatant, hit } of strikes) {
     const pricedCombatant = getBuffedCombatant(strikeCombatant, effects);
+    // A hit's party heal rolls on each enemy it strikes until one roll passes
+    let isPartyHealed = false;
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
@@ -199,6 +215,9 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
         continue;
       for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, Math.random))
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
+      healKitStriker(party, pricedCombatant, hit);
+      if (!isPartyHealed)
+        isPartyHealed = healKitParty(party, characterIdCombatantMap, effects, pricedCombatant, hit, kitRandom);
     }
   }
 });

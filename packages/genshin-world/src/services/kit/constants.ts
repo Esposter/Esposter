@@ -30,3 +30,6 @@ export const TARGET_ANGLE_WEIGHT = 0.3;
 // Provisional: an enemy's strike is its ATK at this multiple, which no table gives
 // Until a recording of an enemy's attack measures it
 export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
+// The seed of the stream the kit's own rolls read, such as Breastplate's heal. No combat stream is seeded yet, so the
+// Strikes' CRIT Rate roll still reads Math.random
+export const KIT_RANDOM_SEED = 1;

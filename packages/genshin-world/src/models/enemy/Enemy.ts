@@ -2,6 +2,7 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { GroundPoint } from "genshin-engine";
 
 // One enemy in the world as its AI moves it, written in place each step: its kind and level, its camp and spawn,
@@ -30,4 +31,5 @@ export interface Enemy {
   position: GroundPoint;
   state: EnemyState;
   stateSeconds: number;
+  statuses: EnemyStatus[];
 }

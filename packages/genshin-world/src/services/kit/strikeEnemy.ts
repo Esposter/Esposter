@@ -19,9 +19,11 @@ import { getDamage } from "#src/services/combat/damage/getDamage";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyInternalCooldown } from "#src/services/combat/internalCooldown/applyInternalCooldown";
 import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCooldown/constants";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 
@@ -32,7 +34,11 @@ import { ID_SEPARATOR } from "@esposter/shared";
 export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, random: () => number): EnergyDrop[] => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
-  const { gauge, internalCooldownTag, isBlunt, poiseDamage, talentMultiplier } = kitHit;
+  const { gauge, internalCooldownTag, isBlunt } = kitHit;
+  const status = kitHit.enemyStatus?.(combatant);
+  if (status) addEnemyStatus(enemy, { ...status });
+  // A stacked hit's multiplier and poise are read from the enemy's stacks, which the hit then consumes
+  const { poiseDamage, talentMultiplier } = readKitStackedHit(enemy, kitHit);
   // Shattering Ice's CRIT Rate reads the enemy as the hit finds it, before its Freeze shatters or its element lands
   const isShatteringIceTarget =
     combatant.elementalResonances.includes(Element.Cryo) &&
@@ -84,10 +90,11 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
     amplifyingMultiplier,
     attackerLevel: combatant.level,
     criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
+    // An enemy's statuses add their DMG taken to the bonus each hit on it reads
     damageBonus:
       attributeTotalMap[
         element === undefined ? Attribute.PhysicalDamageBonus : ElementDamageBonusAttributeMap[element]
-      ],
+      ] + enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
     defense,
     isCritical:
       random() <

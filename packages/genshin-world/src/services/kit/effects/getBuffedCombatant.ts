@@ -10,10 +10,11 @@ export const getBuffedCombatant = (combatant: Combatant, effects: readonly KitEf
   const buffs = effects.filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === combatant.characterId,
   );
-  if (buffs.length === 0) return combatant;
+  const passiveBonuses = combatant.kit.getPassiveBonuses?.(combatant) ?? [];
+  if (buffs.length === 0 && passiveBonuses.length === 0) return combatant;
   const attributeTotalMap = { ...combatant.attributes.attributeTotalMap };
   let { attack } = combatant.attributes;
-  for (const { amount, attribute } of buffs)
+  for (const { amount, attribute } of [...buffs, ...passiveBonuses])
     if (attribute === Attribute.Attack) attack += amount;
     else attributeTotalMap[attribute] += amount;
   return { ...combatant, attributes: { ...combatant.attributes, attack, attributeTotalMap } };

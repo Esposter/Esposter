@@ -5,9 +5,10 @@ import { getImportSpecifiers } from "#src/services/hooks/stagedImports/getImport
 import { getScriptBlocks } from "#src/services/hooks/stagedImports/getScriptBlocks";
 import { readIndexBlobs } from "#src/services/hooks/stagedImports/readIndexBlobs";
 import { runGitBytes } from "#src/services/hooks/stagedImports/runGitBytes";
+import { jsonDateParse } from "@esposter/shared";
 import { posix } from "node:path";
 
-const IMPORTER_REGEX = /\.(?:ts|mts|vue)$/;
+const IMPORTER_REGEX = /\.(?:ts|mts|vue)$/u;
 const PACKAGE_JSON_FILENAME = "package.json";
 
 // Every staged source file that can import, read from the index so a hunk staged for the commit is what is checked
@@ -32,7 +33,10 @@ export const readStagedImporters = (committedPaths: ReadonlySet<string>): Staged
     const packageJson = blobs.get(packageJsonPath);
     const source = blobs.get(path) ?? "";
     return {
-      aliases: packageJson === undefined ? {} : (JSON.parse(packageJson).imports ?? {}),
+      aliases:
+        packageJson === undefined
+          ? {}
+          : (jsonDateParse<{ imports?: Record<string, unknown> }>(packageJson).imports ?? {}),
       packageDirectory,
       path,
       specifiers: getImportSpecifiers(path.endsWith(".vue") ? getScriptBlocks(source) : source),

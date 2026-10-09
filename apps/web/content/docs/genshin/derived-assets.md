@@ -133,7 +133,7 @@ A grid of covered cells is traced by one `traceCoveredGrid`, whichever fit fille
 - **Pinned commits:** AnimeStudio `db860e1f9bf0e0314b892782304d44f3ac42c261` (the CLI, its Ooz and ACL sources), Texture2DDecoder `c974dbda1209a6af34cb03941fa0b999627c3623` (`KiruyaMomochi/Texture2DDecoder`, the native behind the `Kyaru.Texture2DDecoder` wrapper, the one whose macOS build the NuGet package does not ship).
 - **Edits it applies to the clone:** every project retargets `net10.0`, and the `win-x64` runtime identifier is dropped.
 - **Natives:** `Texture2DDecoderNative` and Ooz build and load; ACL's MHY library builds and loads. The other ACL libraries (SR, ZZZ, DB) fail to compile under clang, and ZZZV2 needs `windows.h`, so animation clips from those are not available.
-- **Requirements:** .NET 10 and CMake, with `DOTNET_ROOT` pointing at the SDK's `libexec` (for Homebrew, `$(brew --prefix dotnet)/libexec`) when the CLI runs.
+- **Requirements:** .NET 10 and CMake to build. The CLI is published self-contained, so it runs with no `DOTNET_ROOT` however .NET was installed, and the game-running check, which reads Windows' process list, passes on macOS, where the game has no build.
 - **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation (`AnimeStudio.HLSLDecompiler`) are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
 
 Then set `GENSHIN_ANIMESTUDIO_CLI` to the printed path (the default is `~/Downloads/AnimeStudio/AnimeStudio.CLI.exe`).

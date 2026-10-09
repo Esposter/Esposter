@@ -40,5 +40,6 @@ export const createEnemy = (
     position: { ...position },
     state: EnemyState.Idle,
     stateSeconds: 0,
+    statuses: [],
   };
 };

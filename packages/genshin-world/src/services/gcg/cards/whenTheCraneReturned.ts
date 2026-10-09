@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { findGcgNextCharacterIndex } from "#src/services/gcg/findGcgNextCharacterIndex";
+import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
 
 const WHEN_THE_CRANE_RETURNED_ID = 332_007;
@@ -15,7 +15,7 @@ export const whenTheCraneReturned: GcgCardModule = {
   },
   onSkillUsed: ({ duel, sideIndex }, _skill, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);
-    const nextIndex = findGcgNextCharacterIndex(side, side.activeIndex);
+    const nextIndex = findGcgAdjacentCharacterIndex(side, side.activeIndex, 1);
     if (nextIndex !== undefined) side.activeIndex = nextIndex;
     zoneCard.usages = 0;
   },

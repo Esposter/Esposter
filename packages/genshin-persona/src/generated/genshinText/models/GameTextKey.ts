@@ -51,6 +51,7 @@ export enum GameTextKey {
   Audio = "UI_SETTING_PAGE_SOUND_CATEGORY",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
+  BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
   BambooShoot = "4238416012",
   BattlePass = "UI_STC_GAMEENTRYPAGE_BP",
   BerylConch = "1859043748",
@@ -118,6 +119,21 @@ export enum GameTextKey {
   FrostlampFlower = "1823058028",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
+  GcgActionPhase = "UI_GCG_PHASE_ACTION",
+  GcgChallenge = "191219274",
+  GcgConcede = "UI_GCG_CONFIG_SURRENDER",
+  GcgConfirm = "UI_GCG_ACTION_OK",
+  GcgDefeat = "UI_GCG_RESULT_LOSE",
+  GcgElementalTuning = "UI_GCG_ACTION_ELEMENT_SYNCHO",
+  GcgEndRound = "UI_GCG_PASS_DECLARE",
+  GcgNowActing = "UI_GCG_PLAYERINFO_ACTION",
+  GcgReroll = "UI_GCG_ACTION_HINT_REROLL",
+  GcgRollPhase = "UI_GCG_PHASE_THROW",
+  GcgRoundTitle = "UI_GCG_PHASE_ROUND_TITLE",
+  GcgStartingHand = "UI_GCG_PHASE_SWITCH_HAND",
+  GcgSwitchCharacter = "UI_GCG_ACTION_SWITCH_CHAR",
+  GcgVictory = "UI_GCG_RESULT_WIN",
+  GcgYourTurn = "UI_GCG_TURN_YOU",
   GenesisCrystal = "2722599324",
   GlazeLily = "4012901404",
   GlowingHornshroom = "1496527260",
@@ -303,6 +319,7 @@ export enum GameTextKey {
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`
   WishBeginners = "UI_GACHA_SHOW_PANEL_A016_TITLE",
+  WishBuyFate = "UI_GACHAPAGE_BUYFATE_DIRECT",
   WishCharacterEvent = "UI_GACHA_TYPE_03",
   WishCount = "UI_GACHAPAGE_DOGACHA",
   WishEpitomizedPath = "UI_GACHA_WISH",

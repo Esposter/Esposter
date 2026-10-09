@@ -1,4 +1,5 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
@@ -28,6 +29,21 @@ const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, heig
 const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
 // Measured: gcsim v2.47.2 (MIT) lisa/skill.go, Violet Arc's press lands on the target, priced as the circle of radius 1
 const PRESS_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
+// Measured: gcsim v2.47.2 (MIT) lisa/skill.go, the hold's strike on each enemy within 10 metres, a circle of radius 0.2 on
+// Each one, so it reaches 10.2 metres round the body
+const HOLD_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 10.2 });
+// Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3, and
+// gcsim gives the stacks no duration. Lisa's charged attacks apply one too from her A1 (lisa/asc.go). The hold consumes
+// The stacks. The wiki's hold holds for 1.9 seconds to charge in full, which the hold's minimum is taken from
+const CONDUCTIVE_STATUS_ID = "conductive";
+const CONDUCTIVE_STACK: EnemyStatus = {
+  damageTakenBonus: 0,
+  id: CONDUCTIVE_STATUS_ID,
+  maxStacks: 3,
+  secondsRemaining: Infinity,
+  stacks: 1,
+};
+const HOLD_MINIMUM_HELD_SECONDS = 1.9;
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, Lightning Rose's activation and each discharge reach a circle of radius 7
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/burst.go
 const LIGHTNING_ROSE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 7 });
@@ -77,9 +93,33 @@ const createDischarges = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, LISA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
   }));
 
-// Lisa's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and
-// Lightning Rose. Its multipliers are read from its proud skill groups. Violet Arc's hold, its stacks of Conductive, A1's
-// And A4's effects are not built, so the press stands at its own cooldown
+// Lisa's kit at talent level 1: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and hold,
+// And Lightning Rose. Its multipliers are read from its proud skill groups. A4's effect is not built
+// Violet Arc's hold: a strike on each enemy within 10 metres, whose multiplier and poise are set by the enemy's Conductive
+// Stacks, from none to three, and which consumes them. Its 2U of Electro and the wiki's stacked poise, 150 to 300. Measured:
+// gcsim v2.47.2 (MIT) lisa/skill.go, the hold's strike at 117 frames and its animation of 143 frames, and the wiki's
+// Violet Arc page for the multipliers at group indices 0 to 3, 320% to 487%, and the poise
+const createVioletArcHold = (talentMultiplierMap: TalentMultiplierMap): KitAction => {
+  const talentMultipliers = [0, 1, 2, 3].map((index) =>
+    getTalentMultiplier(talentMultiplierMap, LISA_SKILL_GROUP_ID, TALENT_START_LEVEL, index),
+  );
+  return {
+    hits: [
+      {
+        element: Element.Electro,
+        gauge: 2,
+        hitArea: HOLD_HIT_AREA,
+        hitmarkSeconds: 117 / 60,
+        poiseDamage: 150,
+        stackedHit: { poiseDamages: [150, 195, 240, 300], statusId: CONDUCTIVE_STATUS_ID, talentMultipliers },
+        talentMultiplier: talentMultipliers[0] ?? 0,
+      },
+    ],
+    seconds: 143 / 60,
+    targetingArea: SKILL_TARGETING_AREA,
+  };
+};
+
 export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 20,
   burstEnergyCost: 80,
@@ -89,6 +129,8 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     hits: [
       {
         element: Element.Electro,
+        // A1: each enemy a charged attack hits gains a stack of Conductive
+        enemyStatus: (combatant) => (combatant.ascension >= 1 ? CONDUCTIVE_STACK : undefined),
         gauge: 1,
         hitArea: CHARGE_HIT_AREA,
         hitmarkSeconds: 56 / 60,
@@ -122,6 +164,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     hits: [
       {
         element: Element.Electro,
+        enemyStatus: () => CONDUCTIVE_STACK,
         gauge: 1,
         hitArea: PRESS_HIT_AREA,
         hitmarkSeconds: 22 / 60,
@@ -133,6 +176,14 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     seconds: 40 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
+  // Held past its minimum and released, the skill plays its hold at the hold's cooldown, which the table gives
+  elementalSkillHolds: [
+    {
+      action: createVioletArcHold(talentMultiplierMap),
+      cooldownSeconds: getTalentMultiplier(talentMultiplierMap, LISA_SKILL_GROUP_ID, TALENT_START_LEVEL, 4),
+      minimumHeldSeconds: HOLD_MINIMUM_HELD_SECONDS,
+    },
+  ],
   highPlunge: {
     hits: [
       {
