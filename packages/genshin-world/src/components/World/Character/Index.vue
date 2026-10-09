@@ -49,6 +49,7 @@ import {
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
+  FOLLOW_CAMERA_DEFAULT_SETTINGS,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   InputAction,
   LocomotionState,
@@ -255,7 +256,12 @@ onBeforeRender(({ delta }) => {
   const activeCamera = camera.value;
   const isFollowing = (!isHeld || isOrbiting) && activeCamera instanceof PerspectiveCamera;
   if (isFollowing) {
-    followCamera ??= createFollowCamera({ camera: activeCamera, ground, landmarkCollider });
+    followCamera ??= createFollowCamera({
+      camera: activeCamera,
+      ground,
+      landmarkCollider,
+      settings: FOLLOW_CAMERA_DEFAULT_SETTINGS,
+    });
     followCamera.look(inputState, characterController.facing);
     if (!isHeld) {
       characterController.holdPresses(inputState);
