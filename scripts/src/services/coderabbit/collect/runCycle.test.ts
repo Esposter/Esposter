@@ -26,10 +26,12 @@ import {
   CI_FAILURE_CONCLUSION,
   CI_SUCCESS_CONCLUSION,
   COMPLETED_DESCRIPTION,
+  CYCLE_BUDGET_MS,
   DEVELOP_BRANCH,
   EXPRESS_TRAILER,
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
+  JOB_STARTED_AT_ENVIRONMENT_VARIABLE,
   MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
   MOVED_BRANCH_RETRY_DELAY_SECONDS,
@@ -38,12 +40,15 @@ import {
   PENDING_CHECK_WAIT_MS,
   QUEUE_BRANCH,
   RATE_LIMITED_DESCRIPTION,
+  REPAIR_ATTEMPT_TIMEOUT_MS,
   REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
+  REPAIR_FIRST_MARKER,
   REPAIR_REGENERATE_COMMANDS,
   REPAIR_REGENERATE_TIMEOUT_MS,
   REPAIR_SESSION_TIMEOUT_MS,
   REPAIR_SIGNATURE_SPAN_MS,
+  RERUN_MARKER,
   RETRIGGER_BUFFER_MS,
   RETRIGGER_SLEEP_CAP_MS,
   REVIEW_ASK_MARKER,
@@ -140,6 +145,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
   const redRun: MainCheck = {
+    attempt: 1,
     conclusion: CI_FAILURE_CONCLUSION,
     createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
     databaseId: 0,
@@ -323,11 +329,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
-  // A release merge carries its reviewed develop head's tree, so CI's verdict there is main's before main's own
-  // Run concludes: the cycle the merge fires repairs it rather than the one CI's conclusion fires later
-  test("repairs a merged release red on its reviewed head while main's own run is going", async () => {
-    expect.hasAssertions();
-
+  // A release merged red over main: its reviewed head's run red, and main's own run over the merge as a test gives it
+  const publishRedRelease = (mainRun: MainCheck): string => {
     const baseSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const reviewedSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
     switchTo(baseSha);
@@ -339,8 +342,42 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockImplementation((args) => {
       if (args[0] !== "run" || args[1] !== "list") return answerRest?.(args) ?? "";
       else if (args.includes(reviewedSha)) return JSON.stringify([redRun]);
-      else return JSON.stringify([{ ...redRun, conclusion: "", status: "in_progress" }]);
+      else return JSON.stringify([mainRun]);
     });
+    answerRegenerated(() => greenSpawn);
+    return mainSha;
+  };
+
+  // A release merge carries its reviewed develop head's tree, so CI's verdict there is main's before main's own
+  // Run concludes: the cycle the merge fires repairs it rather than the one CI's conclusion fires later
+  test("repairs a merged release red on its reviewed head while main's own run is going", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publishRedRelease({ ...redRun, conclusion: "", status: "in_progress" });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(readSha(`origin/${MAIN_BRANCH}^`)).toBe(mainSha);
+  });
+
+  // A re-run of main's own failed jobs is the head's verdict asked again, which the reviewed head's red does not
+  // Pre-empt: a flake the re-run turns green would otherwise be paid a repair
+  test("repairs nothing while main's own run re-runs its failed jobs, though its reviewed head is red", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publishRedRelease({ ...redRun, attempt: 2, conclusion: "", status: "in_progress" });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+  });
+
+  // The return stroke fast-forwards develop onto main's head, so develop's run over that commit is the newest there:
+  // Main's verdict is read on main itself, or main's own red reads as develop's green
+  test("repairs main's own red when develop's run over the same head is newer", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [{ ...redRun, conclusion: CI_SUCCESS_CONCLUSION, headBranch: DEVELOP_BRANCH }, redRun]);
     answerRegenerated(() => greenSpawn);
     await runCycle({ ...baseInput, cwd: getCwd() });
 
@@ -460,9 +497,66 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     return queueRun;
   };
 
+  // The queue's verdict over a commit carrying main's head and one more, which nothing queues any longer — a commit
+  // Parked since — so no window is in flight to merge over the gap it reads
+  const publishGap = (): { mainSha: string; verdictSha: string } => {
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    return { mainSha, verdictSha: commitFile(TEST_FILENAME, "") };
+  };
+
   // A job main failed that the queue passes is one a window still queued heals, and no repair at main's head can pass
   // Its verify while it is red: the gap spends no session and no attempt, and is recorded on the head
   test("spends no session or attempt on a red main whose failing job the queue passes, and records the gap", async () => {
+    expect.hasAssertions();
+
+    const { mainSha, verdictSha } = publishGap();
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runSession).not.toHaveBeenCalled();
+    expect(spawnPnpm).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [verdictSha])}`,
+    ]);
+  });
+
+  // The gap recorded against the queue's newest verdict is read off the head, so a later pass neither reads the queue
+  // Run's jobs again nor records the gap twice. Nothing reports the queue moving on, nor — with no window open or owed
+  // — a window merging over the gap, so the run wakes itself once a queue run's span has passed again
+  test("reads a transit gap already recorded on main's head against the queue's newest verdict, and wakes", async () => {
+    expect.hasAssertions();
+
+    const { mainSha, verdictSha } = publishGap();
+    answerGh([], [], [], [], [redRun]);
+    const queueRun = answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[1]?.startsWith(`repos/{owner}/{repo}/commits/${mainSha}/comments?`)
+        ? JSON.stringify([[getMarked(getMarker(TRANSIT_GAP_MARKER, mainSha, [verdictSha]))]])
+        : (answerRest?.(args) ?? ""),
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(1 + RETRIGGER_BUFFER_MS),
+      targetSha: undefined,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(
+      runGh.mock.calls.filter(
+        ([args]) => args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString(),
+      ),
+    ).toHaveLength(0);
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
+  });
+
+  // A queue that passes main's failing job over main's very own tree has nothing queued to heal it: it is a flake or a
+  // Red of main's own, so its failed jobs run once more and the red is held for that run, woken once its span has passed
+  test("re-runs the failed jobs of a red main the queue passes over the same tree, and holds it", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -474,40 +568,37 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(1 + RETRIGGER_BUFFER_MS),
       targetSha: undefined,
     });
-    expect(runSession).not.toHaveBeenCalled();
-    expect(spawnPnpm).not.toHaveBeenCalled();
-    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
-      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
+    expect(runGh.mock.calls.filter(([args]) => args[0] === "run" && args[1] === "rerun")).toStrictEqual([
+      [["run", "rerun", redRun.databaseId.toString(), "--failed"]],
     ]);
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(RERUN_MARKER, mainSha)}`,
+    ]);
+    expect(runSession).not.toHaveBeenCalled();
   });
 
-  // The gap recorded against the queue's newest verdict is read off the head, so a later pass neither reads the queue
-  // Run's jobs again nor records the gap twice
-  test("reads a transit gap already recorded on main's head against the queue's newest verdict", async () => {
+  // The re-run is asked once per head: a red it leaves is the repairer's like any other
+  test("repairs a red main the queue passes over the same tree once its failed jobs have run again", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
-    const queueRun = answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
+    answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) =>
       args[1]?.startsWith(`repos/{owner}/{repo}/commits/${mainSha}/comments?`)
-        ? JSON.stringify([[getMarked(getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha]))]])
+        ? JSON.stringify([[getMarked(getMarker(RERUN_MARKER, mainSha))]])
         : (answerRest?.(args) ?? ""),
     );
+    answerRegenerated(() => greenSpawn);
     await runCycle({ ...baseInput, cwd: getCwd() });
 
-    expect(runSession).not.toHaveBeenCalled();
-    expect(
-      runGh.mock.calls.filter(
-        ([args]) => args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString(),
-      ),
-    ).toHaveLength(0);
-    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
+    expect(runGh.mock.calls.filter(([args]) => args[0] === "run" && args[1] === "rerun")).toHaveLength(0);
+    expect(readSha(`origin/${MAIN_BRANCH}^`)).toBe(mainSha);
   });
 
   // Only a job red on the queue too is main's own to repair: the session runs as it does with no queue verdict at all
@@ -570,7 +661,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const verdictSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
     publish(DEVELOP_BRANCH, mainSha);
-    publish(QUEUE_BRANCH, mainSha);
+    const tipSha = publish(QUEUE_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
     answerGh([], [], [], [], [redRun]);
     const queueRun = answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
     const answerRest = runGh.getMockImplementation();
@@ -578,14 +669,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       args[0] === "run" &&
       args[1] === "list" &&
       args[args.indexOf("--workflow") + 1] === queueRun.workflowDatabaseId.toString() &&
-      args[args.indexOf("--commit") + 1] === mainSha
-        ? JSON.stringify([getQueueRun(mainSha)])
+      args[args.indexOf("--commit") + 1] === tipSha
+        ? JSON.stringify([getQueueRun(tipSha)])
         : (answerRest?.(args) ?? ""),
     );
     await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
-      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [tipSha])}`,
     ]);
   });
 
@@ -594,10 +685,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("repairs a CodeQL red beside a CI red the queue heals", async () => {
     expect.hasAssertions();
 
-    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, mainSha);
+    const { mainSha, verdictSha } = publishGap();
     answerGh([], [], [], [], [redRun]);
-    answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
+    answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
     const [, codeQlWorkflowFile = ""] = MAIN_CHECK_WORKFLOW_FILES;
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) =>
@@ -615,7 +705,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       targetSha: readSha(`origin/${MAIN_BRANCH}`),
     });
     expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
-      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [verdictSha])}`,
       `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}`,
     ]);
   });
@@ -884,6 +974,73 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       getMarker(REPAIR_EXHAUSTED_MARKER, signature, [collectorSha]),
     );
     expect(runSession).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
+  });
+
+  // A repair the run's budget cannot hold is marked on the head, keyed by its signature: under steady merging the walk
+  // Spends more of every run than a repair's clocks leave, so a red asked for last would never start
+  test("marks a repair the run's budget cannot hold to go first in the next run", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: CYCLE_BUDGET_MS - REPAIR_ATTEMPT_TIMEOUT_MS + 1, toFake: ["Date"] });
+    vi.stubEnv(JOB_STARTED_AT_ENVIRONMENT_VARIABLE, "0");
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[CycleBudgetSpentError: Invalid operation: Create, name: coderabbit, the run has spent 16 of its 100 minutes, too few for a session of up to 85]`,
+    );
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(REPAIR_FIRST_MARKER, signature)}`,
+    ]);
+  });
+
+  // The run after the mark repairs before it walks, so a window whose review completed waits on the repair's push
+  test("starts with a marked repair, ahead of the walk", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    publish(getWindowBranch(pullRequest), mainSha);
+    answerGh(openPullRequests, [], [], [getMarked(getMarker(REPAIR_FIRST_MARKER, signature))], [redRun]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    answerRegenerated(() => greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: repairedReason,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+  });
+
+  // The attempt the marked run made spends the mark, so the run after it walks first again; and a signature is marked
+  // Once within the span, so a repair its budget still cannot hold is not marked a second time
+  test("walks first and marks nothing again once an attempt has followed a mark within the span", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: CYCLE_BUDGET_MS - REPAIR_ATTEMPT_TIMEOUT_MS + 1, toFake: ["Date"] });
+    vi.stubEnv(JOB_STARTED_AT_ENVIRONMENT_VARIABLE, "0");
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    publish(getWindowBranch(pullRequest), mainSha);
+    answerGh(
+      openPullRequests,
+      [],
+      [],
+      [getMarked(getMarker(REPAIR_FIRST_MARKER, signature)), ...getSignatureAttempts(1)],
+      [redRun],
+    );
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true });
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[CycleBudgetSpentError: Invalid operation: Create, name: coderabbit, the run has spent 16 of its 100 minutes, too few for a session of up to 85]`,
+    );
+    expect(getPrCalls("merge")).toHaveLength(1);
     expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
   });
 

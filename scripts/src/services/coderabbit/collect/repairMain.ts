@@ -14,6 +14,7 @@ import {
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
+import { markRepairFirst } from "#src/services/coderabbit/collect/markRepairFirst";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFailedLog } from "#src/services/coderabbit/collect/readFailedLog";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -24,6 +25,7 @@ import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { settleRedChecks } from "#src/services/coderabbit/collect/settleRedChecks";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
+import { getResult, noop } from "@esposter/shared";
 
 // A red `main` is the collector's: the release merges on the review alone, so what CI held — a lint rule a bump
 // Enabled, a size snapshot a build moved, a claimed commit the express lane cut unverified — lands on `main`
@@ -34,13 +36,14 @@ import { runGit } from "#src/services/shared/runGit";
 // Its own — the install and the regenerators, the session, each verify — so one part running long never cuts another
 // Short, and a clock that runs out is a failed attempt like any other.
 export const repairMain = async (repairInput: RepairInput): Promise<RepairResult> => {
-  const { collectorSha, cwd, isDryRun, mainSha } = repairInput;
+  const { collectorSha, cwd, isDryRun, mainSha, viewerLogin } = repairInput;
   const red = settleRedChecks(repairInput);
   if (red.check === undefined) return { retriggerDelaySeconds: red.retriggerDelaySeconds };
 
   const {
     attempts: { attempts, recordAttempt, recordFailure },
     check,
+    signature,
   } = red;
   console.info(
     `${MAIN_BRANCH} is red on ${check.url} — repairing it (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
@@ -49,8 +52,14 @@ export const repairMain = async (repairInput: RepairInput): Promise<RepairResult
     console.info("would repair — a dry run runs no Claude session");
     return {};
   }
-  // The whole attempt is budgeted, its clocks end to end, since the session's own clock is one the launcher cannot read
-  assertCycleBudget(REPAIR_ATTEMPT_TIMEOUT_MS);
+  // The whole attempt is budgeted, its clocks end to end, since the session's own clock is one the launcher cannot read;
+  // An attempt the budget cannot hold is marked to go first in the next run
+  getResult(() => {
+    assertCycleBudget(REPAIR_ATTEMPT_TIMEOUT_MS);
+  }).match(noop, (error) => {
+    markRepairFirst({ mainSha, signature, viewerLogin });
+    throw error;
+  });
   const regenerateDeadlineMs = Date.now() + REPAIR_REGENERATE_TIMEOUT_MS;
   runGit(["switch", "--detach", mainSha], cwd);
   // The tree the repairer's own checks run against is this head, not the one the event checked out (`INSTALL_COMMAND`)

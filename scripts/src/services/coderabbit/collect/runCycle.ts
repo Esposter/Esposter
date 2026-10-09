@@ -6,6 +6,7 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
+import { checkIsRepairFirst } from "#src/services/coderabbit/collect/checkIsRepairFirst";
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
 import { DEVELOP_BRANCH, MAIN_BRANCH, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
@@ -61,9 +62,10 @@ const checkIsStackingAllowedOver = (openStack: WindowPullRequest[], cwd: string)
 // One pass: return, express, then the open stack — the release from `develop` while it is open, and each window's gate,
 // The bottom one merged and drained once its review completes — then as many windows opened as the hourly ceiling and
 // The stacking guard allow, each cut from the top of the stack, and last the repair of a red `main`, which no window
-// Waits on. Every input is a remote fact and every write is either a push or guarded by a predicate a later run
-// Re-evaluates, so any event may run this and a run against unchanged state does nothing. It returns its verdict rather
-// Than exiting, which is what makes a dry run one mode of the same code path (docs: infra/review-collector).
+// Waits on — first instead, in the one run after a repair the budget could not hold. Every input is a remote fact and
+// Every write is either a push or guarded by a predicate a later run re-evaluates, so any event may run this and a run
+// Against unchanged state does nothing. It returns its verdict rather than exiting, which is what makes a dry run one
+// Mode of the same code path (docs: infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
@@ -137,6 +139,12 @@ export const runCycle = async ({
       CycleOutcomeKind.Idle,
       `pull request #${legacyPullRequest.number} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} was closed without merging — a person's pause`,
     );
+  // A repair an earlier run owed and its budget could not hold goes first, ahead of the drain and the walk whose sessions
+  // Spent that budget (`checkIsRepairFirst`); held or past its repairs, the pass goes on and asks for it again last
+  if (checkIsRepairFirst(viewerLogin)) {
+    const repairedFirst = await runRepairStep({ collectorSha, cwd, isDryRun, viewerLogin });
+    if (repairedFirst.outcome) return repairedFirst.outcome;
+  }
 
   // The newest merged pull request is the review the next cut answers, so its findings are drained again on every run
   // Until none is open. A drain that could not finish ended the run that merged it, so nothing above it may merge or

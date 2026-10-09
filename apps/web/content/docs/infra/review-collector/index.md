@@ -14,7 +14,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the filters that name the window branches, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one stack without racing: the collector writes `develop` and each window branch, the session writes `ai/queue`.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
-6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of its own, last in the pass so no window waits on it; a red the queue already passes is a transit gap its windows heal, and spends nothing.
+6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of its own, last in the pass so no window waits on it — first in the run after one the run's budget could not hold; a red the queue already passes is a transit gap its windows heal, and spends nothing, and one it passes over `main`'s own tree is a flake whose failed jobs run again once.
 7. [Realign](/docs/infra/review-collector/realign) — the queue rebased onto `develop` on request, when a hand repair outside the collector has left its diff counting files the base already holds.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
@@ -52,17 +52,22 @@ flowchart TD
   E -->|yes| EP[Cherry-pick onto main<br/>push unverified, exit — no window spent]
   E -->|no| CL{A window or the release closed<br/>without merging, not by a re-cut}
   CL -->|yes| PZ[Exit — a person's pause]
-  CL -->|no| BW{Bottom window's review}
+  CL -->|no| RF{A repair the last run's budget<br/>could not hold marked, no attempt since}
+  RF -->|yes, and red under its cap| RP[Repair first, ahead of the walk —<br/>push, or count a failed attempt, exit]
+  RF -->|no, or held or past its cap| BW{Bottom window's review}
   BW -->|running, rate limited, or skipped, without a check<br/>or pending past its wait and asked, a wait apart| SY
   BW -->|unreviewed past the last ask's wait| RC[Re-cut it and every window above —<br/>a skip's replacement at half the cap,<br/>a release's commits into windows] --> SY
   BW -->|complete| MG[Merge it, retarget the next to main, delete its branch,<br/>drain its findings — past the cap, defer them to an issue] --> BW
   BW -->|no window open| SY
   SY[Rewrite ai/queue onto develop or the fixes,<br/>parking a commit it cannot carry on ai/held/*] --> OB{A slot free in the rolling hour,<br/>stacking allowed, something owed}
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
-  OB -->|no| MR{main red on CI or CodeQL,<br/>each workflow judged on its own}
-  MR -->|yes, but a job it failed passes on the queue's run over it| TG[A transit gap the windows heal —<br/>recorded on main's head, exit]
+  OB -->|no| MR{main's own run red on CI or CodeQL,<br/>each workflow judged on its own}
+  MR -->|yes, but a job it failed passes on the queue's run over it| TG[A transit gap the windows heal —<br/>recorded on main's head, exit, waking once a queue run's span has passed]
+  MR -->|yes, but the queue passes a job it failed<br/>over main's own tree, not yet re-run| RR[Re-run main's failed jobs once —<br/>exit, waking the same way]
   MR -->|yes, and the queue's run over it is still going| HD[Held — exit, waking once a queue run's span has passed]
-  MR -->|yes, in no job the queue passes,<br/>its signature under the cap| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
+  MR -->|yes, in no job the queue passes,<br/>its signature under the cap| RB{The attempt fits<br/>the run's budget}
+  RB -->|yes| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
+  RB -->|no| MK[Mark it to go first next run —<br/>exit, waking in a minute]
   MR -->|yes, past the cap| RI[One issue for the signature, exit —<br/>waking when its oldest attempts age out]
   MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, an ask's wait, a check's wait]
 ```
