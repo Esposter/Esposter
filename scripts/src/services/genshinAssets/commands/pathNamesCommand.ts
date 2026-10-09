@@ -13,9 +13,14 @@ export const pathNamesCommand: SubCommandsDef[string] = defineCommand({
     name: "path-names",
   },
   run: async () => {
-    const regionKeysMap = new Map<string, string[] | undefined>();
-    for (const region of Object.keys(RegionCapitalMap))
-      regionKeysMap.set(region, await readCityPathKeys(parseDerivedAssetComponent(region)));
+    const regionKeysMap = new Map<string, string[] | undefined>(
+      await Promise.all(
+        Object.keys(RegionCapitalMap).map(async (region): Promise<[string, string[] | undefined]> => [
+          region,
+          await readCityPathKeys(parseDerivedAssetComponent(region)),
+        ]),
+      ),
+    );
     const keys = new Set([...regionKeysMap.values()].flatMap((regionKeys) => regionKeys ?? []));
     const matches = await buildDerivedPathNames(keys);
     const regionLines = Array.from(regionKeysMap, ([region, regionKeys]) => {

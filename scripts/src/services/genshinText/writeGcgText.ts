@@ -20,7 +20,7 @@ export const writeGcgText = (): string[] => {
         [...cards, ...characters].flatMap(({ descriptionTextId, nameTextId }) => [nameTextId, descriptionTextId]),
       ),
     ),
-    (textId) => String(textId),
+    String,
   ).toSorted();
   const notes = writeTextChunks(GCG_TEXT_DIRECTORY, textIds);
   notes.push(`${textIds.length} texts written in ${GameLanguages.length} languages`);
