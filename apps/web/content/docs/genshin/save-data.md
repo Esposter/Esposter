@@ -16,7 +16,7 @@ flowchart TD
   P -->|"a blob that does not parse"| X0["error: the blob is left as it is"]
   P -->|"no blob, or it parses"| L["take the lease: a new session id replaces the old"]
   L --> W1{"one PUT under the ETag read, or create-only"}
-  W1 -->|"precondition failed"| X["CONFLICT: a concurrent start wrote first, the page plays the browser's save"]
+  W1 -->|"precondition failed"| X["CONFLICT: a concurrent start wrote first, the page retries the start with backoff"]
   W1 -->|"written"| O["the save, the session id, the replaced session, the new ETag and the server's now"]
   V["genshin.saveGenshin with a session id and the ETag"] --> W2{"one PUT under that ETag"}
   W2 -->|"written"| N["the new ETag and the server's now"]

@@ -119,7 +119,7 @@ Those same bytes are also the key they are stored under: a retained version is a
 
 ## The Genshin save — instants read as the schema's ISO strings
 
-The Genshin save is a Zod-validated object written by `JSON.stringify`, its instants held as ISO strings that `genshinSaveSchema` reads with `z.iso.datetime()`. Both of its reads parse it as plain `JSON.parse`: the server's `readGenshinSaveState` and the signed-out `readGuestSave`. A revival would turn each instant into a `Date` the schema rejects, and every save would read as absent, so the schema owns the instants as strings and the reviver is left out.
+The Genshin save is a Zod-validated object written by `JSON.stringify`, its instants held as ISO strings that `genshinSaveSchema` reads with `z.iso.datetime()`. Each of its reads parses it as plain `JSON.parse`: the server's `readGenshinSaveState`, the signed-out `readGuestSave` and the journal's `parseGenshinJournal`. A revival would turn each instant into a `Date` the schema rejects, and every save would read as absent, so the schema owns the instants as strings and the reviver is left out.
 
 ## Machine JSON whose strings are paths — same rule, other side of the repo
 
