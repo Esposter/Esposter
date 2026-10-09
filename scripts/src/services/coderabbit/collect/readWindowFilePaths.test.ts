@@ -6,7 +6,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(readWindowFilePaths, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, commitFiles, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
 
   test("counts a fold of main on a window stacked above another, and not on a window cut from main", () => {
     expect.hasAssertions();

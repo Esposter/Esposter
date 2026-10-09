@@ -84,7 +84,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       writeFileSync(join(getCwd(), filePath), " ");
       runGit(["add", filePath], getCwd());
       runGit(["commit", "--quiet", "--no-edit"], getCwd());
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Merged);
@@ -102,7 +102,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     setupConflict();
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
 
     await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
@@ -131,17 +131,6 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     // The merge is cleared on the way out: the next command run over this checkout is a `git checkout`, which
     // Refuses over an unresolved index
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
-  });
-
-  test("counts no attempt and leaves the merge for the next run when the resolver never started", async () => {
-    expect.hasAssertions();
-
-    setupConflict();
-    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
-
-    await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Conflicted);
-    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
-    expect(runGh).toHaveBeenCalledTimes(1);
   });
 
   test(`${MergeMainOutcome.Conflicted}: past the attempt cap the fold is abandoned without a session`, async () => {

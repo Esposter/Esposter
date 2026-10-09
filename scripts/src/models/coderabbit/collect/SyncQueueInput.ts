@@ -1,7 +1,7 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 
-export interface SyncQueueInput extends Pick<CycleInput, "collectorSha">, Pick<PortInput, "baseSha"> {
+export interface SyncQueueInput extends Pick<CycleInput, "collectorSha">, Pick<PortInput, "baseSha" | "fileCap"> {
   cwd: string;
   developSha: string;
   isDryRun: boolean;
