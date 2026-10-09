@@ -7,9 +7,11 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NOELLE_CHARACTER_ID } from "#src/services/character/constants";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
+import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -112,6 +114,29 @@ describe("noelle kit", () => {
     expect(healParty?.chance(combatant, [sweepingTime])).toBe(1);
     expect(healParty?.chance(combatant, [])).toBeCloseTo(0.5, 5);
     expect(healParty?.chance({ ...combatant, constellationCount: 0 }, [sweepingTime])).toBeCloseTo(0.5, 5);
+  });
+
+  test("its Breastplate heal reaches the party through healKitParty, 21.28% of her DEF plus 102.7 HP as a share of each member's Max HP", () => {
+    expect.hasAssertions();
+    const combatant = createNoelleCombatant();
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    const partyMember = getPartyMember(party, NOELLE_CHARACTER_ID);
+    partyMember.healthShare = 0.5;
+    const characterIdCombatantMap = new Map([[NOELLE_CHARACTER_ID, combatant]]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const hit = takeOne(NOELLE_KIT.elementalSkill.hits);
+    NOELLE_KIT.elementalSkill.onStart?.({
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant,
+      kitEffectState,
+    });
+
+    expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.6)).toBe(false);
+    expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.4)).toBe(true);
+    expect(partyMember.healthShare).toBeCloseTo(
+      0.5 + (0.2128 * combatant.attributes.defense + 102.71802) / combatant.attributes.maxHealth,
+      5,
+    );
   });
 
   test("with To Be Cleaned, her shield explodes as it ends for 4 times her ATK of Geo, on the character on the field, from four constellations", () => {
