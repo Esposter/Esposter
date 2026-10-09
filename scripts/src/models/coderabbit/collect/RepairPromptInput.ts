@@ -6,7 +6,5 @@ export interface RepairPromptInput extends Pick<CycleInput, "collectorSha"> {
   // The tail of the install that failed on the red head (`runInstall`), absent when it installed
   installFailure?: string;
   mainSha: string;
-  // The whole minutes the attempt's deadline leaves the session, after the install and the regenerators spent theirs
-  remainingMinutes: number;
   runUrl: string;
 }

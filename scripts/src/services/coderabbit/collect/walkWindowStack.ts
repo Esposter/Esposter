@@ -5,13 +5,14 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
-import { DEVELOP_BRANCH, MISSING_CHECK_WAIT_MS } from "#src/services/coderabbit/collect/constants";
+import { DEVELOP_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { getSoonestDelay } from "#src/services/coderabbit/collect/getSoonestDelay";
 import { getWindowFileCap } from "#src/services/coderabbit/collect/getWindowFileCap";
 import { mergeBottomWindow } from "#src/services/coderabbit/collect/mergeBottomWindow";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readCheckWaitEndsAtMs } from "#src/services/coderabbit/collect/readCheckWaitEndsAtMs";
 import { readPullRequestHeadSha } from "#src/services/coderabbit/collect/readPullRequestHeadSha";
 import { readRecutFileCaps } from "#src/services/coderabbit/collect/readRecutFileCaps";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
@@ -23,8 +24,9 @@ import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // One pass over the open stack, bottom up. Only the bottom window merges, and only once its review completes: a window
 // Whose review completes above an unmerged one waits for its turn. Any window a rate limit refused is settled where it
-// Stands, any window the bot skipped is asked for its review a wait apart, and a bottom window with no check is asked
-// The same way once it has waited for one; the wait the run sleeps to is the soonest across them. A window still
+// Stands, any window the bot skipped is asked for its review a wait apart, and a bottom window with no check, or one
+// Whose review has stayed pending past the time a review takes, is asked the same way once that wait ends; the run
+// Sleeps to the soonest of every wait, so a status event that never comes strands nothing. A window still
 // Skipped past its last ask is cut again with every window above it, at half the cap it was cut under, which ends the
 // Walk: the opener cuts the replacement in the same run. Nothing here fails the run, and the walk never opens anything.
 export const walkWindowStack = async ({
@@ -44,7 +46,7 @@ export const walkWindowStack = async ({
   let isBottom = true;
 
   for (const [index, window] of stack.entries()) {
-    const { createdAt, headRefName, number } = window;
+    const { headRefName, number } = window;
     // The bot's latest submitted review names the commit it read; the head is where the pull request stands now
     const reviewedSha = readBotEntries<GitHubReview>(`pulls/${number}/reviews`).at(-1)?.commit_id || "";
     const gate = getGateDecision(readCheckStatus(number), readPullRequestHeadSha(number), reviewedSha);
@@ -77,7 +79,8 @@ export const walkWindowStack = async ({
     isBottom = false;
     // Read per window, since a drain below it can run for most of an hour
     const nowMs = Date.now();
-    const checkWaitEndsAtMs = Date.parse(createdAt) + MISSING_CHECK_WAIT_MS;
+    // Only the window next to merge waits on a missing or pending check and is then asked; one above it waits its turn
+    const checkWaitEndsAtMs = isNextToMerge ? readCheckWaitEndsAtMs(gate.kind, window, nowMs) : undefined;
     if (gate.kind === GateDecisionKind.RateLimited) {
       const settlement = settleRateLimit({
         isDryRun,
@@ -87,17 +90,17 @@ export const walkWindowStack = async ({
       });
       retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, settlement.retriggerDelaySeconds);
       if (settlement.outcome) blockReasons.push(settlement.outcome.reason);
-    } else if (gate.kind === GateDecisionKind.Missing && isNextToMerge && nowMs < checkWaitEndsAtMs) {
+    } else if (checkWaitEndsAtMs !== undefined && nowMs < checkWaitEndsAtMs) {
       blockReasons.push(
-        `pull request #${number} — no CodeRabbit check yet; asked for once it has waited until ${new Date(checkWaitEndsAtMs).toISOString()}`,
+        `pull request #${number} — ${gate.reason}; asked for once it has waited until ${new Date(checkWaitEndsAtMs).toISOString()}`,
       );
       retriggerDelaySeconds = getSoonestDelay(
         retriggerDelaySeconds,
         getRetriggerDelaySeconds(checkWaitEndsAtMs - nowMs),
       );
-    } else if (gate.kind === GateDecisionKind.Skipped || (gate.kind === GateDecisionKind.Missing && isNextToMerge)) {
+    } else if (gate.kind === GateDecisionKind.Skipped || checkWaitEndsAtMs !== undefined) {
       const settlement = settleSkippedReview({
-        isCheckMissing: gate.kind === GateDecisionKind.Missing,
+        gateKind: gate.kind,
         isDryRun,
         issueComments: readEntries(`issues/${number}/comments`),
         nowMs,

@@ -10,7 +10,7 @@ import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { repairMain } from "#src/services/coderabbit/collect/repairMain";
 
-// The repair is a pass's last step, after the walk and the openings: its session and checks run up to its deadline,
+// The repair is a pass's last step, after the walk and the openings: its session and checks run up to their clocks,
 // And the windows merged and opened before it are reviewed meanwhile rather than waiting on a red `main` that blocks
 // No window. `main` is read afresh, since the walk may have merged into it. The repair is a cut of its own, alone: one
 // That proved itself green before committing is not put through the same suite again, one that fails it counts
@@ -22,7 +22,7 @@ export const runRepairStep = async (repairStepInput: RepairStepInput): Promise<C
   const { mainSha } = readBranchShas(cwd);
   const repair = await repairMain({ ...repairStepInput, mainSha });
   if (repair.targetSha === undefined) return undefined;
-  else if (!repair.isVerified && !checkIsGreen(cwd, repair.deadlineMs)) {
+  else if (!repair.isVerified && !checkIsGreen(cwd)) {
     repair.recordFailure(`repair this red ${MAIN_BRANCH} head`, "left a repair that failed the checks as a cut");
     throw new AttemptFailedError(`the repair of ${mainSha} failed the checks as a cut`);
   } else if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: repair.targetSha }))
