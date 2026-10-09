@@ -11,11 +11,11 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { readStatTables } from "#src/services/character/readStatTables";
-import { createCharacter } from "#src/services/character/createCharacter";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
@@ -29,9 +29,9 @@ import { getElementalResonances } from "#src/services/party/getElementalResonanc
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { createSeededRandom } from "genshin-engine";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
+import { createSeededRandom } from "genshin-engine";
 
 // The party the player fields, the characters it is made of and their combat, the enemies the world holds and the kit's
 // Effects on the team. A defeat places its drops and is a doing the quests count, and a team that falls revives where the

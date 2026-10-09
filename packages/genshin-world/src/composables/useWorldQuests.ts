@@ -6,9 +6,9 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
-import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
 import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";

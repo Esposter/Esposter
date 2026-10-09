@@ -13,6 +13,7 @@ import type { Ref, ShallowRef } from "vue";
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
@@ -21,11 +22,10 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
-import { useIntervalFn, useNow } from "@vueuse/core";
 
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a point
 // Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once

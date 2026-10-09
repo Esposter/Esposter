@@ -1,26 +1,26 @@
-import type { Quest } from "#src/models/quest/Quest";
-import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Talk } from "#src/models/dialogue/Talk";
+import type { Interactable } from "#src/models/interaction/Interactable";
+import type { Quest } from "#src/models/quest/Quest";
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 import type { ComputedRef, Ref } from "vue";
 
-import { InteractionKind } from "genshin-interface";
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
 import { getStandingTalks } from "#src/services/resident/getStandingTalks";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { InteractionKind } from "genshin-interface";
 
 // The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, and a resident
 // Whose duel names a game holds the standing talk written for it. A quest's talk wins a shared id
 export const useWorldTalks = ({
-  getResidentSpot,
   getResidents,
+  getResidentSpot,
   questsInProgress,
   questTextMap,
   standingTalkMap,
 }: {
-  getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   getResidents: () => Resident[];
+  getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   questsInProgress: ComputedRef<Quest[]>;
   questTextMap: Ref<Readonly<Record<string, string>>>;
   standingTalkMap: ReadonlyMap<string, Talk>;
