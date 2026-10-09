@@ -13,3 +13,5 @@ export const BUILD_CACHE_RUN_IN_SLOT_PATH = ".agents/skills/throughput/scripts/r
 // The file a package's dist carries the key it was built or restored under in, so a dist that no longer matches its
 // Sources is seen without rebuilding anything. Written beside the output rather than into the cache, which stores the bare build.
 export const BUILD_STAMP_FILE = ".build-cache-key";
+// Under a key's folder, the generated barrels, at the paths they have in the package
+export const BUILD_GENERATED_DIRECTORY = "generated";
