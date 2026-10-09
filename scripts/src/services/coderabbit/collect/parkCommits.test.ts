@@ -87,7 +87,7 @@ describe(parkCommits, () => {
       - aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa , held on \`ai/held/aaaaaaaaaa\`
       - bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb , held on \`ai/held/bbbbbbbbbb\`
 
-      To re-land them, on \`ai/queue\`:
+      The collector tries the re-land itself as \`main\` moves, up to its attempts, and closes this issue once every commit is back. To re-land them by hand, on \`ai/queue\`:
 
       1. \`git fetch origin\`
       2. For each held branch above, in order: \`git cherry-pick --no-commit origin/<branch>\`, settle what the cause names by splitting it under the cap or resolving the conflict, then commit each part under a message of its own, \`git commit -m "<subject>"\` — never the message the pick prepares, nor \`-x\`: either can carry a "(cherry picked from commit …)" line naming a sha the held branch carries, and a commit naming one is owed nowhere until that branch is deleted
