@@ -14,6 +14,7 @@ import { selectChangedFiles } from "#src/services/fleet/data/selectChangedFiles"
 import { waitForExit } from "#src/services/fleet/data/waitForExit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
+import { mkdir } from "node:fs/promises";
 import { join, posix } from "node:path";
 import { pipeline } from "node:stream/promises";
 
@@ -57,6 +58,8 @@ export const syncPeer = async (
     return;
   }
 
+  // Tar unpacks only into a directory that exists, and a pull may be the first to fill this one
+  if (isPull) await mkdir(localDirectory, { recursive: true });
   const [sourceCommand, targetCommand] = getTransferCommands(direction, peer, localDirectory, remoteDirectory);
   const source = spawn(sourceCommand.file, sourceCommand.args, { stdio: ["pipe", "pipe", "inherit"] });
   const target = spawn(targetCommand.file, targetCommand.args, { stdio: ["pipe", "inherit", "inherit"] });
