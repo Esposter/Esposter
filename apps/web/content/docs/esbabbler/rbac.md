@@ -9,7 +9,7 @@ Discord-complexity role-based access control per room. Every privileged operatio
 
 ## How it works
 
-Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** of `RoomPermission` flags. `bigint` (not `number`) lets the field grow past 32 bits; since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`.
+Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** of `RoomPermission` flags. `bigint` (not `number`) lets the field grow past 32 bits; since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`, then their own [overrides](/docs/esbabbler/member-permission-overrides) are folded in: allowed bits are added and denied bits removed, so a member's row is the last word over their roles and never over Administrator.
 
 ```mermaid
 flowchart TD
@@ -47,10 +47,11 @@ The one real limit is width: `permissions` is a signed 64-bit `bigint`, so bit 6
 
 ## Data model
 
-| Table              | Key facts                                                                                              |
-| ------------------ | ------------------------------------------------------------------------------------------------------ |
-| `roomRoles`        | `roomId` FK, `name`, `color`, `position` (higher = more authority), `permissions` bigint, `isEveryone` |
-| `usersToRoomRoles` | `(userId, roomId, roleId)` composite PK — explicit role assignments                                    |
+| Table                   | Key facts                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `roomRoles`             | `roomId` FK, `name`, `color`, `position` (higher = more authority), `permissions` bigint, `isEveryone`                               |
+| `usersToRoomRoles`      | `(userId, roomId, roleId)` composite PK — explicit role assignments                                                                  |
+| `roomMemberPermissions` | `(userId, roomId)` PK — one member's `allow` and `deny` bits, disjoint; see [overrides](/docs/esbabbler/member-permission-overrides) |
 
 ## Service layer & guards
 
