@@ -43,6 +43,7 @@ committed.
 | `login-door-recording` | `LoginScreen` | 16.44% | 0.366 | 11.47% | 0.5796 |
 | `login-door-session` | `LoginScreen` | 12.25% | 0.417 | 8.41% | 0.4567 |
 | `login-interface-door` | `LoginInterface` | 0.75% | 0.985 | 0.44% | 0.0459 |
+| `login-interface-door-mainland` | `LoginInterface` | 0.65% | 0.975 | 0.45% | 0.0265 |
 | `login-interface-loading` | `LoginInterface` | 0.34% | 0.995 | 0.11% | 0.0285 |
 | `login-interface-mainland-rating` | `LoginInterface` | 3.85% | 0.953 | 2.62% | 0.2090 |
 | `login-interface-title` | `LoginInterface` | 0.51% | 0.997 | 0.25% | 0.0353 |
