@@ -27,6 +27,13 @@ describe(findMissingImports, () => {
     ).toStrictEqual([]);
   });
 
+  // A Vite query names how a tracked module is imported, so the module it names is the one checked
+  test("passes a tracked target imported with a Vite query", () => {
+    expect.hasAssertions();
+
+    expect(findMissingImports([createImporter(["#src/services/tracked?worker"])], COMMITTED_PATHS)).toStrictEqual([]);
+  });
+
   test("fails a target neither in HEAD nor staged, naming the importer, the import and the missing path", () => {
     expect.hasAssertions();
 
