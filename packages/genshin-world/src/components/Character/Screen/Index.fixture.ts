@@ -2,7 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import artifactExpMaterials from "#src/generated/stats/artifactExpMaterials.json";
 import artifactMainAffixCurves from "#src/generated/stats/artifactMainAffixCurves.json";
 import artifactMainAffixPools from "#src/generated/stats/artifactMainAffixPools.json";
@@ -13,9 +13,12 @@ import characters from "#src/generated/stats/characters.json";
 import weaponGrowCurves from "#src/generated/stats/weaponGrowCurves.json";
 import weapons from "#src/generated/stats/weapons.json";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { parseStatTables } from "#src/services/character/parseStatTables";
 import { CharacterMenuTab } from "genshin-interface";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 // Xilonen on the Attributes tab at level 90, the English PC client's character screen as the 21:9 recording shows her
 // Beside fourteen of the player's other characters, the Traveler among them, their weapons held at the first level
@@ -69,7 +72,7 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
 export const props = {
   activeCharacterId: XILONEN_ID,
   characters: roster,
-  gameDataBaseUrl: "game-data",
+  gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
   initialTab: CharacterMenuTab.Attributes,
   maxStamina: STAMINA,

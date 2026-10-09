@@ -70,8 +70,8 @@ The Achievements screen has no parity measure yet. Its look waits on `achievemen
 | `packages/genshin-world/src/services/achievement/AchievementTriggerEventKindMap.ts`     | The trigger types watched and the kind of doing each counts                          |
 | `packages/genshin-world/src/services/achievement/checkIsAchievementCategoryComplete.ts` | Whether every achievement of a category is finished                                  |
 | `packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts`  | The namecard item of each finished category that pays one                            |
-| `packages/genshin-world/src/services/achievement/readAchievements.ts`                   | The slices read on demand, checked against their schemas                             |
-| `packages/genshin-world/src/services/achievement/AchievementTextLoaderMap.ts`           | The words in each language, imported on demand                                       |
+| `packages/genshin-world/src/services/achievement/readAchievements.ts`                   | The slices fetched by their keys, checked against their schemas                      |
+| `packages/genshin-world/src/services/achievement/AchievementTextLoaderMap.ts`           | The words in each language, fetched by their key                                     |
 | `packages/genshin-world/src/components/Achievement/Screen/Index.vue`                    | The Achievements screen the Paimon menu opens                                        |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                         | Loads the slices and words when the screen opens, and shows it                       |
 | `packages/genshin-world/src/data/achievements/achievementCount.json`                    | The count of the achievements kept, which the save's achievement slice is bounded by |

@@ -1,7 +1,11 @@
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ItemCategory } from "genshin-interface";
+import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 describe(getItemDefinition, () => {
   const BILLET_ID = 101_101;

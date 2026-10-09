@@ -2,18 +2,19 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import standardRule from "#src/generated/gcg/standardRule.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
+
+const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createCharacterState = (): GcgCharacterState => ({
   aura: GcgAura.None,
@@ -36,8 +37,6 @@ const createCharacterState = (): GcgCharacterState => ({
 });
 
 describe(declareGcgRoundEnd, () => {
-  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
   const SEED = 7;
   const HAND_CARD_COUNT = 1;
   const DRAW_PILE_CARD_IDS = [201, 202, 203];
@@ -73,7 +72,7 @@ describe(declareGcgRoundEnd, () => {
   test("should pass the turn to the side still acting, and make the first to declare the next round's first", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
     const result = declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
 
@@ -95,7 +94,7 @@ describe(declareGcgRoundEnd, () => {
   test("should close the round once both sides declare, drawing two cards each and rolling the next round", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
     declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
     declareGcgRoundEnd(duel, 1, rule, createSeededRandom(SEED));
@@ -110,7 +109,7 @@ describe(declareGcgRoundEnd, () => {
   test("should concede the duel to both sides once the fifteenth round's end phase closes", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel(GCG_ROUND_LIMIT);
     declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
     declareGcgRoundEnd(duel, 1, rule, createSeededRandom(SEED));

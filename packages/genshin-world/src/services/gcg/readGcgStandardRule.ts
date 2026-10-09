@@ -1,10 +1,9 @@
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+import { readGameData } from "#src/services/data/readGameData";
 
-// The standard duel rule, its slice imported on demand when a duel is first set up, so no duel's table sits in the main
-// Bundle of every page
-export const readGcgStandardRule = async (): Promise<GcgRule> => {
-  const { default: standardRule } = await import("#src/generated/gcg/standardRule.json");
-  return gcgStandardRuleSchema.parse(standardRule);
-};
+// The standard duel rule, fetched by its key from the hosted game data when a duel is first set up, so no page reads a
+// Duel's table it does not play
+export const readGcgStandardRule = (gameDataBaseUrl: string): Promise<GcgRule> =>
+  readGameData(gameDataBaseUrl, "gcg/standardRule", gcgStandardRuleSchema);

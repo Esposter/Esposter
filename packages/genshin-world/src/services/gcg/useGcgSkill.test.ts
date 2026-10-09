@@ -3,17 +3,31 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
-import standardRule from "#src/generated/gcg/standardRule.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+
+const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
+  actingSideIndex: 0,
+  firstSideIndex: 0,
+  nextFirstSideIndex: 0,
+  outcome: undefined,
+  phase: GcgPhase.Action,
+  round: 1,
+  rule: TEST_RULE,
+  sides: [attacker, defender],
+  winnerSideIndex: undefined,
+});
 
 const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSideState => ({
   activeIndex: 0,
@@ -34,20 +48,6 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
 });
 
 describe(useGcgSkill, () => {
-  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
-  const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
-    actingSideIndex: 0,
-    firstSideIndex: 0,
-    nextFirstSideIndex: 0,
-    outcome: undefined,
-    phase: GcgPhase.Action,
-    round: 1,
-    rule: TEST_RULE,
-    sides: [attacker, defender],
-    winnerSideIndex: undefined,
-  });
-
   const MAX_ENERGY = 3;
   const NORMAL_ATTACK_ID = 13_011;
   const BURST_ID = 13_013;

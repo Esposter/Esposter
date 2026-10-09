@@ -4,27 +4,28 @@ import { archiveBookSchema } from "#src/models/archive/ArchiveBook";
 import { archiveEntrySchema } from "#src/models/archive/ArchiveEntry";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
+import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// Every section's entries, the slices `pnpm -C scripts genshin:assets archive` writes, imported on demand as chunks of
-// Their own and checked against their shape as they arrive
-export const readArchiveEntries = async (): Promise<ArchiveSectionEntriesMap> => {
+// Every section's entries, which `pnpm -C scripts genshin:assets archive` writes.
+// Each is fetched by its key from the hosted game data and checked against its shape as it arrives
+export const readArchiveEntries = async (gameDataBaseUrl: string): Promise<ArchiveSectionEntriesMap> => {
   const [books, equipment, geography, livingBeings, materials, travelLog, tutorials] = await Promise.all([
-    import("#src/generated/archive/books.json"),
-    import("#src/generated/archive/equipment.json"),
-    import("#src/generated/archive/geography.json"),
-    import("#src/generated/archive/livingBeings.json"),
-    import("#src/generated/archive/materials.json"),
-    readTravelLogEntries(),
-    import("#src/generated/archive/tutorials.json"),
+    readGameData(gameDataBaseUrl, "archive/books", z.array(archiveBookSchema)),
+    readGameData(gameDataBaseUrl, "archive/equipment", z.array(archiveEntrySchema)),
+    readGameData(gameDataBaseUrl, "archive/geography", z.array(archiveEntrySchema)),
+    readGameData(gameDataBaseUrl, "archive/livingBeings", z.array(archiveEntrySchema)),
+    readGameData(gameDataBaseUrl, "archive/materials", z.array(archiveEntrySchema)),
+    readTravelLogEntries(gameDataBaseUrl),
+    readGameData(gameDataBaseUrl, "archive/tutorials", z.array(archiveEntrySchema)),
   ]);
   return {
-    [ArchiveSection.Books]: z.array(archiveBookSchema).parse(books.default),
-    [ArchiveSection.Equipment]: z.array(archiveEntrySchema).parse(equipment.default),
-    [ArchiveSection.Geography]: z.array(archiveEntrySchema).parse(geography.default),
-    [ArchiveSection.LivingBeings]: z.array(archiveEntrySchema).parse(livingBeings.default),
-    [ArchiveSection.Materials]: z.array(archiveEntrySchema).parse(materials.default),
+    [ArchiveSection.Books]: books,
+    [ArchiveSection.Equipment]: equipment,
+    [ArchiveSection.Geography]: geography,
+    [ArchiveSection.LivingBeings]: livingBeings,
+    [ArchiveSection.Materials]: materials,
     [ArchiveSection.TravelLog]: travelLog,
-    [ArchiveSection.Tutorials]: z.array(archiveEntrySchema).parse(tutorials.default),
+    [ArchiveSection.Tutorials]: tutorials,
   };
 };

@@ -1,13 +1,17 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ItemCategory } from "genshin-interface";
+import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 describe(destroyInventoryItems, () => {
   const ORE_ID = 104_011;

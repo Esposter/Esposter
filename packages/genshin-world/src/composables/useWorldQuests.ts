@@ -20,10 +20,12 @@ import { getResultAsync } from "@esposter/shared";
 // Achievements and the Travel Log
 export const useWorldQuests = ({
   events,
+  gameDataBaseUrl,
   language,
   savedQuestProgressMap,
 }: {
   events: WorldEvents;
+  gameDataBaseUrl: string;
   language: GameLanguage;
   savedQuestProgressMap: ReadonlyMap<string, QuestProgress>;
 }) => {
@@ -57,7 +59,7 @@ export const useWorldQuests = ({
     return steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
   });
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(readQuests).match(
+  getResultAsync(() => readQuests(gameDataBaseUrl)).match(
     (newQuests) => {
       quests.value = newQuests;
       questProgressMap.value = startQuests(newQuests, questProgressMap.value);
@@ -67,7 +69,7 @@ export const useWorldQuests = ({
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => QuestTextLoaderMap[language]()).match(
+  getResultAsync(() => QuestTextLoaderMap[language](gameDataBaseUrl)).match(
     (newQuestTextMap) => {
       questTextMap.value = newQuestTextMap;
     },

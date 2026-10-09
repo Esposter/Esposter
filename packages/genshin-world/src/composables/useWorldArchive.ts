@@ -76,7 +76,10 @@ export const useWorldArchive = ({
     if (!newIsArchiveUnlocked || archiveData.value) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
-      const [sectionEntriesMap, textMap] = await Promise.all([readArchiveEntries(), ArchiveTextLoaderMap[language]()]);
+      const [sectionEntriesMap, textMap] = await Promise.all([
+        readArchiveEntries(gameDataBaseUrl),
+        ArchiveTextLoaderMap[language](gameDataBaseUrl),
+      ]);
       return { sectionEntriesMap, textMap };
     }).match(
       (newArchiveData) => {
@@ -91,7 +94,7 @@ export const useWorldArchive = ({
   // First needed, since the Archive's own screen may not have been opened
   events.on("parentQuestFinish", () => {
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(readTravelLogEntries).match(
+    getResultAsync(() => readTravelLogEntries(gameDataBaseUrl)).match(
       (entries) => {
         archiveProgressMap.value = openTravelLogEntries(archiveProgressMap.value, entries, finishedMainQuestIds.value);
       },

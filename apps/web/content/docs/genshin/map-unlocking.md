@@ -35,8 +35,8 @@ flowchart TD
 | `packages/genshin-world/src/components/World/Session/Index.vue`                    | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
 | `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept |
 | `scripts/src/services/genshinAssets/transPoints/buildTransPointRewards.ts`         | Builds the open world's transport point rewards, for publishing             |
-| `packages/genshin-world/src/generated/transPoints/scene3.json`                     | The written slice, imported on demand                                       |
-| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Loads the slice, checking it against its shape as it arrives                |
+| `packages/genshin-world/src/generated/transPoints/scene3.json`                     | The slice the builder writes, published as `transPoints/scene3`             |
+| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Fetches the slice by its key, checking it against its shape as it arrives   |
 
 ## Notes
 

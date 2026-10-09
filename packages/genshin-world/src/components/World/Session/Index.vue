@@ -142,7 +142,7 @@ const {
   questTextMap,
   trackedQuestId,
   trackerQuest,
-} = useWorldQuests({ events, language, savedQuestProgressMap: savedState.quests });
+} = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
   adventureExp,
@@ -215,6 +215,7 @@ const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClock
 const { achievementData } = useWorldAchievements({
   achievementProgressMap,
   events,
+  gameDataBaseUrl,
   getWorldNow,
   language,
   screenKind,
@@ -233,6 +234,7 @@ const {
 } = useWorldPickups({
   archive: { archiveData, archiveProgressMap },
   events,
+  gameDataBaseUrl,
   gameText,
   getWorldNow,
   inventory,
@@ -281,6 +283,7 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
   useWorldMap({
     events,
     gainWorldAdventureExp,
+    gameDataBaseUrl,
     regionDataBaseUrl,
     setWallet,
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
@@ -652,6 +655,7 @@ defineExpose({ jumpTo, readCameraPosition });
     />
     <GcgSession
       v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
+      :game-data-base-url
       :game-id="gcgGameId"
       :game-text
       :language

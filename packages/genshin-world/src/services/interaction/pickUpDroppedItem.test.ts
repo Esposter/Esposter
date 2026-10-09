@@ -1,10 +1,14 @@
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Currency } from "#src/models/inventory/Currency";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { GameLanguage } from "genshin-text";
 import { describe, expect, test } from "vitest";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 describe(pickUpDroppedItem, () => {
   const maskId = 112_005;

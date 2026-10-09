@@ -21,6 +21,8 @@ import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { getResultAsync } from "@esposter/shared";
 
 interface Props {
+  // Where the host serves the game's tables and words
+  gameDataBaseUrl: string;
   // The duel of the card game's own table the resident offers, by its game id there
   gameId: number;
   // The game's words in the reader's language
@@ -29,7 +31,7 @@ interface Props {
   language: GameLanguage;
 }
 
-const { gameId, gameText, language } = defineProps<Props>();
+const { gameDataBaseUrl, gameId, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ leave: [] }>();
 const duel = ref<GcgDuel>();
 const textMap = shallowRef<Readonly<Record<string, string>>>({});
@@ -37,11 +39,11 @@ const textMap = shallowRef<Readonly<Record<string, string>>>({});
 // Sets a duel up from its game: both decks and the rule read, the duel opened with the player's first, and the opponent
 // Brought through its preparation before the player is asked for its own
 const createSessionDuel = async (): Promise<GcgDuel> => {
-  const game = readGcgGame(gameId);
+  const game = await readGcgGame(gameDataBaseUrl, gameId);
   const [playerDeck, opponentDeck, rule] = await Promise.all([
-    readGcgDeck(game.playerDeckId),
-    readGcgDeck(game.enemyDeckId),
-    readGcgStandardRule(),
+    readGcgDeck(gameDataBaseUrl, game.playerDeckId),
+    readGcgDeck(gameDataBaseUrl, game.enemyDeckId),
+    readGcgStandardRule(gameDataBaseUrl),
   ]);
   const newDuel = createGcgDuel([playerDeck, opponentDeck], Math.random, rule);
   advanceGcgOpponent(newDuel, GCG_OPPONENT_SIDE_INDEX, Math.random);
@@ -59,7 +61,7 @@ getResultAsync(createSessionDuel).match(
   },
 );
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => GcgTextLoaderMap[language]()).match(
+getResultAsync(() => GcgTextLoaderMap[language](gameDataBaseUrl)).match(
   (newTextMap) => {
     textMap.value = newTextMap;
   },

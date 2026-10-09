@@ -1,12 +1,14 @@
 import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
 import { readGcgDeck } from "#src/services/gcg/readGcgDeck";
+import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
@@ -27,10 +29,8 @@ describe("the tutorial deck's cards and skills", () => {
   // On its side
   const openTutorialDuel = async (dice: (Element | GcgDieFace)[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
-    const deck = await readGcgDeck(TUTORIAL_DECK_ID);
-    const { gcgStandardRuleSchema } = await import("#src/models/gcg/gcgStandardRuleSchema");
-    const { default: standardRule } = await import("#src/generated/gcg/standardRule.json");
-    const duel = createGcgDuel([deck, deck], random, gcgStandardRuleSchema.parse(standardRule));
+    const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, TUTORIAL_DECK_ID);
+    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL));
     for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
     for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
     takeOne(duel.sides, 0).dice = dice;

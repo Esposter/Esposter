@@ -11,7 +11,7 @@ In the game the map shows how much of each area a player has explored, as a perc
 
 ```mermaid
 flowchart TD
-  T["The game's table: each area's total and its events"] --> S["Mondstadt's slice, imported as the world opens"]
+  T["The game's table: each area's total and its events"] --> S["Mondstadt's slice, fetched by its key as the world opens"]
   S --> K["Each doing an area counts: its kind and weight"]
   U["Unlocked Statues of The Seven"] -->|"a statue done: its area's waypoint"| D["The doings done"]
   K --> D
@@ -32,7 +32,7 @@ flowchart TD
 | :--------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`    | An area's count and percentage, the done weight over its total                                   |
 | `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts`       | The doings an area's unlocked statue has done                                                    |
-| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | Imports the Mondstadt slice and checks it against its schema                                     |
+| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | Fetches the Mondstadt slice by its key and checks it against its schema                          |
 | `packages/genshin-world/src/composables/useExplorationAreas.ts`                    | Reads the slice as the world opens, logging a slice that fails                                   |
 | `packages/genshin-world/src/components/Map/Overlay/Index.vue`                      | Shows each filled area's count and percentage under its name, and lists them for a screen reader |
 | `packages/genshin-world/src/models/exploration/ExplorationArea.ts`                 | An area's total and the doings its progress counts                                               |

@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { advanceGcgOpponent } from "#src/services/gcg/advanceGcgOpponent";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
@@ -26,8 +27,8 @@ describe("a duel between two copies of the tutorial deck", () => {
   test("should be played to its end through the engine's public functions", async () => {
     expect.hasAssertions();
 
-    const tutorialDeck = await readGcgDeck(1);
-    const rule = await readGcgStandardRule();
+    const tutorialDeck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = playGcgDuel([tutorialDeck, tutorialDeck], rule);
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
@@ -41,8 +42,11 @@ describe("a duel between opponent decks 3 and 4", () => {
   test("should be played to its end through the engine's public functions", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(3), await readGcgDeck(4)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 3), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 4)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -55,8 +59,11 @@ describe("the tutorial duels' decks: the player's deck 7 and the opponent decks 
   test("should play opponent deck 30111 against opponent deck 30112 to its end", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(30_111), await readGcgDeck(30_112)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_111), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_112)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -67,8 +74,11 @@ describe("the tutorial duels' decks: the player's deck 7 and the opponent decks 
   test("should play the player's deck 7 against opponent deck 30111 to its end", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(7), await readGcgDeck(30_111)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 7), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 30_111)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -81,8 +91,11 @@ describe("the Oceanid duel's deck 2", () => {
   test("should be played against the tutorial deck to its end", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(2)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 2)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -95,8 +108,11 @@ describe("the Mondstadt challenger Marjorie's deck 11005", () => {
   test("should be played against the tutorial deck to its end", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(11_005)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 11_005)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -109,8 +125,11 @@ describe("the Mondstadt challenger Ellin's monster deck 11002", () => {
   test("should be played against the tutorial deck to its end", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(11_002)], rule);
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+    const duel = playGcgDuel(
+      [await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 1), await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, 11_002)],
+      rule,
+    );
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,

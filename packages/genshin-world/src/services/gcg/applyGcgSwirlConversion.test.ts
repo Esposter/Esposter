@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
@@ -20,8 +21,8 @@ describe("the Large Wind Spirit's Swirl conversion", () => {
 
   const openDuel = async (): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
-    const deck = await readGcgDeck(TUTORIAL_DECK_ID);
-    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
+    const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, TUTORIAL_DECK_ID);
+    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL));
     for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
     for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
     return duel;

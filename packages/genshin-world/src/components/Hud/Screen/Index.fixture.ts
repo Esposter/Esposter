@@ -1,11 +1,14 @@
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import charactersJson from "#src/generated/stats/characters.json";
 import { characterDataSchema } from "#src/models/character/CharacterData";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { createParty } from "#src/services/party/createParty";
 import { createInput, STAMINA_MAX } from "genshin-engine";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 // The English PC client's world HUD at 1080 high, from the public recording of a session at 70 seconds, letterboxed,
 // So cropped to the game's screen and scored over the part clear of its subtitles. Mona, Klee and the Traveler are
