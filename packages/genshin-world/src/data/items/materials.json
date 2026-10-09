@@ -1,4 +1,5 @@
 [
+  { "id": 106, "materialType": "MATERIAL_NONE", "nameTextId": "3246419172", "rank": 10, "rarity": 3, "stackLimit": 0 },
   {
     "id": 100012,
     "materialType": "MATERIAL_EXCHANGE",
@@ -69,6 +70,70 @@
     "nameTextId": "1448077684",
     "rank": 301,
     "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101004,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2057452708",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101006,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1269908988",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101008,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2485846164",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101009,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3736537308",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 101010,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3831100636",
+    "rank": 301,
+    "rarity": 0,
+    "stackLimit": 99999
+  },
+  {
+    "id": 104011,
+    "materialType": "MATERIAL_WEAPON_EXP_STONE",
+    "nameTextId": "2429162676",
+    "rank": 5,
+    "rarity": 1,
+    "stackLimit": 99999
+  },
+  {
+    "id": 104012,
+    "materialType": "MATERIAL_WEAPON_EXP_STONE",
+    "nameTextId": "377860124",
+    "rank": 5,
+    "rarity": 2,
+    "stackLimit": 99999
+  },
+  {
+    "id": 104013,
+    "materialType": "MATERIAL_WEAPON_EXP_STONE",
+    "nameTextId": "3267705996",
+    "rank": 5,
+    "rarity": 3,
     "stackLimit": 99999
   },
   {
