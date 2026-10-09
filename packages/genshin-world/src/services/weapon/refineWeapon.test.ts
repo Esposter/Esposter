@@ -1,6 +1,7 @@
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
@@ -10,6 +11,9 @@ describe(refineWeapon, () => {
   const WEAPON_DATA: WeaponData = {
     ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 }],
     baseExp: 1800,
+    destroyReturnMaterial: 0,
+    destroyReturnMaterialCount: 0,
+    destroyRule: DestroyRule.None,
     growAttributes: [],
     id: 1,
     nameTextId: "1",

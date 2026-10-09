@@ -2,6 +2,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ascendWeapon } from "#src/services/weapon/ascendWeapon";
@@ -21,6 +22,9 @@ describe(ascendWeapon, () => {
       },
     ],
     baseExp: 1800,
+    destroyReturnMaterial: 0,
+    destroyReturnMaterialCount: 0,
+    destroyRule: DestroyRule.None,
     growAttributes: [],
     id: 1,
     nameTextId: "1",
