@@ -25,5 +25,1119 @@
       "rotation": 0
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4315.56, "z": 2635.87 }, "rotation": 1.3724 },
+      "id": "1273",
+      "nameTextId": "712159365",
+      "talkId": "30311"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5422.2, "z": 1972.31 }, "rotation": -1.5969 },
+      "id": "1274",
+      "nameTextId": "330412517",
+      "talkId": "30312"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5590.99, "z": 948.84 }, "rotation": 0.3529 },
+      "id": "1275",
+      "nameTextId": "556855373",
+      "talkId": "30313"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4431.52, "z": 2584.47 }, "rotation": 0 },
+      "id": "20414",
+      "nameTextId": "2703020093",
+      "talkId": "50801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4453.1, "z": 2467.67 }, "rotation": 1.3879 },
+      "id": "20415",
+      "nameTextId": "35375165",
+      "talkId": "50901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4317.26, "z": 2599.48 }, "rotation": 0.3151 },
+      "id": "30055",
+      "nameTextId": "3530175765",
+      "talkId": "7265201"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4317.26, "z": 2599.48 }, "rotation": 0.3151 },
+      "id": "3005501",
+      "nameTextId": "1755467949",
+      "talkId": "7265201"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5019.32, "z": 3200.66 }, "rotation": -2.0213 },
+      "id": "20401",
+      "nameTextId": "2517041237",
+      "talkId": "50426"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4439.13, "z": 2554.04 }, "rotation": -0.237 },
+      "id": "30068",
+      "nameTextId": "2216900733",
+      "talkId": "7002603"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4461.44, "z": 2575.63 }, "rotation": -3.1014 },
+      "id": "30065",
+      "nameTextId": "1802432701",
+      "talkId": "4006333"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4438.28, "z": 2573.89 }, "rotation": 2.4768 },
+      "id": "30166",
+      "nameTextId": "1995757776",
+      "talkId": "4006344"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4439.07, "z": 2574.71 }, "rotation": -0.4536 },
+      "id": "30165",
+      "nameTextId": "290784472",
+      "talkId": "4006344"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4460.9, "z": 2585.97 }, "rotation": 0.1578 },
+      "id": "30164",
+      "nameTextId": "3753889888",
+      "talkId": "4006343"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4465.23, "z": 2586.92 }, "rotation": 0 },
+      "id": "20568",
+      "nameTextId": "3172528200",
+      "talkId": "4006332"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4474.18, "z": 2580.8 }, "rotation": -1.9267 },
+      "id": "20562",
+      "nameTextId": "1317282208",
+      "talkId": "4006328"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4484.11, "z": 2567.93 }, "rotation": 2.4881 },
+      "id": "30139",
+      "nameTextId": "1629677808",
+      "talkId": "4005402"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4488.95, "z": 2580.71 }, "rotation": -0.3813 },
+      "id": "3190",
+      "nameTextId": "4007379072",
+      "talkId": "4005402"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4472.94, "z": 2523.67 }, "rotation": -2.0455 },
+      "id": "30163",
+      "nameTextId": "516003104",
+      "talkId": "4006338"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4471.05, "z": 2585.35 }, "rotation": -0.3491 },
+      "id": "30174",
+      "nameTextId": "2709194168",
+      "talkId": "4006345"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4459.65, "z": 2533.97 }, "rotation": 0 },
+      "id": "30176",
+      "nameTextId": "2067672456",
+      "talkId": "4006346"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4462, "z": 2531.5 }, "rotation": 0 },
+      "id": "30177",
+      "nameTextId": "2347467920",
+      "talkId": "4006348"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4465.49, "z": 2531.03 }, "rotation": 0 },
+      "id": "30178",
+      "nameTextId": "841148768",
+      "talkId": "4006350"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4467.76, "z": 2533.91 }, "rotation": 0 },
+      "id": "30179",
+      "nameTextId": "3227593960",
+      "talkId": "4006352"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4467.74, "z": 2537.37 }, "rotation": 0 },
+      "id": "30180",
+      "nameTextId": "2265218104",
+      "talkId": "4006354"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4465.56, "z": 2498.72 }, "rotation": -1.5268 },
+      "id": "30064",
+      "nameTextId": "2289432669",
+      "talkId": "7265601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4483.31, "z": 2466.32 }, "rotation": -1.4489 },
+      "id": "30172",
+      "nameTextId": "1523385344",
+      "talkId": "7269101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4482.31, "z": 2466.23 }, "rotation": 1.6639 },
+      "id": "30173",
+      "nameTextId": "3023303072",
+      "talkId": "4008811"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4096.95, "z": 2202.51 }, "rotation": -2.355 },
+      "id": "30168",
+      "nameTextId": "1687230560",
+      "talkId": "7269801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4075.45, "z": 2193.99 }, "rotation": 2.9147 },
+      "id": "30167",
+      "nameTextId": "1214252464",
+      "talkId": "7268601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4108.55, "z": 2211.05 }, "rotation": 1.4721 },
+      "id": "30169",
+      "nameTextId": "4250940864",
+      "talkId": "7272001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4092.99, "z": 2198.92 }, "rotation": -2.5786 },
+      "id": "30170",
+      "nameTextId": "1506045072",
+      "talkId": "7272101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4484.8, "z": 2581.4 }, "rotation": 0 },
+      "id": "30211",
+      "nameTextId": "777682056",
+      "talkId": "7227829"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4425.38, "z": 2573.75 }, "rotation": 1.7483 },
+      "id": "30171",
+      "nameTextId": "2433291520",
+      "talkId": "7268701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4425.52, "z": 2578.71 }, "rotation": 1.7585 },
+      "id": "30187",
+      "nameTextId": "109546688",
+      "talkId": "7269402"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4070.59, "z": 2207.72 }, "rotation": 1.4971 },
+      "id": "30162",
+      "nameTextId": "669677936",
+      "talkId": "7268449"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4846.96, "z": 2668.35 }, "rotation": -2.4239 },
+      "id": "30188",
+      "nameTextId": "1054528680",
+      "talkId": "7250001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4844.01, "z": 2662.46 }, "rotation": -3.0587 },
+      "id": "30189",
+      "nameTextId": "2554112176",
+      "talkId": "7250001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4855.98, "z": 2667.02 }, "rotation": -2.0409 },
+      "id": "30190",
+      "nameTextId": "3039723912",
+      "talkId": "7250001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4100.19, "z": 2209.69 }, "rotation": 0 },
+      "id": "30191",
+      "nameTextId": "3551971736",
+      "talkId": "7268602"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4094.76, "z": 2221.08 }, "rotation": -0.8 },
+      "id": "13087",
+      "nameTextId": "1543448760",
+      "talkId": "7273001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4092.54, "z": 2199.65 }, "rotation": -2.2306 },
+      "id": "13089",
+      "nameTextId": "1805344968",
+      "talkId": "7273007"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4097.29, "z": 2208.97 }, "rotation": -1.4828 },
+      "id": "13088",
+      "nameTextId": "25933880",
+      "talkId": "7273003"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4079.01, "z": 2196.27 }, "rotation": -2.9241 },
+      "id": "13090",
+      "nameTextId": "1483507936",
+      "talkId": "7273008"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4077.05, "z": 2212.79 }, "rotation": -2.4289 },
+      "id": "13019",
+      "nameTextId": "693453088",
+      "talkId": "7273004"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4078.53, "z": 2214.88 }, "rotation": -1.5803 },
+      "id": "1044",
+      "nameTextId": "3981848709",
+      "talkId": "101902"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4483.74, "z": 2579.89 }, "rotation": 0.1537 },
+      "id": "13080",
+      "nameTextId": "1133283384",
+      "talkId": "7368613"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4484.01, "z": 2577.92 }, "rotation": 3.0524 },
+      "id": "13081",
+      "nameTextId": "2581946648",
+      "talkId": "7368613"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4489.1, "z": 2568.11 }, "rotation": -2.8982 },
+      "id": "13118",
+      "nameTextId": "2184120512",
+      "talkId": "7368611"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5993.32, "z": -99.65 }, "rotation": -1.188 },
+      "id": "20314",
+      "nameTextId": "2897173517",
+      "talkId": "7214801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5925.89, "z": -583.98 }, "rotation": 2.191 },
+      "id": "20336",
+      "nameTextId": "510072005",
+      "talkId": "7215201"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5651.78, "z": -949.81 }, "rotation": 2.1365 },
+      "id": "20311",
+      "nameTextId": "3692715309",
+      "talkId": "7214501"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5358.35, "z": -468.72 }, "rotation": -2.698 },
+      "id": "20313",
+      "nameTextId": "325155205",
+      "talkId": "7214701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5436.09, "z": -722.27 }, "rotation": 3.1176 },
+      "id": "20312",
+      "nameTextId": "3830149213",
+      "talkId": "7214601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5710.7, "z": -222.8 }, "rotation": 0 },
+      "id": "20422",
+      "nameTextId": "1432116509",
+      "talkId": "7214904"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5722.26, "z": -688.69 }, "rotation": 0 },
+      "id": "1278",
+      "nameTextId": "2235453773",
+      "talkId": "30315"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5598.01, "z": -587.81 }, "rotation": -2.3165 },
+      "id": "20432",
+      "nameTextId": "2611967141",
+      "talkId": "7221901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5506.41, "z": 974.7 }, "rotation": 0.074 },
+      "id": "20234",
+      "nameTextId": "1810071981",
+      "talkId": "7212902"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5506.41, "z": 974.7 }, "rotation": 0.074 },
+      "id": "20252",
+      "nameTextId": "635898909",
+      "talkId": "7212901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5487.88, "z": 970.03 }, "rotation": -0.4447 },
+      "id": "20248",
+      "nameTextId": "1726339109",
+      "talkId": "7212904"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5506.41, "z": 974.7 }, "rotation": 0.074 },
+      "id": "20255",
+      "nameTextId": "335894717",
+      "talkId": "7212905"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5916.33, "z": 1096.68 }, "rotation": 0.2598 },
+      "id": "20236",
+      "nameTextId": "3030896917",
+      "talkId": "7213103"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5916.33, "z": 1096.68 }, "rotation": 0.2598 },
+      "id": "20257",
+      "nameTextId": "3292854693",
+      "talkId": "7213104"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5916.33, "z": 1096.68 }, "rotation": 0.2598 },
+      "id": "20254",
+      "nameTextId": "3168728373",
+      "talkId": "7213101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5722.15, "z": 1087.47 }, "rotation": 0 },
+      "id": "20235",
+      "nameTextId": "1580164245",
+      "talkId": "7213003"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5722.15, "z": 1087.47 }, "rotation": -1.9021 },
+      "id": "20253",
+      "nameTextId": "2861033597",
+      "talkId": "7213001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5722.15, "z": 1087.47 }, "rotation": -1.9021 },
+      "id": "20256",
+      "nameTextId": "1436849653",
+      "talkId": "7213004"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5684.58, "z": 923.9 }, "rotation": 0 },
+      "id": "20370",
+      "nameTextId": "3094309093",
+      "talkId": "7217801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5779.77, "z": 1174.14 }, "rotation": -2.0632 },
+      "id": "20371",
+      "nameTextId": "1036420357",
+      "talkId": "7217802"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5806.25, "z": 1095.56 }, "rotation": 0 },
+      "id": "20372",
+      "nameTextId": "1476348269",
+      "talkId": "7217803"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5917.92, "z": 1001.99 }, "rotation": 0 },
+      "id": "20373",
+      "nameTextId": "3437013389",
+      "talkId": "7217804"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5860.24, "z": 1035.49 }, "rotation": 0 },
+      "id": "20374",
+      "nameTextId": "4008413293",
+      "talkId": "7217805"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5497.8, "z": 1242.91 }, "rotation": -3.1416 },
+      "id": "20364",
+      "nameTextId": "1428882437",
+      "talkId": "7217901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5501.45, "z": 733.22 }, "rotation": 0 },
+      "id": "20365",
+      "nameTextId": "4269454685",
+      "talkId": "7217902"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5669.36, "z": 822.65 }, "rotation": 0 },
+      "id": "20366",
+      "nameTextId": "2781976741",
+      "talkId": "7217903"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5786.45, "z": 1016.24 }, "rotation": 0 },
+      "id": "20367",
+      "nameTextId": "3053452365",
+      "talkId": "7217904"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5839.82, "z": 1142.92 }, "rotation": 1.0005 },
+      "id": "20368",
+      "nameTextId": "3401433277",
+      "talkId": "7217905"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6069.26, "z": 997.18 }, "rotation": 0 },
+      "id": "20369",
+      "nameTextId": "4107108381",
+      "talkId": "7217906"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5798.29, "z": 1033.8 }, "rotation": 0.6455 },
+      "id": "20267",
+      "nameTextId": "3388186925",
+      "talkId": "7214103"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5585.57, "z": 492.77 }, "rotation": -2.9548 },
+      "id": "20259",
+      "nameTextId": "4154805357",
+      "talkId": "7213202"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5559.15, "z": 884.41 }, "rotation": 1.227 },
+      "id": "20238",
+      "nameTextId": "3662226909",
+      "talkId": "7213801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5526.66, "z": 890.56 }, "rotation": 0 },
+      "id": "20266",
+      "nameTextId": "206331229",
+      "talkId": "7213901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5352.28, "z": 1378.32 }, "rotation": -1.6357 },
+      "id": "20291",
+      "nameTextId": "4148590805",
+      "talkId": "7216101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5960.09, "z": 1039 }, "rotation": -2.8812 },
+      "id": "20240",
+      "nameTextId": "923034901",
+      "talkId": "7214001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5519.83, "z": 1691.6 }, "rotation": -1.7191 },
+      "id": "20391",
+      "nameTextId": "2473880661",
+      "talkId": "7218601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5864.82, "z": 1015.62 }, "rotation": 1.0698 },
+      "id": "20393",
+      "nameTextId": "410438725",
+      "talkId": "7218801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5781.29, "z": 994.22 }, "rotation": 1.5279 },
+      "id": "20394",
+      "nameTextId": "2630621413",
+      "talkId": "7218901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5712.06, "z": 1829.55 }, "rotation": -1.738 },
+      "id": "3164",
+      "nameTextId": "2780785677",
+      "talkId": "7212401"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5349.61, "z": 1778.01 }, "rotation": 0.2176 },
+      "id": "3166",
+      "nameTextId": "1822573029",
+      "talkId": "7212801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5491.21, "z": 1891.3 }, "rotation": -0.9336 },
+      "id": "3165",
+      "nameTextId": "1287059533",
+      "talkId": "6316501"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5549.78, "z": 1724.78 }, "rotation": -0.1314 },
+      "id": "3162",
+      "nameTextId": "1558189469",
+      "talkId": "303006"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5086.87, "z": 2213.3 }, "rotation": -1.6868 },
+      "id": "3156",
+      "nameTextId": "1925121053",
+      "talkId": "6315601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5188.29, "z": 2234.22 }, "rotation": 2.2269 },
+      "id": "3157",
+      "nameTextId": "1475505413",
+      "talkId": "6315701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5232.73, "z": 2198.29 }, "rotation": 0.6888 },
+      "id": "3158",
+      "nameTextId": "2848496757",
+      "talkId": "6315801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5840.4, "z": 1918.04 }, "rotation": -1.2099 },
+      "id": "20392",
+      "nameTextId": "2201508893",
+      "talkId": "7218701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6629.23, "z": 2441.62 }, "rotation": 0 },
+      "id": "20379",
+      "nameTextId": "2608290125",
+      "talkId": "7221003"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6325.01, "z": 2761.55 }, "rotation": -0.9177 },
+      "id": "1277",
+      "nameTextId": "2802935909",
+      "talkId": "30314"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6227.32, "z": 2565.26 }, "rotation": 2.4971 },
+      "id": "20433",
+      "nameTextId": "1573732397",
+      "talkId": "7222001"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6559.96, "z": 2982.04 }, "rotation": 0 },
+      "id": "20439",
+      "nameTextId": "1946647781",
+      "talkId": "6801305"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6560.96, "z": 2969.46 }, "rotation": 0 },
+      "id": "20438",
+      "nameTextId": "2612209733",
+      "talkId": "6801304"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6322.03, "z": 2476.11 }, "rotation": 0 },
+      "id": "20442",
+      "nameTextId": "1377589685",
+      "talkId": "6801308"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6323.25, "z": 2517.76 }, "rotation": 0 },
+      "id": "20440",
+      "nameTextId": "3001881877",
+      "talkId": "6801306"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6172.34, "z": 2481.98 }, "rotation": 0 },
+      "id": "20435",
+      "nameTextId": "2542508069",
+      "talkId": "6801301"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -6357.14, "z": 2749.23 }, "rotation": 0 },
+      "id": "20436",
+      "nameTextId": "4032460821",
+      "talkId": "6801302"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4601.71, "z": 3111.16 }, "rotation": -1.2133 },
+      "id": "20287",
+      "nameTextId": "1538940069",
+      "talkId": "7210715"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5258.8, "z": 3329.14 }, "rotation": 0 },
+      "id": "20302",
+      "nameTextId": "275260581",
+      "talkId": "34771"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5268.49, "z": 3271.34 }, "rotation": -2.1973 },
+      "id": "20419",
+      "nameTextId": "1071491285",
+      "talkId": "34819"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4664.29, "z": 2829.28 }, "rotation": 0.177 },
+      "id": "20232",
+      "nameTextId": "2525482437",
+      "talkId": "7210610"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4601.58, "z": 3111.18 }, "rotation": -1.4403 },
+      "id": "20251",
+      "nameTextId": "735315325",
+      "talkId": "7214201"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4722.29, "z": 3005.41 }, "rotation": 0.4622 },
+      "id": "20290",
+      "nameTextId": "1819672677",
+      "talkId": "7210901"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4158.08, "z": 2870.05 }, "rotation": 2.2379 },
+      "id": "30038",
+      "nameTextId": "606334181",
+      "talkId": "7065201"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4369.58, "z": 3144.37 }, "rotation": -0.5866 },
+      "id": "20300",
+      "nameTextId": "673826205",
+      "talkId": "7210308"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4302.04, "z": 2866.94 }, "rotation": -2.7218 },
+      "id": "20377",
+      "nameTextId": "1528629693",
+      "talkId": "7218101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4538.53, "z": 3205.36 }, "rotation": 1.7227 },
+      "id": "3159",
+      "nameTextId": "4101135429",
+      "talkId": "7210807"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4537.02, "z": 3204.45 }, "rotation": 2.3088 },
+      "id": "3160",
+      "nameTextId": "1851205749",
+      "talkId": "7210811"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4676.65, "z": 2827.74 }, "rotation": 0 },
+      "id": "20250",
+      "nameTextId": "3954635093",
+      "talkId": "7210616"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5146.54, "z": 3443.61 }, "rotation": -0.5241 },
+      "id": "20389",
+      "nameTextId": "931967101",
+      "talkId": "7219301"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4370.95, "z": 3151.15 }, "rotation": -1.0162 },
+      "id": "20231",
+      "nameTextId": "1110733029",
+      "talkId": "7210615"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4676.2, "z": 3123.14 }, "rotation": -0.6653 },
+      "id": "30269",
+      "nameTextId": "1433713864",
+      "talkId": "7250110"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4696.98, "z": 3203.79 }, "rotation": 1.3418 },
+      "id": "30270",
+      "nameTextId": "132943872",
+      "talkId": "7250111"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4698.43, "z": 3204.35 }, "rotation": -1.337 },
+      "id": "30271",
+      "nameTextId": "3334167816",
+      "talkId": "7250111"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4698.51, "z": 3203.34 }, "rotation": -1.8468 },
+      "id": "30272",
+      "nameTextId": "1328547216",
+      "talkId": "7250111"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4697.98, "z": 3202.61 }, "rotation": -2.5555 },
+      "id": "30273",
+      "nameTextId": "3699021296",
+      "talkId": "7250111"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4911.33, "z": 3075.41 }, "rotation": -0.3272 },
+      "id": "30083",
+      "nameTextId": "3454817613",
+      "talkId": "7265801"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4240.07, "z": 3004.88 }, "rotation": -1.024 },
+      "id": "12172",
+      "nameTextId": "201650181",
+      "talkId": "4002007"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4240.51, "z": 3090.96 }, "rotation": 0 },
+      "id": "30067",
+      "nameTextId": "3222718757",
+      "talkId": "4002011"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4470.12, "z": 3371.26 }, "rotation": 0 },
+      "id": "12334",
+      "nameTextId": "1006979517",
+      "talkId": "1911609"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4980.46, "z": 3097.52 }, "rotation": 0 },
+      "id": "30160",
+      "nameTextId": "1881347560",
+      "talkId": "7250101"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4315.3, "z": 3173.21 }, "rotation": 0 },
+      "id": "20456",
+      "nameTextId": "81099941",
+      "talkId": "202402"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4687.67, "z": 3310.05 }, "rotation": 0.3455 },
+      "id": "12941",
+      "nameTextId": "2095246424",
+      "talkId": "4008914"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4685.01, "z": 3321.31 }, "rotation": -0.7269 },
+      "id": "12942",
+      "nameTextId": "3595577472",
+      "talkId": "4009010"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4664.55, "z": 3329.21 }, "rotation": 2.4684 },
+      "id": "12943",
+      "nameTextId": "994703408",
+      "talkId": "4009010"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4671.71, "z": 3320.34 }, "rotation": 2.0703 },
+      "id": "12945",
+      "nameTextId": "14709184",
+      "talkId": "4008904"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4690.15, "z": 3314.23 }, "rotation": -2.7423 },
+      "id": "13026",
+      "nameTextId": "784938304",
+      "talkId": "4009124"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4672.06, "z": 3327.22 }, "rotation": -3.0836 },
+      "id": "13011",
+      "nameTextId": "3802622128",
+      "talkId": "4008916"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5004.03, "z": 3122.07 }, "rotation": -2.7951 },
+      "id": "20405",
+      "nameTextId": "4049727941",
+      "talkId": "50430"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4958.03, "z": 3133.58 }, "rotation": -3.0692 },
+      "id": "20407",
+      "nameTextId": "2270565613",
+      "talkId": "50432"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4975.45, "z": 3160.43 }, "rotation": 0.4657 },
+      "id": "20406",
+      "nameTextId": "3876746437",
+      "talkId": "50431"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4988.69, "z": 3171.5 }, "rotation": 0.7906 },
+      "id": "20404",
+      "nameTextId": "1586730173",
+      "talkId": "50429"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5013.99, "z": 3190.42 }, "rotation": -2.2811 },
+      "id": "20403",
+      "nameTextId": "1898752253",
+      "talkId": "50501"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5014.2, "z": 3212.95 }, "rotation": 1.1414 },
+      "id": "20402",
+      "nameTextId": "3605259581",
+      "talkId": "50427"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5038.45, "z": 3226.86 }, "rotation": 0 },
+      "id": "20400",
+      "nameTextId": "3800855717",
+      "talkId": "50425"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4999.38, "z": 3160.56 }, "rotation": -0.913 },
+      "id": "20412",
+      "nameTextId": "708609293",
+      "talkId": "50601"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4903.05, "z": 3141.11 }, "rotation": 1.1121 },
+      "id": "20408",
+      "nameTextId": "3664395381",
+      "talkId": "50433"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4902.72, "z": 3111.11 }, "rotation": 0 },
+      "id": "20411",
+      "nameTextId": "2045968597",
+      "talkId": "50436"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4905.05, "z": 3086.05 }, "rotation": 0 },
+      "id": "20409",
+      "nameTextId": "2270858533",
+      "talkId": "50434"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4898.63, "z": 3069.32 }, "rotation": 0 },
+      "id": "20410",
+      "nameTextId": "1844500725",
+      "talkId": "50435"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4895.88, "z": 3160.97 }, "rotation": 0 },
+      "id": "20413",
+      "nameTextId": "2783055045",
+      "talkId": "50701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -3768.85, "z": 2923.38 }, "rotation": 2.24 },
+      "id": "20331",
+      "nameTextId": "624656701",
+      "talkId": "7280402"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4892.66, "z": 3094.97 }, "rotation": 0 },
+      "id": "12133",
+      "nameTextId": "3661046869",
+      "talkId": "34817"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4892.69, "z": 3094.98 }, "rotation": 0 },
+      "id": "12134",
+      "nameTextId": "4051652741",
+      "talkId": "34818"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4996.9, "z": 3242.04 }, "rotation": 0 },
+      "id": "12181",
+      "nameTextId": "4194749493",
+      "talkId": "1901218"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5007.78, "z": 3239.82 }, "rotation": 0 },
+      "id": "12180",
+      "nameTextId": "2436051397",
+      "talkId": "1901217"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5008.33, "z": 3229.4 }, "rotation": 0 },
+      "id": "12179",
+      "nameTextId": "96132597",
+      "talkId": "1901216"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4997.19, "z": 3224.26 }, "rotation": -2.1376 },
+      "id": "12208",
+      "nameTextId": "1180174637",
+      "talkId": "1901219"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4917.58, "z": 3178.86 }, "rotation": 0 },
+      "id": "12490",
+      "nameTextId": "566710392",
+      "talkId": "1202934"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -5268.64, "z": 3009.83 }, "rotation": 3.0628 },
+      "id": "30252",
+      "nameTextId": "1449415944",
+      "talkId": "7272701"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -8022.71, "z": 2003.33 }, "rotation": 1.4656 },
+      "id": "1279",
+      "nameTextId": "756391973",
+      "talkId": "30316"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -8205.07, "z": 1427.12 }, "rotation": 0 },
+      "id": "20512",
+      "nameTextId": "1309370669",
+      "talkId": "6801002"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -7890.1, "z": 1269.26 }, "rotation": 0 },
+      "id": "20497",
+      "nameTextId": "2724359445",
+      "talkId": "6801001"
+    }
+  ]
 }

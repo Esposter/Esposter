@@ -12,6 +12,7 @@ export interface CraftingRecipe {
   kind: CraftingRecipeKind;
   materials: ItemCount[];
   mora: number;
+  nameTextId: string;
   playerLevel: number;
   resultCount: number;
   resultItemId: number;
@@ -23,6 +24,7 @@ export const craftingRecipeSchema = z.object({
   kind: z.enum(CraftingRecipeKind),
   materials: z.array(itemCountSchema).min(1),
   mora: z.int().nonnegative(),
+  nameTextId: z.string().min(1),
   playerLevel: z.int().nonnegative(),
   resultCount: z.int().positive(),
   resultItemId: z.int().positive(),

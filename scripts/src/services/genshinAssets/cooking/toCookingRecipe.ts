@@ -63,6 +63,7 @@ export const toCookingRecipe = (
     ingredients: row.inputVec.filter(({ count }) => count > 0).map(({ count, id }) => ({ count, id })),
     isDefaultUnlocked: row.isDefaultUnlocked,
     maxProficiency: row.maxProficiency,
+    nameTextId: String(row.nameTextMapHash),
     qteParam: [qteCentre, qteWidth],
     rankLevel: row.rankLevel,
     resultItemIds: {

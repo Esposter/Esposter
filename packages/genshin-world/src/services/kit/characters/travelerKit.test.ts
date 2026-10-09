@@ -2,7 +2,7 @@ import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe("TRAVELER_KIT", () => {
+describe("travelerKit", () => {
   test("reads each talent multiplier from the Anemo form's table, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -14,6 +14,7 @@ describe("TRAVELER_KIT", () => {
       takeOne(TRAVELER_KIT.elementalSkill.hits).talentMultiplier,
       takeOne(TRAVELER_KIT.elementalBurst.hits).talentMultiplier,
     ];
+    // oxlint-disable-next-line oxc/approx-constant -- 0.434 is the wiki's talent multiplier, not the LOG10E it approximates
     const expectedMultipliers = [0.445, 0.434, 0.53, 0.583, 0.708, 0.559, 0.722, 0.639, 1.28, 1.6, 1.76, 0.808];
     expect(multipliers).toHaveLength(expectedMultipliers.length);
     for (const [index, expectedMultiplier] of expectedMultipliers.entries())

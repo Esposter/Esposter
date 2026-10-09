@@ -13,6 +13,7 @@ describe(checkIsRecipeOpen, () => {
     kind: CraftingRecipeKind.Tier,
     materials: [{ count: 3, id: 112_003 }],
     mora: 50,
+    nameTextId: "1",
     playerLevel: ADVENTURE_RANK,
     resultCount: 1,
     resultItemId: 112_004,

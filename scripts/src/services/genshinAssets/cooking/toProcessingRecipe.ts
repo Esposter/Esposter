@@ -18,6 +18,7 @@ export const toProcessingRecipe = (row: CompoundRow): ProcessingRecipe | undefin
     id: row.id,
     ingredients,
     isDefaultUnlocked: row.isDefaultUnlocked,
+    nameTextId: String(row.nameTextMapHash),
     queueSize: row.queueSize,
     rankLevel: row.rankLevel,
     result: { count: output.count, id: output.id },

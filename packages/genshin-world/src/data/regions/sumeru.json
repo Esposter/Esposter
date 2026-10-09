@@ -25,5 +25,720 @@
       "rotation": 0
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3212.7, "z": -4700.31 }, "rotation": 0 },
+      "id": "20739",
+      "nameTextId": "2816631872",
+      "talkId": "7302107"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2980.05, "z": -3558.7 }, "rotation": 0 },
+      "id": "20738",
+      "nameTextId": "2392323464",
+      "talkId": "7302209"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2043.52, "z": -4796.03 }, "rotation": 0 },
+      "id": "4288",
+      "nameTextId": "2021181488",
+      "talkId": "7325801"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2506.13, "z": -5086.6 }, "rotation": 0 },
+      "id": "20791",
+      "nameTextId": "3255068008",
+      "talkId": "7303623"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2267.84, "z": -4400.38 }, "rotation": 0 },
+      "id": "20895",
+      "nameTextId": "1966850072",
+      "talkId": "7311710"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2614.55, "z": -5308.73 }, "rotation": -2.7282 },
+      "id": "1287",
+      "nameTextId": "1317469416",
+      "talkId": "30323"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1997.43, "z": -4697.97 }, "rotation": -0.3983 },
+      "id": "1284",
+      "nameTextId": "2925068632",
+      "talkId": "30320"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2795.69, "z": -4394.32 }, "rotation": 0 },
+      "id": "4225",
+      "nameTextId": "984066056",
+      "talkId": "7307701"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2795.14, "z": -4425.7 }, "rotation": 3.1269 },
+      "id": "4226",
+      "nameTextId": "2132855168",
+      "talkId": "7307702"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2779.78, "z": -4409.69 }, "rotation": 1.5701 },
+      "id": "4227",
+      "nameTextId": "2741081504",
+      "talkId": "7307702"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2811.11, "z": -4410.18 }, "rotation": -1.5788 },
+      "id": "4228",
+      "nameTextId": "1430732112",
+      "talkId": "7307702"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1900.4, "z": -3612.32 }, "rotation": 1.3155 },
+      "id": "1282",
+      "nameTextId": "3041183000",
+      "talkId": "30318"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3307.65, "z": -3834.07 }, "rotation": -2.541 },
+      "id": "1283",
+      "nameTextId": "324929008",
+      "talkId": "30319"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3059.38, "z": -4670.46 }, "rotation": -1.5168 },
+      "id": "1285",
+      "nameTextId": "2668258776",
+      "talkId": "30321"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2716.65, "z": -3560.44 }, "rotation": 2.8172 },
+      "id": "1286",
+      "nameTextId": "2040332336",
+      "talkId": "30322"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2490.11, "z": -4517.03 }, "rotation": -3.0965 },
+      "id": "1288",
+      "nameTextId": "4062326176",
+      "talkId": "30324"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2410.05, "z": -4001.74 }, "rotation": 0.0927 },
+      "id": "12729",
+      "nameTextId": "3819299912",
+      "talkId": "2300307"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2411.45, "z": -4052.93 }, "rotation": 0 },
+      "id": "12737",
+      "nameTextId": "178864584",
+      "talkId": "7319401"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2379.14, "z": -4044.75 }, "rotation": 1.9258 },
+      "id": "12738",
+      "nameTextId": "661006784",
+      "talkId": "7319501"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2356.56, "z": -3979.37 }, "rotation": 0 },
+      "id": "12739",
+      "nameTextId": "4040909888",
+      "talkId": "7319601"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2198.39, "z": -4093.75 }, "rotation": 1.2718 },
+      "id": "12740",
+      "nameTextId": "2692499824",
+      "talkId": "7319701"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2277, "z": -4069.54 }, "rotation": 1.7775 },
+      "id": "12741",
+      "nameTextId": "1508504624",
+      "talkId": "7319801"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2230, "z": -4146.63 }, "rotation": -0.5236 },
+      "id": "4287",
+      "nameTextId": "285217832",
+      "talkId": "7324301"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2282.62, "z": -3716.65 }, "rotation": 0 },
+      "id": "30226",
+      "nameTextId": "1438818304",
+      "talkId": "7350901"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2380.24, "z": -4071.63 }, "rotation": 0 },
+      "id": "12742",
+      "nameTextId": "797671512",
+      "talkId": "7319901"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2336.89, "z": -4023.68 }, "rotation": 0 },
+      "id": "12743",
+      "nameTextId": "3463582824",
+      "talkId": "7320001"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2354.06, "z": -4009.4 }, "rotation": 0 },
+      "id": "12744",
+      "nameTextId": "3528450488",
+      "talkId": "7320101"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2328.52, "z": -4047.43 }, "rotation": 0 },
+      "id": "12745",
+      "nameTextId": "3877983584",
+      "talkId": "7320201"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2362.14, "z": -3930.43 }, "rotation": 0 },
+      "id": "30038",
+      "nameTextId": "606334181",
+      "talkId": "7065201"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1961.83, "z": -4147.4 }, "rotation": 0 },
+      "id": "20896",
+      "nameTextId": "4233503784",
+      "talkId": "7311711"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3532.42, "z": -5149.5 }, "rotation": 0 },
+      "id": "12795",
+      "nameTextId": "2676129192",
+      "talkId": "7321801"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2955.42, "z": -5271.84 }, "rotation": 0 },
+      "id": "20894",
+      "nameTextId": "2975717752",
+      "talkId": "7311709"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3884.14, "z": -5252.62 }, "rotation": -0.1918 },
+      "id": "4900",
+      "nameTextId": "1174460680",
+      "talkId": "30325"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2946.09, "z": -4392.28 }, "rotation": -2.6462 },
+      "id": "12760",
+      "nameTextId": "3565100104",
+      "talkId": "7367501"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3813.17, "z": -3752.17 }, "rotation": -2.0133 },
+      "id": "12720",
+      "nameTextId": "4113532320",
+      "talkId": "2301223"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3796.18, "z": -3787.81 }, "rotation": 1.0766 },
+      "id": "12719",
+      "nameTextId": "1570162120",
+      "talkId": "2301222"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3839.52, "z": -3836.22 }, "rotation": -2.5866 },
+      "id": "30212",
+      "nameTextId": "2019020808",
+      "talkId": "1917202"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3838.1, "z": -3836.51 }, "rotation": -3.035 },
+      "id": "30213",
+      "nameTextId": "2473668928",
+      "talkId": "1303003"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3770.8, "z": -3851.14 }, "rotation": -2.196 },
+      "id": "12679",
+      "nameTextId": "1944221856",
+      "talkId": "2301221"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3244.77, "z": -4049.32 }, "rotation": 0 },
+      "id": "20897",
+      "nameTextId": "3885130984",
+      "talkId": "7322601"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3480.37, "z": -3980.4 }, "rotation": 0 },
+      "id": "20898",
+      "nameTextId": "3249810928",
+      "talkId": "7322604"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3521.57, "z": -3813.74 }, "rotation": 0 },
+      "id": "20899",
+      "nameTextId": "1291112520",
+      "talkId": "7322607"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3187.59, "z": -3454.55 }, "rotation": 0 },
+      "id": "20900",
+      "nameTextId": "1809117328",
+      "talkId": "7322610"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3240.57, "z": -4047.37 }, "rotation": 0 },
+      "id": "20881",
+      "nameTextId": "1299670488",
+      "talkId": "7322815"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3795.9, "z": -3773.13 }, "rotation": -1.2217 },
+      "id": "12794",
+      "nameTextId": "825127392",
+      "talkId": "7321701"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3411.72, "z": -3528.85 }, "rotation": 0 },
+      "id": "20901",
+      "nameTextId": "3903675536",
+      "talkId": "7322613"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3463.33, "z": -3585.8 }, "rotation": 0 },
+      "id": "20873",
+      "nameTextId": "3530054048",
+      "talkId": "7322806"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3438.04, "z": -3646.91 }, "rotation": 0 },
+      "id": "20874",
+      "nameTextId": "3607229568",
+      "talkId": "7322807"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3460.1, "z": -3630.78 }, "rotation": 0 },
+      "id": "20875",
+      "nameTextId": "960966736",
+      "talkId": "7322808"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3244.27, "z": -4049.89 }, "rotation": 0 },
+      "id": "20867",
+      "nameTextId": "4125239528",
+      "talkId": "7322801"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3480.37, "z": -3980.4 }, "rotation": 0 },
+      "id": "20868",
+      "nameTextId": "3855826272",
+      "talkId": "7322802"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3521.57, "z": -3813.74 }, "rotation": 0 },
+      "id": "20869",
+      "nameTextId": "1016120368",
+      "talkId": "7322803"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3187.59, "z": -3454.55 }, "rotation": 0 },
+      "id": "20870",
+      "nameTextId": "906968400",
+      "talkId": "7322804"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3411.72, "z": -3528.85 }, "rotation": 0 },
+      "id": "20871",
+      "nameTextId": "3759378760",
+      "talkId": "7322805"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3806.97, "z": -3771.92 }, "rotation": -1.9256 },
+      "id": "12859",
+      "nameTextId": "3475711352",
+      "talkId": "4008112"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3897.45, "z": -3969.49 }, "rotation": 2.0371 },
+      "id": "12857",
+      "nameTextId": "1618107744",
+      "talkId": "4008104"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3805.59, "z": -3772.26 }, "rotation": 3.0084 },
+      "id": "12860",
+      "nameTextId": "2076333448",
+      "talkId": "4008133"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3804.63, "z": -3772.45 }, "rotation": -2.6451 },
+      "id": "12861",
+      "nameTextId": "425037928",
+      "talkId": "4008137"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3797.66, "z": -3773.72 }, "rotation": -2.2253 },
+      "id": "30292",
+      "nameTextId": "3342737624",
+      "talkId": "4008118"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3889.02, "z": -3676.85 }, "rotation": -0.9737 },
+      "id": "12858",
+      "nameTextId": "3144510664",
+      "talkId": "4008120"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3897.92, "z": -3700.96 }, "rotation": -2.1322 },
+      "id": "30254",
+      "nameTextId": "1493464528",
+      "talkId": "4008121"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3894.78, "z": -3682.58 }, "rotation": -1.4168 },
+      "id": "30257",
+      "nameTextId": "3064988016",
+      "talkId": "4008123"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3801.2, "z": -3770.45 }, "rotation": 0.2684 },
+      "id": "30253",
+      "nameTextId": "2253149240",
+      "talkId": "4008113"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3796.33, "z": -3774.06 }, "rotation": 2.9721 },
+      "id": "30255",
+      "nameTextId": "3572791408",
+      "talkId": "4008122"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3916.27, "z": -3950.05 }, "rotation": -1.2406 },
+      "id": "30256",
+      "nameTextId": "2284238160",
+      "talkId": "4008125"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3899.2, "z": -3952.45 }, "rotation": 0.2635 },
+      "id": "30258",
+      "nameTextId": "1531736432",
+      "talkId": "4008124"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3902, "z": -3689.38 }, "rotation": -0.9269 },
+      "id": "13060",
+      "nameTextId": "2006079496",
+      "talkId": "4008131"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4163.57, "z": -5176.3 }, "rotation": 0 },
+      "id": "4260",
+      "nameTextId": "3242648008",
+      "talkId": "7323601"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4165.21, "z": -5164.8 }, "rotation": 1.5708 },
+      "id": "4261",
+      "nameTextId": "87511096",
+      "talkId": "7323602"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4165.02, "z": -5171.24 }, "rotation": 0 },
+      "id": "4266",
+      "nameTextId": "3143438376",
+      "talkId": "7323603"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4160.4, "z": -5159.37 }, "rotation": 0 },
+      "id": "4262",
+      "nameTextId": "750789776",
+      "talkId": "7323604"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4160.53, "z": -5153.69 }, "rotation": 0 },
+      "id": "4263",
+      "nameTextId": "3232042336",
+      "talkId": "7323605"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4160.45, "z": -5144.2 }, "rotation": 0 },
+      "id": "4264",
+      "nameTextId": "3693479184",
+      "talkId": "7323606"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4160.47, "z": -5145.71 }, "rotation": 0 },
+      "id": "4265",
+      "nameTextId": "1220342096",
+      "talkId": "7323607"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4217.22, "z": -5280.32 }, "rotation": 0 },
+      "id": "4269",
+      "nameTextId": "3459596744",
+      "talkId": "7323608"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4242.69, "z": -5268.09 }, "rotation": 0 },
+      "id": "4270",
+      "nameTextId": "801226096",
+      "talkId": "7323609"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4289.77, "z": -5314.89 }, "rotation": 1.0264 },
+      "id": "4271",
+      "nameTextId": "3381845344",
+      "talkId": "7323610"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4333.02, "z": -5329.72 }, "rotation": 0 },
+      "id": "4272",
+      "nameTextId": "3989600760",
+      "talkId": "7323611"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4395.81, "z": -5322.58 }, "rotation": 0 },
+      "id": "4273",
+      "nameTextId": "3375799360",
+      "talkId": "7323612"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4390.17, "z": -5342.98 }, "rotation": 0 },
+      "id": "4282",
+      "nameTextId": "2358151216",
+      "talkId": "7323621"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3475.9, "z": -6339.76 }, "rotation": -0.873 },
+      "id": "4903",
+      "nameTextId": "1922136208",
+      "talkId": "30328"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3284.87, "z": -6651.37 }, "rotation": -2.6483 },
+      "id": "10326",
+      "nameTextId": "54233565",
+      "talkId": "7227402"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3119.02, "z": -6579.89 }, "rotation": 0.4922 },
+      "id": "20934",
+      "nameTextId": "3885285608",
+      "talkId": "7322504"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3884.36, "z": -5358.78 }, "rotation": 0 },
+      "id": "4394",
+      "nameTextId": "637584536",
+      "talkId": "7322051"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -3719.03, "z": -5387.66 }, "rotation": -0.359 },
+      "id": "4256",
+      "nameTextId": "2852094296",
+      "talkId": "7319310"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4046.07, "z": -6261.17 }, "rotation": -2.8802 },
+      "id": "4901",
+      "nameTextId": "4224154816",
+      "talkId": "30326"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4805.54, "z": -5745.7 }, "rotation": -2.8986 },
+      "id": "4902",
+      "nameTextId": "3126920576",
+      "talkId": "30327"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4755.44, "z": -5681.64 }, "rotation": -2.4121 },
+      "id": "20941",
+      "nameTextId": "1949823000",
+      "talkId": "7308418"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -4731.36, "z": -5726.13 }, "rotation": 0 },
+      "id": "20942",
+      "nameTextId": "1252654240",
+      "talkId": "7308419"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -5191.74, "z": -5864.37 }, "rotation": 0.55 },
+      "id": "20943",
+      "nameTextId": "2715626872",
+      "talkId": "7308420"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -5178.83, "z": -5825.32 }, "rotation": 0 },
+      "id": "20944",
+      "nameTextId": "941020584",
+      "talkId": "7308421"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1710.01, "z": -4116.83 }, "rotation": 2.9933 },
+      "id": "20765",
+      "nameTextId": "1877494024",
+      "talkId": "7305709"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1946.76, "z": -4091.92 }, "rotation": 2.3642 },
+      "id": "20768",
+      "nameTextId": "1887417608",
+      "talkId": "7311702"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1916.21, "z": -4163.34 }, "rotation": 1.4258 },
+      "id": "20826",
+      "nameTextId": "518774048",
+      "talkId": "7311703"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1898.65, "z": -4114.62 }, "rotation": 1.2939 },
+      "id": "20827",
+      "nameTextId": "1015218232",
+      "talkId": "7311704"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1956.77, "z": -4144.39 }, "rotation": -0.7938 },
+      "id": "20828",
+      "nameTextId": "2316658080",
+      "talkId": "7311705"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1768.51, "z": -3745.31 }, "rotation": 0 },
+      "id": "20770",
+      "nameTextId": "1840683352",
+      "talkId": "7306702"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -2012.13, "z": -4298.3 }, "rotation": 2.8426 },
+      "id": "20769",
+      "nameTextId": "338954608",
+      "talkId": "7307610"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1778.33, "z": -4148.62 }, "rotation": 0.8011 },
+      "id": "12862",
+      "nameTextId": "3685104920",
+      "talkId": "4008143"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1783.06, "z": -4195.13 }, "rotation": -1.6484 },
+      "id": "12856",
+      "nameTextId": "2234673240",
+      "talkId": "4008112"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1408.52, "z": -7450.59 }, "rotation": 0 },
+      "id": "4905",
+      "nameTextId": "3337076816",
+      "talkId": "30329"
+    },
+    {
+      "areaId": "avidya-forest",
+      "day": { "position": { "x": -1274.17, "z": -7213.17 }, "rotation": -2.7576 },
+      "id": "4906",
+      "nameTextId": "888619408",
+      "talkId": "30330"
+    }
+  ]
 }

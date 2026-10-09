@@ -1,0 +1,290 @@
+[
+  {
+    "id": 10001,
+    "needCounts": [2, 4],
+    "nameTextId": "2364208339",
+    "pieceItemIds": [51140, 51120, 51150, 51110, 51130]
+  },
+  {
+    "id": 10002,
+    "needCounts": [2, 4],
+    "nameTextId": "3535784243",
+    "pieceItemIds": [52140, 52120, 52150, 52110, 52130]
+  },
+  {
+    "id": 10003,
+    "needCounts": [2, 4],
+    "nameTextId": "4082302307",
+    "pieceItemIds": [53140, 53120, 53150, 53110, 53130]
+  },
+  {
+    "id": 10004,
+    "needCounts": [2, 4],
+    "nameTextId": "1383639099",
+    "pieceItemIds": [54140, 54120, 54150, 54110, 54130]
+  },
+  { "id": 10005, "needCounts": [2, 4], "nameTextId": "855894507", "pieceItemIds": [55140, 55120, 55150, 55110, 55130] },
+  {
+    "id": 10006,
+    "needCounts": [2, 4],
+    "nameTextId": "2890909019",
+    "pieceItemIds": [56140, 56120, 56150, 56110, 56130]
+  },
+  {
+    "id": 10007,
+    "needCounts": [2, 4],
+    "nameTextId": "3890291955",
+    "pieceItemIds": [57140, 57120, 57150, 57110, 57130]
+  },
+  {
+    "id": 10008,
+    "needCounts": [2, 4],
+    "nameTextId": "1186208923",
+    "pieceItemIds": [58240, 58220, 58250, 58210, 58230]
+  },
+  {
+    "id": 10009,
+    "needCounts": [2, 4],
+    "nameTextId": "2764598579",
+    "pieceItemIds": [59140, 59120, 59150, 59110, 59130]
+  },
+  {
+    "id": 10010,
+    "needCounts": [2, 4],
+    "nameTextId": "2191797475",
+    "pieceItemIds": [60140, 60120, 60150, 60110, 60130]
+  },
+  {
+    "id": 10011,
+    "needCounts": [2, 4],
+    "nameTextId": "1103732163",
+    "pieceItemIds": [61140, 61120, 61150, 61110, 61130]
+  },
+  {
+    "id": 10012,
+    "needCounts": [2, 4],
+    "nameTextId": "3618166787",
+    "pieceItemIds": [62140, 62120, 62150, 62110, 62130]
+  },
+  {
+    "id": 10013,
+    "needCounts": [2, 4],
+    "nameTextId": "3782508715",
+    "pieceItemIds": [63140, 63120, 63150, 63110, 63130]
+  },
+  { "id": 14001, "needCounts": [2, 4], "nameTextId": "933076115", "pieceItemIds": [71340, 71320, 71350, 71310, 71330] },
+  {
+    "id": 14002,
+    "needCounts": [2, 4],
+    "nameTextId": "1873341771",
+    "pieceItemIds": [72340, 72320, 72350, 72310, 72330]
+  },
+  {
+    "id": 14003,
+    "needCounts": [2, 4],
+    "nameTextId": "1632377051",
+    "pieceItemIds": [73340, 73320, 73350, 73310, 73330]
+  },
+  { "id": 14004, "needCounts": [2, 4], "nameTextId": "83115355", "pieceItemIds": [74340, 74320, 74350, 74310, 74330] },
+  {
+    "id": 15001,
+    "needCounts": [2, 4],
+    "nameTextId": "1212345779",
+    "pieceItemIds": [75340, 75320, 75350, 75310, 75330]
+  },
+  {
+    "id": 15002,
+    "needCounts": [2, 4],
+    "nameTextId": "1562600667",
+    "pieceItemIds": [76340, 76320, 76350, 76310, 76330]
+  },
+  { "id": 15003, "needCounts": [2, 4], "nameTextId": "147298547", "pieceItemIds": [77340, 77320, 77350, 77310, 77330] },
+  { "id": 15004, "needCounts": [2, 4], "nameTextId": "729851187", "pieceItemIds": [78340, 78320, 78350, 78310, 78330] },
+  {
+    "id": 15005,
+    "needCounts": [2, 4],
+    "nameTextId": "2512309395",
+    "pieceItemIds": [79340, 79320, 79350, 79310, 79330]
+  },
+  {
+    "id": 15006,
+    "needCounts": [2, 4],
+    "nameTextId": "1524173875",
+    "pieceItemIds": [80340, 80320, 80350, 80310, 80330]
+  },
+  {
+    "id": 15007,
+    "needCounts": [2, 4],
+    "nameTextId": "1751039235",
+    "pieceItemIds": [81340, 81320, 81350, 81310, 81330]
+  },
+  {
+    "id": 15008,
+    "needCounts": [2, 4],
+    "nameTextId": "1541919827",
+    "pieceItemIds": [82340, 82320, 82350, 82310, 82330]
+  },
+  { "id": 15009, "needCounts": [1], "nameTextId": "2060048587", "pieceItemIds": [83330] },
+  { "id": 15010, "needCounts": [1], "nameTextId": "3999792395", "pieceItemIds": [84330] },
+  { "id": 15011, "needCounts": [1], "nameTextId": "212557219", "pieceItemIds": [85330] },
+  { "id": 15012, "needCounts": [1], "nameTextId": "287454451", "pieceItemIds": [86330] },
+  { "id": 15013, "needCounts": [1], "nameTextId": "262428003", "pieceItemIds": [87330] },
+  {
+    "id": 15014,
+    "needCounts": [2, 4],
+    "nameTextId": "2040573235",
+    "pieceItemIds": [88340, 88320, 88350, 88310, 88330]
+  },
+  {
+    "id": 15015,
+    "needCounts": [2, 4],
+    "nameTextId": "1438974323",
+    "pieceItemIds": [89340, 89320, 89350, 89310, 89330]
+  },
+  { "id": 15016, "needCounts": [2, 4], "nameTextId": "156294403", "pieceItemIds": [90340, 90320, 90350, 90310, 90330] },
+  {
+    "id": 15017,
+    "needCounts": [2, 4],
+    "nameTextId": "1337665995",
+    "pieceItemIds": [91340, 91320, 91350, 91310, 91330]
+  },
+  { "id": 15018, "needCounts": [2, 4], "nameTextId": "862591315", "pieceItemIds": [92340, 92320, 92350, 92310, 92330] },
+  {
+    "id": 15019,
+    "needCounts": [2, 4],
+    "nameTextId": "4144068739",
+    "pieceItemIds": [93442, 93422, 93452, 93412, 93432]
+  },
+  {
+    "id": 15020,
+    "needCounts": [2, 4],
+    "nameTextId": "2276480251",
+    "pieceItemIds": [94442, 94422, 94452, 94412, 94432]
+  },
+  {
+    "id": 15021,
+    "needCounts": [2, 4],
+    "nameTextId": "2546254299",
+    "pieceItemIds": [95442, 95422, 95452, 95412, 95432]
+  },
+  {
+    "id": 15022,
+    "needCounts": [2, 4],
+    "nameTextId": "1756609915",
+    "pieceItemIds": [96442, 96422, 96452, 96412, 96432]
+  },
+  {
+    "id": 15023,
+    "needCounts": [2, 4],
+    "nameTextId": "1558036915",
+    "pieceItemIds": [97442, 97422, 97452, 97412, 97432]
+  },
+  {
+    "id": 15024,
+    "needCounts": [2, 4],
+    "nameTextId": "3626267699",
+    "pieceItemIds": [98442, 98422, 98452, 98412, 98432]
+  },
+  {
+    "id": 15025,
+    "needCounts": [2, 4],
+    "nameTextId": "1675078771",
+    "pieceItemIds": [20442, 20422, 20452, 20412, 20432]
+  },
+  {
+    "id": 15026,
+    "needCounts": [2, 4],
+    "nameTextId": "4145306051",
+    "pieceItemIds": [21442, 21422, 21452, 21412, 21432]
+  },
+  {
+    "id": 15027,
+    "needCounts": [2, 4],
+    "nameTextId": "2538235187",
+    "pieceItemIds": [27442, 27422, 27452, 27412, 27432]
+  },
+  {
+    "id": 15028,
+    "needCounts": [2, 4],
+    "nameTextId": "3094139291",
+    "pieceItemIds": [28442, 28422, 28452, 28412, 28432]
+  },
+  {
+    "id": 15029,
+    "needCounts": [2, 4],
+    "nameTextId": "1925210475",
+    "pieceItemIds": [29442, 29422, 29452, 29412, 29432]
+  },
+  { "id": 15030, "needCounts": [2, 4], "nameTextId": "235897163", "pieceItemIds": [30442, 30422, 30452, 30412, 30432] },
+  {
+    "id": 15031,
+    "needCounts": [2, 4],
+    "nameTextId": "1249831355",
+    "pieceItemIds": [31442, 31422, 31452, 31412, 31432]
+  },
+  {
+    "id": 15032,
+    "needCounts": [2, 4],
+    "nameTextId": "3410220315",
+    "pieceItemIds": [32442, 32422, 32452, 32412, 32432]
+  },
+  {
+    "id": 15033,
+    "needCounts": [2, 4],
+    "nameTextId": "2803305851",
+    "pieceItemIds": [33442, 33422, 33452, 33412, 33432]
+  },
+  { "id": 15034, "needCounts": [2, 4], "nameTextId": "279470371", "pieceItemIds": [34442, 34422, 34452, 34412, 34432] },
+  {
+    "id": 15035,
+    "needCounts": [2, 4],
+    "nameTextId": "1492569491",
+    "pieceItemIds": [35442, 35422, 35452, 35412, 35432]
+  },
+  { "id": 15036, "needCounts": [2, 4], "nameTextId": "352459163", "pieceItemIds": [36442, 36422, 36452, 36412, 36432] },
+  {
+    "id": 15037,
+    "needCounts": [2, 4],
+    "nameTextId": "2949387691",
+    "pieceItemIds": [37442, 37422, 37452, 37412, 37432]
+  },
+  {
+    "id": 15038,
+    "needCounts": [2, 4],
+    "nameTextId": "1774578891",
+    "pieceItemIds": [38442, 38422, 38452, 38412, 38432]
+  },
+  {
+    "id": 15039,
+    "needCounts": [2, 4],
+    "nameTextId": "3761476939",
+    "pieceItemIds": [39442, 39422, 39452, 39412, 39432]
+  },
+  {
+    "id": 15040,
+    "needCounts": [2, 4],
+    "nameTextId": "2177723555",
+    "pieceItemIds": [40442, 40422, 40452, 40412, 40432]
+  },
+  {
+    "id": 15041,
+    "needCounts": [2, 4],
+    "nameTextId": "3690673363",
+    "pieceItemIds": [41442, 41422, 41452, 41412, 41432]
+  },
+  { "id": 15042, "needCounts": [2, 4], "nameTextId": "625305019", "pieceItemIds": [42442, 42422, 42452, 42412, 42432] },
+  { "id": 15043, "needCounts": [2, 4], "nameTextId": "894629371", "pieceItemIds": [43442, 43422, 43452, 43412, 43432] },
+  {
+    "id": 15044,
+    "needCounts": [2, 4],
+    "nameTextId": "3721836931",
+    "pieceItemIds": [44442, 44422, 44452, 44412, 44432]
+  },
+  {
+    "id": 15045,
+    "needCounts": [2, 4],
+    "nameTextId": "4291032347",
+    "pieceItemIds": [45442, 45422, 45452, 45412, 45432]
+  },
+  { "id": 15046, "needCounts": [2, 4], "nameTextId": "1086878883", "pieceItemIds": [46442, 46422, 46452, 46412, 46432] }
+]

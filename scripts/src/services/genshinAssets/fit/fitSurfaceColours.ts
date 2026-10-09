@@ -8,9 +8,9 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
+import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
@@ -82,6 +82,25 @@ const readFaceSamples = (
       return { colour, part, weight: weight * coverage };
     });
   });
+// A surface's detail as the mean of the textures its reads drew, or the surface itself when none drew a texture
+const withDetail = <Surface extends FittedSurface>(surface: Surface, details: readonly SurfaceDetail[]): Surface => {
+  const detail = averageSurfaceDetails(details);
+  return detail === undefined ? surface : { ...surface, detail };
+};
+// The part surfaces, each with the detail of the textures its own placed meshes drew
+const withPartDetails = (
+  parts: Record<string, FittedSurface>,
+  reads: readonly ReadSurface[],
+): Record<string, FittedSurface> =>
+  Object.fromEntries(
+    Object.entries(parts).map(([part, surface]) => [
+      part,
+      withDetail(
+        surface,
+        reads.flatMap((read) => (read.part === part && read.detail ? [read.detail] : [])),
+      ),
+    ]),
+  );
 // Each family's surface as its export's textures paint it, returned as the colour and palette `computeSurfaceTones`
 // Reads off the samples its meshes give, and each part's apart as `computePartSurfaces` reads them. A family's meshes
 // Are its placed meshes, each drawn with its submeshes' diffuse textures, and its terrain tiles, each drawn with its base
@@ -172,25 +191,6 @@ export const fitSurfaceColours = async <Family extends string>(
     const terrain = await Promise.all(tiles.map((tile) => readTerrainSurface(tile)));
     return [...placed, ...terrain];
   };
-  // A surface's detail as the mean of the textures its reads drew, or the surface itself when none drew a texture
-  const withDetail = <Surface extends FittedSurface>(surface: Surface, details: readonly SurfaceDetail[]): Surface => {
-    const detail = averageSurfaceDetails(details);
-    return detail === undefined ? surface : { ...surface, detail };
-  };
-  // The part surfaces, each with the detail of the textures its own placed meshes drew
-  const withPartDetails = (
-    parts: Record<string, FittedSurface>,
-    reads: readonly ReadSurface[],
-  ): Record<string, FittedSurface> =>
-    Object.fromEntries(
-      Object.entries(parts).map(([part, surface]) => [
-        part,
-        withDetail(
-          surface,
-          reads.flatMap((read) => (read.part === part && read.detail ? [read.detail] : [])),
-        ),
-      ]),
-    );
   return Object.fromEntries(
     await Promise.all(
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(async ([family, regex]) => {

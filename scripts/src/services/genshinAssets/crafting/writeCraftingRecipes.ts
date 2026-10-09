@@ -16,10 +16,12 @@ import { mkdirSync, writeFileSync } from "node:fs";
 // The bench's recipes from the game's combine table, each with the instruction items that open it, written as one
 // Slice in the world's generated folder. A row the bench does not craft is left out
 export const writeCraftingRecipes = (): void => {
-  const unlockItemIdMap = readUnlockItemIdMap(readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME), UNLOCK_COMBINE_USE_OP);
+  const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
+  const materialMap = new Map(materialRows.map((row) => [row.id, row]));
+  const unlockItemIdMap = readUnlockItemIdMap(materialRows, UNLOCK_COMBINE_USE_OP);
   const recipes = readExcelTable<ExcelCombineRow>(COMBINE_TABLE_NAME)
     .flatMap((row) => {
-      const recipe = toCraftingRecipe(row, unlockItemIdMap.get(row.combineId) ?? []);
+      const recipe = toCraftingRecipe(row, { materialMap, unlockItemIds: unlockItemIdMap.get(row.combineId) ?? [] });
       return recipe ? [recipe] : [];
     })
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);

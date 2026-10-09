@@ -40,7 +40,7 @@ flowchart TD
 ## Not built yet
 
 - **The blossoms.** No challenge leaves a blossom, so no F prompt offers a claim. The prices are ready for the [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops), [domains](/docs/proposals/genshin/domains) and [bosses](/docs/proposals/genshin/bosses) to call.
-- **The claims' rewards.** A fixed reward is its rewardId in the reward table, which the dump holds, but the blossom table BlossomChestExcelConfigData that names each blossom's rewardId is not among the dump's tables. The rolled drops are the wiki's, not yet read. Both wait on a dump that carries the blossom table.
+- **The claims' rewards.** `BlossomChestExcelConfigData` is in the dump, but its rows name each blossom's chest gadget, not a reward: the gadget (for instance 70210109, the Flora chest) carries no reward id, and no table the dump or the community's repository holds links it to a reward in the reward table. The fixed reward needs that link from another source, and the rolled drops are the wiki's, not yet read.
 - **Fragile Resin's refill.** The item is not in the materials the bag reads, and its use is the inventory's. The refill rule is ready for it.
 - **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](/docs/genshin/crafting) bench's.
 - **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.

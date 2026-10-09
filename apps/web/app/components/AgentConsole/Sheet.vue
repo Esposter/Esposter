@@ -8,9 +8,11 @@ import {
   AGENT_CONSOLE_DEFAULT_HEIGHT_RATIO,
   AGENT_CONSOLE_ID,
   AGENT_CONSOLE_MIN_HEIGHT,
+  AGENT_CONSOLE_PANE_MIN_WIDTH,
 } from "@/services/agentConsole/constants";
 import { getConnectionName } from "@/services/agentConsole/getConnectionName";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
+import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType } from "agent-console-server/contracts";
@@ -23,6 +25,8 @@ const { consoleHeight, consolePanelType, isConsoleExpanded, isConsoleOpen } = st
 const { onConsoleFocusRequest, openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId, isTurnRunning, pendingPermissionRequests } = storeToRefs(agentConsoleSessionStore);
+const agentConsolePaneStore = useAgentConsolePaneStore();
+const { isPaneOpen, paneWidth } = storeToRefs(agentConsolePaneStore);
 useAgentConsoleCommands();
 // A question from the agent is never left waiting where nobody looks
 watch(
@@ -32,7 +36,7 @@ watch(
   },
 );
 const sheet = useTemplateRef("sheet");
-const { height: windowHeight } = useWindowSize();
+const { height: windowHeight, width: windowWidth } = useWindowSize();
 // The height the reader dragged it to, or a little over half the window until they have. The sheet never stands taller
 // Than the world it sits in, whatever was saved on a taller window
 const height = computed({
@@ -144,33 +148,53 @@ onConsoleFocusRequest(async () => {
         </p>
         <AgentConsolePanelConnectionRestartButton :connection :status="connectionStatus" />
       </div>
-      <!-- The tab list and the one panel shown, which takes the height left under it and scrolls what does not fit -->
-      <UiTabs v-model="consolePanelType" is-filling :items="AgentConsolePanelMenuItems" label="Console" flex-1>
-        <template #default="{ value }">
-          <div v-if="value === AgentConsolePanelType.Conversation" flex flex-col gap-2 h-full>
-            <!-- With no session open it starts one, the list of the rest being the Sessions tab's -->
-            <AgentConsolePanelNewSession v-if="!currentSessionId" />
-            <template v-else>
-              <!-- Keeps a few lines of the conversation however short the console is: past that the panel scrolls -->
-              <AgentConsolePanelConversation flex-1 min-h-32 />
-              <!-- A request waiting on a verdict stays open until it has one, as the terminal's prompt does -->
-              <AgentConsolePanelPermission
-                v-for="permissionRequest of pendingPermissionRequests"
-                :key="permissionRequest.requestId"
-                :permission-request
-              />
-              <AgentConsolePanelComposer />
-            </template>
-          </div>
-          <div v-else flex flex-col gap-2 h-full>
-            <AgentConsolePanelSessions v-if="value === AgentConsolePanelType.Sessions" />
-            <AgentConsolePanelTimeline v-else-if="value === AgentConsolePanelType.Timeline" />
-            <AgentConsolePanelChanges v-else-if="value === AgentConsolePanelType.Changes" />
-            <AgentConsolePanelUsage v-else-if="value === AgentConsolePanelType.Usage" />
-            <AgentConsolePanelShell v-else />
-          </div>
+      <!-- The tab list and the one panel shown, which takes the height left under it and scrolls what does not fit. The
+        Side pane of app pages stands beside it while a page is open there -->
+      <div flex flex-1 gap-2 min-h-0>
+        <UiTabs
+          v-model="consolePanelType"
+          is-filling
+          :items="AgentConsolePanelMenuItems"
+          label="Console"
+          flex-1
+          min-w-0
+        >
+          <template #default="{ value }">
+            <div v-if="value === AgentConsolePanelType.Conversation" flex flex-col gap-2 h-full>
+              <!-- With no session open it starts one, the list of the rest being the Sessions tab's -->
+              <AgentConsolePanelNewSession v-if="!currentSessionId" />
+              <template v-else>
+                <!-- Keeps a few lines of the conversation however short the console is: past that the panel scrolls -->
+                <AgentConsolePanelConversation flex-1 min-h-32 />
+                <!-- A request waiting on a verdict stays open until it has one, as the terminal's prompt does -->
+                <AgentConsolePanelPermission
+                  v-for="permissionRequest of pendingPermissionRequests"
+                  :key="permissionRequest.requestId"
+                  :permission-request
+                />
+                <AgentConsolePanelComposer />
+              </template>
+            </div>
+            <div v-else flex flex-col gap-2 h-full>
+              <AgentConsolePanelSessions v-if="value === AgentConsolePanelType.Sessions" />
+              <AgentConsolePanelTimeline v-else-if="value === AgentConsolePanelType.Timeline" />
+              <AgentConsolePanelChanges v-else-if="value === AgentConsolePanelType.Changes" />
+              <AgentConsolePanelUsage v-else-if="value === AgentConsolePanelType.Usage" />
+              <AgentConsolePanelShell v-else />
+            </div>
+          </template>
+        </UiTabs>
+        <template v-if="isPaneOpen">
+          <UiResizeHandle
+            v-model="paneWidth"
+            is-reversed
+            label="Resize the pages"
+            :max="windowWidth"
+            :min="AGENT_CONSOLE_PANE_MIN_WIDTH"
+          />
+          <AgentConsolePaneSidePane :style="{ width: `${paneWidth}px` }" shrink-0 min-h-0 />
         </template>
-      </UiTabs>
+      </div>
     </div>
   </section>
 </template>

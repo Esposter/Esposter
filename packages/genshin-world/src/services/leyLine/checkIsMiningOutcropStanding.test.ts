@@ -2,7 +2,7 @@ import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMinin
 import { describe, expect, test } from "vitest";
 
 describe(checkIsMiningOutcropStanding, () => {
-  const refresh = Temporal.Instant.from("1970-01-01T06:00:00+08:00");
+  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 2 });
 
   test("a mining outcrop not mined stands", () => {
     expect.hasAssertions();

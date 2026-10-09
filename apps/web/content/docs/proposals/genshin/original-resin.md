@@ -41,7 +41,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Read from the game's tables:** each claim's `rewardId` rows of `RewardExcelConfigData`, which the dump holds. The blossoms' rows of `BlossomChestExcelConfigData`, which name each blossom's `rewardId`, are not among the dump's tables, so the claim's fixed rewards wait on a dump that carries that table.
+- **Read from the game's tables:** each claim's `rewardId` rows of `RewardExcelConfigData`, which the dump holds. The blossoms' rows of `BlossomChestExcelConfigData` name each blossom's chest gadget, not a `rewardId`, and no table read so far links that gadget to a reward; the claim's fixed rewards wait on a source that does.
 - **Read from the wiki:** each challenge's rolled drops by World Level, as the enemies' are read.
 - **Measured:** nothing; the claim's dialog is laid out by the [recreation passes](/docs/proposals/genshin/recreation-passes).
 

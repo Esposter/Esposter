@@ -14,6 +14,7 @@ export interface CookingRecipe {
   ingredients: ItemCount[];
   isDefaultUnlocked: boolean;
   maxProficiency: number;
+  nameTextId: string;
   qteParam: [number, number];
   rankLevel: number;
   resultItemIds: Record<CookingQuality, number>;
@@ -26,6 +27,7 @@ export const cookingRecipeSchema = z.object({
   ingredients: z.array(itemCountSchema).min(1),
   isDefaultUnlocked: z.boolean(),
   maxProficiency: z.int().positive(),
+  nameTextId: z.string().min(1),
   qteParam: z.tuple([z.number(), z.number()]),
   rankLevel: z.int().positive(),
   resultItemIds: z.record(z.enum(CookingQuality), z.int().positive()),

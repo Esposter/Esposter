@@ -25,6 +25,7 @@ describe(collectProcessing, () => {
     id: 1001,
     ingredients: [{ count: 2, id: 100_017 }],
     isDefaultUnlocked: true,
+    nameTextId: "1",
     queueSize: 99,
     rankLevel: 1,
     result: { count: 1, id: RESULT_ID },

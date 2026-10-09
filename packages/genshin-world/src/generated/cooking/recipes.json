@@ -13,6 +13,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 5,
+    "nameTextId": "3755037976",
     "qteParam": [
       0.63,
       0.4
@@ -48,6 +49,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 5,
+    "nameTextId": "3908313440",
     "qteParam": [
       0.52,
       0.4
@@ -83,6 +85,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 5,
+    "nameTextId": "1915770008",
     "qteParam": [
       0.77,
       0.4
@@ -122,6 +125,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 5,
+    "nameTextId": "942628272",
     "qteParam": [
       0.8,
       0.4
@@ -151,6 +155,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 5,
+    "nameTextId": "4128572800",
     "qteParam": [
       0.4,
       0.4
@@ -190,6 +195,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "3984520288",
     "qteParam": [
       0.4,
       0.4
@@ -229,6 +235,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "2376368400",
     "qteParam": [
       0.48,
       0.4
@@ -268,6 +275,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "2711069136",
     "qteParam": [
       0.7,
       0.4
@@ -307,6 +315,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "3566956816",
     "qteParam": [
       0.63,
       0.4
@@ -346,6 +355,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "3293738192",
     "qteParam": [
       0.63,
       0.4
@@ -375,6 +385,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "3229522296",
     "qteParam": [
       0.7,
       0.4
@@ -414,6 +425,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "2733260808",
     "qteParam": [
       0.63,
       0.4
@@ -439,6 +451,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "148333616",
     "qteParam": [
       0.63,
       0.4
@@ -468,6 +481,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "2991931736",
     "qteParam": [
       0.77,
       0.4
@@ -507,6 +521,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "369760432",
     "qteParam": [
       0.63,
       0.4
@@ -546,6 +561,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1457238064",
     "qteParam": [
       0.48,
       0.4
@@ -585,6 +601,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "4150509704",
     "qteParam": [
       0.48,
       0.4
@@ -614,6 +631,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "3546498432",
     "qteParam": [
       0.48,
       0.4
@@ -653,6 +671,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1604867568",
     "qteParam": [
       0.77,
       0.4
@@ -682,6 +701,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1101681744",
     "qteParam": [
       0.48,
       0.4
@@ -711,6 +731,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1937733632",
     "qteParam": [
       0.77,
       0.4
@@ -740,6 +761,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "854988280",
     "qteParam": [
       0.48,
       0.4
@@ -769,6 +791,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1783721440",
     "qteParam": [
       0.63,
       0.4
@@ -798,6 +821,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "274828576",
     "qteParam": [
       0.48,
       0.4
@@ -837,6 +861,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "1585973488",
     "qteParam": [
       0.77,
       0.4
@@ -862,6 +887,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "2486647928",
     "qteParam": [
       0.72,
       0.4
@@ -891,6 +917,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 5,
+    "nameTextId": "734533992",
     "qteParam": [
       0.4,
       0.4
@@ -934,6 +961,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3826793904",
     "qteParam": [
       0.65,
       0.35
@@ -973,6 +1001,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 10,
+    "nameTextId": "3983445296",
     "qteParam": [
       0.65,
       0.35
@@ -1016,6 +1045,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3320078776",
     "qteParam": [
       0.55,
       0.35
@@ -1059,6 +1089,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3161603344",
     "qteParam": [
       0.55,
       0.35
@@ -1102,6 +1133,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3810629728",
     "qteParam": [
       0.4,
       0.35
@@ -1145,6 +1177,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 10,
+    "nameTextId": "1947768152",
     "qteParam": [
       0.4,
       0.35
@@ -1182,6 +1215,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 10,
+    "nameTextId": "3016112200",
     "qteParam": [
       0.4,
       0.35
@@ -1229,6 +1263,7 @@
     ],
     "isDefaultUnlocked": true,
     "maxProficiency": 10,
+    "nameTextId": "2512996856",
     "qteParam": [
       0.63,
       0.35
@@ -1272,6 +1307,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1279455264",
     "qteParam": [
       0.63,
       0.35
@@ -1305,6 +1341,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1470723400",
     "qteParam": [
       0.63,
       0.35
@@ -1338,6 +1375,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3117860336",
     "qteParam": [
       0.38,
       0.35
@@ -1381,6 +1419,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1816326200",
     "qteParam": [
       0.7,
       0.35
@@ -1424,6 +1463,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1288948872",
     "qteParam": [
       0.72,
       0.35
@@ -1453,6 +1493,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1818173880",
     "qteParam": [
       0.45,
       0.35
@@ -1486,6 +1527,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1887731776",
     "qteParam": [
       0.72,
       0.35
@@ -1529,6 +1571,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2944872720",
     "qteParam": [
       0.4,
       0.35
@@ -1572,6 +1615,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3787944112",
     "qteParam": [
       0.5,
       0.27
@@ -1605,6 +1649,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "781693360",
     "qteParam": [
       0.63,
       0.35
@@ -1644,6 +1689,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1659175328",
     "qteParam": [
       0.4,
       0.35
@@ -1687,6 +1733,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "67165216",
     "qteParam": [
       0.63,
       0.35
@@ -1716,6 +1763,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1148732520",
     "qteParam": [
       0.63,
       0.35
@@ -1745,6 +1793,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "879430664",
     "qteParam": [
       0.63,
       0.35
@@ -1788,6 +1837,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3745655912",
     "qteParam": [
       0.63,
       0.35
@@ -1817,6 +1867,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2027772128",
     "qteParam": [
       0.63,
       0.35
@@ -1846,6 +1897,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1124657328",
     "qteParam": [
       0.63,
       0.35
@@ -1875,6 +1927,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3034140872",
     "qteParam": [
       0.63,
       0.35
@@ -1908,6 +1961,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2898061656",
     "qteParam": [
       0.4,
       0.35
@@ -1947,6 +2001,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "203008152",
     "qteParam": [
       0.4,
       0.35
@@ -1976,6 +2031,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3673180648",
     "qteParam": [
       0.38,
       0.35
@@ -2009,6 +2065,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2529901008",
     "qteParam": [
       0.63,
       0.35
@@ -2052,6 +2109,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "76529768",
     "qteParam": [
       0.45,
       0.35
@@ -2091,6 +2149,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3256165648",
     "qteParam": [
       0.4,
       0.35
@@ -2120,6 +2179,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2857902128",
     "qteParam": [
       0.4,
       0.35
@@ -2149,6 +2209,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1937556632",
     "qteParam": [
       0.38,
       0.35
@@ -2182,6 +2243,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1476579448",
     "qteParam": [
       0.4,
       0.35
@@ -2215,6 +2277,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1440169312",
     "qteParam": [
       0.72,
       0.35
@@ -2248,6 +2311,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "424416256",
     "qteParam": [
       0.4,
       0.35
@@ -2281,6 +2345,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2354955552",
     "qteParam": [
       0.72,
       0.35
@@ -2324,6 +2389,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "614472952",
     "qteParam": [
       0.72,
       0.35
@@ -2367,6 +2433,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2699885576",
     "qteParam": [
       0.4,
       0.35
@@ -2410,6 +2477,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2523195728",
     "qteParam": [
       0.38,
       0.35
@@ -2443,6 +2511,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3208834128",
     "qteParam": [
       0.4,
       0.35
@@ -2476,6 +2545,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1785067584",
     "qteParam": [
       0.72,
       0.35
@@ -2519,6 +2589,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "704703632",
     "qteParam": [
       0.4,
       0.35
@@ -2562,6 +2633,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2570175568",
     "qteParam": [
       0.72,
       0.35
@@ -2595,6 +2667,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2299388224",
     "qteParam": [
       0.72,
       0.35
@@ -2632,6 +2705,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "4111373584",
     "qteParam": [
       0.72,
       0.35
@@ -2675,6 +2749,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1088350544",
     "qteParam": [
       0.4,
       0.35
@@ -2718,6 +2793,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "156251456",
     "qteParam": [
       0.4,
       0.35
@@ -2755,6 +2831,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3869395400",
     "qteParam": [
       0.38,
       0.35
@@ -2794,6 +2871,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1899923616",
     "qteParam": [
       0.7,
       0.35
@@ -2823,6 +2901,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3892600976",
     "qteParam": [
       0.7,
       0.35
@@ -2856,6 +2935,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1098556696",
     "qteParam": [
       0.5,
       0.35
@@ -2889,6 +2969,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2393476264",
     "qteParam": [
       0.4,
       0.35
@@ -2918,6 +2999,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "718946768",
     "qteParam": [
       0.4,
       0.35
@@ -2951,6 +3033,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "4036305048",
     "qteParam": [
       0.3,
       0.35
@@ -2984,6 +3067,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "808082720",
     "qteParam": [
       0.3,
       0.35
@@ -3027,6 +3111,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3851421792",
     "qteParam": [
       0.3,
       0.35
@@ -3056,6 +3141,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3716475296",
     "qteParam": [
       0.3,
       0.35
@@ -3103,6 +3189,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3044367680",
     "qteParam": [
       0.4,
       0.35
@@ -3146,6 +3233,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2174080320",
     "qteParam": [
       0.38,
       0.35
@@ -3193,6 +3281,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3178144040",
     "qteParam": [
       0.4,
       0.35
@@ -3226,6 +3315,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3766322488",
     "qteParam": [
       0.72,
       0.35
@@ -3269,6 +3359,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "758871280",
     "qteParam": [
       0.4,
       0.35
@@ -3298,6 +3389,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "3489393128",
     "qteParam": [
       0.4,
       0.35
@@ -3327,6 +3419,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "4069983736",
     "qteParam": [
       0.5,
       0.35
@@ -3360,6 +3453,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1367331880",
     "qteParam": [
       0.63,
       0.35
@@ -3403,6 +3497,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2219660472",
     "qteParam": [
       0.47,
       0.4
@@ -3440,6 +3535,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "535510128",
     "qteParam": [
       0.54,
       0.4
@@ -3477,6 +3573,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "1118157024",
     "qteParam": [
       0.6,
       0.4
@@ -3510,6 +3607,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "2547137640",
     "qteParam": [
       0.6,
       0.4
@@ -3547,6 +3645,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 10,
+    "nameTextId": "680733008",
     "qteParam": [
       0.6,
       0.4
@@ -3580,6 +3679,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3687633104",
     "qteParam": [
       0.7,
       0.27
@@ -3627,6 +3727,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3151949272",
     "qteParam": [
       0.7,
       0.27
@@ -3664,6 +3765,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3277541528",
     "qteParam": [
       0.5,
       0.27
@@ -3707,6 +3809,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "622254280",
     "qteParam": [
       0.5,
       0.27
@@ -3744,6 +3847,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1443071056",
     "qteParam": [
       0.5,
       0.27
@@ -3791,6 +3895,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3890736288",
     "qteParam": [
       0.7,
       0.27
@@ -3834,6 +3939,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3199568232",
     "qteParam": [
       0.85,
       0.27
@@ -3881,6 +3987,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3553084808",
     "qteParam": [
       0.85,
       0.27
@@ -3924,6 +4031,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "234475728",
     "qteParam": [
       0.45,
       0.27
@@ -3967,6 +4075,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2200331448",
     "qteParam": [
       0.45,
       0.27
@@ -4014,6 +4123,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3633491368",
     "qteParam": [
       0.45,
       0.27
@@ -4061,6 +4171,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2268068896",
     "qteParam": [
       0.45,
       0.27
@@ -4108,6 +4219,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1297228272",
     "qteParam": [
       0.45,
       0.27
@@ -4155,6 +4267,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1554725320",
     "qteParam": [
       0.45,
       0.27
@@ -4192,6 +4305,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2259620224",
     "qteParam": [
       0.45,
       0.27
@@ -4229,6 +4343,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1466823728",
     "qteParam": [
       0.45,
       0.27
@@ -4266,6 +4381,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1998260456",
     "qteParam": [
       0.45,
       0.27
@@ -4303,6 +4419,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3474243688",
     "qteParam": [
       0.45,
       0.27
@@ -4336,6 +4453,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2068102432",
     "qteParam": [
       0.45,
       0.27
@@ -4383,6 +4501,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1621938328",
     "qteParam": [
       0.63,
       0.27
@@ -4420,6 +4539,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3663660088",
     "qteParam": [
       0.4,
       0.27
@@ -4467,6 +4587,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1897768416",
     "qteParam": [
       0.45,
       0.27
@@ -4504,6 +4625,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4195020824",
     "qteParam": [
       0.45,
       0.27
@@ -4551,6 +4673,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "412783744",
     "qteParam": [
       0.5,
       0.27
@@ -4594,6 +4717,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2714249528",
     "qteParam": [
       0.5,
       0.27
@@ -4641,6 +4765,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "397934608",
     "qteParam": [
       0.5,
       0.27
@@ -4678,6 +4803,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1619565648",
     "qteParam": [
       0.5,
       0.27
@@ -4715,6 +4841,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3148531856",
     "qteParam": [
       0.45,
       0.27
@@ -4762,6 +4889,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3071649184",
     "qteParam": [
       0.45,
       0.27
@@ -4799,6 +4927,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "375455064",
     "qteParam": [
       0.5,
       0.27
@@ -4832,6 +4961,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "304994680",
     "qteParam": [
       0.5,
       0.27
@@ -4869,6 +4999,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1069920440",
     "qteParam": [
       0.5,
       0.27
@@ -4902,6 +5033,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "645220616",
     "qteParam": [
       0.5,
       0.27
@@ -4949,6 +5081,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2033311832",
     "qteParam": [
       0.5,
       0.27
@@ -4996,6 +5129,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1907438840",
     "qteParam": [
       0.5,
       0.27
@@ -5033,6 +5167,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "45841528",
     "qteParam": [
       0.5,
       0.27
@@ -5070,6 +5205,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2505997776",
     "qteParam": [
       0.5,
       0.27
@@ -5107,6 +5243,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1790449856",
     "qteParam": [
       0.5,
       0.27
@@ -5144,6 +5281,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3613482312",
     "qteParam": [
       0.5,
       0.27
@@ -5181,6 +5319,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2709268904",
     "qteParam": [
       0.5,
       0.27
@@ -5218,6 +5357,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "865615280",
     "qteParam": [
       0.5,
       0.27
@@ -5265,6 +5405,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2528666000",
     "qteParam": [
       0.5,
       0.27
@@ -5302,6 +5443,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2236708312",
     "qteParam": [
       0.5,
       0.27
@@ -5349,6 +5491,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2036519208",
     "qteParam": [
       0.5,
       0.27
@@ -5396,6 +5539,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2065264720",
     "qteParam": [
       0.63,
       0.27
@@ -5443,6 +5587,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3451987120",
     "qteParam": [
       0.45,
       0.27
@@ -5490,6 +5635,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3557426200",
     "qteParam": [
       0.5,
       0.27
@@ -5527,6 +5673,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "630357328",
     "qteParam": [
       0.85,
       0.27
@@ -5560,6 +5707,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2162489440",
     "qteParam": [
       0.63,
       0.27
@@ -5607,6 +5755,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1822832680",
     "qteParam": [
       0.45,
       0.27
@@ -5644,6 +5793,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "934048224",
     "qteParam": [
       0.5,
       0.27
@@ -5681,6 +5831,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2339158416",
     "qteParam": [
       0.85,
       0.27
@@ -5728,6 +5879,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3245508936",
     "qteParam": [
       0.45,
       0.27
@@ -5765,6 +5917,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2346932720",
     "qteParam": [
       0.5,
       0.27
@@ -5802,6 +5955,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2895538352",
     "qteParam": [
       0.85,
       0.27
@@ -5839,6 +5993,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "87727160",
     "qteParam": [
       0.63,
       0.27
@@ -5886,6 +6041,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "35361224",
     "qteParam": [
       0.45,
       0.27
@@ -5933,6 +6089,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1090623920",
     "qteParam": [
       0.5,
       0.27
@@ -5980,6 +6137,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "867375536",
     "qteParam": [
       0.85,
       0.27
@@ -6017,6 +6175,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1772897608",
     "qteParam": [
       0.45,
       0.27
@@ -6064,6 +6223,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4223121800",
     "qteParam": [
       0.63,
       0.27
@@ -6097,6 +6257,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2560374264",
     "qteParam": [
       0.85,
       0.27
@@ -6134,6 +6295,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1745571856",
     "qteParam": [
       0.5,
       0.27
@@ -6181,6 +6343,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2387974608",
     "qteParam": [
       0.5,
       0.27
@@ -6214,6 +6377,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2913407232",
     "qteParam": [
       0.85,
       0.27
@@ -6247,6 +6411,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1545939976",
     "qteParam": [
       0.85,
       0.27
@@ -6294,6 +6459,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3640786984",
     "qteParam": [
       0.5,
       0.27
@@ -6341,6 +6507,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "714581216",
     "qteParam": [
       0.85,
       0.27
@@ -6388,6 +6555,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2535291960",
     "qteParam": [
       0.45,
       0.27
@@ -6431,6 +6599,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1090250032",
     "qteParam": [
       0.5,
       0.27
@@ -6464,6 +6633,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3722265064",
     "qteParam": [
       0.85,
       0.27
@@ -6501,6 +6671,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3983681568",
     "qteParam": [
       0.45,
       0.27
@@ -6538,6 +6709,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2566333536",
     "qteParam": [
       0.5,
       0.27
@@ -6575,6 +6747,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3411799048",
     "qteParam": [
       0.85,
       0.27
@@ -6622,6 +6795,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "552628536",
     "qteParam": [
       0.45,
       0.27
@@ -6665,6 +6839,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "967776424",
     "qteParam": [
       0.5,
       0.27
@@ -6708,6 +6883,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3177983032",
     "qteParam": [
       0.85,
       0.27
@@ -6745,6 +6921,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2778292632",
     "qteParam": [
       0.45,
       0.27
@@ -6792,6 +6969,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3475282992",
     "qteParam": [
       0.5,
       0.27
@@ -6829,6 +7007,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2068538560",
     "qteParam": [
       0.5,
       0.27
@@ -6866,6 +7045,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "861437184",
     "qteParam": [
       0.85,
       0.27
@@ -6913,6 +7093,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1149251944",
     "qteParam": [
       0.45,
       0.27
@@ -6946,6 +7127,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "950717536",
     "qteParam": [
       0.5,
       0.27
@@ -6983,6 +7165,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1045877168",
     "qteParam": [
       0.85,
       0.27
@@ -7030,6 +7213,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2764978344",
     "qteParam": [
       0.45,
       0.27
@@ -7067,6 +7251,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3265045736",
     "qteParam": [
       0.5,
       0.27
@@ -7104,6 +7289,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2823423352",
     "qteParam": [
       0.85,
       0.27
@@ -7141,6 +7327,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "649215360",
     "qteParam": [
       0.45,
       0.27
@@ -7188,6 +7375,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "304516480",
     "qteParam": [
       0.5,
       0.27
@@ -7231,6 +7419,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2257815856",
     "qteParam": [
       0.85,
       0.27
@@ -7278,6 +7467,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1386330528",
     "qteParam": [
       0.45,
       0.27
@@ -7325,6 +7515,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1765304408",
     "qteParam": [
       0.45,
       0.27
@@ -7362,6 +7553,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2060480552",
     "qteParam": [
       0.5,
       0.27
@@ -7399,6 +7591,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3005976744",
     "qteParam": [
       0.85,
       0.27
@@ -7436,6 +7629,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3044244728",
     "qteParam": [
       0.45,
       0.27
@@ -7483,6 +7677,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2738862512",
     "qteParam": [
       0.5,
       0.27
@@ -7520,6 +7715,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3883522480",
     "qteParam": [
       0.85,
       0.27
@@ -7557,6 +7753,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4062704736",
     "qteParam": [
       0.5,
       0.27
@@ -7604,6 +7801,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1764072496",
     "qteParam": [
       0.85,
       0.27
@@ -7641,6 +7839,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2279651736",
     "qteParam": [
       0.5,
       0.27
@@ -7688,6 +7887,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2124686784",
     "qteParam": [
       0.85,
       0.27
@@ -7735,6 +7935,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "875186680",
     "qteParam": [
       0.5,
       0.27
@@ -7782,6 +7983,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2291256672",
     "qteParam": [
       0.5,
       0.27
@@ -7829,6 +8031,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "936257664",
     "qteParam": [
       0.5,
       0.27
@@ -7866,6 +8069,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1021338080",
     "qteParam": [
       0.85,
       0.27
@@ -7909,6 +8113,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1744983456",
     "qteParam": [
       0.45,
       0.27
@@ -7956,6 +8161,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2027407768",
     "qteParam": [
       0.5,
       0.27
@@ -7993,6 +8199,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1414493400",
     "qteParam": [
       0.85,
       0.27
@@ -8040,6 +8247,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4286736552",
     "qteParam": [
       0.45,
       0.27
@@ -8087,6 +8295,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "246071736",
     "qteParam": [
       0.45,
       0.27
@@ -8134,6 +8343,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1358854632",
     "qteParam": [
       0.45,
       0.27
@@ -8181,6 +8391,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2759848120",
     "qteParam": [
       0.45,
       0.27
@@ -8218,6 +8429,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2726582760",
     "qteParam": [
       0.45,
       0.27
@@ -8265,6 +8477,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2608577808",
     "qteParam": [
       0.45,
       0.27
@@ -8302,6 +8515,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3023386808",
     "qteParam": [
       0.45,
       0.27
@@ -8335,6 +8549,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1471770096",
     "qteParam": [
       0.45,
       0.27
@@ -8372,6 +8587,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "879967248",
     "qteParam": [
       0.45,
       0.27
@@ -8409,6 +8625,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3645350936",
     "qteParam": [
       0.5,
       0.27
@@ -8456,6 +8673,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "985935192",
     "qteParam": [
       0.4,
       0.27
@@ -8503,6 +8721,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1506012352",
     "qteParam": [
       0.45,
       0.27
@@ -8550,6 +8769,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "932755672",
     "qteParam": [
       0.5,
       0.27
@@ -8597,6 +8817,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "3835061560",
     "qteParam": [
       0.4,
       0.27
@@ -8644,6 +8865,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2349038856",
     "qteParam": [
       0.7,
       0.27
@@ -8681,6 +8903,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "310668792",
     "qteParam": [
       0.7,
       0.27
@@ -8728,6 +8951,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2597114152",
     "qteParam": [
       0.4,
       0.27
@@ -8775,6 +8999,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "2271934784",
     "qteParam": [
       0.4,
       0.27
@@ -8822,6 +9047,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "149014984",
     "qteParam": [
       0.5,
       0.27
@@ -8859,6 +9085,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1902469344",
     "qteParam": [
       0.7,
       0.27
@@ -8896,6 +9123,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1617151360",
     "qteParam": [
       0.5,
       0.27
@@ -8933,6 +9161,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4019389680",
     "qteParam": [
       0.5,
       0.27
@@ -8966,6 +9195,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "1631817176",
     "qteParam": [
       0.5,
       0.27
@@ -9003,6 +9233,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "4087163136",
     "qteParam": [
       0.4,
       0.27
@@ -9040,6 +9271,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 15,
+    "nameTextId": "426765704",
     "qteParam": [
       0.6,
       0.27
@@ -9077,6 +9309,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3644462440",
     "qteParam": [
       0.3,
       0.22
@@ -9124,6 +9357,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "901779496",
     "qteParam": [
       0.3,
       0.22
@@ -9161,6 +9395,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2559311976",
     "qteParam": [
       0.3,
       0.22
@@ -9198,6 +9433,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "1431862448",
     "qteParam": [
       0.6,
       0.22
@@ -9235,6 +9471,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "1004248456",
     "qteParam": [
       0.6,
       0.22
@@ -9272,6 +9509,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "815474768",
     "qteParam": [
       0.6,
       0.22
@@ -9309,6 +9547,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "1990273496",
     "qteParam": [
       0.6,
       0.22
@@ -9346,6 +9585,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2681947440",
     "qteParam": [
       0.6,
       0.22
@@ -9383,6 +9623,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "821621800",
     "qteParam": [
       0.6,
       0.22
@@ -9420,6 +9661,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "527180816",
     "qteParam": [
       0.3,
       0.22
@@ -9457,6 +9699,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2730849408",
     "qteParam": [
       0.6,
       0.22
@@ -9494,6 +9737,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "543088688",
     "qteParam": [
       0.6,
       0.22
@@ -9531,6 +9775,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "1267704912",
     "qteParam": [
       0.3,
       0.22
@@ -9568,6 +9813,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3665029328",
     "qteParam": [
       0.6,
       0.22
@@ -9605,6 +9851,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3688423736",
     "qteParam": [
       0.3,
       0.22
@@ -9642,6 +9889,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3968074976",
     "qteParam": [
       0.6,
       0.22
@@ -9679,6 +9927,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3104469016",
     "qteParam": [
       0.6,
       0.22
@@ -9716,6 +9965,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2305411296",
     "qteParam": [
       0.3,
       0.22
@@ -9753,6 +10003,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3370841536",
     "qteParam": [
       0.3,
       0.22
@@ -9790,6 +10041,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2911279496",
     "qteParam": [
       0.6,
       0.22
@@ -9827,6 +10079,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "860720360",
     "qteParam": [
       0.6,
       0.22
@@ -9874,6 +10127,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3513472416",
     "qteParam": [
       0.43,
       0.22
@@ -9911,6 +10165,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "573099392",
     "qteParam": [
       0.3,
       0.22
@@ -9948,6 +10203,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3678409160",
     "qteParam": [
       0.6,
       0.22
@@ -9985,6 +10241,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2815000704",
     "qteParam": [
       0.6,
       0.22
@@ -10022,6 +10279,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "3967545344",
     "qteParam": [
       0.6,
       0.22
@@ -10059,6 +10317,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "172381312",
     "qteParam": [
       0.6,
       0.22
@@ -10096,6 +10355,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2246413608",
     "qteParam": [
       0.45,
       0.22
@@ -10133,6 +10393,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "2336110008",
     "qteParam": [
       0.6,
       0.22
@@ -10170,6 +10431,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "942837864",
     "qteParam": [
       0.6,
       0.22
@@ -10207,6 +10469,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "339166320",
     "qteParam": [
       0.6,
       0.22
@@ -10244,6 +10507,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "1000457264",
     "qteParam": [
       0.5,
       0.22
@@ -10281,6 +10545,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "249750624",
     "qteParam": [
       0.6,
       0.22
@@ -10318,6 +10583,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 20,
+    "nameTextId": "807810104",
     "qteParam": [
       0.45,
       0.22
@@ -10355,6 +10621,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 25,
+    "nameTextId": "2535717208",
     "qteParam": [
       0.63,
       0.17
@@ -10392,6 +10659,7 @@
     ],
     "isDefaultUnlocked": false,
     "maxProficiency": 25,
+    "nameTextId": "1605651872",
     "qteParam": [
       0.6,
       0.22

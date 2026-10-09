@@ -31,7 +31,7 @@ export const getCaptureSoftness = async (capture: string): Promise<number> => {
     throw new InvalidOperationError(Operation.Read, capture, "no reference is taken from it");
   const cachePath = join(REFERENCES_DIRECTORY, `${capture}.softness-${await hashFile(capturePath)}.txt`);
   const softness = existsSync(cachePath)
-    ? Number.parseFloat(await readFile(cachePath, "utf8"))
+    ? Number(await readFile(cachePath, "utf8"))
     : await measureCapture(join(REFERENCES_DIRECTORY, `${referenceId}.png`), cachePath);
   console.log(`${capture} softness ${softness.toFixed(3)} sigma`);
   captureSoftnessMap.set(capture, softness);

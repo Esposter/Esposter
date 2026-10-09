@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(computeMiningOutcropRespawn, () => {
   // Six o'clock in the game's time zone, UTC+8, is the refresh time of the day the epoch begins
-  const refresh = Temporal.Instant.from("1970-01-01T06:00:00+08:00");
+  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 2 });
 
   test("a mining outcrop mined before the day's draw is back at that draw", () => {
     expect.hasAssertions();

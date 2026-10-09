@@ -11,9 +11,10 @@ const { isReadableText } = storeToRefs(readableTextStore);
 // Other face before hydration
 useHead({ htmlAttrs: { "data-readable-text": () => (isReadableText.value ? "" : undefined) } });
 const { data: session } = await useAuthSession();
+const isEmbedded = useIsEmbedded();
 // An immersive page is a place of its own and brings its own way back, so it takes neither the dock nor the room
-// The dock would take from it
-const isDockShown = computed(() => currentRoute.value.meta.layout !== "immersive");
+// The dock would take from it. An embed is a page framed inside another, which the dock would only repeat
+const isDockShown = computed(() => currentRoute.value.meta.layout !== "immersive" && !isEmbedded.value);
 // Where the dock sits at this width, for every fixed region to start past it: the bottom bar on a narrow screen,
 // Unless a touch screen's keyboard is up for the page's composer, and the left rail on a wide one
 const dockInsetClass = computed(() => {

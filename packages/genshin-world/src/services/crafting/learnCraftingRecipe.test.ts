@@ -24,6 +24,7 @@ describe(learnCraftingRecipe, () => {
     kind: CraftingRecipeKind.CondensedResin,
     materials: [{ count: 60, id: 106 }],
     mora: 100,
+    nameTextId: "1",
     playerLevel: 10,
     resultCount: 1,
     resultItemId: 220_007,

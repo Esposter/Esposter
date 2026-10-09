@@ -60,5 +60,881 @@
       "rotation": 0
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -315.68, "z": -233.07 }, "rotation": 1.5708 },
+      "id": "1002",
+      "nameTextId": "2219684877",
+      "talkId": "30603"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -316.54, "z": -233.71 }, "rotation": -3.0457 },
+      "id": "1029",
+      "nameTextId": "3833498965",
+      "talkId": "1012004"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 131.41, "z": -392.65 }, "rotation": 0.91 },
+      "id": "30234",
+      "nameTextId": "672986112",
+      "talkId": "4008814"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 137.01, "z": -411.34 }, "rotation": 1.9206 },
+      "id": "30235",
+      "nameTextId": "3181225400",
+      "talkId": "4008802"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 134.95, "z": -403.55 }, "rotation": 1.4118 },
+      "id": "30266",
+      "nameTextId": "3862519136",
+      "talkId": "4008809"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 133.8, "z": -397.94 }, "rotation": 0.8664 },
+      "id": "30267",
+      "nameTextId": "2907616536",
+      "talkId": "4008808"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 118.08, "z": -415.83 }, "rotation": 2.7264 },
+      "id": "30250",
+      "nameTextId": "2616517896",
+      "talkId": "4008803"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 115.93, "z": -365.62 }, "rotation": -1.3956 },
+      "id": "30236",
+      "nameTextId": "508266744",
+      "talkId": "4008805"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 130.63, "z": -421.17 }, "rotation": 2.8151 },
+      "id": "30240",
+      "nameTextId": "4218110008",
+      "talkId": "4007950"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 125.83, "z": -400.04 }, "rotation": 0 },
+      "id": "30251",
+      "nameTextId": "1978460448",
+      "talkId": "4008807"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 133.66, "z": -397.19 }, "rotation": 1.5696 },
+      "id": "30243",
+      "nameTextId": "1192629520",
+      "talkId": "4008812"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 134.94, "z": -402.97 }, "rotation": 1.1921 },
+      "id": "30244",
+      "nameTextId": "3862063600",
+      "talkId": "4008813"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 126.41, "z": -405.35 }, "rotation": 1.319 },
+      "id": "30237",
+      "nameTextId": "1565221960",
+      "talkId": "4008810"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 124.1, "z": -421.52 }, "rotation": -2.7837 },
+      "id": "30173",
+      "nameTextId": "3023303072",
+      "talkId": "4008811"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 124.22, "z": -368.86 }, "rotation": -1.0501 },
+      "id": "30248",
+      "nameTextId": "3022000568",
+      "talkId": "7368001"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 131.14, "z": -391.85 }, "rotation": 0 },
+      "id": "30274",
+      "nameTextId": "2967878712",
+      "talkId": "4007801"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 81.82, "z": -406.4 }, "rotation": -1.0565 },
+      "id": "30277",
+      "nameTextId": "1904922624",
+      "talkId": "4008895"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 82.81, "z": -407.53 }, "rotation": 2.4038 },
+      "id": "30280",
+      "nameTextId": "3370415312",
+      "talkId": "4008895"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 130.35, "z": -406.75 }, "rotation": -0.0176 },
+      "id": "30275",
+      "nameTextId": "1847627872",
+      "talkId": "4008801"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 114.17, "z": -371.37 }, "rotation": -1.6703 },
+      "id": "30265",
+      "nameTextId": "1743362224",
+      "talkId": "4008076"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 234.58, "z": -402.59 }, "rotation": 1.6552 },
+      "id": "30264",
+      "nameTextId": "1844246776",
+      "talkId": "4008075"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -856.24, "z": -612.51 }, "rotation": 0 },
+      "id": "12251",
+      "nameTextId": "1660244165",
+      "talkId": "4002609"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": -83.27, "z": -954.61 }, "rotation": -2.7962 },
+      "id": "30246",
+      "nameTextId": "3102489920",
+      "talkId": "7367801"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -80.66, "z": -426.29 }, "rotation": 2.9813 },
+      "id": "30247",
+      "nameTextId": "3924686168",
+      "talkId": "7367701"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": -150.81, "z": -903.86 }, "rotation": 1.5911 },
+      "id": "30263",
+      "nameTextId": "131034392",
+      "talkId": "4008074"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -770.57, "z": -842.84 }, "rotation": 3.0492 },
+      "id": "30268",
+      "nameTextId": "443852104",
+      "talkId": "7367902"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -81.03, "z": -424.96 }, "rotation": -0.3787 },
+      "id": "30245",
+      "nameTextId": "79753496",
+      "talkId": "7367701"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -58.06, "z": -335 }, "rotation": -0.4813 },
+      "id": "30249",
+      "nameTextId": "1130332328",
+      "talkId": "7368201"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -28.27, "z": -411.67 }, "rotation": -2.2689 },
+      "id": "1250",
+      "nameTextId": "1785579581",
+      "talkId": "34705"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -42.83, "z": -398.11 }, "rotation": 2.0944 },
+      "id": "1251",
+      "nameTextId": "4077173957",
+      "talkId": "34706"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 46.83, "z": -702.67 }, "rotation": -2.9671 },
+      "id": "1252",
+      "nameTextId": "3607117061",
+      "talkId": "34707"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": -90.33, "z": -884.66 }, "rotation": -1.0472 },
+      "id": "1253",
+      "nameTextId": "2731744301",
+      "talkId": "34708"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": -128.95, "z": -846.71 }, "rotation": -3.1416 },
+      "id": "1254",
+      "nameTextId": "4050179325",
+      "talkId": "34709"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -443.18, "z": -247.12 }, "rotation": 0 },
+      "id": "20209",
+      "nameTextId": "1943146837",
+      "talkId": "2007303"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -532.11, "z": -209.78 }, "rotation": 0 },
+      "id": "20210",
+      "nameTextId": "2165625205",
+      "talkId": "2007304"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -573.79, "z": -144.51 }, "rotation": -1.5606 },
+      "id": "20211",
+      "nameTextId": "2629079533",
+      "talkId": "2007305"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -688.49, "z": -468.6 }, "rotation": 0 },
+      "id": "2003041",
+      "nameTextId": "3244078285",
+      "talkId": "1104511"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -694.93, "z": -475.63 }, "rotation": 0 },
+      "id": "2003042",
+      "nameTextId": "3660517653",
+      "talkId": "1104512"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -695.83, "z": -467.01 }, "rotation": 0 },
+      "id": "12252",
+      "nameTextId": "1503145437",
+      "talkId": "4002813"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -699.54, "z": -471.67 }, "rotation": 0 },
+      "id": "2003039",
+      "nameTextId": "1413639581",
+      "talkId": "1104509"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 439.13, "z": -205.99 }, "rotation": 1.1717 },
+      "id": "30260",
+      "nameTextId": "533474336",
+      "talkId": "4008070"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 759.2, "z": 468.07 }, "rotation": -2.5958 },
+      "id": "30262",
+      "nameTextId": "1356555304",
+      "talkId": "4008072"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 516.86, "z": -159.4 }, "rotation": 0 },
+      "id": "10094",
+      "nameTextId": "2164255797",
+      "talkId": "1020021"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 290.65, "z": 472.91 }, "rotation": -0.2618 },
+      "id": "1255",
+      "nameTextId": "1183869285",
+      "talkId": "34710"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": -30.65, "z": -691.25 }, "rotation": 2.0631 },
+      "id": "1202",
+      "nameTextId": "1518221317",
+      "talkId": "30302"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 38.39, "z": -0.93 }, "rotation": -1.6417 },
+      "id": "1203",
+      "nameTextId": "3705578501",
+      "talkId": "30303"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 676.13, "z": 56.62 }, "rotation": 2.8978 },
+      "id": "1201",
+      "nameTextId": "3921969453",
+      "talkId": "31141"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 752.86, "z": -1443.18 }, "rotation": -1.3425 },
+      "id": "1204",
+      "nameTextId": "3657837837",
+      "talkId": "30304"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 347.72, "z": -368.64 }, "rotation": -2.3391 },
+      "id": "30208",
+      "nameTextId": "4249379944",
+      "talkId": "4006413"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 412.26, "z": -345.73 }, "rotation": 2.0944 },
+      "id": "30112",
+      "nameTextId": "230810904",
+      "talkId": "7050201"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 316.68, "z": -465.4 }, "rotation": -2.0944 },
+      "id": "30217",
+      "nameTextId": "194339240",
+      "talkId": "7051401"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 349.45, "z": -394.67 }, "rotation": -0.3982 },
+      "id": "30261",
+      "nameTextId": "219827248",
+      "talkId": "4008070"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 372.84, "z": -365.61 }, "rotation": 0.6632 },
+      "id": "1244",
+      "nameTextId": "1810394245",
+      "talkId": "34901"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 350.85, "z": -367.89 }, "rotation": -2.618 },
+      "id": "1245",
+      "nameTextId": "3202979149",
+      "talkId": "34801"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 347.23, "z": -365.29 }, "rotation": -2.0071 },
+      "id": "1246",
+      "nameTextId": "1119372501",
+      "talkId": "34701"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 433.11, "z": -354.01 }, "rotation": 1.9199 },
+      "id": "1247",
+      "nameTextId": "1052668133",
+      "talkId": "34702"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 364.4, "z": -407.68 }, "rotation": -0.7086 },
+      "id": "30276",
+      "nameTextId": "1492888944",
+      "talkId": "7368401"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 383.92, "z": -379.39 }, "rotation": 0 },
+      "id": "13172",
+      "nameTextId": "2165337232",
+      "talkId": "4009907"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 455.96, "z": -333.8 }, "rotation": 0 },
+      "id": "30317",
+      "nameTextId": "3963384920",
+      "talkId": "7053002"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 301.48, "z": -392.28 }, "rotation": 0 },
+      "id": "10099",
+      "nameTextId": "2605159509",
+      "talkId": "1050301"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 301.43, "z": -392.28 }, "rotation": 0 },
+      "id": "10112",
+      "nameTextId": "341034485",
+      "talkId": "1050208"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 354.39, "z": -338.18 }, "rotation": 0 },
+      "id": "1269",
+      "nameTextId": "670514437",
+      "talkId": "34732"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 356.96, "z": -336.73 }, "rotation": 0 },
+      "id": "1270",
+      "nameTextId": "4269158533",
+      "talkId": "34733"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 357.56, "z": -336.41 }, "rotation": 0 },
+      "id": "1271",
+      "nameTextId": "4027426829",
+      "talkId": "34734"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 443.84, "z": -347.9 }, "rotation": 0 },
+      "id": "20115",
+      "nameTextId": "1276570781",
+      "talkId": "34735"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 379.82, "z": -374.48 }, "rotation": 0 },
+      "id": "20116",
+      "nameTextId": "1435395541",
+      "talkId": "34737"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 300.92, "z": -377.99 }, "rotation": 0 },
+      "id": "20117",
+      "nameTextId": "974349501",
+      "talkId": "34739"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 339.18, "z": -467.84 }, "rotation": 0 },
+      "id": "20118",
+      "nameTextId": "1463845325",
+      "talkId": "34741"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 394.53, "z": -391.49 }, "rotation": 0.8168 },
+      "id": "20090",
+      "nameTextId": "3206249893",
+      "talkId": "420090"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 421.01, "z": -399.35 }, "rotation": 2.696 },
+      "id": "20091",
+      "nameTextId": "3033082021",
+      "talkId": "420091"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 415.45, "z": -344.02 }, "rotation": 0 },
+      "id": "20092",
+      "nameTextId": "2753850525",
+      "talkId": "420092"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 321.66, "z": -424.18 }, "rotation": 0 },
+      "id": "20093",
+      "nameTextId": "1676121469",
+      "talkId": "420093"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 344.41, "z": -456.21 }, "rotation": -2.0216 },
+      "id": "20094",
+      "nameTextId": "3773281477",
+      "talkId": "420094"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 290.87, "z": -451.37 }, "rotation": 0 },
+      "id": "20095",
+      "nameTextId": "1424784845",
+      "talkId": "420095"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 310.24, "z": -497.76 }, "rotation": 0 },
+      "id": "20096",
+      "nameTextId": "847377549",
+      "talkId": "420096"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 349.85, "z": -517.65 }, "rotation": 0 },
+      "id": "20097",
+      "nameTextId": "1081855285",
+      "talkId": "420097"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 471.63, "z": -617 }, "rotation": 0 },
+      "id": "20098",
+      "nameTextId": "1368105989",
+      "talkId": "420098"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 521.95, "z": -632.79 }, "rotation": 0 },
+      "id": "20099",
+      "nameTextId": "3433353285",
+      "talkId": "420099"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.33, "z": -510.69 }, "rotation": 0 },
+      "id": "2003045",
+      "nameTextId": "3495094533",
+      "talkId": "4141308"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.33, "z": -510.68 }, "rotation": 0 },
+      "id": "2003046",
+      "nameTextId": "3790544309",
+      "talkId": "4141309"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.34, "z": -510.68 }, "rotation": 0 },
+      "id": "2003047",
+      "nameTextId": "3300944053",
+      "talkId": "4141310"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.34, "z": -510.69 }, "rotation": 0 },
+      "id": "2003048",
+      "nameTextId": "1460239397",
+      "talkId": "4141311"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.34, "z": -510.68 }, "rotation": 0 },
+      "id": "2003049",
+      "nameTextId": "3182265741",
+      "talkId": "4141312"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 429.33, "z": -510.68 }, "rotation": 0 },
+      "id": "2003050",
+      "nameTextId": "3256788381",
+      "talkId": "4141313"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 313.03, "z": 459.46 }, "rotation": 2.1526 },
+      "id": "20127",
+      "nameTextId": "1930040781",
+      "talkId": "7101210"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 737.24, "z": 1106.23 }, "rotation": 0 },
+      "id": "20089",
+      "nameTextId": "2008457645",
+      "talkId": "7101201"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 762.77, "z": -1413.28 }, "rotation": 0 },
+      "id": "94",
+      "nameTextId": "4252210229",
+      "talkId": "31258"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 762.76, "z": -1412.14 }, "rotation": 0 },
+      "id": "10922",
+      "nameTextId": "469479525",
+      "talkId": "31259"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -591.2, "z": -462.68 }, "rotation": 0 },
+      "id": "20173",
+      "nameTextId": "2334872677",
+      "talkId": "7010206"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -713.59, "z": -242.2 }, "rotation": 0.6427 },
+      "id": "1272",
+      "nameTextId": "1092526165",
+      "talkId": "30310"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -736.18, "z": -233.11 }, "rotation": 0 },
+      "id": "20181",
+      "nameTextId": "2309224573",
+      "talkId": "7012302"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -782.21, "z": -348.99 }, "rotation": 0 },
+      "id": "20183",
+      "nameTextId": "872369597",
+      "talkId": "7012304"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -789.72, "z": -611.55 }, "rotation": 0 },
+      "id": "20182",
+      "nameTextId": "1771751605",
+      "talkId": "7012303"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -585.48, "z": -333.74 }, "rotation": 0 },
+      "id": "20204",
+      "nameTextId": "1819936213",
+      "talkId": "7010308"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -591.62, "z": -331.48 }, "rotation": -1.6509 },
+      "id": "20198",
+      "nameTextId": "2407967965",
+      "talkId": "7010302"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -781.21, "z": -262.81 }, "rotation": -1.2895 },
+      "id": "20184",
+      "nameTextId": "2691685677",
+      "talkId": "7012401"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -987.14, "z": -415.43 }, "rotation": 0 },
+      "id": "20185",
+      "nameTextId": "855994549",
+      "talkId": "7012402"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -739.31, "z": -739.18 }, "rotation": 0.3889 },
+      "id": "20186",
+      "nameTextId": "1777237253",
+      "talkId": "7012403"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -660.09, "z": -552.44 }, "rotation": 0 },
+      "id": "20187",
+      "nameTextId": "2580858341",
+      "talkId": "7012404"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -852.24, "z": -455.78 }, "rotation": 0 },
+      "id": "20188",
+      "nameTextId": "495607901",
+      "talkId": "7012405"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1044.97, "z": -611.23 }, "rotation": 0.3246 },
+      "id": "20189",
+      "nameTextId": "28597261",
+      "talkId": "7012406"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -902.74, "z": -232.35 }, "rotation": 1.0713 },
+      "id": "20190",
+      "nameTextId": "929984725",
+      "talkId": "7012407"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -516.66, "z": -150.51 }, "rotation": -0.4633 },
+      "id": "20191",
+      "nameTextId": "4003101141",
+      "talkId": "7012408"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1094.85, "z": -351.07 }, "rotation": 0.9424 },
+      "id": "20199",
+      "nameTextId": "2490142021",
+      "talkId": "7010303"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -705.24, "z": -310.93 }, "rotation": 0 },
+      "id": "20201",
+      "nameTextId": "1175790965",
+      "talkId": "7010305"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -852, "z": -773.02 }, "rotation": -1.4864 },
+      "id": "20205",
+      "nameTextId": "1072867341",
+      "talkId": "7010309"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1285.12, "z": -100.21 }, "rotation": 0 },
+      "id": "20197",
+      "nameTextId": "3683447285",
+      "talkId": "7010301"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1281.77, "z": -109.7 }, "rotation": 0 },
+      "id": "20202",
+      "nameTextId": "133396525",
+      "talkId": "7010306"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -709.5, "z": -682.26 }, "rotation": -2.7527 },
+      "id": "20200",
+      "nameTextId": "3258804605",
+      "talkId": "7010304"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -880.92, "z": -271.03 }, "rotation": -0.3343 },
+      "id": "20203",
+      "nameTextId": "3443034205",
+      "talkId": "7010307"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -956.51, "z": -581.32 }, "rotation": -1.6862 },
+      "id": "20195",
+      "nameTextId": "3309942237",
+      "talkId": "7010104"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -947.2, "z": -125.06 }, "rotation": 0.0648 },
+      "id": "20208",
+      "nameTextId": "836945173",
+      "talkId": "7010109"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -988.76, "z": -714.13 }, "rotation": 0 },
+      "id": "20206",
+      "nameTextId": "3309125861",
+      "talkId": "7010107"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -862.18, "z": -766.47 }, "rotation": 0 },
+      "id": "20207",
+      "nameTextId": "3811196373",
+      "talkId": "7010108"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1153.89, "z": -205.85 }, "rotation": -2.9199 },
+      "id": "20214",
+      "nameTextId": "3546243085",
+      "talkId": "7012701"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1276.33, "z": -172.95 }, "rotation": 0 },
+      "id": "20215",
+      "nameTextId": "1831571509",
+      "talkId": "7012702"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1359.47, "z": -69.06 }, "rotation": 0 },
+      "id": "20216",
+      "nameTextId": "4203040813",
+      "talkId": "7012801"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": -1213.94, "z": -424.03 }, "rotation": 0 },
+      "id": "2003040",
+      "nameTextId": "2999408925",
+      "talkId": "1104507"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 134.29, "z": -376.79 }, "rotation": 1.3265 },
+      "id": "30003",
+      "nameTextId": "1667691893",
+      "talkId": "4111106"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 139.77, "z": -389.29 }, "rotation": 1.6179 },
+      "id": "30004",
+      "nameTextId": "2336851973",
+      "talkId": "4111115"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 134.73, "z": -400.87 }, "rotation": 0.5149 },
+      "id": "30002",
+      "nameTextId": "1721268629",
+      "talkId": "4111114"
+    },
+    {
+      "areaId": "galesong-hill",
+      "day": { "position": { "x": 65.15, "z": 234.86 }, "rotation": 1.4135 },
+      "id": "30015",
+      "nameTextId": "1998042421",
+      "talkId": "4111501"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 132.65, "z": -402.02 }, "rotation": -1.864 },
+      "id": "30011",
+      "nameTextId": "481547749",
+      "talkId": "4111114"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 141.28, "z": -392.96 }, "rotation": 1.7925 },
+      "id": "30017",
+      "nameTextId": "1471767949",
+      "talkId": "4111513"
+    },
+    {
+      "areaId": "starfell-valley",
+      "day": { "position": { "x": 365.55, "z": -329.68 }, "rotation": 0.2473 },
+      "id": "30001",
+      "nameTextId": "2205569333",
+      "talkId": "4100101"
+    }
+  ]
 }

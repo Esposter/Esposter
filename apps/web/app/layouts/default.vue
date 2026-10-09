@@ -25,14 +25,18 @@ const {
   rightTitle = "Details",
 } = defineProps<Props>();
 const { currentRoute } = useRouter();
+const isEmbedded = useIsEmbedded();
 const layoutStore = useLayoutStore();
+// An embed is a page framed in the agent console, and takes no drawers of its own
+const hasLeftDrawer = computed(() => Boolean(slots.left) && !isEmbedded.value);
+const hasRightDrawer = computed(() => Boolean(slots.right) && !isEmbedded.value);
 const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
 // A docked drawer is a column of the grid, as wide as the drawer while it is open and none at all while it is closed,
 // So the page beside it takes the room as the column animates and nothing has to be offset by hand. A narrow screen's
 // Drawers are sheets over the page instead, and take no column
 const gridTemplateColumns = computed(() => {
-  const leftColumnWidth = slots.left && isDesktop.value && isLeftDrawerOpen.value ? leftDrawerWidth : 0;
-  const rightColumnWidth = slots.right && isDesktop.value && isRightDrawerOpen.value ? rightDrawerWidth : 0;
+  const leftColumnWidth = hasLeftDrawer.value && isDesktop.value && isLeftDrawerOpen.value ? leftDrawerWidth : 0;
+  const rightColumnWidth = hasRightDrawer.value && isDesktop.value && isRightDrawerOpen.value ? rightDrawerWidth : 0;
   return `${leftColumnWidth}px minmax(0, 1fr) ${rightColumnWidth}px`;
 });
 // A narrow screen's drawer is a sheet over the page, and a page picked from it is what it was opened for
@@ -47,8 +51,8 @@ watch(
 onMounted(() => {
   // A wide screen docks every drawer the page has, open, and a narrow one keeps them closed behind their buttons
   watchImmediate(isDesktop, (newIsDesktop) => {
-    isLeftDrawerOpen.value = slots.left ? newIsDesktop : false;
-    isRightDrawerOpen.value = slots.right ? newIsDesktop : false;
+    isLeftDrawerOpen.value = hasLeftDrawer.value ? newIsDesktop : false;
+    isRightDrawerOpen.value = hasRightDrawer.value ? newIsDesktop : false;
   });
 });
 </script>
@@ -67,7 +71,7 @@ onMounted(() => {
     grid
     rows="[minmax(0,1fr)]"
   >
-    <template v-if="slots.left">
+    <template v-if="hasLeftDrawer">
       <aside
         v-if="isDesktop"
         :class="{ '[overflow-clip-margin:var(--ui-step)]': isLeftDrawerOpen }"
@@ -95,7 +99,7 @@ onMounted(() => {
     <main col-start-2 row-start-1 min-h-0 min-w-0>
       <slot />
     </main>
-    <template v-if="slots.right">
+    <template v-if="hasRightDrawer">
       <aside
         v-if="isDesktop"
         :class="{ '[overflow-clip-margin:var(--ui-step)]': isRightDrawerOpen }"

@@ -43,7 +43,7 @@ flowchart TD
 **Still to build, in order:**
 
 1. **The bench's place**, read from the city's streaming records for Mondstadt, or fitted from the spawned places where the records do not place it, and its prompt through the interaction page.
-2. **The bench's screen**: its recipes by tab, the count, and the craft, with each result named once its items' names are game text keys.
+2. **The bench's screen**: its recipes by tab, the count, and the craft, with each result named from the names chunk its recipe's `nameTextId` cites.
 3. **Gadgets**, once a source names their instructions.
 4. **Characters' crafting talents**, once their passives are read.
 

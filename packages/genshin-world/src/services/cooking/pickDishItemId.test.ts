@@ -14,6 +14,7 @@ describe(pickDishItemId, () => {
     ingredients: [{ count: 1, id: 100_011 }],
     isDefaultUnlocked: true,
     maxProficiency: 5,
+    nameTextId: "1",
     qteParam: [0.5, 0.4],
     rankLevel: 1,
     resultItemIds: {

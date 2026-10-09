@@ -11,6 +11,7 @@ export interface ProcessingRecipe {
   id: number;
   ingredients: ItemCount[];
   isDefaultUnlocked: boolean;
+  nameTextId: string;
   queueSize: number;
   rankLevel: number;
   result: ItemCount;
@@ -21,6 +22,7 @@ export const processingRecipeSchema = z.object({
   id: z.int().positive(),
   ingredients: z.array(itemCountSchema).min(1),
   isDefaultUnlocked: z.boolean(),
+  nameTextId: z.string().min(1),
   queueSize: z.int().positive(),
   rankLevel: z.int().positive(),
   result: itemCountSchema,

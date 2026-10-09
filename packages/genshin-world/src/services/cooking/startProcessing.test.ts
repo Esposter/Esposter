@@ -25,6 +25,7 @@ describe(startProcessing, () => {
     id: 1001,
     ingredients: [{ count: 2, id: INGREDIENT_ID }],
     isDefaultUnlocked: true,
+    nameTextId: "1",
     queueSize: QUEUE_SIZE,
     rankLevel: 1,
     result: { count: 1, id: 110_001 },

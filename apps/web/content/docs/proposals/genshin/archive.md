@@ -1,6 +1,6 @@
 ---
 title: Archive
-description: Proposal — what remains of the Archive once its built part stands: the Living Beings' kills, Books and Tutorials as their doings land, the Geography's viewpoints taken in where they stand, and the artifact sets once the bag keeps each artifact's set.
+description: Proposal — what remains of the Archive once its built part stands: the wildlife's Living Beings kills, Books and Tutorials as their doings land, the Geography's viewpoints taken in where they stand, and the artifact sets once the bag keeps each artifact's set.
 model: claude-opus-5-5
 ---
 
@@ -11,7 +11,7 @@ The Archive's seven sections, their entries read from the game's codex tables, t
 ## Decisions
 
 - **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when read; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
-- **Living Beings counts kills.** Each enemy's and animal's entry shows how many have been defeated, and its model turns on the screen as the game's does, drawn by the [characters](/docs/genshin/characters) reader once its model is built.
+- **Living Beings counts kills.** Each enemy's entry shows how many have been defeated, and each animal's waits on the wildlife's strike, and its model turns on the screen as the game's does, drawn by the [characters](/docs/genshin/characters) reader once its model is built.
 - **A viewpoint is taken in where it stands.** Each viewpoint is a place in the world that, reached, offers to be viewed, which opens its entry with its picture as the game does; its picture is drawn by the world from its place, never the game's image.
 
 ## How it works
@@ -28,16 +28,15 @@ flowchart LR
 
 **This adds, in order:**
 
-1. **Living Beings' kills**, once a monster's name is read from a source the dump lacks and the wildlife's kills count.
+1. **Wildlife's Living Beings**, once an animal is struck and its kills count.
 2. **Books**, once a book can be read.
-3. **Tutorials**, once their names are read and a tip is shown.
+3. **Tutorials' opening**, once a tip is shown.
 4. **Geography's viewpoints**, at their places.
 5. **Artifact sets**, once the bag keeps each artifact's set, so that all five pieces can be counted.
 
 ## Data and measures
 
 - **Each viewpoint's place:** from the scene points where it is one, or the spawned places' fit where it is not.
-- **Each monster's name:** the dump's monster rows name no text, so a name table or a text source is needed before the monsters can be listed and counted.
 
 ## Key files
 

@@ -1,4 +1,5 @@
 import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCodexRow";
+import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
 
@@ -11,6 +12,7 @@ import {
   ENEMY_LEVEL_CURVES_PATH,
   MONSTER_CODEX_TYPE,
   MONSTER_CURVE_TABLE_FILENAME,
+  MONSTER_DESCRIBE_TABLE_FILENAME,
   MONSTER_TABLE_FILENAME,
   REGIONS_DIRECTORY,
 } from "#src/services/genshinAssets/enemies/constants";
@@ -37,7 +39,7 @@ const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): str
 export const writeEnemyKinds = async (): Promise<string[]> => {
   const regionsDirectory = join(WORLD_DATA_DIRECTORY, REGIONS_DIRECTORY);
   const regionFilenames = await readdir(regionsDirectory);
-  const [regionDatas, monsterRows, monsterCurveRows, animalCodexRows] = await Promise.all([
+  const [regionDatas, monsterRows, monsterDescribeRows, monsterCurveRows, animalCodexRows] = await Promise.all([
     Promise.all(
       regionFilenames.map(async (filename) =>
         parseMachineJson<{ enemyCamps: { members: { enemyKindId: number }[] }[] }>(
@@ -46,6 +48,7 @@ export const writeEnemyKinds = async (): Promise<string[]> => {
       ),
     ),
     readExcelTable<MonsterRow>(MONSTER_TABLE_FILENAME),
+    readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_FILENAME),
     readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_FILENAME),
     readExcelTable<AnimalCodexRow>(ANIMAL_CODEX_TABLE_FILENAME),
   ]);
@@ -63,7 +66,11 @@ export const writeEnemyKinds = async (): Promise<string[]> => {
         ({ describeId, type }) => type === MONSTER_CODEX_TYPE && describeId === monsterRow.describeId,
       );
       if (!codexRow) throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no archive entry");
+      const monsterDescribeRow = monsterDescribeRows.find(({ id }) => id === monsterRow.describeId);
+      if (!monsterDescribeRow)
+        throw new InvalidOperationError(Operation.Read, String(enemyKindId), "has no monster description");
       return {
+        archiveEntryId: codexRow.id,
         attackCurve: getGrowCurve(monsterRow, BASE_ATTACK_PROPERTY),
         baseAttack: monsterRow.attackBase,
         baseDefense: monsterRow.defenseBase,
@@ -82,7 +89,7 @@ export const writeEnemyKinds = async (): Promise<string[]> => {
         enemyType: monsterRow.securityLevel,
         healthCurve: getGrowCurve(monsterRow, BASE_HEALTH_PROPERTY),
         id: enemyKindId,
-        nameTextId: String(monsterRow.nameTextMapHash),
+        nameTextId: String(monsterDescribeRow.nameTextMapHash),
         physicalResistance: monsterRow.physicalSubHurt,
       };
     });

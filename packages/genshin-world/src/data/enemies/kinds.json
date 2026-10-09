@@ -1,5 +1,6 @@
 [
   {
+    "archiveEntryId": 21010101,
     "attackCurve": "GROW_CURVE_ATTACK",
     "baseAttack": 22.608,
     "baseDefense": 500,
@@ -18,7 +19,7 @@
     "enemyType": "NORMAL",
     "healthCurve": "GROW_CURVE_HP",
     "id": 21010101,
-    "nameTextId": "2561869233",
+    "nameTextId": "2823299104",
     "physicalResistance": 0.1
   }
 ]
