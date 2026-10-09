@@ -71,7 +71,7 @@ export const GENSHIN_TEXT_SOURCE_DIRECTORY: string = join(REPOSITORY_ROOT, "pack
 export const GENSHIN_TEXT_GENERATED_DIRECTORY: string = join(GENSHIN_TEXT_SOURCE_DIRECTORY, "generated");
 // Where the world's quests are written, one file a quest, and their words, one chunk a language; and the names its stat
 // Tables cite, one chunk a language, and the card game's names and descriptions, one chunk a language too
-const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
+export const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
   REPOSITORY_ROOT,
   "packages",
   "genshin-world",
