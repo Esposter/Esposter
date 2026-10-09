@@ -45,7 +45,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
     for (const entry of entries) if (entry !== undefined) contents.files.push(entry);
     batch = [];
   };
-  for await (const entry of directory) {
+  for await (const entry of directory)
     if (entry.isDirectory()) contents.directories.push(entry.name);
     else if (entry.isFile()) {
       batch.push(entry);
@@ -53,7 +53,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
         // oxlint-disable-next-line no-await-in-loop -- A batch is flushed before the next one fills, so the stats never stack
         await flush();
     }
-  }
+
   await flush();
   return contents;
 };

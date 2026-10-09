@@ -11,9 +11,9 @@ import {
   GameLanguageCodeMap,
 } from "#src/services/genshinText/constants";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
-import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
+import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, statSync } from "node:fs";
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
