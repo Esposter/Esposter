@@ -3,31 +3,12 @@ import type { GenshinSave } from "genshin-world/save";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
+import { readGuestSave } from "@/services/genshin/readGuestSave";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 import { checkIsServer, getResult, noop } from "@esposter/shared";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 
-// A browser that blocks its storage throws on the access, which is logged and read as no guest save, so a signed-in
-// Player's account save still loads
-const readGuestSave = (): GenshinSave | undefined => {
-  const guestJson = getResult(
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
-    () => window.localStorage.getItem(LocalStorageKey.GenshinSave),
-  )
-    .orTee(console.error)
-    .unwrapOr(null);
-  if (!guestJson) return undefined;
-
-  const parsedJson: unknown = getResult(() =>
-    // oxlint-disable-next-line no-restricted-properties -- the save holds its instants as ISO strings a date revival would turn into Dates
-    JSON.parse(guestJson),
-  )
-    .orTee(console.error)
-    .unwrapOr(undefined);
-  const result = genshinSaveSchema.safeParse(parsedJson);
-  return result.success ? result.data : undefined;
-};
 const clearGuestSave = () => {
   getResult(
     // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above

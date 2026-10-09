@@ -27,7 +27,7 @@ flowchart TD
 
 A start and a save each read the ETag before the envelope, so a write that lands between the two reads makes the save's own write fail its precondition. That failure is answered as a replacement too, because with one live session a changed blob means the lease was lost. The write throws the same CONFLICT for both, so the client can tell a replaced game from a failed save.
 
-The client plays the save it starts with. The world takes its wallet, bag, carried quests, unlocked landmarks, achievements and wish counters from the save and emits the whole save on every change, so the page saves what it holds on the clicker's autosave cadence, saves at once after a grant, and flushes when the page is hidden. Signed out, the same schema is kept in localStorage. A start answers whether the account had a save: when it did not, a guest's save uploads, and when it did, the two merge.
+The client plays the save it starts with. The world takes its wallet, bag, carried quests, unlocked landmarks, achievements and wish counters from the save and emits the whole save on every change, so the page saves what it holds on the clicker's autosave cadence, saves at once after a grant, and flushes when the page is hidden. Signed out, the same schema is kept in localStorage as plain JSON, and a reload reads it back the same way, its instants still the ISO strings the schema reads. A start answers whether the account had a save: when it did not, a guest's save uploads, and when it did, the two merge.
 
 ```mermaid
 flowchart TD
@@ -118,6 +118,7 @@ Paths relative to the repository root.
 | `packages/db/src/services/azure/container/writeJsonBlob.ts`                            | a write under conditions, returning its ETag and stored length                              |
 | `apps/web/server/services/genshin/events/genshinEventEmitter.ts`                       | the per-user `replaceSession` event a start emits                                           |
 | `apps/web/app/composables/genshin/useGenshinSave.ts`                                   | the page's save: start, offset, autosave, grant, hidden flush, guest merge                  |
+| `apps/web/app/services/genshin/readGuestSave.ts`                                       | the signed-out save, parsed as plain JSON so its instants read                              |
 | `apps/web/app/components/Genshin/Index.vue`                                            | the page wiring the save into the world and the replaced dialog                             |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                        | the world reading each system from the save and emitting the whole of it                    |
 | `packages/genshin-world/src/services/save/readGenshinSave.ts`                          | the save read into the world's systems                                                      |
