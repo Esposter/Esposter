@@ -9,23 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-08T09:05:29.827Z
-- Commit: 761e184bbd
+- Date: 2026-10-09T20:46:23.898Z
+- Commit: f57d864477
 - Node: v26.10.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
-## mergeTerrainTiles > 8 tiles
-
-| task            | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| --------------- | ------- | --------- | ------ | -------- | ------- |
-| 32 cells a side | 1.00×   | 0.4890    | ±6.35% | 0.5505   | 10      |
-| 64 cells a side | 0.28×   | 1.7733    | ±3.29% | 1.9132   | 10      |
-
-## mergeTerrainTiles > 64 tiles
+## writeTerrainRingTile > a ring of 8 tiles
 
 | task            | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------------- | ------- | --------- | ------- | -------- | ------- |
-| 32 cells a side | 1.00×   | 4.1382    | ±8.80%  | 4.8679   | 10      |
-| 64 cells a side | 0.3×    | 13.7383   | ±13.63% | 19.6626  | 10      |
+| 32 cells a side | 1.00×   | 0.0133    | ±15.09% | 0.0199   | 10      |
+| 64 cells a side | 0.3×    | 0.0447    | ±6.58%  | 0.0527   | 10      |
+
+## writeTerrainRingTile > a ring of 64 tiles
+
+| task            | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| --------------- | ------- | --------- | ------ | -------- | ------- |
+| 32 cells a side | 1.00×   | 0.0119    | ±3.13% | 0.0132   | 10      |
+| 64 cells a side | 0.26×   | 0.0450    | ±1.11% | 0.0465   | 10      |

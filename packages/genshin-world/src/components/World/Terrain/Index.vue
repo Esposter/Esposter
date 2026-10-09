@@ -2,7 +2,14 @@
 import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
-import type { LightUniforms, TerrainOptions, TerrainSelection, WaterUniforms, WindUniforms } from "genshin-engine";
+import type {
+  LightUniforms,
+  TerrainOptions,
+  TerrainRing,
+  TerrainSelection,
+  WaterUniforms,
+  WindUniforms,
+} from "genshin-engine";
 import type { DataTexture } from "three";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
@@ -14,19 +21,18 @@ import {
   createFlowerMaterial,
   createFlowerTileGeometry,
   createTerrainMaterial,
+  createTerrainRing,
   createTerrainSelection,
   createTerrainTileGeometry,
   createTileStreamer,
   getTerrainTileColumn,
   getTerrainTileLevel,
   getTerrainTileRow,
-  mergeTerrainTiles,
   resolveTerrainDraws,
   selectTerrainTiles,
   TERRAIN_LAYER,
-  writeTerrainRingIndices,
 } from "genshin-engine";
-import { BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
+import { Box3, BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -69,7 +75,6 @@ const morphEye = uniform(new Vector3());
 const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightUniforms, rampTexture }, waterUniforms);
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
-const tileVertexCount = (cellsPerSide + 1) ** 2;
 // Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its tile's
 // Mesh, so they show, hide and go with the tile
 const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
@@ -85,18 +90,24 @@ const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
   return worker;
 });
 let requestCount = 0;
-// The rings past the shadows' reach hold their tiles' arrays, not meshes: each such level is one mesh over every tile of
-// The level held, its index naming the tiles drawn in it, rebuilt when a tile of the level arrives or leaves
-const farTileMap = new Map<number, PlantedTerrainTile>();
-const dirtyRingLevels = new Set<number>();
-const ringMeshMap = new Map<number, Mesh>();
-const ringIndexMap = new Map<number, Uint32Array>();
-// Each held far tile's place in its level's ring, and the tiles each ring draws this frame and last wrote its index for
-const ringOrdinalMap = new Map<number, number>();
-const ringDrawnMap = new Map<number, number[]>();
-const ringWrittenMap = new Map<number, number[]>();
+// The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is written
+// Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and the
+// Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
+const ringMap = new Map<number, TerrainRing>();
+const ringDrawnKeysMap = new Map<number, number[]>();
 const checkIsNear = (key: number): boolean => checkTerrainTileCasts(terrainOptions, key, shadowReach);
-const tileStreamer = createTileStreamer<Mesh | PlantedTerrainTile>({
+const getRing = (level: number): TerrainRing => {
+  const heldRing = ringMap.get(level);
+  if (heldRing) return heldRing;
+  const ring = createTerrainRing(terrainOptions, tileIndices, terrainMaterial);
+  ring.mesh.receiveShadow = true;
+  ring.mesh.layers.enable(TERRAIN_LAYER);
+  ringMap.set(level, ring);
+  ringDrawnKeysMap.set(level, []);
+  tileGroup.add(ring.mesh);
+  return ring;
+};
+const tileStreamer = createTileStreamer<Mesh | number>({
   disposeTile: (tile) => {
     if (tile instanceof Mesh) {
       tileGroup.remove(tile);
@@ -104,8 +115,7 @@ const tileStreamer = createTileStreamer<Mesh | PlantedTerrainTile>({
       for (const child of tile.children) if (child instanceof Mesh) child.geometry.dispose();
       return;
     }
-    farTileMap.delete(tile.key);
-    dirtyRingLevels.add(getTerrainTileLevel(tile.key));
+    ringMap.get(getTerrainTileLevel(tile))?.remove(tile);
   },
   maxCachedCount: TILE_SELECTION_CAPACITY,
   maxPendingCount: MAX_PENDING_TILE_COUNT,
@@ -122,13 +132,15 @@ const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
   const terrainTile = event.data;
   const { key, plantColors, plantMatrices } = terrainTile;
   if (!checkIsNear(key)) {
-    farTileMap.set(key, terrainTile);
-    dirtyRingLevels.add(getTerrainTileLevel(key));
-    tileStreamer.receive(key, terrainTile);
+    getRing(getTerrainTileLevel(key)).add(terrainTile);
+    tileStreamer.receive(key, key);
     return;
   }
   const size = finestTileSize * 2 ** getTerrainTileLevel(key);
-  const mesh = new Mesh(createTerrainTileGeometry(terrainTile, index), terrainMaterial);
+  const mesh = new Mesh(
+    createTerrainTileGeometry(terrainTile, index, new Box3().setFromArray(terrainTile.positions)),
+    terrainMaterial,
+  );
   mesh.position.set(getTerrainTileColumn(key) * size, 0, getTerrainTileRow(key) * size);
   mesh.matrixAutoUpdate = false;
   mesh.updateMatrix();
@@ -165,38 +177,6 @@ const originMatrix = new Matrix4();
 const viewProjection = new Matrix4();
 const frustum = new Frustum();
 let isReady = false;
-// Rebuilds a far level's ring: every tile of the level held, laid out in the order their keys sort, each tile's
-// Ordinal being its place in that order, which is what its indices are numbered by
-const rebuildRing = (level: number): void => {
-  const oldMesh = ringMeshMap.get(level);
-  if (oldMesh) {
-    tileGroup.remove(oldMesh);
-    oldMesh.geometry.dispose();
-  }
-  ringMeshMap.delete(level);
-  ringIndexMap.delete(level);
-  ringDrawnMap.delete(level);
-  ringWrittenMap.delete(level);
-  const keys = [...farTileMap.keys()]
-    .filter((key) => getTerrainTileLevel(key) === level)
-    .toSorted((firstKey, secondKey) => firstKey - secondKey);
-  for (const [ordinal, key] of keys.entries()) ringOrdinalMap.set(key, ordinal);
-  if (keys.length === 0) return;
-  const tiles = keys.map((key) => farTileMap.get(key)).filter((tile) => tile !== undefined);
-  const indices = new Uint32Array(keys.length * tileIndices.length);
-  const mesh = new Mesh(
-    createTerrainTileGeometry(mergeTerrainTiles(tiles, finestTileSize), new BufferAttribute(indices, 1)),
-    terrainMaterial,
-  );
-  mesh.receiveShadow = true;
-  mesh.layers.enable(TERRAIN_LAYER);
-  mesh.visible = false;
-  ringMeshMap.set(level, mesh);
-  ringIndexMap.set(level, indices);
-  ringDrawnMap.set(level, []);
-  ringWrittenMap.set(level, []);
-  tileGroup.add(mesh);
-};
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
 // Draw are shown in place of last frame's. It is walked twice: in the view, for what is asked for first and what makes
 // The terrain ready, and all round the eye, for what is held and drawn. Drawn all round, the ground is the same
@@ -227,31 +207,16 @@ onBeforeRender(() => {
     const tile = tileStreamer.get(shown.keys[drawIndex] ?? 0);
     if (tile instanceof Mesh) tile.visible = false;
   }
-  for (const level of dirtyRingLevels) rebuildRing(level);
-  dirtyRingLevels.clear();
-  for (const drawnOrdinals of ringDrawnMap.values()) drawnOrdinals.length = 0;
+  for (const drawnKeys of ringDrawnKeysMap.values()) drawnKeys.length = 0;
   for (let drawIndex = 0; drawIndex < draws.count; drawIndex++) {
     const tile = tileStreamer.get(draws.keys[drawIndex] ?? 0);
     if (tile instanceof Mesh) tile.visible = true;
   }
   for (let drawIndex = 0; drawIndex < viewDraws.count; drawIndex++) {
     const key = viewDraws.keys[drawIndex] ?? 0;
-    if (!checkIsNear(key)) ringDrawnMap.get(getTerrainTileLevel(key))?.push(ringOrdinalMap.get(key) ?? 0);
+    if (!checkIsNear(key)) ringDrawnKeysMap.get(getTerrainTileLevel(key))?.push(key);
   }
-  // A ring's index is written only when the tiles it draws have changed, which a view that holds still never does
-  for (const [level, drawnOrdinals] of ringDrawnMap) {
-    const mesh = ringMeshMap.get(level);
-    const indices = ringIndexMap.get(level);
-    const writtenOrdinals = ringWrittenMap.get(level);
-    if (!mesh || !indices || !writtenOrdinals) continue;
-    mesh.visible = drawnOrdinals.length > 0;
-    if (!mesh.visible || drawnOrdinals.join(",") === writtenOrdinals.join(",")) continue;
-    const count = writeTerrainRingIndices(indices, tileIndices, drawnOrdinals, tileVertexCount);
-    mesh.geometry.setDrawRange(0, count);
-    if (mesh.geometry.index) mesh.geometry.index.needsUpdate = true;
-    writtenOrdinals.length = 0;
-    writtenOrdinals.push(...drawnOrdinals);
-  }
+  for (const [level, ring] of ringMap) ring.draw(ringDrawnKeysMap.get(level) ?? []);
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
   if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.has(key))) return;
@@ -262,7 +227,7 @@ onBeforeRender(() => {
 onUnmounted(() => {
   for (const worker of workers) worker.terminate();
   tileStreamer.dispose();
-  for (const mesh of ringMeshMap.values()) mesh.geometry.dispose();
+  for (const ring of ringMap.values()) ring.dispose();
   terrainMaterial.dispose();
   flowerMaterial.dispose();
 });
