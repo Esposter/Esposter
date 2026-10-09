@@ -18,6 +18,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createKitState } from "#src/services/kit/createKitState";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getInfusedElement } from "#src/services/kit/effects/getInfusedElement";
+import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -201,6 +202,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
         continue;
       for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, Math.random))
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
+      healKitStriker(party, pricedCombatant, hit);
     }
   }
 });

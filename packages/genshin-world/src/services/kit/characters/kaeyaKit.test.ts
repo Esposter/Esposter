@@ -5,9 +5,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KAEYA_CHARACTER_ID } from "#src/services/character/constants";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
+import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -51,5 +53,28 @@ describe("kaeya kit", () => {
     expect(icicles).toHaveLength(13);
     expect(icicles.every(({ hit }) => hit.talentMultiplier === 0.776 && hit.element === "Ice")).toBe(true);
     expect(effects).toStrictEqual([]);
+  });
+
+  test("ascension 1 heals Kaeya by 15% of his ATK for each enemy Frostgnaw strikes, and gives none before it", () => {
+    expect.hasAssertions();
+    const hit = takeOne(KAEYA_KIT.elementalSkill.hits);
+    const combatant: Combatant = {
+      ...createKaeyaCombatant(),
+      ascension: 1,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+        { attribute: Attribute.BaseAttack, value: 1000 },
+      ]),
+    };
+    const party = createParty([KAEYA_CHARACTER_ID]);
+    const partyMember = getPartyMember(party, KAEYA_CHARACTER_ID);
+    partyMember.healthShare = 0.5;
+
+    healKitStriker(party, combatant, hit);
+    expect(partyMember.healthShare).toBeCloseTo(
+      0.5 + (0.15 * combatant.attributes.attack) / combatant.attributes.maxHealth,
+      5,
+    );
+    expect(hit.healAttackShare?.({ ...combatant, ascension: 0 })).toBe(0);
   });
 });

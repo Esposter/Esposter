@@ -76,8 +76,8 @@ const createIcicleHits = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
   }));
 
 // Kaeya's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Frostgnaw and Glacial
-// Waltz. Its multipliers are read from its proud skill groups. Frostgnaw's damage against Water, A1's heal, A4's
-// Particles and Glacial Waltz's activation knockback are not built
+// Waltz. Its multipliers are read from its proud skill groups. Frostgnaw's damage against Water, A4's particles and
+// Glacial Waltz's activation knockback are not built
 export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 20,
   burstEnergyCost: 80,
@@ -126,6 +126,10 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       {
         element: Element.Cryo,
         gauge: 2,
+        // Measured: gcsim v2.47.2 (MIT) kaeya/skill.go, A1: each enemy Frostgnaw hits heals Kaeya by 15% of his ATK. The
+        // Heal is not scaled by Healing Bonus, as the other heals are not
+        // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/skill.go
+        healAttackShare: (combatant) => (combatant.ascension >= 1 ? 0.15 : 0),
         hitArea: FROSTGNAW_HIT_AREA,
         hitmarkSeconds: 28 / 60,
         poiseDamage: 140,
