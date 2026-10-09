@@ -38,6 +38,7 @@ export const KAEYA_CHARACTER_ID = 10_000_015;
 export const LISA_CHARACTER_ID = 10_000_006;
 export const NOELLE_CHARACTER_ID = 10_000_034;
 export const AYAKA_CHARACTER_ID = 10_000_002;
+export const JEAN_CHARACTER_ID = 10_000_003;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],

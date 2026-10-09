@@ -21,7 +21,7 @@ export interface KitHit {
   gauge?: number;
   // The share of its striker's ATK the hit heals its striker's character by for each enemy it strikes, given the striker
   healAttackShare?: (combatant: Combatant) => number;
-  // The heal the party may take from the hit while its striker's character holds a shield, if the hit can give one
+  // The heal the party may take from the hit as it strikes, if the hit can give one
   healParty?: KitPartyHeal;
   hitArea: AttackArea;
   hitmarkSeconds: number;

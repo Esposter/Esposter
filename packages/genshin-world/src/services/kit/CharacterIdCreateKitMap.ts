@@ -6,6 +6,7 @@ import {
   AYAKA_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
   DILUC_CHARACTER_ID,
+  JEAN_CHARACTER_ID,
   KAEYA_CHARACTER_ID,
   LISA_CHARACTER_ID,
   MONA_CHARACTER_ID,
@@ -15,6 +16,7 @@ import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { createJeanKit } from "#src/services/kit/characters/jeanKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
@@ -27,6 +29,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [AYAKA_CHARACTER_ID]: createAyakaKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
+  [JEAN_CHARACTER_ID]: createJeanKit,
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
   [LISA_CHARACTER_ID]: createLisaKit,
   [MONA_CHARACTER_ID]: createMonaKit,
