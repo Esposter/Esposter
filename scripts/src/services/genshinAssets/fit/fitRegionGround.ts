@@ -4,6 +4,7 @@ import type { GroundPoint } from "genshin-engine";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { checkIsInsideRegionOutlines } from "#src/services/genshinAssets/fit/checkIsInsideRegionOutlines";
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
+import { computeLagDifference } from "#src/services/genshinAssets/fit/computeLagDifference";
 import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
@@ -27,12 +28,15 @@ const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
 // The hills' widths, widest first, down to the knolls round the oak and the statue
 const GROUND_WIDTHS = [200, 120, 70, 40, 24, 14];
+// The distance round the centre the ground's bar is read within, in metres, where the residual draws none
+const GROUND_BAR_RADIUS = 60;
 // The distances round the centre the fit's error is reported within
-const GROUND_ERROR_BANDS = [60, 150, 300, 700];
-// The side of the residual's fade cells, in metres: the residual is drawn by how far the ground above it misses in each
+const GROUND_ERROR_BANDS = [GROUND_BAR_RADIUS, 150, 300, 700];
+// The side of the residual's fade cells, in metres: the residual is drawn by how far the ground above it misses in each,
+// And faded in over one past the bar's radius
 const GROUND_FADE_CELL_SIZE = 64;
-// The hills' bar within 60 metres of the centre, in metres: a fade cell whose ground misses by less draws none of the
-// Residual, and one missing by twice it draws all
+// The hills' bar within the bar's radius, in metres: a fade cell whose ground misses by less draws none of the residual,
+// And one missing by twice it draws all
 const GROUND_RESIDUAL_GATE_METRES = 0.62;
 
 // The catalogue's regions, each with its areas' outlines, which a region's ground is fitted inside
@@ -82,7 +86,10 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   const computeMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
     mapTerrainResidualGrid(heightGrid, (x, z, height) => height - getGroundHeight(x, z));
   const { features, remainder } = fitTerrainPlateaus(computeMisses(createGaussianHillsHeight(hills)));
-  const fade = fitTerrainResidualFade(remainder, GROUND_FADE_CELL_SIZE, GROUND_RESIDUAL_GATE_METRES);
+  const fade = {
+    ...fitTerrainResidualFade(remainder, GROUND_FADE_CELL_SIZE, GROUND_RESIDUAL_GATE_METRES),
+    clearing: { falloff: GROUND_FADE_CELL_SIZE, radius: GROUND_BAR_RADIUS, x: centre.x, z: centre.z },
+  };
   const getFadeWeight = (x: number, z: number): number => sampleTerrainResidualFade(fade, x, z);
   const residual = { ...fitTerrainResidual(remainder, getFadeWeight), fade };
   const path = await writeWorldData(join(region, "base-ground.json"), {
@@ -91,8 +98,15 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     ...computeGroundBounds(heightGrid.values),
     residual,
   });
-  const groundMisses = computeMisses(createTerrainShapeHeight({ ...hills, features, residual }));
-  const unfadedMisses = computeMisses(createTerrainShapeHeight({ ...hills, features }));
+  const getGroundHeight = createTerrainShapeHeight({ ...hills, features, residual });
+  const getFeaturedHeight = createTerrainShapeHeight({ ...hills, features });
+  const groundMisses = computeMisses(getGroundHeight);
+  const unfadedMisses = computeMisses(getFeaturedHeight);
+  const drawnResidual = mapTerrainResidualGrid(heightGrid, (x, z, height) =>
+    Number.isFinite(height) ? getGroundHeight(x, z) - getFeaturedHeight(x, z) : Number.NaN,
+  );
+  const fadedRemainder = mapTerrainResidualGrid(remainder, (x, z, value) => getFadeWeight(x, z) * value);
+  const octaveScales = Array.from({ length: residual.octaves }, (_value, octave) => residual.scale / 2 ** octave);
   const fadeWeights = mapTerrainResidualGrid(heightGrid, (x, z, height) =>
     Number.isFinite(height) ? getFadeWeight(x, z) : Number.NaN,
   );
@@ -114,6 +128,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     `ground: ${features.length} plateaus, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
     `ground: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
     `ground: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over the fitted extent and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
+    `ground: the residual's power by octave against the faded leftover's, as the change over its scale, ${octaveScales.map((scale) => `${roundFitted(computeLagDifference(drawnResidual, scale))} against ${roundFitted(computeLagDifference(fadedRemainder, scale))} metres at ${scale}`).join(", ")}`,
     path,
   ];
 };
