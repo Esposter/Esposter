@@ -76,6 +76,7 @@ const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTyp
   descriptionTextId: cardRow.descTextMapHash,
   effects: cardRow.skillList.map((skillId) => findRow(skillRows, skillId, "skill").skillJson),
   id: cardRow.id,
+  isLocation: cardRow.tagList.includes("GCG_TAG_PLACE"),
   kind: toCardKind(cardRow),
   nameTextId: cardRow.nameTextMapHash,
 });

@@ -29,7 +29,9 @@ import {
   GCG_SPREAD_DAMAGE,
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
+import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -58,7 +60,11 @@ const hitGcgCharacter = (
   if (damage.damageType === GcgDamageKind.Piercing) hurtGcgCharacter(hit, damage.value, true);
   else if (damage.damageType === GcgDamageKind.Physical)
     hurtGcgCharacter(hit, damage.value + takeGcgFrozenBonus(hit, damage.damageType), false);
-  else applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule);
+  else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
+    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule);
+    const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses]);
+    if (permanentAura !== undefined) hit.aura = permanentAura;
+  }
 };
 
 // An elemental hit: its Frozen bonus, then the reaction its aura makes with the element if the rule lists one, which

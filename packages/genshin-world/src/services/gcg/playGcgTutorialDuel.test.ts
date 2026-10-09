@@ -78,3 +78,45 @@ describe("the tutorial duels' decks: the player's deck 7 and the opponent decks 
     });
   });
 });
+
+describe("the Oceanid duel's deck 2", () => {
+  test("should be played against the tutorial deck to its end", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(2)], rule);
+
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+});
+
+describe("the Mondstadt challenger Marjorie's deck 11005", () => {
+  test("should be played against the tutorial deck to its end", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(11_005)], rule);
+
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+});
+
+describe("the Mondstadt challenger Ellin's monster deck 11002", () => {
+  test("should be played against the tutorial deck to its end", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(11_002)], rule);
+
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+});

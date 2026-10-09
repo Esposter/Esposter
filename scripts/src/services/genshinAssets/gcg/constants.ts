@@ -37,9 +37,12 @@ export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Elem
 // Field, Niwabi Enshou, Aurous Blaze and The Wolf Within; and deck 4's two Shadowsword summons and three Oceanic Mimics
 export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number, number[]>([
   [1, [113_011, 113_031, 112_031, 112_032]],
+  [2, [113_021, 113_022, 114_011, 122_011, 122_012, 122_013]],
   [3, [111_041, 113_051, 113_052, 114_021]],
   [4, [125_011, 125_012, 122_011, 122_012, 122_013]],
   [7, [113_011, 111_031, 115_011]],
+  [11_002, [133_021, 134_061]],
+  [11_005, [111_023, 115_021]],
   [30_111, [113_011, 111_031, 115_011]],
   [30_112, [113_031, 114_011, 111_031]],
 ]);

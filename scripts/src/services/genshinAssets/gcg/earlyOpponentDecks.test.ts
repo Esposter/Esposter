@@ -19,7 +19,7 @@ describe("early opponent decks", () => {
 
     expect(
       [...EARLY_OPPONENT_DECK_IDS.values()].filter((deckId) => GcgDeckIdCreatedCardIdsMap.has(deckId)),
-    ).toStrictEqual([30_112, 30_111]);
+    ).toStrictEqual([30_112, 30_111, 11_002, 11_005]);
   });
 
   test("should build the player's deck the tutorial duel names", () => {

@@ -3,6 +3,8 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GCG_STARTING_HAND_COUNT } from "#src/services/gcg/constants";
+import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
+import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { shuffleGcgCards } from "#src/services/gcg/shuffleGcgCards";
 
 // A side as a duel opens it: its characters at full HP with the first one active once it prepares, its cards shuffled
@@ -12,16 +14,19 @@ export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSide
   return {
     activeIndex: 0,
     cards: deck.cards,
-    characters: deck.characters.map((character) => ({
-      aura: GcgAura.None,
-      character,
-      energy: 0,
-      equipments: [],
-      hp: character.hp,
-      isFrozen: false,
-      shield: 0,
-      statuses: [],
-    })),
+    characters: deck.characters.map((character) => {
+      const statuses = listGcgStartingStatuses(character);
+      return {
+        aura: findGcgPermanentAura(statuses) ?? GcgAura.None,
+        character,
+        energy: 0,
+        equipments: [],
+        hp: character.hp,
+        isFrozen: false,
+        shield: 0,
+        statuses,
+      };
+    }),
     dice: [],
     drawPile: drawPile.slice(GCG_STARTING_HAND_COUNT),
     hand: drawPile.slice(0, GCG_STARTING_HAND_COUNT),

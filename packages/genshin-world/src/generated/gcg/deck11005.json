@@ -452,58 +452,46 @@
     },
     {
       "costs": [],
-      "descriptionTextId": 1683969280,
+      "descriptionTextId": 2618050720,
       "effects": [
-        "Char_Skill_13033_Ex_1",
-        "Char_Skill_13033_Ex_2"
+        "Char_Skill_11023_Ex_1"
       ],
-      "id": 113031,
-      "isLocation": false,
-      "kind": "Onstage",
-      "nameTextId": 2475609279
-    },
-    {
-      "costs": [],
-      "descriptionTextId": 197292520,
-      "effects": [
-        "Char_Skill_14012_Ex_1"
-      ],
-      "id": 114011,
+      "id": 111023,
       "isLocation": false,
       "kind": "Summon",
-      "nameTextId": 319692159
+      "nameTextId": 2348808319
     },
     {
       "costs": [],
-      "descriptionTextId": 2244090960,
+      "descriptionTextId": 2106210392,
       "effects": [
-        "Char_Skill_11033_Ex_1"
+        "Char_Skill_15023_Ex_1"
       ],
-      "id": 111031,
+      "id": 115021,
       "isLocation": false,
-      "kind": "Onstage",
-      "nameTextId": 3532909895
+      "kind": "Summon",
+      "nameTextId": 606732423
     }
   ],
   "characterIds": [
-    1401,
-    1303,
-    1103
+    1102,
+    1502,
+    2201
   ],
   "characters": [
     {
-      "descriptionTextId": 1675953204,
-      "element": "Electric",
-      "hp": 10,
-      "id": 1401,
+      "descriptionTextId": 1041040556,
+      "element": "Ice",
+      "hp": 12,
+      "id": 1102,
       "maxEnergy": 3,
-      "nameTextId": 1567838547,
+      "nameTextId": 4240059515,
       "skills": [
         {
           "costs": [
             {
               "count": 1,
-              "element": "Electric",
+              "element": "Ice",
               "kind": "Dice"
             },
             {
@@ -513,27 +501,27 @@
           ],
           "effect": "Effect_Damage_Physic_2",
           "energyGain": 1,
-          "id": 14011,
+          "id": 11021,
           "kind": "NormalAttack"
         },
         {
           "costs": [
             {
               "count": 3,
-              "element": "Electric",
+              "element": "Ice",
               "kind": "Dice"
             }
           ],
-          "effect": "Char_Skill_14012",
+          "effect": "Char_Skill_11022",
           "energyGain": 1,
-          "id": 14012,
+          "id": 11022,
           "kind": "ElementalSkill"
         },
         {
           "costs": [
             {
               "count": 3,
-              "element": "Electric",
+              "element": "Ice",
               "kind": "Dice"
             },
             {
@@ -541,27 +529,27 @@
               "kind": "Energy"
             }
           ],
-          "effect": "Char_Skill_14013",
+          "effect": "Char_Skill_11023",
           "energyGain": 0,
-          "id": 14013,
+          "id": 11023,
           "kind": "ElementalBurst"
         }
       ],
       "weapon": "BOW"
     },
     {
-      "descriptionTextId": 964758820,
-      "element": "Fire",
-      "hp": 10,
-      "id": 1303,
+      "descriptionTextId": 929989084,
+      "element": "Wind",
+      "hp": 12,
+      "id": 1502,
       "maxEnergy": 2,
-      "nameTextId": 4269319299,
+      "nameTextId": 905231715,
       "skills": [
         {
           "costs": [
             {
               "count": 1,
-              "element": "Fire",
+              "element": "Wind",
               "kind": "Dice"
             },
             {
@@ -571,27 +559,27 @@
           ],
           "effect": "Effect_Damage_Physic_2",
           "energyGain": 1,
-          "id": 13031,
+          "id": 15021,
           "kind": "NormalAttack"
         },
         {
           "costs": [
             {
               "count": 3,
-              "element": "Fire",
+              "element": "Wind",
               "kind": "Dice"
             }
           ],
-          "effect": "Effect_Damage_Fire_3",
+          "effect": "Char_Skill_15022",
           "energyGain": 1,
-          "id": 13032,
+          "id": 15022,
           "kind": "ElementalSkill"
         },
         {
           "costs": [
             {
               "count": 4,
-              "element": "Fire",
+              "element": "Wind",
               "kind": "Dice"
             },
             {
@@ -599,27 +587,27 @@
               "kind": "Energy"
             }
           ],
-          "effect": "Char_Skill_13033",
+          "effect": "Char_Skill_15023",
           "energyGain": 0,
-          "id": 13033,
+          "id": 15023,
           "kind": "ElementalBurst"
         }
       ],
       "weapon": "SWORD"
     },
     {
-      "descriptionTextId": 1060447580,
-      "element": "Ice",
-      "hp": 10,
-      "id": 1103,
-      "maxEnergy": 2,
-      "nameTextId": 2566603099,
+      "descriptionTextId": 3926501404,
+      "element": "Water",
+      "hp": 11,
+      "id": 2201,
+      "maxEnergy": 3,
+      "nameTextId": 561889595,
       "skills": [
         {
           "costs": [
             {
               "count": 1,
-              "element": "Ice",
+              "element": "Water",
               "kind": "Dice"
             },
             {
@@ -627,43 +615,56 @@
               "kind": "Unaligned"
             }
           ],
-          "effect": "Effect_Damage_Physic_2",
+          "effect": "Effect_Damage_Water_1",
           "energyGain": 1,
-          "id": 11031,
+          "id": 22011,
           "kind": "NormalAttack"
         },
         {
           "costs": [
             {
               "count": 3,
-              "element": "Ice",
+              "element": "Water",
               "kind": "Dice"
             }
           ],
-          "effect": "Char_Skill_11032",
+          "effect": "Char_Skill_22012",
           "energyGain": 1,
-          "id": 11032,
+          "id": 22012,
           "kind": "ElementalSkill"
         },
         {
           "costs": [
             {
-              "count": 4,
-              "element": "Ice",
+              "count": 5,
+              "element": "Water",
+              "kind": "Dice"
+            }
+          ],
+          "effect": "Char_Skill_22013",
+          "energyGain": 1,
+          "id": 22013,
+          "kind": "ElementalSkill"
+        },
+        {
+          "costs": [
+            {
+              "count": 3,
+              "element": "Water",
               "kind": "Dice"
             },
             {
-              "count": 2,
+              "count": 3,
               "kind": "Energy"
             }
           ],
-          "effect": "Char_Skill_11033",
+          "effect": "Char_Skill_22014",
           "energyGain": 0,
-          "id": 11033,
+          "id": 22014,
           "kind": "ElementalBurst"
         }
       ],
-      "weapon": "SWORD"
+      "weapon": "NONE"
     }
   ]
 }

@@ -8,6 +8,7 @@ export interface GcgCard {
   descriptionTextId: number;
   effects: string[];
   id: number;
+  isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
 }

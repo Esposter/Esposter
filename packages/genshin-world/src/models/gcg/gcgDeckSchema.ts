@@ -22,6 +22,7 @@ export const gcgDeckSchema = z.object({
       descriptionTextId: z.int().positive(),
       effects: z.array(z.string()),
       id: z.int().positive(),
+      isLocation: z.boolean(),
       kind: z.enum(GcgCardKind),
       nameTextId: z.int().positive(),
     }),
