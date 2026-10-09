@@ -1,10 +1,10 @@
 import { getDirectoryDigest } from "#src/services/fleet/data/getDirectoryDigest";
 import { describe, expect, test } from "vitest";
 
-const FILE = { mtime: 1, name: "a.png", size: 2 };
-const CHILD = { digest: "b", name: "sub" };
-
 describe(getDirectoryDigest, () => {
+  const FILE = { mtime: 1, name: "a.png", size: 2 };
+  const CHILD = { digest: "b", name: "sub" };
+
   test("does not depend on the order the files and directories are listed in", () => {
     expect.hasAssertions();
 

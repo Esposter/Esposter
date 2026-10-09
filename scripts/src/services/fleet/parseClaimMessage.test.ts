@@ -1,16 +1,16 @@
 import { parseClaimMessage } from "#src/services/fleet/parseClaimMessage";
 import { describe, expect, test } from "vitest";
 
-const CLAIM = {
-  claimedAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
-  entry: "city-areas",
-  load: "CPU 4%",
-  machine: "pc",
-  renewedAt: Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 10 }).toString(),
-  worker: "7f3a",
-};
-
 describe(parseClaimMessage, () => {
+  const CLAIM = {
+    claimedAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+    entry: "city-areas",
+    load: "CPU 4%",
+    machine: "pc",
+    renewedAt: Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 10 }).toString(),
+    worker: "7f3a",
+  };
+
   test("reads a claim commit's message back", () => {
     expect.hasAssertions();
 

@@ -1,9 +1,9 @@
 import { parseForEachRefLine } from "#src/services/fleet/parseForEachRefLine";
 import { describe, expect, test } from "vitest";
 
-const SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
-
 describe(parseForEachRefLine, () => {
+  const SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+
   test("reads a ref's commit, id and message, a message keeping its spaces", () => {
     expect.hasAssertions();
 

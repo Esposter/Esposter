@@ -1,15 +1,15 @@
 import { parsePeers } from "#src/services/fleet/data/parsePeers";
 import { describe, expect, test } from "vitest";
 
-const PEER = {
-  host: "192.168.0.2",
-  identityFile: "~/.ssh/fleet",
-  parityDirectory: "~/data",
-  repository: "/repo",
-  user: "me",
-};
-
 describe(parsePeers, () => {
+  const PEER = {
+    host: "192.168.0.2",
+    identityFile: "~/.ssh/fleet",
+    parityDirectory: "~/data",
+    repository: "/repo",
+    user: "me",
+  };
+
   test("reads each named peer's fields", () => {
     expect.hasAssertions();
 
