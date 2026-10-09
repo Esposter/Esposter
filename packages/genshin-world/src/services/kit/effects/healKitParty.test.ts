@@ -30,6 +30,7 @@ const createCombatant = (characterId: number, maxHealth: number): Combatant => (
     { attribute: Attribute.BaseHealth, value: maxHealth },
   ]),
   characterId,
+  constellationCount: 0,
   elementalResonances: [],
   kit: NOELLE_KIT,
   level: 90,
@@ -42,7 +43,7 @@ describe(healKitParty, () => {
     const member = createCombatant(MEMBER_ID, 20_000);
     const party = createParty([NOELLE_CHARACTER_ID, MEMBER_ID]);
     for (const characterId of [NOELLE_CHARACTER_ID, MEMBER_ID]) getPartyMember(party, characterId).healthShare = 0.5;
-    const healParty = { chance: 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
+    const healParty = { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
 
     const isHealed = healKitParty(
       party,
@@ -70,7 +71,7 @@ describe(healKitParty, () => {
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
     const party = createParty([NOELLE_CHARACTER_ID]);
     const combatants = new Map([[NOELLE_CHARACTER_ID, noelle]]);
-    const hit = { ...NOELLE_HIT, healParty: { chance: 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
+    const hit = { ...NOELLE_HIT, healParty: { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
 
     expect(healKitParty(party, combatants, [], noelle, hit, () => 0)).toBe(false);
     expect(healKitParty(party, combatants, [SHIELD], noelle, hit, () => 0.9)).toBe(false);

@@ -18,6 +18,7 @@ describe(getBuffedCombatant, () => {
       ascension: 0,
       attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 100 }]),
       characterId: CHARACTER_ID,
+      constellationCount: 0,
       elementalResonances: [],
       kit: DILUC_KIT,
       level: 90,

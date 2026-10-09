@@ -17,9 +17,14 @@ export const healKitParty = (
   random: () => number,
 ): boolean => {
   const { healParty } = kitHit;
-  if (!healParty || !effects.some((effect) => effect.kind === "shield" && effect.characterId === striker.characterId))
+  if (
+    !healParty ||
+    !effects.some(
+      (effect) => effect.kind === "shield" && effect.characterId === striker.characterId && effect.secondsRemaining > 0,
+    )
+  )
     return false;
-  if (random() >= healParty.chance) return false;
+  if (random() >= healParty.chance(striker, effects)) return false;
   const healedHp = healParty.flatHealth + healParty.defenseShare * striker.attributes.defense;
   for (const characterId of party.characterIdMemberMap.keys()) {
     const member = characterIdCombatantMap.get(characterId);

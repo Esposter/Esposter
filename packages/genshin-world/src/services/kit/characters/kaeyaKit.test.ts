@@ -19,6 +19,7 @@ const createKaeyaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: KAEYA_CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: KAEYA_KIT,
   level: 90,
@@ -65,6 +66,7 @@ describe("kaeya kit", () => {
         { attribute: Attribute.BaseHealth, value: 10_000 },
         { attribute: Attribute.BaseAttack, value: 1000 },
       ]),
+      constellationCount: 0,
     };
     const party = createParty([KAEYA_CHARACTER_ID]);
     const partyMember = getPartyMember(party, KAEYA_CHARACTER_ID);

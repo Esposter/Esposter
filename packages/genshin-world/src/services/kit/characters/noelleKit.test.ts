@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -6,7 +7,9 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NOELLE_CHARACTER_ID } from "#src/services/character/constants";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -21,6 +24,7 @@ const createNoelleCombatant = (): Combatant => ({
     { attribute: Attribute.BaseDefense, value: DEFENSE },
   ]),
   characterId: NOELLE_CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: NOELLE_KIT,
   level: 90,
@@ -91,5 +95,54 @@ describe("noelle kit", () => {
         secondsRemaining: 15 + 80 / 60,
       },
     ]);
+  });
+
+  test("with I Got Your Back, Breastplate's heal is certain under Sweeping Time from one constellation, and at its chance otherwise", () => {
+    expect.hasAssertions();
+    const combatant = { ...createNoelleCombatant(), constellationCount: 1 };
+    const sweepingTime: KitEffect = {
+      characterId: combatant.characterId,
+      element: Element.Geo,
+      isConverted: true,
+      kind: "infusion",
+      secondsRemaining: 10,
+    };
+    const { healParty } = takeOne(NOELLE_KIT.elementalSkill.hits);
+
+    expect(healParty?.chance(combatant, [sweepingTime])).toBe(1);
+    expect(healParty?.chance(combatant, [])).toBeCloseTo(0.5, 5);
+    expect(healParty?.chance({ ...combatant, constellationCount: 0 }, [sweepingTime])).toBeCloseTo(0.5, 5);
+  });
+
+  test("with To Be Cleaned, her shield explodes as it ends for 4 times her ATK of Geo, from where it was cast, from four constellations", () => {
+    expect.hasAssertions();
+    const body = { facing: 0, height: 0, position: { x: 10, z: 0 } };
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    const explodeAfterShield = (constellationCount: number) => {
+      const kitEffectState: KitEffectState = { effects: [] };
+      const combatant = { ...createNoelleCombatant(), constellationCount };
+      NOELLE_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState });
+      // Breastplate lasts 12 seconds, so 13 seconds run it out
+      return stepKitEffects(kitEffectState, 13, { activeCombatant: combatant, body: body.position, party });
+    };
+
+    expect(explodeAfterShield(3)).toStrictEqual([]);
+    const [explosion] = explodeAfterShield(4);
+    expect(explosion?.hit.talentMultiplier).toBe(4);
+    expect(explosion?.hit.element).toBe(Element.Geo);
+    expect(explosion?.body.position).toStrictEqual({ x: 10, z: 0 });
+  });
+
+  test("recasting Breastplate ends the shield she holds, whose explosion goes off on the next step", () => {
+    expect.hasAssertions();
+    const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const combatant = { ...createNoelleCombatant(), constellationCount: 4 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    NOELLE_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState });
+    NOELLE_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState });
+    const context = { activeCombatant: combatant, body: body.position, party: createParty([NOELLE_CHARACTER_ID]) };
+
+    expect(stepKitEffects(kitEffectState, 0.1, context)).toHaveLength(1);
+    expect(kitEffectState.effects).toHaveLength(1);
   });
 });

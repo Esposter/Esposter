@@ -304,6 +304,7 @@ const characterIdCombatantMap = computed(() => {
           elementalResonances,
         ),
         characterId: character.id,
+        constellationCount: character.constellationCount,
         elementalResonances,
         kit,
         level: character.level,

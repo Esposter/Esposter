@@ -1,6 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -8,12 +10,16 @@ import { LISA_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
+import { createKitState } from "#src/services/kit/createKitState";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { createParty } from "#src/services/party/createParty";
+import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const LISA_KIT = createLisaKit(await readTalentMultipliers([LISA_CHARACTER_ID]));
@@ -22,6 +28,7 @@ const createLisaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: LISA_CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: LISA_KIT,
   level: 90,
@@ -80,5 +87,45 @@ describe("lisa kit", () => {
     expect(read.talentMultiplier).toBeCloseTo(4.24, 2);
     expect(read.poiseDamage).toBe(240);
     expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("its hold is released by itself at 4 seconds held, and holding on past them starts it no second time", () => {
+    expect.hasAssertions();
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const landedHits: KitHit[] = [];
+    const context: KitStepContext = {
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant: createLisaCombatant(),
+      kitEffectState: { effects: [] },
+    };
+    const idleInput: KitInput = {
+      height: 0,
+      isAttackHeld: false,
+      isAttackPressed: false,
+      isBurstPressed: false,
+      isSkillHeld: false,
+      isSkillPressed: false,
+      locomotionState: LocomotionState.Idle,
+    };
+    // A quarter second a step keeps the held seconds exact, so the skill reaches its 4 seconds after 16 steps, and is held
+    // Past them until the step 28 lets it go
+    const startedSteps: number[] = [];
+    for (let step = 0; step < 40; step++) {
+      const action = stepKit(
+        kitState,
+        LISA_KIT,
+        { ...idleInput, isSkillHeld: step < 28 },
+        partyMember,
+        stamina,
+        0.25,
+        landedHits,
+        context,
+      );
+      if (action) startedSteps.push(step);
+    }
+
+    expect(startedSteps).toStrictEqual([15]);
   });
 });

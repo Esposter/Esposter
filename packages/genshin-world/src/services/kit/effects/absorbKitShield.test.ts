@@ -14,6 +14,7 @@ const combatant: Combatant = {
   ascension: 0,
   attributes: computeCharacterAttributes([]),
   characterId: CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: TRAVELER_KIT,
   level: 90,

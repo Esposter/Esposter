@@ -38,8 +38,19 @@ export const stepKit = (
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
-  kitState.skillReleasedSeconds = isSkillHeld ? 0 : kitState.skillHeldSeconds;
-  kitState.skillHeldSeconds = isSkillHeld ? kitState.skillHeldSeconds + stepSeconds : 0;
+  // A skill held to its maximum is released there, once: holding on past it neither starts it again nor releases it twice
+  const previousHeldSeconds = kitState.skillHeldSeconds;
+  const maximumHeldSeconds = kit.elementalSkillMaximumHeldSeconds ?? Infinity;
+  if (isSkillHeld) {
+    kitState.skillHeldSeconds = Math.min(previousHeldSeconds + stepSeconds, maximumHeldSeconds);
+    kitState.skillReleasedSeconds =
+      previousHeldSeconds < maximumHeldSeconds && kitState.skillHeldSeconds === maximumHeldSeconds
+        ? maximumHeldSeconds
+        : 0;
+  } else {
+    kitState.skillReleasedSeconds = previousHeldSeconds < maximumHeldSeconds ? previousHeldSeconds : 0;
+    kitState.skillHeldSeconds = 0;
+  }
   kitState.sprintSeconds = locomotionState === LocomotionState.Sprint ? kitState.sprintSeconds + stepSeconds : 0;
   if (kitState.sprintSeconds > 0) kit.onSprint?.(context, kitState);
   kitState.skillChainSeconds += stepSeconds;
@@ -72,7 +83,7 @@ export const stepKit = (
       action === kit.elementalSkill ||
       action === kit.elementalBurst ||
       kit.elementalSkillChain?.followUps.includes(action) === true ||
-      kit.elementalSkillHolds?.some((hold) => hold.action === action) === true;
+      kit.elementalSkillHolds?.some((hold) => hold.action === action || hold.variant?.action === action) === true;
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));

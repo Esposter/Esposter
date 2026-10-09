@@ -22,6 +22,7 @@ import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
@@ -201,18 +202,19 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     ...landedHits.map((hit): KitStrike => ({ body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
-  for (const { body: strikeBody, combatant: strikeCombatant, hit } of strikes) {
+  for (const { body: strikeBody, combatant: strikeCombatant, hit, target } of strikes) {
     const pricedCombatant = getBuffedCombatant(strikeCombatant, kitEffectState.effects);
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-        !checkIsInAttackArea(hit.hitArea, strikeBody, enemy)
+        (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, strikeBody, enemy))
       )
         continue;
       for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, random))
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
+      strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
       if (!isPartyHealed)
         isPartyHealed = healKitParty(

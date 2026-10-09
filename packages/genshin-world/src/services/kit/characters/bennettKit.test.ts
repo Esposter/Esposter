@@ -34,6 +34,7 @@ const createBennettCombatant = (): Combatant => ({
     { attribute: Attribute.BaseAttack, value: BASE_ATTACK },
   ]),
   characterId: BENNETT_CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: BENNETT_KIT,
   level: 90,
@@ -158,5 +159,28 @@ describe("bennett kit", () => {
     expect(
       releaseSkill(0.1, { ascension: 4, body: { x: 50, z: 0 }, effects: [field] }).partyMember.skillCooldownSeconds,
     ).toBeCloseTo(4, 5);
+  });
+
+  test("under its own field at Ascension 4, the Level 2 hold plays without the launch, in 175 frames, and otherwise in 343", () => {
+    expect.hasAssertions();
+    const body = { x: 0, z: 0 };
+    const field: KitEffect = {
+      centre: body,
+      characterId: BENNETT_CHARACTER_ID,
+      kind: "field",
+      nextTickSeconds: 1,
+      onTick: () => {},
+      radius: 6,
+      secondsRemaining: 10,
+      tickIndex: 0,
+      tickIntervalSeconds: 1,
+    };
+
+    expect(releaseSkill(1.2, { ascension: 4, body, effects: [field] }).action?.seconds).toBeCloseTo(175 / 60, 5);
+    expect(releaseSkill(1.2, { ascension: 3, body, effects: [field] }).action?.seconds).toBeCloseTo(343 / 60, 5);
+    expect(releaseSkill(1.2, { ascension: 4, body: { x: 50, z: 0 }, effects: [field] }).action?.seconds).toBeCloseTo(
+      343 / 60,
+      5,
+    );
   });
 });

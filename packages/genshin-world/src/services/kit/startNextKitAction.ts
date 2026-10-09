@@ -63,7 +63,8 @@ export const startNextKitAction = (
     partyMember.skillCooldownSeconds = cooldownSeconds * (kit.getSkillCooldownMultiplier?.(context) ?? 1);
     kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
     kitState.skillChainSeconds = 0;
-    return startKitAction(kitState, hold?.action ?? kit.elementalSkill, landedHits);
+    const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;
+    return startKitAction(kitState, holdAction ?? kit.elementalSkill, landedHits);
   }
 
   if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot) {

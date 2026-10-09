@@ -87,6 +87,10 @@ const CHARGE_LEVEL_2_SECOND_HITMARK_SECONDS = 121 / 60;
 const CHARGE_LEVEL_2_EXPLOSION_HITMARK_SECONDS = 166 / 60;
 const CHARGE_LEVEL_1_SECONDS = 98 / 60;
 const CHARGE_LEVEL_2_SECONDS = 343 / 60;
+// Measured: gcsim v2.47.2 (MIT) bennett/skill.go, the Level 2 hold's animation under Fearnaught, 175 frames, without the
+// Launch: its hits and explosion are the same, all of them landing before the animation ends
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
+const CHARGE_LEVEL_2_NO_LAUNCH_SECONDS = 175 / 60;
 // Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. A recording of
 // The skill's hold measures them
 const CHARGE_LEVEL_1_MINIMUM_HELD_SECONDS = 0.5;
@@ -165,23 +169,25 @@ const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction
   targetingArea: SKILL_TARGETING_AREA,
 });
 
+// Whether Bennett stands in a field of his own at Ascension 4, the condition Fearnaught's two effects read: Passion
+// Overload's cooldown is halved, and Bennett is not launched by the Level 2 explosion
+const checkIsFearnaughtActive = ({ body, combatant, kitEffectState }: KitStepContext): boolean =>
+  combatant.ascension >= 4 &&
+  kitEffectState.effects.some(
+    (effect) =>
+      effect.kind === "field" &&
+      effect.characterId === combatant.characterId &&
+      checkIsInKitField(effect, body.position),
+  );
+
 // Fantastic Voyage's field lowers Passion Overload's cooldown by half at Ascension 4 for Bennett standing in it, and
 // Ascension 1 lowers every Passion Overload's cooldown by 20%
 // Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
-const getSkillCooldownMultiplier = ({ body, combatant, kitEffectState }: KitStepContext): number => {
+const getSkillCooldownMultiplier = (context: KitStepContext): number => {
   let multiplier = 1;
-  if (combatant.ascension >= 1) multiplier *= 0.8;
-  if (
-    combatant.ascension >= 4 &&
-    kitEffectState.effects.some(
-      (effect) =>
-        effect.kind === "field" &&
-        effect.characterId === combatant.characterId &&
-        checkIsInKitField(effect, body.position),
-    )
-  )
-    multiplier *= 0.5;
+  if (context.combatant.ascension >= 1) multiplier *= 0.8;
+  if (checkIsFearnaughtActive(context)) multiplier *= 0.5;
   return multiplier;
 };
 
@@ -301,6 +307,10 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       action: createChargeLevel2(talentMultiplierMap),
       cooldownSeconds: BENNETT_CHARGE_LEVEL_2_COOLDOWN_SECONDS,
       minimumHeldSeconds: CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS,
+      variant: {
+        action: { ...createChargeLevel2(talentMultiplierMap), seconds: CHARGE_LEVEL_2_NO_LAUNCH_SECONDS },
+        checkIsActive: checkIsFearnaughtActive,
+      },
     },
   ],
   getSkillCooldownMultiplier,
