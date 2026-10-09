@@ -30,6 +30,7 @@ export const craftRecipe = (
 ): undefined | { inventory: Inventory; wallet: Wallet } => {
   if (
     !checkIsRecipeOpen(recipe, progress, adventureRank) ||
+    !Number.isInteger(count) ||
     count < 1 ||
     count > computeCraftableCount(recipe, { inventory, wallet }, now)
   )

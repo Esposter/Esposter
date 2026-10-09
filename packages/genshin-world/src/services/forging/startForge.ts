@@ -28,6 +28,7 @@ export const startForge = (
 ): undefined | { inventory: Inventory; progress: ForgeProgress; wallet: Wallet } => {
   if (
     !checkIsForgeRecipeOpen(recipe, progress, adventureRank) ||
+    !Number.isInteger(count) ||
     count < 1 ||
     count > recipe.queueSize ||
     progress.orders.length >= computeForgeQueueCount(adventureRank) ||

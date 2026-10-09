@@ -96,4 +96,10 @@ describe(startProcessing, () => {
     expect(result?.job.count).toBe(2);
     expect(result?.job.startedAt.equals(now.subtract({ seconds: UNIT_SECONDS }))).toBe(true);
   });
+
+  test("should be refused for a count that is not whole", () => {
+    expect.hasAssertions();
+
+    expect(startProcessing(recipe, 1.5, { inventory: createInventory(4), job: undefined, now: EPOCH })).toBeUndefined();
+  });
 });

@@ -17,6 +17,7 @@ export const startProcessing = (
   const queuedCount = job?.count ?? 0;
   if (
     !recipe.isDefaultUnlocked ||
+    !Number.isInteger(count) ||
     count < 1 ||
     queuedCount + count > recipe.queueSize ||
     recipe.ingredients.some(({ count: perUnit, id }) => countInventoryItem(inventory.items, id) < perUnit * count)

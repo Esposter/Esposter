@@ -81,4 +81,10 @@ describe(startForge, () => {
 
     expect(startForge(recipe, 2, { ...startArguments, inventory: createInventory(5) })).toBeUndefined();
   });
+
+  test("should be refused for a count that is not whole", () => {
+    expect.hasAssertions();
+
+    expect(startForge(recipe, 1.5, startArguments)).toBeUndefined();
+  });
 });

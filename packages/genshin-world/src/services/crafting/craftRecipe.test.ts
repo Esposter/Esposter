@@ -90,6 +90,15 @@ describe(craftRecipe, () => {
     expect(craftRecipe(tierRecipe, 3, resultDefinition, craftingState(inventory, wallet))).toBeUndefined();
   });
 
+  test("should refuse a count that is not whole", () => {
+    expect.hasAssertions();
+
+    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 9 }], nextId: 1 };
+    const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 300 };
+
+    expect(craftRecipe(tierRecipe, 1.5, resultDefinition, craftingState(inventory, wallet))).toBeUndefined();
+  });
+
   test("should refuse a Condensed Resin the bag has no stack room for, the bag holding its limit of five", () => {
     expect.hasAssertions();
 
