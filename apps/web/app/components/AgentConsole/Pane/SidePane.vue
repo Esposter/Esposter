@@ -6,7 +6,7 @@ import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
 
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { currentPagePath, pagePaths } = storeToRefs(agentConsolePaneStore);
-const { closePage } = agentConsolePaneStore;
+const { closePage, openPage } = agentConsolePaneStore;
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { closePage } = agentConsolePaneStore;
           :aria-selected="pagePath === currentPagePath"
           role="tab"
           :variant="pagePath === currentPagePath ? undefined : UiButtonVariant.Quiet"
-          @click="currentPagePath = pagePath"
+          @click="openPage(pagePath)"
         >
           {{ pagePath }}
         </UiButton>

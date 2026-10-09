@@ -27,7 +27,7 @@ sequenceDiagram
 
 - **The embed flag.** A page framed by the pane carries `?embed` in its query (`EMBED_QUERY_KEY`, built by `getEmbeddedPath`). The app's root reads it once, through `useIsEmbedded`, and drops the dock; the default layout drops its drawers and the resource layout drops its trail and service menu. The page's own content is not touched, so every page of the app is embeddable with no change to it.
 - **Frames, not proxies.** Each open page is a same-origin `iframe`, so the auth cookie, the page's own state and its tRPC calls behave exactly as they do in a tab of their own. Every frame stays mounted while its tab is in the background, so a page keeps its place when it is shown again.
-- **Links open in the pane.** A link in a message of the conversation, or in the composer's stream, opens in the pane when it points at this app's origin. A modifier key (Ctrl, Cmd or Shift) keeps the link's own behaviour and opens a tab.
+- **Links open in the pane.** A link in a message of the conversation, or in the composer's stream, opens in the pane when it points at this app's origin. A modifier key (Ctrl, Cmd or Shift) keeps the link's own behaviour and opens a tab, and a link to an anchor on the console's own page scrolls there.
 - **Layout.** The pane stands beside the console's tabs, behind a handle on its start edge that the reader drags to resize it, remembered by the browser as `LocalStorageKey.AgentConsolePaneWidth`. It never grows so wide the tabs keep less than the pane's own least width, whatever width was remembered on a wider window. It appears only while a page is open there, and closing its last tab closes it.
 
 ## Decisions
