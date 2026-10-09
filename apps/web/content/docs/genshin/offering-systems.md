@@ -1,11 +1,11 @@
 ---
 title: Offering systems
-description: The offering rule built and tested as rules, not yet on a screen. Every offering item the bag holds is offered at once and its rewards paid in, each level its items cover is reached and its reward paid once, the Frostbearing Tree's levels are read from the game's offering table, and its place in Mondstadt is written from the official map.
+description: The offering rule built and tested as rules, not yet on a screen. Every offering item the bag holds is offered at once and its rewards paid in, each level its items cover is reached and its reward paid once, the Frostbearing Tree's levels are read from the game's offering table, and its place in Mondstadt is published from the official map.
 ---
 
 # Offering systems
 
-In the game a sacred tree, fountain or shrine takes the items of its kind the bag holds, all at once, and rises a level for each threshold its offerings pass. This page is what is built of [Offering systems](/docs/proposals/genshin/offering-systems): the rule, the same one a statue's Oculi follow, the bag's offer that takes the items out of the bag, and the Frostbearing Tree in Dragonspine as the first offering written. The rules are pure functions with their own tests. Nothing in the world calls them yet, since no tree is drawn or prompted in Dragonspine, so the rule runs on no screen.
+In the game a sacred tree, fountain or shrine takes the items of its kind the bag holds, all at once, and rises a level for each threshold its offerings pass. This page is what is built of [Offering systems](/docs/proposals/genshin/offering-systems): the rule, the same one a statue's Oculi follow, the bag's offer that takes the items out of the bag, and the Frostbearing Tree in Dragonspine as the first offering published. The rules are pure functions with their own tests. Nothing in the world calls them yet, since no tree is drawn or prompted in Dragonspine, so the rule runs on no screen.
 
 ## How it works
 
@@ -20,8 +20,8 @@ flowchart TD
   NEXT -->|"no"| HELD["Held toward the next level"]
 ```
 
-- **The tree's levels come from the game's table.** `pnpm -C scripts genshin:assets offerings` writes the Frostbearing Tree's levels from the offering level-up table, one row a level holding the item it takes, how many, and the rewards its reward row pays. Offering 1 is the tree, the one its open state names. The offering table is not in the dump, so the [game data formats](/docs/genshin/game-data-formats) page records how it is fetched. The slice is imported on demand by `readFrostbearingTreeLevels` and checked against its schema as it arrives.
-- **The tree's place comes from the official map.** The same command writes the Frostbearing Tree's place: the map's one point for the tree, which lies in Mondstadt's area, carried through the [spawned places](/docs/genshin/spawned-places) fit into the game's coordinates and then into Mondstadt's region axes. It is one slice per region in `generated/frostbearingTreePlaces`, and the tree stands at `(-596.88, -216.89)` in Mondstadt's axes, not yet placed on the ground.
+- **The tree's levels come from the game's table.** `pnpm -C scripts genshin:assets offerings` publishes the Frostbearing Tree's levels from the offering level-up table, one row a level holding the item it takes, how many, and the rewards its reward row pays. Offering 1 is the tree, the one its open state names. The offering table is not in the dump, so the [game data formats](/docs/genshin/game-data-formats) page records how it is fetched. The slice is imported on demand by `readFrostbearingTreeLevels` and checked against its schema as it arrives.
+- **The tree's place comes from the official map.** The same command publishes the Frostbearing Tree's place: the map's one point for the tree, which lies in Mondstadt's area, carried through the [spawned places](/docs/genshin/spawned-places) fit into the game's coordinates and then into Mondstadt's region axes. It is one slice per region in the `frostbearingTreePlaces` dataset, and the tree stands at `(-596.88, -216.89)` in Mondstadt's axes, not yet placed on the ground.
 - **Every item the bag holds is offered at once.** `offerBagItems` takes every item an offering's levels take that the bag holds out of the bag and counts them into the offering through `offerItems`. That takes the count offered, adds it to the held count, then reaches each next level whose items the count now covers, taking those off the count and returning the levels reached in order. A level's threshold is the running sum of the items the levels take, so the tree's eleven levels after its first take ten each, 110 in all.
 - **Each reached level's rewards are paid in.** `offerBagItems` pays every reward of the levels reached as a pick up pays it: Mora into the wallet, anything else into the bag. What the bag has no room for is left over and counted as the offer's overflow.
 - **The first offer starts the tree.** Level 1 takes no items, so offering none reaches it, whatever the bag holds, and its reward is paid once, as a statue's first resonance does. This is settled from the table, since the wiki's page was not reachable when this was built.
@@ -40,10 +40,10 @@ flowchart TD
 | `packages/genshin-world/src/models/offering/OfferingReward.ts`                | One item a level pays                                                     |
 | `packages/genshin-world/src/generated/offerings/frostbearingTree.json`        | The written levels, imported on demand                                    |
 | `packages/genshin-world/src/generated/frostbearingTreePlaces/mondstadt.json`  | The tree's place in Mondstadt, one slice per region                       |
-| `scripts/src/services/genshinAssets/offerings/writeFrostbearingTreeLevels.ts` | Writes the tree's levels, each reward joined from the reward table        |
-| `scripts/src/services/genshinAssets/offerings/writeFrostbearingTreePlaces.ts` | Writes the tree's place from the official map's point and the fit         |
+| `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreeLevels.ts` | Builds the tree's levels, each reward joined from the reward table        |
+| `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts` | Builds the tree's place from the official map's point and the fit         |
 | `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`          | One level's row: the item and count it takes, its rewards                 |
-| `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                 | The reward table keyed by reward id, shared by the level writers          |
+| `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                 | The reward table keyed by reward id, shared by the level builders         |
 
 ## Notes
 

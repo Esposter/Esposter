@@ -11,8 +11,8 @@ The fishing points stand where the official map places them, each region's pools
 
 ```mermaid
 flowchart LR
-  MAP["The official map's Fishing Point label"] -->|"fit"| P["points.json, by region"]
-  TABLES["Fish, rod, pool and stock tables"] -->|"genshin:assets fishing"| S["fish.json, rods.json, pools.json"]
+  MAP["The official map's Fishing Point label"] -->|"fit"| P["points, by region"]
+  TABLES["Fish, rod, pool and stock tables"] -->|"genshin:assets fishing"| S["fish, rods and pools, published"]
   P --> W["genshin-world, imported on demand"]
   S --> W
   W --> R["Rules: stock by hour, refill, draw, lure, reel"]
@@ -32,7 +32,7 @@ stateDiagram-v2
 
 ## The read
 
-`pnpm -C scripts genshin:assets fishing` writes four slices into the world's generated folder, each imported on demand and checked against its shape as it arrives:
+`pnpm -C scripts genshin:assets fishing` publishes four records to the fishing dataset of the [hosted game data](/docs/genshin/hosted-game-data), one for each of the points, the fish, the rods and the pools:
 
 - **Points.** The official map's Fishing Point label, placed by the fit that already carries the statues and waypoints into the game's coordinates ([spawned places](/docs/genshin/spawned-places)), carried into its region's axes by the same step as the chests, and filed by region.
 - **Fish and rods.** Every fish's hit points, attract and flee ranges, bite timeout, feeler range, moving zone and item, and every rod's base attack, multiplier, accuracy and maximum, read by the table's own names.
@@ -56,8 +56,8 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 
 | File                                                                         | Role                                                          |
 | :--------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/fishing/writeFishingPoints.ts`           | The official map's fishing points, fitted and filed by region |
-| `scripts/src/services/genshinAssets/fishing/writeFishingTables.ts`           | The fish, rods and each region's pools as the world's slices  |
+| `scripts/src/services/genshinAssets/fishing/buildFishingPoints.ts`           | The official map's fishing points, fitted and filed by region |
+| `scripts/src/services/genshinAssets/fishing/buildFishingTables.ts`           | The fish, rods and each region's pools as records             |
 | `scripts/src/services/genshinAssets/fishing/toFishingPool.ts`                | A pool's stocks resolved to their table rows                  |
 | `packages/genshin-world/src/services/fishing/pickFishingStock.ts`            | The stock a pool draws from at an hour of the game's day      |
 | `packages/genshin-world/src/services/fishing/checkIsFishingStockRefilled.ts` | Whether an emptied stock is back in full                      |

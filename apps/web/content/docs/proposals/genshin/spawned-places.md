@@ -31,7 +31,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the map's points are read and fitted, the chests are written into their slices by [chests](/docs/genshin/chests), the Oculi into theirs by the [spawned places](/docs/genshin/spawned-places) page, and region data holds what the client's data places, beside one stand-in enemy camp in Mondstadt, written by hand with the enemies.
+**Today:** the map's points are read and fitted, the chests are published into their slices by [chests](/docs/genshin/chests), the Oculi into theirs by the [spawned places](/docs/genshin/spawned-places) page, and region data holds what the client's data places, beside one stand-in enemy camp in Mondstadt, written by hand with the enemies.
 
 **Still to add:**
 
@@ -46,7 +46,7 @@ flowchart TD
 | File                                                            | Role after the change                               |
 | :-------------------------------------------------------------- | :-------------------------------------------------- |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`   | Carries each kind's points into its region          |
-| `scripts/src/services/genshinAssets/oculi/writeOculusPlaces.ts` | Writes the Oculi slices from the points and the fit |
+| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts` | Builds the Oculi slices from the points and the fit |
 | `packages/genshin-world/src/generated/`                         | One slice per kind and region, imported on demand   |
 | `packages/genshin-world/src/services/world/getWorldHeight.ts`   | The ground a fitted place stands on                 |
 

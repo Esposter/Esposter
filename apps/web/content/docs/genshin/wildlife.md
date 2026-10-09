@@ -1,11 +1,11 @@
 ---
 title: Wildlife
-description: The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's generated slice and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them, their drops and the material sources wait on the proposal's later steps.
+description: The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's slice of the game data and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them, their drops and the material sources wait on the proposal's later steps.
 ---
 
 # Wildlife
 
-The client does not place the game's animals, so the map's public points stand in for them, as [spawned places](/docs/genshin/spawned-places) describes. This page is the built part of the [wildlife](/docs/proposals/genshin/wildlife) proposal: the three kinds of bird and beast the map marks as fleeing are placed in the scene by the fit's transform and written into each region's slice, and in Windrise's scene each one stands at its place and runs from the character when it comes near. Nothing is struck, dropped or picked up yet.
+The client does not place the game's animals, so the map's public points stand in for them, as [spawned places](/docs/genshin/spawned-places) describes. This page is the built part of the [wildlife](/docs/proposals/genshin/wildlife) proposal: the three kinds of bird and beast the map marks as fleeing are placed in the scene by the fit's transform and published into each region's slice, and in Windrise's scene each one stands at its place and runs from the character when it comes near. Nothing is struck, dropped or picked up yet.
 
 ## How it works
 
@@ -16,7 +16,7 @@ flowchart TD
   K -->|"yes"| L{"On the ground layer, in a mapped region?"}
   L -->|"no"| UG["Left out, as the chests are"]
   L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
-  T --> S["One slice per region in genshin-world's generated wildlife folder"]
+  T --> S["One slice per region, published to the wildlife dataset of the hosted game data"]
   S --> V["Windrise's scene parses Mondstadt's slice and stands each animal at its place"]
   V --> F{"The character within the escape radius?"}
   F -->|"yes: run straight away"| F
@@ -38,7 +38,7 @@ The numbers are provisional, each marked in `services/wildlife/constants.ts`:
 
 ## The placement
 
-`pnpm -C scripts genshin:assets wildlife` writes each region's animals as one slice in `packages/genshin-world/src/generated/wildlife/`, the chest slices' pattern. Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked.
+`pnpm -C scripts genshin:assets wildlife` publishes each region's animals as one slice to the wildlife dataset of the [hosted game data](/docs/genshin/hosted-game-data), the chest slices' pattern. Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked.
 
 `WorldWildlife` stands each animal in Windrise's scene as a capsule of one instanced draw, the enemies' stand-in, stood on the ground under it and turned to its heading. Windrise parses the Mondstadt slice with `wildlifePlaceSchema` when it loads, and the animals are not drawn in a witness render, as the enemies are not.
 
@@ -56,11 +56,11 @@ Every animal of the slice exists from the scene's load. The rule that most anima
 | `packages/genshin-world/src/components/World/Wildlife/Index.vue`        | The instanced stand-ins, stepped and drawn                  |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Mounts the stand-ins over Mondstadt's slice                 |
 | `packages/genshin-world/src/generated/wildlife/`                        | One slice per region                                        |
-| `scripts/src/services/genshinAssets/wildlife/writeWildlifePlaces.ts`    | Carries the map's animals into each region's slice          |
+| `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`    | Carries the map's animals into each region's slice          |
 | `scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts` | Each kind's label on the official map                       |
 | `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`        | `genshin:assets wildlife`                                   |
 
 ## Sources
 
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the writer reads as references.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the builder reads as references.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the environment animal table whose gadget rows give the closest escape radius and time held for the kinds.

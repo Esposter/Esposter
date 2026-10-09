@@ -1,11 +1,11 @@
 ---
 title: Chests
-description: The official Teyvat Interactive Map's chests, fitted into each region's generated slice by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once; locks, digging, seals, the bag's drops and the other tiers wait on the proposal's later steps.
+description: The official Teyvat Interactive Map's chests, fitted into each region's slice of the game data by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once; locks, digging, seals, the bag's drops and the other tiers wait on the proposal's later steps.
 ---
 
 # Chests
 
-The servers' chests are not in the client's data, so the official map's public points stand in for them, as the [spawned places](/docs/genshin/spawned-places) page describes. This page is the first half of the [chests](/docs/proposals/genshin/chests) proposal: each chest the map marks on the ground is carried into the scene by the fit's transform and written into its region's slice, with its kind. Opening one is the second half, below.
+The servers' chests are not in the client's data, so the official map's public points stand in for them, as the [spawned places](/docs/genshin/spawned-places) page describes. This page is the first half of the [chests](/docs/proposals/genshin/chests) proposal: each chest the map marks on the ground is carried into the scene by the fit's transform and published into its region's slice, with its kind. Opening one is the second half, below.
 
 ## How it works
 
@@ -18,7 +18,7 @@ flowchart TD
   L -->|"yes"| A{"In a mapped region's area?"}
   A -->|"no"| UM["Left out: no region holds it"]
   A -->|"yes"| T["Fit's transform into the game's axes,<br/>then placeMapPoints into its region's axes"]
-  T --> S["One slice per region in genshin-world's generated chests folder"]
+  T --> S["One slice per region, published to the chests dataset of the hosted game data"]
 ```
 
 ## The kinds
@@ -37,26 +37,25 @@ flowchart TD
 
 A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. Opening also pours out what the wiki lists for the tier, as provisional pools: one weapon picked from the one-star weapons Common and Exquisite chests name, and the Character EXP materials by star with their counts (Wanderer's Advice, Adventurer's Experience, Hero's Wit). The artifacts are not rolled yet, since an artifact needs its slot and rarity, and the pour-out is not yet placed in the world. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
 
-## The writer
+## The builder
 
-`pnpm -C scripts genshin:assets chests` reads the points and the fit, and writes one slice per region, a list of places laid out as the [spawned places](/docs/genshin/spawned-places) page's Oculi slices are, each in its region's axes. It writes only its own slices, and the report counts each region's chests and what it left out. It does not read the game's tables, the wiki or the installed game.
+`pnpm -C scripts genshin:assets chests` reads the points and the fit, and publishes one slice per region to the chests dataset of the [hosted game data](/docs/genshin/hosted-game-data): a list of places laid out as the [spawned places](/docs/genshin/spawned-places) page's Oculi slices are, each in its region's axes. A publish replaces the whole chests dataset, and the notes count each region's chests and what it left out. With `--dry-run` it prints `unchanged, no request made` when the published slices already match, and it needs no credential. It does not read the game's tables, the wiki or the installed game.
 
 - **The ground only.** Underground chests are counted and left out for the reason the [Oculi](/docs/genshin/spawned-places#the-oculi) section gives.
 - **Mapped areas only.** A point in an area no region is mapped to has no region to join, so it is counted and left out. The current run leaves none out.
-- **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the writer does not place them.
+- **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the builder does not place them.
 - **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the [spawned places](/docs/genshin/spawned-places#the-oculi) rule keeps it out of `LandmarkKind`.
 - **Regions, not catalogue areas.** Each slice is a region, and a place does not yet name its catalogue area, since that needs the region outlines the exploration progress reads. The area each chest counts toward is not set.
-- **Region axes.** The fit carries a point into the game's axes, so `placeMapPoints` carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Every writer of a map point takes the same step through it, so no slice is left in the game's axes.
-- **No height is written.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
+- **Region axes.** The fit carries a point into the game's axes, so `placeMapPoints` carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Every builder of a map point takes the same step through it, so no slice is left in the game's axes.
+- **No height is published.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
 
 ## Key files
 
 | File                                                               | Role                                                                                                             |
 | :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region's axes, the ground and mapped areas, shared with the other map points |
-| `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                                                           |
+| `scripts/src/services/genshinAssets/chests/buildChestPlaces.ts`    | Builds each region's slice from the points and the fit                                                           |
 | `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                                      |
-| `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder                                                                                                 |
 | `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                                          |
 | `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                                 |
 | `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                                 |
@@ -67,5 +66,5 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 ## Sources
 
 - [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the chest reward table's ranges per tier.
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the writer reads as references.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the builder reads as references.
 - [Common Chest Windrise, Mondstadt](https://www.youtube.com/watch?v=JQEikGg8Nvk), OAT_OA, 30 to 42 seconds: a Common chest in Windrise's area opened from standing in reach, its rewards (Adventure EXP, Anemo Sigil, Enhancement Ore, Traveling Doctor's Medicine Pot and Mora) in the wallet's list. Read at 1080 high and 30 frames a second, with the interaction key shown as Enter rather than F, so its opening's timing is measured to a frame at 30 a second.

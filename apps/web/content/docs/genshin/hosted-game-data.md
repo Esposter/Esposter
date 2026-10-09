@@ -64,15 +64,16 @@ flowchart TD
 
 ## Publishing
 
-- `pnpm -C scripts genshin:assets profile` and `pnpm -C scripts genshin:assets archive` build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The recipe and activity commands publish the same way: `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`, each scoped to its own dataset.
+- `pnpm -C scripts genshin:assets profile`, `archive`, `achievements` and `gcg`, and `pnpm -C scripts genshin:text names` and `quests`, build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The recipe and activity commands publish the same way: `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`, each scoped to its own dataset.
 - A real publish stores each missing object in both accounts, with `DefaultAzureCredential`, which resolves to the owner's `az login`. No account key is written to disk.
 - A rerun on the same dump reports `unchanged` and makes no request.
+- A dry run that reports `N records would be published` means the builder's records differ from the lock: the dump has moved past the committed files, or the lock has gone stale for that dataset, and the publish is a separate step.
 - The lock is written only after both accounts hold every object, so a failed account leaves the committed lock naming nothing new, and a rerun converges.
 - `pnpm -C scripts genshin:data verify` fetches every object the lock reaches from each account, anonymously, and checks that each hashes to its name.
 
 A publish names the scopes it replaces. A dataset scope replaces every key under its dataset; a key scope (`login/music`) replaces that one key and keeps its dataset's other keys as the lock holds them, so a fit that refits one part publishes one key. A key scope is checked to sit under a dataset before anything is published (`toGameDataKeyScopes`).
 
-The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The recipe and activity builders publish their records instead of writing files, and the other builders still write theirs.
+The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The recipe and activity builders publish their records instead of writing files, the map-point, offering, gathering and fishing builders publish theirs too, and so do the achievements, the archive and its names, the quests, the names and the card game's decks, standard rule and games. The card game's words are still written by `genshin:text gcg`, since the lock's `gcgText` records name 102 texts where the committed decks name 176, and its publish is the proposal's to make; the other builders still write theirs.
 
 ## Reading
 
@@ -159,6 +160,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **A kept world data file is read before its published record.** Until a fit publishes its keys instead of writing its file, the file it last wrote is the freshest copy, and a parity loop that rewrites `login/music.json` reads its own last write.
 - **The coverage shards only restore the mirror.** A shard reads a subset of what the lock names, and one exact key saved by whichever shard finished first would hold that subset for every later run.
 - **A record holding several tables is parsed per field.** The friendship record carries the levels and the namecards, and each reader's schema takes only its own field, so a reader holds what it returns and nothing else.
+- **A step publishes its builders' records in one call.** Fishing's two builders share one scope, and a publish replaces every key under its scope, so a call per builder would drop the other builder's keys until its own call ran. Offerings publishes its two scopes in one call for the same reason.
 
 ## Notes
 
@@ -168,53 +170,57 @@ Wall times move with the machine's load, so the median of three is the steadier 
 
 ## Key files
 
-| File                                                                                  | Role                                                                                            |
-| :------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------- |
-| `scripts/src/services/gameData/publishGameData.ts`                                    | Plans a publication, stores it in both accounts and returns the entries it planned for the lock |
-| `scripts/src/services/gameData/publishGameDataStep.ts`                                | One generator's publish: publishes, then commits its entries onto the lock as it stands then    |
-| `scripts/src/services/gameData/commitGameDataLock.ts`                                 | Merges a publication's entries onto the lock at commit, so a concurrent scope's entries survive |
-| `scripts/src/services/gameData/publishGameDataToTarget.ts`                            | Stores what one account lacks, reusing young and reachable objects                              |
-| `scripts/src/services/gameData/planGameDataPublication.ts`                            | Hashes every record and index, with each index's entries sorted by id                           |
-| `scripts/src/services/gameData/verifyGameData.ts`                                     | Fetches every object the lock reaches, anonymously, and checks each hash                        |
-| `scripts/src/services/gameData/pruneGameData.ts`                                      | Deletes the objects no live lock reaches and that are past retention                            |
-| `scripts/src/services/gameData/readLiveGameDataLocks.ts`                              | The locks a stored object may still be reached by                                               |
-| `scripts/src/services/gameData/storeGameDataRecord.ts`                                | Writes one object create-only, or rewrites a stale copy with the same bytes                     |
-| `scripts/src/services/gameData/createGameDataContainerClient.ts`                      | The keyless container client each account is published through                                  |
-| `scripts/src/services/gameData/commands/verifyCommand.ts`                             | `genshin:data verify`                                                                           |
-| `scripts/src/services/gameData/commands/pruneCommand.ts`                              | `genshin:data prune`                                                                            |
-| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`               | Builds each character's profile in every language, one index a language                         |
-| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`              | Builds each volume's body in every language, one index a language                               |
-| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                       | `genshin:assets profile`, which publishes the profiles                                          |
-| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                       | `genshin:assets archive`, which publishes the book bodies after the slices                      |
-| `packages/genshin-world/src/generated/gameDataLock.json`                              | The lock: each index key and each object key to its hash                                        |
-| `packages/genshin-world/src/services/data/readGameDataEntry.ts`                       | Reads one record by id, through its index                                                       |
-| `packages/genshin-world/src/services/data/readGameDataObject.ts`                      | Fetches one object by its hash, memoized by URL                                                 |
-| `packages/genshin-world/src/services/shared/fetchJson.ts`                             | The fetch itself: the timeout, the HTTP error and the JSON                                      |
-| `packages/genshin-world/src/services/data/constants.ts`                               | `GAME_DATA_BLOB_PATH`, the path under the container                                             |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`                 | Reads a character's profile record, its Friendship Level and its namecard                       |
-| `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                             |
-| `packages/genshin-world/src/components/Character/Profile/Index.vue`                   | The Profile tab, which reads its character's record                                             |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and stat tables arrive, with the base URL among its props        |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`                    | Hands the base URL to the Profile tab                                                           |
-| `packages/genshin-world/tsconfig.build.json`                                          | Maps the lock's exact path ahead of the generated stand-in                                      |
-| `apps/web/app/components/Genshin/World.vue`                                           | Passes the AppAssets game data path to the world                                                |
-| `packages/db/src/services/azure/container/uploadCompressedJson.ts`                    | Uploads a compressed JSON object with its headers and conditions                                |
-| `packages/db/src/services/azure/container/deleteBlobs.ts`                             | Deletes a set of blobs, treating a missing one as deleted and a refused one as kept             |
-| `scripts/src/services/gameData/mergeGameDataLock.ts`                                  | Drops every entry a dataset or key scope names and lays the publication's entries over the rest |
-| `scripts/src/services/gameData/toGameDataKeyScopes.ts`                                | The keys a step republishes on their own, each checked to sit under a dataset                   |
-| `scripts/src/services/gameData/readPublishedGameData.ts`                              | A record another step published, read through the lock on disk from the dev account             |
-| `scripts/src/services/gameData/readPublishedGameDataEntry.ts`                         | One entry of a published index, read the same way                                               |
-| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                          | A fitted data file from disk while the package keeps it, else its published record              |
-| `packages/genshin-world/src/models/data/GameDataset.ts`                               | The datasets, each the scope a publish replaces and the first segment of its keys               |
-| `packages/genshin-world/src/models/data/GameDataKey.ts`                               | The lock's object keys, which type the key a reader names                                       |
-| `packages/genshin-world/src/models/data/GameDataIndexKey.ts`                          | The lock's index keys, which type the index a reader names                                      |
-| `packages/genshin-world/src/services/data/readGameData.ts`                            | Reads one record by its key                                                                     |
-| `packages/genshin-world/src/generated/talentMultipliers/TalentMultiplierLoaderMap.ts` | Each character's multipliers, read from the `talentMultipliers` index                           |
-| `packages/genshin-world/scripts/gameData/constants.ts`                                | `GAME_DATA_LOCAL_BASE_URL`, the base every suite and fixture reads from                         |
-| `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataObject.ts`        | One object from the mirror, downloaded and checked against its hash on a miss                   |
-| `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`                | The suites' fetch route to the mirror                                                           |
-| `packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts`              | The parity page's and the browser suite's middleware to the mirror                              |
-| `.github/workflows/CI.yaml`                                                           | Restores the mirror for the coverage shards, keyed on the lock                                  |
+| File                                                                                  | Role                                                                                                                 |
+| :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/gameData/publishGameData.ts`                                    | Plans a publication, stores it in both accounts and returns the entries it planned for the lock                      |
+| `scripts/src/services/gameData/publishGameDataStep.ts`                                | One generator's publish: publishes, then commits its entries onto the lock as it stands then                         |
+| `scripts/src/services/gameData/commitGameDataLock.ts`                                 | Merges a publication's entries onto the lock at commit, so a concurrent scope's entries survive                      |
+| `scripts/src/services/gameData/publishGameDataToTarget.ts`                            | Stores what one account lacks, reusing young and reachable objects                                                   |
+| `scripts/src/services/gameData/planGameDataPublication.ts`                            | Hashes every record and index, with each index's entries sorted by id                                                |
+| `scripts/src/services/gameData/verifyGameData.ts`                                     | Fetches every object the lock reaches, anonymously, and checks each hash                                             |
+| `scripts/src/services/gameData/pruneGameData.ts`                                      | Deletes the objects no live lock reaches and that are past retention                                                 |
+| `scripts/src/services/gameData/readLiveGameDataLocks.ts`                              | The locks a stored object may still be reached by                                                                    |
+| `scripts/src/services/gameData/storeGameDataRecord.ts`                                | Writes one object create-only, or rewrites a stale copy with the same bytes                                          |
+| `scripts/src/services/gameData/createGameDataContainerClient.ts`                      | The keyless container client each account is published through                                                       |
+| `scripts/src/services/gameData/commands/verifyCommand.ts`                             | `genshin:data verify`                                                                                                |
+| `scripts/src/services/gameData/commands/pruneCommand.ts`                              | `genshin:data prune`                                                                                                 |
+| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`               | Builds each character's profile in every language, one index a language                                              |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`              | Builds each volume's body in every language, one index a language                                                    |
+| `scripts/src/services/genshinText/buildTextChunks.ts`                                 | Builds one record a language of a set of text ids, shared by the achievements, the archive, the names and the quests |
+| `scripts/src/services/genshinText/readNameTextIds.ts`                                 | Collects every `nameTextId` the world cites, from the published records and the data files the lock does not name    |
+| `scripts/src/models/gameData/GameDataBuild.ts`                                        | What a builder returns: the notes it reports and the records it publishes                                            |
+| `scripts/src/services/genshinAssets/points/buildMapPointSlices.ts`                    | Builds each region's places as one record of a dataset, keyed by the region                                          |
+| `scripts/src/services/genshinAssets/commands/profileCommand.ts`                       | `genshin:assets profile`, which publishes the profiles                                                               |
+| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`                       | `genshin:assets archive`, which publishes the sections, their names and the book bodies together                     |
+| `packages/genshin-world/src/generated/gameDataLock.json`                              | The lock: each index key and each object key to its hash                                                             |
+| `packages/genshin-world/src/services/data/readGameDataEntry.ts`                       | Reads one record by id, through its index                                                                            |
+| `packages/genshin-world/src/services/data/readGameDataObject.ts`                      | Fetches one object by its hash, memoized by URL                                                                      |
+| `packages/genshin-world/src/services/shared/fetchJson.ts`                             | The fetch itself: the timeout, the HTTP error and the JSON                                                           |
+| `packages/genshin-world/src/services/data/constants.ts`                               | `GAME_DATA_BLOB_PATH`, the path under the container                                                                  |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`                 | Reads a character's profile record, its Friendship Level and its namecard                                            |
+| `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                                                  |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`                   | The Profile tab, which reads its character's record                                                                  |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and stat tables arrive, with the base URL among its props                             |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`                    | Hands the base URL to the Profile tab                                                                                |
+| `packages/genshin-world/tsconfig.build.json`                                          | Maps the lock's exact path ahead of the generated stand-in                                                           |
+| `apps/web/app/components/Genshin/World.vue`                                           | Passes the AppAssets game data path to the world                                                                     |
+| `packages/db/src/services/azure/container/uploadCompressedJson.ts`                    | Uploads a compressed JSON object with its headers and conditions                                                     |
+| `packages/db/src/services/azure/container/deleteBlobs.ts`                             | Deletes a set of blobs, treating a missing one as deleted and a refused one as kept                                  |
+| `scripts/src/services/gameData/mergeGameDataLock.ts`                                  | Drops every entry a dataset or key scope names and lays the publication's entries over the rest                      |
+| `scripts/src/services/gameData/toGameDataKeyScopes.ts`                                | The keys a step republishes on their own, each checked to sit under a dataset                                        |
+| `scripts/src/services/gameData/readPublishedGameData.ts`                              | A record another step published, read through the lock on disk from the dev account                                  |
+| `scripts/src/services/gameData/readPublishedGameDataEntry.ts`                         | One entry of a published index, read the same way                                                                    |
+| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                          | A fitted data file from disk while the package keeps it, else its published record                                   |
+| `packages/genshin-world/src/models/data/GameDataset.ts`                               | The datasets, each the scope a publish replaces and the first segment of its keys                                    |
+| `packages/genshin-world/src/models/data/GameDataKey.ts`                               | The lock's object keys, which type the key a reader names                                                            |
+| `packages/genshin-world/src/models/data/GameDataIndexKey.ts`                          | The lock's index keys, which type the index a reader names                                                           |
+| `packages/genshin-world/src/services/data/readGameData.ts`                            | Reads one record by its key                                                                                          |
+| `packages/genshin-world/src/generated/talentMultipliers/TalentMultiplierLoaderMap.ts` | Each character's multipliers, read from the `talentMultipliers` index                                                |
+| `packages/genshin-world/scripts/gameData/constants.ts`                                | `GAME_DATA_LOCAL_BASE_URL`, the base every suite and fixture reads from                                              |
+| `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataObject.ts`        | One object from the mirror, downloaded and checked against its hash on a miss                                        |
+| `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`                | The suites' fetch route to the mirror                                                                                |
+| `packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts`              | The parity page's and the browser suite's middleware to the mirror                                                   |
+| `.github/workflows/CI.yaml`                                                           | Restores the mirror for the coverage shards, keyed on the lock                                                       |
 
 ## Sources
 
