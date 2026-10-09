@@ -1,51 +1,29 @@
 import type { FailureSignature } from "#src/models/coderabbit/collect/FailureSignature";
-import type { CollectorJobView } from "#src/models/coderabbit/guard/CollectorJobView";
 
 import { CI_FAILURE_CONCLUSION } from "#src/services/coderabbit/collect/constants";
 import {
   CI_SUCCESS_CONCLUSION,
-  COLLECT_JOB_NAME,
-  COLLECTOR_WORKFLOW_FILE,
-  GUARD_RED_STREAK,
   GUARD_RUN_LIST_LIMIT,
-  RUN_SKIPPED_CONCLUSION,
+  RUN_CANCELLED_CONCLUSION,
+  RUN_IN_PROGRESS_STATUS,
 } from "#src/services/coderabbit/guard/constants";
-import { getRunFailureSignature } from "#src/services/coderabbit/guard/getRunFailureSignature";
-import { readJobAnnotations } from "#src/services/coderabbit/guard/readJobAnnotations";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { runGh } from "#src/services/shared/runGh";
+import { readCollectorRuns } from "#src/services/coderabbit/guard/readCollectorRuns";
+import { readRedStreak } from "#src/services/coderabbit/guard/readRedStreak";
 
-// The red the newest collector runs keep failing on, when the last `GUARD_RED_STREAK` of them failed alike — the same
-// Step, the same error line — which no rerun answers. Newest first: a run whose collect job succeeded ends the streak,
-// And a run the filter skipped or one cancelled before it ran ended neither way and is read past. The run the guard
-// Belongs to is still going, but its collect job has ended, so it is the newest read
+// The red the newest collector runs keep failing on, when the last `GUARD_RED_STREAK` of them failed alike
+// (`readRedStreak`). Only the runs whose collect job can have ended are listed, each status by the API's own filter, so
+// The runs the caller's filter skipped and the fires superseded while pending — nearly every run — never crowd the
+// Streak out of reach: the runs still going, the one the guard belongs to among them, and the green and the red ones.
+// A cancelled run is a fire superseded while pending, save one whose retrigger or guard a newer run replaced after its
+// Collect job ended, so the cancelled runs are read only across the streak's own span, before it holds — and a span
+// Holding more of them than one list reads leaves some unread, so it holds nothing
 export const readHeldSignature = (): FailureSignature | undefined => {
-  const runIds = parseMachineJson<{ conclusion: string; databaseId: number }[]>(
-    runGh([
-      "run",
-      "list",
-      "--workflow",
-      COLLECTOR_WORKFLOW_FILE,
-      "--limit",
-      GUARD_RUN_LIST_LIMIT.toString(),
-      "--json",
-      "conclusion,databaseId",
-    ]),
-  )
-    .filter(({ conclusion }) => conclusion !== RUN_SKIPPED_CONCLUSION)
-    .map(({ databaseId }) => databaseId);
-  const signatures: FailureSignature[] = [];
-  for (const runId of runIds) {
-    const job = parseMachineJson<{ jobs: CollectorJobView[] }>(
-      runGh(["run", "view", runId.toString(), "--json", "jobs"]),
-    ).jobs.find(({ name }) => name === COLLECT_JOB_NAME);
-    if (job?.conclusion === CI_SUCCESS_CONCLUSION) return undefined;
-    else if (job?.conclusion !== CI_FAILURE_CONCLUSION) continue;
-
-    const signature = getRunFailureSignature(job, readJobAnnotations(job.databaseId));
-    if (signatures.some(({ hash }) => hash !== signature.hash)) return undefined;
-    signatures.push(signature);
-    if (signatures.length === GUARD_RED_STREAK) return signature;
-  }
-  return undefined;
+  const runs = [RUN_IN_PROGRESS_STATUS, CI_SUCCESS_CONCLUSION, CI_FAILURE_CONCLUSION].flatMap((status) =>
+    readCollectorRuns(status),
+  );
+  const streak = readRedStreak(runs);
+  if (streak === undefined) return undefined;
+  const cancelledRuns = readCollectorRuns(RUN_CANCELLED_CONCLUSION, streak.createdAt);
+  if (cancelledRuns.length === GUARD_RUN_LIST_LIMIT) return undefined;
+  return readRedStreak([...runs, ...cancelledRuns])?.signature;
 };
