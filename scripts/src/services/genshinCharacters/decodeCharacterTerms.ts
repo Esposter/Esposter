@@ -1,11 +1,8 @@
 import type { CharacterTerms } from "#src/models/genshinCharacters/CharacterTerms";
 
 import { CharacterTermsEncoding } from "#src/models/genshinCharacters/CharacterTermsEncoding";
+import { CHARACTER_TERMS_NOT_JAPANESE_REGEX } from "#src/services/genshinCharacters/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-
-// What a Shift-JIS reading of Chinese text turns up and Japanese terms never hold: the half-width katakana a GBK lead
-// Byte reads as, and the private-use letters its highest lead bytes map to
-const NOT_JAPANESE_PATTERN = /[-｡-ﾟ]/u;
 
 const getEncodings = (bytes: Uint8Array): CharacterTermsEncoding[] => {
   if (bytes[0] === 0xff && bytes[1] === 0xfe) return [CharacterTermsEncoding.Utf16LittleEndian];
@@ -21,7 +18,10 @@ export const decodeCharacterTerms = (bytes: Uint8Array): CharacterTerms => {
   const encodings = getEncodings(bytes);
   for (const encoding of encodings) {
     const text = getResult(() => new TextDecoder(encoding, { fatal: true }).decode(bytes)).unwrapOr(undefined);
-    if (text !== undefined && !(encoding === CharacterTermsEncoding.ShiftJis && NOT_JAPANESE_PATTERN.test(text)))
+    if (
+      text !== undefined &&
+      !(encoding === CharacterTermsEncoding.ShiftJis && CHARACTER_TERMS_NOT_JAPANESE_REGEX.test(text))
+    )
       return { encoding, text };
   }
   throw new InvalidOperationError(Operation.Read, "terms", `decode in none of ${encodings.join(", ")}`);

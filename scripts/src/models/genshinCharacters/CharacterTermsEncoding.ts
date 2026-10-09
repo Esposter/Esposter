@@ -3,7 +3,7 @@
 export enum CharacterTermsEncoding {
   Gbk = "gbk",
   ShiftJis = "shift_jis",
+  Utf8 = "utf8",
   Utf16BigEndian = "utf-16be",
   Utf16LittleEndian = "utf-16le",
-  Utf8 = "utf8",
 }

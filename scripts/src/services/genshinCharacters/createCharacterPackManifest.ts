@@ -7,6 +7,8 @@ export const createCharacterPackManifest = (
   files: readonly Pick<CharacterPackFile, "hash" | "path">[],
 ): CharacterPackManifest => ({
   files: Object.fromEntries(
-    files.map(({ hash, path }) => [path, hash] as const).toSorted(([a], [b]) => (a < b ? -1 : 1)),
+    files
+      .map(({ hash, path }) => [path, hash] as const)
+      .toSorted(([firstPath], [secondPath]) => (firstPath < secondPath ? -1 : 1)),
   ),
 });

@@ -12,7 +12,12 @@ export const chooseCharacterTermsFile = (folder: string, filePaths: readonly str
       const nameIndex = CHARACTER_TERMS_FILE_NAMES.findIndex((termsFileName) => name.includes(termsFileName));
       return nameIndex === -1 ? [] : [{ depth: filePath.split("/").length, filePath, nameIndex }];
     })
-    .toSorted((a, b) => a.nameIndex - b.nameIndex || a.depth - b.depth || (a.filePath < b.filePath ? -1 : 1));
+    .toSorted(
+      (firstTermsFile, secondTermsFile) =>
+        firstTermsFile.nameIndex - secondTermsFile.nameIndex ||
+        firstTermsFile.depth - secondTermsFile.depth ||
+        (firstTermsFile.filePath < secondTermsFile.filePath ? -1 : 1),
+    );
   if (termsFile === undefined)
     throw new InvalidOperationError(
       Operation.Read,
