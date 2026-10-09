@@ -4,8 +4,8 @@ import { getCodeView } from "#src/services/hooks/stagedImports/getCodeView";
 // Each read from the code view so a commented-out or quoted import never counts
 export const getImportSpecifiers = (source: string): string[] => {
   const { code, strings } = getCodeView(source);
-  const staticPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^;\u0000]*?\bfrom\s+)?\u0000(\d+)\u0000/g;
-  const dynamicPattern = /\bimport\s*\(\s*\u0000(\d+)\u0000\s*\)/g;
+  const staticPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^;]*?\bfrom\s+)?(?<index>\d+)/gu;
+  const dynamicPattern = /\bimport\s*\(\s*(?<index>\d+)\s*\)/gu;
   return [...code.matchAll(staticPattern), ...code.matchAll(dynamicPattern)].map(
     (match) => strings[Number(match[1])] ?? "",
   );

@@ -4,8 +4,8 @@ import { describe, expect, test } from "vitest";
 describe(placeMapPoints, () => {
   test("carries each ground point of a kind into its region's axes at the fit's place, and leaves out the rest", () => {
     expect.hasAssertions();
-    // A point at (1.5, 2.25) under an offset of (10, 20) lands at (11.5, 22.25) in the game's coordinates, which an origin
-    // Of (0, 0) leaves as (11.5, -22.25) in the region's axes, its z mirrored
+    // A point at (1.5, 2.25) under an offset of (10, 20) lands at (11.5, 22.25) in the game's coordinates.
+    // An origin of (0, 0) leaves it at (11.5, -22.25) in the region's axes, its z mirrored
     const transform = { mirrored: false, offset: { x: 10, z: 20 }, scale: 1, turn: 0 };
     const placement = placeMapPoints(
       [

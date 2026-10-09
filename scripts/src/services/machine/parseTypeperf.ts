@@ -4,8 +4,7 @@ export const parseTypeperf = (output: string): number | undefined => {
   const dataRow = output
     .split("\n")
     .map((line) => line.trim())
-    .filter((line) => line.startsWith('"'))
-    .at(-1);
+    .findLast((line) => line.startsWith('"'));
   if (dataRow === undefined) return undefined;
   const values = dataRow
     .split('","')

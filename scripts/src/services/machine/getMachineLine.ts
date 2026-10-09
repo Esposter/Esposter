@@ -1,5 +1,6 @@
 import { MachineState } from "#src/models/machine/MachineState";
 import { REMINDER_MINUTES } from "#src/services/machine/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The one line the session is woken with, or none: a change of state always prints, while idle and tight repeat every
 // Reminder interval they hold, and busy never reminds, since it has nothing to start
@@ -18,5 +19,7 @@ export const getMachineLine = (
       return `machine idle: ${figures} - room for more runs`;
     case MachineState.Tight:
       return `machine tight: ${figures} - hold new runs`;
+    default:
+      throw new InvalidOperationError(Operation.Read, "machine state", `has no line for ${String(state)}`);
   }
 };

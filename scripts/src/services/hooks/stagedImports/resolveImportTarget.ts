@@ -38,8 +38,8 @@ const getAliasPath = (specifier: string, packageDirectory: string, aliases: Read
   return best?.path;
 };
 
-// The repository paths an import names, or undefined when it names nothing inside the repository: a bare package
-// Specifier, or a relative path that climbs out of it
+// The repository paths an import names, or undefined when it names nothing inside the repository.
+// A bare package specifier, or a relative path that climbs out of it, names nothing inside it.
 export const resolveImportTarget = (
   specifier: string,
   importingPath: string,

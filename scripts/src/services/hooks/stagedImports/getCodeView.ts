@@ -18,7 +18,7 @@ export const getCodeView = (source: string): { code: string; strings: string[] }
     } else if (character === "'" || character === '"' || character === "`") {
       const stringEnd = getStringEnd(source, index);
       strings.push(source.slice(index + 1, stringEnd));
-      code += `\u0000${strings.length - 1}\u0000`;
+      code += `${strings.length - 1}`;
       index = stringEnd + 1;
     } else {
       code += character;

@@ -32,5 +32,3 @@ export const SHOP_GENERATED_DIRECTORY: string = join(
   "generated",
   "shops",
 );
-export const PAIMON_BARGAINS_GOODS_PATH: string = join(SHOP_GENERATED_DIRECTORY, "paimonsBargains.json");
-export const MONDSTADT_GENERAL_GOODS_PATH: string = join(SHOP_GENERATED_DIRECTORY, "mondstadtGeneralGoods.json");

@@ -20,7 +20,7 @@ export const ORPHAN_NAMES: readonly string[] = ["du", "find", "grep", "rg"];
 export const ORPHAN_COMMAND_LINE_CHARACTERS = 120;
 // Windows reports process CPU time in 100-nanosecond ticks
 export const WINDOWS_TICKS_PER_SECOND = 10_000_000;
-// MacOS reparents an orphan to launchd, which is always process 1
+// An orphan on macOS is reparented to launchd, which is always process 1
 export const LAUNCHD_PROCESS_ID = 1;
 export const SECONDS_PER_MINUTE: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 export const SECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).total("seconds");
