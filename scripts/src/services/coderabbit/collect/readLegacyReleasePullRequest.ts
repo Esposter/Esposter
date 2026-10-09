@@ -21,6 +21,6 @@ export const readLegacyReleasePullRequest = (): undefined | WindowPullRequest =>
       "--limit",
       "1",
       "--json",
-      "number,state,headRefName,baseRefName,createdAt",
+      "number,state,headRefName,headRefOid,baseRefName,createdAt",
     ]),
   ).at(0);

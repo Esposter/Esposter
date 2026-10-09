@@ -183,13 +183,15 @@ fogUniforms.startDistance.value = FOG_START_DISTANCE;
 const postUniforms = createPostUniforms();
 // The sight's mask: the drops, the residents and the enemies, drawn in the colours the sight lights them, which the post
 // Chain reads where its reach is. Its spread and strength are read off the screen's sight each frame, and none is drawn
-// While no screen gives one
+// While no screen gives one. Its stand-ins are placed in the world's own coordinates, so the scene is offset by the floating
+// Origin as the world's group is, and the reach's origin is read against the camera the same way
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
 onBeforeRender(() => {
+  sightScene.position.set(-origin.x, 0, -origin.z);
   if (!elementalSight) return;
-  sightUniforms.origin.value.set(elementalSight.origin.x, elementalSight.origin.z);
+  sightUniforms.origin.value.set(elementalSight.origin.x - origin.x, elementalSight.origin.z - origin.z);
   sightUniforms.radius.value = getSightRadius(elementalSight);
   sightUniforms.strength.value = elementalSight.isOn ? 1 : 0;
 });
@@ -223,7 +225,7 @@ const gameClock = useSky({
   windUniforms,
 });
 // The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the sun
-useSunShadow({ characterBody, enemyMap, sunLight: { cascadedShadowNode, light: sun } });
+useSunShadow({ enemyMap, getCharacterBody: () => characterBody, sunLight: { cascadedShadowNode, light: sun } });
 // The clock only starts at its held minute, so a minute held anew is set on it
 watch(
   () => heldMinutes,

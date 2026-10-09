@@ -64,4 +64,4 @@ flowchart TD
 ## Sources
 
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: four a day from the pool of the areas lit, commissions replacing their area's enemies and objects, blocked by a quest holding their place, the preferred region, Encounter Points, the unlock at rank 12 and each region's quest, four rewards a day by rank, and Katheryne's bonus.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the daily task table with each task's place, radius, finish, reward and swapped groups.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the daily task table with each task's place, radius, finish, reward and swapped groups.

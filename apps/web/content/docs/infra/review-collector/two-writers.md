@@ -38,7 +38,7 @@ sequenceDiagram
   S->>Q: git push
 ```
 
-A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, the push through `pnpm ai:queue:push`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and the window branches and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, the push through `pnpm ai:queue:push`, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`). The push replays only the session's commits since the remote's fork point, skipping those the collector already ported, and the sync after it keeps an uncommitted edit by three-way merging it onto the pushed tip where the two touch different lines.
 
 ## Enforced by rulesets
 

@@ -20,6 +20,6 @@ export const readWindowPullRequests = (listState: WindowPullRequestListState): W
       "--limit",
       PULL_REQUEST_LIST_LIMIT.toString(),
       "--json",
-      "number,state,headRefName,baseRefName,createdAt,isCrossRepository",
+      "number,state,headRefName,headRefOid,baseRefName,createdAt,isCrossRepository",
     ]),
   ).filter(({ headRefName, isCrossRepository }) => !isCrossRepository && checkIsWindowBranch(headRefName));

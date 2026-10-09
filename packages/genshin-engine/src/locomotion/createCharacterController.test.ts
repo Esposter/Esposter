@@ -109,6 +109,7 @@ describe(createCharacterController, () => {
       ground: createGroundQuery((x) => (x > 50 ? -5 : 0), 0),
       landmarkCollider: createLandmarkCollider(),
       position: new Vector3(),
+      staminaMaximum: STAMINA_MAX,
     });
     const placedPosition = new Vector3(100, -LOCOMOTION.swimDepth, 0);
     characterController.place(placedPosition, 0);

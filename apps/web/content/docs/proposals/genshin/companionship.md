@@ -51,4 +51,4 @@ flowchart LR
 
 - [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: the full amount to every party member, the fallen too, never the Traveler, and each source's amounts.
 - [Friendship Level](https://genshin-impact.fandom.com/wiki/Friendship_Level), Genshin Impact Wiki: what each level from 1 to 10 opens, stories and voice-overs also waiting on quests, and no EXP past 10.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the friendship levels' EXP and the stories and voice-overs filed under each character.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the friendship levels' EXP and the stories and voice-overs filed under each character.

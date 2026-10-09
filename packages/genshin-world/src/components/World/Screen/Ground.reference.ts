@@ -47,6 +47,13 @@ export const groundTopic: ReferenceTopic = {
       result:
         "BigWorld_1_-2, a SectorBinData script, holds about fourteen hundred positions packed twelve bytes apart, every one inside the tile, those round the statue within two metres of its height: points on the ground about one every 27 metres, exact data a fitted ground can be held to. BigWorld_1_-2_Index, its sibling, holds no position in the tile's range",
     },
+    {
+      method:
+        "The ground refitted at three-metre steps with hills down to four metres wide, against the six-metre fit with hills down to fourteen, each judged by the Shape pass at the reference camera",
+      outcome: InvestigationOutcome.DeadEnd,
+      result:
+        "The fit's error falls from 0.62 to 0.14 metres within 60 metres and from 2.71 to 0.79 within 700, and the Ground's normal from 10.0 to 6.2 degrees, which holds its gate, and its depth from 0.037 to 0.017. Its outline rises from 16.7 to 17.7 pixels, the paving's from 3.6 to 4.2 and the oak's depth from 0.19 to 0.21, so the change is not landed: a mixed result. Its flowers are about two pixels of the outline, which stays near 15.5 without them, and the outline's largest misses lie where the reference's oak canopy covers ground the stand-in shows and along the horizon, not on the cliffs. No terrain fit closes the outline gate while the oak's canopy does not match",
+    },
   ],
   openQuestions: [],
 };

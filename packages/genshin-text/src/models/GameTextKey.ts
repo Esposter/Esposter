@@ -75,8 +75,6 @@ export enum GameTextKey {
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   Friends = "UI_FRIEND_TITLE",
-  GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
-  GenesisCrystal = "2722599324",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
   GenesisCrystal = "2722599324",

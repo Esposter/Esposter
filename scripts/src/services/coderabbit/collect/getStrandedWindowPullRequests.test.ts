@@ -11,6 +11,7 @@ describe(getStrandedWindowPullRequests, () => {
     baseRefName: MAIN_BRANCH,
     createdAt,
     headRefName: `${WINDOW_BRANCH_PREFIX}1`,
+    headRefOid: "",
     number: 1,
     state: WindowPullRequestState.Merged,
   };
@@ -18,6 +19,7 @@ describe(getStrandedWindowPullRequests, () => {
     baseRefName: mergedWindowPullRequest.headRefName,
     createdAt,
     headRefName: `${WINDOW_BRANCH_PREFIX}2`,
+    headRefOid: "",
     number: 2,
     state: WindowPullRequestState.Open,
   };
@@ -36,6 +38,7 @@ describe(getStrandedWindowPullRequests, () => {
     const closedWindowPullRequest: WindowPullRequest = {
       ...mergedWindowPullRequest,
       headRefName: `${WINDOW_BRANCH_PREFIX}3`,
+      headRefOid: "",
       number: 3,
       state: WindowPullRequestState.Closed,
     };

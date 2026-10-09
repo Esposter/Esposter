@@ -42,4 +42,4 @@ These need a recording of the English PC client's dialogue at 1080 high, found a
 
 - [Template:DIcon](https://genshin-impact.fandom.com/wiki/Template:DIcon), Genshin Impact Wiki: the marks a dialogue choice is drawn with, a quest's and a story quest's among them.
 - [NPC](https://genshin-impact.fandom.com/wiki/NPC), Genshin Impact Wiki: the world's characters, those met in the open world and those met only in quests.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the dialog table's roles, among them the black screen a narration is shown on.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dialog table's roles, among them the black screen a narration is shown on.

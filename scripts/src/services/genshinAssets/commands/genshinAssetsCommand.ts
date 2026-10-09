@@ -7,6 +7,7 @@ import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand"
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
+import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -18,6 +19,7 @@ import { offeringsCommand } from "#src/services/genshinAssets/commands/offerings
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
+import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesCommand";
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -53,10 +55,12 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     rank: rankCommand,
     statues: statuesCommand,
     offerings: offeringsCommand,
+    friendship: friendshipCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
     items: itemsCommand,
     outcrops: leyLineCommand,
     chests: chestsCommand,
+    puzzles: puzzlesCommand,
   },
 });

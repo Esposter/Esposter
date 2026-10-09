@@ -443,7 +443,7 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.Activate)
-              unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, interactable.id]);
+              unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
             else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               screenKind = ScreenKind.Dialogue;
@@ -509,7 +509,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @strike="(enemy) => strikeParty(enemy)"
       />
     </TresCanvas>
-    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text />
+    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text :origin />
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"

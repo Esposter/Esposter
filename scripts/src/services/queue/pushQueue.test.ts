@@ -8,7 +8,8 @@ import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
 describe(pushQueue, () => {
-  const { commitFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+    setupFixtureRepository();
   const remoteQueueRef = `origin/${QUEUE_BRANCH}`;
   const readRemoteSubjects = () => runGit(["log", "--format=%s", remoteQueueRef], getCwd()).trim().split("\n");
   // The remote queue moves past the base while the session commits on the base: another session's push
@@ -66,6 +67,18 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
   });
 
+  test("keeps another session's staged work when the push leaves the branch where it stands", () => {
+    expect.hasAssertions();
+
+    publish(QUEUE_BRANCH, readSha("HEAD"));
+    commitFile("b", "b");
+    writeFileSync(join(getCwd(), ".gitignore"), "staged");
+    runGit(["add", ".gitignore"], getCwd());
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("M  .gitignore\n");
+  });
+
   test("refuses to sync over an uncommitted file the remote changed, leaving the branch where it was", () => {
     expect.hasAssertions();
 
@@ -76,6 +89,21 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["b", ".gitignore"]);
     expect(readSha("HEAD")).toBe(local);
     expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("dirty");
+  });
+
+  test("syncs over an uncommitted edit to a file the remote changed on another line, keeping both", () => {
+    expect.hasAssertions();
+
+    const base = commitFile("roadmap", "1\n2\n3\n4\n5\n");
+    publish(QUEUE_BRANCH, commitFile("roadmap", "one\n2\n3\n4\n5\n"));
+    switchTo(base);
+    commitFile("b", "b");
+    writeFileSync(join(getCwd(), "roadmap"), "1\n2\n3\n4\nfive\n");
+
+    expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Pushed);
+    expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
+    expect(readFileSync(join(getCwd(), "roadmap"), "utf8")).toBe("one\n2\n3\n4\nfive\n");
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M roadmap\n");
   });
 
   test("stops carrying at a landed commit that does not apply, aborting it and keeping the tree clear", () => {
@@ -91,7 +119,7 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M .gitignore\n");
   });
 
-  test("replays the branch itself over a clean tree", () => {
+  test("replays onto the remote over a clean tree, moving the branch onto the replay", () => {
     expect.hasAssertions();
 
     setupMovedRemote("a", "b");
@@ -103,8 +131,12 @@ git -C ../clone commit --quiet --message ${path}`);
   test("waits on a conflict, moving nothing", () => {
     expect.hasAssertions();
 
-    setupMovedRemote("a", "a");
+    const base = readSha("HEAD");
+    publish(QUEUE_BRANCH, commitFile("a", "a"));
     const remote = readSha(remoteQueueRef);
+    switchTo(base);
+    // Titled apart from the remote's commit: one with the same subject and author date is a port, not a conflict
+    commitFiles(["a", "c"], "b");
     writeFileSync(join(getCwd(), ".gitignore"), "a");
 
     expect(pushQueue(getCwd())).toBe(QueuePushOutcome.Waiting);

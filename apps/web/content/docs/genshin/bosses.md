@@ -23,7 +23,7 @@ flowchart TD
 - **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence.
 - **A claimed boss is back five seconds later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that many seconds after it.
 - **The week resets on Monday at the daily reset's hour.** `computeWeeklyResetTime` finds the most recent Monday at 04:00 at or before the moment read, in that moment's own time zone, sharing `DAILY_RESET_TIME` with the enemies' reset so the hour is kept in one place. A moment before that week's reset belongs to the week before.
-- **A claim at the reset counts toward the new week.** `countWeeklyBossClaims` counts a claim made at or after the reset, so the claim at exactly 04:00 Monday is this week's first.
+- **A claim at the reset counts toward the new week.** `countWeeklyBossClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted.
 - **One count across every weekly boss.** `countWeeklyBossClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for.
 
 ## Scope and order
@@ -32,7 +32,7 @@ flowchart TD
 
 **Not built yet:**
 
-- **The Trounce Blossom's offer and its claim.** Its F prompt, the claim's resin spent, the boss's respawn on the claim, and the blossom's drawing wait on the enemies' defeat map and the interaction prompts, both of which carry another session's uncommitted changes. The world does not yet keep a claim time for a defeated boss.
+- **The Trounce Blossom's offer and its claim.** Its F prompt, the claim's resin spent, the boss's respawn on the claim, and the blossom's drawing wait on the enemies' defeat map and the interaction prompts. The world does not yet keep a claim time for a defeated boss.
 - **The boss's rewards.** The Adventure EXP, Mora and Companionship EXP, its ascension material and its artifacts by World Level are not read: the dump's blossom tables hold no normal boss's row, so the reward table has to be fetched before the claim can give anything.
 - **Each boss's moves**, its phases and shields, and the poise and immunities that come with them.
 - **The weekly bosses' domains**, their quests and Andrius in the open world, and the once-a-week gate per boss.

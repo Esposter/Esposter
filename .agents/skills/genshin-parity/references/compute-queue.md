@@ -24,7 +24,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
   - It renders on the GPU, and an edit to world or engine source reloads the page and kills every run on it.
   - So the lane has **one runner**, working in **one runner worktree**: `<scratchpad>/wt-runner`, cut from `origin/ai/queue`, installed once and reused, and fast-forwarded between items. Its parity page is served from that worktree on port 3002 (`pnpm -C packages/genshin-world parity`), and each of its `genshin:parity` commands sets `GENSHIN_PARITY_PORT=3002`, since the default names the shared checkout's page.
   - A batch's edits in the shared checkout never touch it.
-- **A screen being built** is not a queue item: a `haiku` agent bringing a 2D screen to the game's likeness uses the shared checkout's parity page, which the main session serves once for the wave on port 3011, and the one shared Edge every command opens its page in (`genshin:parity browser start`). An agent starts neither a server nor a browser, so its edit-and-compare loop never waits on the queue. A 2D comparison takes seconds, so a reload from another agent's edit costs one retry. A run of more than a couple of minutes, such as a solve, a fit over the page or a full `passes`, is never run on the shared page: every edit to world or engine source reloads it, and one 12-minute shadow solve was killed four times that way. Such a run becomes a `[page]` item for the runner's own worktree, and the agent that wrote the code ends its unit with the item queued. Even a short edit-and-compare loop needs a page that loads, and a code wave's half-written files in the shared checkout keep it from loading: the Windrise oak lost seven runs to a stats wave. So a scene or screen loop runs in **the bench** instead, a second worktree beside the runner's, where no wave edits.
+- **A screen being built** is not a queue item: a `haiku` agent bringing a 2D screen to the game's likeness runs its edit-and-compare loop in the bench (below), so the loop never waits on the queue. The shared checkout's parity page, which the main session serves once for the wave on port 3011 with the one shared Edge every command opens its page in (`genshin:parity browser start`), takes a lone comparison outside a loop: a 2D comparison takes seconds, so a reload from another agent's edit costs one retry. A run of more than a couple of minutes, such as a solve, a fit over the page or a full `passes`, is never run on the shared page: every edit to world or engine source reloads it, and one 12-minute shadow solve was killed four times that way. Such a run becomes a `[page]` item for the runner's own worktree, and the agent that wrote the code ends its unit with the item queued. Even a short edit-and-compare loop needs a page that loads, and a code wave's half-written files in the shared checkout keep it from loading: the Windrise oak lost seven runs to a stats wave. So a scene or screen loop runs in **the bench** instead, a second worktree beside the runner's, where no wave edits.
 
 ## The bench
 
@@ -35,7 +35,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 - **Landing:** commit in the bench, then `git fetch origin ai/queue && git rebase origin/ai/queue && git push origin HEAD:ai/queue` there. The push is plain; a refusal means the remote moved, so fetch, rebase and push again. The shared checkout takes the commits on its next `pnpm ai:queue:push` sync.
 - **No mixed result on an approved screen.** A loop lands a change that moves an approved visual image only when every gated figure it moves improves. Only the user approves images, so a change that lifts one figure and worsens another, like the walkway glow's colour against its structure, is recorded as tried in the scene's reference file and not landed.
 - **Ending:** the bench is left clean, its page stopped, and the lock removed.
-- **`[cpu]`** covers fits, solves, extraction and sampling that read files and need no page. They run in the shared checkout, a few at once.
+- **`[cpu]`** covers fits, solves, extraction and sampling that read files and need no page. They run in the shared checkout, as many at once as the cores and the memory gate allow (**Keeping it busy**).
 
 ## Running one
 
@@ -44,7 +44,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
 4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item from the queue in the same commit. The roadmap holds open work only.
 5. **If the measure misses,** commit nothing and change no parameter. Put the number on the item's line in place of ` — running`, and report it. A miss is a call for the main session, never a second run with a guessed value.
-6. **Take the next item of the lane,** until it is empty. Then report and end.
+6. **Start the next runnable item of the lane** whenever the memory gate leaves room, beside the ones still running, until none is left. Then report and end.
 
 ## Keeping it busy
 

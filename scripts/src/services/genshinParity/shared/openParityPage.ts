@@ -51,10 +51,19 @@ export const openParityPage = async ({
   // And the width is the least in CSS pixels whose drawn width is the one asked for, so a scene draws exactly the
   // Pixels a reference is resized to at any aspect
   const deviceScaleFactor = (height / INTERFACE_HEIGHT) * (1 + DEVICE_SCALE_MARGIN);
-  const context = await browser.newContext({
-    deviceScaleFactor,
-    viewport: { height: INTERFACE_HEIGHT, width: Math.ceil(width / deviceScaleFactor) },
-  });
+  // A context that fails to open closes the browser, since no caller receives it to close
+  const context = await getResultAsync(() =>
+    browser.newContext({
+      deviceScaleFactor,
+      viewport: { height: INTERFACE_HEIGHT, width: Math.ceil(width / deviceScaleFactor) },
+    }),
+  ).match(
+    (value) => value,
+    async (error) => {
+      await browser.close();
+      throw error;
+    },
+  );
   // Closing a connected browser only disconnects from it, which leaves the shared one serving the other commands
   const close = async (): Promise<void> => {
     await context.close();

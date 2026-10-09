@@ -67,4 +67,4 @@ flowchart TD
 ## Sources
 
 - [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: entrances acting as waypoints, Blessing, Forgery and Mastery and the ranks or quests that open them, three days a week each with Sunday common, one-time domains, and the Petrified Tree claimed with resin. Not yet read: the wiki refused the fetch.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the dungeon, dungeon entry and daily dungeon tables, the last with its weekday fields scrambled.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dungeon, dungeon entry and daily dungeon tables, the last with its weekday fields scrambled.

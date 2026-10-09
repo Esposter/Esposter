@@ -10,6 +10,3 @@ export const CHEST_PLACES_GENERATED_DIRECTORY: string = join(
   "generated",
   "chests",
 );
-// The map's layer of the ground and above. Points on the layers under it stand on floors of their own, which no chest
-// Place is written for yet
-export const GROUND_LAYER = 0;

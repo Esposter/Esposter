@@ -14,6 +14,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
     ```
 
   - It fixes the errors in its own files; one in another agent's half-written file is theirs. A package with no log is checked by hand, once.
+  - **A keeper holds them alive.** Watchers die (a native crash, a killed parent), and an agent that restarts one by hand doubles it. So the main session starts `.agents/skills/throughput/scripts/keep-watchers.ps1` once, hidden, with the packages the wave edits. It restarts any watcher it finds dead, its build info deleted first, and logs each restart to `~/Esposter/checks/keeper.log`. Agents never start, restart or stop a watcher.
   - **A watcher costs memory** — half a gigabyte for a small package, two for `scripts` — so watchers run only for the packages a wave is editing. The main session stops a package's watcher and **deletes its log** when the package goes quiet or the memory gate is near, since a stale log reads as a clean pass. A watcher that died leaves a log whose last write stops moving, and it is restarted or its log deleted.
   - The checks folder holds the watchers' logs only; an agent's own scratch output goes in its scratchpad.
   - **TS6307 on a new file is a stale build-info file**, not a missing include: "File … is not listed within the file list of project" while the file sits under an included glob. Delete the package's git-ignored `tsconfig.tsbuildinfo` and restart its watcher.

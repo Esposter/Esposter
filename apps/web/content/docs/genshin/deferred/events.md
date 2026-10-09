@@ -14,4 +14,4 @@ The game runs limited-time events beside its permanent world: a festival's quest
 ## Sources
 
 - [Event](https://genshin-impact.fandom.com/wiki/Event), Genshin Impact Wiki: limited-time activities, their quests gone after their window, and the Events screen on F5.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the activity table, holding each event's configuration and no dates.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the activity table, holding each event's configuration and no dates.

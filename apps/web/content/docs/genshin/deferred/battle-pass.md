@@ -14,4 +14,4 @@ The game's Battle Pass runs a period at a time, opened from Adventure Rank 20. D
 ## Sources
 
 - [Battle Pass](https://genshin-impact.fandom.com/wiki/Battle_Pass), Genshin Impact Wiki: the unlock at rank 20, fifty levels of a thousand experience, the weekly cap, period missions around the active events, the Sojourner's tier and the paid Gnostic Hymn.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the Battle Pass schedule with its periods' dates.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the Battle Pass schedule with its periods' dates.

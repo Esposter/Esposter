@@ -15,11 +15,13 @@ import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWin
 import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
 import { getPausedWindow } from "#src/services/coderabbit/collect/getPausedWindow";
 import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
+import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFoldedWindowsMerged";
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
+import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
@@ -61,7 +63,7 @@ export const runCycle = async ({
   const branchShas = readBranchShas(cwd);
   const { mainSha, queueSha } = branchShas;
   const viewerLogin = readViewerLogin();
-  const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
+  const windowHistory = markFoldedWindowsMerged(readWindowPullRequests(WindowPullRequestListState.All), mainSha, cwd);
   // A merge whose retarget failed strands the window above it, which is retargeted before the stack is read
   const openPullRequests = retargetStrandedWindows({
     cwd,
@@ -226,11 +228,19 @@ export const runCycle = async ({
       reviewsPerHour: REVIEWS_PER_HOUR,
     }) > 0
   ) {
+    // A pull request drained by an earlier run that opened nothing is answered by this cut too
+    const previousWindow = getNewestWindowPullRequest(history);
+    const answeredPullRequests = [
+      ...new Set([
+        ...drainedPullRequests,
+        ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+      ]),
+    ];
     // oxlint-disable-next-line no-await-in-loop -- each window is cut from the remote the one before it moved
     const opened = await openNextWindow({
       collectorSha,
       cwd,
-      drainedPullRequests,
+      drainedPullRequests: answeredPullRequests,
       expressHeldCount: expressed.heldShas.length,
       isDryRun,
       isFirstWindow: openingOutcome === undefined,

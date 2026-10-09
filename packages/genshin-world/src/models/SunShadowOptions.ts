@@ -3,8 +3,9 @@ import type { SunLight } from "genshin-engine";
 import type { Object3D } from "three";
 
 export interface SunShadowOptions {
-  // The character's body, whose moves redraw the shadow it casts where a character stands on the field
-  characterBody?: Object3D;
   enemyMap: Map<string, Enemy>;
+  // The character's body, whose moves redraw the shadow it casts where a character stands on the field, read each frame
+  // Since the body is given only once the character's locomotion has loaded
+  getCharacterBody: () => Object3D | undefined;
   sunLight: SunLight;
 }

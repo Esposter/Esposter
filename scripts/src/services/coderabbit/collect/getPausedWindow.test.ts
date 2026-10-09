@@ -14,6 +14,7 @@ const getWindowPullRequest = (
   baseRefName,
   createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
   headRefName: getWindowBranch(number),
+  headRefOid: "",
   number,
   state,
 });
