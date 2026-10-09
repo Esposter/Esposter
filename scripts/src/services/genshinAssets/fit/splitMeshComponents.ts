@@ -4,8 +4,8 @@ import type { Vector } from "#src/models/shared/Vector";
 const JOIN_DECIMALS = 4;
 // A mesh's triangles grouped into the pieces they join into, two triangles one piece where they share a corner. An
 // Export splits a vertex wherever its texture seams, so corners are joined by where they stand, not by their index.
-// Returns each piece's triangles, the pieces in the order their first triangle comes
-export const splitMeshComponents = (vertices: readonly Vector[], faces: readonly Vector[]): Vector[][] => {
+// Returns each piece's triangles by their index among the faces, the pieces in the order their first triangle comes
+export const splitMeshComponents = (vertices: readonly Vector[], faces: readonly Vector[]): number[][] => {
   const placeVertexMap = new Map<string, number>();
   const joined = vertices.map(([x, y, z], vertex) => {
     const place = `${x.toFixed(JOIN_DECIMALS)},${y.toFixed(JOIN_DECIMALS)},${z.toFixed(JOIN_DECIMALS)}`;
@@ -31,11 +31,11 @@ export const splitMeshComponents = (vertices: readonly Vector[], faces: readonly
     parents[findRoot(joined[second] ?? second)] = root;
     parents[findRoot(joined[third] ?? third)] = root;
   }
-  const rootFacesMap = new Map<number, Vector[]>();
-  for (const face of faces) {
+  const rootFacesMap = new Map<number, number[]>();
+  for (const [index, face] of faces.entries()) {
     const root = findRoot(joined[face[0]] ?? face[0]);
     const pieceFaces = rootFacesMap.get(root) ?? [];
-    pieceFaces.push(face);
+    pieceFaces.push(index);
     rootFacesMap.set(root, pieceFaces);
   }
   return [...rootFacesMap.values()];

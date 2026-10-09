@@ -7,10 +7,11 @@ import { describe, test } from "vitest";
 // A stack's section counts, each run at the twelve angles a blade's radii are read at and the thirty-two an upright
 // Stack's are
 const BENCH_SECTION_COUNTS = [8, 64];
-// A stack's sections at a count, each one a radius at every angle
+// A stack's sections at a count, each one a radius and a colour at every angle
 const toSections = (count: number, angleCount: number): StatueSection[] =>
   Array.from({ length: count }, (_value, index) => ({
     centre: [0, 0],
+    colors: Array.from({ length: angleCount }, (_color, sector) => (sector % 2) * 0xffffff),
     height: 0.1,
     radii: Array.from({ length: angleCount }, () => 1 + (index % 2) * 0.5),
   }));

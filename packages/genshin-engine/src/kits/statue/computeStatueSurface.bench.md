@@ -9,23 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-09T08:05:06.075Z
-- Commit: 21511bd91e
+- Date: 2026-10-09T18:01:16.908Z
+- Commit: 965b9cdc28
 - Node: v26.10.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: darwin 27.0.0 (arm64)
+- CPU: Apple M1 × 8
+- RAM: 16.0 GiB
 
 ## computeStatueSurface > 8 sections
 
-| task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| --------- | ------- | --------- | ------- | -------- | ------- |
-| 12 angles | 1.00×   | 0.0276    | ±15.56% | 0.0398   | 10      |
-| 32 angles | 0.47×   | 0.0590    | ±14.88% | 0.0777   | 10      |
+| task      | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
+| --------- | ------- | --------- | -------- | -------- | ------- |
+| 12 angles | 1.00×   | 0.0299    | ±11.92%  | 0.0379   | 10      |
+| 32 angles | 0.24×   | 0.1229    | ±118.96% | 0.6484   | 10      |
 
 ## computeStatueSurface > 64 sections
 
 | task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------- | ------- | --------- | ------- | -------- | ------- |
-| 12 angles | 1.00×   | 0.0998    | ±43.08% | 0.2427   | 10      |
-| 32 angles | 0.59×   | 0.1691    | ±47.07% | 0.4371   | 10      |
+| 12 angles | 1.00×   | 0.1017    | ±18.68% | 0.1509   | 10      |
+| 32 angles | 0.49×   | 0.2096    | ±13.81% | 0.2579   | 10      |

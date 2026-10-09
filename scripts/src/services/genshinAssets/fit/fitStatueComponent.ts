@@ -50,29 +50,49 @@ const toStackMesh = (stacks: readonly StatueStack[]): { faces: Vector[]; vertice
 };
 // A component's points split into `count` blades by k-means, each blade a stack along its own length; a blade too few
 // Points reach is left out
-const fitBlades = (points: readonly Vector[], count: number, random: () => number): StatueStack[] => {
+const fitBlades = (
+  points: readonly Vector[],
+  count: number,
+  random: () => number,
+  readColour: (point: Readonly<Vector>) => number,
+): StatueStack[] => {
   const clusters = clusterVectors(points, seedClusterMeans(points, count, random));
   return Array.from({ length: count }, (_blade, blade) =>
     points.filter((_point, index) => clusters[index] === blade),
   ).flatMap((bladePoints) =>
     bladePoints.length < STATUE_BLADE_MIN_SAMPLES
       ? []
-      : [fitStatueStack(bladePoints, { angleCount: STATUE_BLADE_ANGLE_COUNT, sectionHeight: STATUE_SECTION_HEIGHT })],
+      : [
+          fitStatueStack(bladePoints, {
+            angleCount: STATUE_BLADE_ANGLE_COUNT,
+            readColour,
+            sectionHeight: STATUE_SECTION_HEIGHT,
+          }),
+        ],
   );
 };
 // One piece of a statue's mesh as the statue kit's stacks: one upright stack, as a column, a dish or a robe stands, or
 // The piece split into blades, as a leaf, a wing's feathers or an arm lie, at each count `STATUE_BLADE_COUNTS` holds,
 // Whichever lies nearest the piece's own surface by `computeSurfaceError`, its distance and angle each over what the
 // Shape pass holds a stand-in to, so the choice is read from no view and fits the piece, not one camera. `points` are
-// The piece's surface samples the stacks are fitted to, and `samples` the ones each candidate is scored against
+// The piece's surface samples the stacks are fitted to, `samples` the ones each candidate is scored against, and
+// `readColour` the piece's colour where each of a stack's vertices stands
 export const fitStatueComponent = (
   points: readonly Vector[],
   samples: readonly MeshSample[],
   random: () => number,
+  readColour: (point: Readonly<Vector>) => number,
 ): { score: number; stacks: StatueStack[] } => {
   const candidates = [
-    [fitStatueStack(points, { angleCount: STATUE_ANGLE_COUNT, axis: UP, sectionHeight: STATUE_SECTION_HEIGHT })],
-    ...STATUE_BLADE_COUNTS.map((count) => fitBlades(points, count, random)),
+    [
+      fitStatueStack(points, {
+        angleCount: STATUE_ANGLE_COUNT,
+        axis: UP,
+        readColour,
+        sectionHeight: STATUE_SECTION_HEIGHT,
+      }),
+    ],
+    ...STATUE_BLADE_COUNTS.map((count) => fitBlades(points, count, random, readColour)),
   ];
   return candidates
     .map((stacks) => {
