@@ -3,6 +3,7 @@ export const props = {
   amount: 1,
   amountLabel: "Amount",
   amountMaximum: 4,
+  closeLabel: "Back",
   coins: 2_945_208,
   craftedLabel: "Crafting Performed: 1",
   craftingMaterialsLabel: "Crafting Materials",

@@ -6,6 +6,8 @@ interface Props {
   amountLabel: string;
   // The most a recipe crafts at once
   amountMaximum: number;
+  // The close button's name for assistive tech, the game's "Back" line
+  closeLabel: string;
   // The coins the wallet holds
   coins: number;
   // The Crafted-so-far line under the picked recipe, in the game's words
@@ -29,6 +31,7 @@ const recipeId = defineModel<number>("recipeId", { default: 0 });
 const {
   amountLabel,
   amountMaximum,
+  closeLabel,
   coins,
   craftedLabel,
   craftingMaterialsLabel,
@@ -49,7 +52,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <p class="coins">{{ coins }}</p>
-      <button class="close" type="button" @click="emit('close')">×</button>
+      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
     </header>
     <ul class="recipes">
       <li v-for="recipe of recipes" :key="recipe.id">

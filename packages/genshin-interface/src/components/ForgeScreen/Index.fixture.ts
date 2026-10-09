@@ -7,6 +7,7 @@ export const props = {
   amount: 5,
   amountLabel: "Amount",
   amountMaximum: 19,
+  closeLabel: "Back",
   coins: 375_527,
   materialsLabel: "Materials",
   obtainLabel: "Obtain",
