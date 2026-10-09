@@ -9,7 +9,7 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). Several sessi
 
 ## How it works
 
-Every Bash command is read before it runs, with the same reader the [disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan) uses: the command is split at its separators, a quoted shell command is read again on its own, and `git -C <dir>` and `git -c key=value` are skipped before the subcommand. `.`, `./`, `:/` and `:/.` are each read as every path of the checkout. A subcommand is refused when it is one of these whole-index forms:
+Each Bash command goes through the reader of the [disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan): it is split at its separators, a quoted shell command is read again on its own, and `git -C <dir>` and `git -c key=value` are skipped before the subcommand. `.`, `./`, `:/` and `:/.` are each read as every path of the checkout. A subcommand is refused when it is one of these whole-index forms:
 
 - `add` with `.`, `-A`, `--all`, `-u` or `--update` with no path, or `-N` / `--intent-to-add` with `.` or no path;
 - `reset` with no path, except `--soft`, which moves HEAD alone and leaves the index as it is. A path is one after `--`, or a second operand with no `--`, since git reads the first as a commit or a path and every one after it as a path; a lone operand may be a commit, so it is refused;
@@ -44,14 +44,14 @@ A refused command is denied with the form it used and the path forms to use inst
 
 ## Key files
 
-| File                                                              | Role                                                             |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/ward/registerWholeIndex.ts`   | The Bash call hook: denies a refused form while a peer is live   |
-| `packages/genshin-mods/src/services/ward/getWholeIndexRefusal.ts` | The pure check over the command's text, and the deny message     |
-| `packages/genshin-mods/src/services/ward/getCheckoutPeer.ts`      | Whether the ward's records show another session in this checkout |
-| `packages/genshin-mods/src/services/ward/getCheckoutRoot.ts`      | The checkout a session's working directory sits in               |
-| `packages/genshin-mods/src/services/shell/getShellRefusal.ts`     | The segment, quoting and nesting reader both shell guards share  |
-| `packages/genshin-mods/src/services/shell/joinDirectory.ts`       | A folder a `cd` or a `-C` names, joined onto the one before it   |
+| File                                                              | Role                                                               |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/ward/registerWholeIndex.ts`   | The Bash call hook: denies a refused form while a peer is live     |
+| `packages/genshin-mods/src/services/ward/getWholeIndexRefusal.ts` | The pure refusal check of the command's text, and its deny message |
+| `packages/genshin-mods/src/services/ward/getCheckoutPeer.ts`      | Whether the ward's records show another session in this checkout   |
+| `packages/genshin-mods/src/services/ward/getCheckoutRoot.ts`      | The checkout a session's working directory sits in                 |
+| `packages/genshin-mods/src/services/shell/getShellRefusal.ts`     | The segment, quoting and nesting reader both shell guards share    |
+| `packages/genshin-mods/src/services/shell/joinDirectory.ts`       | A folder a `cd` or a `-C` names, joined onto the one before it     |
 
 ## Notes
 

@@ -21,7 +21,7 @@ flowchart TD
   COUNT --> DONE{"Count reached?"}
   DONE -->|"yes"| PAY["Primogems paid, and the finish moment kept"]
   PAY --> CAT{"Every achievement of its category finished?"}
-  CAT -->|"yes"| NAMECARD["computeAchievementNamecardItemIds: the category's namecard item, not yet granted (see Notes)"]
+  CAT -->|"yes"| NAMECARD["computeAchievementNamecardItemIds: the namecard item, not yet granted"]
   SCREEN["Paimon menu: Achievements"] --> VIEW["The screen: categories with finished counts, the selected category's rows"]
 ```
 

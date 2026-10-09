@@ -120,7 +120,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **The base is a required prop, passed down from the world.** `WorldScreen` takes `gameDataBaseUrl`, the Session hands it to the character screen, and the Profile tab takes it as a prop. The lint rule bans `provide` and `inject` because they hide an input from a component's signature, so a tab mounted without the prop is a type error rather than a silent fetch from a guessed address.
 - **Prune runs on demand, not at the end of each publish.** The rest of the mechanism is as proposed; the automatic run is not built.
 - **The Amber profile test fetches through a stub.** The stub answers the index from the lock's real hash and a stub record, because the test asserts the namecard rule, and a test that copies game data is what the rules forbid.
-- **`CHUNK_SUFFIX` is removed.** Its 392 `.chunk.ts` files were all `genshin-world`'s generated chunks, and with the two datasets' loader maps gone no module carries the suffix.
+- **The chunk suffix is removed.** Its 392 `.chunk.ts` files were all `genshin-world`'s generated chunks, and with the two datasets' loader maps gone no module carries the suffix.
 - **Publishing goes to both accounts in one call.** A dry run stores nothing, so there is no per-account dry run.
 
 ## Notes
@@ -146,7 +146,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/commands/verifyCommand.ts`                | `genshin:data verify`                                                                           |
 | `scripts/src/services/gameData/commands/pruneCommand.ts`                 | `genshin:data prune`                                                                            |
 | `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`  | Builds each character's profile in every language, one index a language                         |
-| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` | Builds each volume's body in every language, one index a language                               |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` | Builds the book bodies for publication                                                          |
 | `scripts/src/services/genshinAssets/commands/profileCommand.ts`          | `genshin:assets profile`, which publishes the profiles                                          |
 | `scripts/src/services/genshinAssets/commands/archiveCommand.ts`          | `genshin:assets archive`, which publishes the book bodies after the slices                      |
 | `packages/genshin-world/src/generated/gameDataLock.json`                 | The lock: each index key and each object key to its hash                                        |
@@ -154,7 +154,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `packages/genshin-world/src/services/data/readGameDataObject.ts`         | Fetches one object by its hash, memoized by URL                                                 |
 | `packages/genshin-world/src/services/shared/fetchJson.ts`                | The fetch itself: the timeout, the HTTP error and the JSON                                      |
 | `packages/genshin-world/src/services/data/constants.ts`                  | `GAME_DATA_BLOB_PATH`, the path under the container                                             |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`    | Reads a character's profile record, its Friendship Level and its namecard                       |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`    | Reads a character's profile record                                                              |
 | `packages/genshin-world/src/composables/useWorldArchive.ts`              | Reads a volume's body in the game language when the reader opens it                             |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`      | The Profile tab, which reads its character's record                                             |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`           | Opens the world once its names and stat tables arrive, with the base URL among its props        |
