@@ -55,4 +55,4 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 ## Tokens are a resource too
 
 - **Haiku implements and opus settles the calls** (the `llm-delegation` skill). An opus agent stopped part way ends on a handoff spec. The main session lifts the spec out of the agent's transcript with a script into a file the next agent reads, never by reading the transcript itself.
-- **The last tenth of a usage window belongs to the compute queue** (the usage reserve, in this skill's `SKILL.md`).
+- **A usage window's end belongs to the compute queue** (the usage reserve, in this skill's `SKILL.md`).

@@ -13,8 +13,6 @@ Time and effort are the limit, so every resource the session holds works at once
 - **Ending a turn to report while independent work is still ready.** The report goes out with the work still running, and names what runs and what is queued.
 - **A question to the user that blocks the rest of the turn.** Asks of the user's ear or eye are batched at the end of a reply, and everything not waiting on the answer carries on.
 
-- **A maintenance tier inside the usage reserve**, where sessions past 90% turn to reviews, sweeps and docs on `haiku` before the wind-down. The user declined it on 2026-10-10: the compute queue's runs change code too, and the reserve keeps the last tenth for them, since that is where refactors, simplifications and optimisations turn up.
-
 ## Rules
 
 - **A run of a minute or more starts in the background**, and the same turn picks up the next unit that does not depend on it. A step whose input is that run's result waits for its notification and is never run ahead on a guess.
@@ -27,7 +25,20 @@ Time and effort are the limit, so every resource the session holds works at once
 
 ## The usage reserve
 
-The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So the last tenth of either usage window, five-hour or weekly, is kept for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod watches the windows and puts the reserve into the session's system prompt when one reaches 90% used. From then until the window resets, the session:
+The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads the five-hour and the weekly window against their tiers, and puts the reserve into the session's system prompt naming the window and its reset time. The lines are `FIVE_HOUR_MAINTENANCE_PERCENTAGE`, `FIVE_HOUR_WIND_DOWN_PERCENTAGE` and `WEEKLY_WIND_DOWN_PERCENTAGE` in the mod's `constants.ts`: the five-hour window's maintenance tier starts at 90% used and its wind-down at 97%, and the weekly window has no maintenance tier and winds down at 90%. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
+
+### Maintenance
+
+The five-hour window resets within hours, so its unused end is lost, and `haiku` stretches it furthest because limits weigh a token by its family. From its maintenance line until the window resets, the session:
+
+1. Starts no new feature, design or proposal.
+2. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (the `sweeps` skill); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
+3. Writes a finding that needs judgement down as a follow-up (the `follow-ups` plugin's capture skill), not decided on `haiku`.
+4. Keeps the compute queue's runners going.
+
+### Wind-down
+
+The weekly window stays strict because a lockout lasts days. From a window's wind-down line until it resets, the session:
 
 1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
 2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
