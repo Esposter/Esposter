@@ -3,7 +3,9 @@ import type { ProposalFrontmatter } from "#src/models/fleet/ProposalFrontmatter"
 import { z } from "zod";
 
 const FRONTMATTER_REGEX = /^---\n(?<block>[\s\S]*?)\n---\n/u;
-const FIELD_REGEX = /^(?<key>[a-z]+): (?<value>.*)$/gmu;
+// A field's value runs on over the indented lines below its key, as a formatter wraps a long flow sequence
+const FIELD_REGEX = /^(?<key>[a-z]+):(?<value>.*(?:\n[ \t].*)*)$/gmu;
+const LINE_BREAK_REGEX = /\s*\n\s*/gu;
 const QUOTED_REGEX = /^(?<quote>["'])(?<text>.*)\k<quote>$/u;
 const SEQUENCE_REGEX = /^\[(?<items>.*)\]$/u;
 
@@ -32,7 +34,10 @@ const readFieldValue = (value: string): string | string[] => {
 export const parseProposalFrontmatter = (text: string): ProposalFrontmatter => {
   const block = FRONTMATTER_REGEX.exec(text)?.groups?.block ?? "";
   const fields = Object.fromEntries(
-    Array.from(block.matchAll(FIELD_REGEX), ({ groups }) => [groups?.key ?? "", readFieldValue(groups?.value ?? "")]),
+    Array.from(block.matchAll(FIELD_REGEX), ({ groups }) => {
+      const value = (groups?.value ?? "").replaceAll(LINE_BREAK_REGEX, " ").trim();
+      return [groups?.key ?? "", readFieldValue(value)];
+    }),
   );
   return ProposalFrontmatterSchema.parse(fields);
 };
