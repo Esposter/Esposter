@@ -117,7 +117,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **Each language is one index,** not one object per entity. The largest index is about 20 KB raw, so a 2 KB book never pulls a 300 KB index.
 - **The keys are `profile/<Language>` and `bookBody/<Language>`,** with the entity id as the entry key, in decimal.
 - **The lock imports statically,** and `tsconfig.build.json` maps its exact path ahead of the generated wildcard, so the declaration program types it rather than the stand-in.
-- **The Profile tab injects the base with an empty default.** A tab mounted outside the world fetches from an empty base and logs the failure, rather than fetching a guessed address.
+- **The base is a required prop, passed down from the world.** `WorldScreen` takes `gameDataBaseUrl`, the Session hands it to the character screen, and the Profile tab takes it as a prop. The lint rule bans `provide` and `inject` because they hide an input from a component's signature, so a tab mounted without the prop is a type error rather than a silent fetch from a guessed address.
 - **Prune runs on demand, not at the end of each publish.** The rest of the mechanism is as proposed; the automatic run is not built.
 - **The Amber profile test fetches through a stub.** The stub answers the index from the lock's real hash and a stub record, because the test asserts the namecard rule, and a test that copies game data is what the rules forbid.
 - **`CHUNK_SUFFIX` is removed.** Its 392 `.chunk.ts` files were all `genshin-world`'s generated chunks, and with the two datasets' loader maps gone no module carries the suffix.
@@ -127,42 +127,42 @@ Wall times move with the machine's load, so the median of three is the steadier 
 
 - **Rejected here:** per-version folders, which re-upload every unchanged file under each version; per-dataset manifests, which add a round trip to each read; git-style trees, which take two or three sequential round trips per read; a mutable pointer blob, which lets data run ahead of the parsers deployed with it; a Nitro mirror in development, which would hide the real host from dev; connection strings, replaced by a keyless credential.
 - **Clone size does not shrink.** Git keeps the old blobs, and no history is rewritten.
-- **External npm consumers are not supported yet.** The package still bundles its remaining generated data, so it is unchanged for them until the second phase.
+- **External npm consumers need a host from the first phase.** `gameDataBaseUrl` is a required `WorldScreen` prop, and the Profile tab and the book reader fetch from it. Esposter's accounts admit only https://esposter.com and http://localhost:3000, so any other consumer must serve every object the lock names from its own base, as the package README says.
 
 ## Key files
 
-| File                                                                     | Role                                                                                           |
-| :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| `scripts/src/services/gameData/publishGameData.ts`                       | Plans a publication, stores it in both accounts and returns the lock it would commit           |
-| `scripts/src/services/gameData/publishGameDataStep.ts`                   | One generator's publish: reads the lock, publishes, writes the lock when both accounts hold it |
-| `scripts/src/services/gameData/publishGameDataToTarget.ts`               | Stores what one account lacks, reusing young and reachable objects                             |
-| `scripts/src/services/gameData/planGameDataPublication.ts`               | Hashes every record and index, with each index's entries sorted by id                          |
-| `scripts/src/services/gameData/verifyGameData.ts`                        | Fetches every object the lock reaches, anonymously, and checks each hash                       |
-| `scripts/src/services/gameData/pruneGameData.ts`                         | Deletes the objects no live lock reaches and that are past retention                           |
-| `scripts/src/services/gameData/readLiveGameDataLocks.ts`                 | The locks a stored object may still be reached by                                              |
-| `scripts/src/services/gameData/storeGameDataRecord.ts`                   | Writes one object create-only, or rewrites a stale copy with the same bytes                    |
-| `scripts/src/services/gameData/createGameDataContainerClient.ts`         | The keyless container client each account is published through                                 |
-| `scripts/src/services/gameData/commands/verifyCommand.ts`                | `genshin:data verify`                                                                          |
-| `scripts/src/services/gameData/commands/pruneCommand.ts`                 | `genshin:data prune`                                                                           |
-| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`  | Builds each character's profile in every language, one index a language                        |
-| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` | Builds each volume's body in every language, one index a language                              |
-| `scripts/src/services/genshinAssets/commands/profileCommand.ts`          | `genshin:assets profile`, which publishes the profiles                                         |
-| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`          | `genshin:assets archive`, which publishes the book bodies after the slices                     |
-| `packages/genshin-world/src/generated/gameDataLock.json`                 | The lock: each index key and each object key to its hash                                       |
-| `packages/genshin-world/src/services/data/readGameDataEntry.ts`          | Reads one record by id, through its index                                                      |
-| `packages/genshin-world/src/services/data/readGameData.ts`               | Reads one record by its key                                                                    |
-| `packages/genshin-world/src/services/data/readGameDataObject.ts`         | Fetches one object by its hash, memoized by URL                                                |
-| `packages/genshin-world/src/services/data/fetchGameDataObject.ts`        | The fetch itself: the timeout, the HTTP error and the JSON                                     |
-| `packages/genshin-world/src/services/data/constants.ts`                  | `GAME_DATA_BLOB_PATH`, the path under the container                                            |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`    | Reads a character's profile record, its Friendship Level and its namecard                      |
-| `packages/genshin-world/src/composables/useWorldArchive.ts`              | Reads a volume's body in the game language when the reader opens it                            |
-| `packages/genshin-world/src/components/Character/Profile/Index.vue`      | The Profile tab, which reads its character's record                                            |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`           | Opens the world once its names and stat tables arrive, with the base URL among its props       |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`       | Hands the base URL to the Profile tab                                                          |
-| `packages/genshin-world/tsconfig.build.json`                             | Maps the lock's exact path ahead of the generated stand-in                                     |
-| `apps/web/app/components/Genshin/World.vue`                              | Passes the AppAssets game data path to the world                                               |
-| `packages/db/src/services/azure/container/uploadCompressedJson.ts`       | Uploads a compressed JSON object with its headers and conditions                               |
-| `packages/db/src/services/azure/container/deleteBlobs.ts`                | Deletes a set of blobs, treating a missing one as deleted and a refused one as kept            |
+| File                                                                     | Role                                                                                            |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `scripts/src/services/gameData/publishGameData.ts`                       | Plans a publication, stores it in both accounts and returns the entries it planned for the lock |
+| `scripts/src/services/gameData/publishGameDataStep.ts`                   | One generator's publish: publishes, then commits its entries onto the lock as it stands then    |
+| `scripts/src/services/gameData/commitGameDataLock.ts`                    | Merges a publication's entries onto the lock at commit, so a concurrent scope's entries survive |
+| `scripts/src/services/gameData/publishGameDataToTarget.ts`               | Stores what one account lacks, reusing young and reachable objects                              |
+| `scripts/src/services/gameData/planGameDataPublication.ts`               | Hashes every record and index, with each index's entries sorted by id                           |
+| `scripts/src/services/gameData/verifyGameData.ts`                        | Fetches every object the lock reaches, anonymously, and checks each hash                        |
+| `scripts/src/services/gameData/pruneGameData.ts`                         | Deletes the objects no live lock reaches and that are past retention                            |
+| `scripts/src/services/gameData/readLiveGameDataLocks.ts`                 | The locks a stored object may still be reached by                                               |
+| `scripts/src/services/gameData/storeGameDataRecord.ts`                   | Writes one object create-only, or rewrites a stale copy with the same bytes                     |
+| `scripts/src/services/gameData/createGameDataContainerClient.ts`         | The keyless container client each account is published through                                  |
+| `scripts/src/services/gameData/commands/verifyCommand.ts`                | `genshin:data verify`                                                                           |
+| `scripts/src/services/gameData/commands/pruneCommand.ts`                 | `genshin:data prune`                                                                            |
+| `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`  | Builds each character's profile in every language, one index a language                         |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` | Builds each volume's body in every language, one index a language                               |
+| `scripts/src/services/genshinAssets/commands/profileCommand.ts`          | `genshin:assets profile`, which publishes the profiles                                          |
+| `scripts/src/services/genshinAssets/commands/archiveCommand.ts`          | `genshin:assets archive`, which publishes the book bodies after the slices                      |
+| `packages/genshin-world/src/generated/gameDataLock.json`                 | The lock: each index key and each object key to its hash                                        |
+| `packages/genshin-world/src/services/data/readGameDataEntry.ts`          | Reads one record by id, through its index                                                       |
+| `packages/genshin-world/src/services/data/readGameDataObject.ts`         | Fetches one object by its hash, memoized by URL                                                 |
+| `packages/genshin-world/src/services/shared/fetchJson.ts`                | The fetch itself: the timeout, the HTTP error and the JSON                                      |
+| `packages/genshin-world/src/services/data/constants.ts`                  | `GAME_DATA_BLOB_PATH`, the path under the container                                             |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`    | Reads a character's profile record, its Friendship Level and its namecard                       |
+| `packages/genshin-world/src/composables/useWorldArchive.ts`              | Reads a volume's body in the game language when the reader opens it                             |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`      | The Profile tab, which reads its character's record                                             |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`           | Opens the world once its names and stat tables arrive, with the base URL among its props        |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`       | Hands the base URL to the Profile tab                                                           |
+| `packages/genshin-world/tsconfig.build.json`                             | Maps the lock's exact path ahead of the generated stand-in                                      |
+| `apps/web/app/components/Genshin/World.vue`                              | Passes the AppAssets game data path to the world                                                |
+| `packages/db/src/services/azure/container/uploadCompressedJson.ts`       | Uploads a compressed JSON object with its headers and conditions                                |
+| `packages/db/src/services/azure/container/deleteBlobs.ts`                | Deletes a set of blobs, treating a missing one as deleted and a refused one as kept             |
 
 ## Sources
 

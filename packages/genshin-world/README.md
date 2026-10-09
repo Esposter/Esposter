@@ -43,12 +43,15 @@ import "genshin-world/style.css";
     :create-terrain-worker="() => new TerrainTileWorker()"
     :is-tuning="isDevelopment || undefined"
     :quality-tier
+    game-data-base-url="https://your-host.example/game-data"
     region-data-base-url="genshin"
   />
 </template>
 ```
 
 Region data lives in `src/data/regions/<region>.json`, and your server serves it at the base URL, so a region is fetched as the camera comes within reach and released as it leaves.
+
+Character profiles and book bodies are not bundled. They are fetched from `game-data-base-url`, which must serve each object that the package's `gameDataLock.json` names as `<base>/<sha256>.json`, with CORS for your page's origin. Esposter's own accounts admit only esposter.com and localhost, so another host must publish its own copy.
 
 ## <a name="documentation">📖 Documentation</a>
 

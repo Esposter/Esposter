@@ -29,13 +29,13 @@ One file per entity because that is how a consumer usually reads them — a sess
 
 **Committed, because the consumer must not need the generator's inputs.** The reference map is read on every spoken reply, by a plugin copy installed on a machine with no encoder and no engine of the repository's; the tiled types are what the game is type-checked against. A generated file that only existed after a local run would make every consumer's build depend on a source the repository does not hold.
 
+**Published, when a browser fetches it, and only its lock committed.** A set a screen reads one record at a time, when it opens the record, is published to Blob storage as content-addressed objects instead of committed. The one file committed beside it is the lock that names each object's hash, so the consumer still never needs the generator's inputs and no build reads the records. The profiles and book bodies are the first such sets ([hosted game data](/docs/genshin/hosted-game-data)).
+
 ## What one never does
 
 **It is never edited by hand.** A wrong value is a wrong generator or a wrong input, and the fix goes there and is re-run — an edit in the output is overwritten by the next run without a trace. Each generator treats its folder as the run's whole output: it clears the folder and writes it again, so an entity the source no longer holds leaves no stale file behind. A generator whose entities cost minutes each to measure may read the previous run's records first and write an unchanged entity's back rather than measure it again — the folder is still cleared and still the run's whole output, and a `--fresh` flag measures everything — but the choice is per entity and by name, never a diff of the folder against itself.
 
 **An authored file never holds a generated value, and a generated file never holds an authored one.** The persona card is the person's — how the character speaks, in our words, and the reference line someone listened to and chose; the measured reference the selection computes for the same character is an entry of the generated map beside it. When both exist the precedence is resolved in code, never by copying one value into the other's file:
-
-**Published, when a browser fetches it, and only its lock committed.** A set a screen reads one record at a time, when it opens the record, is published to Blob storage as content-addressed objects instead of committed. The one file committed beside it is the lock that names each object's hash, so the consumer still never needs the generator's inputs and no build reads the records. The profiles and book bodies are the first such sets ([hosted game data](/docs/genshin/hosted-game-data)).
 
 ```mermaid
 flowchart LR
