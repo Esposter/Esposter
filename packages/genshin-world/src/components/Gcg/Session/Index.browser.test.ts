@@ -1,6 +1,6 @@
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey } from "genshin-text";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
@@ -19,5 +19,15 @@ describe("gcgSession", () => {
       .element(page.getByText(fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.GcgRoundTitle], 2)))
       .toBeVisible();
     await expect.element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgReroll] })).toBeVisible();
+  });
+
+  test("should leave when the duel fails to load", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const onLeave = vi.fn<() => void>();
+    render(GcgSession, { props: { gameId: -1, gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onLeave } });
+
+    await expect.poll(() => onLeave).toHaveBeenCalledOnce();
   });
 });
