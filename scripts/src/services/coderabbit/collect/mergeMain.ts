@@ -25,7 +25,8 @@ import { getResult } from "@esposter/shared";
 // What landed on `main` unread — an express cut, a dependency bump — rides the window about to be pushed rather
 // Than waiting for the release to bring the two together. The lockfile conflict that merge always brings is
 // Rebuilt from the installed tree (`git` skill); any other conflict is the resolver's, counted on `main`'s head,
-// And past its attempts the fold is abandoned — the release merge is then where a person meets it.
+// And past its attempts the fold is abandoned: a cut goes on without `main`, and the fold at the window's merge parks
+// The commits that conflict and cuts the rest again (`foldWindowMain`).
 export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInput): Promise<MergeMainOutcome> => {
   const main = `origin/${MAIN_BRANCH}`;
   if (checkIsAncestor(main, "HEAD", cwd)) return MergeMainOutcome.AlreadyMerged;

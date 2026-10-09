@@ -136,7 +136,7 @@ export const SESSION_LIMITED_MARKER = "review-collector session-limited";
 export const DRAINS_MARKER = "review-collector drains";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
-// The commit is a person's, and the port holds on it
+// The commit is parked on its held branch and the replay goes on without it (`replayOwed`)
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 // Keys the one issue a park opens (`parkCommits`), by the first commit it parks
 export const HELD_MARKER = "review-collector held";
