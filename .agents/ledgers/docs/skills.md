@@ -25,6 +25,7 @@
 | `file-organization`       | 2026-10-05 · Opus 5.5 |       |
 | `finishing`               | 2026-10-05 · Opus 5.5 |       |
 | `formatting`              | 2026-10-05 · Opus 5.5 |       |
+| `genshin-data`            | —                     |       |
 | `genshin-engine`          | 2026-10-05 · Opus 5.5 |       |
 | `genshin-parity`          | 2026-10-07 · Opus 5.5 |       |
 | `genshin-text`            | 2026-10-05 · Opus 5.5 |       |
