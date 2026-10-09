@@ -27,7 +27,7 @@ flowchart TD
 
 ## The floors and chambers
 
-`pnpm -C scripts genshin:assets spiral-abyss` builds three records from the game's tower tables and publishes them to the hosted game data as `spiralAbyss/floors`, `spiralAbyss/rewards` and `spiralAbyss/periods`, which `readAbyssFloors`, `readAbyssFloorRewards` and `readAbyssPeriods` fetch by key; the committed copies remain under `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the tower tables: the four the records are built from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
+`pnpm -C scripts genshin:assets spiral-abyss` builds three records from the game's tower tables and publishes them to the hosted game data as `spiralAbyss/floors`, `spiralAbyss/rewards` and `spiralAbyss/periods`, which `readAbyssFloors`, `readAbyssFloorRewards` and `readAbyssPeriods` fetch by key. The community dump the scripts read lacks the tower tables: the four the records are built from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
 
 - **Floors.** Every floor the tower table holds: its id and its place in the twelve, the level group that lists its three chambers, its teams and the stars its chambers must hold for the floor above. The Corridor's eight floors and each Moon Spire period's four are among them.
 - **Chambers.** Each chamber's three star conditions. A time condition is a mark on the clock's seconds left, and a monolith condition a mark on the monolith's health percent, each as the table names it.
@@ -72,7 +72,6 @@ flowchart TD
 | `packages/genshin-world/src/services/spiralAbyss/readAbyssPeriods.ts`            | The Moon Spire's periods, loaded and checked from their slice              |
 | `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssOpenAtRank.ts`      | Whether the Abyss is open to a player's Adventure Rank                     |
 | `packages/genshin-world/src/services/spiralAbyss/readAbyssFloors.ts`             | The floors and their chambers, every floor the table holds, fetched by key |
-| `packages/genshin-world/src/generated/spiralAbyss/floors.json`                   | The floors and their chambers, every floor the table holds                 |
 
 ## Not built yet
 
