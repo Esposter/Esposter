@@ -3,6 +3,7 @@ title: Forging
 description: Proposal — the blacksmith's forge screen and place. The recipes, queues by rank, real-time orders, the daily cap, the four-star weapons from billets, the drop-table Mystic Enhancement Ore, the forging talents and the Serenitea Pot's refusal of Magical Crystal Chunks are built.
 model: claude-haiku-5-5
 needs: [game-exports]
+waiting: "the blacksmith's place waits on the scene group export (Lua/Scene/3 positions), and the forge screen's wiring on the Start, Obtain and Materials text ids, which the game map does not key"
 touches:
   [
     "packages/genshin-interface/src/components/ForgeScreen/**",
@@ -27,7 +28,7 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 **Still to build, in order:**
 
 1. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen is reached through its fixture, since the game's menus hold no forge.
-2. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them. The Start and Obtain words wait on their text ids, which the game's own map does not yet key (the forge tab's words are keyed in `GameTextKey`).
+2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. It waits on the Start, Obtain and Materials words: the English map holds no key for them, so the screen has no label to show them with.
 
 ## Data and measures
 
