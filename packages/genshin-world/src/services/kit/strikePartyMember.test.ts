@@ -7,11 +7,15 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
+
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
 
 describe(strikePartyMember, () => {
   const MAX_HEALTH = 1000;

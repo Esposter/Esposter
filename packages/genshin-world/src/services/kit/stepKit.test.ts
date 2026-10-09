@@ -1,12 +1,16 @@
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
-import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
+
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
 
 describe(stepKit, () => {
   const STEP_SECONDS = 0.1;

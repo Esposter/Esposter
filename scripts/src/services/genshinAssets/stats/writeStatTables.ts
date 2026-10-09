@@ -15,13 +15,14 @@ import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCha
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
-import { toTalentMultiplierMap } from "#src/services/genshinAssets/stats/toTalentMultiplierMap";
+import { toJson } from "#src/services/genshinAssets/stats/toJson";
+import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables";
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
+import { writeTalentTables } from "#src/services/genshinAssets/stats/writeTalentTables";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 // The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables into
 // The world package, with the curves they grow along, only those any of them names. Every table is checked against the
 // World's schema as it is written; what the run noted, a property no attribute names among it, is returned once each
@@ -32,6 +33,10 @@ export const writeStatTables = (): string[] => {
   const characterTalentKits = getCharacterTalentKits();
   const proudSkillRows = readExcelTable<ExcelProudSkillRow>("ProudSkillExcelConfigData");
   const combatGroupIds = new Set(characterTalentKits.flatMap(({ talentGroupIds }) => Object.values(talentGroupIds)));
+  const talentTables = characterTalentKits.map(({ characterId, talentGroupIds }) => ({
+    characterId,
+    ...toTalentTables(proudSkillRows, new Set(Object.values(talentGroupIds))),
+  }));
   const tableMap = {
     "artifactExpMaterials.json": getArtifactExpMaterials(),
     "artifactMainAffixCurves.json": getArtifactMainAffixCurves(notes),
@@ -46,7 +51,6 @@ export const writeStatTables = (): string[] => {
     "characters.json": characterDatas,
     "characterSkillKits.json": getCharacterSkillKits(),
     "characterTalentKits.json": characterTalentKits,
-    "talentMultipliers.json": toTalentMultiplierMap(proudSkillRows, combatGroupIds),
     "talentUpgrades.json": toTalentUpgradeMap(proudSkillRows, combatGroupIds),
     "weaponGrowCurves.json": toGrowCurves(
       readExcelTable<ExcelCurveRow>("WeaponCurveExcelConfigData"),
@@ -61,5 +65,6 @@ export const writeStatTables = (): string[] => {
   mkdirSync(STATS_GENERATED_DIRECTORY, { recursive: true });
   for (const [fileName, table] of Object.entries(tableMap))
     writeFileSync(join(STATS_GENERATED_DIRECTORY, fileName), toJson(table));
+  writeTalentTables(talentTables);
   return [...new Set(notes)];
 };

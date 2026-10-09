@@ -1,9 +1,9 @@
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 
-import { toTalentMultiplierMap } from "#src/services/genshinAssets/stats/toTalentMultiplierMap";
+import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables";
 import { describe, expect, test } from "vitest";
 
-describe(toTalentMultiplierMap, () => {
+describe(toTalentTables, () => {
   const GROUP_ID = 231;
   const OTHER_GROUP_ID = 999;
   const ROWS: ExcelProudSkillRow[] = [
@@ -36,13 +36,21 @@ describe(toTalentMultiplierMap, () => {
     },
   ];
 
-  test("keeps each named group's levels in order, each with its parameters up to the last one not zero", () => {
+  test("keeps each named group's levels in order, its parameters up to the last one not zero, and its labels apart", () => {
     expect.hasAssertions();
-    expect(toTalentMultiplierMap(ROWS, new Set([GROUP_ID]))).toStrictEqual({
-      [GROUP_ID]: [
-        { level: 1, paramDescTextIds: [21, 22], paramList: [0.25, 0.75] },
-        { level: 2, paramDescTextIds: [11], paramList: [0.5] },
-      ],
+    expect(toTalentTables(ROWS, new Set([GROUP_ID]))).toStrictEqual({
+      labelMap: {
+        [GROUP_ID]: [
+          { level: 1, paramDescTextIds: [21, 22] },
+          { level: 2, paramDescTextIds: [11] },
+        ],
+      },
+      multiplierMap: {
+        [GROUP_ID]: [
+          { level: 1, paramList: [0.25, 0.75] },
+          { level: 2, paramList: [0.5] },
+        ],
+      },
     });
   });
 });

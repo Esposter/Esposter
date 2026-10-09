@@ -4,11 +4,15 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
+
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
 
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,
