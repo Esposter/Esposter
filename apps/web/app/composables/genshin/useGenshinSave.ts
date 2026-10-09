@@ -5,12 +5,35 @@ import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
-import { checkIsServer, getResult, noop } from "@esposter/shared";
+import { checkIsServer, getResult, jsonDateParse, noop } from "@esposter/shared";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 
+// A browser that blocks its storage throws on the access, which is logged and read as no guest save, so a signed-in
+// Player's account save still loads
+const readGuestSave = (): GenshinSave | undefined => {
+  const guestJson = getResult(
+    // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
+    () => window.localStorage.getItem(LocalStorageKey.GenshinSave),
+  )
+    .orTee(console.error)
+    .unwrapOr(null);
+  if (!guestJson) return undefined;
+
+  const parsedJson: unknown = getResult(() => jsonDateParse(guestJson))
+    .orTee(console.error)
+    .unwrapOr(undefined);
+  const result = genshinSaveSchema.safeParse(parsedJson);
+  return result.success ? result.data : undefined;
+};
+const clearGuestSave = () => {
+  getResult(
+    // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
+    () => window.localStorage.removeItem(LocalStorageKey.GenshinSave),
+  ).match(noop, console.error);
+};
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
-// the start took; signed out, it is this browser's copy. A change is saved on the clock's autosave cadence, at once after
-// a grant, and when the page is hidden. The server's clock is kept as an offset, which the world reads its timers by
+// The start took; signed out, it is this browser's copy. A change is saved on the clock's autosave cadence, at once after
+// A grant, and when the page is hidden. The server's clock is kept as an offset, which the world reads its timers by
 export const useGenshinSave = async () => {
   const { $trpc } = useNuxtApp();
   const { executeMutation } = useMutation();
@@ -20,7 +43,7 @@ export const useGenshinSave = async () => {
   const isReplaced = ref(false);
   const serverClockOffsetMs = ref(0);
   // The lease this page holds, empty while the page plays the browser's save, and the save the page holds with the JSON
-  // the account or the browser last stored, so an unchanged save is never sent again
+  // The account or the browser last stored, so an unchanged save is never sent again
   let sessionId = "";
   let latestSave: GenshinSave = EMPTY_GENSHIN_SAVE;
   let persistedJson = "";
@@ -32,29 +55,6 @@ export const useGenshinSave = async () => {
     serverClockOffsetMs.value = Math.round(
       Temporal.Instant.from(serverNow).epochMilliseconds - (sentAt + receivedAt) / 2,
     );
-  };
-  // A browser that blocks its storage throws on the access, which is logged and read as no guest save, so a signed-in
-  // Player's account save still loads
-  const readGuestSave = (): GenshinSave | undefined => {
-    const guestJson = getResult(
-      // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
-      () => window.localStorage.getItem(LocalStorageKey.GenshinSave),
-    )
-      .orTee(console.error)
-      .unwrapOr(null);
-    if (!guestJson) return undefined;
-    // eslint-disable-next-line no-restricted-properties -- the save keeps its instants as ISO strings, which a date revival would turn into Dates
-    const parsedJson: unknown = getResult(() => JSON.parse(guestJson))
-      .orTee(console.error)
-      .unwrapOr(undefined);
-    const result = genshinSaveSchema.safeParse(parsedJson);
-    return result.success ? result.data : undefined;
-  };
-  const clearGuestSave = () => {
-    getResult(
-      // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
-      () => window.localStorage.removeItem(LocalStorageKey.GenshinSave),
-    ).match(noop, console.error);
   };
   const startLease = async () => {
     const sentAt = Date.now();
@@ -84,15 +84,15 @@ export const useGenshinSave = async () => {
     if (outcome.status === MutationStatus.Succeeded) {
       persistedJson = saveJson;
       setServerClockOffset(outcome.result.serverNow, sentAt, Date.now());
-    } else if (outcome.status === MutationStatus.Failed) {
-      // A write the server refuses as another session's is the lease lost, so the page is replaced. Any other failure
-      // stays unsaved and is sent again by the next save
+    }
+    // A write the server refuses as another session's is the lease lost, so the page is replaced. Any other failure
+    // Stays unsaved and is sent again by the next save
+    else if (outcome.status === MutationStatus.Failed)
       if (checkIsTRPCConflict(outcome.error)) isReplaced.value = true;
       else console.error(outcome.error);
-    }
   };
   // Signed out, the page plays the browser's save. Signed in, the account's save is loaded, and a guest save the browser
-  // holds is uploaded when the account has none, or merged into the account's when it has one
+  // Holds is uploaded when the account has none, or merged into the account's when it has one
   const readLocalSave = () => {
     initialSave.value = readGuestSave() ?? EMPTY_GENSHIN_SAVE;
     latestSave = initialSave.value;
@@ -119,7 +119,7 @@ export const useGenshinSave = async () => {
   };
   if (!checkIsServer()) {
     // A session another sign-in replaced hears it through the real-time layer, the replacing session's id reaching every
-    // subscriber of the user. One that does not hear it is refused by its next save instead
+    // Subscriber of the user. One that does not hear it is refused by its next save instead
     useOnlineSubscribable(
       () => session.value?.user.id,
       (userId) => {
@@ -138,10 +138,10 @@ export const useGenshinSave = async () => {
     // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
     useIntervalFn(persist, AUTOSAVE_INTERVAL_MS);
     useEventListener(
-      () => document,
+      () => window.document,
       "visibilitychange",
       () => {
-        if (document.visibilityState !== "hidden") return;
+        if (window.document.visibilityState !== "hidden") return;
         // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
         persist();
       },

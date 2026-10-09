@@ -18,29 +18,31 @@ export const holdFleetEntry = async (entry: string, machine: string, claimed: Cl
   while (isHeld) {
     // oxlint-disable-next-line no-await-in-loop -- each renewal is one interval after the last, so the waits cannot overlap
     await sleep(RENEW_MILLISECONDS);
+    const previous = current;
     // oxlint-disable-next-line no-await-in-loop -- as above
     const renewal = await getResultAsync(async () => {
       const sample = await readMachineSample();
       const message = {
-        ...current.message,
+        ...previous.message,
         load: formatMachineLoad(sample.cpuPercentage, sample.gpuPercentage, sample.freeGigabytes),
         renewedAt: Temporal.Now.instant().toString(),
       };
       const sha = createFleetCommit(message);
-      return { outcome: pushFleetRef(`${CLAIM_REF_PREFIX}${entry}`, sha, current.sha), renewed: { message, sha } };
+      return { outcome: pushFleetRef(`${CLAIM_REF_PREFIX}${entry}`, sha, previous.sha), renewed: { message, sha } };
     });
-    renewal.match(
+    const next = renewal.match(
       ({ outcome, renewed }) => {
-        if (outcome === FleetPushOutcome.Pushed) current = renewed;
-        else {
-          isHeld = false;
-          const reason = outcome === FleetPushOutcome.Gone ? "its ref was deleted" : "another machine holds it";
-          console.info(`${machine} stopped holding ${entry}: ${reason}`);
-        }
+        if (outcome === FleetPushOutcome.Pushed) return { claim: renewed, isHeld: true };
+        const reason = outcome === FleetPushOutcome.Gone ? "its ref was deleted" : "another machine holds it";
+        console.info(`${machine} stopped holding ${entry}: ${reason}`);
+        return { claim: previous, isHeld: false };
       },
       (error) => {
         console.error(`renewing ${entry} failed, retrying next interval: ${error.message}`);
+        return { claim: previous, isHeld: true };
       },
     );
+    current = next.claim;
+    isHeld = next.isHeld;
   }
 };

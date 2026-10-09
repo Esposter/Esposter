@@ -1,6 +1,6 @@
 import type { Peer } from "#src/models/fleet/data/Peer";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 const PEER_FIELDS: readonly string[] = ["host", "identityFile", "parityDirectory", "repository", "user"];
 
@@ -13,7 +13,7 @@ const readField = (name: string, values: Map<string, unknown>, field: string): s
 
 // The peers file: a map from each peer's name to its host, user, key, repository and parity directory
 export const parsePeers = (text: string): Record<string, Peer> => {
-  const value: unknown = JSON.parse(text);
+  const value: unknown = jsonDateParse(text);
   if (typeof value !== "object" || value === null || Array.isArray(value))
     throw new InvalidOperationError(Operation.Read, "peers", "the peers file is not a map of peers");
   const peers: Record<string, Peer> = {};

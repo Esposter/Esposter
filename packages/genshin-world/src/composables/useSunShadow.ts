@@ -36,9 +36,8 @@ export const useSunShadow = ({ enemyMap, getCharacterBody, sunLight }: SunShadow
     // The cascades' node sets their flag again when its anchor has moved a texel, after this and before the frame draws.
     // The body casts only into the nearest cascades, the others' slices lying past the reach of its shadow
     light.shadow.needsUpdate = isMoved;
-    cascadedShadowNode.lights.forEach(({ shadow }, index) => {
+    for (const [index, { shadow }] of cascadedShadowNode.lights.entries())
       if (shadow) shadow.needsUpdate = isSunOrEnemyMoved || (isBodyMoved && index < BODY_SHADOW_CASCADES);
-    });
     if (!isMoved) return;
     drawnSunDirection.copy(sunDirection);
     if (characterBody) drawnBodyMatrix.copy(characterBody.matrix);

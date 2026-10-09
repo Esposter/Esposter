@@ -2,11 +2,11 @@ import { parseClaimMessage } from "#src/services/fleet/parseClaimMessage";
 import { describe, expect, test } from "vitest";
 
 const CLAIM = {
-  claimedAt: "2026-10-09T00:00:00Z",
+  claimedAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
   entry: "city-areas",
   load: "CPU 4%",
   machine: "pc",
-  renewedAt: "2026-10-09T00:10:00Z",
+  renewedAt: Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 10 }).toString(),
 };
 
 describe(parseClaimMessage, () => {

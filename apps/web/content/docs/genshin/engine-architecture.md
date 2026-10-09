@@ -76,6 +76,22 @@ Every module is judged by what it costs a mid-range laptop's integrated GPU and 
 
 Every generator and every per-frame selection is benched under the `bench` skill at two scales or more, so its cost is shown to follow what is visible. A module whose bench grows with the continent is redesigned, not tuned.
 
+## The world screen is composition
+
+`World/Screen/Index.vue` only composes. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
+
+```mermaid
+flowchart LR
+  Pick[useWorldPickups] -->|questEvent| Quests[useWorldQuests]
+  Combat[useWorldCombat] -->|defeatEnemy| Archive[useWorldArchive]
+  Combat -->|questEvent| Quests
+  Talks[useWorldTalks] -->|questEvent| Quests
+  Save[useWorldSave] -->|bagChange| Archive
+  Quests -->|achievementEvents| Achievements[useWorldAchievements]
+  Quests -->|parentQuestFinish| Archive
+  Map[useWorldMap] -->|questEvent| Quests
+```
+
 ## Key files
 
 | File                                                            | Role                                                           |

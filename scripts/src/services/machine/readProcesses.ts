@@ -1,6 +1,5 @@
 import type { MachineProcess } from "#src/models/machine/MachineProcess";
 import type { MsysProcess } from "#src/models/machine/MsysProcess";
-import type { WindowsProcess } from "#src/models/machine/WindowsProcess";
 
 import { checkIsMsysExecutable } from "#src/services/machine/checkIsMsysExecutable";
 import { parseMsysProcesses } from "#src/services/machine/parseMsysProcesses";

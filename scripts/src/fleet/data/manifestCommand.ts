@@ -1,5 +1,4 @@
-import { DATA_FOLDERS } from "#src/services/fleet/data/constants";
-import { FAILURE_EXIT_CODE } from "#src/services/fleet/data/constants";
+import { DATA_FOLDERS, FAILURE_EXIT_CODE } from "#src/services/fleet/data/constants";
 import { getManifest } from "#src/services/fleet/data/getManifest";
 import { getParityDirectory } from "#src/services/fleet/data/getParityDirectory";
 import { resolveFolders } from "#src/services/fleet/data/resolveFolders";

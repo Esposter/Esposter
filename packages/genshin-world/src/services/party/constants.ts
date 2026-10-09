@@ -32,6 +32,9 @@ export const IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER = 0.95;
 // The factor the walking, running, sprinting and dashing speeds are multiplied by under Impetuous Winds' Movement SPD,
 // Which the Movement Speed page of the Genshin Impact Wiki lists them among
 export const IMPETUOUS_WINDS_MOVEMENT_SPEED_MULTIPLIER = 1.1;
+// The factor the stamina a kit's action or a step spends is multiplied by under Impetuous Winds, as the Team Bonus
+// Page of the Genshin Impact Wiki gives it
+export const IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER = 0.85;
 // The actions switching to each slot of the deployed team, its first slot first: 1 to 4, and a pad's directions
 export const PARTY_MEMBER_INPUT_ACTIONS: readonly InputAction[] = [
   InputAction.SwitchToPartyMember1,

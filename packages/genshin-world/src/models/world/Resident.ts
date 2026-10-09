@@ -22,7 +22,7 @@ export const residentSchema = z.object({
   absentAtNight: z.literal(true).optional(),
   areaId: z.string().min(1),
   day: residentSpotSchema.optional(),
-  duelGameId: z.number().int().positive().optional(),
+  duelGameId: z.int().positive().optional(),
   id: z.string().min(1),
   nameTextId: z.string().min(1),
   night: residentSpotSchema.optional(),

@@ -1,7 +1,13 @@
 import { parseMachineHeartbeat } from "#src/services/fleet/parseMachineHeartbeat";
 import { describe, expect, test } from "vitest";
 
-const HEARTBEAT = { at: "2026-10-09T00:00:00Z", cpu: 12, freeMemory: 20.5, gpu: 3, machine: "pc" };
+const HEARTBEAT = {
+  at: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+  cpu: 12,
+  freeMemory: 20.5,
+  gpu: 3,
+  machine: "pc",
+};
 
 describe(parseMachineHeartbeat, () => {
   test("reads a heartbeat with its gpu reading", () => {

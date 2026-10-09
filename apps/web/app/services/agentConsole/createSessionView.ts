@@ -4,6 +4,7 @@ import { MAIN_LANE_TITLE } from "@/services/agentConsole/constants";
 
 export const createSessionView = (): SessionView => ({
   conversationEvents: [],
+  diffCommentMap: new Map(),
   // Only ever asked whether it holds an id, so it is kept out of reactivity rather than proxied id by id
   eventIds: markRaw(new Set()),
   fileEditMap: new Map(),

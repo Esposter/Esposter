@@ -12,7 +12,7 @@ import { getResult, jsonDateParse } from "@esposter/shared";
 // Read that fails surfaces instead: answered with a fresh game, the client's next autosave would overwrite the save
 // It could not read. The ETag is answered beside the model, the one the next save is sent under
 export const createReadBlobStateProcedure = <TData>(container: AzureContainer, Model: new (init?: never) => TData) =>
-  standardAuthedProcedure.query<{ data: TData; etag: string | undefined }>(async ({ ctx }) => {
+  standardAuthedProcedure.query<{ data: TData; etag?: string }>(async ({ ctx }) => {
     const containerClient = await useContainerClient(container);
     const { etag, json } = await readBlobState(containerClient, getSaveBlobName(ctx.getSessionPayload.user.id));
     if (!json) return { data: new Model(), etag };

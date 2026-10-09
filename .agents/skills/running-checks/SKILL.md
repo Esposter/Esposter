@@ -67,7 +67,7 @@ failed job's log (`gh run view <id> --log-failed`) names the package whose typec
 included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is
 reproduced by `pnpm lint:fix` from the repo root, the one scope matching CI's
 (the `package-scripts` skill's `references/check-suite.md`). A check that writes — `lint:fix`, `pnpm format` — owns
-the files it covers until its exit line, so nothing is edited under it meanwhile.
+the files it covers until its exit line, so nothing is edited under it meanwhile. On Windows a worktree under a long path (the session scratchpad's, about 135 characters) makes `vp lint` fail with "The system cannot find the path specified": tsgolint reads node_modules past MAX_PATH, so create the worktree at a short path such as `C:/Users/<you>/wt-<name>` and `git worktree move` it there.
 
 ## Reading the result
 

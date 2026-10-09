@@ -68,7 +68,7 @@
     "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "parity": "vite --config parity/vite.config.ts --port 3002 --strictPort",
+    "parity": "vite --config parity/vite.config.ts",
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",
     "typecheck": "vue-tsc"

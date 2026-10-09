@@ -8,10 +8,10 @@ import { z } from "zod";
 
 // A save is sent under the ETag its last read or save returned, so a write over a save another session changed is a
 // CONFLICT, which the client answers by reading again. An absent ETag saves only over no save at all
-export const createSaveBlobStateProcedure = <TSchema extends z.ZodType>(container: AzureContainer, schema: TSchema) =>
+export const createSaveBlobStateProcedure = (container: AzureContainer, schema: z.ZodType) =>
   standardAuthedProcedure
     .input(z.object({ data: schema, etag: z.string().optional() }))
-    .mutation<{ etag: string | undefined }>(async ({ ctx, input }) => {
+    .mutation<{ etag?: string }>(async ({ ctx, input }) => {
       const containerClient = await useContainerClient(container);
       const etag = await writeBlobState(
         containerClient,

@@ -4,8 +4,8 @@ import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
-import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
+import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";

@@ -1,10 +1,12 @@
 import type { ConnectionSessionSummary } from "@/models/agentConsole/ConnectionSessionSummary";
+import type { DiffComment } from "@/models/agentConsole/DiffComment";
 import type { AgentEvent, SessionSummary } from "agent-console-server/contracts";
 
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
+import { toDiffCommentKey } from "@/services/agentConsole/toDiffCommentKey";
 import { SessionStorageKey } from "@/services/shared/SessionStorageKey";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 
@@ -18,6 +20,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
   const conversationEvents = computed(() => sessionView.value.conversationEvents);
   const fileEdits = computed(() => [...sessionView.value.fileEditMap.values()].flat());
+  const diffCommentMap = computed(() => sessionView.value.diffCommentMap);
   const fileOriginMap = computed(() => sessionView.value.fileOriginMap);
   const pendingPermissionRequests = computed(() => [...sessionView.value.pendingPermissionRequestMap.values()]);
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
@@ -63,23 +66,38 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   };
   const storeEvents = (sessionId: string, newEvents: AgentEvent[]) =>
     foldAgentEvents(getDataRef(sessionId).value, newEvents);
+  // A replay rebuilds the session's view from its log, but a comment drafted on its diff is the person's own and is kept
   const storeSessionReset = (sessionId: string) => {
-    getDataRef(sessionId).value = createSessionView();
+    const dataRef = getDataRef(sessionId);
+    dataRef.value = { ...createSessionView(), diffCommentMap: dataRef.value.diffCommentMap };
+  };
+  const saveDiffComment = (diffComment: DiffComment) => {
+    sessionView.value.diffCommentMap.set(toDiffCommentKey(diffComment), diffComment);
+  };
+  const deleteDiffComment = (diffCommentKey: string) => {
+    sessionView.value.diffCommentMap.delete(diffCommentKey);
+  };
+  const clearDiffComments = () => {
+    sessionView.value.diffCommentMap.clear();
   };
 
   return {
     avatar,
     capabilities,
+    clearDiffComments,
     contextUsage,
     conversationEvents,
     currentSession,
     currentSessionId,
+    deleteDiffComment,
+    diffCommentMap,
     fileEdits,
     fileOriginMap,
     isContextNearCompaction,
     isTurnRunning,
     pendingPermissionRequests,
     rateLimit,
+    saveDiffComment,
     sessions,
     sessionSettings,
     sessionState,

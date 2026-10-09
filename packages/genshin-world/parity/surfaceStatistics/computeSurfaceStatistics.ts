@@ -18,6 +18,12 @@ enum CombineMode {
   SquaredDifference = 2,
   SquaredDeviation = 3,
 }
+// The reductions a surface reads in its first submit, each a slot of the partial sums
+enum Slot {
+  Count = 0,
+  Sum = 1,
+  FirstBand = 2,
+}
 // The uniform's fields, in the order the shader declares them
 interface Parameters {
   count: number;
@@ -28,12 +34,6 @@ interface Parameters {
   outputOffset: number;
   radius: number;
   width: number;
-}
-// The reductions a surface reads in its first submit, each a slot of the partial sums
-enum Slot {
-  Count = 0,
-  Sum = 1,
-  FirstBand = 2,
 }
 
 const createStorageBuffer = (device: GPUDevice, length: number): GPUBuffer =>
@@ -91,7 +91,6 @@ const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) => {
     pass.end();
   };
   return {
-    parameterBuffers,
     // A Gaussian blur of a buffer, one axis then the other, through the temporary buffer
     blur: (
       source: GPUBuffer,
@@ -157,6 +156,7 @@ const createRecorder = (device: GPUDevice, encoder: GPUCommandEncoder) => {
         { count, direction: 0, height: 0, mean, mode, outputOffset: 0, radius: 0, width: 0 },
         [Math.ceil(count / SURFACE_STATISTICS_WORKGROUP_SIZE), 1],
       ),
+    parameterBuffers,
     // A sum over the buffer's first `count` elements, its partial for each workgroup at the offset given
     reduce: (input: GPUBuffer, partials: GPUBuffer, count: number, slot: number): void =>
       dispatch(

@@ -1,9 +1,9 @@
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe("genshinSaveSchema", () => {
-  it("reads a save written before the slices were added as the new player holds them", () => {
+  test("reads a save written before the slices were added as the new player holds them", () => {
     expect.hasAssertions();
     const predatingSave = {
       quests: EMPTY_GENSHIN_SAVE.quests,

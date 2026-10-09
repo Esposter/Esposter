@@ -7,7 +7,7 @@ import { ORPHAN_CPU_SECONDS, ORPHAN_NAMES } from "#src/services/machine/constant
 const MSYS_INIT_PROCESS_ID = 1;
 
 // A Win32 process's parent is gone when no listed process has its id, or it was reparented to the adopter, which is how
-// macOS hands an orphan to launchd
+// MacOS hands an orphan to launchd
 const checkIsWin32Orphan = (
   { parentProcessId }: MachineProcess,
   processIds: Set<number>,
@@ -15,7 +15,7 @@ const checkIsWin32Orphan = (
 ): boolean => !processIds.has(parentProcessId) || parentProcessId === adopterProcessId;
 
 // An MSYS process is judged by its MSYS parent, since its Win32 parent may be a short-lived intermediate that has exited
-// while the MSYS parent, the bash running the pipeline, still lives. It is an orphan when that MSYS parent is gone or is
+// While the MSYS parent, the bash running the pipeline, still lives. It is an orphan when that MSYS parent is gone or is
 // Init, and its Win32 parent is no live process outside MSYS
 const checkIsMsysOrphan = (
   { parentProcessId }: MachineProcess,

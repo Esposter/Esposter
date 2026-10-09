@@ -33,7 +33,7 @@ export const startNextKitAction = (
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
   const isHeldThroughStrike = isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS;
-  if (isHeldThroughStrike && stamina.value >= kit.chargedAttackStamina) {
+  if (isHeldThroughStrike && stamina.checkCanSpend(kit.chargedAttackStamina)) {
     stamina.spend(kit.chargedAttackStamina);
     return startKitAction(kitState, kit.chargedAttack, landedHits);
   }

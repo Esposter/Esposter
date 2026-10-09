@@ -1,10 +1,10 @@
 import type { Manifest } from "#src/models/fleet/data/Manifest";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 // A manifest a peer printed, checked as a map from directory to digest before any of it is trusted
 export const parseManifest = (text: string): Manifest => {
-  const value: unknown = JSON.parse(text);
+  const value: unknown = jsonDateParse(text);
   if (typeof value !== "object" || value === null || Array.isArray(value))
     throw new InvalidOperationError(Operation.Read, "manifest", "the peer's manifest is not a directory map");
   const manifest: Manifest = {};

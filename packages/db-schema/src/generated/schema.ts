@@ -18,6 +18,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { roomEmojisInMessage } from "#src/schema/message/roomEmojisInMessage";
 import { roomFiltersInMessage, wordFilterActionEnum } from "#src/schema/message/roomFiltersInMessage";
+import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPermissionsInMessage";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
 import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "#src/schema/message/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "#src/schema/message/scheduledMessageJobsInMessage";
@@ -90,6 +91,7 @@ export const schema = {
   roomCategoriesInMessage,
   roomEmojisInMessage,
   roomFiltersInMessage,
+  roomMemberPermissionsInMessage,
   roomRolesInMessage,
   roomsInMessage,
   roomTypeEnum,

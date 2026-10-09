@@ -17,6 +17,7 @@ The design, from each module's job to the order a frame runs in, is `apps/web/co
 
 ## Rules
 
+- **A world system lives in its own composable; the screen only composes them.** Each system of `WorldScreen` is one `use<System>` composable under `composables/`, and a cross-system reaction goes through `WorldEventMap` on the screen's one `WorldEvents`, never a call into another system's state (`apps/web/content/docs/genshin/engine-architecture.md`).
 - **The engine has no Vue, no store and no DOM beyond a canvas, and no place.** `genshin-engine` is the renderer and the generators, and knows no region by name. `genshin-world` is the game's world on it: the catalogue, the regions' data, and the TresJS layer — components and composables such as `usePostPipeline` — that creates the engine's modules. The world's screen (`WorldScreen`) owns its canvas; the app keeps only the opening (`components/Genshin/Index.vue`), its stores, and the bundler's seams, which the world takes as props: the terrain worker's factory, the URL region data is fetched from, and the tuning panel's visibility.
 - **A generator is pure and seeded, and returns typed arrays**: `computeX(options)` does the work with no three.js object per vertex, and `createXGeometry` only wraps its arrays in a `BufferGeometry`. The `compute*` function is what is tested and benched.
 - **Nothing allocates per vertex or per frame.** Write into the output buffer by index, and pass a writer (`writeColor(colors, offset, …)`) rather than returning a tuple.

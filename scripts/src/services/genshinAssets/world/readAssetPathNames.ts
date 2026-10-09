@@ -12,10 +12,11 @@ export const readAssetPathNames = async (): Promise<Map<string, string>> => {
     ASSET_PATH_INDEX_PATH,
     ...(existsSync(DERIVED_ASSET_PATH_INDEX_PATH) ? [DERIVED_ASSET_PATH_INDEX_PATH] : []),
   ];
-  for (const indexPath of indexPaths) {
+  const indexes = await Promise.all(indexPaths.map((indexPath) => readFile(indexPath, "utf8")));
+  for (const index of indexes) {
     const { SubAssets } = parseMachineJson<{
       SubAssets: Record<string, { Name: string; PathHashLast: number; PathHashPre: number }[]>;
-    }>(await readFile(indexPath, "utf8"));
+    }>(index);
     for (const assets of Object.values(SubAssets))
       for (const { Name, PathHashLast, PathHashPre } of assets)
         pathNames.set(String((BigInt(PathHashLast) << 8n) | BigInt(PathHashPre)), Name);

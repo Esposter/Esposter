@@ -45,7 +45,7 @@ flowchart TD
 | :------------------------------------- | :------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------- |
 | Start work                             | open a terminal, `cd`, run `claude`                           | open the page, type the repository path, or pick one a session already used                               |
 | Read a long tool input before allowing | scroll the prompt, the input often truncated                  | the card shows it whole, formatted                                                                        |
-| Review an edit                         | a second terminal or the editor, `git diff`                   | the turn's diff beside the conversation, per file                                                         |
+| Review an edit                         | a second terminal or the editor, `git diff`                   | the turn's diff beside the conversation, per file, with a comment on any line sent back as one prompt     |
 | Find what a command printed earlier    | scroll back, or search the scrollback if the terminal can     | the timeline, each call collapsible, and a search over the session                                        |
 | Know how much context is left          | the status line, if configured                                | a gauge, with a warning before automatic compaction                                                       |
 | Run two sessions at once               | two terminal tabs, their state invisible from each other      | the session list, each with its state, one click apart                                                    |

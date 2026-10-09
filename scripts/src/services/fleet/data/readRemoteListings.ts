@@ -12,7 +12,7 @@ import { createInterface } from "node:readline";
 
 // The peer's files in each of the directories, one line per directory and streamed, so the peer's listing never
 // Waits on a whole copy in memory. The directories go over stdin, so a long list never meets an argument limit
-export async function* readRemoteListings(
+export const readRemoteListings = async function* (
   peer: Peer,
   remoteDirectory: string,
   directories: string[],
@@ -26,4 +26,4 @@ export async function* readRemoteListings(
     yield parseDirectoryListing(line);
   if ((await exitCode) !== SUCCESS_EXIT_CODE)
     throw new InvalidOperationError(Operation.Read, peer.host, "its file listing could not be read over ssh");
-}
+};
