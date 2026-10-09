@@ -1,6 +1,6 @@
 ---
 title: Archive
-description: Proposal — what remains of the Archive once its built part stands: the Living Beings' kills, the Travel Log, Books and Tutorials as their doings land, the Geography's viewpoints taken in where they stand, and the artifact sets once the bag keeps each artifact's set.
+description: Proposal — what remains of the Archive once its built part stands: the Living Beings' kills, Books and Tutorials as their doings land, the Geography's viewpoints taken in where they stand, and the artifact sets once the bag keeps each artifact's set.
 model: claude-opus-5-5
 ---
 
@@ -29,11 +29,10 @@ flowchart LR
 **This adds, in order:**
 
 1. **Living Beings' kills**, once a monster's name is read from a source the dump lacks and the wildlife's kills count.
-2. **Travel Log**, as the quest page finishes quests and counts them.
-3. **Books**, once a book can be read.
-4. **Tutorials**, once their names are read and a tip is shown.
-5. **Geography's viewpoints**, at their places.
-6. **Artifact sets**, once the bag keeps each artifact's set, so that all five pieces can be counted.
+2. **Books**, once a book can be read.
+3. **Tutorials**, once their names are read and a tip is shown.
+4. **Geography's viewpoints**, at their places.
+5. **Artifact sets**, once the bag keeps each artifact's set, so that all five pieces can be counted.
 
 ## Data and measures
 
