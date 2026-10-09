@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import type { Achievement } from "#src/models/achievement/Achievement";
-import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
-import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
-import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
@@ -51,13 +47,11 @@ import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
+import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
-import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
-import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -302,39 +296,12 @@ const {
 const adventureRankStanding = computeAdventureRankStanding(savedState.adventureExp, new Set<string>());
 const worldLevel = adventureRankStanding.worldLevel;
 const adventureExpProgress = computeAdventureRankProgress(savedState.adventureExp, adventureRankStanding.rank);
-// The achievements, their categories and their words in the reader's language, read the first time the Achievements
-// Screen opens rather than with the world. The quests a player finishes move the achievements whatever screen is open,
-// Which reads their table on its own
-const achievementData = shallowRef<{
-  achievements: Achievement[];
-  categories: AchievementCategory[];
-  textMap: Readonly<Record<string, string>>;
-}>();
-const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(savedState.achievementProgressMap);
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
   events,
   finishedMainQuestIds,
   language,
   screenKind,
-});
-watch(screenKind, (newScreenKind) => {
-  if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => {
-    const [{ achievements, categories }, textMap] = await Promise.all([
-      readAchievements(),
-      AchievementTextLoaderMap[language](),
-    ]);
-    return { achievements, categories, textMap };
-  }).match(
-    (newAchievementData) => {
-      achievementData.value = newAchievementData;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
 });
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
 // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
@@ -390,6 +357,16 @@ const clearKitEffects = () => {
 const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+// The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
+const { achievementData, achievementProgressMap } = useWorldAchievements({
+  events,
+  getWorldNow,
+  language,
+  savedAchievementProgressMap: savedState.achievementProgressMap,
+  screenKind,
+  setWallet,
+  wallet,
+});
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
 const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop, placeWorldDrops, worldDrops } =
   useWorldPickups({
@@ -451,29 +428,6 @@ const interactables = computed<Interactable[]>(() => {
   return [...pickUpInteractables.value, ...residentInteractables.value, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
-// The achievements a finished step or quest moves, read off their table when first needed, and the Primogems of those
-// Finished are paid into the wallet
-const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
-  if (achievementEvents.length === 0) return;
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(readAchievements).match(
-    ({ achievements }) => {
-      const now = getWorldNow();
-      let primogems = 0;
-      let nextProgressMap = achievementProgressMap.value;
-      for (const achievementEvent of achievementEvents) {
-        const advance = advanceAchievements(achievements, nextProgressMap, achievementEvent, now);
-        primogems += advance.primogems;
-        nextProgressMap = advance.progressMap;
-      }
-      achievementProgressMap.value = nextProgressMap;
-      setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + primogems });
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-};
 // The Primogems a statue pays on its first unlock, from the open world's transport points by its scene point. Only a
 // Locked landmark is offered to resonate with, so each is paid once
 const payFirstUnlockReward = (landmarkId: string) => {
@@ -491,7 +445,6 @@ const payFirstUnlockReward = (landmarkId: string) => {
     },
   );
 };
-events.on("achievementEvents", advanceAchievementsWith);
 // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
 const activateLandmark = (landmarkId: string) => {
   unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
