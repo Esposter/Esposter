@@ -124,6 +124,7 @@ export const useWorldCombat = ({
         partyMember.skillCooldownSeconds,
       ),
       skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
+      weaponType: combatant.weaponType,
     };
   });
   // The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which

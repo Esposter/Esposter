@@ -59,7 +59,7 @@ import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useRafFn } from "@vueuse/core";
+import { useEventListener, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
@@ -357,6 +357,8 @@ const endTalk = () => {
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
+// Whether the device's main pointer is a finger, which the HUD draws the touch layout for
+const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres and the yaw the view faces, for the map and the minimap, read each frame
 // And handed on only when it moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ x: 0, yaw: 0, z: 0 });
@@ -559,6 +561,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :input
       :interface-rects="hudInterfaceRects"
+      :is-touch
       :landmarks="unlockedLandmarks"
       :member="hudMember"
       :name-text-map="nameText"

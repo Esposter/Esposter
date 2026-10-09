@@ -16,6 +16,5 @@ export const hudInterfaceRectsSchema = z.object({
   [HudInterfaceRectName.MapInfo]: fittedInterfaceRectSchema,
   [HudInterfaceRectName.MiniMap]: fittedInterfaceRectSchema,
   [HudInterfaceRectName.PlayerProfileButton]: fittedInterfaceRectSchema,
-  [HudInterfaceRectName.StaminaBar]: fittedInterfaceRectSchema,
   [HudInterfaceRectName.TeamButtonContainer]: fittedInterfaceRectSchema,
 }) satisfies z.ZodType<HudInterfaceRects>;

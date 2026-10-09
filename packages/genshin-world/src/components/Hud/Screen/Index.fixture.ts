@@ -1,6 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
@@ -11,10 +12,11 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
-// The English PC client's world HUD at 1080 high, from the public recording of a session at 70 seconds, letterboxed,
-// So cropped to the game's screen and scored over the part clear of its subtitles. Mona, Klee and the Traveler are
-// The deployed team, the Traveler on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no meter
-// Shows, and the quest tracked is the one the recording shows: its title, with its altitude line not built yet
+// The English mobile client's world HUD on a 1920 by 935 screen, from the public recording of a session at 70 seconds,
+// Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is drawn,
+// As the recording plays on a phone. Mona, Klee and the Traveler are the party's rows it shows, and Venti, a bow's
+// Wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no meter shows, and the quest
+// Tracked is the one the recording shows: its title, with its altitude line not built yet
 const PARTY_CHARACTER_IDS = [10000041, 10000029, 10000007];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(
@@ -34,19 +36,21 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
+  isTouch: true,
   landmarks: [],
-  // Provisional: the burst unfilled and the skill off cooldown, read as the recording shows them until the
-  // Energy and cooldown the frame holds are measured off a recording of the Traveler's buttons
+  // Venti's figures as the frame shows them: his skill off cooldown, and his burst, which costs 60 Energy, filled to
+  // 0.236 of its disc's height (21 of its 89 pixels)
   member: {
     burstCooldown: 0,
     burstCooldownSeconds: 0,
-    energy: 0,
-    energyCost: 40,
+    energy: 14.2,
+    energyCost: 60,
     health: 17286,
     level: 90,
     maxHealth: 17400,
     skillCooldown: 0,
     skillCooldownSeconds: 0,
+    weaponType: WeaponType.Bow,
   },
   nameTextMap: englishNameText,
   party,

@@ -215,9 +215,22 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "SplashHealthNotice",
     seconds: 9.5,
   },
-  // The English PC client's world HUD from the public recording of a session at 70 seconds, its black letterbox bars
-  // Cropped away and its subtitles left out of the region scored. The HUD is drawn over the recording's own frame, so
-  // A piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop` only shows the overlay)
+  // The English PC client's stamina meter at 1080 high, from a public tutorial's climb at 48 seconds (this clip's 30),
+  // Three tenths of it left in yellow under its drained track, on the white rock clear of the character. The meter is
+  // Drawn round the pivot, so the frame's pivot is the circle its arc was fitted to (978.3, 501.3), and only the meter's
+  // Looks are scored, the rest of that player's HUD left out of the region
+  "hud-stamina-climb": {
+    capture: "yt-hRR2yoP3uY0-world-stamina.mp4",
+    isBackdrop: true,
+    props: { frame: { pivotX: 0.5095, pivotY: 0.4642, seconds: 0, stamina: 30 }, isTouch: false },
+    region: { height: 140, width: 65, x: 1040, y: 430 },
+    screen: "HudScreen",
+    seconds: 30,
+  },
+  // The English mobile client's world HUD from the public recording of a session at 70 seconds, played on a phone, its
+  // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
+  // Recording's own frame, so a piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop`
+  // Only shows the overlay)
   "hud-world-pickup": {
     capture: "world-pickup.mkv",
     crop: { height: 935, width: 1920, x: 0, y: 72 },
