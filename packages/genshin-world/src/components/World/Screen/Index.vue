@@ -377,6 +377,12 @@ const archiveData = shallowRef<{
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
 // The volume the Archive is reading, its title and its text in the reader's language
 const bookReading = shallowRef<{ body: string; title: string }>();
+// The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
+// Volume or after the Archive has closed opens no reader
+let loadingBookId: number | undefined;
+watch(screenKind, (newScreenKind) => {
+  if (newScreenKind !== ScreenKind.Archive) loadingBookId = undefined;
+});
 // A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
 const readBook = (bookId: number) => {
   if (!archiveData.value) return;
@@ -384,9 +390,12 @@ const readBook = (bookId: number) => {
   const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
   const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
   if (!book || !loadBody) return;
+  loadingBookId = bookId;
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(async () => (await loadBody())[language]()).match(
     (body) => {
+      if (loadingBookId !== bookId) return;
+      loadingBookId = undefined;
       bookReading.value = { body, title: textMap[book.nameTextId] || "" };
     },
     (error) => {
