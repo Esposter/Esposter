@@ -16,6 +16,14 @@ describe(parsePeers, () => {
     expect(parsePeers(JSON.stringify({ laptop: PEER }))).toStrictEqual({ laptop: PEER });
   });
 
+  test("keeps a directory named as an ISO datetime a string", () => {
+    expect.hasAssertions();
+
+    const peer = { ...PEER, parityDirectory: "2026-10-09T12:00:00Z" };
+
+    expect(parsePeers(JSON.stringify({ laptop: peer }))).toStrictEqual({ laptop: peer });
+  });
+
   test("rejects a field that is not a string", () => {
     expect.hasAssertions();
 

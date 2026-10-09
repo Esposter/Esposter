@@ -5,7 +5,7 @@ import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
-import { checkIsServer, getResult, jsonDateParse, noop } from "@esposter/shared";
+import { checkIsServer, getResult, noop } from "@esposter/shared";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 
 // A browser that blocks its storage throws on the access, which is logged and read as no guest save, so a signed-in
@@ -19,7 +19,10 @@ const readGuestSave = (): GenshinSave | undefined => {
     .unwrapOr(null);
   if (!guestJson) return undefined;
 
-  const parsedJson: unknown = getResult(() => jsonDateParse(guestJson))
+  const parsedJson: unknown = getResult(() =>
+    // oxlint-disable-next-line no-restricted-properties -- the save holds its instants as ISO strings a date revival would turn into Dates
+    JSON.parse(guestJson),
+  )
     .orTee(console.error)
     .unwrapOr(undefined);
   const result = genshinSaveSchema.safeParse(parsedJson);
