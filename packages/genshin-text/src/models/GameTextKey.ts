@@ -234,7 +234,7 @@ export enum GameTextKey {
   // An item and its count, its name in place of `{0}` and the count in place of `{1}`
   ItemCount = "SHOP_ITEM_NAME_AND_COUNT",
   JueyunChili = "22100332",
-  // The touch controls' jump button, which a screen reader says in place of its glyph
+  // The touch layout's jump button, which a screen reader says in place of its glyph
   Jump = "UI_ACTIVITY_LOLI_RUN_JUMP",
   KalpalataLotus = "1479130340",
   LakelightLily = "47843548",
@@ -285,6 +285,8 @@ export enum GameTextKey {
   NilotpalaLotus = "774700468",
   NoctilucousJade = "2726159796",
   NocturnalBlossom = "2957600892",
+  // The touch layout's attack button, which a screen reader says in place of its weapon's glyph
+  NormalAttack = "CONTROL_SKILL1",
   Notices = "UI_STC_GAMEENTRYPAGE_BULLETIN",
   OminousMask = "1726035172",
   Onikabuto = "767303132",
@@ -344,6 +346,8 @@ export enum GameTextKey {
   SpinelFruit = "1984022796",
   SprayfeatherGill = "4108433756",
   SpringOfTheFirstDewdrop = "1466037620",
+  // The touch layout's sprint button, which a screen reader says in place of its glyph
+  Sprint = "CONTROL_SPRINT_OR_SKILL3",
   StainedMask = "3015475460",
   // The HUD's stamina meter, named for a screen reader
   Stamina = "133358079",
@@ -359,6 +363,8 @@ export enum GameTextKey {
   StrangeTooth = "2715317724",
   SumeruRose = "691451364",
   SweetFlower = "1330975132",
+  // The touch layout's aim button a bow's wielder has, as the controls list name it, said in place of its glyph
+  SwitchAimingMode = "CONTROL_TOGGLE_ATTACK_MODE",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
   // The map's way to a place, as its button says
