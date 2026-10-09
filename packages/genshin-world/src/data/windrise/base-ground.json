@@ -5484,6 +5484,8 @@
     { "height": -6.45, "width": 14, "x": -304, "z": 740 },
     { "height": 13.5, "width": 14, "x": -394, "z": 752 }
   ],
+  "features": [],
   "maxHeight": 299,
-  "minHeight": -201
+  "minHeight": -201,
+  "residual": { "amplitude": 7.41, "octaves": 3, "scale": 32, "seed": 1 }
 }
