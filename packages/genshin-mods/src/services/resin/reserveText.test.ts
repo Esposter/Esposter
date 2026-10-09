@@ -17,7 +17,7 @@ describe(reserveText, () => {
 
     expect(
       reserveText({ isWindDown: false, name: "five-hour", percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE, resetsAt }),
-    ).toStrictEqual(
+    ).toBe(
       `Usage maintenance: the five-hour usage window has passed ${FIVE_HOUR_MAINTENANCE_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}. ${MAINTENANCE_INSTRUCTION}`,
     );
   });
@@ -27,7 +27,7 @@ describe(reserveText, () => {
 
     expect(
       reserveText({ isWindDown: true, name: "five-hour", percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE, resetsAt }),
-    ).toStrictEqual(
+    ).toBe(
       `Usage reserve: the five-hour usage window has passed ${FIVE_HOUR_WIND_DOWN_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}. ${RESERVE_INSTRUCTION}`,
     );
   });
