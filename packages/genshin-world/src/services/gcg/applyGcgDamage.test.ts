@@ -2,24 +2,24 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import standardRule from "#src/generated/gcg/standardRule.json";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GCG_BURNING_FLAME_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
-
-import standardRule from "#src/generated/gcg/standardRule.json";
-import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+import { describe, expect, test } from "vitest";
 
 const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
+  cards: [],
   characters,
   dice: [],
   drawPile: [],
@@ -28,7 +28,6 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   hasPrepared: true,
   hasRolled: true,
   isReplacementPending: false,
-  cards: [],
   onstages: [],
   summons: [],
   supports: [],
@@ -66,10 +65,10 @@ describe(applyGcgDamage, () => {
       weapon: "",
     },
     energy: 0,
+    equipments: [],
     hp: FULL_HP,
     isFrozen: false,
     shield: 0,
-    equipments: [],
     statuses: [],
   });
 

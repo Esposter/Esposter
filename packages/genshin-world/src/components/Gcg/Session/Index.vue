@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
-import type { GameText, GameLanguage } from "genshin-text";
+import type { GameLanguage, GameText } from "genshin-text";
 
 import GcgScreen from "#src/components/Gcg/Screen/Index.vue";
-import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { advanceGcgOpponent } from "#src/services/gcg/advanceGcgOpponent";
+import { GCG_OPPONENT_SIDE_INDEX, GCG_PLAYER_SIDE_INDEX } from "#src/services/gcg/constants";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
+import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { GcgTextLoaderMap } from "#src/services/gcg/GcgTextLoaderMap";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
@@ -30,9 +31,6 @@ interface Props {
 
 const { gameId, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ leave: [] }>();
-// The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
-const PLAYER_SIDE_INDEX = 0;
-const OPPONENT_SIDE_INDEX = 1;
 const duel = ref<GcgDuel>();
 const textMap = shallowRef<Readonly<Record<string, string>>>({});
 
@@ -46,7 +44,7 @@ const createSessionDuel = async (): Promise<GcgDuel> => {
     readGcgStandardRule(),
   ]);
   const newDuel = createGcgDuel([playerDeck, opponentDeck], Math.random, rule);
-  advanceGcgOpponent(newDuel, OPPONENT_SIDE_INDEX, Math.random);
+  advanceGcgOpponent(newDuel, GCG_OPPONENT_SIDE_INDEX, Math.random);
   return newDuel;
 };
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -70,10 +68,10 @@ getResultAsync(() => GcgTextLoaderMap[language]()).match(
 
 // A player's action on the duel, then the opponent's turns the scripted policy takes until the player is asked again
 const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
-  const currentDuel = duel.value;
-  if (!currentDuel) return;
-  action(currentDuel);
-  advanceGcgOpponent(currentDuel, OPPONENT_SIDE_INDEX, Math.random);
+  const duelValue = duel.value;
+  if (!duelValue) return;
+  action(duelValue);
+  advanceGcgOpponent(duelValue, GCG_OPPONENT_SIDE_INDEX, Math.random);
 };
 </script>
 
@@ -85,41 +83,47 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
     v-if="duel"
     :duel
     :game-text
-    :player-side-index="PLAYER_SIDE_INDEX"
-    :text-map="textMap"
+    :player-side-index="GCG_PLAYER_SIDE_INDEX"
+    :text-map
     @declare-round-end="
-      playerAction((currentDuel) => declareGcgRoundEnd(currentDuel, PLAYER_SIDE_INDEX, currentDuel.rule, Math.random))
+      playerAction((currentDuel) =>
+        declareGcgRoundEnd(currentDuel, GCG_PLAYER_SIDE_INDEX, currentDuel.rule, Math.random),
+      )
     "
     @leave="emit('leave')"
     @play-card="
       (handIndex, targetIndex, dieIndices) =>
-        playerAction((currentDuel) => playGcgCard(currentDuel, PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices))
+        playerAction((currentDuel) =>
+          playGcgCard(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices),
+        )
     "
     @prepare="
       (switchedHandIndices, activeIndex) =>
         playerAction((currentDuel) =>
-          prepareGcgSide(currentDuel, PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex, Math.random),
+          prepareGcgSide(currentDuel, GCG_PLAYER_SIDE_INDEX, switchedHandIndices, activeIndex, Math.random),
         )
     "
     @reroll="
       (dieIndices) =>
-        playerAction((currentDuel) => rerollGcgDice(currentDuel, PLAYER_SIDE_INDEX, dieIndices, Math.random))
+        playerAction((currentDuel) => rerollGcgDice(currentDuel, GCG_PLAYER_SIDE_INDEX, dieIndices, Math.random))
     "
     @replace-character="
       (characterIndex) =>
-        playerAction((currentDuel) => replaceGcgCharacter(currentDuel, PLAYER_SIDE_INDEX, characterIndex))
+        playerAction((currentDuel) => replaceGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex))
     "
     @switch-character="
       (characterIndex, dieIndices) =>
-        playerAction((currentDuel) => switchGcgCharacter(currentDuel, PLAYER_SIDE_INDEX, characterIndex, dieIndices))
+        playerAction((currentDuel) =>
+          switchGcgCharacter(currentDuel, GCG_PLAYER_SIDE_INDEX, characterIndex, dieIndices),
+        )
     "
     @tune-die="
       (handIndex, dieIndex) =>
-        playerAction((currentDuel) => tuneGcgDie(currentDuel, PLAYER_SIDE_INDEX, handIndex, dieIndex))
+        playerAction((currentDuel) => tuneGcgDie(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, dieIndex))
     "
     @use-skill="
       (skillId, dieIndices) =>
-        playerAction((currentDuel) => useGcgSkill(currentDuel, PLAYER_SIDE_INDEX, skillId, dieIndices))
+        playerAction((currentDuel) => useGcgSkill(currentDuel, GCG_PLAYER_SIDE_INDEX, skillId, dieIndices))
     "
   />
 </template>

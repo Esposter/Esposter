@@ -1,16 +1,15 @@
 import type { GcgDeck } from "#src/models/gcg/GcgDeck";
 
+import standardRule from "#src/generated/gcg/standardRule.json";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
+import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-import { takeOne } from "@esposter/shared";
-
-import standardRule from "#src/generated/gcg/standardRule.json";
-import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
 
 const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 

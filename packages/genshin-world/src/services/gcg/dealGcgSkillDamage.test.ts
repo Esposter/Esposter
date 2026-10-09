@@ -8,8 +8,8 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const FULL_HP = 10;
 const PYRO_VALUE = 2;
@@ -18,10 +18,10 @@ const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAur
   aura,
   character: { descriptionTextId: 2, element, hp: FULL_HP, id: 1, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
   energy: 0,
+  equipments: [],
   hp: FULL_HP,
   isFrozen: false,
   shield: 0,
-  equipments: [],
   statuses: [],
 });
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
@@ -92,12 +92,12 @@ describe(dealGcgSkillDamage, () => {
 
     expect({
       hpAfterDendro: takeOne(takeOne(duel.sides, 1).characters, 0)?.hp,
-      usagesAfterPyro,
       usagesAfterDendro: attacker.onstages.map(({ usages }) => usages),
+      usagesAfterPyro,
     }).toStrictEqual({
       hpAfterDendro: FULL_HP - PYRO_VALUE - 1 - PYRO_VALUE,
-      usagesAfterPyro: [2],
       usagesAfterDendro: [1],
+      usagesAfterPyro: [2],
     });
   });
 });

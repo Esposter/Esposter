@@ -3,23 +3,23 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
+import standardRule from "#src/generated/gcg/standardRule.json";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
-import { describe, expect, test } from "vitest";
-import { takeOne } from "@esposter/shared";
-
-import standardRule from "#src/generated/gcg/standardRule.json";
 import { gcgStandardRuleSchema } from "#src/models/gcg/gcgStandardRuleSchema";
+import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 
 const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSideState => ({
   activeIndex: 0,
+  cards: [],
   characters: [character],
   dice,
   drawPile: [],
@@ -28,7 +28,6 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
   hasPrepared: true,
   hasRolled: true,
   isReplacementPending: false,
-  cards: [],
   onstages: [],
   summons: [],
   supports: [],
@@ -79,10 +78,10 @@ describe(useGcgSkill, () => {
       weapon: "",
     },
     energy: 0,
+    equipments: [],
     hp: 10,
     isFrozen: false,
     shield: 0,
-    equipments: [],
     statuses: [],
   });
 

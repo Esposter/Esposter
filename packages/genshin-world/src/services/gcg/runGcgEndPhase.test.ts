@@ -8,8 +8,8 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_BURNING_FLAME_ID } from "#src/services/gcg/constants";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const FULL_HP = 10;
 
@@ -17,10 +17,10 @@ const createCharacterState = (element: Element, aura: Element | GcgAura = GcgAur
   aura,
   character: { descriptionTextId: 2, element, hp: FULL_HP, id: 1, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
   energy: 0,
+  equipments: [],
   hp: FULL_HP,
   isFrozen: false,
   shield: 0,
-  equipments: [],
   statuses: [],
 });
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({

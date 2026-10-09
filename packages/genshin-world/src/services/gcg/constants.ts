@@ -1,7 +1,9 @@
 import { Element, Elements } from "#src/models/Element";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 
 // The faces a die shows when rolled: each of the seven elements and Omni, each equally likely
 export const GCG_DIE_FACES: (Element | GcgDieFace)[] = [...Elements, GcgDieFace.Omni];
@@ -92,3 +94,18 @@ export const GCG_CATALYZING_FIELD_ID = 117;
 export const GCG_CATALYZING_FIELD_MAX_USAGES = 2;
 // The two foods that stay on their character as a status for the round, so a character holds one of them a round
 export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_004, 333_005, 333_008];
+// The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
+export const GCG_PLAYER_SIDE_INDEX = 0;
+export const GCG_OPPONENT_SIDE_INDEX = 1;
+// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst
+export const GCG_SKILL_KIND_DISPLAY_ORDER: GcgSkillKind[] = [
+  GcgSkillKind.NormalAttack,
+  GcgSkillKind.ElementalSkill,
+  GcgSkillKind.ElementalBurst,
+];
+// The action card kinds that are equipped to a character, so a click on one waits for the character it goes onto
+export const GCG_EQUIPMENT_CARD_KINDS = new Set<GcgCardKind>([
+  GcgCardKind.Artifact,
+  GcgCardKind.Talent,
+  GcgCardKind.Weapon,
+]);

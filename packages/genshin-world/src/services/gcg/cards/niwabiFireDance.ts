@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { niwabiEnshou } from "#src/services/gcg/cards/niwabiEnshou";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const NIWABI_ENSHOU_ID = 113_051;

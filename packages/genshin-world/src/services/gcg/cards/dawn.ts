@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const PYRO_INFUSION_ID = 113_011;

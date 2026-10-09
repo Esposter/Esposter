@@ -7,5 +7,5 @@ export const listGcgDiceSubsets = (totalDice: number): number[][] => {
     for (let index = startIndex; index < totalDice; index++) extend(index + 1, [...subset, index]);
   };
   extend(0, []);
-  return subsets.toSorted((first, second) => first.length - second.length);
+  return subsets.toSorted((firstSubset, secondSubset) => firstSubset.length - secondSubset.length);
 };

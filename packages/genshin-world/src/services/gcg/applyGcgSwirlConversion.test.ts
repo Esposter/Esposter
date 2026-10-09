@@ -26,7 +26,7 @@ const openDuel = async (): Promise<GcgDuel> => {
   return duel;
 };
 
-describe("Large Wind Spirit's Swirl conversion", () => {
+describe("the Large Wind Spirit's Swirl conversion", () => {
   test("should convert to the Swirled element on the first Swirl its side makes, and not again", async () => {
     expect.hasAssertions();
 

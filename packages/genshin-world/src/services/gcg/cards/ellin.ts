@@ -1,4 +1,5 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
+
 import { takeOne } from "@esposter/shared";
 
 const ELLIN_ID = 322_010;

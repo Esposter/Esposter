@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const THE_WOLF_WITHIN_ID = 114_021;

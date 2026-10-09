@@ -5,7 +5,7 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { takeOne } from "@esposter/shared";
 
 // The weapon kinds Chonghua Frost Field converts the Physical DMG of: Sword, Claymore and Polearm
-const CHONGHUA_FROST_FIELD_WEAPONS = new Set<string>(["SWORD", "CLAYMORE", "POLE"]);
+const CHONGHUA_FROST_FIELD_WEAPONS = new Set<string>(["CLAYMORE", "POLE", "SWORD"]);
 
 // Chonghua Frost Field: for two rounds, the Physical DMG dealt by a Sword, Claymore or Polearm character of its side is
 // Converted to Cryo DMG (the wiki's Chonghua's Layered Frost (Character Card Skill))

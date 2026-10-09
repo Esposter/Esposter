@@ -3,8 +3,8 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
-import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { rollGcgDice } from "#src/services/gcg/rollGcgDice";
+import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { takeOne } from "@esposter/shared";
 
 // A side's one reroll of its dice in the roll phase: any dice it names are thrown again, and none named passes. Once both

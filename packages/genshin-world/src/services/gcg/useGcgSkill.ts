@@ -2,8 +2,8 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { canRunGcgSkill } from "#src/services/gcg/canRunGcgSkill";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
+import { checkIsGcgSkillRunnable } from "#src/services/gcg/checkIsGcgSkillRunnable";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
@@ -25,7 +25,7 @@ export const useGcgSkill = (
   if (!user) return GcgActionResult.Unavailable;
   else if (user.isFrozen) return GcgActionResult.Frozen;
   const skill = user.character.skills.find(({ id }) => id === skillId);
-  if (!skill || skill.kind === GcgSkillKind.Passive || !canRunGcgSkill(skill.effect))
+  if (!skill || skill.kind === GcgSkillKind.Passive || !checkIsGcgSkillRunnable(skill.effect))
     return GcgActionResult.Unavailable;
   if (
     !payGcgSubjectCost({ duel, sideIndex }, side.activeIndex, { card: undefined, skill }, skill.costs, paidDiceIndices)

@@ -2,7 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { canEatGcgFood } from "#src/services/gcg/effects/canEatGcgFood";
+import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
@@ -11,7 +11,7 @@ const NORTHERN_SMOKED_CHICKEN_ID = 333_004;
 // Northern Smoked Chicken: the target character's next Normal Attack this round costs one Unaligned die less, and a
 // Character eats one food a round
 export const northernSmokedChicken: GcgCardModule = {
-  canPlay: ({ duel, sideIndex }, targetIndex) => canEatGcgFood(duel, sideIndex, targetIndex),
+  canPlay: ({ duel, sideIndex }, targetIndex) => checkIsGcgFoodEatable(duel, sideIndex, targetIndex),
   initialRounds: 1,
   initialUsages: 1,
   onCostPaid: (_context, subject, zoneCard) => {
