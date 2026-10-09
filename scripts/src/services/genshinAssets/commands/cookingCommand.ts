@@ -1,17 +1,27 @@
 import type { SubCommandsDef } from "citty";
 
-import { writeCookingRecipes } from "#src/services/genshinAssets/cooking/writeCookingRecipes";
-import { writeProcessingRecipes } from "#src/services/genshinAssets/cooking/writeProcessingRecipes";
+import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { buildCookingRecipes } from "#src/services/genshinAssets/cooking/buildCookingRecipes";
+import { buildProcessingRecipes } from "#src/services/genshinAssets/cooking/buildProcessingRecipes";
 import { defineCommand } from "citty";
+import { GameDataset } from "genshin-world";
 
 export const cookingCommand: SubCommandsDef[string] = defineCommand({
+  args: { ...dryRunArgs },
   meta: {
     description:
-      "Write the dishes (with their specialties and the instructions that teach them) and the processings from the dump into genshin-world",
+      "Publish the dishes (with their specialties and the instructions that teach them) and the processings from the dump to the game data",
     name: "cooking",
   },
-  run: () => {
-    writeCookingRecipes();
-    writeProcessingRecipes();
+  run: async ({ args }) => {
+    const objects = { ...buildCookingRecipes(), ...buildProcessingRecipes() };
+    console.log(
+      await publishGameDataStep({
+        isDryRun: args["dry-run"],
+        publication: { indexes: {}, objects },
+        scopes: [GameDataset.Cooking],
+      }),
+    );
   },
 });

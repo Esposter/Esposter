@@ -2,9 +2,6 @@ import type { ExcelRoleCombatDifficultyRow } from "#src/models/genshinAssets/ima
 import type { ExcelRoleCombatScheduleRow } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatScheduleRow";
 
 import {
-  IMAGINARIUM_DIFFICULTIES_PATH,
-  IMAGINARIUM_GENERATED_DIRECTORY,
-  IMAGINARIUM_SEASONS_PATH,
   ROLE_COMBAT_DIFFICULTY_TABLE_NAME,
   ROLE_COMBAT_SCHEDULE_TABLE_NAME,
 } from "#src/services/genshinAssets/imaginarium/constants";
@@ -12,11 +9,11 @@ import { toImaginariumDifficulty } from "#src/services/genshinAssets/imaginarium
 import { toImaginariumSeason } from "#src/services/genshinAssets/imaginarium/toImaginariumSeason";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
-// The Imaginarium Theater's seasons and difficulties from the role combat tables, each written as a slice in the world's
-// Generated folder. A season names its difficulties by id, and a season naming one the difficulty table lacks is refused
-export const writeImaginarium = (): void => {
+// The Imaginarium Theater's seasons and difficulties from the role combat tables, each published as a record of the
+// Imaginarium dataset. A season names its difficulties by id, and a season naming one the difficulty table lacks is refused
+export const buildImaginarium = (): Record<string, unknown> => {
   const difficulties = readExcelTable<ExcelRoleCombatDifficultyRow>(ROLE_COMBAT_DIFFICULTY_TABLE_NAME)
     .map((row) => toImaginariumDifficulty(row))
     .toSorted((firstDifficulty, secondDifficulty) => firstDifficulty.id - secondDifficulty.id);
@@ -33,7 +30,5 @@ export const writeImaginarium = (): void => {
         `names difficulty ${missingId}, which the table lacks`,
       );
   }
-  mkdirSync(IMAGINARIUM_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(IMAGINARIUM_SEASONS_PATH, `${JSON.stringify(seasons)}\n`);
-  writeFileSync(IMAGINARIUM_DIFFICULTIES_PATH, `${JSON.stringify(difficulties)}\n`);
+  return { [`${GameDataset.Imaginarium}/difficulties`]: difficulties, [`${GameDataset.Imaginarium}/seasons`]: seasons };
 };
