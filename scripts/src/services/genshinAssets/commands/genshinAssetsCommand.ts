@@ -45,6 +45,7 @@ import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralA
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
+import { transPointsCommand } from "#src/services/genshinAssets/commands/transPointsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
@@ -76,6 +77,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     fishing: fishingCommand,
     rank: rankCommand,
     statues: statuesCommand,
+    "trans-points": transPointsCommand,
     offerings: offeringsCommand,
     friendship: friendshipCommand,
     stats: statsCommand,
