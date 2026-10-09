@@ -44,6 +44,7 @@ export const RAZOR_CHARACTER_ID = 10_000_020;
 export const VENTI_CHARACTER_ID = 10_000_022;
 export const XIANGLING_CHARACTER_ID = 10_000_023;
 export const BEIDOU_CHARACTER_ID = 10_000_024;
+export const XINGQIU_CHARACTER_ID = 10_000_025;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],
