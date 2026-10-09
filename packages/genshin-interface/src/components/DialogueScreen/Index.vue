@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { DialogueChoice } from "#src/models/DialogueChoice";
 
+import { computed } from "vue";
+
 interface Props {
   // The replies on offer, shown once the line is written out, none while the talk only goes on
   choices: DialogueChoice[];

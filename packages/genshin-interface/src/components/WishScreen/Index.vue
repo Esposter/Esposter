@@ -6,6 +6,8 @@ import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishResultCell } from "#src/models/WishResultCell";
 import type { WishSet } from "#src/models/WishSet";
 
+import { computed } from "vue";
+
 interface Props {
   // The way back to the world in the reader's language
   backLabel: string;
