@@ -9,7 +9,7 @@ import type { GroundPoint } from "genshin-engine";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BENNETT_CHARACTER_ID } from "#src/services/character/constants";
+import { BENNETT_CHARACTER_ID, MONA_CHARACTER_ID } from "#src/services/character/constants";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -70,6 +70,21 @@ const releaseSkill = (
 };
 const NO_EFFECT_STATE = { ascension: 0, body: { x: 0, z: 0 }, effects: [] };
 
+// The effects Bennett's field leaves on the team at its first tick, for the character on it at the health share given
+const readFirstFieldTick = (combatant: Combatant, fieldCharacterId: number, healthShare: number): KitEffect[] => {
+  const body = { x: 0, z: 0 };
+  const party = createParty([BENNETT_CHARACTER_ID, MONA_CHARACTER_ID]);
+  getPartyMember(party, fieldCharacterId).healthShare = healthShare;
+  const kitEffectState: KitEffectState = { effects: [] };
+  BENNETT_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+  stepKitEffects(kitEffectState, 34 / 60, {
+    activeCombatant: { ...combatant, characterId: fieldCharacterId },
+    body,
+    party,
+  });
+  return kitEffectState.effects.filter(({ kind }) => kind !== "field");
+};
+
 describe("bennett kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
@@ -90,7 +105,7 @@ describe("bennett kit", () => {
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
   });
 
-  test("its field infuses the character on it from its first tick, and heals one under 70% of its HP from the second", () => {
+  test("its field gives the character on it an ATK bonus from its first tick and no infusion, and heals one under 70% from the second", () => {
     expect.hasAssertions();
     const combatant = createBennettCombatant();
     const party = createParty([BENNETT_CHARACTER_ID]);
@@ -108,7 +123,6 @@ describe("bennett kit", () => {
         kind: "buff",
         secondsRemaining: 126 / 60,
       },
-      { characterId: BENNETT_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 126 / 60 },
     ]);
 
     // The second tick, a second on, heals a character at half its HP by 577 plus 6% of Bennett's Max HP
@@ -116,6 +130,69 @@ describe("bennett kit", () => {
     partyMember.healthShare = 0.5;
     stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
     expect(partyMember.healthShare).toBeCloseTo(0.5 + (577.3388 + 0.06 * MAX_HEALTH) / MAX_HEALTH, 4);
+  });
+
+  test("at constellation 1 its ATK bonus has no HP threshold, and gains 20% of Bennett's base ATK", () => {
+    expect.hasAssertions();
+    // Under 70% of its HP, the character on the field gets the 76% bonus its 56% and Grand Expectation's 20% make
+    expect(
+      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 1 }, BENNETT_CHARACTER_ID, 0.5),
+    ).toStrictEqual([
+      {
+        amount: (0.56 + 0.2) * BASE_ATTACK,
+        attribute: Attribute.Attack,
+        characterId: BENNETT_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 126 / 60,
+      },
+    ]);
+  });
+
+  test("at constellation 6 a sword wielder on the field gains a 15% Pyro DMG Bonus and Pyro on its weapon", () => {
+    expect.hasAssertions();
+    // Bennett himself wields a sword, and constellation 6 keeps constellation 1's 76% bonus
+    expect(
+      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 6 }, BENNETT_CHARACTER_ID, 1),
+    ).toStrictEqual([
+      {
+        amount: (0.56 + 0.2) * BASE_ATTACK,
+        attribute: Attribute.Attack,
+        characterId: BENNETT_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 126 / 60,
+      },
+      {
+        amount: 0.15,
+        attribute: Attribute.PyroDamageBonus,
+        characterId: BENNETT_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 126 / 60,
+      },
+      { characterId: BENNETT_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 126 / 60 },
+    ]);
+  });
+
+  test("at constellation 6 a catalyst wielder on the field gains the Pyro DMG Bonus and no infusion", () => {
+    expect.hasAssertions();
+    // Mona wields a catalyst, and gets the same 76% bonus as the sword wielder
+    expect(
+      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 6 }, MONA_CHARACTER_ID, 1),
+    ).toStrictEqual([
+      {
+        amount: (0.56 + 0.2) * BASE_ATTACK,
+        attribute: Attribute.Attack,
+        characterId: MONA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 126 / 60,
+      },
+      {
+        amount: 0.15,
+        attribute: Attribute.PyroDamageBonus,
+        characterId: MONA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 126 / 60,
+      },
+    ]);
   });
 
   test("plays each Charge Level by how long the skill was held, with that level's cooldown", () => {
