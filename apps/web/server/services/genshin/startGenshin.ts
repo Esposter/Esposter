@@ -24,7 +24,7 @@ export const startGenshin = async (userId: string): Promise<StartGenshinResult> 
   const { envelope, etag } = await readGenshinSaveState(containerClient, userId);
   const startedEnvelope = startGenshinSession(envelope, crypto.randomUUID());
   const writtenEtag = await writeGenshinSaveEnvelope(containerClient, userId, startedEnvelope, etag);
-  if (envelope) genshinEventEmitter.emit("replaceSession", [[userId, startedEnvelope.sessionId]]);
+  if (envelope) genshinEventEmitter.emit("replaceSession", [userId, startedEnvelope.sessionId]);
   return {
     etag: writtenEtag,
     isNew: envelope === undefined,
