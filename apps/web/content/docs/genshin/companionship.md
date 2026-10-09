@@ -5,7 +5,7 @@ description: Each character's Friendship Level read from the Companionship EXP i
 
 # Companionship
 
-Every character but the Traveler keeps a total of Companionship EXP, and its Friendship Level is the count of the game's levels that total has reached. Only the total is stored, so the level cannot disagree with it. The Original Resin claims are the first source that gives the EXP. The stories a level opens are on the [character profile](/docs/genshin/character-profile), and the voice-overs, Serenitea Pot dialogue and namecard view are not drawn yet; the commissions and random events that also give EXP have no page built.
+Every character but the Traveler keeps a total of Companionship EXP, and its Friendship Level is the count of the game's levels that total has reached. Only the total is stored, so the level cannot disagree with it. The Original Resin claims are the first source that gives the EXP. The stories and voice-overs a level opens are on the [character profile](/docs/genshin/character-profile), and the Serenitea Pot dialogue and namecard view are not drawn yet; the commissions and random events that also give EXP have no page built.
 
 ## How it works
 
@@ -27,7 +27,7 @@ flowchart LR
 - **The grant is whole, not split.** Every deployed member but the Traveler gets the full amount, a fallen one included, since the grant reads the team rather than their health.
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short.
 - **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's Recordings owed list, one per pair of kinds, measure what a claim gives.
-- **Not built.** The voice-overs, the Serenitea Pot dialogue and the namecard view, which the [proposal](/docs/proposals/genshin/companionship) keeps; the stories are on the [character profile](/docs/genshin/character-profile). The claim is a rule with no claim screen calling it yet.
+- **Not built.** The Serenitea Pot dialogue and the namecard view, which the [proposal](/docs/proposals/genshin/companionship) keeps; the stories and voice-overs are on the [character profile](/docs/genshin/character-profile). The claim is a rule with no claim screen calling it yet.
 
 ## Key files
 

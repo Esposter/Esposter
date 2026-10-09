@@ -2,7 +2,7 @@
 import type { CharacterMenuProfileEntry } from "#src/models/CharacterMenuProfileEntry";
 
 interface Props {
-  // The character's stories in the order the game lists them, the first one open at the start
+  // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
   entries: CharacterMenuProfileEntry[];
 }
 
