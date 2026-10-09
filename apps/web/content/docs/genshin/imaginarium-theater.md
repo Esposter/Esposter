@@ -58,7 +58,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumSeason.ts`               | One season from its schedule row                                          |
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumDifficulty.ts`           | One difficulty and its level floor from its table row                     |
 | `packages/genshin-world/src/services/imaginarium/findImaginariumSeason.ts`            | The season played at a moment                                             |
-| `packages/genshin-world/src/services/shared/findLatestBegun.ts`                       | The item that began latest before a moment, the search both schedules use |
+| `packages/genshin-world/src/services/shared/findLatestBegun.ts`                       | The item that began latest before a moment, the Theater's season's search |
 | `packages/genshin-world/src/services/imaginarium/getImaginariumSeasonDifficulties.ts` | A season's difficulties, joined by id and ordered by level                |
 | `packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`     | Whether a Principal Cast can perform a stage                              |
 | `packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`  | The Blessing Level a run holds                                            |
