@@ -105,6 +105,8 @@ export enum GameTextKey {
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
   Dracolite = "2859410932",
+  // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
+  ElectroCrystal = "2189505020",
   // The HUD's skill and burst buttons, named as the controls name their keys
   ElementalBurst = "CONTROL_SKILL5",
   ElementalSkill = "CONTROL_SKILL2",
