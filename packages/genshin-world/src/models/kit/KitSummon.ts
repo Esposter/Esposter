@@ -1,0 +1,14 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitHit } from "#src/models/kit/KitHit";
+
+// An entity placed where its character cast it, which lands its own hits on the seconds its hitmarks fall at, for the
+// Seconds left of it. It is priced by the combatant that cast it, as it stood then
+export interface KitSummon {
+  body: KitBody;
+  combatant: Combatant;
+  elapsedSeconds: number;
+  hits: KitHit[];
+  kind: "summon";
+  secondsRemaining: number;
+}
