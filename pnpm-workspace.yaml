@@ -10,6 +10,10 @@ packages:
 # Since a later build consumes what an earlier one produced and the failures after it would be that one restated.
 bail: false
 
+# pnpm's default installs the whole workspace before any `pnpm exec` or `pnpm run` finds node_modules out of date, so
+# a command in a shared checkout or a worktree with no install rewrites node_modules mid-run. `error` refuses instead.
+verifyDepsBeforeRun: error
+
 allowBuilds:
   "@parcel/watcher": true
   better-sqlite3: true
