@@ -29,7 +29,7 @@ flowchart TD
 
 ## The flight
 
-`stepWildlife` runs on the enemies' fixed step, a sixtieth of a second. An idle animal with the character within its escape radius starts running straight away from it at the flight speed. A running one keeps running for the escape time, then stands idle, or runs again if the character is still in reach. A character that is gone leaves a running animal to finish its time and then stand idle.
+`stepWildlife` runs on the enemies' fixed step, a sixtieth of a second. An idle animal with the character within its escape radius starts running straight away from it at the flight speed. A running one keeps running for the escape time, then stands idle, or runs again if the character is still in reach. A character that is gone leaves a running animal running on its last heading until its time is up, and then standing idle.
 
 The numbers are provisional, each marked in `services/wildlife/constants.ts`:
 
