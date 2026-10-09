@@ -12,7 +12,8 @@ export interface SaveGenshinResult {
   serverNow: string;
 }
 
-// A write from a session that is no longer current is refused, never merged
+// A write from a session that is no longer current is refused, never merged. The ETag is the safety net: a blob that
+// Changed under the read is the same loss of the lease, so the write's CONFLICT is answered as a replacement too
 export const saveGenshin = async (
   userId: string,
   { save, sessionId }: SaveGenshinInput,
@@ -21,6 +22,6 @@ export const saveGenshin = async (
   const { envelope, etag } = await readGenshinSaveState(containerClient, userId);
   if (!etag || !checkIsGenshinSessionCurrent(envelope, sessionId)) throw getGenshinSessionReplacedError();
 
-  const written = await writeGenshinSaveEnvelope(containerClient, userId, { save, sessionId }, { ifMatch: etag });
-  return { etag: written.etag, serverNow: Temporal.Now.instant().toString() };
+  const writtenEtag = await writeGenshinSaveEnvelope(containerClient, userId, { save, sessionId }, etag);
+  return { etag: writtenEtag, serverNow: Temporal.Now.instant().toString() };
 };

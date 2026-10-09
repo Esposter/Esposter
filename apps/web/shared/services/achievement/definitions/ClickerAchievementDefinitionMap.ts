@@ -22,7 +22,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: {
       operation: (value) => BuildingIds.every((buildingId) => value.some(({ id }) => id === buildingId)),
       operator: AchievementOperator.Operation,
-      path: "boughtBuildings",
+      path: "data.boughtBuildings",
       type: AchievementConditionType.Property,
     },
     description: "Own every building in your clicker game",
@@ -32,7 +32,12 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [ClickerAchievementName.ClickerBillionaire]: defineAchievementDefinition({
     amount: 1,
-    condition: { operator: BinaryOperator.Ge, path: "pointCount", type: AchievementConditionType.Property, value: 1e9 },
+    condition: {
+      operator: BinaryOperator.Ge,
+      path: "data.pointCount",
+      type: AchievementConditionType.Property,
+      value: 1e9,
+    },
     description: "Hold 1,000,000,000 points in your clicker game",
     icon: "i-mdi:cash-multiple",
     points: 150,
@@ -50,7 +55,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: {
       operation: (value) => Object.keys(UpgradeMap).every((upgradeId) => value.some((id) => id === upgradeId)),
       operator: AchievementOperator.Operation,
-      path: "boughtUpgrades",
+      path: "data.boughtUpgrades",
       type: AchievementConditionType.Property,
     },
     description: "Buy every upgrade in your clicker game",
@@ -60,7 +65,12 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [ClickerAchievementName.ClickerMillionaire]: defineAchievementDefinition({
     amount: 1,
-    condition: { operator: BinaryOperator.Ge, path: "pointCount", type: AchievementConditionType.Property, value: 1e6 },
+    condition: {
+      operator: BinaryOperator.Ge,
+      path: "data.pointCount",
+      type: AchievementConditionType.Property,
+      value: 1e6,
+    },
     description: "Hold 1,000,000 points in your clicker game",
     icon: "i-mdi:cash",
     points: 50,
@@ -91,7 +101,7 @@ export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     condition: {
       operator: BinaryOperator.Ge,
-      path: "pointCount",
+      path: "data.pointCount",
       type: AchievementConditionType.Property,
       value: 1e12,
     },

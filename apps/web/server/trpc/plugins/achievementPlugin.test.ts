@@ -42,8 +42,8 @@ describe("achievementPlugin", () => {
       throw new Error(" ");
     });
     const clickerSave = new ClickerSave();
-    await caller.clicker.saveClicker(clickerSave);
-    const storedClickerSave = await caller.clicker.readClicker();
+    await caller.clicker.saveClicker({ data: clickerSave });
+    const { data: storedClickerSave } = await caller.clicker.readClicker();
     const userAchievements = await caller.achievement.readUserAchievements();
 
     expect(storedClickerSave).toStrictEqual(clickerSave);
@@ -57,7 +57,7 @@ describe("achievementPlugin", () => {
   test("processes achievements on the happy path", async () => {
     expect.hasAssertions();
 
-    await caller.clicker.saveClicker(new ClickerSave());
+    await caller.clicker.saveClicker({ data: new ClickerSave() });
     const userAchievements = await caller.achievement.readUserAchievements();
     const clickerNovice = userAchievements.find(
       ({ achievement }) => achievement.name === ClickerAchievementName.ClickerNovice,
@@ -69,10 +69,12 @@ describe("achievementPlugin", () => {
     expect(clickerNovice.unlockedAt).toStrictEqual(new Date(0));
   });
 
-  test("counts every increment when mutations run concurrently", async () => {
+  test("counts every increment across saves", async () => {
     expect.hasAssertions();
 
-    await Promise.all([caller.clicker.saveClicker(new ClickerSave()), caller.clicker.saveClicker(new ClickerSave())]);
+    // Each save is sent under the etag the last one returned, since two saves over one blob at once are a conflict
+    const { etag } = await caller.clicker.saveClicker({ data: new ClickerSave() });
+    await caller.clicker.saveClicker({ data: new ClickerSave(), etag });
     const userAchievements = await caller.achievement.readUserAchievements();
     // Novice unlocks on the first save, so a still-locked achievement is what proves neither increment was lost
     const clickerSaver = userAchievements.find(

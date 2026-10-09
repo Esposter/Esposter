@@ -4,8 +4,8 @@ import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 import { checkIsServer, getResult } from "@esposter/shared";
-import { TRPCClientError } from "@trpc/client";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
@@ -79,7 +79,7 @@ export const useGenshinSave = async () => {
     } else if (outcome.status === MutationStatus.Failed) {
       // A write the server refuses as another session's is the lease lost, so the page is replaced. Any other failure
       // stays unsaved and is sent again by the next save
-      if (outcome.error instanceof TRPCClientError && outcome.error.data?.code === "CONFLICT") isReplaced.value = true;
+      if (checkIsTRPCConflict(outcome.error)) isReplaced.value = true;
       else console.error(outcome.error);
     }
   };
