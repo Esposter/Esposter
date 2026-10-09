@@ -60,12 +60,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role after the change                                    |
-| :------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Enters a realm's scene and returns to the world          |
-| `packages/genshin-world/src/models/world/BuildingKit.ts`       | The kits a furnishing is drawn by                        |
-| `packages/genshin-world/src/models/inventory/Currency.ts`      | Gains Realm Currency, once its game text name has a key  |
-| `packages/genshin-world/src/models/inventory/Inventory.ts`     | Furnishings and blueprints, in the bag's Furnishings tab |
+| File                                                            | Role after the change                                    |
+| :-------------------------------------------------------------- | :------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Enters a realm's scene and returns to the world          |
+| `packages/genshin-world/src/models/world/BuildingKit.ts`        | The kits a furnishing is drawn by                        |
+| `packages/genshin-world/src/models/inventory/Currency.ts`       | Gains Realm Currency, once its game text name has a key  |
+| `packages/genshin-world/src/models/inventory/Inventory.ts`      | Furnishings and blueprints, in the bag's Furnishings tab |
 
 ## Sources
 

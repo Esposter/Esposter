@@ -85,7 +85,7 @@ The character on the field fights through its kit, which prices every character'
 | `packages/genshin-world/src/services/map/findNearestLandmark.ts`                   | The loaded statue nearest the body, where a fallen team is jumped to                                             |
 | `packages/genshin-world/src/services/party/constants.ts`                           | The team size, the cooldown, the default teams and the keys                                                      |
 | `packages/genshin-world/src/components/World/Character/Index.vue`                  | Steps the field's kit, its cooldowns, a drowning, a burst on a switch, a strike's resonances and the stamina cut |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Keeps the characters and the party, switches on the keys, and respawns a fallen team                             |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                    | Keeps the characters and the party, switches on the keys, and respawns a fallen team                             |
 
 ## Notes
 

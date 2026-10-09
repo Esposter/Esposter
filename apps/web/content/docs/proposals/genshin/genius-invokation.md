@@ -23,7 +23,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 **This adds, in order:**
 
-1. **Seating the challengers.** Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated game's standing talk is written from the dialogue its NPC's talk config names: the NPC's greeting line, then the duel reply `191219274`. A line with no English text is skipped, and where an NPC has no English challenge line its talk's first line stands in. The world's screen then passes the merged talk sources in place of its quest-only talk map. **Hook:** in `components/World/Screen/Index.vue`, the `talkMap` computed becomes `mergeTalks(questTalks, getStandingTalks(residents, standingTalkMap))`, once the talks system's split lands.
+1. **Seating the challengers.** Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated game's standing talk is written from the dialogue its NPC's talk config names: the NPC's greeting line, then the duel reply `191219274`. A line with no English text is skipped, and where an NPC has no English challenge line its talk's first line stands in. The world's screen then passes the merged talk sources in place of its quest-only talk map. **Hook:** in `components/World/Session/Index.vue`, the `talkMap` computed becomes `mergeTalks(questTalks, getStandingTalks(residents, standingTalkMap))`, once the talks system's split lands.
 2. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them.
 3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
@@ -37,7 +37,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 | File                                                             | Role after the change                                                              |
 | :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`   | Begins a resident's talk, its talks the quests' until the merged list is passed in |
+| `packages/genshin-world/src/components/World/Session/Index.vue`  | Begins a resident's talk, its talks the quests' until the merged list is passed in |
 | `scripts/src/services/genshinAssets/residents/writeResidents.ts` | Writes each resident's talk id, not yet the talk's own lines                       |
 
 ## Sources

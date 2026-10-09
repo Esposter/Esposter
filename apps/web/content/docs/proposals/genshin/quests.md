@@ -41,12 +41,12 @@ These need the English PC client at 1080 high, published screenshots and recordi
 
 ## Key files
 
-| File                                                           | Role after the change                                                |
-| :------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Starts the quests, hands each doing to them and reports the finishes |
-| `packages/genshin-world/src/models/world/RegionData.ts`        | Gains the triggers the carried quests name                           |
-| `packages/genshin-world/src/models/quest/QuestId.ts`           | Grows by a line for each quest carried                               |
-| `packages/genshin-world/src/services/quest/QuestLoaderMap.ts`  | Gains a line for each quest carried                                  |
+| File                                                            | Role after the change                                                |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Starts the quests, hands each doing to them and reports the finishes |
+| `packages/genshin-world/src/models/world/RegionData.ts`         | Gains the triggers the carried quests name                           |
+| `packages/genshin-world/src/models/quest/QuestId.ts`            | Grows by a line for each quest carried                               |
+| `packages/genshin-world/src/services/quest/QuestLoaderMap.ts`   | Gains a line for each quest carried                                  |
 
 ## Sources
 

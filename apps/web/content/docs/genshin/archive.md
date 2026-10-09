@@ -94,7 +94,7 @@ The Archive screen has no parity measure yet. Its places follow the achievements
 | `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`     | The names in each language, imported on demand                                   |
 | `packages/genshin-world/src/services/archive/constants.ts`                | The main quest the Archive opens after                                           |
 | `packages/genshin-world/src/components/Archive/Screen/Index.vue`          | The Archive screen the Paimon menu opens                                         |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`            | `setInventory`, the unlock and the names' load, and the screen's slot            |
+| `packages/genshin-world/src/components/World/Session/Index.vue`           | `setInventory`, the unlock and the names' load, and the screen's slot            |
 | `scripts/src/services/genshinAssets/archive/writeArchive.ts`              | The writer: each section's entries into its slice                                |
 | `scripts/src/services/genshinAssets/archive/toArchiveEntries.ts`          | A candidate kept only when its name is in the English text, in the codex's order |
 | `scripts/src/services/genshinAssets/archive/readLivingBeingCandidates.ts` | The animal rows and their names                                                  |

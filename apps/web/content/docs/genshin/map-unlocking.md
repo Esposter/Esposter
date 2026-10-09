@@ -32,7 +32,7 @@ flowchart TD
 | `packages/genshin-world/src/services/map/computeFilledAreaIds.ts`                  | The areas that unlocked landmarks stand in, which are the filled ones       |
 | `packages/genshin-world/src/services/map/computeAreaLabels.ts`                     | Names only the filled areas, at their outline or their unlocked landmarks   |
 | `packages/genshin-world/src/components/Map/Drawing/Index.vue`                      | Draws the outlines of filled areas and the marks of the unlocked landmarks  |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                    | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
 | `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept |
 | `scripts/src/services/genshinAssets/transPoints/writeTransPointRewards.ts`         | Writes the open world's transport point rewards into the slice              |
 | `packages/genshin-world/src/generated/transPoints/scene3.json`                     | The written slice, imported on demand                                       |

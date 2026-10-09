@@ -57,7 +57,7 @@ The overlay is scored against `map-overlay-jueyun`, the English client's map on 
 | `packages/genshin-world/src/services/map/computeZoomShare.ts`         | Where a view's metres sit on the zoom slider's track, on a logarithm                                                                             |
 | `packages/genshin-world/src/services/map/computeZoomMetresAtShare.ts` | The metres a place on the track shows, clamped at either end                                                                                     |
 | `packages/genshin-world/src/services/map/computeWheelZoomMetres.ts`   | The metres after a wheel turn, along the same track                                                                                              |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`        | Opens the map, fades and places on a jump, and exposes both to its host                                                                          |
+| `packages/genshin-world/src/components/World/Session/Index.vue`       | Opens the map, fades and places on a jump, and exposes both to its host                                                                          |
 | `packages/genshin-world/src/components/World/Character/Index.vue`     | Places the body at a pose, the follow camera level behind it                                                                                     |
 
 ## Notes

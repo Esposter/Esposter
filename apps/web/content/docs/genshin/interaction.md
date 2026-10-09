@@ -74,7 +74,7 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 | `packages/genshin-world/src/composables/useInteraction.ts`                     | The prompts read each frame, a press and a held F's repeat                          |
 | `packages/genshin-world/src/models/interaction/Interactable.ts`                | A thing the character can act on: its prompt and its place                          |
 | `packages/genshin-world/src/models/world/WorldDrop.ts`                         | A drop lying on the ground: its item, count, id and point                           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                 | Holds the drops, the residents and the locked statues, and acts on the selected row |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                | Holds the drops, the residents and the locked statues, and acts on the selected row |
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                                             |
 | `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 139 units right of the centre                   |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                                             |

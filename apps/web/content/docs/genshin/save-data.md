@@ -70,7 +70,7 @@ flowchart LR
 - **The server's clock answers every start and save, and the client reads its timers through the offset.** The offset is the server's now minus the midpoint of the call's send and answer, re-taken on each save. Original Resin's regeneration, the gathering points' respawns and the pickups' instants are read through it.
 - **A replaced session is told by the in-process real-time layer, and by the refused write as the fallback.** A start that replaces a session emits the replacing session's id on the per-user `replaceSession` event, which the `onSessionReplaced` subscription yields to the user's subscribers. A session that does not hear it is refused with CONFLICT on its next save, and that refusal alone also replaces it.
 - **A guest's save merges by a pure rule, slice by slice.** The landmarks and the achievements are grow-only: landmarks union, and an achievement keeps the larger count and the earlier moment it was finished. A quest keeps the further of its two steps. The Adventure EXP and each character's Companionship EXP keep the larger. Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's. Mondstadt's Reputation keeps the further, by level and then by EXP. The bag and the wallet are the account's copy, except that a same-day Primogem refill count takes the larger. A new account takes the guest's save as it is.
-- **The bag keeps no names.** An entry stores the item's id in the game's tables, the bag's own id and count, and a weapon's or an artifact's level. Its definition, and so its name in the reader's language, is read from the game's tables as the save loads, so a bag reads in whichever language the reader plays.
+- **The bag keeps no names.** An entry stores the item's id in the game's tables, the bag's own id and count, and a weapon's or an artifact's level. Its definition, and so its name in the reader's language, is read from the game's tables as the save loads: a weapon's from the weapon table, whose id the entry names, and any other item's from the materials table, each name read by its text id from the name-text chunks. A bag reads in whichever language the reader plays.
 - **The save's slices are the game's ids and counters.** A wallet's currencies, the instants as ISO strings, the unlocked landmark ids, each carried quest's progress by id, each achievement's count and finish moment by id, each character's Companionship EXP by id and each kind of wish's counters. The world's rules derive everything else on load.
 - **A slice a save predates reads as the new player's.** Each slice added after the wallet and the quests has a default, so a save written before it keeps the wallet and the quests it held. The new player's value stands in for the slice, which is the same reset a new slice needs.
 - **Reputation and Companionship are carried, not changed.** No source adds Reputation or Companionship EXP to the world yet, and the characters a player holds are not saved, so the world holds the saved values and writes them back unchanged. Companionship has no character to apply to until the roster is saved.
@@ -82,49 +82,49 @@ flowchart LR
 
 Paths relative to the repository root.
 
-| File                                                                                   | Role                                                                        |
-| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/genshin.ts`                                              | `startGenshin` and `saveGenshin`, and `onSessionReplaced`                   |
-| `apps/web/server/services/genshin/startGenshin.ts`                                     | take the lease and write the envelope under the ETag read                   |
-| `apps/web/server/services/genshin/saveGenshin.ts`                                      | refuse a stale session, write under the ETag                                |
-| `apps/web/server/services/genshin/writeGenshinSaveEnvelope.ts`                         | the write through `writeBlobState`, its CONFLICT refused as a replacement   |
-| `apps/web/server/services/genshin/readGenshinSaveState.ts`                             | the blob's ETag and its parsed envelope, a save that does not parse refused |
-| `apps/web/server/services/genshin/startGenshinSession.ts`                              | the lease rule: a new session replaces the old and keeps its save           |
-| `apps/web/server/services/genshin/checkIsGenshinSessionCurrent.ts`                     | the write rule: only the current session's id matches                       |
-| `apps/web/server/models/genshin/GenshinSaveEnvelope.ts`                                | the blob's shape: the save and the session id                               |
-| `apps/web/server/services/blobState/readBlobState.ts`                                  | the blob's ETag and JSON, read together, for every blob-state read          |
-| `apps/web/server/services/blobState/writeBlobState.ts`                                 | the write under the ETag, create-only when none, a refusal as CONFLICT      |
-| `apps/web/server/trpc/procedure/blobState/createReadBlobStateProcedure.ts`             | the shared read: `{ data, etag }` for Clicker and Dungeons                  |
-| `apps/web/server/trpc/procedure/blobState/createSaveBlobStateProcedure.ts`             | the shared save: `{ data, etag }` in, the new ETag out                      |
-| `apps/web/app/services/trpc/checkIsTRPCConflict.ts`                                    | the page's test for a CONFLICT answer                                       |
-| `packages/genshin-world/src/save.ts`                                                   | the save's entry for the server, `genshin-world/save`                       |
-| `packages/genshin-interface/src/save.ts`                                               | the kinds of wish the save keys its counters by, `genshin-interface/save`   |
-| `packages/genshin-world/src/models/save/GenshinSave.ts`                                | the composed save schema, each slice's default, and its size bound          |
-| `packages/genshin-world/src/models/save/GenshinSaveState.ts`                           | the systems as the world reads them                                         |
-| `packages/genshin-world/src/models/inventory/InventorySave.ts`                         | the bag's slice, its entries by item id                                     |
-| `packages/genshin-world/src/models/inventory/WalletSave.ts`                            | the wallet's slice, with the Original Resin instants as ISO strings         |
-| `packages/genshin-world/src/models/map/UnlockedLandmarkSave.ts`                        | the unlocked landmarks' slice                                               |
-| `packages/genshin-world/src/models/quest/QuestProgressSave.ts`                         | the carried quests' progress slice                                          |
-| `packages/genshin-world/src/models/achievement/AchievementProgressSave.ts`             | the achievements' progress slice, each finish moment an ISO string          |
-| `packages/genshin-world/src/models/adventureRank/AdventureExpSave.ts`                  | the Adventure EXP slice                                                     |
-| `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`                 | the Companionship EXP slice, by character id                                |
-| `packages/genshin-world/src/models/reputation/ReputationProgressSave.ts`               | Mondstadt's Reputation slice                                                |
-| `packages/genshin-world/src/models/wish/WishPityMapSave.ts`                            | the wish counters' slice, keyed by the kind of wish                         |
-| `packages/genshin-world/src/services/save/constants.ts`                                | the bounds, the slices' empty values and the new player's save              |
-| `packages/genshin-world/src/services/save/toInventory.ts`                              | the bag read from its save, each definition read by item id                 |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                          | the bag written as its save, each entry by item id                          |
-| `packages/genshin-world/src/services/save/toAchievementProgressMap.ts`                 | the achievements' progress read from its save                               |
-| `packages/genshin-world/src/services/save/toAchievementProgressSave.ts`                | the achievements' progress written as its save                              |
-| `packages/db/src/services/azure/container/writeJsonBlob.ts`                            | a write under conditions, returning its ETag and stored length              |
-| `apps/web/server/services/genshin/events/genshinEventEmitter.ts`                       | the per-user `replaceSession` event a start emits                           |
-| `apps/web/app/composables/genshin/useGenshinSave.ts`                                   | the page's save: start, offset, autosave, grant, hidden flush, guest merge  |
-| `apps/web/app/components/Genshin/Index.vue`                                            | the page wiring the save into the world and the replaced dialog             |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                         | the world reading each system from the save and emitting the whole of it    |
-| `packages/genshin-world/src/services/save/readGenshinSave.ts`                          | the save read into the world's systems                                      |
-| `packages/genshin-world/src/services/save/toGenshinSave.ts`                            | the world's systems written as the save                                     |
-| `packages/genshin-world/src/services/save/mergeGenshinSave.ts`                         | the guest's save merged into the account's, slice by slice                  |
-| `apps/web/shared/services/achievement/definitions/ClickerAchievementDefinitionMap.ts`  | the clicker achievements' conditions, read from the save's `data` key       |
-| `apps/web/shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | the dungeons achievements' conditions, read from the save's `data` key      |
+| File                                                                                   | Role                                                                                        |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/genshin.ts`                                              | `startGenshin` and `saveGenshin`, and `onSessionReplaced`                                   |
+| `apps/web/server/services/genshin/startGenshin.ts`                                     | take the lease and write the envelope under the ETag read                                   |
+| `apps/web/server/services/genshin/saveGenshin.ts`                                      | refuse a stale session, write under the ETag                                                |
+| `apps/web/server/services/genshin/writeGenshinSaveEnvelope.ts`                         | the write through `writeBlobState`, its CONFLICT refused as a replacement                   |
+| `apps/web/server/services/genshin/readGenshinSaveState.ts`                             | the blob's ETag and its parsed envelope, a save that does not parse refused                 |
+| `apps/web/server/services/genshin/startGenshinSession.ts`                              | the lease rule: a new session replaces the old and keeps its save                           |
+| `apps/web/server/services/genshin/checkIsGenshinSessionCurrent.ts`                     | the write rule: only the current session's id matches                                       |
+| `apps/web/server/models/genshin/GenshinSaveEnvelope.ts`                                | the blob's shape: the save and the session id                                               |
+| `apps/web/server/services/blobState/readBlobState.ts`                                  | the blob's ETag and JSON, read together, for every blob-state read                          |
+| `apps/web/server/services/blobState/writeBlobState.ts`                                 | the write under the ETag, create-only when none, a refusal as CONFLICT                      |
+| `apps/web/server/trpc/procedure/blobState/createReadBlobStateProcedure.ts`             | the shared read: `{ data, etag }` for Clicker and Dungeons                                  |
+| `apps/web/server/trpc/procedure/blobState/createSaveBlobStateProcedure.ts`             | the shared save: `{ data, etag }` in, the new ETag out                                      |
+| `apps/web/app/services/trpc/checkIsTRPCConflict.ts`                                    | the page's test for a CONFLICT answer                                                       |
+| `packages/genshin-world/src/save.ts`                                                   | the save's entry for the server, `genshin-world/save`                                       |
+| `packages/genshin-interface/src/save.ts`                                               | the kinds of wish the save keys its counters by, `genshin-interface/save`                   |
+| `packages/genshin-world/src/models/save/GenshinSave.ts`                                | the composed save schema, each slice's default, and its size bound                          |
+| `packages/genshin-world/src/models/save/GenshinSaveState.ts`                           | the systems as the world reads them                                                         |
+| `packages/genshin-world/src/models/inventory/InventorySave.ts`                         | the bag's slice, its entries by item id                                                     |
+| `packages/genshin-world/src/models/inventory/WalletSave.ts`                            | the wallet's slice, with the Original Resin instants as ISO strings                         |
+| `packages/genshin-world/src/models/map/UnlockedLandmarkSave.ts`                        | the unlocked landmarks' slice                                                               |
+| `packages/genshin-world/src/models/quest/QuestProgressSave.ts`                         | the carried quests' progress slice                                                          |
+| `packages/genshin-world/src/models/achievement/AchievementProgressSave.ts`             | the achievements' progress slice, each finish moment an ISO string                          |
+| `packages/genshin-world/src/models/adventureRank/AdventureExpSave.ts`                  | the Adventure EXP slice                                                                     |
+| `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`                 | the Companionship EXP slice, by character id                                                |
+| `packages/genshin-world/src/models/reputation/ReputationProgressSave.ts`               | Mondstadt's Reputation slice                                                                |
+| `packages/genshin-world/src/models/wish/WishPityMapSave.ts`                            | the wish counters' slice, keyed by the kind of wish                                         |
+| `packages/genshin-world/src/services/save/constants.ts`                                | the bounds, the slices' empty values and the new player's save                              |
+| `packages/genshin-world/src/services/save/toInventory.ts`                              | the bag read from its save, each definition read by item id, a weapon from the weapon table |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                          | the bag written as its save, each entry by item id                                          |
+| `packages/genshin-world/src/services/save/toAchievementProgressMap.ts`                 | the achievements' progress read from its save                                               |
+| `packages/genshin-world/src/services/save/toAchievementProgressSave.ts`                | the achievements' progress written as its save                                              |
+| `packages/db/src/services/azure/container/writeJsonBlob.ts`                            | a write under conditions, returning its ETag and stored length                              |
+| `apps/web/server/services/genshin/events/genshinEventEmitter.ts`                       | the per-user `replaceSession` event a start emits                                           |
+| `apps/web/app/composables/genshin/useGenshinSave.ts`                                   | the page's save: start, offset, autosave, grant, hidden flush, guest merge                  |
+| `apps/web/app/components/Genshin/Index.vue`                                            | the page wiring the save into the world and the replaced dialog                             |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                        | the world reading each system from the save and emitting the whole of it                    |
+| `packages/genshin-world/src/services/save/readGenshinSave.ts`                          | the save read into the world's systems                                                      |
+| `packages/genshin-world/src/services/save/toGenshinSave.ts`                            | the world's systems written as the save                                                     |
+| `packages/genshin-world/src/services/save/mergeGenshinSave.ts`                         | the guest's save merged into the account's, slice by slice                                  |
+| `apps/web/shared/services/achievement/definitions/ClickerAchievementDefinitionMap.ts`  | the clicker achievements' conditions, read from the save's `data` key                       |
+| `apps/web/shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | the dungeons achievements' conditions, read from the save's `data` key                      |
 
 ## Notes
 

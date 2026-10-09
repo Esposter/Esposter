@@ -71,7 +71,7 @@ flowchart TD
 | `packages/genshin-world/src/models/hud/HudFrame.ts`                 | What the HUD reads off the world each frame                             |
 | `packages/genshin-world/src/services/quest/getQuestCounter.ts`      | A step's counted objective, as the tracker and the quest screen show it |
 | `packages/genshin-world/src/services/shared/getActionKeyCode.ts`    | The key a pressed piece holds in the world's input                      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`      | Mounts the HUD, fills its slots with each piece's state, navigates on V |
+| `packages/genshin-world/src/components/World/Session/Index.vue`     | Mounts the HUD, fills its slots with each piece's state, navigates on V |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`    | Raises the beam over the navigated objective in the world's group       |
 | `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`  | Which screens hide the HUD                                              |
 

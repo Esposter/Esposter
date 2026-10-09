@@ -173,6 +173,6 @@ What is still to build is the [Genshin proposal](/docs/proposals/genshin), and t
 | `packages/genshin-engine/src/index.ts`                           | The engine's entry, which the app imports every module from |
 | `apps/web/app/components/Genshin/Index.vue`                      | The game: the opening over the world's loading              |
 | `apps/web/app/components/Genshin/World.vue`                      | The canvas on the WebGPU renderer                           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`   | The world's canvas, its camera and the scene it looks at    |
+| `packages/genshin-world/src/components/World/Session/Index.vue`  | The world's canvas, its camera and the scene it looks at    |
 | `packages/genshin-interface/src/components/GameScreen/Index.vue` | The root every screen of the game's is drawn in             |
 | `packages/genshin-world/src/services/windrise`                   | Windrise's heights, colours and look                        |

@@ -35,7 +35,7 @@ These need a recording of the English PC client's dialogue at 1080 high, found a
 | File                                                                 | Role after the change                                                      |
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`      | Fills the placeholders, draws narration and offers the open quest talks    |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`       | Mounts the talk host when F begins a talk, and holds the controls under it |
+| `packages/genshin-world/src/components/World/Session/Index.vue`      | Mounts the talk host when F begins a talk, and holds the controls under it |
 | `packages/genshin-world/src/services/dialogue/constants.ts`          | The reveal and auto-play timings, once measured                            |
 | `packages/genshin-interface/src/components/DialogueScreen/Index.vue` | The replies' traced marks, and the measured look                           |
 

@@ -56,7 +56,7 @@ flowchart TD
 | `packages/genshin-world/src/models/party/Party.ts`                       | The state Party Setup edits and the HUD reads        |
 | `packages/genshin-world/src/services/party/addPartyTeam.ts`              | The team rules Configure Team's add goes through     |
 | `packages/genshin-world/src/services/party/disbandPartyTeam.ts`          | The team rules Configure Team's disband goes through |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`           | Fills Party Setup's screen slot                      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`          | Fills Party Setup's screen slot                      |
 | `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | Party Setup's title, already the game's              |
 
 ## Sources

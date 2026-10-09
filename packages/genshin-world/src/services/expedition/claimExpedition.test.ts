@@ -1,6 +1,7 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 
+import englishNameText from "#src/generated/nameText/English.json";
 import { Currency } from "#src/models/inventory/Currency";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -38,7 +39,7 @@ describe(claimExpedition, () => {
         place,
         EMPTY_INVENTORY,
         EMPTY_WALLET,
-        ENGLISH_GAME_TEXT,
+        englishNameText,
         returnedAt.subtract({ nanoseconds: 1 }),
         random,
       ),
@@ -60,7 +61,7 @@ describe(claimExpedition, () => {
         ironChunkPlace,
         EMPTY_INVENTORY,
         EMPTY_WALLET,
-        ENGLISH_GAME_TEXT,
+        englishNameText,
         returnedAt,
         random,
       )?.inventory.items,
@@ -90,7 +91,7 @@ describe(claimExpedition, () => {
         place,
         EMPTY_INVENTORY,
         EMPTY_WALLET,
-        ENGLISH_GAME_TEXT,
+        englishNameText,
         returnedAt,
         random,
       ),

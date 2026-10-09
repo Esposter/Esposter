@@ -85,7 +85,7 @@ The game's pause menu, laid out as the English PC client's 1.3 still draws it at
 | `packages/genshin-world/src/services/menu/MenuEntryGlyphMap.ts`          | each contents entry's icon, traced, placed in its tile                                                |
 | `packages/genshin-world/src/services/menu/MenuFrameGlyphMap.ts`          | the side bar's, Back's, the card's and the settings header's icons, traced, placed in the reference   |
 | `packages/genshin-world/src/components/Menu/Glyph/Index.vue`             | one traced icon, placed in the reference's pixels from its parent                                     |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`           | reads the input once a frame, keeps what is open, holds the world, lets the pointer go, mounts a talk |
+| `packages/genshin-world/src/components/World/Session/Index.vue`          | reads the input once a frame, keeps what is open, holds the world, lets the pointer go, mounts a talk |
 | `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                        |
 | `packages/genshin-world/src/components/Menu/Paimon/Index.vue`            | the Paimon menu, laid out in the 1.3 still's pixels, its icons placed and its card drawn              |
 | `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the Graphics tab's header, tab and quality row; not yet opened by the world                           |

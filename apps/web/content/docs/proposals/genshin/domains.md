@@ -56,13 +56,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role after the change                                |
-| :------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-world/src/models/world/LandmarkKind.ts`      | Gains the domain entrance                            |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts` | Fits the domain entrances from the streaming records |
-| `packages/genshin-world/src/services/map/constants.ts`         | `JUMP_LANDMARK_KINDS` gains the domain entrance      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Enters a domain's scene and returns to the world     |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`         | A domain's waves, as camps of its scene              |
+| File                                                            | Role after the change                                |
+| :-------------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/genshin-world/src/models/world/LandmarkKind.ts`       | Gains the domain entrance                            |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`  | Fits the domain entrances from the streaming records |
+| `packages/genshin-world/src/services/map/constants.ts`          | `JUMP_LANDMARK_KINDS` gains the domain entrance      |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Enters a domain's scene and returns to the world     |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`          | A domain's waves, as camps of its scene              |
 
 ## Sources
 

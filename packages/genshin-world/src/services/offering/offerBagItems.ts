@@ -4,7 +4,6 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingOffer } from "#src/models/offering/OfferingOffer";
 import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
-import type { GameText } from "genshin-text";
 
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -18,7 +17,7 @@ export const offerBagItems = (
   { items, nextId }: Inventory,
   wallet: Wallet,
   progress: OfferingProgress<OfferingLevel>,
-  gameText: GameText,
+  names: Readonly<Record<string, string>>,
 ): OfferingOffer => {
   const offeringItemIds = new Set(progress.levels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId));
   const itemCounts: ItemCount[] = Array.from(offeringItemIds, (id) => ({ count: countInventoryItem(items, id), id }));
@@ -28,7 +27,7 @@ export const offerBagItems = (
   let paidWallet = wallet;
   let overflow = 0;
   for (const { itemCount, itemId } of gainedLevels.flatMap(({ rewards }) => rewards)) {
-    const pickUp = pickUpDroppedItem({ count: itemCount, itemId }, inventory, paidWallet, gameText);
+    const pickUp = pickUpDroppedItem({ count: itemCount, itemId }, inventory, paidWallet, names);
     inventory = pickUp.inventory;
     paidWallet = pickUp.wallet;
     overflow += pickUp.overflow;
