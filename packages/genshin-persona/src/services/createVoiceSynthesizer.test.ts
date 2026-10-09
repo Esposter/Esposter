@@ -19,6 +19,12 @@ import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { getVoiceDeviceLadder } from "#src/services/getVoiceDeviceLadder";
 import { describe, expect, test, vi } from "vitest";
 
+// The fallbacks walk a ladder of several rungs, so the host's own platform, which may have the CPU alone, is not read
+vi.mock(import("#src/services/getVoiceDeviceLadder"), async (importOriginal) => {
+  const { getVoiceDeviceLadder: getOriginalVoiceDeviceLadder } = await importOriginal();
+  return { getVoiceDeviceLadder: () => getOriginalVoiceDeviceLadder("linux") };
+});
+
 // The runtime's tensor, reduced to the one field the plugin reads
 class TestTensor {
   data: BigInt64Array | Float32Array;
