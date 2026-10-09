@@ -73,7 +73,7 @@ sequenceDiagram
 | [Effort level](/docs/proposals/infra/agent-console/effort-level)                           | an effort select beside the model select, showing the level the session is at |
 | [Session titles](/docs/proposals/infra/agent-console/session-titles)                       | renaming a session by its title, saved in its own transcript                  |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)       | attaching to a session a terminal runs, through its transcript and a channel  |
-| [Extensions](/docs/proposals/infra/agent-console/extensions)                               | how other tooling joins — app routes, MCP Apps, first-party views             |
+| [Extensions](/docs/proposals/infra/agent-console/extensions)                               | how other tooling joins — MCP Apps and first-party views, app routes shipped  |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                       | the parts a theme adds past the default, and the Genshin theme                |
 | [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                             | Genshin theme — the session's character arriving through a wish               |
 | [Element ambience](/docs/proposals/infra/agent-console/element-ambience)                   | Genshin theme — a backdrop in the element, moved by the spoken line           |

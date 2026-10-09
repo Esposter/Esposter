@@ -47,6 +47,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Host installer](/docs/infra/claude-interface/agent-console/host-installer)                   | the Windows executable, its self-install, the esposter-host link and the release asset       |
 | [Session windows](/docs/infra/claude-interface/agent-console/session-windows)                 | each session in a console window of its own, the loopback gate, and stopping from either end |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork             |
+| [Side pane](/docs/infra/claude-interface/agent-console/side-pane)                             | any page of the app beside the conversation, opened with the embed flag and no code          |
 | [Console overlay](/docs/infra/claude-interface/agent-console/console-overlay)                 | the bar, the keys, the console sheet, the pause menu, the loading screen and what they cost  |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it                  |
 | [Workflow comparison](/docs/infra/claude-interface/agent-console/workflow-comparison)         | the terminal's workflow against the console's, task by task, and what the console costs      |
@@ -65,5 +66,5 @@ What the terminal shows and does, and where the console carries each part, is [t
 
 ## Notes
 
-- The Genshin theme's palette, voice, scene and reactions, the views (the collector harbour), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
+- The Genshin theme's palette, voice, scene and reactions, the views (the collector harbour), the terminal-mirror driver and the MCP Apps tier of [extensions](/docs/proposals/infra/agent-console/extensions) are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
 - Cost is what the SDK reports for the session's query since the host opened it. A session resumed in a new host process starts that count again, as a new terminal process does.
