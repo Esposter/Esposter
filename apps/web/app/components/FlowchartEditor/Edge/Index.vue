@@ -32,7 +32,8 @@ const labelY = computed(() => edgePath.value[2]);
 const isEditing = ref(false);
 const editedLabel = ref("");
 const labelInput = useTemplateRef<HTMLInputElement>("labelInput");
-// Double clicking the path or its label starts an edit; the label is written back on Enter or when focus leaves
+// Double clicking the path or its label starts an edit; the label is written back on Enter, unless it confirms an input
+// Method's composition, or when focus leaves
 const startEditing = async () => {
   editedLabel.value = label || "";
   isEditing.value = true;
@@ -69,7 +70,7 @@ const commitLabel = () => {
         bg-panel
         w-32
         @blur="commitLabel()"
-        @keydown.enter="commitLabel()"
+        @keydown.enter="!$event.isComposing && commitLabel()"
       />
       <span v-else text-sm px-2 py-1 rd bg-panel>{{ label }}</span>
     </div>

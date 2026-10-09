@@ -1,6 +1,6 @@
 ---
 title: Flowchart Connectors
-description: Flowchart edges draw an arrowhead, a right-angled path and an editable label by default, and a selected edge gets the same properties panel and delete a selected node has.
+description: Flowchart edges draw an arrowhead along a right-angled path by default and can carry an editable label, and a selected edge gets the properties panel a selected node has, with a Delete connector action.
 ---
 
 # Flowchart Connectors
@@ -23,7 +23,7 @@ flowchart LR
 - **Defaults.** `DEFAULT_EDGE_OPTIONS` (`apps/web/app/services/flowchartEditor/constants.ts`) is passed as the canvas's `default-edge-options`: `markerEnd` is a closed arrow and `type` is `smoothstep`. Vue Flow applies those defaults to a connection the same as to an edge added in code, and a stored edge's own `type` and `markerEnd` win over them.
 - **Edge model.** `GraphEdge` carries `label` and `markerEnd`, and `graphEdgeSchema` validates both. The label is capped at the same ceiling a node's label is.
 - **Drawing.** Every path type is rendered by one labelled edge component (`apps/web/app/components/FlowchartEditor/Edge/Index.vue`), which draws the path with Vue Flow's own path function for its type (`EdgePathMap`) and places the label at that path's midpoint.
-- **Editing.** Double clicking the path or the label opens an input; Enter or leaving the input writes the label back.
+- **Editing.** Double clicking the path or the label opens an input; Enter or leaving the input writes the label back, and an Enter that confirms an input method's composition does not.
 - **Panel.** `FlowchartEditor/Panel/Index.vue` shows one panel for a single selected node or, when no node is selected, a single selected edge. The edge's content (`Panel/EdgeContent.vue`) holds the label and a path toggle with three choices: Curved, Right-angled and Straight.
 - **Published view.** A published flowchart draws its labels and arrowheads from the stored edges with Vue Flow's built-in edges, so it needed no change.
 
