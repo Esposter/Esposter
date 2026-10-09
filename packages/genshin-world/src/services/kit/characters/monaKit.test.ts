@@ -62,9 +62,10 @@ describe("mona kit", () => {
   test("its Stellaris Phantasm gives each enemy in its bubble an Omen of 4 seconds and 42% DMG taken", () => {
     expect.hasAssertions();
     const { enemyStatus } = takeOne(MONA_KIT.elementalBurst.hits);
-    expect(enemyStatus?.id).toBe("mona-omen");
-    expect(enemyStatus?.secondsRemaining).toBeCloseTo(4, 2);
-    expect(enemyStatus?.damageTakenBonus).toBeCloseTo(0.42, 2);
+    const omen = enemyStatus?.(createMonaCombatant());
+    expect(omen?.id).toBe("mona-omen");
+    expect(omen?.secondsRemaining).toBeCloseTo(4, 2);
+    expect(omen?.damageTakenBonus).toBeCloseTo(0.42, 2);
   });
 
   test("ascension 4 adds 20% of its Energy Recharge to its Hydro DMG Bonus as its hits are priced", () => {

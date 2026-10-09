@@ -164,7 +164,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     hits: [
       {
         element: Element.Hydro,
-        enemyStatus: {
+        enemyStatus: () => ({
           damageTakenBonus: getTalentMultiplier(
             talentMultiplierMap,
             MONA_BURST_GROUP_ID,
@@ -178,7 +178,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
             TALENT_START_LEVEL,
             OMEN_DURATION_INDEX,
           ),
-        },
+        }),
         gauge: 1,
         hitArea: BUBBLE_HIT_AREA,
         hitmarkSeconds: 107 / 60,

@@ -203,7 +203,7 @@ describe(strikeEnemy, () => {
     const enemy = createSturdyEnemy();
     const hit: KitHit = {
       ...TRAVELER_KIT.plungeCollision,
-      enemyStatus: { damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 },
+      enemyStatus: () => ({ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }),
     };
 
     strikeEnemy(enemy, hit, createCombatant(), NEVER_CRITICAL);

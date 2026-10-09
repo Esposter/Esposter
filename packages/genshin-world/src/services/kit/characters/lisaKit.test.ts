@@ -1,12 +1,17 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { LISA_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -51,5 +56,29 @@ describe("lisa kit", () => {
     expect(discharges).toHaveLength(30);
     expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
     expect(effects).toStrictEqual([]);
+  });
+
+  test("stacks Conductive on each enemy its press strikes, up to three", () => {
+    expect.hasAssertions();
+    const enemy = { ...createEnemy(ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
+    const press = takeOne(LISA_KIT.elementalSkill.hits);
+
+    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemy, press, createLisaCombatant(), () => 1);
+
+    expect(enemy.statuses.map(({ id, stacks }) => [id, stacks])).toStrictEqual([["conductive", 3]]);
+  });
+
+  test("its hold strikes an enemy at the multiplier of its Conductive stacks, and consumes them", () => {
+    expect.hasAssertions();
+    const hold = LISA_KIT.elementalSkillHolds?.[0]?.action;
+    const hit = takeOne(hold?.hits ?? []) satisfies KitHit;
+    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    enemy.statuses = [{ damageTakenBonus: 0, id: "conductive", secondsRemaining: Infinity, stacks: 2 }];
+
+    const read = readKitStackedHit(enemy, hit);
+
+    expect(read.talentMultiplier).toBeCloseTo(4.24, 2);
+    expect(read.poiseDamage).toBe(240);
+    expect(enemy.statuses).toStrictEqual([]);
   });
 });

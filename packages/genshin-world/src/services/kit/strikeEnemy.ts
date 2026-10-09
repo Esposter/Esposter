@@ -23,6 +23,7 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 
@@ -33,8 +34,11 @@ import { ID_SEPARATOR } from "@esposter/shared";
 export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, random: () => number): EnergyDrop[] => {
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
-  const { enemyStatus, gauge, internalCooldownTag, isBlunt, poiseDamage, talentMultiplier } = kitHit;
-  if (enemyStatus) addEnemyStatus(enemy, { ...enemyStatus });
+  const { gauge, internalCooldownTag, isBlunt } = kitHit;
+  const status = kitHit.enemyStatus?.(combatant);
+  if (status) addEnemyStatus(enemy, { ...status });
+  // A stacked hit's multiplier and poise are read from the enemy's stacks, which the hit then consumes
+  const { poiseDamage, talentMultiplier } = readKitStackedHit(enemy, kitHit);
   // Shattering Ice's CRIT Rate reads the enemy as the hit finds it, before its Freeze shatters or its element lands
   const isShatteringIceTarget =
     combatant.elementalResonances.includes(Element.Cryo) &&
