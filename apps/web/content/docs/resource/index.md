@@ -56,6 +56,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey resource](/docs/resource/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Program resource](/docs/resource/program-resource) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
 - [Note resource](/docs/resource/note-resource) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
+- [Note slash menu](/docs/resource/note-slash-menu) — `/` opens a filterable block menu at the caret, drawn by the editor on the composer's suggestion stack
 - [Blueprint resource](/docs/resource/blueprint-resource) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
 - [Blueprint capture](/docs/resource/blueprint-capture) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
 - [Survey response controls](/docs/resource/survey-response-controls) — the accepting-responses toggle and the closed state that keeps participant links alive

@@ -19,7 +19,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 - [ ] [Blueprint deploy review](/docs/proposals/resource/blueprint-deploy-review) — the Deploy dialog lists every resource it will create under its resolved name before creating any
 - [ ] [Note images](/docs/proposals/resource/note-images) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
 - [ ] [Note tables](/docs/proposals/resource/note-tables) — Notion's simple table: text cells, a header row, and a table menu for rows and columns
-- [ ] [Note slash menu](/docs/proposals/resource/note-slash-menu) — `/` opens a filterable block menu at the caret
 - [ ] [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) — import and export a Note as a `.md` file
 - [ ] [Flowchart image export](/docs/proposals/resource/flowchart-image-export) — Export PNG and Export SVG of the whole diagram
 
