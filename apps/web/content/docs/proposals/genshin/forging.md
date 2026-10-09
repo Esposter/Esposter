@@ -34,4 +34,4 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 ## Sources
 
-- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout waits on the recording, since this build could not read the page.
+- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout waits on a measure of the recording: a public clip of the Wagner forge, [Have an item forged at Wagner](https://www.youtube.com/watch?v=AVnbm8fESr0), 81 seconds, is kept under the captures as `yt-AVnbm8fESr0` and is the layout's reference until the owed `forge-order-queue.mkv` lands.
