@@ -40,7 +40,7 @@ flowchart TD
 ## Data and measures
 
 - **Read from the game's tables:** a dish's use from its item row in `MaterialExcelConfigData`, and the passives that name a kind of dish from the talents' tables.
-- **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then. The queued processing's timing and whether its units run one after another are also owed a recording.
+- **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then. Processing is built with its units one after another at the table's seconds each, and a recording owed on the [roadmap](/docs/genshin/roadmap) confirms that rule rather than settling an unbuilt one.
 - **Not yet read:** the source that teaches most processings, which the table does not name, so they stay closed.
 
 ## Key files
