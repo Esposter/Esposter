@@ -360,25 +360,25 @@ walk and the openings — or first, in the run after one the run's budget could 
 hour — CI's and CodeQL's each read off `main`'s own run and judged on its own, unless the queue's run over its head
 already passes a job it failed, a transit gap its windows heal, which spends nothing, or is still going; either holds
 the red and wakes the cycle one queue run's length later, since nothing reports a queue run concluding, and a job the
-queue passes over `main`'s very tree is a flake, its failed jobs run again once before any repair. Each part of an
-attempt runs on its own clock and the attempts are counted per failure signature, with an issue once its attempts run
-out and a wake for when the oldest
-of them age out. Every session runs under a wall clock, a session that never starts is retried five minutes later,
-GitHub refusing a request mid-pass — a server error, or a rate limit, waited out for as long as GitHub states — ends the
-run idle rather than red, a run that fails or is killed is woken five minutes later, and a hold that lifts on a clock
-schedules its own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on
-the same line in the newest runs, never one GitHub caused, which a rerun would only meet again: it gets one issue, and
-the next push or event runs the cycle as usual. Its pace is the review budget's, not its own: each of the plan's hourly
-reviews (`REVIEWS_PER_HOUR`) carries one window under the cap, so a backlog of hundreds of queue commits takes hours to
-drain. What still needs a person is billing — a CodeRabbit plan or usage credits that refuse every review, under which
-windows keep being cut smaller, and the Claude Code subscription every session runs on; the tokens — the collector's
-`gh` login, which `gh auth logout` on its machine stops and only a person refreshes, and the Claude Code token only a
-person mints; a window or a release from `develop` a person closes without merging, which pauses the collector until it
-is reopened; and a commit no resolver can land past its caps, which stays on its held branch, its issue carrying the
-steps that land it by hand. Every issue the collector opens is labelled `ready-for-agent`, for a session to take up like
-any other. An external contributor's pull request enters at the same door: opened from an `external/*` branch against
-`ai/queue` — never `main`, where it would spend one of the plan's hourly reviews on arrival — and squash-merged onto the
-queue by a maintainer, where the collector cuts it like any session commit.
+queue passes over `main`'s very tree is no gap but a flake or `main`'s own, its failed jobs run again once before any
+repair. Each part of an attempt runs on its own clock and the attempts are counted per failure signature, with an issue
+once its attempts run out and a wake for when the oldest of them age out. Every session runs under a wall clock, a
+session that never starts is retried five minutes later, GitHub refusing a request mid-pass — a server error, or a rate
+limit, waited out for as long as GitHub states where it states one — ends the run idle rather than red, a run that fails
+or is killed, or whose wake never dispatched, is woken five minutes later, and a hold that lifts on a clock schedules
+its own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on the same
+line in the newest runs, never one GitHub caused or one in the job's setup, which a rerun would only meet again: it gets
+one issue, and the next push or event runs the cycle as usual. Its pace is the review budget's, not its own: each of the
+plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one window under the cap, so a backlog of hundreds of queue commits
+takes hours to drain. What still needs a person is billing — a CodeRabbit plan or usage credits that refuse every
+review, under which windows keep being cut smaller, and the Claude Code subscription every session runs on; the tokens —
+the collector's `gh` login, which `gh auth logout` on its machine stops and only a person refreshes, and the Claude Code
+token only a person mints; a window or a release from `develop` a person closes without merging, which pauses the
+collector until it is reopened; and a commit no resolver can land past its caps, which stays on its held branch, its
+issue carrying the steps that land it by hand. Every issue the collector opens is labelled `ready-for-agent`, for a
+session to take up like any other. An external contributor's pull request enters at the same door: opened from an
+`external/*` branch against `ai/queue` — never `main`, where it would spend one of the plan's hourly reviews on arrival
+— and squash-merged onto the queue by a maintainer, where the collector cuts it like any session commit.
 The design, the plan's figures and the fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
