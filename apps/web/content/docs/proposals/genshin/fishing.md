@@ -1,8 +1,8 @@
 ---
 title: Fishing
-description: Proposal — fishing as the game runs it, every number from its own fish tables. The points, stocks, fish, rods and the rules of a cast and a reel are built; the bite and its skills, bait, the rod's pull, the screen and the Fishing Associations' exchanges are what remains, each waiting on a call or a recording.
+description: Proposal — fishing as the game runs it, every number from its own fish tables. The points, stocks, fish, rods and the rules of a cast and a reel are built; the bite and its skills, bait, the rod's pull, the screen and the Fishing Associations' exchanges are what remains.
 model: claude-opus-5-5
-needs: [game-exports, game-install]
+touches: ["packages/genshin-world/src/services/fishing/**", "packages/genshin-world/src/models/fishing/**"]
 ---
 
 # Fishing
@@ -13,8 +13,9 @@ Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line 
 
 - **A point's stock is its region's pools, for now.** Each region's pools are the game's, filed by city. Neither the official map's points nor the dump's tables tie a point to one pool, so until a recording shows which pool a point draws from, a point draws from every pool of its region. Nod-Krai's city is filed under no pool, so its points draw nothing, and the fifty-four pools filed under city zero, which no region names, are left out until a recording places them.
 - **Stocks come back as the game sets them.** The game's clock picks the day's or the night's stock, and an emptied stock is back in full seventy-two hours on, the day's and the night's kept apart by their own emptying, as the [fishing page](/docs/genshin/fishing) records (built).
-- **Bait is not tied to a fish yet.** The bait table's feature tags name no fish, and no fish row names the tags it wants, so which bait draws which fish waits on the crafting recipes and a recording of a bait at work. Each kind is drawn only by its own bait, crafted from its recipe.
+- **Bait is not tied to a fish yet.** The bait table's feature tags name no fish, and no fish row names the tags it wants, so which bait draws which fish is read from the wiki's fish pages, each of which names its bait. Each kind is drawn only by its own bait, crafted from its recipe.
 - **The bite is the fish's own.** A fish nibbles for a time within its feeler range and bites, and the bite is struck within its `biteTimeout` or lost. The timing and the caller's clock are not yet built.
+- **The nibble's length is drawn from the fish's feeler times.** `feelerTimes` is a range in seconds, its least and its most (from `[0.75, 1]` to `[2, 8]` across the table), so a fish nibbles for a time drawn evenly between them by the caller's random source, as `claimExpedition` draws a count. A strike while it only nibbles scares it off and the cast is back to aiming, as a strike after `biteTimeout` seconds of biting is. The owed `fishing-reel.mkv` checks the scare; it does not gate the build.
 - **The reel's zone moves by the fish's own fields.** The moving zone's width, speed, offset and duration are the fish's, and the reel takes the zone as its input meanwhile. How the zone travels over its duration waits on a recording of the minigame, as the tension rate and the allowance do.
 - **The fish fights back with its skills.** Each fish's skills from `FishSkillExcelConfigData` act on the tension and the hit points on a clock of their own; the rod's pull and the struggles are read from the skill rows once the reel's zone is.
 - **The stock limits stay unread.** Each pool's two limit numbers have scrambled names, and their meaning is not settled by any table here, so they wait on a reading.
@@ -42,9 +43,12 @@ stateDiagram-v2
 
 **This adds, in order:**
 
-1. **The bite and the nibbles**, on the fish's timeout and feeler range, with the cast's `Biting` phase.
-2. **The reel's zone and the fish's skills**, once a recording shows how the zone travels and the rod's pull is set.
-3. **Bait and the rod's choice**, from the bait table's tags, the crafting recipes and the rod's multiplier and accuracy.
+1. **The bite and the nibbles, as a pure rule.** No source is owed: `packages/genshin-world/src/generated/fishing/fish.json` already holds each fish's `feelerTimes` and `biteTimeout`.
+   - `packages/genshin-world/src/models/fishing/FishingBite.ts`: a bite under way, its `nibbleSeconds` and its `elapsedSeconds`. The caller draws `nibbleSeconds` as `feelerTimes[0] + random() * (feelerTimes[1] - feelerTimes[0])` when the fish turns to the lure, with no helper around it.
+   - `packages/genshin-world/src/services/fishing/stepFishingBite.ts`: the bite after `seconds`, given whether the strike was pressed, returning its next `FishingPhase` and bite: `Waiting` while it nibbles, `Biting` from `nibbleSeconds`, `Reeling` on a strike while biting, and `Aiming` on a strike while nibbling or once `biteTimeout` seconds of biting pass unstruck.
+   - `stepFishingBite.test.ts` beside it asserts each of those four transitions on a fish with `biteTimeout: 5` and a bite with `nibbleSeconds: 1`.
+2. **The reel's zone and the fish's skills.** The zone travels on the fish's own `bonusWidth`, `bonusSpeed`, `bonusOffset` and `bonusDuration`, read provisionally until `fishing-reel.mkv` re-measures it, and the skills from `FishSkillExcelConfigData`, which the dump already holds.
+3. **Bait and the rod's choice**, which fish each bait draws read from the wiki's fish pages, each naming its bait, through the repository's wiki reader, with the crafting recipes and the rod's multiplier and accuracy.
 4. **The screen, the prompt in reach, the cast's input and the catch into the bag.**
 5. **The Fishing Associations' exchanges.**
 

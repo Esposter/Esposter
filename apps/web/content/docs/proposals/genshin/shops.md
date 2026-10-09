@@ -3,6 +3,13 @@ title: Shops
 description: Proposal — the game's shops on one rule over its own goods table, its first parts built as Paimon's Bargains' Fates and the Mondstadt grocery's Mora-priced goods. Still to build: Paimon's Bargains' rotation, weapons and materials, every other vendor's goods and restocks, each region's Souvenir Shop taking its Sigils, and nothing that costs Genesis Crystals.
 model: claude-opus-5-5
 needs: [game-exports]
+touches:
+  [
+    "scripts/src/services/genshinAssets/items/**",
+    "packages/genshin-world/src/services/shop/**",
+    "packages/genshin-world/src/data/items/**",
+    "packages/genshin-world/src/generated/nameText/**",
+  ]
 ---
 
 # Shops
@@ -18,9 +25,10 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
 - **Paimon's Bargains' rotation.** The wiki gives the schedule: two characters a month from a six-month cycle of twelve, at 34 Starglitter each; a set of five weapons, Royal or Blackcliff, every two months at 24 Starglitter; and a monthly set of top materials and the Crown of Insight. The table holds the characters as rotations 10201 and 10202, six orders each, and the weapons as 10203 to 10207, with the goods naming no item of their own. The rotation's item ids name no avatar or material row in the dump, so its names wait on the bag's definitions. A character whose constellations are full cannot be bought. Fates for Primogems are the [inventory](/docs/proposals/genshin/inventory) proposal's.
 - **Souvenir Shops take Sigils.** Each region's main city trades its own Sigils for materials, blueprints and Mora, never restocking. The table's Souvenir rows price in item 305 for Mondstadt and 307 for Liyue, and the wallet's Sigils are the [inventory](/docs/proposals/genshin/inventory)'s to hold. Since 2.0 a region's shop opens only once its region's offering is at its last level, as Sumeru's waits on Vanarana's Favor ([offering systems](/docs/proposals/genshin/offering-systems)).
 - **Nothing for Genesis Crystals.** The Gift Shop and the outfit shop sell only for Genesis Crystals, which the world never sells, so their goods are never offered, as the [Genshin](/docs/proposals/genshin) proposal rules out any payment.
-- **A Reputation discount is the price's.** The table gives a city's named shops a Mora discount at its reputation level four, a rate of 90 in the table, which is ten percent off. The rounding is the proposal's: in the player's favour, to a multiple of five Mora ([reputation](/docs/proposals/genshin/reputation)).
+- **A Reputation discount is the price's.** The table gives a city's named shops a Mora discount at its reputation level four, a rate of 90 in the table, which is ten percent off. The rounding is the proposal's: in the player's favour, to a multiple of five Mora ([reputation](/docs/proposals/genshin/reputation)). The wiki's Blanche (Mondstadt) page bears it out: Salt at 60 is 50 after the discount, Pepper at 80 is 70 and Tomato at 120 is 105.
 - **A vendor is a resident.** A city's vendor is placed as a resident, and their shop opens from their talk, as the game opens it.
-- **The Mondstadt general goods vendor is Blanche, on shop 1004.** The table's shop types are numbers that no dump file names, so the link is read from the table's order, as the [shops](/docs/genshin/shops) page sets out, and confirmed by a recording before the screen.
+- **The Mondstadt general goods vendor is Blanche, on shop 1004.** The table's shop types are numbers that no dump file names, so the link is read from the table's order, as the [shops](/docs/genshin/shops) page sets out. The wiki's Blanche (Mondstadt) page confirms it without a recording: her shop lists the same eight goods at the same Mora prices and daily limit of 100 as shop 1004, and is open at all times of the day.
+- **A good that is no currency goes into the bag.** A purchase whose item the wallet does not hold adds it to the bag through `addInventoryItem`, as `claimExpedition` adds a reward, and a purchase the bag cannot take whole is refused with nothing spent.
 
 ## Scope and order
 
@@ -28,7 +36,10 @@ The rule over Paimon's Bargains' Fates and the Mondstadt grocery's goods is buil
 
 **This adds, in order:**
 
-1. **The grocery's purchases, once the bag holds its ingredients.** The rule and the goods are built; the items they give are the [inventory](/docs/proposals/genshin/inventory) proposal's.
+1. **The grocery's purchases into the bag.** The bag's materials hold only what drops, expeditions and the forge name, so the grocery's eight ingredients have no definition yet.
+   - `scripts/src/services/genshinAssets/items/writeItems.ts` adds the item ids of `packages/genshin-world/src/generated/shops/mondstadtGeneralGoods.json` to the ids it writes; `pnpm -C scripts genshin:assets items` rewrites `packages/genshin-world/src/data/items/materials.json` from the dump's `MaterialExcelConfigData`, and `pnpm -C scripts genshin:text names` adds their names to the existing name-text chunks.
+   - `packages/genshin-world/src/services/shop/buyShopGood.ts` takes the bag (`Inventory`) and the reader's names beside the wallet. An item in `ShopItemCurrencyMap` still goes to the wallet; any other is added with `addInventoryItem(inventory, getItemDefinition(itemId, names), itemCount)`, and an addition with any overflow returns undefined. The result gains `inventory`.
+   - `packages/genshin-world/src/services/shop/buyShopGood.test.ts` gains two cases on good 203001 (item 100075, 60 Mora): bought into an empty bag it adds one item and takes 60 Mora, and into a bag with no room for a new kind it is refused with the wallet unchanged. The existing Fate cases pass the bag through unchanged.
 2. **Paimon's Bargains' screen, its rotation, weapons and materials**, once the bag holds the items' definitions.
 3. **Each city's vendors and Souvenir Shop**, as its region is built, with the Sigils in the wallet.
 4. **The Fishing Associations**, with fishing.

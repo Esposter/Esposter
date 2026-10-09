@@ -2,11 +2,17 @@
 title: Expeditions
 description: Proposal — the expeditions Katheryne sends out from the Adventurers' Guild, their screen, the other nations' places as their statues are placed, and the expedition bonus and talents. The sending, return, claim and recall of Mondstadt's places are built, on the expeditions page.
 model: claude-haiku-5-5
+needs: [media-engine]
+touches:
+  [
+    "packages/genshin-interface/src/components/ExpeditionScreen/**",
+    "packages/genshin-world/src/components/Expedition/**",
+  ]
 ---
 
 # Expeditions
 
-The sending, the return, the claim, the recall and the limit by rank are built, with Mondstadt's places ([expeditions](/docs/genshin/expeditions)). What remains is what a player meets: Katheryne's talk that sends a character, the expedition screen, the other nations' places, and what a character's expedition talent adds. The places open with the statues that cover them ([map unlocking](/docs/proposals/genshin/map-unlocking)), and the talents wait on the characters' kits ([character kits](/docs/proposals/genshin/character-kits)), so this page waits on both.
+The sending, the return, the claim, the recall and the limit by rank are built, with Mondstadt's places ([expeditions](/docs/genshin/expeditions)). What remains is what a player meets: Katheryne's talk that sends a character, the expedition screen, the other nations' places, and what a character's expedition talent adds. The places open with the statues that cover them ([map unlocking](/docs/proposals/genshin/map-unlocking)), and the talents wait on the characters' kits ([character kits](/docs/proposals/genshin/character-kits)), so those two parts wait on them.
 
 ## Decisions
 
@@ -14,6 +20,8 @@ The sending, the return, the claim, the recall and the limit by rank are built, 
 - **Any character but the Traveler stays usable in the party while away.** The game sends them in name only, so the party reads nothing from an expedition.
 - **The expedition bonus is a chance by level, not a talent.** `ExpeditionBonusExcelConfigData` gives a chance per level of the sent character: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table does not say what a bonus gives, so the payload is open, and the earlier reading of this table as the talent's bonus is withdrawn.
 - **A character's expedition talent adds to a send or to a reward.** A passive that shortens an expedition or adds to its reward applies when its character is sent. Which passives do this is read from the characters' kits once the [character kits](/docs/proposals/genshin/character-kits) are built, not from the bonus table.
+- **The expedition screen is built now from a public clip.** Its layout is read off a published walkthrough of Katheryne's expedition screen, [How to Complete an Expedition and Send Characters Out on One](https://www.youtube.com/watch?v=fxIjhlV3vUA) (107 seconds), and its comparison is queued for the user's eyes. No recording is owed for it first; one of the English PC client re-measures it later without gating the build.
+- **Until Katheryne stands in the world, the screen opens from the world's menu.** The residents' join writes no Katheryne into Mondstadt's region data, so her talk is wired once she is placed, as the forge's blacksmith waits on the scene group export.
 - **Other nations' places open by their statues.** `checkIsExpeditionPlaceOpen` checks that a place's named statue is resonated, against the scene points `computeUnlockedStatuePointIds` maps the unlocked landmarks to, and a nation's places join the slice once its statues are placed.
 
 ## Scope and order
@@ -22,9 +30,14 @@ The sending, the return, the claim, the recall and the limit by rank are built, 
 
 **This adds, in order:**
 
-1. **Katheryne's talk and the expedition screen.** Her talk opens the screen, which lists each open place with its durations and the characters free to go. Its layout waits on a recording.
-2. **Each other nation's places**, as their statues join the region data, with the reward items of each named in the game text.
-3. **The bonus and the expedition talents.** The bonus's payload is read from the game's own data once it is found, and the talents join the kits.
+1. **The expedition screen, built now from the public clip.**
+   - Take the clip with `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=fxIjhlV3vUA --from 0 --to 107 --name expedition-screen`, then `pnpm -C scripts genshin:parity frames` over it, reading the frames to pick the ones that show the place list with a place's durations and the character list. Write each with `pnpm -C scripts genshin:parity frame <capture> --at <second> --name expedition-screen` into `references/expedition-screen/`, beside the SOURCE.txt it writes.
+   - Build `ExpeditionScreen` in `packages/genshin-interface/src/components/ExpeditionScreen/` (`Index.vue` and `Index.fixture.ts`) inside `GameScreen` on those frames, props in and events out: each open place with its durations, the characters free to go, and each expedition away with its time left; it emits a send, a claim and a recall. Its words are the game's by text id, added to `GameTextKey` with `pnpm -C scripts genshin:text find` and `write`.
+   - Its world wrapper `packages/genshin-world/src/components/Expedition/Screen/Index.vue`, with its own `Index.fixture.ts`, calls `sendExpedition`, `claimExpedition` and `recallExpedition` over Mondstadt's slice, and `ScreenKind` gains `Expedition`.
+   - The proof: a `ParityReferenceMap` entry naming the chosen frame for `ExpeditionScreen`, which `ParityReferenceMap.test.ts` requires of every fixture, and a `compare` run whose comparison goes under the roadmap's Awaiting the user.
+2. **Katheryne's talk**, once the residents' join places her in Mondstadt's region data; it opens the screen in place of the world's menu.
+3. **Each other nation's places**, as their statues join the region data, with the reward items of each named in the game text.
+4. **The bonus and the expedition talents.** The bonus's payload is read from the game's own data once it is found, and the talents join the kits.
 
 ## Data and measures
 
