@@ -54,7 +54,7 @@ const commitLabel = () => {
     <div
       v-if="isEditing || label"
       class="nodrag nopan"
-      pointer-events-all
+      pointer-events-auto
       absolute
       :style="{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)` }"
       @dblclick="startEditing()"
