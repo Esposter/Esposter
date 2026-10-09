@@ -26,7 +26,7 @@ The quest model and its pure progression, the quest screen J opens, the beam ove
 2. **The go-to triggers.** A quest's go-to steps name triggers no region data places yet, so they never move. Each trigger the carried quests name is placed in its region's data, and reaching it is the go-to event.
 3. **The talks that offer a quest.** A world or story quest starts from the talk that offers it. The carried quests do not name their offering talk, so the quest table's offer is read first.
 4. **The commissions.** Dealt at the reset from the reached areas' pools, with the preferred region, as [commissions](/docs/genshin/commissions) describes.
-5. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once the places are placed by item 1.
+5. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once the places are placed by item 2.
 6. **The Adventure Rank's quests.** The world level is still computed from no finished quests. [Adventure rank](/docs/proposals/genshin/adventure-rank) reads the finished quests once the rank's own page does.
 
 ## Measures owed

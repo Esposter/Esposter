@@ -45,7 +45,7 @@ A trigger type the map does not name is not watched, and its achievements never 
 
 ### The screen
 
-`ScreenKind.Achievements` opens from the Paimon menu. The screen lists the categories down the left, each with how many of its achievements are finished over how many it has, and the selected category's achievements on the right in the table's order, each with its title, its description, its count when its count is more than one, and its Primogems. Q and E step between the categories, the quest screen's tab keys, and a hidden achievement reads "?" until it is finished. The screen opens empty of progress, since nothing yet emits the events a finish is counted from.
+`ScreenKind.Achievements` opens from the Paimon menu. The screen lists the categories down the left, each with how many of its achievements are finished over how many it has, and the selected category's achievements on the right in the table's order, each with its title, its description, its count when its count is more than one, and its Primogems. Q and E step between the categories, the quest screen's tab keys, and a hidden achievement reads "?" until it is finished. Its progress is what the quests have counted, since only the quest triggers move yet (see Notes).
 
 ## Notes
 
