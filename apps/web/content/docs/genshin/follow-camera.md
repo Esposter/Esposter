@@ -1,6 +1,6 @@
 ---
 title: Follow camera
-description: The third-person camera behind the character, as the game's follows its own — an orbit round a pivot above the body, turned by the mouse or the right stick and zoomed by the wheel, pulled in wherever the ground, the water's surface or a landmark stands between it and the character, and run once a frame on the body's place blended between its last two steps. A click locks the pointer, Left Alt shows the cursor, and photo mode hands the view to the free camera.
+description: The third-person camera behind the character, as the game's follows its own — an orbit round a pivot above the body, turned by the mouse or the right stick and zoomed by the wheel, pulled in wherever the ground, the water's surface or a landmark stands between it and the character, and run once a frame on the body's place blended between its last two steps. A click locks the pointer, Left Alt shows the cursor, and photo mode holds the body and orbits the view round it.
 ---
 
 # Follow camera
@@ -40,7 +40,7 @@ The arm is cleared each frame before the eye is placed. A sphere of the camera's
 
 A click on the world locks the pointer, as the game hides its cursor in play, and Left Alt lets it go to show the cursor, as the game's Show Cursor does; a lock let go that way does not open the Paimon menu, which a lock lost to `Escape` does ([screens](/docs/genshin/screens)). The next click takes the pointer again.
 
-Photo mode, chosen from the Paimon menu, holds the body where it stands and hands the view to the [free camera](/docs/genshin/free-camera), which picks up the view where the follow camera left it. The world's clock runs on as the game's does in photo mode. Leaving photo mode gives the view back to the follow camera, behind the character as it was.
+Photo mode, chosen from the Paimon menu, holds the body where it stands and keeps the follow camera on it as an orbit: the look turns the view round the body and the wheel zooms it, within the same range and pitch limits as the follow camera. That range is shared until the game's photo mode range is solved ([follow camera proposal](/docs/proposals/genshin/follow-camera)). The world's clock runs on as the game's does in photo mode. Leaving photo mode gives the view back to the follow camera where the orbit left it, the body still standing where it did. Under the tuning panel photo mode hands the view to the [free camera](/docs/genshin/free-camera) instead.
 
 ## The numbers
 
@@ -48,14 +48,14 @@ The pivot's height, the field of view, the pitch's limits, the default, nearest 
 
 ## Key files
 
-| File                                                              | Its role                                                                 |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/genshin-engine/src/camera/createFollowCamera.ts`        | the orbit: look, zoom, reset, and the eye pulled in along the arm        |
-| `packages/genshin-engine/src/camera/constants.ts`                 | the camera's provisional numbers                                         |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | the sphere cast along the arm                                            |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | how far into the next step a frame has come                              |
-| `packages/genshin-world/src/components/World/Character/Index.vue` | runs the camera each frame on the blended body, and locks the pointer    |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`    | shows the cursor on Left Alt, and swaps in the free camera in photo mode |
+| File                                                              | Its role                                                              |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/genshin-engine/src/camera/createFollowCamera.ts`        | the orbit: look, zoom, reset, and the eye pulled in along the arm     |
+| `packages/genshin-engine/src/camera/constants.ts`                 | the camera's provisional numbers                                      |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | the sphere cast along the arm                                         |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | how far into the next step a frame has come                           |
+| `packages/genshin-world/src/components/World/Character/Index.vue` | runs the camera each frame on the blended body, and locks the pointer |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`    | shows the cursor on Left Alt, and holds the orbit on in photo mode    |
 
 ## Sources
 
