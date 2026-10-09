@@ -18,6 +18,8 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
@@ -90,6 +92,8 @@ import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { CharacterIdCreateKitMap } from "#src/services/kit/CharacterIdCreateKitMap";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -474,6 +478,9 @@ const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, sp
 // The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
 // The character's kit strikes and an enemy's strike lands from
 const enemyMap = new Map<string, Enemy>();
+// The effects on the deployed team, the shields and taunts an enemy's strike is taken by, which the character on the field
+// Steps and the enemies read
+const kitEffects: KitEffect[] = [];
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -733,11 +740,17 @@ const respawnParty = () => {
   const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
   if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
 };
-// An enemy's strike lands on the character on the field, and a team it fells respawns
-const strikeParty = (enemy: Enemy) => {
+// An enemy's strike lands on the taunt it struck, or on the character on the field through her shield, and a team it
+// Fells respawns
+const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
   const combatant = activeCombatant.value;
   if (!combatant) return;
-  strikePartyMember(party, enemy, combatant);
+  if (taunt) {
+    damageKitTaunt(taunt, computeEnemyStrikeDamage(enemy, combatant));
+    return;
+  }
+
+  strikePartyMember(party, enemy, combatant, kitEffects);
   respawnParty();
 };
 // Where the camera stands in world metres, which its host reads to know where a player is
@@ -844,6 +857,7 @@ defineExpose({ jumpTo, readCameraPosition });
           ref="character"
           :body="characterBody"
           :character-id-combatant-map
+          :effects="kitEffects"
           :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
@@ -868,6 +882,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
+        :effects="kitEffects"
         :elemental-sight
         :enemy-map
         :held-minutes
@@ -882,7 +897,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :world-level
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
-        @strike="(enemy) => strikeParty(enemy)"
+        @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>
     <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text :origin />

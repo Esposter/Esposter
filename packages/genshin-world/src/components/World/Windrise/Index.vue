@@ -2,6 +2,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { Interactable } from "#src/models/interaction/Interactable";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
@@ -109,6 +111,8 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
+  // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
+  effects: KitEffect[];
   // The game's minute of the day the clock is held at, in place of its running from the region's start
   heldMinutes?: number;
   // The drops and the residents in the world, each a row of the prompts and drawn as a stand-in
@@ -136,6 +140,7 @@ const {
   characterLocomotion,
   characterPackBaseUrl,
   createTerrainWorker,
+  effects,
   elementalSight,
   enemyMap,
   heldMinutes,
@@ -149,7 +154,11 @@ const {
   regionDataBaseUrl,
   worldLevel,
 } = defineProps<Props>();
-const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; ready: []; strike: [enemy: Enemy] }>();
+const emit = defineEmits<{
+  defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
+  ready: [];
+  strike: [enemy: Enemy, taunt: KitTaunt | undefined];
+}>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
 // Ours rather than in the floating origin's group, since the page's tools find the camera among their siblings and stay
 // Within reach of the origin
@@ -384,6 +393,7 @@ onUnmounted(() => {
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies
       v-if="!witness"
+      :effects
       :enemy-map
       :is-held
       :light-uniforms
@@ -393,7 +403,7 @@ onUnmounted(() => {
       :target="characterBody?.position"
       :world-level
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
-      @strike="(enemy) => emit('strike', enemy)"
+      @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
     />
     <!-- The animals run from the character where the references show none, so a witness render draws none of them -->
     <WorldWildlife

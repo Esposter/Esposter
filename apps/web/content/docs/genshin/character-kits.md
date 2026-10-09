@@ -73,8 +73,8 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
 - **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's.
 - **Dawn's damage-over-time and explosion** are not built. They move with a box a fixed summon does not hold.
-- **A shield** is a character's health that takes damage before the character does, for the seconds left of it, recast over one it already holds. `absorbKitShield` takes damage from it and drops it once its health is spent. Enemy strikes do not call it yet, so a shield holds its health and takes none.
-- **A taunt** is an entity placed where its character cast it, with health, which draws the enemies' strikes while it stands. It explodes once, from its body and priced by the combatant that cast it, when its seconds run out or its health is gone. Its health is taken by `damageKitTaunt`, which no enemy strike calls yet, so a taunt explodes on its timer.
+- **A shield** is a character's health that takes damage before the character does, for the seconds left of it, recast over one it already holds. It is a combat shield, so `absorbKitShield` hands the damage to the combat's `absorbShieldDamage`, and it is dropped once its health is spent. An enemy's strike is taken by it first, and the damage past its health is what the character loses.
+- **A taunt** is an entity placed where its character cast it, with health, which draws the enemies' strikes while it stands. It explodes once, from its body and priced by the combatant that cast it, when its seconds run out or its health is gone. An enemy within its aggro range strikes it instead of the character, and each strike is taken from its health by `damageKitTaunt`.
 
 ## Decisions
 
@@ -104,10 +104,13 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Lightning Rose's activation deals no damage.** The wiki gives it 0U and 10 poise and no multiplier, so the activation is a poise-only hit. gcsim gives it a multiplier of 0.1 that the table does not, so it is left out.
 - **Violet Arc's press cooldown is the wiki's 1 second.** The skill table's 16 seconds is the hold's, which is not built, nor are its Conductive stacks, so the press stands at its own cooldown.
 - **A charged attack after a strike skips its windup.** gcsim skips 14 frames of the charge's windup after a normal attack, so the hit lands at 56 frames here, and at 70 from rest, which the kit does not start.
-- **Breastplate's shield is set from Noelle's DEF.** It holds 160% of her DEF plus 769 for 12 seconds, and is recast over the one she holds. Its healing (21.28% of her DEF plus 102, on half of the hits it takes) and its C4 explosion are not built, and no enemy strike reads the shield yet.
+- **Breastplate's shield is set from Noelle's DEF.** It holds 160% of her DEF plus 769 for 12 seconds, and is recast over the one she holds. Its healing (21.28% of her DEF plus 102, on half of the hits it takes) and its C4 explosion are not built.
 - **Sweeping Time's converted attacks keep their normal poise.** The wiki's converted strikes and plunges have their own poise, which the kit does not switch to. The Geo infusion and the ATK bonus of 40% of her DEF are built, for 15 seconds past an 80-frame start.
 - **Noelle's charged attack is one cycle of its spin and its final slash.** A held spin's cycles are not built, so the charged attack hits once and then once more.
 - **Bennett's A1 and A4 are not built.** Both cut Passion Overload's cooldown, which the kit holds as one value, and A4 also stops a level-2 hold from launching Bennett. Passion Overload's hold levels are not built either.
+- **An enemy's strike takes a shield through the combat shield.** `absorbKitShield` prices the strike's damage by `absorbShieldDamage` with the character's shield strength, the rule the combat page gives, so the Geo shield's 150% and the shield strength are the combat's, and the overflow is the damage to HP. The kit keeps no second absorption arithmetic.
+- **An enemy strikes the nearest live taunt within its aggro range.** `selectEnemyTaunt` picks, for each enemy on each step, the nearest taunt within `ENEMY_AGGRO_RANGE` ahead of the character, and a taunt with no seconds or no health left is not picked. The taunt takes the damage the strike would deal the active character, as the kit gives a taunt no defence of its own.
+- **The team's effects are the world screen's.** The screen holds them, the character on the field steps them, and the enemies and their strikes read them. The character clears them when it unmounts, so a shield or taunt does not outlive the character that cast it.
 
 ## Key files
 
@@ -130,10 +133,11 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                            |
 | `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon         |
 | `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                            |
+| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`           | The nearest live taunt in an enemy's aggro range, which it strikes                     |
 | `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`        | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                             |
 | `packages/genshin-world/src/services/kit/characters/lisaKit.ts`         | `createLisaKit`, Lisa's kit with Lightning Rose's discharges                           |
 | `packages/genshin-world/src/services/kit/characters/noelleKit.ts`       | `createNoelleKit`, Noelle's kit with Breastplate's shield and Sweeping Time's buffs    |
-| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | Takes a shield's health to a character's damage, dropping it once spent                |
+| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | A shield takes the strike's damage through the combat's absorption                     |
 | `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                |
 | `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Dawn's infusion and A4                              |
 | `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                    |

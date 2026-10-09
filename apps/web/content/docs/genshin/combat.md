@@ -109,11 +109,11 @@ flowchart TD
   ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
   HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, getDamage, damageEnemy"]
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
-  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: getDamage over the member's Max HP"]
+  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the member's shield, then getDamage over the member's Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
 
-The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, and the world screen respawns the deployed team when all of it has fallen.
+The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, takes it from her shield first through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. An enemy within aggro range of a live taunt strikes the taunt instead, through `damageKitTaunt`.
 
 ## Decisions
 
@@ -127,7 +127,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then the damage with any amplifying, catalyze or transformative bonus, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
 - **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
 - **Particles reach every member standing.** Each particle a struck enemy drops gives each standing member of the deployed team `getEnergyGain`'s energy, up to its burst's cost. A fallen member takes none (`gainPartyEnergy`).
-- **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The damage over the member's Max HP is the share it takes (`strikePartyMember`).
+- **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The damage the member's shield does not absorb, over her Max HP, is the share she takes (`strikePartyMember`).
 
 ## Key files
 
