@@ -52,7 +52,7 @@ import {
   createFollowCamera,
   createGroundQuery,
   FOLLOW_CAMERA_DEFAULT_SETTINGS,
-  FOLLOW_CAMERA_PIVOT_HEIGHT,
+  FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
   STAMINA_MAX,
@@ -284,7 +284,7 @@ onBeforeRender(({ delta }) => {
   body.rotation.set(0, characterController.facing, 0);
   if (!isFollowing) return;
   pivot.copy(body.position);
-  pivot.y += FOLLOW_CAMERA_PIVOT_HEIGHT;
+  pivot.y += locomotion.capsuleHeight * FOLLOW_CAMERA_PIVOT_SHARE;
   followCamera?.follow(pivot, origin, delta);
 }, CAMERA_FRAME_PRIORITY);
 // The effects are the screen's, and they stop with the character that steps them, so none outlives its unmount

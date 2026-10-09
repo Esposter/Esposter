@@ -62,7 +62,7 @@ import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
-  FOLLOW_CAMERA_PIVOT_HEIGHT,
+  FOLLOW_CAMERA_PIVOT_SHARE,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
@@ -311,7 +311,9 @@ useRafFn(() => {
   const stamina = character.value?.stamina.value ?? STAMINA_MAX;
   if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
   hudFrame.stamina = stamina;
-  pivot.set(x - origin.x, y + FOLLOW_CAMERA_PIVOT_HEIGHT, z - origin.z).project(activeCamera);
+  pivot
+    .set(x - origin.x, y + locomotion.value.capsuleHeight * FOLLOW_CAMERA_PIVOT_SHARE, z - origin.z)
+    .project(activeCamera);
   hudFrame.pivotX = (pivot.x + 1) / 2;
   hudFrame.pivotY = (1 - pivot.y) / 2;
 });

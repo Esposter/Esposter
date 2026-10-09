@@ -3,6 +3,7 @@ import type { CommandDef } from "citty";
 import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
 import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
+import { cameraCommand } from "#src/services/genshinAssets/commands/cameraCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { cityAreasCommand } from "#src/services/genshinAssets/commands/cityAreasCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
@@ -69,6 +70,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     interface: interfaceCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,
+    camera: cameraCommand,
     timings: timingsCommand,
     witness: witnessCommand,
     "city-areas": cityAreasCommand,
