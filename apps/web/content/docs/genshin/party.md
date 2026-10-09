@@ -1,6 +1,6 @@
 ---
 title: Party
-description: The player's party as the game keeps it — up to four characters in each team Party Setup holds, one team deployed and one of its members on the field. A member's key switches it in past the one second cooldown, never one who is down, and a team is deployed or edited under the game's own refusals. The state is plain data and pure rules in genshin-world, read by the world screen once a frame.
+description: The player's party as the game keeps it — up to four characters in each team Party Setup holds, one team deployed and one of its members on the field. A member's key switches it in past the one second cooldown, never one who is down, and Left Alt with the key also uses that member's burst. A team is added, renamed, disbanded or deployed under the game's own limits and refusals, and the deployed team's elements give its Elemental Resonances. The state is plain data and pure rules in genshin-world, read by the world screen once a frame.
 ---
 
 # Party
@@ -27,6 +27,9 @@ flowchart TD
 - **A switch is a key's slot, in the order of the deployed team.** `PARTY_MEMBER_INPUT_ACTIONS` holds the actions for slots 1 to 4 ([controls](/docs/genshin/controls) binds them to `1` to `4` and a pad's up, right, left and down). `switchPartyMember` answers with a `PartySwitchResult`: `Unchanged` for an empty slot or the member already on the field, `Down` for a character who is down, `Cooldown` within `PARTY_SWITCH_COOLDOWN_SECONDS` of the last switch, and `Switched` otherwise.
 - **Party Setup's edits are refused as the game refuses them.** `deployPartyTeam` deploys a team with its first member standing on the field, and answers `Empty` for a team with nobody in it and `Down` for one whose members are all down. `setPartyTeamCharacters` sets a team's members, each once and four at most; on the deployed team the field keeps its slot, or the last one past a shortened team, so it answers `Empty` for a team emptied and `Down` for a character who is down landing on the field. Both are a `PartyTeamResult`.
 - **The character on the field** is `getActiveCharacterId`, the deployed team's member at the active index.
+- **Teams are added, renamed and disbanded under the game's limits.** `addPartyTeam` adds an empty team named "Team Standing By" until renamed, and answers `Full` past fifteen teams. `disbandPartyTeam` keeps the four default teams and the deployed one (`Kept`), and a team disbanded before the deployed one moves its index down so the same team stays deployed. `renamePartyTeam` with an empty name gives a team its own name back.
+- **A burst on a switch.** [Controls](/docs/genshin/controls) binds `Left Alt` with `1` to `4` to `SwitchToPartyMemberAndBurst1` to `4`, a chord that takes the press over from the plain key. The character's fixed step reads that press (`PARTY_MEMBER_BURST_INPUT_ACTIONS`) and uses its burst once the member is on the field, switched to by the world screen's key that frame or already there, so a refused switch (a cooldown, a fallen member, an empty slot) uses no burst.
+- **Elemental Resonance is a rule over the deployed team's elements.** `getElementalResonances` gives each element that two or more of a full team's four members share, in the game's element order, and none for a team not full.
 
 ## The world screen
 
@@ -46,11 +49,15 @@ The character on the field fights through its kit, which prices every character'
 | `packages/genshin-world/src/services/party/damagePartyMember.ts`      | HP taken, a fall, and the next member brought on                                     |
 | `packages/genshin-world/src/services/party/gainPartyEnergy.ts`        | A particle's energy to each standing member of the deployed team                     |
 | `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`     | Each member's skill and burst cooldowns, lowered each step                           |
+| `packages/genshin-world/src/services/party/addPartyTeam.ts`           | A team added to Party Setup, named until renamed, at most fifteen                    |
+| `packages/genshin-world/src/services/party/disbandPartyTeam.ts`       | A team disbanded, the defaults and the deployed one kept                             |
+| `packages/genshin-world/src/services/party/renamePartyTeam.ts`        | A team renamed, an empty name giving its own back                                    |
+| `packages/genshin-world/src/services/party/getElementalResonances.ts` | The resonances a full team's elements give                                           |
 | `packages/genshin-world/src/services/party/drownParty.ts`             | A drowning: every member's energy and a tenth of its Max HP                          |
 | `packages/genshin-world/src/services/party/reviveParty.ts`            | A fallen team brought back at 35% of its Max HP                                      |
 | `packages/genshin-world/src/services/map/findNearestLandmark.ts`      | The loaded statue nearest the body, where a fallen team is jumped to                 |
 | `packages/genshin-world/src/services/party/constants.ts`              | The team size, the cooldown, the default teams and the keys                          |
-| `packages/genshin-world/src/components/World/Character/Index.vue`     | Steps the field's kit, its cooldowns and a drowning                                  |
+| `packages/genshin-world/src/components/World/Character/Index.vue`     | Steps the field's kit, its cooldowns, a drowning and a burst on a switch             |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`        | Keeps the characters and the party, switches on the keys, and respawns a fallen team |
 
 ## Notes
