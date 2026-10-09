@@ -57,7 +57,7 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+1. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe. The save holds no crafting slice yet, and the learned recipes have no world-state owner either (`CraftingProgress` lives only in the screen's props), so the slice comes with that owner: a `crafting` key in `GenshinSave`, its learned recipes and per-recipe counts, read and merged by the save's own services.
 2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. Once the step above is built, the unit carries a `waiting:` line for this one.
 
 ## Data and measures
