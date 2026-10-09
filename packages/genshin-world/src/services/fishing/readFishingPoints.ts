@@ -1,11 +1,10 @@
 import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 
 import { fishingPointPlaceSchema } from "#src/models/fishing/FishingPointPlace";
+import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The fishing points of each region, the slice `pnpm -C scripts genshin:assets fishing` writes, imported on demand and
-// Checked against its shape as it arrives
-export const readFishingPoints = async (): Promise<Record<string, FishingPointPlace[]>> => {
-  const { default: fishingPoints } = await import("#src/generated/fishing/points.json");
-  return z.record(z.string(), z.array(fishingPointPlaceSchema)).parse(fishingPoints);
-};
+// The fishing points of each region `pnpm -C scripts genshin:assets fishing` publishes
+// Fetched by its key from the hosted game data and checked against its shape as it arrives
+export const readFishingPoints = (gameDataBaseUrl: string): Promise<Record<string, FishingPointPlace[]>> =>
+  readGameData(gameDataBaseUrl, "fishing/points", z.record(z.string(), z.array(fishingPointPlaceSchema)));
