@@ -12,7 +12,7 @@ import { Quaternion, Vector3 } from "three";
 
 // A scene's hierarchy as the dumps hold it, from every root and every object whose father no dump holds, each node
 // Flagged with what its arrangement turns on: an empty anchor a script spawns into, a lost father or lost children, a
-// Root whose whole subtree collapses onto the origin, and a mesh laid out under several of these tops
+// Top whose whole subtree collapses onto the origin, and a mesh laid out under several of these tops
 export const composeSceneTree = (
   objects: readonly SceneObject[],
   gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
@@ -50,8 +50,8 @@ export const composeSceneTree = (
     const worldScale = new Vector3();
     keyWorldMatrixMap.get(key)?.decompose(new Vector3(), new Quaternion(), worldScale);
     const node: SceneTreeNode = { children, flags, mesh, object, worldScale: worldScale.toArray() };
-    if (isRoot && new Quaternion(...object.rotation).equals(new Quaternion()) && checkIsSubtreeAtOrigin(node))
-      flags.push(SceneTreeFlag.RootAtOrigin);
+    const isTop = isRoot || !checkHasFather(object);
+    if (isTop && checkIsSubtreeAtOrigin(node)) flags.push(SceneTreeFlag.TopAtOrigin);
     return node;
   };
   const tops = objects

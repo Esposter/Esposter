@@ -6,9 +6,9 @@ export enum SceneTreeFlag {
   LostChildren = "children not dumped",
   // A father no dump holds: the place and scale it composes through are lost with it
   LostFather = "father not dumped",
-  // An unturned root whose whole subtree stands at the origin: a prefab's root that no placement reached, so it sits where
-  // Something spawns it
-  RootAtOrigin = "root at the origin",
   // A mesh laid out under several roots: only some of those arrangements are the scene's
   SharedMesh = "mesh under several roots",
+  // An unturned top (a root, or an object whose father no dump holds) whose whole subtree stands at the origin: a prefab
+  // That no placement reached and no dump places, so it sits where something spawns it
+  TopAtOrigin = "top at the origin",
 }

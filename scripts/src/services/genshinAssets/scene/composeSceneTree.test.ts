@@ -16,7 +16,7 @@ describe(composeSceneTree, () => {
       new Map(),
     );
 
-    expect(root?.flags).toStrictEqual([SceneTreeFlag.RootAtOrigin]);
+    expect(root?.flags).toStrictEqual([SceneTreeFlag.TopAtOrigin]);
     expect(root?.children.map(({ flags, worldScale }) => ({ flags, worldScale }))).toStrictEqual([
       { flags: [SceneTreeFlag.EmptyAnchor], worldScale: [0.1, 0.1, 0.1] },
     ]);
@@ -43,7 +43,7 @@ describe(composeSceneTree, () => {
 
     expect(tops.map(({ flags }) => flags)).toStrictEqual([
       [SceneTreeFlag.LostChildren],
-      [SceneTreeFlag.EmptyAnchor, SceneTreeFlag.LostFather],
+      [SceneTreeFlag.EmptyAnchor, SceneTreeFlag.LostFather, SceneTreeFlag.TopAtOrigin],
     ]);
   });
 
