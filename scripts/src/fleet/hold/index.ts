@@ -23,7 +23,7 @@ await runMain(
         return;
       }
       console.info(`holding ${args.id}`);
-      await holdFleetEntry(args.id, profile.id, claimed);
+      await holdFleetEntry(args.id, profile.id);
     },
   }),
 );

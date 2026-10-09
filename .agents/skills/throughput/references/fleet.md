@@ -19,7 +19,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 ## The queue is pulled, never pushed
 
 - **Work is an entry with an id and its needs:** a compute-queue item on the roadmap, or an open proposal unit. An entry names what it writes, which is also its touch set.
-- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next`. That returns, and claims, the first entry that meets all of these:
+- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
   - no one holds it;
@@ -27,6 +27,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
   Nothing ready means the machine stays idle and says nothing.
 
+- **A fresh worktree is set up in two installs, never one.** `pnpm i --frozen-lockfile` leaves the workspace state without the `autoDedupe` setting, which `verifyDepsBeforeRun: error` rejects as "changed"; the `pnpm i --offline` that follows records it, and runs no network resolve, so the lockfile stays as committed. In a worktree: `pnpm i --frozen-lockfile && pnpm i --offline`.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 
 ## A claim is a ref

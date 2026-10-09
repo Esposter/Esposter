@@ -5,6 +5,7 @@ import { CLAIM_REF_PREFIX } from "#src/services/fleet/constants";
 import { createFleetCommit } from "#src/services/fleet/createFleetCommit";
 import { pushFleetRef } from "#src/services/fleet/pushFleetRef";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
+import { removeHoldFile } from "#src/services/fleet/removeHoldFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Writes the miss over a claim this machine holds, keeping the claim so the stale takeover never takes it: the entry
@@ -21,4 +22,5 @@ export const missFleetEntry = (entry: string, miss: string): void => {
       entry,
       "the claim moved since it was read, so the miss did not land",
     );
+  removeHoldFile(entry);
 };
