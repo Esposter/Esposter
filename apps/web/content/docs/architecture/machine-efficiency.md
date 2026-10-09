@@ -14,12 +14,12 @@ A **lane** is one thing doing work on the machine: the main session, a `haiku` a
 - **Each worktree serves its own parity page.** A runner's worktree starts its dev server on port 3002, and the shared checkout's page is served once on 3011 for the main session. A server holds its memory flat across page loads, so one per lane costs little.
 - **Each command launches its own browser.** A parity command opens an Edge for its own life and closes it with its page, so no browser outlives the command that started it, and a browser that grows across pages never builds up.
 - **Every heavy run takes a slot.** A typecheck, a build or a test run goes through `run-in-slot.sh`, which lets two of them run at once and holds the rest back. A tsdown build peaks near 2 GB, and many agents building at once took free memory down to about 1.3 GB.
-- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits while it is under about 4 GB. The machine watcher (`watch-machine.ps1`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls.
+- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits while it is under about 4 GB. The machine watcher (`pnpm ai:machine:watch`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls.
 
 ```mermaid
 flowchart TD
   G["Memory gate — read free RAM,<br/>wait while under about 4 GB"] -->|"holds new starts"| L
-  W["watch-machine.ps1 under Monitor —<br/>silent while busy, one line when idle or tight"] -->|"idle: start what can run"| L
+  W["pnpm ai:machine:watch under Monitor —<br/>silent while busy, one line when idle or tight"] -->|"idle: start what can run"| L
   L["A lane — the main session, a haiku agent or a runner"] --> DS["Its worktree's dev server<br/>3002 runner, 3011 shared checkout"]
   L --> CMD["A parity command"]
   CMD --> EDGE["Its own Edge, closed with its page"]
@@ -49,7 +49,7 @@ The shared Edge saved time while it was kept, and it was removed once its growth
 | :------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------- |
 | `.agents/skills/throughput/references/machine-efficiency.md`  | The rules an agent follows: slots, one check per package, search and long-run placement                |
 | `.agents/skills/throughput/scripts/run-in-slot.sh`            | Runs one heavy command in one of two machine-wide slots                                                |
-| `.agents/skills/throughput/scripts/watch-machine.ps1`         | Watches the CPU and free memory under Monitor and prints the idle and tight lines                      |
+| `scripts/src/machine/watch/index.ts`                          | Watches the CPU, GPU and free memory under Monitor, prints the idle and tight lines and sweeps orphans |
 | `scripts/src/services/genshinParity/shared/openParityPage.ts` | Launches the page's own Edge with the flags an unlimited frame rate needs, and closes it with the page |
 | `scripts/src/services/genshinParity/shared/constants.ts`      | The page's port, `GENSHIN_PARITY_PORT`, 3011 for the shared checkout and 3002 for a runner             |
 | `packages/genshin-world/parity/vite.config.ts`                | The parity page's dev server, which each worktree serves on its own port                               |

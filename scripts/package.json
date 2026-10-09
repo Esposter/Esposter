@@ -36,6 +36,7 @@
     "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",
     "ai:coderabbit:state": "tsx src/coderabbit/state/index.ts",
     "ai:identifiers:rename": "node src/identifiers/rename/index.ts",
+    "ai:machine:watch": "tsx src/machine/watch/index.ts",
     "ai:proposals:report": "tsx src/proposals/report/index.ts",
     "ai:queue:push": "tsx src/queue/push/index.ts",
     "ai:skills:extract": "tsx src/skills/extract/index.ts",

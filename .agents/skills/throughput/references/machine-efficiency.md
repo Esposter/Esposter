@@ -32,13 +32,13 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
-  - The machine watcher stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
+  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
   - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
 - **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder.
 
 ## Watch the machine
 
-- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `.agents/skills/throughput/scripts/watch-machine.ps1` under the Monitor tool, re-armed at each expiry. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
+- **A watcher wakes the session, so nothing polls.** While agents or runners are working, the main session runs `pnpm ai:machine:watch` under the Monitor tool, re-armed at each expiry. It is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute. It is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than 6 GB free, and one when free memory falls under the 4 GB gate. Either line repeats every 15 minutes while its state holds.
 - **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
 - **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
 - **A tight line holds new starts** until memory comes back.
