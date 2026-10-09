@@ -32,6 +32,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
   Nothing ready means the machine stays idle and says nothing.
 
+- **A lane's worktree is `~/Esposter/wt/<lane>`**, the same path on every machine and in every session (`runner`, `bench`, `bench2`, `cpu`, `perf`, `ci`). A one-off worktree is `~/Esposter/wt/<name>` and is removed with `remove-worktree.sh` when done. The short root keeps `node_modules/.pnpm` under Windows' 260-character limit, which a scratchpad path does not.
 - **A fresh worktree is set up in two installs, never one.** `pnpm i --frozen-lockfile` leaves the workspace state without the `autoDedupe` setting, which `verifyDepsBeforeRun: error` rejects as "changed"; the `pnpm i --offline` that follows records it, and runs no network resolve, so the lockfile stays as committed. In a worktree: `pnpm i --frozen-lockfile && pnpm i --offline`.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 
