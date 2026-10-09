@@ -1,4 +1,7 @@
 export interface Attempts {
+  // When each attempt already made was recorded, oldest first — a count kept within a span drops under the cap as the
+  // Oldest ages out of it
+  attemptedAtMs: number[];
   // How many attempts had already been made, which is what the step compares against the cap
   attempts: number;
   // Records this attempt as made without failing, under the marker the count reads, with a note in place of the

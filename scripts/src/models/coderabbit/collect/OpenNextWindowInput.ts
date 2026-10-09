@@ -5,8 +5,11 @@ export interface OpenNextWindowInput {
   cwd: string;
   // The merged windows this run drained, whose replies the window's answering commits owe
   drainedPullRequests: number[];
-  // The express lane's claimed commits still waiting on `main`, which an idle cut says rather than reads as synced
-  expressHeldCount: number;
+  // The express lane's claimed commits still waiting on `main`, which an idle cut says rather than reads as synced, and
+  // Parks once nothing in flight can move `main` under them
+  expressHeldShas: string[];
+  // The `main` head the express lane tried them on, so a `main` the walk moved since is one they have not met
+  expressMainSha: string;
   // The file cap the window is cut to (`PortInput`)
   fileCap: number;
   isDryRun: boolean;

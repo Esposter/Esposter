@@ -146,6 +146,10 @@ export const HELD_MARKER = "review-collector held";
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 // A claimed commit whose express cut did not apply to `main`, counted on the commit itself like the sync's marker
 export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
+// What the issue a parked claim opens asks of its re-land: no claim, so a window carries it in queue order, after the
+// Work it was waiting on
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
+export const EXPRESS_RELAND_STEP: string = `re-land each without its \`${EXPRESS_TRAILER}:\` trailer, so a window carries it in queue order`;
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 // An attempt at a red `main`, failed or pushed, posted on the head it was made at and keyed by the red's failure
@@ -154,8 +158,9 @@ export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
 // Keys the one issue per failure signature whose repairs ran out: the repairer stops on that signature, and the walk
 // Never waits on it
 export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
-// The collector's own `@coderabbitai review` on a skipped or check-less window. Only these are counted, so an ask a
-// Person wrote, or the one the rate limit's settlement posts, spends nothing of the window's asks
+// The collector's own `@coderabbitai review` on a window whose review the bot owes: skipped, check-less, dropped, or
+// Refused by a rate limit whose deadline has passed. Only these are counted, so an ask a person wrote spends nothing of
+// The window's asks
 export const REVIEW_ASK_MARKER = "review-collector review-ask";
 // On every window a re-cut closes, carrying the file cap its replacement is cut to
 export const WINDOW_RECUT_MARKER = "review-collector recut";
@@ -268,6 +273,12 @@ export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minu
 // How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
 // Hours, so a run a minute apart would spend a runner per minute learning it is still down
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
+// How soon a window whose ask the re-read check withheld is read again (`settleReviewAsk`): a check that moved under
+// The run may have sent its status event while the run held the group, and one that could not be read sends none
+export const CHECK_REREAD_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
+// How soon a run whose push was refused because the branch moved under it runs again, when no push to that branch
+// Fires a run of its own (`getMovedOutcome`): the next run re-measures against the branch as it now stands
+export const MOVED_BRANCH_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // The wait after the first, second and third marked ask for a window's review (`REVIEW_ASK_MARKER`). Its length is the
 // Ask cap, and the wait after the last ask is the wait before the window is re-cut
 export const REVIEW_ASK_WAITS_MS: number[] = [15, 60, 60].map((minutes) =>

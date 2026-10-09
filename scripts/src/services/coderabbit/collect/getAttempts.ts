@@ -3,7 +3,7 @@ import type { AttemptsInput } from "#src/models/coderabbit/collect/AttemptsInput
 
 import { SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
+import { getMarkedAtMs } from "#src/services/coderabbit/collect/getMarkedAtMs";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 
 // The attempts a capped step has made at one unit of work, and the one way to record another. The marker names the
@@ -14,8 +14,10 @@ import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 // Newest commit comments a red's signature is counted over (`readSignatureAttempts`).
 export const getAttempts = ({ collectorSha, comments, key, marker, post, viewerLogin }: AttemptsInput): Attempts => {
   const attemptMarker = getMarker(marker, key, [collectorSha]);
-  const attempts = getMarkedCount(comments, viewerLogin, attemptMarker);
+  const attemptedAtMs = getMarkedAtMs(comments, viewerLogin, attemptMarker);
+  const attempts = attemptedAtMs.length;
   return {
+    attemptedAtMs,
     attempts,
     recordAttempt: (note) => {
       post(`${attemptMarker}\nAttempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP}: ${note}`);

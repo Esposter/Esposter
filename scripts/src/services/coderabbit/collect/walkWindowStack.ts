@@ -1,3 +1,4 @@
+import type { ReviewAskSettlement } from "#src/models/coderabbit/collect/ReviewAskSettlement";
 import type { WindowStackWalkInput } from "#src/models/coderabbit/collect/WindowStackWalkInput";
 import type { WindowStackWalkResult } from "#src/models/coderabbit/collect/WindowStackWalkResult";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
@@ -23,12 +24,13 @@ import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // One pass over the open stack, bottom up. Only the bottom window merges, and only once its review completes: a window
-// Whose review completes above an unmerged one waits for its turn. Any window a rate limit refused is settled where it
-// Stands, any window the bot skipped is asked for its review a wait apart, and a bottom window with no check, or one
-// Whose review has stayed pending past the time a review takes, is asked the same way once that wait ends; the run
-// Sleeps to the soonest of every wait, so a status event that never comes strands nothing. A window still
-// Skipped past its last ask is cut again with every window above it, at half the cap it was cut under, which ends the
-// Walk: the opener cuts the replacement in the same run. Nothing here fails the run, and the walk never opens anything.
+// Whose review completes above an unmerged one waits for its turn. Any window a rate limit refused is asked for its
+// Review once the stated deadline passes, any window the bot skipped is asked a wait apart, and a bottom window with no
+// Check, or one whose review has stayed pending past the time a review takes, is asked the same way once that wait
+// Ends; the run sleeps to the soonest of every wait, so a status event that never comes strands nothing. A window whose
+// Review is still not run past its last ask is cut again with every window above it — a skipped one at half the cap it
+// Was cut under — which ends the walk: the opener cuts the replacement in the same run. Nothing here fails the run, and
+// The walk never opens anything.
 export const walkWindowStack = async ({
   collectorSha,
   cwd,
@@ -81,16 +83,16 @@ export const walkWindowStack = async ({
     const nowMs = Date.now();
     // Only the window next to merge waits on a missing or pending check and is then asked; one above it waits its turn
     const checkWaitEndsAtMs = isNextToMerge ? readCheckWaitEndsAtMs(gate.kind, window, nowMs) : undefined;
-    if (gate.kind === GateDecisionKind.RateLimited) {
-      const settlement = settleRateLimit({
+    let settlement: ReviewAskSettlement | undefined;
+    if (gate.kind === GateDecisionKind.RateLimited)
+      settlement = settleRateLimit({
         isDryRun,
         issueComments: readEntries(`issues/${number}/comments`),
+        nowMs,
         pullRequest: number,
         viewerLogin,
       });
-      retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, settlement.retriggerDelaySeconds);
-      if (settlement.outcome) blockReasons.push(settlement.outcome.reason);
-    } else if (checkWaitEndsAtMs !== undefined && nowMs < checkWaitEndsAtMs) {
+    else if (checkWaitEndsAtMs !== undefined && nowMs < checkWaitEndsAtMs) {
       blockReasons.push(
         `pull request #${number} — ${gate.reason}; asked for once it has waited until ${new Date(checkWaitEndsAtMs).toISOString()}`,
       );
@@ -98,8 +100,8 @@ export const walkWindowStack = async ({
         retriggerDelaySeconds,
         getRetriggerDelaySeconds(checkWaitEndsAtMs - nowMs),
       );
-    } else if (gate.kind === GateDecisionKind.Skipped || checkWaitEndsAtMs !== undefined) {
-      const settlement = settleSkippedReview({
+    } else if (gate.kind === GateDecisionKind.Skipped || checkWaitEndsAtMs !== undefined)
+      settlement = settleSkippedReview({
         gateKind: gate.kind,
         isDryRun,
         issueComments: readEntries(`issues/${number}/comments`),
@@ -107,32 +109,42 @@ export const walkWindowStack = async ({
         pullRequest: number,
         viewerLogin,
       });
-      retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, settlement.retriggerDelaySeconds);
-      if (settlement.outcome) blockReasons.push(`pull request #${number} — ${settlement.outcome.reason}`);
-      // The release from `develop` predates the stack and has no window branch to cut again, so it is only ever asked
-      if (settlement.isRecutDue && !checkIsWindowBranch(headRefName))
-        blockReasons.push(
-          `pull request #${number} — the bot skipped its review past the collector's last ask, and the release from ${DEVELOP_BRANCH} is never cut again`,
-        );
-      else if (settlement.isRecutDue) {
-        const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
-        const cutUnderFileCap = getWindowFileCap(
-          windowHistory.filter((windowPullRequest) => windowPullRequest.number < number),
-          readRecutFileCaps(windowHistory, viewerLogin),
-        );
-        const recut = recutWindowStack({
-          cwd,
-          fileCap: Math.max(1, Math.floor(cutUnderFileCap / 2)),
-          isDryRun,
-          reason: `the bot skipped the review of pull request #${number} past the collector's last ask (${gate.reason}), so the window is too big for one review`,
-          window,
-        });
-        blockReasons.push(recut.reason);
-        break;
-      }
-    } else if (gate.kind === GateDecisionKind.Proceed)
+    else if (gate.kind === GateDecisionKind.Proceed)
       blockReasons.push(`pull request #${number} — its review is complete and waits for the windows below it`);
     else blockReasons.push(`pull request #${number} — ${gate.reason}`);
+    if (settlement === undefined) continue;
+
+    retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, settlement.retriggerDelaySeconds);
+    if (settlement.outcome) blockReasons.push(`pull request #${number} — ${settlement.outcome.reason}`);
+    if (!settlement.isRecutDue) continue;
+    // The release from `develop` predates the stack and has no window branch to cut again, so it is only ever asked
+    else if (!checkIsWindowBranch(headRefName)) {
+      blockReasons.push(
+        `pull request #${number} — the bot ran no review past the collector's last ask, and the release from ${DEVELOP_BRANCH} is never cut again`,
+      );
+      continue;
+    }
+
+    const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
+    const cutUnderFileCap = getWindowFileCap(
+      windowHistory.filter((windowPullRequest) => windowPullRequest.number < number),
+      readRecutFileCaps(windowHistory, viewerLogin),
+    );
+    // A window the bot keeps skipping is too big for one review, so its replacement is cut to half its cap. One whose
+    // Limit the bot left unanswered was never read at all, so it is cut again under the cap it had
+    const isRateLimited = gate.kind === GateDecisionKind.RateLimited;
+    const recut = recutWindowStack({
+      cwd,
+      fileCap: isRateLimited ? cutUnderFileCap : Math.max(1, Math.floor(cutUnderFileCap / 2)),
+      isDryRun,
+      reason: isRateLimited
+        ? `the bot answered none of the collector's asks for the review the limit refused on pull request #${number}, so the window is opened again`
+        : `the bot skipped the review of pull request #${number} past the collector's last ask (${gate.reason}), so the window is too big for one review`,
+      window,
+    });
+    blockReasons.push(recut.reason);
+    retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, recut.retriggerDelaySeconds);
+    break;
   }
 
   return { blockReasons, drainedPullRequests, retriggerDelaySeconds };

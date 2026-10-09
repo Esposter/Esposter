@@ -3,7 +3,7 @@ import type { UnappliedClaimsInput } from "#src/models/coderabbit/collect/Unappl
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   EXPRESS_FAILED_MARKER,
-  EXPRESS_TRAILER,
+  EXPRESS_RELAND_STEP,
   MAIN_BRANCH,
   SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
@@ -36,7 +36,7 @@ export const settleUnappliedClaims = ({
 
   if (exhaustedShas.length > 0)
     parkCommits({
-      cause: `no cut onto ${MAIN_BRANCH} applied them across ${SESSION_ATTEMPT_CAP} of its heads — re-land each without its \`${EXPRESS_TRAILER}:\` trailer, so a window carries it in queue order`,
+      cause: `no cut onto ${MAIN_BRANCH} applied them across ${SESSION_ATTEMPT_CAP} of its heads — ${EXPRESS_RELAND_STEP}`,
       cwd,
       isDryRun,
       shas: exhaustedShas,

@@ -7,6 +7,7 @@ export interface WindowStackWalkResult {
   drainedPullRequests: number[];
   // A stop that ends the run before any window is opened
   outcome?: CycleOutcome;
-  // The soonest deadline a rate limit across the stack states, slept to before the cycle runs again
+  // The soonest wake any window's hold states — a rate limit's deadline, a check's wait, an ask's wait — slept to before
+  // The cycle runs again
   retriggerDelaySeconds?: number;
 }

@@ -2,7 +2,8 @@ import type { Attempts } from "#src/models/coderabbit/collect/Attempts";
 
 // What the repairer left: the head the repair was committed at, with the recorders its attempt is counted through —
 // As a failure should the cut then fail its checks, as an attempt once it is pushed — or nothing, when `main` is green,
-// Past its repairs, or on a dry run
+// Past its repairs, or on a dry run. Past its repairs it carries the wake owed once its oldest attempts age out of the
+// Span
 export type RepairResult =
   | {
       // Whether the checks already passed on `targetSha`'s tree. The regenerating repair proves itself green
@@ -14,4 +15,4 @@ export type RepairResult =
       recordFailure: Attempts["recordFailure"];
       targetSha: string;
     }
-  | { targetSha?: undefined };
+  | { retriggerDelaySeconds?: number; targetSha?: undefined };

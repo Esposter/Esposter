@@ -6,6 +6,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   DEVELOP_BRANCH,
+  EXPRESS_RELAND_STEP,
   MAIN_BRANCH,
   QUEUE_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
@@ -34,7 +35,8 @@ export const openNextWindow = async ({
   collectorSha,
   cwd,
   drainedPullRequests,
-  expressHeldCount,
+  expressHeldShas,
+  expressMainSha,
   fileCap,
   isDryRun,
   openPullRequests,
@@ -103,13 +105,30 @@ export const openNextWindow = async ({
       };
     }
     // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an idle
-    // Run reads as a synced queue over a commit still owed to `main`
-    else if (expressHeldCount > 0)
+    // Run reads as a synced queue over a commit still owed to `main`. With no window open, none to cut and `main` where
+    // The lane met it, nothing in flight can move `main` under it, so the head it failed on is the last it would meet:
+    // It is parked now rather than counted on heads that never come
+    else if (expressHeldShas.length > 0 && openPullRequests.length === 0 && mainSha === expressMainSha) {
+      parkCommits({
+        cause: `no cut onto ${MAIN_BRANCH} at ${mainSha} applied them, and with no window open or owed nothing will move ${MAIN_BRANCH} under them — ${EXPRESS_RELAND_STEP}`,
+        cwd,
+        isDryRun,
+        shas: expressHeldShas,
+        viewerLogin,
+      });
       return {
         isWindowOpened: false,
         outcome: {
           kind: CycleOutcomeKind.Idle,
-          reason: `${expressHeldCount} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
+          reason: `${isDryRun ? "would park" : "parked"} ${expressHeldShas.length} claimed commits no cut onto ${MAIN_BRANCH} applies, with nothing in flight to move it`,
+        },
+      };
+    } else if (expressHeldShas.length > 0)
+      return {
+        isWindowOpened: false,
+        outcome: {
+          kind: CycleOutcomeKind.Idle,
+          reason: `${expressHeldShas.length} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
         },
       };
     return {

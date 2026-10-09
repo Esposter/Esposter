@@ -1,6 +1,6 @@
 ---
 title: Express lane
-description: A commit that claims it needs no review — the Express trailer the reshaper writes or a session writes itself — goes straight to main, unverified, instead of spending a review window's file budget — a red it leaves is the repairer's, a later commit that builds on it takes it into the window, and one that never applies is parked past its attempts.
+description: A commit that claims it needs no review — the Express trailer the reshaper writes or a session writes itself — goes straight to main, unverified, instead of spending a review window's file budget — a red it leaves is the repairer's, a later commit that builds on it takes it into the window, and one that never applies is parked past its attempts, or at once when nothing in flight can move main.
 ---
 
 # Express Lane
@@ -22,6 +22,8 @@ The cut goes first even over a red `main`, because a claimed commit may be the r
 
 A skipped commit waits on the unported work it needs, and most get it: the windows carry that work to `main`, and a later cut applies. Some never do — a size snapshot whose line `main` rewrites with every bundle change, an edit to a file `main` has since deleted — and the lane would wait on them forever, reported only in an idle run's reason. So every skip is counted against the attempt cap (`SESSION_ATTEMPT_CAP`) in a marker on the commit itself, naming the collector's own source as its basis, as the sync's and the reshaper's counts do ([the runner's counts](/docs/infra/review-collector/runner)). **A skip is counted once per `main` head, never once per run.** A cherry-pick onto the same head is the same pick, and runs fire on every push and review event, so a count per run would park a commit one window away from what it needs within minutes; a head that moves and still refuses the commit is a fresh attempt, so a commit waiting on a window in flight gets the windows that merge meanwhile. Past the cap the commit is parked as a commit no window can carry is: pushed to its own held branch, named in one issue ([the collection cycle](/docs/infra/review-collector/collection-cycle), "Sync"), and owed nowhere from then on, so its claim drops out of the lane and out of the idle reason with it. The issue asks for the re-land without the `Express:` trailer, so a window carries the commit in queue order, after the work it was waiting on.
 
+**A quiet queue parks a claim at once.** A count per head waits on heads that only come while something is in flight. With no window open, nothing else owed to cut, and `main` still where the lane met the claim — a walk that merged the last window this run has moved it, and that push runs the lane again — nothing can move `main` under the claim, so the head it failed on is the last it would meet: the opener parks it then, as the cap would, rather than count it on heads that never come.
+
 ```mermaid
 flowchart TD
   C[A commit the queue owes main and develop] --> T{Carries an Express trailer}
@@ -33,6 +35,7 @@ flowchart TD
   PU --> FO[Next window: the fold merges main in<br/>the sync drops the original by its copy]
   EX -->|skipped| AT{Skipped on the cap's worth<br/>of main heads already}
   AT -->|no| WT[Counted once for this head, and waits]
+  WT -->|no window open, none to cut,<br/>main unmoved this run| PK
   WT -->|a later owed commit conflicts without it| CA[The port carries it into the window]
   AT -->|yes| PK[Parked on ai/held/* with one issue —<br/>owed nowhere, its claim dropped]
 ```
@@ -54,6 +57,7 @@ flowchart TD
 | `scripts/src/services/coderabbit/collect/portExpress.ts`           | the candidate on `main`                                                                      |
 | `scripts/src/services/coderabbit/collect/readTrailedShas.ts`       | which of a set carry a trailer, in one read                                                  |
 | `scripts/src/services/coderabbit/collect/settleUnappliedClaims.ts` | a claimed commit no cut applied, counted once per `main` head and parked past the cap        |
+| `scripts/src/services/coderabbit/collect/openNextWindow.ts`        | a quiet queue's claims parked at once, with nothing in flight to move `main`                 |
 
 ## Notes
 

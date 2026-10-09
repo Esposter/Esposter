@@ -13,6 +13,8 @@ import {
   PENDING_BUCKET,
   PENDING_CHECK_WAIT_MS,
   QUEUE_BRANCH,
+  RATE_LIMIT_COMMENT_MARKER,
+  RATE_LIMITED_DESCRIPTION,
   REVIEW_ASK_MARKER,
   REVIEW_ASK_WAITS_MS,
   WINDOW_RECUT_MARKER,
@@ -22,7 +24,7 @@ import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRe
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
-import { PROBE_COMMENT, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { CODERABBIT_REST_LOGIN, PROBE_COMMENT, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -118,6 +120,51 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [["pr", "close", bottom.number.toString(), "--delete-branch"]],
     ]);
     expect(closedOverDevelopShas).toStrictEqual([mainSha, mainSha]);
+  });
+
+  // An ask the bot never answers holds the window with nothing to wake it, so past the last ask's wait it is opened
+  // Again; the limit is no measure of its size, so the replacement keeps the cap it was cut under
+  test("re-cuts a rate-limited bottom window whose asks the bot left unanswered, under the cap it was cut under", async () => {
+    expect.hasAssertions();
+
+    const bottom = getWindow(0, MAIN_BRANCH, publish(getWindowBranch(0), commitFile(`${TEST_FILENAME}.ts`, "")));
+    const above = getWindow(
+      1,
+      bottom.headRefName,
+      publish(getWindowBranch(1), commitFile(`${TEST_FILENAME}/${TEST_FILENAME}.ts`, "")),
+    );
+    publish(DEVELOP_BRANCH, above.headRefOid);
+    publish(QUEUE_BRANCH, above.headRefOid);
+    const block: GitHubEntry = {
+      body: RATE_LIMIT_COMMENT_MARKER,
+      id: 0,
+      updated_at: new Date(0).toISOString(),
+      user: { login: CODERABBIT_REST_LOGIN },
+    };
+    const ask: GitHubEntry = {
+      body: askBody,
+      id: 1,
+      updated_at: new Date(1).toISOString(),
+      user: { login: viewerLogin },
+    };
+    readCheckStatus.mockReturnValue({ bucket: PASS_BUCKET, description: RATE_LIMITED_DESCRIPTION, name: CHECK_NAME });
+    answerGh([bottom, above], [block, ask, ask, ask]);
+    vi.setSystemTime(1 + takeOne(REVIEW_ASK_WAITS_MS, 2));
+
+    const reason = `the bot answered none of the collector's asks for the review the limit refused on pull request #${bottom.number}, so the window is opened again`;
+    const body = `<!-- ${WINDOW_RECUT_MARKER} cap:${REVIEW_FILE_CAP} -->\nCut again under a cap of ${REVIEW_FILE_CAP} files: ${reason}.`;
+
+    await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom, above] })).resolves.toStrictEqual({
+      blockReasons: [
+        `#${bottom.number}, #${above.number} cut again under a cap of ${REVIEW_FILE_CAP} files — ${reason}`,
+      ],
+      drainedPullRequests: [],
+      retriggerDelaySeconds: undefined,
+    });
+    expect(getPrCalls(["comment"])).toStrictEqual([
+      [["pr", "comment", above.number.toString(), "--body", body]],
+      [["pr", "comment", bottom.number.toString(), "--body", body]],
+    ]);
   });
 
   test("waits on a bottom window with no check until the missing-check wait has passed", async () => {

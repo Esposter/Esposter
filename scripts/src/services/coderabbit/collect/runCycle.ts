@@ -223,7 +223,7 @@ export const runCycle = async ({
     return getOutcome(
       followed.outcome.kind,
       followed.outcome.reason,
-      walked.retriggerDelaySeconds,
+      getSoonestDelay(walked.retriggerDelaySeconds, followed.outcome.retriggerDelaySeconds),
       followed.outcome.targetSha,
     );
   let history = readWindowPullRequests(WindowPullRequestListState.All);
@@ -251,7 +251,8 @@ export const runCycle = async ({
       collectorSha,
       cwd,
       drainedPullRequests: answeredPullRequests,
-      expressHeldCount: expressed.heldShas.length,
+      expressHeldShas: expressed.heldShas,
+      expressMainSha: mainSha,
       fileCap: getWindowFileCap(history, openingFileCaps),
       isDryRun,
       openPullRequests: openedStack,
@@ -276,11 +277,23 @@ export const runCycle = async ({
     getOpenedInLastHour(history, nowMs) >= REVIEWS_PER_HOUR
       ? getRetriggerDelaySeconds(getOpeningWaitMs(history, nowMs) + RETRIGGER_BUFFER_MS)
       : undefined;
-  const retriggerDelaySeconds = getSoonestDelay(walked.retriggerDelaySeconds, ceilingDelaySeconds);
   // A red `main` last, on the remote as the walk and the openings left it: its repair verdict wins, carrying the wake
-  // The stack is owed
+  // The stack and the openings are owed, and a signature past its repairs states the wake its oldest attempt ageing out
+  // Is owed
   const repaired = await runRepairStep({ collectorSha, cwd, isDryRun, viewerLogin });
-  if (repaired) return getOutcome(repaired.kind, repaired.reason, retriggerDelaySeconds, repaired.targetSha);
+  const retriggerDelaySeconds = getSoonestDelay(
+    walked.retriggerDelaySeconds,
+    ceilingDelaySeconds,
+    openingOutcome?.retriggerDelaySeconds,
+    repaired.retriggerDelaySeconds,
+  );
+  if (repaired.outcome)
+    return getOutcome(
+      repaired.outcome.kind,
+      repaired.outcome.reason,
+      retriggerDelaySeconds,
+      repaired.outcome.targetSha,
+    );
   if (openingOutcome === undefined || openingOutcome.kind === CycleOutcomeKind.Idle) {
     const idleReasons = [...walked.blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
     return getOutcome(
