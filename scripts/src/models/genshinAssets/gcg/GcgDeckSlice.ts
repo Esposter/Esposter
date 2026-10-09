@@ -1,5 +1,13 @@
 import type { Element, GcgCardKind, GcgCost, GcgSkillKind } from "genshin-world";
 
+// A deck's slice: its cards in order, its characters in order, and the card ids the deck holds, a card once per copy
+export interface GcgDeckSlice {
+  cardIds: number[];
+  cards: GcgDeckSliceCard[];
+  characterIds: number[];
+  characters: GcgDeckSliceCharacter[];
+}
+
 // A card of a deck or a card its skills create, as the slice writes it: its id, its name and description text ids, its
 // Kind, its cost and the effect names of its skills
 export interface GcgDeckSliceCard {
@@ -7,6 +15,7 @@ export interface GcgDeckSliceCard {
   descriptionTextId: number;
   effects: string[];
   id: number;
+  isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
 }
@@ -22,14 +31,6 @@ export interface GcgDeckSliceCharacter {
   nameTextId: number;
   skills: GcgDeckSliceSkill[];
   weapon: string;
-}
-
-// A deck's slice: its cards in order, its characters in order, and the card ids the deck holds, a card once per copy
-export interface GcgDeckSlice {
-  cardIds: number[];
-  cards: GcgDeckSliceCard[];
-  characterIds: number[];
-  characters: GcgDeckSliceCharacter[];
 }
 
 export interface GcgDeckSliceSkill {

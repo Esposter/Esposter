@@ -2,6 +2,7 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -49,6 +50,23 @@ const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // Duration of 15 seconds and that start
 const SWEEPING_TIME_START_SECONDS = 80 / 60;
 
+// Breastplate's constellations, gated on the level the save holds: I Got Your Back at 1 makes its heal certain while
+// Sweeping Time is up, and To Be Cleaned at 4 explodes the shield for 400% of Noelle's ATK as it ends. The wiki gives the
+// Explosion's gauge and poise in its advanced properties, and no area, so it reaches as far as the shield does
+// https://genshin-impact.fandom.com/wiki/I_Got_Your_Back and https://genshin-impact.fandom.com/wiki/To_Be_Cleaned
+const I_GOT_YOUR_BACK_CONSTELLATION = 1;
+const TO_BE_CLEANED_CONSTELLATION = 4;
+const TO_BE_CLEANED_HIT: KitHit = {
+  element: Element.Geo,
+  gauge: 2,
+  hitArea: BREASTPLATE_HIT_AREA,
+  hitmarkSeconds: 0,
+  internalCooldownTag: InternalCooldownTag.ElementalSkill,
+  isBlunt: true,
+  poiseDamage: 100,
+  talentMultiplier: 4,
+};
+
 // Noelle's hits are physical and blunt, so none applies a gauge unless infused. Their poise is the wiki's Favonius
 // Bladework advanced properties
 const createNormalAttack = (
@@ -69,15 +87,27 @@ const createNormalAttack = (
 // Of her DEF plus 102.7 HP to the party. Measured: gcsim v2.47.2 (MIT) noelle/skill.go, the chance, share and flat
 // Heal at the skill group's indices, and the wiki's Breastplate page gives 50% and 21.3% plus 103 at level 1
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/noelle/skill.go
-const createBreastplateHeal = (talentMultiplierMap: TalentMultiplierMap): KitPartyHeal => ({
-  chance: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
-  defenseShare: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
-  flatHealth: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 7),
-});
+const createBreastplateHeal = (talentMultiplierMap: TalentMultiplierMap): KitPartyHeal => {
+  const chance = getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 2);
+  return {
+    // Sweeping Time's Geo infusion is up on Noelle while her burst's effects stand, which I Got Your Back's chance reads
+    chance: (striker, effects) =>
+      striker.constellationCount >= I_GOT_YOUR_BACK_CONSTELLATION &&
+      effects.some(
+        (effect) =>
+          effect.kind === "infusion" && effect.characterId === striker.characterId && effect.element === Element.Geo,
+      )
+        ? 1
+        : chance,
+    defenseShare: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
+    flatHealth: getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 7),
+  };
+};
 
 // Noelle's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Breastplate and
-// Sweeping Time. Its multipliers are read from its proud skill groups. Breastplate's heal is built, its explosion at C4
-// And A1's and A4's effects are not, so the charged attack is one cycle of its spin and its final slash
+// Sweeping Time. Its multipliers are read from its proud skill groups. Breastplate's heal and its C1 and C4 are built,
+// Gated on the constellations the combatant holds, and A1's and A4's effects are not, so the charged attack is one cycle
+// Of its spin and its final slash
 export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const breastplateHeal = createBreastplateHeal(talentMultiplierMap);
   return {
@@ -177,6 +207,11 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Geo,
+          // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character on
+          // The field as the shield ends, whoever holds it then
+          ...(combatant.constellationCount >= TO_BE_CLEANED_CONSTELLATION && {
+            explosion: { combatant, hit: TO_BE_CLEANED_HIT },
+          }),
           health:
             getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 6) +
             getTalentMultiplier(talentMultiplierMap, NOELLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 0) *

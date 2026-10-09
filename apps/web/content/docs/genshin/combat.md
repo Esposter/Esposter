@@ -66,7 +66,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 ### Damage
 
-`getDamage` is the game's general formula. The talent's multiplier of its stat, plus any flat bonus, is multiplied by one plus the damage bonus and by a crit's one plus critical damage. It is then cut by the enemy's defence against the attacker's level, (5 × attacker level + 500) / (enemy defence + 5 × attacker level + 500) before any reduction or ignoring, and by the enemy's resistance. An enemy of level L has 5 × L + 500 defence, so a hit from its own level is halved. Last it is multiplied by an amplifying reaction's multiplier. `getResistanceMultiplier` adds half a negative resistance, takes off a resistance up to 75%, and leaves 1 / (4 × resistance + 1) past that.
+`getDamage` is the game's general formula. The talent's multiplier of its stat, plus any flat bonus, is multiplied by one plus the damage bonus and by a crit's one plus critical damage. It is then cut by the enemy's defence against the attacker's level, (5 × attacker level + 500) / (enemy defence + 5 × attacker level + 500) before any reduction or ignoring, and by the enemy's resistance, less any RES a status on the enemy takes off it, as Enduring Rock's Geo RES does. An enemy of level L has 5 × L + 500 defence, so a hit from its own level is halved. Last it is multiplied by an amplifying reaction's multiplier. `getResistanceMultiplier` adds half a negative resistance, takes off a resistance up to 75%, and leaves 1 / (4 × resistance + 1) past that.
 
 - **Amplifying**: Vaporize and Melt multiply their hit by 2 where Hydro vaporizes or Pyro melts, and by 1.5 the other way round. Elemental mastery raises that by 2.78 × EM / (EM + 1400), plus any reaction bonus (`getAmplifyingMultiplier`).
 - **Catalyze**: Aggravate adds 1.15 and Spread 1.25 times the character's level multiplier to the hit's flat bonus, raised by 5 × EM / (EM + 1200) (`getCatalyzeBonus`).
@@ -74,7 +74,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
 
-The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The roll is drawn from the world's one seeded random source, the stream the kit's other rolls read, so a session's rolls repeat. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them.
+The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The roll is drawn from the world's one seeded random source, the stream the kit's other rolls read, so a session's rolls repeat. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them. Enduring Rock's DMG and Geo RES, and Sprawling Greenery's timed Elemental Mastery, are read as a strike lands, as the [party](/docs/genshin/party) page describes.
 
 ### Internal cooldown
 
@@ -109,11 +109,11 @@ flowchart TD
   ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
   HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, getDamage, damageEnemy"]
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
-  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the member's shield, then getDamage over the member's Max HP"]
+  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the team's shields, then getDamage over the member's Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
 
-The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, takes it from her shield first through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. An enemy within aggro range of a live taunt strikes the taunt instead, through `damageKitTaunt`.
+The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, takes it from the team's shields first, all at once, through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. An enemy within aggro range of a live taunt strikes the taunt instead, through `damageKitTaunt`.
 
 ## Decisions
 
@@ -127,7 +127,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then the damage with any amplifying, catalyze or transformative bonus, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
 - **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
 - **Particles reach every member standing.** Each particle a struck enemy drops gives each standing member of the deployed team `getEnergyGain`'s energy, up to its burst's cost. A fallen member takes none (`gainPartyEnergy`).
-- **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The damage the member's shield does not absorb, over her Max HP, is the share she takes (`strikePartyMember`).
+- **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The least overflow the team's shields leave, over the member's Max HP, is the share the member takes (`strikePartyMember`).
 
 ## Key files
 

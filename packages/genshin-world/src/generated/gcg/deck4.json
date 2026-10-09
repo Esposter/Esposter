@@ -1,183 +1,359 @@
 {
   "cardIds": [
-    312201, 312201, 312501, 312501, 312301, 312301, 311201, 311201, 332004, 321001, 322011, 322011, 322001, 322001,
-    322007, 322007, 321005, 321005, 332008, 332008, 322002, 322002, 222011, 222011, 225011, 225011, 333006, 333006,
-    213051, 213051
+    312201,
+    312201,
+    312501,
+    312501,
+    312301,
+    312301,
+    311201,
+    311201,
+    332004,
+    321001,
+    322011,
+    322011,
+    322001,
+    322001,
+    322007,
+    322007,
+    321005,
+    321005,
+    332008,
+    332008,
+    322002,
+    322002,
+    222011,
+    222011,
+    225011,
+    225011,
+    333006,
+    333006,
+    213051,
+    213051
   ],
   "cards": [
     {
-      "costs": [{ "count": 2, "kind": "Unaligned" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
       "descriptionTextId": 2385103000,
-      "effects": ["Effect_Cost_Water_1"],
+      "effects": [
+        "Effect_Cost_Water_1"
+      ],
       "id": 312201,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 197932271
     },
     {
-      "costs": [{ "count": 2, "kind": "Unaligned" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
       "descriptionTextId": 3620648424,
-      "effects": ["Effect_Cost_Wind_1"],
+      "effects": [
+        "Effect_Cost_Wind_1"
+      ],
       "id": 312501,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 1979046055
     },
     {
-      "costs": [{ "count": 2, "kind": "Unaligned" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
       "descriptionTextId": 1588837416,
-      "effects": ["Effect_Cost_Fire_1"],
+      "effects": [
+        "Effect_Cost_Fire_1"
+      ],
       "id": 312301,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 422241615
     },
     {
-      "costs": [{ "count": 2, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 934392152,
-      "effects": ["Effect_Weapon_Dmg_1"],
+      "effects": [
+        "Effect_Weapon_Dmg_1"
+      ],
       "id": 311201,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 678693135
     },
     {
-      "costs": [{ "count": 1, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 164660464,
-      "effects": ["Card_Event_3320041"],
+      "effects": [
+        "Card_Event_3320041"
+      ],
       "id": 332004,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 2569665855
     },
     {
-      "costs": [{ "count": 2, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 2565750848,
-      "effects": ["Card_Support_3210011"],
+      "effects": [
+        "Card_Support_3210011"
+      ],
       "id": 321001,
+      "isLocation": true,
       "kind": "Support",
       "nameTextId": 3375574319
     },
     {
-      "costs": [{ "count": 2, "kind": "Unaligned" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
       "descriptionTextId": 778816720,
-      "effects": ["Card_Support_3220111"],
+      "effects": [
+        "Card_Support_3220111"
+      ],
       "id": 322011,
+      "isLocation": false,
       "kind": "Support",
       "nameTextId": 1886840895
     },
     {
-      "costs": [{ "count": 3, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 3,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 3689959480,
-      "effects": ["Card_Support_3220011"],
+      "effects": [
+        "Card_Support_3220011"
+      ],
       "id": 322001,
+      "isLocation": false,
       "kind": "Support",
       "nameTextId": 3726724407
     },
     {
       "costs": [],
       "descriptionTextId": 4177006736,
-      "effects": ["Card_Support_3220071"],
+      "effects": [
+        "Card_Support_3220071"
+      ],
       "id": 322007,
+      "isLocation": false,
       "kind": "Support",
       "nameTextId": 2509511975
     },
     {
-      "costs": [{ "count": 2, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 2664778080,
-      "effects": ["Card_Support_3210051"],
+      "effects": [
+        "Card_Support_3210051"
+      ],
       "id": 321005,
+      "isLocation": true,
       "kind": "Support",
       "nameTextId": 1254755631
     },
     {
-      "costs": [{ "count": 2, "kind": "Unaligned" }],
+      "costs": [
+        {
+          "count": 2,
+          "kind": "Unaligned"
+        }
+      ],
       "descriptionTextId": 1424341232,
-      "effects": ["Card_Event_3320081"],
+      "effects": [
+        "Card_Event_3320081"
+      ],
       "id": 332008,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3108879471
     },
     {
-      "costs": [{ "count": 1, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 2063805760,
-      "effects": ["Card_Support_3220021"],
+      "effects": [
+        "Card_Support_3220021"
+      ],
       "id": 322002,
+      "isLocation": false,
       "kind": "Support",
       "nameTextId": 1308713351
     },
     {
       "costs": [
-        { "count": 4, "element": "Water", "kind": "Dice" },
-        { "count": 3, "kind": "Energy" }
+        {
+          "count": 4,
+          "element": "Water",
+          "kind": "Dice"
+        },
+        {
+          "count": 3,
+          "kind": "Energy"
+        }
       ],
       "descriptionTextId": 616970680,
-      "effects": ["Char_Skill_22014_Talent_1"],
+      "effects": [
+        "Char_Skill_22014_Talent_1"
+      ],
       "id": 222011,
+      "isLocation": false,
       "kind": "Talent",
       "nameTextId": 1526916495
     },
     {
-      "costs": [{ "count": 3, "element": "Wind", "kind": "Dice" }],
+      "costs": [
+        {
+          "count": 3,
+          "element": "Wind",
+          "kind": "Dice"
+        }
+      ],
       "descriptionTextId": 3563417896,
-      "effects": ["Char_Skill_25012_Talent_1"],
+      "effects": [
+        "Char_Skill_25012_Talent_1"
+      ],
       "id": 225011,
+      "isLocation": false,
       "kind": "Talent",
       "nameTextId": 3268170903
     },
     {
-      "costs": [{ "count": 1, "kind": "Matching" }],
+      "costs": [
+        {
+          "count": 1,
+          "kind": "Matching"
+        }
+      ],
       "descriptionTextId": 2426536032,
-      "effects": ["Card_Event_3330061"],
+      "effects": [
+        "Card_Event_3330061"
+      ],
       "id": 333006,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3634014575
     },
     {
-      "costs": [{ "count": 1, "element": "Fire", "kind": "Dice" }],
+      "costs": [
+        {
+          "count": 1,
+          "element": "Fire",
+          "kind": "Dice"
+        }
+      ],
       "descriptionTextId": 1699944904,
-      "effects": ["Char_Skill_13052_Talent_1"],
+      "effects": [
+        "Char_Skill_13052_Talent_1"
+      ],
       "id": 213051,
+      "isLocation": false,
       "kind": "Talent",
       "nameTextId": 1320172695
     },
     {
       "costs": [],
       "descriptionTextId": 1670710464,
-      "effects": ["Char_Skill_25012_Ex_1", "Char_Skill_25012_Ex_2"],
+      "effects": [
+        "Char_Skill_25012_Ex_1",
+        "Char_Skill_25012_Ex_2"
+      ],
       "id": 125011,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 1379208575
     },
     {
       "costs": [],
       "descriptionTextId": 338396224,
-      "effects": ["Char_Skill_25013_Ex_1", "Char_Skill_25013_Ex_2"],
+      "effects": [
+        "Char_Skill_25013_Ex_1",
+        "Char_Skill_25013_Ex_2"
+      ],
       "id": 125012,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 1820973391
     },
     {
       "costs": [],
       "descriptionTextId": 2855219424,
-      "effects": ["Char_Skill_22012_Ex_1"],
+      "effects": [
+        "Char_Skill_22012_Ex_1"
+      ],
       "id": 122011,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 1245259199
     },
     {
       "costs": [],
       "descriptionTextId": 3456683304,
-      "effects": ["Char_Skill_22012_Ex_2"],
+      "effects": [
+        "Char_Skill_22012_Ex_2"
+      ],
       "id": 122012,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 1640488375
     },
     {
       "costs": [],
       "descriptionTextId": 86152400,
-      "effects": ["Char_Skill_22012_Ex_3", "_Global_ShieldAsShield_Once"],
+      "effects": [
+        "Char_Skill_22012_Ex_3",
+        "_Global_ShieldAsShield_Once"
+      ],
       "id": 122013,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 509907327
     }
   ],
-  "characterIds": [2201, 2501, 1305],
+  "characterIds": [
+    2201,
+    2501,
+    1305
+  ],
   "characters": [
     {
       "descriptionTextId": 3926501404,
@@ -189,8 +365,15 @@
       "skills": [
         {
           "costs": [
-            { "count": 1, "element": "Water", "kind": "Dice" },
-            { "count": 2, "kind": "Unaligned" }
+            {
+              "count": 1,
+              "element": "Water",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
           ],
           "effect": "Effect_Damage_Water_1",
           "energyGain": 1,
@@ -198,14 +381,26 @@
           "kind": "NormalAttack"
         },
         {
-          "costs": [{ "count": 3, "element": "Water", "kind": "Dice" }],
+          "costs": [
+            {
+              "count": 3,
+              "element": "Water",
+              "kind": "Dice"
+            }
+          ],
           "effect": "Char_Skill_22012",
           "energyGain": 1,
           "id": 22012,
           "kind": "ElementalSkill"
         },
         {
-          "costs": [{ "count": 5, "element": "Water", "kind": "Dice" }],
+          "costs": [
+            {
+              "count": 5,
+              "element": "Water",
+              "kind": "Dice"
+            }
+          ],
           "effect": "Char_Skill_22013",
           "energyGain": 1,
           "id": 22013,
@@ -213,8 +408,15 @@
         },
         {
           "costs": [
-            { "count": 3, "element": "Water", "kind": "Dice" },
-            { "count": 3, "kind": "Energy" }
+            {
+              "count": 3,
+              "element": "Water",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
           ],
           "effect": "Char_Skill_22014",
           "energyGain": 0,
@@ -234,8 +436,15 @@
       "skills": [
         {
           "costs": [
-            { "count": 1, "element": "Wind", "kind": "Dice" },
-            { "count": 2, "kind": "Unaligned" }
+            {
+              "count": 1,
+              "element": "Wind",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
           ],
           "effect": "Effect_Damage_Physic_2",
           "energyGain": 1,
@@ -243,14 +452,26 @@
           "kind": "NormalAttack"
         },
         {
-          "costs": [{ "count": 3, "element": "Wind", "kind": "Dice" }],
+          "costs": [
+            {
+              "count": 3,
+              "element": "Wind",
+              "kind": "Dice"
+            }
+          ],
           "effect": "Char_Skill_25012",
           "energyGain": 1,
           "id": 25012,
           "kind": "ElementalSkill"
         },
         {
-          "costs": [{ "count": 3, "element": "Ice", "kind": "Dice" }],
+          "costs": [
+            {
+              "count": 3,
+              "element": "Ice",
+              "kind": "Dice"
+            }
+          ],
           "effect": "Char_Skill_25013",
           "energyGain": 1,
           "id": 25013,
@@ -258,8 +479,15 @@
         },
         {
           "costs": [
-            { "count": 3, "element": "Wind", "kind": "Dice" },
-            { "count": 3, "kind": "Energy" }
+            {
+              "count": 3,
+              "element": "Wind",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
           ],
           "effect": "Effect_Damage_Wind_4",
           "energyGain": 0,
@@ -279,8 +507,15 @@
       "skills": [
         {
           "costs": [
-            { "count": 1, "element": "Fire", "kind": "Dice" },
-            { "count": 2, "kind": "Unaligned" }
+            {
+              "count": 1,
+              "element": "Fire",
+              "kind": "Dice"
+            },
+            {
+              "count": 2,
+              "kind": "Unaligned"
+            }
           ],
           "effect": "Effect_Damage_Physic_2",
           "energyGain": 1,
@@ -288,7 +523,13 @@
           "kind": "NormalAttack"
         },
         {
-          "costs": [{ "count": 1, "element": "Fire", "kind": "Dice" }],
+          "costs": [
+            {
+              "count": 1,
+              "element": "Fire",
+              "kind": "Dice"
+            }
+          ],
           "effect": "Char_Skill_13052",
           "energyGain": 0,
           "id": 13052,
@@ -296,8 +537,15 @@
         },
         {
           "costs": [
-            { "count": 3, "element": "Fire", "kind": "Dice" },
-            { "count": 3, "kind": "Energy" }
+            {
+              "count": 3,
+              "element": "Fire",
+              "kind": "Dice"
+            },
+            {
+              "count": 3,
+              "kind": "Energy"
+            }
           ],
           "effect": "Char_Skill_13053",
           "energyGain": 0,

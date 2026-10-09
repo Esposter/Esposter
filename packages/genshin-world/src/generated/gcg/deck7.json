@@ -44,6 +44,7 @@
         "Effect_Weapon_Dmg_1"
       ],
       "id": 311101,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 2483146127
     },
@@ -59,6 +60,7 @@
         "Effect_Weapon_Dmg_1"
       ],
       "id": 311201,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 678693135
     },
@@ -74,6 +76,7 @@
         "Effect_Weapon_Dmg_1"
       ],
       "id": 311301,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 449174559
     },
@@ -89,6 +92,7 @@
         "Effect_Weapon_Dmg_1"
       ],
       "id": 311401,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 317284527
     },
@@ -104,6 +108,7 @@
         "Effect_Weapon_Dmg_1"
       ],
       "id": 311501,
+      "isLocation": false,
       "kind": "Weapon",
       "nameTextId": 1498335679
     },
@@ -119,6 +124,7 @@
         "Effect_Cost_Elec_1"
       ],
       "id": 312401,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 1886843199
     },
@@ -134,6 +140,7 @@
         "Effect_Cost_Fire_1"
       ],
       "id": 312301,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 422241615
     },
@@ -149,6 +156,7 @@
         "Effect_Cost_Ice_1"
       ],
       "id": 312101,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 2300937231
     },
@@ -164,6 +172,7 @@
         "Effect_Cost_Rock_1"
       ],
       "id": 312601,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 1523555575
     },
@@ -179,6 +188,7 @@
         "Effect_Cost_Water_1"
       ],
       "id": 312201,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 197932271
     },
@@ -194,6 +204,7 @@
         "Effect_Cost_Wind_1"
       ],
       "id": 312501,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 1979046055
     },
@@ -209,6 +220,7 @@
         "Effect_Cost_Grass_1"
       ],
       "id": 312701,
+      "isLocation": false,
       "kind": "Artifact",
       "nameTextId": 3378512927
     },
@@ -224,6 +236,7 @@
         "Card_Support_3220011"
       ],
       "id": 322001,
+      "isLocation": false,
       "kind": "Support",
       "nameTextId": 3726724407
     },
@@ -239,6 +252,7 @@
         "Card_Support_3210041"
       ],
       "id": 321004,
+      "isLocation": true,
       "kind": "Support",
       "nameTextId": 2493051975
     },
@@ -254,6 +268,7 @@
         "Card_Support_3210061"
       ],
       "id": 321006,
+      "isLocation": true,
       "kind": "Support",
       "nameTextId": 1749050455
     },
@@ -269,6 +284,7 @@
         "Card_Event_3320011"
       ],
       "id": 332001,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 1518832783
     },
@@ -279,6 +295,7 @@
         "Card_Event_3320021"
       ],
       "id": 332002,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 1063807071
     },
@@ -294,6 +311,7 @@
         "Card_Event_3330081"
       ],
       "id": 333008,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3672328375
     },
@@ -309,6 +327,7 @@
         "Card_Event_3320041"
       ],
       "id": 332004,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 2569665855
     },
@@ -319,6 +338,7 @@
         "Card_Event_3320061"
       ],
       "id": 332006,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 2871878943
     },
@@ -334,6 +354,7 @@
         "Card_Event_3320121"
       ],
       "id": 332012,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 657478871
     },
@@ -349,6 +370,7 @@
         "Card_Event_3320131"
       ],
       "id": 332013,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 81129847
     },
@@ -364,6 +386,7 @@
         "Card_Event_3320141"
       ],
       "id": 332014,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 2088623263
     },
@@ -379,6 +402,7 @@
         "Card_Event_3320081"
       ],
       "id": 332008,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3108879471
     },
@@ -394,6 +418,7 @@
         "Card_Event_3320091"
       ],
       "id": 332009,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 4088649143
     },
@@ -404,6 +429,7 @@
         "Card_Event_3330051"
       ],
       "id": 333005,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 1534070871
     },
@@ -419,6 +445,7 @@
         "Card_Event_3320071"
       ],
       "id": 332007,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3497108615
     },
@@ -429,6 +456,7 @@
         "Card_Event_3320101"
       ],
       "id": 332010,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 1112288687
     },
@@ -439,6 +467,7 @@
         "Card_Event_3320111"
       ],
       "id": 332011,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 1933849719
     },
@@ -449,6 +478,7 @@
         "Card_Event_3320051"
       ],
       "id": 332005,
+      "isLocation": false,
       "kind": "Event",
       "nameTextId": 3172091111
     },
@@ -459,6 +489,7 @@
         "Char_Skill_13013_Ex_1"
       ],
       "id": 113011,
+      "isLocation": false,
       "kind": "State",
       "nameTextId": 3776130423
     },
@@ -469,6 +500,7 @@
         "Char_Skill_11033_Ex_1"
       ],
       "id": 111031,
+      "isLocation": false,
       "kind": "Onstage",
       "nameTextId": 3532909895
     },
@@ -480,6 +512,7 @@
         "Char_Skill_15013_Ex_2"
       ],
       "id": 115011,
+      "isLocation": false,
       "kind": "Summon",
       "nameTextId": 3997648255
     }

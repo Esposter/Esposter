@@ -7,12 +7,14 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
+import { Element } from "#src/models/Element";
 import {
   AIRBORNE_LOCOMOTION_STATES,
   CHARGED_ATTACK_HOLD_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
 } from "#src/services/kit/constants";
 import { startKitAction } from "#src/services/kit/startKitAction";
+import { IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER } from "#src/services/party/constants";
 import { takeOne } from "@esposter/shared";
 
 // The action the presses ask for once none is playing: a charged attack once a strike held past its hold has ended, a
@@ -60,10 +62,15 @@ export const startNextKitAction = (
       ({ minimumHeldSeconds }) => kitState.skillReleasedSeconds >= minimumHeldSeconds,
     );
     const cooldownSeconds = hold?.cooldownSeconds ?? kit.skillCooldownSeconds;
-    partyMember.skillCooldownSeconds = cooldownSeconds * (kit.getSkillCooldownMultiplier?.(context) ?? 1);
+    const impetuousWindsMultiplier = context.combatant.elementalResonances.includes(Element.Anemo)
+      ? IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER
+      : 1;
+    partyMember.skillCooldownSeconds =
+      cooldownSeconds * (kit.getSkillCooldownMultiplier?.(context) ?? 1) * impetuousWindsMultiplier;
     kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
     kitState.skillChainSeconds = 0;
-    return startKitAction(kitState, hold?.action ?? kit.elementalSkill, landedHits);
+    const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;
+    return startKitAction(kitState, holdAction ?? kit.elementalSkill, landedHits);
   }
 
   if ((isAttackPressed || kitState.isAttackQueued) && isOnFoot) {

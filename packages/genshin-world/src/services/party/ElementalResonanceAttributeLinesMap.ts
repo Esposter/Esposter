@@ -7,19 +7,18 @@ import { SpecialResonance } from "#src/models/party/SpecialResonance";
 
 // The attribute lines each resonance adds to every member of the deployed team while it holds it, summed in with the
 // Members' own by computeCharacterAttributes. Each figure is the game's as the Elemental Resonance page of the Genshin
-// Impact Wiki (https://genshin-impact.fandom.com/wiki/Elemental_Resonance) gives it. The effects that need machinery
-// Not built yet (the Cryo and Hydro durations, the Electro particle, the Anemo stamina, movement and skill cooldown, the
-// Geo shield damage and enemy RES, the Dendro timed EM) are not here, and are listed on the party proposal
+// Impact Wiki (https://genshin-impact.fandom.com/wiki/Elemental_Resonance) gives it. An effect on a hit, a reaction or
+// A skill is applied where that is read rather than summed here, and the ones not built yet are on the party proposal
 export const ElementalResonanceAttributeLinesMap: Record<ElementalResonance, AttributeLine[]> = {
-  // Its stamina, movement and skill cooldown are applied where those are read, not summed here
+  // Its movement and skill cooldown are applied where those are read, not summed here
   [Element.Anemo]: [],
   // Its CRIT Rate against Frozen or Cryo enemies is applied where the hit is struck, not summed here
   [Element.Cryo]: [],
-  // Elemental Mastery +50 (its timed bonus after a reaction is not built)
+  // Elemental Mastery +50 (its timed bonus after a reaction is applied where the reaction is struck, not summed here)
   [Element.Dendro]: [{ attribute: Attribute.ElementalMastery, value: 50 }],
-  // Its particle chance is applied where a reaction triggers, not summed here
+  // Its particle on a reaction is not built yet, so it is not applied here
   [Element.Electro]: [],
-  // Shield strength +15%
+  // Shield strength +15% (its DMG and enemy RES after a shield are applied where a hit is priced and struck)
   [Element.Geo]: [{ attribute: Attribute.ShieldStrength, value: 0.15 }],
   // Max HP +25%
   [Element.Hydro]: [{ attribute: Attribute.HealthPercent, value: 0.25 }],

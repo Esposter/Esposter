@@ -20,6 +20,8 @@ export interface Kit {
   elementalSkillChain?: KitSkillChain;
   // The hold levels a skill has, ordered by their minimum seconds, if it has any. A skill with holds starts on its release
   elementalSkillHolds?: KitSkillHold[];
+  // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
+  elementalSkillMaximumHeldSeconds?: number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands
   getPassiveBonuses?: (combatant: Combatant) => { amount: number; attribute: Attribute }[];
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it

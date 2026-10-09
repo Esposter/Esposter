@@ -3,6 +3,7 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBubbleSpec } from "#src/models/kit/KitBubbleSpec";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
@@ -17,7 +18,8 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Mona's proud skill groups, read at its talent level. The attack group holds the four strikes at 0 to 3, the charged
 // Attack at 4 and its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group holds Mirror
-// Reflection's damage-over-time tick at 0 and its explosion at 1, and the burst group the bubble's explosion at 1
+// Reflection's damage-over-time tick at 0 and its explosion at 1, and the burst group holds the bubble's duration at 0
+// And its explosion at 1, beside the Omen's duration and DMG bonus
 const MONA_ATTACK_GROUP_ID = 4131;
 const MONA_SKILL_GROUP_ID = 4132;
 const MONA_BURST_GROUP_ID = 4139;
@@ -27,6 +29,10 @@ const MONA_BURST_GROUP_ID = 4139;
 const OMEN_DURATION_INDEX = 3;
 const OMEN_DAMAGE_BONUS_INDEX = 9;
 const OMEN_STATUS_ID = "mona-omen";
+// The Illusory Bubble lasts the group's first value, 8 seconds, unless it bursts first, and bursts into the explosion the
+// Group gives at index 1, 442.4% at talent level 1 (https://genshin-impact.fandom.com/wiki/Stellaris_Phantasm)
+const BUBBLE_DURATION_INDEX = 0;
+const BUBBLE_EXPLOSION_INDEX = 1;
 
 // Measured: gcsim v2.47.2 (MIT) mona/attack.go, the strikes' reach: circles of radius 1, 1, 1 and 2. gcsim centres them
 // On the primary target, which an area does not hold, so they are priced round the body until it does
@@ -125,6 +131,49 @@ const createMirrorReflectionHits = (talentMultiplierMap: TalentMultiplierMap): K
   },
 ];
 
+// Stellaris Phantasm's bubble on each enemy its cast strikes: it bursts on a hit with poise damage or when its seconds run
+// Out, into a single Hydro hit of 2U at its own explosion's multiplier, with the wiki's 200 poise, under the Elemental
+// Burst internal cooldown. The Omen the burst puts on the enemy runs from the burst, not from the cast
+// https://genshin-impact.fandom.com/wiki/Stellaris_Phantasm
+const createStellarisPhantasmBubble = (talentMultiplierMap: TalentMultiplierMap): KitBubbleSpec => ({
+  explosion: {
+    element: Element.Hydro,
+    gauge: 2,
+    // The explosion lands on the enemy the bubble holds alone, so its area is not read
+    hitArea: BUBBLE_HIT_AREA,
+    hitmarkSeconds: 0,
+    internalCooldownTag: InternalCooldownTag.ElementalBurst,
+    poiseDamage: 200,
+    talentMultiplier: getTalentMultiplier(
+      talentMultiplierMap,
+      MONA_BURST_GROUP_ID,
+      TALENT_START_LEVEL,
+      BUBBLE_EXPLOSION_INDEX,
+    ),
+  },
+  omen: {
+    damageTakenBonus: getTalentMultiplier(
+      talentMultiplierMap,
+      MONA_BURST_GROUP_ID,
+      TALENT_START_LEVEL,
+      OMEN_DAMAGE_BONUS_INDEX,
+    ),
+    id: OMEN_STATUS_ID,
+    secondsRemaining: getTalentMultiplier(
+      talentMultiplierMap,
+      MONA_BURST_GROUP_ID,
+      TALENT_START_LEVEL,
+      OMEN_DURATION_INDEX,
+    ),
+  },
+  secondsRemaining: getTalentMultiplier(
+    talentMultiplierMap,
+    MONA_BURST_GROUP_ID,
+    TALENT_START_LEVEL,
+    BUBBLE_DURATION_INDEX,
+  ),
+});
+
 // Ascension 4's Hydro DMG Bonus, which a hit reads as it is priced, from 20% of Mona's Energy Recharge
 const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < 4
@@ -137,8 +186,7 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
       ];
 
 // Mona's kit at talent level 1: four strikes, a charged attack, a collision and two plunges, Mirror Reflection of Doom
-// And Stellaris Phantasm, with its Omen, and her passives. Its multipliers are read from its proud skill groups. The
-// Bubble's explosion is not built, so the bubble applies its Hydro and the Omen, whose duration runs from the cast
+// And Stellaris Phantasm, with its bubble and Omen, and her passives. Its multipliers are read from its proud skill groups
 export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
@@ -159,27 +207,13 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   },
   chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
   // Measured: gcsim v2.47.2 (MIT) mona/burst.go, the bubble at 107 frames and its cancel frame at 127. The wiki's
-  // Stellaris Phantasm applies 1U of Hydro on cast under an Elemental Burst ICD, with 50 poise. Its Omen is applied with
-  // The bubble on each enemy it strikes, as the wiki says both are applied on cast
+  // Stellaris Phantasm applies 1U of Hydro on cast under an Elemental Burst ICD, with 50 poise, and holds each enemy it
+  // Strikes in its bubble
   elementalBurst: {
     hits: [
       {
+        bubble: createStellarisPhantasmBubble(talentMultiplierMap),
         element: Element.Hydro,
-        enemyStatus: () => ({
-          damageTakenBonus: getTalentMultiplier(
-            talentMultiplierMap,
-            MONA_BURST_GROUP_ID,
-            TALENT_START_LEVEL,
-            OMEN_DAMAGE_BONUS_INDEX,
-          ),
-          id: OMEN_STATUS_ID,
-          secondsRemaining: getTalentMultiplier(
-            talentMultiplierMap,
-            MONA_BURST_GROUP_ID,
-            TALENT_START_LEVEL,
-            OMEN_DURATION_INDEX,
-          ),
-        }),
         gauge: 1,
         hitArea: BUBBLE_HIT_AREA,
         hitmarkSeconds: 107 / 60,

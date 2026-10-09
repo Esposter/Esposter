@@ -18,7 +18,8 @@ export interface KitState {
   // The presses of a skill chain played so far, zero once none is open, and the seconds since the last of them
   skillChainCount: number;
   skillChainSeconds: number;
-  // The seconds the skill has been held, zero once let go, and the seconds it was held when it was let go this step
+  // The seconds the skill has been held, zero once let go and capped at its maximum, and the seconds it was held when it was
+  // Let go this step, or when it reached its maximum
   skillHeldSeconds: number;
   skillReleasedSeconds: number;
   // The seconds the body has sprinted without pause, which a passive spends as it goes on

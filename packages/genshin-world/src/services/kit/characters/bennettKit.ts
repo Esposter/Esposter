@@ -9,7 +9,9 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { getCharacterWeaponType } from "#src/services/character/getCharacterWeaponType";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -62,7 +64,7 @@ const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 
 // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the field's first tick at 34 frames and then every second to its end,
-// Its heal and ATK bonus below 70% and above 70% of the character's HP, and the self infusion of 126 frames
+// Its heal below 70% and its ATK bonus above it, of the character's HP, and the buffs of 126 frames
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
 const BENNETT_FIELD_FIRST_TICK_SECONDS = 34 / 60;
 const BENNETT_FIELD_TICK_INTERVAL_SECONDS = 1;
@@ -71,6 +73,24 @@ const BENNETT_FIELD_HP_THRESHOLD = 0.7;
 const BENNETT_FIELD_BUFF_SECONDS = 126 / 60;
 // The field's life runs from the burst's start to its duration past the first tick
 const BENNETT_BURST_START_SECONDS = 34 / 60;
+
+// Grand Expectation at constellation 1 lifts the ATK bonus's HP threshold to any HP above zero, and adds 20% of Bennett's
+// Base ATK to it. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the `pc += 0.2` and the threshold of 0 at Cons 1
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
+const GRAND_EXPECTATION_CONSTELLATION = 1;
+const GRAND_EXPECTATION_BASE_ATTACK_SHARE = 0.2;
+// Fire Ventures With Me at constellation 6 gives the character on the field a 15% Pyro DMG Bonus, whatever it wields, and
+// Pyro on its weapon if it wields a sword, claymore or polearm. Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the PyroP
+// Of 0.15 outside the weapon switch and the infusion within it. The wiki's note gives the same wielders
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
+// https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me
+const FIRE_VENTURES_WITH_ME_CONSTELLATION = 6;
+const FIRE_VENTURES_PYRO_DAMAGE_BONUS = 0.15;
+const FIRE_VENTURES_INFUSED_WEAPON_TYPES = new Set<WeaponType>([
+  WeaponType.Claymore,
+  WeaponType.Polearm,
+  WeaponType.Sword,
+]);
 
 // Measured: the wiki's Passion Overload page, the press's cooldown of 5 seconds and the hold's of 7.5 and 10 seconds
 // https://genshin-impact.fandom.com/wiki/Passion_Overload
@@ -87,8 +107,12 @@ const CHARGE_LEVEL_2_SECOND_HITMARK_SECONDS = 121 / 60;
 const CHARGE_LEVEL_2_EXPLOSION_HITMARK_SECONDS = 166 / 60;
 const CHARGE_LEVEL_1_SECONDS = 98 / 60;
 const CHARGE_LEVEL_2_SECONDS = 343 / 60;
-// Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. A recording of
-// The skill's hold measures them
+// Measured: gcsim v2.47.2 (MIT) bennett/skill.go, the Level 2 hold's animation under Fearnaught, 175 frames, without the
+// Launch: its hits and explosion are the same, all of them landing before the animation ends
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
+const CHARGE_LEVEL_2_NO_LAUNCH_SECONDS = 175 / 60;
+// Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. The roadmap's
+// Recordings owed list holds the entry that measures them, `bennett-charge-levels.mkv`
 const CHARGE_LEVEL_1_MINIMUM_HELD_SECONDS = 0.5;
 const CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS = 1;
 
@@ -165,29 +189,33 @@ const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction
   targetingArea: SKILL_TARGETING_AREA,
 });
 
+// Whether Bennett stands in a field of his own at Ascension 4, the condition Fearnaught's two effects read: Passion
+// Overload's cooldown is halved, and Bennett is not launched by the Level 2 explosion
+const checkIsFearnaughtActive = ({ body, combatant, kitEffectState }: KitStepContext): boolean =>
+  combatant.ascension >= 4 &&
+  kitEffectState.effects.some(
+    (effect) =>
+      effect.kind === "field" &&
+      effect.characterId === combatant.characterId &&
+      checkIsInKitField(effect, body.position),
+  );
+
 // Fantastic Voyage's field lowers Passion Overload's cooldown by half at Ascension 4 for Bennett standing in it, and
 // Ascension 1 lowers every Passion Overload's cooldown by 20%
 // Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
-const getSkillCooldownMultiplier = ({ body, combatant, kitEffectState }: KitStepContext): number => {
+const getSkillCooldownMultiplier = (context: KitStepContext): number => {
   let multiplier = 1;
-  if (combatant.ascension >= 1) multiplier *= 0.8;
-  if (
-    combatant.ascension >= 4 &&
-    kitEffectState.effects.some(
-      (effect) =>
-        effect.kind === "field" &&
-        effect.characterId === combatant.characterId &&
-        checkIsInKitField(effect, body.position),
-    )
-  )
-    multiplier *= 0.5;
+  if (context.combatant.ascension >= 1) multiplier *= 0.8;
+  if (checkIsFearnaughtActive(context)) multiplier *= 0.5;
   return multiplier;
 };
 
-// The field's tick, written for the character who cast it. From the second tick a character under 70% of its HP is
-// Healed by 577 plus 6% of Bennett's Max HP, and one above it gains an ATK bonus of 56% of Bennett's base ATK. Either way
-// The character on the field is infused with Pyro for 2.1 seconds. The heal's Healing Bonus is not read
+// The field's tick, written for the character who cast it. From the second tick a character under 70% of its HP is healed
+// By 577 plus 6% of Bennett's Max HP. One above 70% gains an ATK bonus of 56% of Bennett's base ATK, which Grand Expectation
+// Lifts to any HP above zero and adds 20% to. From Fire Ventures With Me, that bonus also gives the character on the field
+// A 15% Pyro DMG Bonus, and Pyro on its weapon if it wields a sword, claymore or polearm, all for 2.1 seconds. The heal's
+// Healing Bonus is not read
 const createFieldTick =
   (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
   ({ activeCombatant, kitEffectState, party, tickIndex }: KitFieldTick): void => {
@@ -199,22 +227,36 @@ const createFieldTick =
       const heal = flatHeal + maxHealthHeal * owner.attributes.maxHealth;
       healPartyMember(party, characterId, heal / activeCombatant.attributes.maxHealth);
     }
-    if (healthShare > BENNETT_FIELD_HP_THRESHOLD)
+    const hasGrandExpectation = owner.constellationCount >= GRAND_EXPECTATION_CONSTELLATION;
+    if (healthShare > (hasGrandExpectation ? 0 : BENNETT_FIELD_HP_THRESHOLD)) {
       addKitEffect(kitEffectState, {
         amount:
-          getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) *
+          (getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) +
+            (hasGrandExpectation ? GRAND_EXPECTATION_BASE_ATTACK_SHARE : 0)) *
           owner.attributes.attributeTotalMap[Attribute.BaseAttack],
         attribute: Attribute.Attack,
         characterId,
         kind: "buff",
         secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
       });
-    addKitEffect(kitEffectState, {
-      characterId,
-      element: Element.Pyro,
-      kind: "infusion",
-      secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
-    });
+      if (owner.constellationCount >= FIRE_VENTURES_WITH_ME_CONSTELLATION) {
+        addKitEffect(kitEffectState, {
+          amount: FIRE_VENTURES_PYRO_DAMAGE_BONUS,
+          attribute: Attribute.PyroDamageBonus,
+          characterId,
+          kind: "buff",
+          secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
+        });
+        const weaponType = getCharacterWeaponType(characterId);
+        if (weaponType !== undefined && FIRE_VENTURES_INFUSED_WEAPON_TYPES.has(weaponType))
+          addKitEffect(kitEffectState, {
+            characterId,
+            element: Element.Pyro,
+            kind: "infusion",
+            secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
+          });
+      }
+    }
   };
 
 // Bennett's kit at talent level 1: five strikes, a charged attack, a collision and two plunges, Passion Overload's press
@@ -301,6 +343,10 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       action: createChargeLevel2(talentMultiplierMap),
       cooldownSeconds: BENNETT_CHARGE_LEVEL_2_COOLDOWN_SECONDS,
       minimumHeldSeconds: CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS,
+      variant: {
+        action: { ...createChargeLevel2(talentMultiplierMap), seconds: CHARGE_LEVEL_2_NO_LAUNCH_SECONDS },
+        checkIsActive: checkIsFearnaughtActive,
+      },
     },
   ],
   getSkillCooldownMultiplier,

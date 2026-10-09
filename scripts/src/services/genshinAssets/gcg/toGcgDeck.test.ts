@@ -55,6 +55,7 @@ describe(toGcgDeck, () => {
           descriptionTextId: CARD_DESCRIPTION_TEXT_ID,
           effects: [],
           id: CARD_ID,
+          isLocation: false,
           kind: GcgCardKind.Event,
           nameTextId: CARD_NAME_TEXT_ID,
         },

@@ -14,6 +14,7 @@ import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { burningFlame } from "#src/services/gcg/cards/burningFlame";
 import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import {
   GCG_AURA_ELEMENTS,
   GCG_BURNING_FLAME_ID,
@@ -29,7 +30,10 @@ import {
   GCG_SPREAD_DAMAGE,
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
+import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
+import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -58,7 +62,11 @@ const hitGcgCharacter = (
   if (damage.damageType === GcgDamageKind.Piercing) hurtGcgCharacter(hit, damage.value, true);
   else if (damage.damageType === GcgDamageKind.Physical)
     hurtGcgCharacter(hit, damage.value + takeGcgFrozenBonus(hit, damage.damageType), false);
-  else applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule);
+  else if (!checkIsGcgElementImmune([...hit.equipments, ...hit.statuses], damage.damageType)) {
+    applyGcgElementalDamage(duel, sourceSideIndex, hit, damage.damageType, damage.value, rule);
+    const permanentAura = findGcgPermanentAura([...hit.equipments, ...hit.statuses]);
+    if (permanentAura !== undefined) hit.aura = permanentAura;
+  }
 };
 
 // An elemental hit: its Frozen bonus, then the reaction its aura makes with the element if the rule lists one, which
@@ -102,10 +110,12 @@ const applyGcgReactionEffects = (
   const otherTargets = targetSide.characters.filter((character) => character !== hit && character.hp > 0);
   if (reaction === GcgReactionKind.Superconduct || reaction === GcgReactionKind.ElectroCharged)
     for (const other of otherTargets) hurtGcgCharacter(other, GCG_PIERCING_DAMAGE, true);
-  else if (reaction === GcgReactionKind.Swirl)
+  else if (reaction === GcgReactionKind.Swirl) {
     for (const other of otherTargets)
       hurtGcgCharacter(other, GCG_SPREAD_DAMAGE + takeGcgFrozenBonus(other, aura), false);
-  else if (reaction === GcgReactionKind.Burning)
+    for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
+      GcgCardIdModuleMap.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
+  } else if (reaction === GcgReactionKind.Burning)
     addGcgReactionCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame, GCG_BURNING_FLAME_MAX_USAGES);
   else if (reaction === GcgReactionKind.Bloom)
     addGcgReactionCard(sourceSide.onstages, GCG_DENDRO_CORE_ID, dendroCore, GCG_DENDRO_CORE_MAX_USAGES);

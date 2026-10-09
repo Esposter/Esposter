@@ -12,6 +12,7 @@ import type { FollowCamera, InputState, LandmarkCollider, Locomotion } from "gen
 import type { Object3D } from "three";
 
 import water from "#src/data/windrise/water.json";
+import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -22,13 +23,17 @@ import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
+import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
+import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS } from "#src/services/party/constants";
 import { drownParty } from "#src/services/party/drownParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
@@ -128,10 +133,14 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   const isBurstPressed =
     heldPresses.has(InputAction.ElementalBurst) || (burstSwitchIndex !== -1 && burstSwitchIndex === party.activeIndex);
   const isSkillPressed = heldPresses.has(InputAction.ElementalSkill);
+  // Impetuous Winds raises the speeds the controller moves the body by, read from the character on the field before the
+  // Controller steps
+  const isImpetuousWinds =
+    characterIdCombatantMap.get(getActiveCharacterId(party))?.elementalResonances.includes(Element.Anemo) ?? false;
   characterController.step(
     kitState.action ? stillInput : inputState,
     followCamera?.yaw ?? 0,
-    locomotion,
+    isImpetuousWinds ? getImpetuousWindsLocomotion(locomotion) : locomotion,
     FIXED_STEP_SECONDS,
   );
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);
@@ -201,18 +210,22 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     ...landedHits.map((hit): KitStrike => ({ body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
-  for (const { body: strikeBody, combatant: strikeCombatant, hit } of strikes) {
+  for (const { body: strikeBody, combatant: strikeCombatant, hit, target } of strikes) {
     const pricedCombatant = getBuffedCombatant(strikeCombatant, kitEffectState.effects);
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-        !checkIsInAttackArea(hit.hitArea, strikeBody, enemy)
+        (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, strikeBody, enemy))
       )
         continue;
-      for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, random))
+      addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
+      const { energyDrops, reactions } = strikeEnemy(enemy, hit, pricedCombatant, random);
+      for (const energyDrop of energyDrops)
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
+      addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
+      strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
       if (!isPartyHealed)
         isPartyHealed = healKitParty(

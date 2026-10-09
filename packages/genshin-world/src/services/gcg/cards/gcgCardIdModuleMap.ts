@@ -9,13 +9,19 @@ import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
+import { crossfire } from "#src/services/gcg/cards/crossfire";
+import { dandelionField } from "#src/services/gcg/cards/dandelionField";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
+import { drunkenMist } from "#src/services/gcg/cards/drunkenMist";
+import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
+import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { guardiansOath } from "#src/services/gcg/cards/guardiansOath";
+import { guoba } from "#src/services/gcg/cards/guoba";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { iHaventLostYet } from "#src/services/gcg/cards/iHaventLostYet";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
@@ -42,6 +48,7 @@ import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirr
 import { oz } from "#src/services/gcg/cards/oz";
 import { paimon } from "#src/services/gcg/cards/paimon";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
+import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { quickKnit } from "#src/services/gcg/cards/quickKnit";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
@@ -59,6 +66,7 @@ import { thunderSummonersCrown } from "#src/services/gcg/cards/thunderSummonersC
 import { timmie } from "#src/services/gcg/cards/timmie";
 import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutomaton";
 import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword";
+import { tubby } from "#src/services/gcg/cards/tubby";
 import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
 import { wangshuInn } from "#src/services/gcg/cards/wangshuInn";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
@@ -70,23 +78,30 @@ import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } fro
 
 // Every card a duel's module covers, by the card's id in the game's table
 export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, GcgCardModule>([
+  [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
   [112_031, reflection],
   [112_032, illusoryBubble],
   [113_011, pyroInfusion],
+  [113_021, guoba],
+  [113_022, pyronadoField],
   [113_031, inspirationField],
   [113051, niwabiEnshou],
   [113052, aurousBlaze],
   [114_011, oz],
   [114021, theWolfWithin],
   [115_011, largeWindSpirit],
+  [115_021, dandelionField],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
   [125011, shadowswordLoneGale],
   [125012, shadowswordGallopingFrost],
+  [133_021, flowfireEdge],
+  [134_061, elementalLifeformElectro],
   [213_011, flowingFlame],
+  [213_021, crossfire],
   [213051, naganoharaMeteorSwarm],
   [222011, streamingSurge],
   [225011, transcendentAutomaton],
@@ -111,6 +126,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [321_006, favoniusCathedral],
   [322_001, paimon],
   [322002, katheryne],
+  [322_006, tubby],
   [322_007, timmie],
   [322_010, ellin],
   [322011, ironTongueTian],

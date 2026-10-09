@@ -17,6 +17,7 @@ const createAmberCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: AMBER_CHARACTER_ID,
+  constellationCount: 0,
   elementalResonances: [],
   kit: AMBER_KIT,
   level: 90,

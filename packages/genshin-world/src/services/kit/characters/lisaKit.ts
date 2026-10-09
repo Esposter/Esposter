@@ -34,7 +34,7 @@ const PRESS_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2
 const HOLD_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 10.2 });
 // Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3,
 // And the stacks have no duration in gcsim. Lisa's charged attacks apply one too from her A1 (lisa/asc.go), and the hold
-// Consumes the stacks. The wiki's hold takes 1.9 seconds to charge in full, which the hold's minimum is taken from
+// Consumes the stacks.
 const CONDUCTIVE_STATUS_ID = "conductive";
 const CONDUCTIVE_STACK: EnemyStatus = {
   damageTakenBonus: 0,
@@ -43,7 +43,11 @@ const CONDUCTIVE_STACK: EnemyStatus = {
   secondsRemaining: Infinity,
   stacks: 1,
 };
+// Provisional: the wiki's 1.9 seconds is the time the hold takes to charge in full, which the minimum is taken from, until the
+// Roadmap's Recordings owed list entry `lisa-violet-arc-hold.mkv` measures it. The wiki's Violet Arc page gives a maximum
+// Of 4 seconds, past which the skill is released by itself (https://genshin-impact.fandom.com/wiki/Violet_Arc)
 const HOLD_MINIMUM_HELD_SECONDS = 1.9;
+const HOLD_MAXIMUM_HELD_SECONDS = 4;
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, Lightning Rose's activation and each discharge reach a circle of radius 7
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/burst.go
 const LIGHTNING_ROSE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 7 });
@@ -176,7 +180,6 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     seconds: 40 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
-  // Held past its minimum and released, the skill plays its hold at the hold's cooldown, which the table gives
   elementalSkillHolds: [
     {
       action: createVioletArcHold(talentMultiplierMap),
@@ -184,6 +187,9 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       minimumHeldSeconds: HOLD_MINIMUM_HELD_SECONDS,
     },
   ],
+  // Held past its minimum and released, the skill plays its hold at the hold's cooldown, which the table gives. Held to
+  // Its maximum, the hold plays there without a release
+  elementalSkillMaximumHeldSeconds: HOLD_MAXIMUM_HELD_SECONDS,
   highPlunge: {
     hits: [
       {

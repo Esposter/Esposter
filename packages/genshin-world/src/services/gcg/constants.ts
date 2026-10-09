@@ -70,6 +70,7 @@ export const GcgReactionPairs: [Element, Element, GcgReactionKind][] = [
 // The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other six
 // Elements its own way, which the world's Element enum spells otherwise
 export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new Map<string, Element | GcgDamageKind>([
+  ["Elec", Element.Electro],
   ["Electric", Element.Electro],
   ["Fire", Element.Pyro],
   ["Grass", Element.Dendro],

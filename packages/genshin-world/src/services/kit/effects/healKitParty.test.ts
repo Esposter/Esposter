@@ -30,6 +30,7 @@ const createCombatant = (characterId: number, maxHealth: number): Combatant => (
     { attribute: Attribute.BaseHealth, value: maxHealth },
   ]),
   characterId,
+  constellationCount: 0,
   elementalResonances: [],
   kit: NOELLE_KIT,
   level: 90,
@@ -42,7 +43,7 @@ describe(healKitParty, () => {
     const member = createCombatant(MEMBER_ID, 20_000);
     const party = createParty([NOELLE_CHARACTER_ID, MEMBER_ID]);
     for (const characterId of [NOELLE_CHARACTER_ID, MEMBER_ID]) getPartyMember(party, characterId).healthShare = 0.5;
-    const healParty = { chance: 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
+    const healParty = { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 };
 
     const isHealed = healKitParty(
       party,
@@ -70,10 +71,45 @@ describe(healKitParty, () => {
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
     const party = createParty([NOELLE_CHARACTER_ID]);
     const combatants = new Map([[NOELLE_CHARACTER_ID, noelle]]);
-    const hit = { ...NOELLE_HIT, healParty: { chance: 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
+    const hit = { ...NOELLE_HIT, healParty: { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
 
     expect(healKitParty(party, combatants, [], noelle, hit, () => 0)).toBe(false);
     expect(healKitParty(party, combatants, [SHIELD], noelle, hit, () => 0.9)).toBe(false);
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).healthShare).toBe(1);
+  });
+
+  test("an unshielded heal rolls without a shield, healing by the striker's ATK share", () => {
+    expect.hasAssertions();
+    const striker: Combatant = {
+      ...createCombatant(NOELLE_CHARACTER_ID, 10_000),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 1000 },
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+      ]),
+    };
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    getPartyMember(party, NOELLE_CHARACTER_ID).healthShare = 0.5;
+    const healParty = {
+      attackShare: 0.15,
+      chance: () => 0.5,
+      defenseShare: 0,
+      flatHealth: 0,
+      isUnshielded: true as const,
+    };
+
+    const isHealed = healKitParty(
+      party,
+      new Map([[NOELLE_CHARACTER_ID, striker]]),
+      [],
+      striker,
+      { ...NOELLE_HIT, healParty },
+      () => 0,
+    );
+
+    expect(isHealed).toBe(true);
+    expect(getPartyMember(party, NOELLE_CHARACTER_ID).healthShare).toBeCloseTo(
+      0.5 + (healParty.attackShare * striker.attributes.attack) / striker.attributes.maxHealth,
+      5,
+    );
   });
 });

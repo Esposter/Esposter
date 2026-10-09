@@ -1,18 +1,21 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitShield } from "#src/models/kit/KitShield";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { absorbShieldDamage } from "#src/services/combat/shield/absorbShieldDamage";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 
-// Takes a character's shield to the damage it is dealt, through the combat shield's absorption, written in place. One
-// Spent is dropped by the next step. It returns the damage the shield did not absorb, which is all of it with none up
+// An enemy's strike on the character on the field, taken by every live shield on the team at once: each one absorbs the
+// Full damage through the combat shield's absorption at the struck character's shield strength, written in place, and the
+// Member takes the least any of them passes on, so none while one holds it all and the whole damage with none up. A shield
+// Whose health is spent is ended, and the next step drops it
 export const absorbKitShield = (effects: readonly KitEffect[], combatant: Combatant, damage: number): number => {
-  const shield = effects.find(
-    (effect): effect is KitShield => effect.kind === "shield" && effect.characterId === combatant.characterId,
-  );
-  if (!shield) return damage;
-  const overflow = absorbShieldDamage(shield, damage, combatant.attributes.attributeTotalMap[Attribute.ShieldStrength]);
-  if (shield.health <= 0) shield.secondsRemaining = 0;
+  const shieldStrength = combatant.attributes.attributeTotalMap[Attribute.ShieldStrength];
+  const shields = effects.filter((effect) => checkIsKitShieldLive(effect));
+  let overflow = damage;
+  for (const shield of shields) {
+    overflow = Math.min(overflow, absorbShieldDamage(shield, damage, shieldStrength));
+    if (shield.health <= 0) shield.secondsRemaining = 0;
+  }
   return overflow;
 };

@@ -16,6 +16,7 @@ const createTaunt = (health: number, secondsRemaining: number): KitTaunt => ({
     ascension: 0,
     attributes: computeCharacterAttributes([]),
     characterId: AMBER_CHARACTER_ID,
+    constellationCount: 0,
     elementalResonances: [],
     kit: AMBER_KIT,
     level: 90,

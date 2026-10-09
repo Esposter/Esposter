@@ -26,6 +26,7 @@ describe(strikePartyMember, () => {
       { attribute: Attribute.Defense, value: DEFENSE },
     ]),
     characterId: 1,
+    constellationCount: 0,
     elementalResonances: [],
     kit: TRAVELER_KIT,
     level: 1,

@@ -17,7 +17,7 @@ flowchart TD
   READ --> WORDS["generated/questText: the quests' words, one chunk a language"]
   FILES --> START["startQuests: the first Archon quest not finished starts"]
   START --> PROGRESS["Quests in progress, from step 0"]
-  DOING["The Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
+  DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
   PROGRESS --> ADVANCE
   ADVANCE --> MET{"Every objective of the step met?"}
   MET -->|"no"| COUNT["The objective's count goes up, held at its own"]

@@ -1,3 +1,4 @@
+import type { Element } from "#src/models/Element";
 import type { GcgCostReduction } from "#src/models/gcg/GcgCostReduction";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
@@ -11,6 +12,7 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 // The additive hooks, then the multiplying ones, so a doubling is taken after every bonus
 export interface GcgCardModule {
   canPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => boolean;
+  immuneElement?: Element;
   initialRounds?: number;
   initialUsages?: number;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
@@ -22,7 +24,9 @@ export interface GcgCardModule {
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onSkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard) => GcgDamage | void;
+  onSwirl?: (context: GcgEffectContext, zoneCard: GcgZoneCard, element: Element) => void;
   onSwitch?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
+  permanentAura?: Element;
   play?: (context: GcgEffectContext, targetIndex: number | undefined) => void;
   reduceCost?: (
     context: GcgEffectContext,
