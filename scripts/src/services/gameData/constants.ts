@@ -12,7 +12,7 @@ export const GAME_DATA_LOCK_PATH: string = join(
 );
 // The lock's path from the repository root, as git names it
 export const GAME_DATA_LOCK_REPOSITORY_PATH = "packages/genshin-world/src/generated/gameDataLock.json";
-const DAY_MS = 24 * 60 * 60 * 1000;
+export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // An object a lock no longer names is kept this long, so a revert within this window still resolves it
 export const GAME_DATA_RETENTION_MS: number = 90 * DAY_MS;
 // An object stored this recently is reused as it is, so a prune run inside the retention window cannot take it

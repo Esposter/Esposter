@@ -1,13 +1,8 @@
+import type { GameDataPlan } from "#src/models/gameData/GameDataPlan";
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
-import type { GameDataLock } from "genshin-world";
 
 import { getGameDataHash } from "#src/services/gameData/getGameDataHash";
-
-export interface GameDataPlan {
-  lock: GameDataLock;
-  records: GameDataRecord[];
-}
 
 const createGameDataRecord = (value: unknown, isIndex: boolean): GameDataRecord => {
   const json = JSON.stringify(value);

@@ -1,12 +1,12 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
 import type { GameDataset } from "genshin-world";
 
+import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
+import { commitGameDataLock } from "#src/services/gameData/commitGameDataLock";
 import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
 import { publishGameData } from "#src/services/gameData/publishGameData";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
-import { writeGameDataLock } from "#src/services/gameData/writeGameDataLock";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 interface PublishGameDataStepOptions {
   isDryRun: boolean;
@@ -14,7 +14,7 @@ interface PublishGameDataStepOptions {
   scopes: GameDataset[];
 }
 
-// One generator's publish: the scopes it replaces are stored in both accounts, and the lock is rewritten only once both have
+// One generator's publish: the scopes it replaces are stored in both accounts, and the lock is committed only once both have
 // Them. A dry run stores nothing and needs no credential. Returns a note of what the step did to the lock
 export const publishGameDataStep = async ({
   isDryRun,
@@ -33,10 +33,10 @@ export const publishGameDataStep = async ({
     publication,
     scopes,
   });
-  if (result.isUnchanged) return `${label}: unchanged, no request made`;
-  if (isDryRun) return `${label}: dry run, ${result.storedObjectCount} records would be published`;
+  if (result.outcome === GameDataPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
+  if (result.outcome === GameDataPublishOutcome.DryRun)
+    return `${label}: dry run, ${result.storedObjectCount} records would be published`;
+  await commitGameDataLock(scopes, result.plannedLock);
   const { uploadedCountMap } = result;
-  if (!uploadedCountMap) throw new InvalidOperationError(Operation.Update, label, "was published without a count");
-  await writeGameDataLock(result.nextLock);
   return `${label}: ${result.storedObjectCount} records published, ${uploadedCountMap[GameDataTarget.Dev]} objects uploaded to dev and ${uploadedCountMap[GameDataTarget.Prod]} to prod`;
 };

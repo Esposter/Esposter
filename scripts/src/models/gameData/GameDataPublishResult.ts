@@ -1,11 +1,14 @@
+import type { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import type { GameDataTarget } from "#src/models/gameData/GameDataTarget";
 import type { GameDataLock } from "genshin-world";
 
-// The lock a publish would commit, and what it did to get there: nothing when the lock already names it, or the number
-// Of objects each account received when it was published. A dry run reports only the objects it would store
-export interface GameDataPublishResult {
-  isUnchanged: boolean;
-  nextLock: GameDataLock;
-  storedObjectCount: number;
-  uploadedCountMap?: Record<GameDataTarget, number>;
-}
+// Each outcome carries only what it has: a published one carries the lock the caller commits and each account's count
+export type GameDataPublishResult =
+  | { outcome: GameDataPublishOutcome.DryRun; storedObjectCount: number }
+  | {
+      outcome: GameDataPublishOutcome.Published;
+      plannedLock: GameDataLock;
+      storedObjectCount: number;
+      uploadedCountMap: Record<GameDataTarget, number>;
+    }
+  | { outcome: GameDataPublishOutcome.Unchanged };

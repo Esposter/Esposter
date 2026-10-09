@@ -3,6 +3,7 @@ import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { PublishGameDataOptions } from "#src/models/gameData/PublishGameDataOptions";
 import type { ContainerClient } from "@azure/storage-blob";
 
+import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
 import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
@@ -12,9 +13,9 @@ import { readGameDataReachableHashes } from "#src/services/gameData/readGameData
 import { compressJson } from "@esposter/db";
 import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
-// Stores what a publication names in every account and returns the lock it would commit. The caller writes that lock
-// Only once this resolves: a failure in either account throws before then, so the committed lock never names data a
-// Reader cannot fetch, and a rerun converges on the same objects.
+// Stores what a publication names in every account, and returns the entries it planned for the caller to merge into the
+// Lock and commit. The caller commits only once this resolves: a failure in either account throws before then, so the
+// Committed lock never names data a Reader cannot fetch, and a rerun converges on the same objects.
 export const publishGameData = async ({
   containerClientMap,
   currentLock,
@@ -28,9 +29,9 @@ export const publishGameData = async ({
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeGameDataLock(currentLock, scopes, plan.lock);
   if (formatGameDataLock(nextLock) === formatGameDataLock(currentLock))
-    return { isUnchanged: true, nextLock: currentLock, storedObjectCount: 0 };
+    return { outcome: GameDataPublishOutcome.Unchanged };
   // A dry run stops before any account, so it needs no credential and writes nothing
-  if (!containerClientMap) return { isUnchanged: false, nextLock, storedObjectCount: plan.records.length };
+  if (!containerClientMap) return { outcome: GameDataPublishOutcome.DryRun, storedObjectCount: plan.records.length };
   const compressedJsonMap = new Map<string, Promise<Buffer>>();
   // Compressed once per object and shared by both accounts, which hold the same bytes
   const getCompressedJson = (record: GameDataRecord) => {
@@ -47,8 +48,8 @@ export const publishGameData = async ({
     publishAccount(containerClientMap[GameDataTarget.Prod]),
   ]);
   return {
-    isUnchanged: false,
-    nextLock,
+    outcome: GameDataPublishOutcome.Published,
+    plannedLock: plan.lock,
     storedObjectCount: plan.records.length,
     uploadedCountMap: { [GameDataTarget.Dev]: devCount, [GameDataTarget.Prod]: prodCount },
   };

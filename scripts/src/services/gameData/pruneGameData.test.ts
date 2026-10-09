@@ -1,12 +1,12 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
+import { DAY_MS } from "#src/services/gameData/constants";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(pruneGameData, () => {
-  const DAY_MS = 24 * 60 * 60 * 1000;
   const liveHash = "a".repeat(64);
   const oldHash = "b".repeat(64);
   const youngHash = "c".repeat(64);
