@@ -65,8 +65,8 @@ const readWitnessTargetsInCall = async (
 };
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer.
 // The page draws them at the reference's full 1920 by 1080, not the structure's width, so each float target is 33 MB,
-// And one call moving all eight held the renderer for seconds, the shared browser closing the page under it in every
-// Run on it, where each target alone moves its 33 MB in about a second. So each target is drawn and read in a call of
+// And one call moving all eight held the renderer for seconds, long enough for the page to be closed under it, where each
+// Target alone moves its 33 MB in about a second. So each target is drawn and read in a call of
 // Its own; the families, the parts and the view's size come from a call drawing none, which draws nothing. Told to, of
 // The scene's own parts in place of the exports', and given a direction, under the sun cast from it for this read alone
 export const readWitnessTargets = async (
