@@ -1,9 +1,12 @@
 import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
+import type { CommitCommentsPage } from "#src/models/coderabbit/collect/CommitCommentsPage";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
+import type { RunJobsView } from "#src/models/coderabbit/collect/RunJobsView";
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
+import type { RepositoryView } from "#src/models/coderabbit/shared/RepositoryView";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
@@ -13,6 +16,7 @@ import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
+import { SessionUnstartedError } from "#src/models/coderabbit/collect/SessionUnstartedError";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
 import {
@@ -23,34 +27,35 @@ import {
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
   EXPRESS_TRAILER,
-  HELD_MARKER,
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
-  OUTAGE_RETRY_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
   QUEUE_BRANCH,
   RATE_LIMITED_DESCRIPTION,
+  REPAIR_ATTEMPT_TIMEOUT_MS,
+  REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_COMMANDS,
-  RESHAPE_FAILED_MARKER,
   RETRIGGER_BUFFER_MS,
   RETRIGGER_SLEEP_CAP_MS,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SESSION_LIMITED_MARKER,
   WINDOW_OPENING_WINDOW_MS,
+  WINDOW_RECUT_MARKER,
   WINDOW_TITLE,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getFailureSignature } from "#src/services/coderabbit/collect/getFailureSignature";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { PROBE_COMMENT, REVIEW_FILE_CAP, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
+import { PROBE_COMMENT, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -94,7 +99,7 @@ const getCommitCommentPosts = (sha: string) =>
   runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
 
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, commitFiles, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+  const { commitFile, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
@@ -118,22 +123,31 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     state,
   });
   const openPullRequests: WindowPullRequest[] = [getWindowPullRequest(WindowPullRequestState.Open)];
-  const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
+  // A base's config whose stacking guard lets a window sit on top of it
+  const stackingConfig = 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n';
 
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
   const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: CI_COMPLETED_STATUS, url: "" };
+  // What the red run failed on, and the signature its repairs are counted under
+  const redRunJobs: RunJobsView = { jobs: [{ conclusion: CI_FAILURE_CONCLUSION, name: "" }], workflowName: "" };
+  const signature = getFailureSignature(
+    redRunJobs.workflowName,
+    redRunJobs.jobs.map(({ name }) => name),
+  );
   const greenSpawn: SpawnSyncReturns<string> = { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
-  // What `gh` answers: the login, the window pull requests, the reviews, the issue comments, every commit's comments,
-  // CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one page of nothing a
-  // `--slurp` returns. The pull requests are kept as GitHub would hold them: a merge closes its window and a create
-  // Opens one, so a run reads back what it wrote
+  const repairedReason = `${MAIN_BRANCH} repaired — its push runs the cycle again`;
+  // What `gh` answers: the login, the window pull requests, the reviews, the issue comments, the repository's newest
+  // Commit comments, CI's runs for main's head, a red run's jobs and log, no open issue, and `[[]]` for every other
+  // Paginated list — the one page of nothing a `--slurp` returns. The pull requests are kept as GitHub would hold them:
+  // A merge closes its window and a create opens one, so a run reads back what it wrote. Every commit comment is dated
+  // At the epoch, so a test reading them pins the clock there
   const collectorSha = "collectorSha";
   const baseInput = { collectorSha, isDryRun: false };
   const answerGh = (
     windowPullRequests: WindowPullRequest[] = [],
     reviews: GitHubReview[] = [],
     issueComments: GitHubEntry[] = [],
-    commitComments: GitHubEntry[] = [],
+    signatureComments: GitHubEntry[] = [],
     mainChecks: MainCheck[] = [],
     legacyPullRequests: WindowPullRequest[] = [],
   ) => {
@@ -165,14 +179,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         });
         return "";
       } else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
-      else if (args[0] === "run" && args[1] === "view") return "";
+      else if (args[0] === "run" && args[1] === "view")
+        return args.includes("--json") ? JSON.stringify(redRunJobs) : "";
+      else if (args[0] === "repo" && args[1] === "view")
+        return JSON.stringify({ name: "", owner: { login: "" } } satisfies RepositoryView);
+      else if (args[0] === "issue" && args[1] === "list") return "[]";
+      else if (args[0] === "api" && args[1] === "graphql")
+        return JSON.stringify({
+          data: {
+            repository: {
+              commitComments: {
+                nodes: signatureComments.map(({ body, id, user }) => ({
+                  author: user,
+                  body,
+                  createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+                  databaseId: id,
+                })),
+              },
+            },
+          },
+        } satisfies CommitCommentsPage);
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/pulls/${pullRequest}/reviews`))
         return JSON.stringify([reviews]);
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/issues/${pullRequest}/comments`))
         return JSON.stringify([issueComments]);
-      // The read is paginated where the post carries a body
-      else if (args[1]?.startsWith("repos/{owner}/{repo}/commits/") && args.includes("--paginate"))
-        return JSON.stringify([commitComments]);
       else return "[[]]";
     });
   };
@@ -231,8 +261,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
   // Most of what lands on main unread is red for a reason the repo's own regenerators answer, and they answer it
   // Without a session: one moves the tree, the checks pass on what it left, and the repair is pushed with the
-  // Shared window untouched
-  test("repairs a red main with its own regenerators, spawning no session", async () => {
+  // Shared window untouched. The push is an attempt too, so a repair that leaves the same jobs red is paid for once
+  test("repairs a red main with its own regenerators, spawning no session, and counts the push", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -245,12 +275,23 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Repaired,
-      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 0 claimed commits behind it`,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
       targetSha: repairSha,
     });
     expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
       `${repairSha} ${mainSha}`,
     );
+    expect(getCommitCommentPosts(mainSha)).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${mainSha}/comments`,
+          "-f",
+          `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP}: repaired this red ${MAIN_BRANCH} head with ${repairSha}`,
+        ],
+      ],
+    ]);
   });
 
   // A release merge carries its reviewed develop head's tree, so CI's verdict there is main's before main's own
@@ -291,10 +332,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     let dirtyAtSession = "unread";
     runSession.mockImplementation(() => {
       dirtyAtSession = runGit(["status", "--porcelain", "-uall"], getCwd());
-      return Promise.resolve({ isEnded: false, isStarted: false });
+      return Promise.reject(new SessionUnstartedError());
     });
-    await runCycle({ ...baseInput, cwd: getCwd() });
 
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
+    );
     expect(dirtyAtSession).toBe("");
   });
 
@@ -303,6 +346,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("hands a red main that does not install to the repairer with the install's tail", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
@@ -311,17 +355,26 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     let prompt = "";
     runSession.mockImplementation((input) => {
       ({ prompt } = input);
-      return Promise.resolve({ isEnded: false, isStarted: false });
+      return Promise.reject(new SessionUnstartedError());
     });
-    await runCycle({ ...baseInput, cwd: getCwd() });
 
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
+    );
     expect(spawnPnpm).toHaveBeenCalledExactlyOnceWith(INSTALL_COMMAND, {
       cwd: getCwd(),
       maxBuffer: INSTALL_OUTPUT_MAX_BUFFER_BYTES,
       stdio: "pipe",
     });
     expect(prompt).toBe(
-      getRepairPrompt({ collectorSha, failedLog: "", installFailure: installTail, mainSha, runUrl: redRun.url }),
+      getRepairPrompt({
+        collectorSha,
+        failedLog: "",
+        installFailure: installTail,
+        mainSha,
+        remainingMinutes: Temporal.Duration.from({ milliseconds: REPAIR_ATTEMPT_TIMEOUT_MS }).total("minutes"),
+        runUrl: redRun.url,
+      }),
     );
   });
 
@@ -340,14 +393,15 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
         getCwd(),
       );
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const repairSha = readSha(`origin/${MAIN_BRANCH}`);
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Repaired,
-      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 0 claimed commits behind it`,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
       targetSha: repairSha,
     });
     expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
@@ -355,9 +409,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
-  // A session's repair is verified as the cut it becomes, and one that fails there counts on main's head in the
-  // Shape and under the marker the repairer's own count reads
-  test("counts a repair that fails the checks as a cut on main's head and pushes nothing", async () => {
+  // A session's repair is verified as the cut it becomes, and one that fails there counts against its signature in the
+  // Shape and under the marker the repairer's own count reads, and wakes the next attempt a minute later
+  test("counts a repair that fails the checks as a cut against its signature and pushes nothing", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -370,10 +424,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
         getCwd(),
       );
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
-    await runCycle({ ...baseInput, cwd: getCwd() });
 
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the repair of 9107053724b5b317eae7437b5b6c689aa46d050c failed the checks as a cut]`,
+    );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toStrictEqual([
       [
@@ -381,7 +437,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           "api",
           `repos/{owner}/{repo}/commits/${mainSha}/comments`,
           "-f",
-          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed — the session left a repair that failed the checks as a cut. See the collector run.`,
+          `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed — the session left a repair that failed the checks as a cut. See the collector run.`,
         ],
       ],
     ]);
@@ -431,8 +487,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
-  // Attempt on main's head and fails the run, as the fold does
-  test("counts a repair that left no trailered commit on main's head and fails the run", async () => {
+  // Attempt against its signature and fails the run, as the fold does
+  test("counts a repair that left no trailered commit against its signature and fails the run", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -441,7 +497,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     spawnPnpm.mockReturnValue(greenSpawn);
     runSession.mockImplementation(() => {
       commitFile(TEST_FILENAME, "");
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -454,15 +510,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           "api",
           `repos/{owner}/{repo}/commits/${mainSha}/comments`,
           "-f",
-          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed. See the collector run.`,
+          `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed. See the collector run.`,
         ],
       ],
     ]);
   });
 
-  // One commit exactly, because the streak reads a repair off the head as a commit: a session that left two
-  // Would stack two attempts on the head it made, and a third would hand an answerable red to a person
-  test("counts a repair that left more than one commit on main's head and fails the run", async () => {
+  // One commit exactly, because the repair is pushed as one cut the verify gives one verdict on
+  test("counts a repair that left more than one commit against its signature and fails the run", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -477,7 +532,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           getCwd(),
         );
       }
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -485,6 +540,77 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
+  });
+
+  // A red main holds no window: the reviewed bottom merges and the stack moves first, and the repair, which can run as
+  // Long as its deadline, comes after
+  test("merges the reviewed bottom window before it repairs a red main", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    publish(getWindowBranch(pullRequest), mainSha);
+    answerGh(openPullRequests, [], [], [], [redRun]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: true });
+    answerRegenerated(() => greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getPrCalls("merge")).toHaveLength(1);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+  });
+
+  const getSignatureAttempts = (count: number): GitHubEntry[] =>
+    Array.from({ length: count }, (_value, id) => ({
+      ...getMarked(getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])),
+      id,
+    }));
+
+  // The attempts at a red are recorded on whichever head was red, and a window merged over it makes another head with
+  // The same jobs failing: they are read across every commit's comments, so main's own head carrying none starts no
+  // Fresh count
+  test("counts a failure signature's repairs across a window's merge", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], getSignatureAttempts(SESSION_ATTEMPT_CAP - 1), [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runSession.mockImplementation(() => {
+      commitFile(TEST_FILENAME, "");
+      return Promise.resolve({ isEnded: true });
+    });
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 3 of 3)]`,
+    );
+  });
+
+  // Past its attempts a red is handed to the tracker once, and the repairer spends nothing more on it until the span or
+  // The collector moves on
+  test("opens one issue and repairs nothing once a signature is past its attempts", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], getSignatureAttempts(SESSION_ATTEMPT_CAP), [redRun]);
+    await runCycle({ ...baseInput, cwd: getCwd() });
+    const issueCreates = runGh.mock.calls.filter(([args]) => args[0] === "issue" && args[1] === "create");
+    const createArgs = issueCreates[0]?.[0] ?? [];
+
+    expect(issueCreates).toHaveLength(1);
+    expect(createArgs[createArgs.indexOf("--body") + 1]?.split("\n")[0]).toBe(
+      getMarker(REPAIR_EXHAUSTED_MARKER, signature, [collectorSha]),
+    );
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
   });
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
@@ -546,65 +672,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  const getExhaustedReshapes = (sha: string): GitHubEntry[] =>
-    Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha])),
-      id,
-    }));
-
-  test("notes the queue's first commit on itself and fails the run when it overflows the cap past reshaping", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const heldSha = publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
-    answerGh([], [], [], getExhaustedReshapes(heldSha));
-
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 30e00c79f6d80fba63a7669701f892f6b3cb1a45 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
-    );
-    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
-    expect(getCommitCommentPosts(heldSha)).toStrictEqual([
-      [
-        [
-          "api",
-          `repos/{owner}/{repo}/commits/${heldSha}/comments`,
-          "-f",
-          `body=${getMarker(HELD_MARKER, heldSha)}\nHeld: this is the first commit \`${QUEUE_BRANCH}\` owes \`${DEVELOP_BRANCH}\`, and no window can take it — its reshaping under the file cap or its conflict with the tree the fixes built failed past the attempt cap (the comments above say which). Nothing behind it ports until a person splits or rebases it (\`.agents/skills/review-queue/SKILL.md\`).`,
-        ],
-      ],
-    ]);
-  });
-
-  test("reports a held first commit on a dry run without noting or failing", async () => {
-    expect.hasAssertions();
-
-    publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const heldSha = publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
-    answerGh([]);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd(), isDryRun: true });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Idle,
-      reason: `held at ${heldSha} — a dry run reshapes and resolves nothing`,
-      retriggerDelaySeconds: undefined,
-      targetSha: undefined,
-    });
-    expect(getCommitCommentPosts(heldSha)).toHaveLength(0);
-  });
-
-  test("notes a held commit once", async () => {
-    expect.hasAssertions();
-
-    publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const heldSha = publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
-    answerGh([], [], [], [...getExhaustedReshapes(heldSha), getMarked(getMarker(HELD_MARKER, heldSha))]);
-
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at 30e00c79f6d80fba63a7669701f892f6b3cb1a45 — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ai/queue (its commit comments say which)]`,
-    );
-    expect(getCommitCommentPosts(heldSha)).toHaveLength(0);
-  });
-
   test("opens nothing over a window pull request a person closed", async () => {
     expect.hasAssertions();
 
@@ -622,6 +689,32 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
+  // A re-cut closes the windows the bot would not review and leaves on them the cap their replacement is cut to: that is
+  // No person's pause, and the replacement opens in the same pass, under that cap
+  test("opens the replacement of a re-cut window under the cap its marker carries", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const firstSha = commitFile(TEST_FILENAME, "");
+    publish(QUEUE_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
+    const recutWindow = getWindowPullRequest(WindowPullRequestState.Closed, pullRequest + 1);
+    answerGh([recutWindow]);
+    const answer = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[1]?.startsWith(`repos/{owner}/{repo}/issues/${recutWindow.number}/comments`)
+        ? JSON.stringify([[getMarked(`<!-- ${WINDOW_RECUT_MARKER} cap:1 -->`)]])
+        : (answer?.(args) ?? ""),
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(recutWindow.number + 1),
+      retriggerDelaySeconds: undefined,
+      targetSha: firstSha,
+    });
+  });
+
   // The open release is the stack's bottom: its one review completing merges it and drains its findings, and the windows
   // Open over `main` once it has merged, the stroke having followed `main` onto `develop` first
   test("merges and drains the open release from develop once its review completes, then opens the window", async () => {
@@ -631,7 +724,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Open)]);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(getPrCalls("merge")).toStrictEqual([
@@ -710,10 +803,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("opens nothing over an open window whose own copy lacks the stacking guard, though main carries it", async () => {
     expect.hasAssertions();
 
-    const configSha = publish(
-      MAIN_BRANCH,
-      commitFile(".coderabbit.yaml", 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n'),
-    );
+    const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
     publish(DEVELOP_BRANCH, configSha);
     publish(getWindowBranch(pullRequest), deleteFile(".coderabbit.yaml"));
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
@@ -734,10 +824,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("stacks the next window over an open one when its base's config lets the stack reach it", async () => {
     expect.hasAssertions();
 
-    const configSha = publish(
-      MAIN_BRANCH,
-      commitFile(".coderabbit.yaml", 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n'),
-    );
+    const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
     const developSha = publish(DEVELOP_BRANCH, configSha);
     publish(getWindowBranch(pullRequest), developSha);
     const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
@@ -773,7 +860,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(runDrainStep).toHaveBeenCalledTimes(1);
@@ -796,7 +883,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const reviewFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     runDrainStep.mockResolvedValue({ reviewFixesSha } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const targetSha = readSha(`origin/${DEVELOP_BRANCH}`);
@@ -870,7 +957,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const headSha = publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(getPrCalls("merge")).toStrictEqual([
@@ -899,7 +986,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return answer?.(args) ?? "";
     });
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -913,25 +1000,20 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${getWindowBranch(pullRequest)}`)).toBe(developSha);
   });
 
-  // A drain that left the newest merged window's findings open ended the run that merged it: the next run drains it again
-  // First, and nothing is cut over it while one is still open
-  test("holds the cut while the newest merged window's findings stay open", async () => {
+  // A drain that could not finish ended the run that merged it: the next run drains it again first, and nothing is cut
+  // Over it while its findings are still open
+  test("cuts nothing over the newest merged window while its drain cannot start", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([getWindowPullRequest(WindowPullRequestState.Merged)]);
-    const drainOutcome = {
-      kind: CycleOutcomeKind.Idle,
-      reason: "the drain could not start — the findings stay open",
-      retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
-    };
-    runDrainStep.mockResolvedValue({ outcome: drainOutcome, reviewFixesSha: undefined } satisfies DrainStepResult);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    runDrainStep.mockRejectedValue(new SessionUnstartedError());
 
-    expect(runDrainStep).toHaveBeenCalledTimes(1);
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
+    );
     expect(runDrainStep.mock.calls[0]?.[0]?.pullRequest).toBe(pullRequest);
-    expect(outcome).toStrictEqual(drainOutcome);
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
@@ -966,20 +1048,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
-  // A launcher that wrote nothing is retried as an outage is, a probe that tried as a failed attempt is: neither lifts
-  // With an event behind it
-  test.each([
-    [
-      "no session could start — the window waits for one that can drain its findings",
-      false,
-      OUTAGE_RETRY_DELAY_SECONDS,
-    ],
-    [
-      "the session probe exited non-zero — the window waits for a session that can drain its findings",
-      true,
-      ATTEMPT_RETRY_DELAY_SECONDS,
-    ],
-  ])("leaves a reviewed window open and wakes the cycle when %s", async (reason, isStarted, retriggerDelaySeconds) => {
+  // A launch that wrote nothing ends the pass where it stood, which the entry point retries as an outage: the window
+  // Merges only once a session can follow it
+  test("leaves a reviewed window open when the probe's launch writes nothing", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -987,12 +1058,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: false, isStarted });
+    runSession.mockRejectedValue(new SessionUnstartedError());
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
+    );
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  // A probe that tried is retried as a failed attempt is, with no event behind it
+  test("leaves a reviewed window open and wakes the cycle when the session probe exits non-zero", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(getWindowBranch(pullRequest), developSha);
+    answerGh(openPullRequests);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runSession.mockResolvedValue({ isEnded: false });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason,
-      retriggerDelaySeconds,
+      reason: "the session probe exited non-zero — the window waits for a session that can drain its findings",
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
       targetSha: undefined,
     });
     expect(getPrCalls("merge")).toHaveLength(0);
@@ -1040,6 +1129,37 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: Temporal.Duration.from({
+        milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
+      }).total("seconds"),
+      targetSha: undefined,
+    });
+    expect(getPrCalls("create")).toHaveLength(0);
+  });
+
+  // The hour is the one budget, so the plan's figure of windows open is no reason to sleep through the slot it gives back
+  test("wakes the cycle when the hour turns over with the plan's figure of windows open", async () => {
+    expect.hasAssertions();
+
+    const nowMs = Temporal.Duration.from({ minutes: 50 }).total("milliseconds");
+    vi.useFakeTimers({ now: nowMs, toFake: ["Date"] });
+    const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
+    publish(DEVELOP_BRANCH, configSha);
+    publish(getWindowBranch(REVIEWS_PER_HOUR - 1), configSha);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    const windowNumbers = Array.from({ length: REVIEWS_PER_HOUR }, (_value, index) => index);
+    answerGh(
+      windowNumbers.map((number) => ({
+        ...getWindowPullRequest(WindowPullRequestState.Open, number),
+        baseRefName: number === 0 ? MAIN_BRANCH : getWindowBranch(number - 1),
+      })),
+    );
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: windowNumbers.map((number) => `pull request #${number} — the review is running`).join("; "),
       retriggerDelaySeconds: Temporal.Duration.from({
         milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
       }).total("seconds"),
@@ -1098,12 +1218,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
     // The probe first, which asks only whether a session starts
-    runSession.mockResolvedValueOnce({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValueOnce({ isEnded: true });
     runSession.mockImplementation(() => {
       writeFileSync(join(getCwd(), TEST_FILENAME), " ");
       runGit(["add", TEST_FILENAME], getCwd());
       runGit(["commit", "--quiet", "--no-edit"], getCwd());
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     await runCycle({ ...baseInput, cwd: getCwd() });
     const foldedSha = readSha(`origin/${MAIN_BRANCH}`);
@@ -1127,7 +1247,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const headSha = publish(getWindowBranch(pullRequest), developSha);
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue(completedCheck);
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(getPrCalls("merge")).toStrictEqual([

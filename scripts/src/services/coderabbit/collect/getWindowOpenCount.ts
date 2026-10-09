@@ -1,13 +1,12 @@
 import type { WindowOpenCountInput } from "#src/models/coderabbit/collect/WindowOpenCountInput";
 
-// How many more window pull requests may open now. Each count is held under the hourly ceiling on its own, so the
-// Smaller room is the answer, and a window may sit on top of one already open only when the stack may carry it
+// How many more window pull requests may open now. The rolling hour is the one budget: a window opens as soon as a slot
+// Frees in it, however many are still open, since each spent its slot when it opened. A window may sit on top of one
+// Already open only when the stack may carry it
 export const getWindowOpenCount = ({
   isStackingAllowed,
   openCount,
   openedInLastHour,
   reviewsPerHour,
-}: WindowOpenCountInput): number => {
-  if (openCount > 0 && !isStackingAllowed) return 0;
-  return Math.max(0, Math.min(reviewsPerHour - openCount, reviewsPerHour - openedInLastHour));
-};
+}: WindowOpenCountInput): number =>
+  openCount > 0 && !isStackingAllowed ? 0 : Math.max(0, reviewsPerHour - openedInLastHour);

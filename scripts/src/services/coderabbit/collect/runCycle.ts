@@ -17,6 +17,7 @@ import { getOpeningWaitMs } from "#src/services/coderabbit/collect/getOpeningWai
 import { getPausedWindow } from "#src/services/coderabbit/collect/getPausedWindow";
 import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { getSoonestDelay } from "#src/services/coderabbit/collect/getSoonestDelay";
+import { getWindowFileCap } from "#src/services/coderabbit/collect/getWindowFileCap";
 import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
 import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFoldedWindowsMerged";
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
@@ -25,14 +26,16 @@ import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas"
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
 import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
+import { readRecutFileCaps } from "#src/services/coderabbit/collect/readRecutFileCaps";
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { retargetStrandedWindows } from "#src/services/coderabbit/collect/retargetStrandedWindows";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
+import { runRepairStep } from "#src/services/coderabbit/collect/runRepairStep";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
-import { REVIEW_FILE_CAP, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
+import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // An outcome carries the retrigger a hold lifting at a stated instant owes — a rate limit's deadline, the reset Claude
@@ -52,11 +55,11 @@ const checkIsStackingAllowedOver = (openStack: WindowPullRequest[], cwd: string)
 };
 
 // One pass: return, express, then the open stack — the release from `develop` while it is open, and each window's gate,
-// The bottom one merged and drained once its review completes — and then as many windows opened as the hourly ceiling
-// And the stacking guard allow, each cut from the top of the stack. Every input is a remote fact and every write is
-// Either a push or guarded by a predicate a later run re-evaluates, so any event may run this and a run against
-// Unchanged state does nothing. It returns its verdict rather than exiting, which is what makes a dry run one mode of
-// The same code path (docs: infra/review-collector).
+// The bottom one merged and drained once its review completes — then as many windows opened as the hourly ceiling and
+// The stacking guard allow, each cut from the top of the stack, and last the repair of a red `main`, which no window
+// Waits on. Every input is a remote fact and every write is either a push or guarded by a predicate a later run
+// Re-evaluates, so any event may run this and a run against unchanged state does nothing. It returns its verdict rather
+// Than exiting, which is what makes a dry run one mode of the same code path (docs: infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
@@ -106,12 +109,16 @@ export const runCycle = async ({
       getRetriggerDelaySeconds(sessionLimitResetMs - Date.now() + RETRIGGER_BUFFER_MS),
     );
   // The express lane, before the stack is looked at: a commit claiming no review reaches `main` directly and the fold
-  // Carries it to `develop` with the next window — and a red `main` its cut cannot pass is repaired by the lane's own cut
-  const expressed = await runExpressLane({ collectorSha, cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
+  // Carries it to `develop` with the next window
+  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
   if (expressed.outcome) return expressed.outcome;
   // A window closed without merging is a person's pause, as a closed release was: opening another over it would spend
-  // The slot they were withholding
-  const pausedWindow = getPausedWindow(windowHistory, openPullRequests);
+  // The slot they were withholding. A window a re-cut closed is no pause, since its replacement is owed at once
+  const recutFileCaps = readRecutFileCaps(windowHistory, viewerLogin);
+  const pausedWindow = getPausedWindow(
+    windowHistory.filter(({ number }) => !recutFileCaps.has(number)),
+    openPullRequests,
+  );
   if (pausedWindow)
     return getOutcome(
       CycleOutcomeKind.Idle,
@@ -125,7 +132,8 @@ export const runCycle = async ({
     );
 
   // The newest merged pull request is the review the next cut answers, so its findings are drained again on every run
-  // Until none is open. A drain that left one ended the run that merged it, so nothing above it may merge or open first
+  // Until none is open. A drain that could not finish ended the run that merged it, so nothing above it may merge or
+  // Open first
   let reviewFixesSha = branchShas.reviewFixesSha;
   const pendingPullRequest = getNewestMergedPullRequest([
     ...windowHistory,
@@ -144,7 +152,6 @@ export const runCycle = async ({
       reviewFixesSha,
       viewerLogin,
     });
-    if (pending.outcome) return pending.outcome;
     reviewFixesSha = pending.reviewFixesSha;
   }
 
@@ -172,7 +179,7 @@ export const runCycle = async ({
   // A named pull request is drained when no window is open, as the merged release was: its findings lead the next cut
   if (namedPullRequest !== undefined && stack.length === 0) {
     const currentShas = readBranchShas(cwd);
-    const drain = await drainWindow({
+    await drainWindow({
       collectorSha,
       cwd,
       developSha,
@@ -183,13 +190,6 @@ export const runCycle = async ({
       reviewFixesSha: currentShas.reviewFixesSha,
       viewerLogin,
     });
-    if (drain.outcome)
-      return getOutcome(
-        drain.outcome.kind,
-        drain.outcome.reason,
-        getSoonestDelay(walked.retriggerDelaySeconds, drain.outcome.retriggerDelaySeconds),
-        drain.outcome.targetSha,
-      );
     drainedPullRequests.push(namedPullRequest);
   }
 
@@ -209,25 +209,26 @@ export const runCycle = async ({
   // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
   // Reach the remote ends the openings, and what the openings returned is the run's verdict
   let openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
-  if (walked.drainedPullRequests.length > 0) {
-    // The walk merged something, so the stroke is asked again: it moves `develop` only once the stack is empty
-    const currentShas = readBranchShas(cwd);
-    const followed = runReturnStroke({
-      cwd,
-      developSha: currentShas.developSha,
-      isDryRun,
-      isStackOpen: openedStack.length > 0,
-      mainSha: currentShas.mainSha,
-    });
-    if (followed.outcome)
-      return getOutcome(
-        followed.outcome.kind,
-        followed.outcome.reason,
-        walked.retriggerDelaySeconds,
-        followed.outcome.targetSha,
-      );
-  }
+  // The stroke is asked again, since the walk may have merged the stack or a re-cut closed it: it moves `develop` only
+  // Once the stack is empty
+  const walkedShas = readBranchShas(cwd);
+  const followed = runReturnStroke({
+    cwd,
+    developSha: walkedShas.developSha,
+    isDryRun,
+    isStackOpen: openedStack.length > 0,
+    mainSha: walkedShas.mainSha,
+  });
+  if (followed.outcome)
+    return getOutcome(
+      followed.outcome.kind,
+      followed.outcome.reason,
+      walked.retriggerDelaySeconds,
+      followed.outcome.targetSha,
+    );
   let history = readWindowPullRequests(WindowPullRequestListState.All);
+  // A re-cut in the walk closed windows whose marker carries the cap their replacement is cut to
+  const openingFileCaps = readRecutFileCaps(history, viewerLogin);
   let openingOutcome: CycleOutcome | undefined;
   while (
     getWindowOpenCount({
@@ -251,7 +252,7 @@ export const runCycle = async ({
       cwd,
       drainedPullRequests: answeredPullRequests,
       expressHeldCount: expressed.heldShas.length,
-      fileCap: REVIEW_FILE_CAP,
+      fileCap: getWindowFileCap(history, openingFileCaps),
       isDryRun,
       openPullRequests: openedStack,
       viewerLogin,
@@ -269,13 +270,17 @@ export const runCycle = async ({
   }
 
   // The ceiling counts openings by when they were made, so it turns over on the clock with no event behind it: while it
-  // Is what keeps the stack below the plan's figure, the run wakes again once the oldest opening ages out of the hour
+  // Holds, the run wakes again once the oldest opening ages out of the hour, however many windows are open then
   const nowMs = Date.now();
   const ceilingDelaySeconds =
-    getOpenedInLastHour(history, nowMs) >= REVIEWS_PER_HOUR && openedStack.length < REVIEWS_PER_HOUR
+    getOpenedInLastHour(history, nowMs) >= REVIEWS_PER_HOUR
       ? getRetriggerDelaySeconds(getOpeningWaitMs(history, nowMs) + RETRIGGER_BUFFER_MS)
       : undefined;
   const retriggerDelaySeconds = getSoonestDelay(walked.retriggerDelaySeconds, ceilingDelaySeconds);
+  // A red `main` last, on the remote as the walk and the openings left it: its repair verdict wins, carrying the wake
+  // The stack is owed
+  const repaired = await runRepairStep({ collectorSha, cwd, isDryRun, viewerLogin });
+  if (repaired) return getOutcome(repaired.kind, repaired.reason, retriggerDelaySeconds, repaired.targetSha);
   if (openingOutcome === undefined || openingOutcome.kind === CycleOutcomeKind.Idle) {
     const idleReasons = [...walked.blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
     return getOutcome(
