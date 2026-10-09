@@ -72,11 +72,18 @@ const onMapPointerDown = (event: PointerEvent) => {
   isDragged = false;
   pressStart = { x: event.clientX, y: event.clientY };
   pointer = pressStart;
-  map.value?.setPointerCapture(event.pointerId);
 };
 const onMapPointerMove = (event: PointerEvent) => {
   if (!isPanning || !map.value) return;
-  isDragged ||= Math.hypot(event.clientX - pressStart.x, event.clientY - pressStart.y) > MAP_DRAG_THRESHOLD_PIXELS;
+  // The pointer is captured only once the press is a drag, since a captured press's click lands on the map rather than
+  // On the landmark it was made on
+  if (
+    !isDragged &&
+    Math.hypot(event.clientX - pressStart.x, event.clientY - pressStart.y) > MAP_DRAG_THRESHOLD_PIXELS
+  ) {
+    isDragged = true;
+    map.value.setPointerCapture(event.pointerId);
+  }
   const { height, width } = map.value.getBoundingClientRect();
   // The map is drawn over the screen's larger side, so a pixel is that many metres of the drawn width
   const metresPerPixel = metres.value / Math.max(width, height);
