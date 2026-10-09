@@ -10,7 +10,7 @@ lint, format and the whole suite. The session watches its push's run in the back
 or lint job itself, in a commit behind the push (`AGENTS.md`, "Finishing a change", step 6); only a red that
 reaches `main` is the collector's repair — its regenerators first, then a session
 (`apps/web/content/docs/infra/review-collector/repair.md`). The pre-commit hook formats what
-is staged (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
+is staged and lints what you stage; a red lint blocks the commit (`.githooks/pre-commit`). The command and its directory are the `package-scripts` skill's; this page is
 which checks a session runs and how it waits on them.
 
 ## Settled — do not re-propose

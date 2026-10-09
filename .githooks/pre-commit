@@ -4,14 +4,54 @@
 set -e
 export GIT_LITERAL_PATHSPECS=1
 STAGED_FILE=$(mktemp)
-trap 'rm -f "$STAGED_FILE"' EXIT
+LINT_FILE=$(mktemp)
+OWNER_FILE=$(mktemp)
+trap 'rm -f "$STAGED_FILE" "$LINT_FILE" "$OWNER_FILE"' EXIT
 git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE"
 [ -s "$STAGED_FILE" ] || exit 0
 # A worktree with no install of its own borrows the main checkout's tools: pnpm there would install the whole workspace first
 TOOLS_ROOT=.
-[ -e ./node_modules/.bin/oxfmt ] || TOOLS_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+OWN_INSTALL=1
+[ -e ./node_modules/.bin/oxfmt ] || { TOOLS_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)"); OWN_INSTALL=; }
+TOOLS_ROOT=$(cd "$TOOLS_ROOT" && pwd)
 # A staged file may import a file the commit does not hold, which the checkout built from it could never resolve
 node "$TOOLS_ROOT/scripts/src/hooks/stagedImports/index.ts"
 xargs -0 git ls-files -s -- < "$STAGED_FILE" > "$(git rev-parse --git-path "pre-commit-entries-$PPID")"
 xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxfmt" --config "$TOOLS_ROOT/oxfmt.config.ts" --no-error-on-unmatched-pattern < "$STAGED_FILE" || true
+# CI's Lint job reads the formatted copies this hook is about to commit, so the lint reads them too. oxlint takes every
+# script and component at once; ESLint runs from the package whose own config owns each file, since the root config
+# ignores apps, packages and scripts. The groups are independent and run side by side. A warning passes: only an error fails
+lintFailed=
+lintPids=
+tr '\0' '\n' < "$STAGED_FILE" | grep -E '\.(ts|js|mjs|cjs|vue)$' > "$LINT_FILE" || true
+if [ -s "$LINT_FILE" ]; then
+  if [ -n "$OWN_INSTALL" ]; then
+    xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/vp" lint --disable-nested-config < "$LINT_FILE" &
+  else
+    # The worktree's own vite and oxlint configs import packages it has not installed, so the main install's oxlint reads
+    # the main checkout's config, and finds its type-aware linter on the PATH the main install provides
+    PATH="$TOOLS_ROOT/node_modules/.bin:$PATH" xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/oxlint" -c "$TOOLS_ROOT/oxlint.config.ts" < "$LINT_FILE" &
+  fi
+  lintPids="$lintPids $!"
+  if [ -n "$OWN_INSTALL" ]; then
+    while IFS= read -r file; do
+      dir=$(dirname "$file")
+      while [ "$dir" != . ] && ! grep -q '"lint":' "$dir/package.json" 2>/dev/null; do dir=$(dirname "$dir"); done
+      echo "$dir $file"
+    done < "$LINT_FILE" > "$OWNER_FILE"
+    for dir in $(cut -d ' ' -f 1 "$OWNER_FILE" | sort -u); do
+      files=$(awk -v directory="$dir" '$1 == directory { path = $2; if (directory != ".") path = substr(path, length(directory) + 2); print path }' "$OWNER_FILE")
+      (cd "$dir" && printf '%s\n' "$files" | xargs -d '\n' -n 50 "$TOOLS_ROOT/node_modules/.bin/eslint") &
+      lintPids="$lintPids $!"
+    done
+  else
+    # ESLint's config imports the workspace's own packages and the app's generated Nuxt config, which only this worktree's install holds
+    echo "pre-commit: ESLint skipped, this worktree has no install to load its config from. The push's Lint job runs it" >&2
+  fi
+  for pid in $lintPids; do wait "$pid" || lintFailed=1; done
+fi
+if [ -n "$lintFailed" ]; then
+  echo "pre-commit: the staged files fail lint, which CI's Lint job would reject. Fix the errors above, stage the fixes and commit again" >&2
+  exit 1
+fi
 xargs -0 -n 50 git add < "$STAGED_FILE"
