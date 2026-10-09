@@ -9,6 +9,7 @@ import { checkIsExpeditionReturned } from "#src/services/expedition/checkIsExped
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The state after a character's returned expedition is claimed at `now`: each item of its duration drawn to a count in
@@ -31,15 +32,13 @@ export const claimExpedition = (
     throw new InvalidOperationError(Operation.Read, String(place.id), `offers no ${expedition.hours} hours`);
   let claimedInventory = inventory;
   let moraCount = 0;
-  for (const { itemId, maxCount, minCount } of duration.items) {
-    const count = minCount + Math.floor(random() * (maxCount - minCount + 1));
-    if (itemId === MORA_ITEM_ID) moraCount += count;
+  for (const { count, id } of drawRewardItems(duration.items, random))
+    if (id === MORA_ITEM_ID) moraCount += count;
     else {
-      const addition = addInventoryItem(claimedInventory, getItemDefinition(itemId, names), count);
+      const addition = addInventoryItem(claimedInventory, getItemDefinition(id, names), count);
       if (addition.overflow > 0) return undefined;
       claimedInventory = addition.inventory;
     }
-  }
   return {
     expeditions: expeditions.filter((expeditionAway) => expeditionAway.characterId !== characterId),
     inventory: claimedInventory,
