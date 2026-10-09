@@ -11,9 +11,12 @@ on:
 permissions:
   contents: read
 
+# A newer push cancels an older run, except on `ai/queue`: the sessions push it every few minutes, longer than one run
+# takes, so cancelling left no run on it to finish. There the running run finishes and only the newest waiting one is kept,
+# so the queue gets a verdict about once a run
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/ai/queue' }}
 
 jobs:
   # Shared with 🏎️ Bench; the job id stays `build-packages` so every `needs:` below reads unchanged
