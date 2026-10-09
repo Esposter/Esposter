@@ -1,3 +1,4 @@
+import DevelopDeploymentOrigin from "#src/azure/constants/DevelopDeploymentOrigin";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import * as azure_native from "@pulumi/azure-native";
@@ -15,7 +16,7 @@ export const devstesposter001Properties: azure_native.storage.BlobServicePropert
           {
             allowedHeaders: ["*"],
             allowedMethods: ["GET", "PUT"],
-            allowedOrigins: ["http://localhost:3000"],
+            allowedOrigins: ["http://localhost:3000", DevelopDeploymentOrigin],
             exposedHeaders: [""],
             maxAgeInSeconds: 86_400,
           },

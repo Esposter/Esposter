@@ -1,6 +1,7 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
 import AzureCustomDomainVerificationId from "#src/azure/constants/AzureCustomDomainVerificationId";
+import DevelopDeploymentOrigin from "#src/azure/constants/DevelopDeploymentOrigin";
 import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/devAspEsposterAe001";
@@ -79,7 +80,7 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
         { name: "AzureWebJobsStorage__credential", value: "managedidentity" },
         { name: "AzureWebJobsStorage__queueServiceUri", value: "https://devstesposter001.queue.core.windows.net" },
         { name: "AzureWebJobsStorage__tableServiceUri", value: "https://devstesposter001.table.core.windows.net" },
-        { name: "BASE_URL", value: "https://esposter-develop.up.railway.app" },
+        { name: "BASE_URL", value: DevelopDeploymentOrigin },
         { name: "DATABASE_URL", value: configuration.requireSecret("devFuncEsposter001DatabaseUrl") },
         { name: "FUNCTIONS_EXTENSION_VERSION", value: "~4" },
         { name: "FUNCTIONS_WORKER_RUNTIME", value: "node" },
