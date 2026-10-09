@@ -13,6 +13,7 @@ import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
+import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { BannerKindFateMap } from "#src/services/wish/BannerKindFateMap";
 import { BannerKindGameTextKeyMap } from "#src/services/wish/BannerKindGameTextKeyMap";
 import { buyWishFate } from "#src/services/wish/buyWishFate";
@@ -27,7 +28,7 @@ import { createBanners } from "#src/services/wish/createBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
-import { BannerKind, BannerKinds, GameScreen, ItemCategory, WishScreen } from "genshin-interface";
+import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -142,7 +143,7 @@ const wish = (count: number) => {
     if (item.kind === WishItemKind.Weapon)
       nextInventory = addInventoryItem(
         nextInventory,
-        { category: ItemCategory.Weapon, id: item.id, name: item.name, rank: 0, rarity: item.rarity, stackLimit: 1 },
+        toWeaponDefinition({ id: item.id, name: item.name, rarity: item.rarity }),
         1,
       ).inventory;
   // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy
