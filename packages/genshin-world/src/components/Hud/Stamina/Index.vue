@@ -17,8 +17,9 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The party's stamina, a curved bar beside the character wherever it stands on the screen, filled from its foot:
-       Shown while the pool is spent or refilling, faded out once it is full, and flashing once it runs low -->
+  <!-- The party's stamina, an arc round the character's right wherever it stands on the screen, filled from its foot:
+       Shown while the pool is spent or refilling, faded out once it is full, and flashing once it runs low. The arc is
+       Drawn round the pivot itself, its view's origin, so it rings the character as the game's does -->
   <div
     class="stamina-meter"
     :class="{ low: frame.stamina < maxStamina * STAMINA_METER_LOW_SHARE, shown: frame.stamina < maxStamina }"
@@ -29,11 +30,11 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
     role="meter"
     :style="{ '--pivot-x': frame.pivotX, '--pivot-y': frame.pivotY }"
   >
-    <svg viewBox="0 0 32 120" aria-hidden="true">
-      <path class="track" d="M 4 116 A 80 80 0 0 0 4 4" />
+    <svg viewBox="89 -52 20 104" aria-hidden="true">
+      <path class="track" d="M 93 47.6 A 104.5 104.5 0 0 0 93 -47.6" />
       <path
         class="fill"
-        d="M 4 116 A 80 80 0 0 0 4 4"
+        d="M 93 47.6 A 104.5 104.5 0 0 0 93 -47.6"
         pathLength="1"
         :stroke-dasharray="`${frame.stamina / maxStamina} 1`"
       />
@@ -42,17 +43,19 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
 </template>
 
 <style scoped>
-/* Provisional: the meter's place beside the pivot, its size, arc, colours, flash and fade, measured off a recording of
-   The English PC client's meter draining and refilling */
+/* The arc as `hud-stamina-climb` shows it on the English PC client at 1080 high, its centreline fitted to a circle of
+   Radius 104.5 from 27.1 degrees above its centre to 27.1 below, 7 wide, its view's origin that circle's centre, which
+   Falls on the character. Provisional: that centre being the pivot, the flash and the fade, read off a recording of the
+   Meter refilling until it fades */
 .stamina-meter {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--unit) * 32);
-  height: calc(var(--unit) * 120);
+  width: calc(var(--unit) * 20);
+  height: calc(var(--unit) * 104);
   opacity: 0;
   transition: opacity 300ms ease-out;
-  translate: calc(var(--pivot-x) * 100cqw + var(--unit) * 64) calc(var(--pivot-y) * 100cqh - 50%);
+  translate: calc(var(--pivot-x) * 100cqw + var(--unit) * 89) calc(var(--pivot-y) * 100cqh - var(--unit) * 52);
 }
 
 .shown {
@@ -65,15 +68,17 @@ const { frame, gameText, maxStamina } = defineProps<Props>();
   width: 100%;
   height: 100%;
   fill: none;
-  stroke-width: 6;
+  stroke-width: 7;
 }
 
+/* The drained part a dark red at 0.55, fitted to the track over the white rock, the grass and the sky it crosses, and
+   The fill the yellow of its core's 144 pixels on the same frame */
 .track {
-  stroke: rgb(0 0 0 / 0.35);
+  stroke: rgb(86 8 0 / 0.55);
 }
 
 .fill {
-  stroke: #ffd43b;
+  stroke: #eec20b;
 }
 
 .low .fill {

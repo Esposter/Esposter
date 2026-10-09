@@ -13,6 +13,7 @@ import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
 
+import HudActions from "#src/components/Hud/Actions/Index.vue";
 import HudHealth from "#src/components/Hud/Health/Index.vue";
 import HudMinimap from "#src/components/Hud/Minimap/Index.vue";
 import HudPaimonButton from "#src/components/Hud/PaimonButton/Index.vue";
@@ -22,7 +23,6 @@ import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
-import { useMediaQuery } from "@vueuse/core";
 import { STAMINA_MAX } from "genshin-engine";
 import { GameRect, GameScreen } from "genshin-interface";
 
@@ -39,6 +39,9 @@ interface Props {
   input: Input;
   // The HUD's pieces' rects as the game's tree places them, read before the world opens
   interfaceRects: HudInterfaceRects;
+  // Whether the main pointer is a finger, which has no keys or mouse to move, look and act with, so the touch controls
+  // And the touch layout's action buttons are drawn
+  isTouch: boolean;
   landmarks: Landmark[];
   // The field member's HP, level and cooldowns, hidden until the character on the field is known
   member?: HudMember;
@@ -65,6 +68,7 @@ const {
   gameText,
   input,
   interfaceRects,
+  isTouch,
   landmarks,
   member,
   nameTextMap,
@@ -74,18 +78,17 @@ const {
   trackedQuest,
 } = defineProps<Props>();
 const emit = defineEmits<{ map: []; menu: [] }>();
-// A device whose main pointer is a finger has no keys or mouse to move and look with, so the touch controls are drawn
-const isTouch = useMediaQuery("(pointer: coarse)");
 </script>
 
 <template>
   <!-- The heads-up display over the world: only the pieces the world backs, each in its place. The Paimon button and
        The minimap in the top left with the quest tracker under them, the party down the right, the member on the
        Field's health at the bottom's middle, the skill and burst at the bottom right, the stamina meter where it places
-       Itself, and on a touch screen the touch controls under them all. Everything between the pieces lets the pointer
-       Through to the world, and a press on a piece stays the piece's, never reaching the world's input as an attack -->
+       Itself, and on a touch screen the touch layout's action buttons beside the skill and burst and the touch controls
+       Under them all. Everything between the pieces lets the pointer through to the world, and a press on a piece stays
+       The piece's, never reaching the world's input as an attack -->
   <GameScreen class="hud" @mousedown.stop>
-    <HudTouch v-if="isTouch" :game-text :input />
+    <HudTouch v-if="isTouch" :input />
     <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
          inside its game parent's -->
     <GameRect #default="{ rect: hudRect }" :rect="interfaceRects[HudInterfaceRectName.MainPage]">
@@ -116,22 +119,25 @@ const isTouch = useMediaQuery("(pointer: coarse)");
       <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.HealthBarContainer]">
         <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />
       </GameRect>
-      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.ActionButtons]">
+      <GameRect v-if="isTouch || member" :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.ActionButtons]">
+        <HudActions v-if="isTouch" :game-text :input :weapon-type="member?.weaponType" />
         <HudSkills
+          v-if="member"
           :burst-cooldown="member.burstCooldown"
           :burst-cooldown-seconds="member.burstCooldownSeconds"
           :energy="member.energy"
           :energy-cost="member.energyCost"
           :game-text
           :input
+          :is-touch
           :skill-cooldown="member.skillCooldown"
           :skill-cooldown-seconds="member.skillCooldownSeconds"
         />
       </GameRect>
-      <GameRect :parent="hudRect" :rect="interfaceRects[HudInterfaceRectName.StaminaBar]">
-        <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
-      </GameRect>
     </GameRect>
+    <!-- The stamina meter stands on the screen itself rather than in its rect of the tree, which sits at the screen's
+         Middle, since the recordings show it beside the character wherever the character stands -->
+    <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
     <slot name="prompts" />
   </GameScreen>
 </template>
