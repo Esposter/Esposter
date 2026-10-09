@@ -2,8 +2,8 @@ import type { GetPermissions } from "#src/models/room/rbac/GetPermissions";
 import type { Database } from "@esposter/db-schema";
 
 import {
-  RoomPermission,
   roomMemberPermissionsInMessage,
+  RoomPermission,
   roomRolesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
