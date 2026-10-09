@@ -22,6 +22,7 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { skipStops } from "#src/services/coderabbit/collect/skipStops";
 import { runGit } from "#src/services/shared/runGit";
+import { getResult, noop } from "@esposter/shared";
 
 // Whether the replay carries every commit the source owed — by patch id, or by a copy naming it as its original.
 // A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
@@ -88,7 +89,7 @@ export const replayOwed = async ({
 
   const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
   const conflictedPaths = readUnmergedPaths(cwd);
-  const { attempts, recordFailure } = readAttempts(conflictSha);
+  const { attempts, recordAttempt, recordFailure } = readAttempts(conflictSha);
   const prompt = getSyncPrompt({ branch, conflictedPaths, conflictSha, targetBranch });
   const { isEnded } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Sync], prompt });
   // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run
@@ -100,5 +101,12 @@ export const replayOwed = async ({
       `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
+  // The resolution reaches the remote only with the rewrite's push, and a refusal on the way there — a park's push, or
+  // The rewrite's own — throws it away: so it is counted now, and a run that meets the same commit again pays for it
+  // Against the cap. A rewrite that lands carries the commit under a new sha, which this count does not follow. The
+  // Record is best-effort, since a post that failed must not throw away the resolution it counts
+  getResult(() => {
+    recordAttempt(`resolved the conflict ${conflictSha} brings to ${targetBranch}`);
+  }).match(noop, console.error);
   return ReplayOutcome.Replayed;
 };

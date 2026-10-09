@@ -96,6 +96,18 @@ describe(syncFixes, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     expect(readSha(`origin/${REVIEW_FIXES_BRANCH}`)).toBe(result.owingFixesSha);
     expect(runGit(["show", `${result.owingFixesSha}:${filePath}`], getCwd())).toBe(resolvedContent);
+    // Counted before the push that carries the resolution, so a refusal there costs the resolver a turn rather than
+    // Handing the next run the same session for nothing
+    expect(runGh.mock.calls.filter(([args]) => args.includes("-f"))).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${owingFixesSha}/comments`,
+          "-f",
+          `body=${getMarker(SYNC_FAILED_MARKER, owingFixesSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP}: resolved the conflict ${owingFixesSha} brings to ${DEVELOP_BRANCH}`,
+        ],
+      ],
+    ]);
   });
 
   test("ends a dry run idle on a conflict, the fixes where they were", async () => {

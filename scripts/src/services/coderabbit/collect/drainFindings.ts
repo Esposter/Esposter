@@ -23,11 +23,13 @@ import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnswer
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFindingSeverities } from "#src/services/coderabbit/collect/readFindingSeverities";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readReviewedFilePaths } from "#src/services/coderabbit/collect/readReviewedFilePaths";
 import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { GITHUB_OUTAGE_REGEX, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { withFinalizerAsync } from "@esposter/shared";
+import { getResult, noop, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -108,16 +110,36 @@ export const drainFindings = async ({
       // Pushed whether or not the drain answered everything: what it did fix is the next attempt's answered set
       if (headSha === baseSha) console.info("the drain produced no commit");
       else {
-        // An empty expected sha leases on the branch not existing, which is the first drain's case
-        runGit([
-          "push",
-          `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
-          "origin",
-          `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
-        ]);
+        // An empty expected sha leases on the branch not existing, which is the first drain's case. A refusal throws
+        // This session's fixes away, so it is counted as this attempt's failure before the run ends — uncounted,
+        // Every run would pay for the same drain again with nothing to cap it. A server error is an outage, which
+        // Counts nothing
+        getResult(() =>
+          runGit([
+            "push",
+            `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
+            "origin",
+            `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
+          ]),
+        ).match(noop, (error) => {
+          if (GITHUB_OUTAGE_REGEX.test(error.message)) throw error;
+          recordFailure(`drain review ${newestReviewId}`, `made fixes the push to ${REVIEW_FIXES_BRANCH} refused`);
+          throw new AttemptFailedError(`the push of ${REVIEW_FIXES_BRANCH} was refused: ${error.message}`);
+        });
         console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
       }
 
+      // A fix alone over the bot's cap is one no window can carry: the port parks it, its finding reads as open again,
+      // And a drain that wrote the same fix again would be paid for without end. It is pushed with the rest and
+      // Counted, so past the cap its findings are deferred
+      const oversizedShas = commits
+        .map(({ sha }) => sha)
+        .filter((sha) => readReviewedFilePaths(baseSha, `${sha}^..${sha}`).length > REVIEW_FILE_CAP);
+      if (oversizedShas.length > 0) {
+        const detail = `left ${oversizedShas.join(", ")} alone over the cap of ${REVIEW_FILE_CAP} files`;
+        recordFailure(`drain review ${newestReviewId}`, detail);
+        throw new AttemptFailedError(`the drain ${detail}`);
+      }
       const unanswered = getUnansweredFindings({ ...verdicts, commits, ...drainInput });
       if (unanswered.length > 0) {
         const detail = `left ${unanswered.join(", ")} unanswered`;

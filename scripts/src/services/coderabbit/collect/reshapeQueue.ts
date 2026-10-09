@@ -24,6 +24,7 @@ import { readWindowFilePaths } from "#src/services/coderabbit/collect/readWindow
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
+import { getResult, noop } from "@esposter/shared";
 
 // The queue never holds on the cap: the first owed commit that adds more files than a window has room for
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
@@ -52,7 +53,8 @@ export const reshapeQueue = async ({
   const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   // The room is what the cap leaves beside the fixes and pending commits every window carries ahead of the queue:
   // A commit that fits the cap alone but not beside them is held behind every window a review's findings lead, and
-  // The queue ships nothing but fixes. Fixes that fill the cap alone are the port's failure, not a shape to ask for
+  // The queue ships nothing but fixes. Fixes that fill the cap alone are cut over windows of their own, not a shape to
+  // Ask for
   const windowPaths = new Set(readWindowFilePaths(baseSha, cwd, targetSha));
   const roomFileCount = fileCap - windowPaths.size;
   if (roomFileCount <= 0) return false;
@@ -67,7 +69,7 @@ export const reshapeQueue = async ({
   if (sha === undefined) return false;
 
   const fileCount = readCommitFilePaths(sha).length;
-  const { attempts, recordFailure } = readCommitAttempts({
+  const { attempts, recordAttempt, recordFailure } = readCommitAttempts({
     collectorSha,
     marker: RESHAPE_FAILED_MARKER,
     sha,
@@ -127,5 +129,10 @@ export const reshapeQueue = async ({
   }
   const partCount = getNonEmptyLines(runGit(["rev-list", `${sha}^..HEAD`], cwd)).length - restShas.length;
   console.info(`reshape: ${sha} became ${partCount} commits`);
+  // Counted now and best-effort, as a resolution is (`replayOwed`): the parts reach the remote only with the rewrite's
+  // Push, and a refusal before it would hand the next run the same commit to pay a session for again
+  getResult(() => {
+    recordAttempt(`reshaped ${sha} into ${partCount} commits`);
+  }).match(noop, console.error);
   return true;
 };
