@@ -4,26 +4,27 @@ import { INITIAL_WISH_PITY } from "#src/services/wish/constants";
 import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
-const LANDMARK_ID = "1";
-const OTHER_LANDMARK_ID = "2";
-const QUEST_ID = "3";
-const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
-const ACCOUNT_REFILL_COUNT = 2;
-const GUEST_REFILL_COUNT = 4;
-const ACHIEVEMENT_ID = "5";
-const EARLIER_FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
-const LATER_FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
-const ACCOUNT_COUNT = 1;
-const GUEST_COUNT = 3;
-const ACCOUNT_EXP = 100;
-const GUEST_EXP = 200;
-const CHARACTER_ID = "6";
-const ACCOUNT_LEVEL = 1;
-const GUEST_LEVEL = 2;
-const WISH_KIND = BannerKind.Standard;
-const FATE_POINTS = 1;
-
 describe(mergeGenshinSave, () => {
+  const LANDMARK_ID = "1";
+  const OTHER_LANDMARK_ID = "2";
+  const QUEST_ID = "3";
+  const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
+  const OTHER_REFILL_DAY = Temporal.PlainDate.from(REFILL_DAY).add({ days: 1 }).toString();
+  const ACCOUNT_REFILL_COUNT = 2;
+  const GUEST_REFILL_COUNT = 4;
+  const ACHIEVEMENT_ID = "5";
+  const EARLIER_FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
+  const LATER_FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
+  const ACCOUNT_COUNT = 1;
+  const GUEST_COUNT = 3;
+  const ACCOUNT_EXP = 100;
+  const GUEST_EXP = 200;
+  const CHARACTER_ID = "6";
+  const ACCOUNT_LEVEL = 1;
+  const GUEST_LEVEL = 2;
+  const WISH_KIND = BannerKind.Standard;
+  const FATE_POINTS = 1;
+
   test("unions the landmarks", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [LANDMARK_ID] };
@@ -76,7 +77,11 @@ describe(mergeGenshinSave, () => {
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      wallet: { ...EMPTY_GENSHIN_SAVE.wallet, primogemResinRefillCount: GUEST_REFILL_COUNT },
+      wallet: {
+        ...EMPTY_GENSHIN_SAVE.wallet,
+        primogemResinRefillCount: GUEST_REFILL_COUNT,
+        primogemResinRefillDay: OTHER_REFILL_DAY,
+      },
     };
 
     expect(mergeGenshinSave(account, guest).wallet.primogemResinRefillCount).toBe(ACCOUNT_REFILL_COUNT);
