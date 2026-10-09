@@ -152,6 +152,7 @@ catalog:
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
   "@wasm-audio-decoders/ogg-vorbis": ^0.1.20
+  "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
   apexcharts: ^7.8.0

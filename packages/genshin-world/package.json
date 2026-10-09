@@ -80,6 +80,7 @@
     "@types/node": "catalog:",
     "@types/three": "catalog:",
     "@vitest/browser-playwright": "catalog:",
+    "@webgpu/types": "catalog:",
     "playwright": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:",
