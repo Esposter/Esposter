@@ -118,9 +118,12 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
 
   download(): Promise<BlobDownloadResponseParsed> {
     const buffer = this.container.get(this.name);
+    if (!buffer) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
+    // The ETag the body was stored under, answered by the same response as the body, as the service does
     return Promise.resolve({
-      _response: createMockResponse(buffer ? 200 : 404),
-      readableStreamBody: buffer ? Readable.from(buffer) : undefined,
+      _response: createMockResponse(200),
+      etag: readMockBlobDates(this.containerName, this.name).etag,
+      readableStreamBody: Readable.from(buffer),
     });
   }
 

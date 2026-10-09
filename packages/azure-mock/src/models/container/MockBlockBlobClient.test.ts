@@ -1,3 +1,5 @@
+import type { BlobDownloadResponseParsed } from "@azure/storage-blob";
+
 import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MOCK_BLOB_SEEDED_PROPERTIES } from "#src/services/container/constants";
@@ -5,7 +7,12 @@ import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetada
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerBlobMetadataDatabase } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, assert, describe, expect, test } from "vitest";
+
+const readDownloadBody = async ({ readableStreamBody }: BlobDownloadResponseParsed) => {
+  assert.exists(readableStreamBody);
+  return Buffer.concat(await Array.fromAsync(readableStreamBody, (chunk) => Buffer.from(chunk))).toString();
+};
 
 describe(MockBlockBlobClient, () => {
   const blobName = "blobName";
@@ -32,6 +39,21 @@ describe(MockBlockBlobClient, () => {
     await client[method]();
 
     expect(readMockBlobMetadata(containerName, blobName)).toBeUndefined();
+  });
+
+  // A download answers the ETag and the body of one response, so a caller reading both pairs each body with the ETag its
+  // Write minted, and a later write replaces the two together
+  test("answers the ETag and the body of one download, which a later write replaces together", async () => {
+    expect.hasAssertions();
+
+    const client = getClient();
+    const { etag: firstEtag } = await client.upload("first", 5);
+    const firstDownload = await client.download();
+    const { etag: secondEtag } = await client.upload("second", 6);
+    const secondDownload = await client.download();
+
+    expect([firstDownload.etag, await readDownloadBody(firstDownload)]).toStrictEqual([firstEtag, "first"]);
+    expect([secondDownload.etag, await readDownloadBody(secondDownload)]).toStrictEqual([secondEtag, "second"]);
   });
 
   // A seeded blob reports the seeded etag, so a caller that read one can claim it exactly once: the write mints a
