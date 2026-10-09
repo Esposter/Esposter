@@ -443,7 +443,7 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.Activate)
-              unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, interactable.id]);
+              unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
             else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               screenKind = ScreenKind.Dialogue;

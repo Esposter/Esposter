@@ -14,20 +14,20 @@ import { ChestKind } from "genshin-world";
 // Point on a layer under the ground is left out for now, and so is one in an area no region is mapped to, each counted
 // So the report says what was not placed. The other labels on the map are none of its business
 export const placeChests = (points: readonly InteractiveMapPoint[], transform: SimilarityTransform): ChestPlacement => {
-  const kindByLabelId = new Map(Object.values(ChestKind).map((kind) => [ChestKindLabelIdMap[kind], kind]));
-  const regionByAreaId = new Map(
+  const labelIdKindMap = new Map(Object.values(ChestKind).map((kind) => [ChestKindLabelIdMap[kind], kind]));
+  const areaIdRegionMap = new Map(
     Object.entries(InteractiveMapRegionMap).map(([region, { areaId }]) => [areaId, region]),
   );
   const regionPlaces = new Map<string, ChestPlace[]>();
   const placement: ChestPlacement = { places: {}, skippedUnderground: 0, skippedUnmapped: 0 };
   for (const point of points) {
-    const kind = kindByLabelId.get(point.label_id);
+    const kind = labelIdKindMap.get(point.label_id);
     if (kind === undefined) continue;
     if (point.z_level !== GROUND_LAYER) {
       placement.skippedUnderground++;
       continue;
     }
-    const region = regionByAreaId.get(point.area_id);
+    const region = areaIdRegionMap.get(point.area_id);
     if (region === undefined) {
       placement.skippedUnmapped++;
       continue;
