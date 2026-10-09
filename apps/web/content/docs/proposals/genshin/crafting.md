@@ -1,6 +1,6 @@
 ---
 title: Crafting
-description: Proposal — the crafting bench's parts still to build: the characters' crafting talents, keyed by character, its screen, its place in the city, and the gadgets from their wiki instructions. The recipes, their rules and the instruction unlocks are built, as the crafting page records.
+description: Proposal — the crafting bench's parts still to build: its place in the city, the regional talent materials of two characters, and the gadgets from their wiki instructions. The recipes, their rules, the instruction unlocks, the characters' crafting talents and the screen with its tabs are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -14,7 +14,7 @@ touches:
 
 # Crafting
 
-The crafting bench, which the game calls alchemy, turns materials into better ones: three of a tier into one of the next, potions and baits from ingredients, gadgets from their instructions, and Condensed Resin from Original Resin. Most of what levels a character, a talent or a weapon passes through it at some tier. Its recipes, their rules and the instructions that open them are [built](/docs/genshin/crafting). What is left is the bench's place in the world and its screen, the gadgets, and the talents. It spends from the [inventory](/docs/genshin/inventory)'s bag and wallet, and takes Condensed Resin's resin from the [Original Resin](/docs/genshin/original-resin) wallet.
+The crafting bench, which the game calls alchemy, turns materials into better ones: three of a tier into one of the next, potions and baits from ingredients, gadgets from their instructions, and Condensed Resin from Original Resin. Most of what levels a character, a talent or a weapon passes through it at some tier. Its recipes, their rules and the instructions that open them are [built](/docs/genshin/crafting). What is left is the bench's place in the world, the gadgets, and two talents' regional materials. It spends from the [inventory](/docs/genshin/inventory)'s bag and wallet, and takes Condensed Resin's resin from the [Original Resin](/docs/genshin/original-resin) wallet.
 
 ## Decisions
 
@@ -30,6 +30,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, or where the [spawned places](/docs/proposals/genshin/spawned-places) fit it if they do not, and is used through the [interaction](/docs/proposals/genshin/interaction) prompts. The official map marks no crafting bench, so the spawned places cannot place one; the streaming records must, which the scene's extraction reads and which is not read yet.
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
 - **The screen's words are the game's own.** The title and the Craft button read the reconfirm page's title, the Crafting Performed line `UI_SYNTHESIS_PAGE_ITEM_COUNT`, the Crafting Materials heading `UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE`, the Required line `UI_COMMON_ITEM_NEED`, and the amount slider's name the cooking page's Quantity, as `GameTextKey` records them. Each recipe's name is the names chunk's entry for its `nameTextId`.
+- **The recipe tabs are the combine types the open recipes fall under.** One tab per combine type, in ascending combine type order, named by the game's own text key for it, `COMBINE_TYPE_NAME1` to `COMBINE_TYPE_NAME12`. The labels of 6 and 12 are in the medium English text map, `Consumable` and `Food`, so every combine type a recipe carries has its key; the first tab shows until one is picked. The fixture's earlier note called the Condensed Resin's tab the Gadget tab, which the game's own label for combine type 6 does not match, so the note now says Consumable. A check of the clip by eye is the one thing left to settle.
 - **The bench's crafter is picked on the screen.** The party's characters are listed and one is picked to cook the batch; with none picked the batch crafts plainly.
 - **A gadget's instructions come from the wiki.** The table holds each gadget's recipe hidden with no instruction item to open it. The wiki's Gadgets pages answer through the persona reader, which is how the instructions are read; their reputation and Frostbearing Tree sources are the wiki's too. Until they are read, the gadgets are not offered.
 
@@ -51,15 +52,14 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles and refunds, and the bench's screen through its fixture, as the [crafting](/docs/genshin/crafting) page records.
+**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, the characters' crafting talents' doubles and refunds, the bench's screen with its recipe tabs through its fixture, as the [crafting](/docs/genshin/crafting) page records.
 
 **Still to build, in order:**
 
-1. **The recipe tabs.** The screen lists the open recipes in one column. The tabs are the combine types, with the labels `COMBINE_TYPE_NAME1` to `COMBINE_TYPE_NAME5` and `COMBINE_TYPE_NAME10` already found; the labels of combine types 6 (Condensed Resin) and 12 (the second potion type) are not yet found, so they wait on their keys.
-2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
-3. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
-4. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
-5. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
+1. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
+2. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
+3. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
+4. **The save's craft count.** The Crafting Performed line counts this visit's batches until the save holds a count per recipe.
 
 ## Data and measures
 
@@ -68,10 +68,9 @@ flowchart TD
 
 ## Key files
 
-| File                                                                 | Role after the change                                |
-| :------------------------------------------------------------------- | :--------------------------------------------------- |
-| `packages/genshin-interface/src/components/CraftingScreen/Index.vue` | Gains the recipe tabs by combine type                |
-| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts`    | Reads the bench's streaming placements for Mondstadt |
+| File                                                              | Role after the change                                |
+| :---------------------------------------------------------------- | :--------------------------------------------------- |
+| `scripts/src/services/genshinAssets/world/readWorldPlacements.ts` | Reads the bench's streaming placements for Mondstadt |
 
 ## Sources
 

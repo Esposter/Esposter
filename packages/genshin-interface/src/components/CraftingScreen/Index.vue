@@ -24,6 +24,8 @@ interface Props {
   requiredCoins: number;
   // The Required line's label
   requiredLabel: string;
+  // The recipe tabs, one per combine type the bench holds, in the game's order
+  tabs: CraftingCell[];
   // The title the game shows over the screen
   title: string;
 }
@@ -31,6 +33,7 @@ interface Props {
 const amount = defineModel<number>("amount", { default: 1 });
 const crafterId = defineModel<number>("crafterId", { default: 0 });
 const recipeId = defineModel<number>("recipeId", { default: 0 });
+const tabId = defineModel<number>("tabId", { default: 0 });
 const {
   amountLabel,
   amountMaximum,
@@ -43,6 +46,7 @@ const {
   recipes,
   requiredCoins,
   requiredLabel,
+  tabs,
   title,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; craft: [] }>();
@@ -58,13 +62,22 @@ const emit = defineEmits<{ close: []; craft: [] }>();
       <p class="coins">{{ coins }}</p>
       <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
     </header>
-    <ul class="recipes">
-      <li v-for="recipe of recipes" :key="recipe.id">
-        <button class="recipe" :aria-pressed="recipe.id === recipeId" type="button" @click="recipeId = recipe.id">
-          <span class="recipe-name">{{ recipe.name }}</span>
-        </button>
-      </li>
-    </ul>
+    <div class="list">
+      <ul class="tabs">
+        <li v-for="tab of tabs" :key="tab.id">
+          <button class="tab" :aria-pressed="tab.id === tabId" type="button" @click="tabId = tab.id">
+            <span class="tab-name">{{ tab.name }}</span>
+          </button>
+        </li>
+      </ul>
+      <ul class="recipes">
+        <li v-for="recipe of recipes" :key="recipe.id">
+          <button class="recipe" :aria-pressed="recipe.id === recipeId" type="button" @click="recipeId = recipe.id">
+            <span class="recipe-name">{{ recipe.name }}</span>
+          </button>
+        </li>
+      </ul>
+    </div>
     <div class="detail">
       <p class="recipe-title">{{ recipes.find((recipe) => recipe.id === recipeId)?.name }}</p>
       <ul class="crafters">
