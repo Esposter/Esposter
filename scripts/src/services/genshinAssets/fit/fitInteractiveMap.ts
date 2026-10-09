@@ -2,6 +2,7 @@ import type { InteractiveMapFitFile } from "#src/models/genshinAssets/points/Int
 import type { InteractiveMapRegionFit } from "#src/models/genshinAssets/points/InteractiveMapRegionFit";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { OculusKindLabelIdMap } from "#src/services/genshinAssets/oculi/OculusKindLabelIdMap";
 import { computeResidual } from "#src/services/genshinAssets/points/computeResidual";
 import {
   INTERACTIVE_MAP_DIRECTORY,
@@ -44,7 +45,9 @@ export const fitInteractiveMap = async (): Promise<string> => {
       const pairs = fit.pairs.filter(({ fromIndex }) => anchors[fromIndex]?.area_id === areaId);
       return {
         matched: pairs.length,
-        oculusCount: points.filter(({ area_id, label_id }) => area_id === areaId && label_id === oculus.labelId).length,
+        oculusCount: points.filter(
+          ({ area_id, label_id }) => area_id === areaId && label_id === OculusKindLabelIdMap[oculus.kind],
+        ).length,
         oculusWikiCount: oculus.count,
         region,
         residual: pairs.length > 0 ? roundFitted(computeResidual(pairs)) : undefined,
