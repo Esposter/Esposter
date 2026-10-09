@@ -1,4 +1,6 @@
 export interface PortResult {
+  // The cap the window was cut under: the one the port was given, or the bot's own when the first fix alone passed it
+  fileCap: number;
   // The candidate's file count from the window's base, read from the tree after the last pick
   fileCount: number;
   fixCount: number;
