@@ -36,7 +36,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
   - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once that process itself has burnt more than half a minute of CPU. On Windows its MSYS parent decides only whether it is orphaned, since a Git tool's Win32 parent can exit while its bash lives. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
   - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
-- **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder. A tool is never searched for either: the pinned ones (FFmpeg, yt-dlp, the decompiler, vgmstream) resolve through `resolvePinnedTool`.
+- **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder, and the Bash guard refuses it. A tool is never searched for either: the pinned ones (FFmpeg, yt-dlp, the decompiler, vgmstream) resolve through `resolvePinnedTool`.
 
 ## Watch the machine
 
