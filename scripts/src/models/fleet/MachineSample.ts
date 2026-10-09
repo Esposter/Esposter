@@ -1,7 +1,7 @@
-// One reading of a machine's load: its CPU share busy over the window, its GPU 3D share when a reader measured it, and
-// Its free memory in gigabytes
+// One reading of a machine's load: its CPU share busy over the window, and its GPU 3D share and its free memory in
+// Gigabytes when a reader measured them
 export interface MachineSample {
   cpuPercentage: number;
-  freeGigabytes: number;
+  freeGigabytes?: number;
   gpuPercentage?: number;
 }

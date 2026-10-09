@@ -13,4 +13,10 @@ describe(formatMachineLoad, () => {
 
     expect(formatMachineLoad(0, undefined, 8)).toBe("CPU 0%, GPU 3D none, 8.0 GB free");
   });
+
+  test("reads a free memory no reader measured as none, not as a figure", () => {
+    expect.hasAssertions();
+
+    expect(formatMachineLoad(0, 0, undefined)).toBe("CPU 0%, GPU 3D 0%, none free");
+  });
 });
