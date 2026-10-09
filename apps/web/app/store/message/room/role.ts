@@ -1,11 +1,15 @@
 import type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 import type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
+import type { DeleteMemberPermissionOverrideInput } from "#shared/models/db/role/DeleteMemberPermissionOverrideInput";
 import type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
+import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
+import type { ReadMemberPermissionOverridesInput } from "#shared/models/db/role/ReadMemberPermissionOverridesInput";
 import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
 import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermissionsInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
+import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
@@ -40,8 +44,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setSelectedRoleId,
   } = useDataMap(() => roomStore.scopedRoomId, "");
   const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value));
+  // A role and a member are one selection between them, so picking either clears the other
   const selectRole = (id: string) => {
     selectedRoleId.value = id;
+    selectedMemberId.value = "";
   };
   const {
     data: myPermissions,
@@ -51,6 +57,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { data: selectedMemberId } = useDataMap(() => roomStore.scopedRoomId, "");
   const selectMember = (id: string) => {
     selectedMemberId.value = id;
+    selectedRoleId.value = "";
   };
   // Owner bypass and the bitfield test are one question, and every surface that gates on a permission asks it
   // The same way — a caller reading `permissions` on its own silently drops the bypass
@@ -106,6 +113,22 @@ export const useRoleStore = defineStore("message/room/role", () => {
     );
   };
 
+  // A member's override, keyed by user id within the room. A member with no row is absent, which reads as both
+  // Bitfields zero — the roles alone — so the map only ever holds the members an override actually changes
+  const {
+    data: memberPermissionOverrideMap,
+    getData: getMemberPermissionOverrideMap,
+    setData: setMemberPermissionOverrideMap,
+  } = useDataMap(() => roomStore.scopedRoomId, new Map<string, MemberPermissionOverride>());
+  const getMemberPermissionOverride = (roomId: string, userId: string) =>
+    getMemberPermissionOverrideMap(roomId)?.get(userId) ?? { allow: 0n, deny: 0n };
+  const setMemberPermissionOverride = (roomId: string, userId: string, override: MemberPermissionOverride) => {
+    const roomOverrideMap = new Map(getMemberPermissionOverrideMap(roomId));
+    if (override.allow | override.deny) roomOverrideMap.set(userId, override);
+    else roomOverrideMap.delete(userId);
+    setMemberPermissionOverrideMap(roomId, roomOverrideMap);
+  };
+
   const readRoles = async (input: ReadRolesInput) => {
     const fetchedRoles = await $trpc.role.readRoles.query(input);
     const roomIdRolesMap = Object.groupBy(fetchedRoles, ({ roomId }) => roomId);
@@ -138,6 +161,32 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { executeMutation: executeDeleteRoleMutation } = useMutation();
   const { executeMutation: executeAssignRoleMutation } = useMutation();
   const { executeMutation: executeRevokeRoleMutation } = useMutation();
+  const { executeMutation: executeUpsertMemberPermissionOverrideMutation } = useMutation();
+  const { executeMutation: executeDeleteMemberPermissionOverrideMutation } = useMutation();
+  const readMemberPermissionOverrides = async (input: ReadMemberPermissionOverridesInput) => {
+    const overrides = await $trpc.role.readMemberPermissionOverrides.query(input);
+    setMemberPermissionOverrideMap(
+      input.roomId,
+      new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
+    );
+  };
+  // The write's answer is the state the server left, so the entry is right whatever order the events arrived in
+  const upsertMemberPermissionOverride = async (input: UpsertMemberPermissionOverrideInput) => {
+    await executeUpsertMemberPermissionOverrideMutation(() => $trpc.role.upsertMemberPermissionOverride.mutate(input), {
+      key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
+      onSuccess: (override) => {
+        setMemberPermissionOverride(input.roomId, input.userId, override);
+      },
+    });
+  };
+  const deleteMemberPermissionOverride = async (input: DeleteMemberPermissionOverrideInput) => {
+    await executeDeleteMemberPermissionOverrideMutation(() => $trpc.role.deleteMemberPermissionOverride.mutate(input), {
+      key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
+      onSuccess: () => {
+        setMemberPermissionOverride(input.roomId, input.userId, { allow: 0n, deny: 0n });
+      },
+    });
+  };
   const createRole = async (input: CreateRoleInput) => {
     await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
       key: Symbol("createRole"),
@@ -220,15 +269,19 @@ export const useRoleStore = defineStore("message/room/role", () => {
     checkHasMyPermission,
     checkIsManageable,
     createRole,
+    deleteMemberPermissionOverride,
     deleteRole,
+    getMemberPermissionOverride,
     getMemberRoleMap,
     getMemberRoles,
     getMyPermissions,
     getRoles,
     isCreateRolePending,
+    memberPermissionOverrideMap,
     memberRoleMap,
     mutateMemberRoles,
     myPermissions,
+    readMemberPermissionOverrides,
     readMemberRoles,
     readMyPermissions,
     readRoles,
@@ -239,8 +292,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectedRoleId,
     selectMember,
     selectRole,
+    setMemberPermissionOverride,
     setMemberRoles,
     setRoles,
     updateRole,
+    upsertMemberPermissionOverride,
   };
 });
