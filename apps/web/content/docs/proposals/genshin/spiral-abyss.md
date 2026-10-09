@@ -8,7 +8,6 @@ touches:
     "scripts/src/services/genshinAssets/spiralAbyss/**",
     "packages/genshin-world/src/models/spiralAbyss/**",
     "packages/genshin-world/src/services/spiralAbyss/**",
-    "packages/genshin-world/src/generated/spiralAbyss/**",
     "packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts",
     "packages/genshin-world/src/services/interaction/pickUpDroppedItem.test.ts",
     "packages/genshin-world/src/services/inventory/constants.ts",

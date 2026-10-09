@@ -48,7 +48,6 @@ flowchart TD
 | `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
 | `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                          |
 | `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The reset the weekly limit counts from                                      |
-| `packages/genshin-world/src/generated/reputation/mondstadt.json`                        | The levels, requests and bounties, committed from the dump                  |
 | `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, requests and bounties     |
 | `scripts/src/services/genshinAssets/reputation/buildMondstadtReputation.ts`             | Builds the slice from the dump's tables, for publishing                     |
 | `scripts/src/services/genshinAssets/reputation/toReputationReward.ts`                   | Splits a reward into the Reputation EXP and the items it also pays          |

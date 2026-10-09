@@ -63,7 +63,6 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`           | A recipe learned from an instruction in the bag                                             |
 | `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`           | The recipes, fetched by their key from the hosted game data and checked against their shape |
 | `packages/genshin-world/src/models/crafting/CraftingSave.ts`                    | The save's crafting slice: the learned recipes and each recipe's crafted count              |
-| `packages/genshin-world/src/generated/crafting/recipes.json`                    | The bench's recipes, a few hundred of them                                                  |
 | `packages/genshin-world/src/components/Crafting/Screen/Index.vue`               | The bench's screen: the open recipes, the crafter, the count and the craft                  |
 | `packages/genshin-interface/src/components/CraftingScreen/Index.vue`            | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft |
 | `scripts/src/services/genshinAssets/items/buildItems.ts`                        | The item table's rows, now with every crafting recipe's materials and result                |

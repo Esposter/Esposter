@@ -9,7 +9,6 @@ touches:
     "scripts/src/services/genshinAssets/friendship/**",
     "packages/genshin-world/src/services/friendship/**",
     "packages/genshin-world/src/models/friendship/**",
-    "packages/genshin-world/src/generated/friendship/**",
   ]
 ---
 
@@ -19,11 +18,11 @@ The Friendship Level and the EXP that raises it are built, with the Original Res
 
 ## Decisions
 
-- **The namecard's name shows now, its description waits.** The name is read from the name chunk the stat tables already share, so the view needs no chunk of its own; the description and art wait on the static-data host the pending design picks.
+- **The namecard's name shows now, its description waits.** The name is read from the name records the stat tables already share, so the view needs no record of its own; the description and art are left, each published to the hosted game data with the rest of its words when it is built.
 - **Each source states its own.** Commissions give their share by Adventure Rank, the day's bonus its own, and random events theirs up to ten a day, as the wiki lists them. Each source's page gives its amounts; none is set here.
 - **Each level opens what the game opens.** Level 2 to 6 open the character's stories in turn and their voice-overs tied to Friendship, level 4 and 7 a dialogue when they are a companion in the Serenitea Pot, and level 10 their namecard. A story or line that also waits on a quest waits on both. The stories and lines are the game's own by text id ([game text](/docs/genshin/game-text)), which `FettersExcelConfigData` and `FetterStoryExcelConfigData` file under each character.
 - **The namecard is a material the game's tables join to the character.** `FetterCharacterCardExcelConfigData`, which AnimeGameData holds and the dump lacks, names each character's Friendship 10 reward (`avatarId`, `fetterLevel` 10, `rewardId`). `RewardExcelConfigData` gives that reward's one item, and `MaterialExcelConfigData` holds the item as a `MATERIAL_NAMECARD` with its name, description, `icon` and `picPath`: Amber's reward 241001 is item 210003, `UI_NameCardIcon_Ambor`. No namecard table is owed.
-- **The namecards share the levels' file.** `friendship.json` holds the levels and the namecards together, one chunk the world imports on demand, rather than a file of its own for the namecards, since a file of one row a character is the per-entity slice the static-data host is being designed to replace.
+- **The namecards share the levels' file.** The `friendship/friendship` record holds the levels and the namecards together, fetched by key, rather than a record of its own for the namecards, each reader parsing only the field it returns.
 - **A namecard is held by the level, never stored.** A character at Friendship Level 10 holds its namecard, read from its total EXP as the level is, so the save keeps nothing new and the two cannot disagree.
 - **A namecard is shown by its words, never its picture.** Its art is the game's texture, which is never served, so the view sets its name on a plate of our own, its description waiting with the art on the static-data host; the extracted art is a reference only, and no extraction gates the view.
 - **Settled while building the level.** The levels are the dump's `AvatarFettersLevelExcelConfigData`, each row's EXP the cost to leave its level, so the top row is never spent and level 10 totals 29,100, the wiki's figure. A character keeps its total EXP and the level is read from it. The first claim amounts are provisional at the low end of each wiki range, measured by the Recordings owed clips.

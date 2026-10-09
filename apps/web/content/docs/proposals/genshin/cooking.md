@@ -7,7 +7,6 @@ touches:
   [
     "packages/genshin-world/src/services/cooking/**",
     "packages/genshin-world/src/models/cooking/**",
-    "packages/genshin-world/src/generated/cooking/**",
     "scripts/src/services/genshinAssets/cooking/**",
   ]
 ---

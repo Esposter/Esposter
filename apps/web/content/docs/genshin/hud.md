@@ -63,7 +63,6 @@ flowchart TD
 | File                                                                    | Role                                                                     |
 | :---------------------------------------------------------------------- | :----------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`            | The HUD: its pieces, their places and the slots others fill              |
-| `packages/genshin-world/src/data/hud/interfaceRects.json`               | The HUD's interface rects, fitted from the game's tree                   |
 | `packages/genshin-world/src/services/hud/readHudInterfaceRects.ts`      | The HUD's rects, read from the hosted game data as the world opens       |
 | `packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`         | The pieces of the tree the screen places by, each by its path            |
 | `packages/genshin-world/src/models/hud/HudInterfaceRects.ts`            | The record's schema, keeping only those pieces' rects                    |

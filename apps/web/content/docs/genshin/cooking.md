@@ -49,21 +49,21 @@ The quality weights the table gives each dish are all the Delicious weight in th
 
 ## Key files
 
-| File                                                                   | Role                                                                      |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/cooking/buildCookingRecipes.ts`    | The dishes record built from the cook recipe table, for publishing        |
-| `scripts/src/services/genshinAssets/cooking/toCookingRecipe.ts`        | One dish row as a recipe, its results' qualities read off their item rows |
-| `scripts/src/services/genshinAssets/cooking/buildProcessingRecipes.ts` | The processings record built from the compound table, for publishing      |
-| `packages/genshin-world/src/services/cooking/cookRecipeByHand.ts`      | A dish cooked by hand: its quality, a proficiency, the dish into the bag  |
-| `packages/genshin-world/src/services/cooking/autoCookRecipe.ts`        | Auto Cook's batch of up to 99 Delicious dishes, made whole or refused     |
-| `packages/genshin-world/src/services/cooking/pickDishItemId.ts`        | A character's special dish in place of a result, at its chance            |
-| `packages/genshin-world/src/services/cooking/getCookingQuality.ts`     | The quality of a stop on the zones                                        |
-| `packages/genshin-world/src/services/cooking/startProcessing.ts`       | Units queued with their ingredients taken, the queue's size held          |
-| `packages/genshin-world/src/services/cooking/collectProcessing.ts`     | The units done by a moment taken into the bag, the rest queued            |
-| `packages/genshin-world/src/services/cooking/applyCampfireElement.ts`  | Pyro lights a campfire, the elements that put it out do                   |
-| `packages/genshin-world/src/services/cooking/applyCampfireWeather.ts`  | Rain puts a campfire in the open out                                      |
-| `packages/genshin-world/src/generated/cooking/recipes.json`            | The dishes, a few hundred of them                                         |
-| `packages/genshin-world/src/generated/cooking/processing.json`         | The processings, about sixty of them                                      |
+| File                                                                   | Role                                                                            |
+| :--------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/cooking/buildCookingRecipes.ts`    | The dishes record built from the cook recipe table, for publishing              |
+| `scripts/src/services/genshinAssets/cooking/toCookingRecipe.ts`        | One dish row as a recipe, its results' qualities read off their item rows       |
+| `scripts/src/services/genshinAssets/cooking/buildProcessingRecipes.ts` | The processings record built from the compound table, for publishing            |
+| `packages/genshin-world/src/services/cooking/cookRecipeByHand.ts`      | A dish cooked by hand: its quality, a proficiency, the dish into the bag        |
+| `packages/genshin-world/src/services/cooking/autoCookRecipe.ts`        | Auto Cook's batch of up to 99 Delicious dishes, made whole or refused           |
+| `packages/genshin-world/src/services/cooking/pickDishItemId.ts`        | A character's special dish in place of a result, at its chance                  |
+| `packages/genshin-world/src/services/cooking/getCookingQuality.ts`     | The quality of a stop on the zones                                              |
+| `packages/genshin-world/src/services/cooking/startProcessing.ts`       | Units queued with their ingredients taken, the queue's size held                |
+| `packages/genshin-world/src/services/cooking/collectProcessing.ts`     | The units done by a moment taken into the bag, the rest queued                  |
+| `packages/genshin-world/src/services/cooking/applyCampfireElement.ts`  | Pyro lights a campfire, the elements that put it out do                         |
+| `packages/genshin-world/src/services/cooking/applyCampfireWeather.ts`  | Rain puts a campfire in the open out                                            |
+| `packages/genshin-world/src/services/cooking/readCookingRecipes.ts`    | The dishes, a few hundred of them, fetched by their `cooking/recipes` key       |
+| `packages/genshin-world/src/services/cooking/readProcessingRecipes.ts` | The processings, about sixty of them, fetched by their `cooking/processing` key |
 
 ## Notes
 

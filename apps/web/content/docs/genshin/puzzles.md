@@ -75,7 +75,6 @@ A `TimeTrialChallenge` holds its clock's limit and what is left of it, its state
 | `packages/genshin-world/src/services/puzzle/strikeTimeTrialTarget.ts`       | Counts a target done, solving the challenge on its last                     |
 | `packages/genshin-world/src/services/puzzle/stepTimeTrialChallenge.ts`      | Runs a challenge's clock on the fixed step, failing it when it runs out     |
 | `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's lit time, and a Seelie's return and route times        |
-| `packages/genshin-world/src/generated/puzzles/`                             | One slice per region, imported on demand once the world places them         |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`       | Each kind's labels on the official map                                      |
 | `scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`           | Builds each region's puzzle places from the points                          |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`               | Carries a kind's labelled points into their regions, shared with chests     |

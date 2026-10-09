@@ -3,12 +3,7 @@ title: Weapon enhancement
 description: Proposal — a weapon's passive at its refinement rank, as a module over the kits' shared effects, its numbers read from the game's affix table. Levelling, ascension and refinement are built and documented in the Genshin area.
 model: claude-haiku-5-5
 needs: [game-exports]
-touches:
-  [
-    "scripts/src/services/genshinAssets/stats/**",
-    "scripts/src/models/genshinAssets/stats/**",
-    "packages/genshin-world/src/generated/stats/**",
-  ]
+touches: ["scripts/src/services/genshinAssets/stats/**", "scripts/src/models/genshinAssets/stats/**"]
 ---
 
 # Weapon enhancement
@@ -41,7 +36,7 @@ flowchart TD
 scripts/src/services/genshinAssets/stats/toWeaponPassive.ts
 ```
 
-1. **The affix table, read into each weapon.** `ExcelWeaponRow` (`scripts/src/models/genshinAssets/stats/ExcelWeaponRow.ts`) gains `skillAffix: number[]` and `descTextMapHash`. A new `toWeaponPassive.ts` takes one affix id's rows of `EquipAffixExcelConfigData` (an `ExcelEquipAffixRow`, as `getArtifactSetDatas` reads them) and returns the three fields above, the rows ordered by `level`. `getWeaponDatas` groups the table by `id`, looks up each weapon's `skillAffix[0]` (0, for about a tenth of the weapons, is none) and spreads `toWeaponPassive` in, and `WeaponData` and `weaponDataSchema` gain the three fields. `toWeaponPassive.test.ts` asserts rows given out of order come back by rank, the zeros cut to the longest used place, and no rows give `""`, `""` and `[]`. `pnpm -C scripts genshin:assets stats` then rewrites `packages/genshin-world/src/generated/stats/weapons.json`.
+1. **The affix table, read into each weapon.** `ExcelWeaponRow` (`scripts/src/models/genshinAssets/stats/ExcelWeaponRow.ts`) gains `skillAffix: number[]` and `descTextMapHash`. A new `toWeaponPassive.ts` takes one affix id's rows of `EquipAffixExcelConfigData` (an `ExcelEquipAffixRow`, as `getArtifactSetDatas` reads them) and returns the three fields above, the rows ordered by `level`. `getWeaponDatas` groups the table by `id`, looks up each weapon's `skillAffix[0]` (0, for about a tenth of the weapons, is none) and spreads `toWeaponPassive` in, and `WeaponData` and `weaponDataSchema` gain the three fields. `toWeaponPassive.test.ts` asserts rows given out of order come back by rank, the zeros cut to the longest used place, and no rows give `""`, `""` and `[]`. `pnpm -C scripts genshin:assets stats` then republishes the `stats/weapons` record.
 2. **Each passive as a module**, read at its rank, once the [character kits](/docs/proposals/genshin/character-kits), the unit the other machine holds, hold the shared effects a passive acts through.
 
 ## Data and measures

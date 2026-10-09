@@ -38,8 +38,6 @@ flowchart TD
 | `packages/genshin-world/src/models/offering/OfferingProgress.ts`              | The held count, the level reached and the levels, shared with the statues |
 | `packages/genshin-world/src/models/offering/OfferingOffer.ts`                 | What an offer leaves: the bag, the wallet, the progress and the overflow  |
 | `packages/genshin-world/src/models/offering/OfferingReward.ts`                | One item a level pays                                                     |
-| `packages/genshin-world/src/generated/offerings/frostbearingTree.json`        | The committed levels, which no code imports                               |
-| `packages/genshin-world/src/generated/frostbearingTreePlaces/mondstadt.json`  | The tree's place in Mondstadt, one slice per region                       |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreeLevels.ts` | Builds the tree's levels, each reward joined from the reward table        |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts` | Builds the tree's place from the official map's point and the fit         |
 | `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`          | One level's row: the item and count it takes, its rewards                 |

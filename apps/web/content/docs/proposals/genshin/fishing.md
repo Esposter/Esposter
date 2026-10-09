@@ -50,7 +50,7 @@ packages/genshin-world/src/
 └── services/fishing/stepFishingBite.ts
 ```
 
-1. **The bite and the nibbles, as a pure rule.** No source is owed: `packages/genshin-world/src/generated/fishing/fish.json` already holds each fish's `feelerTimes` and `biteTimeout`.
+1. **The bite and the nibbles, as a pure rule.** No source is owed: the `fishing/fish` record already holds each fish's `feelerTimes` and `biteTimeout`.
    - `FishingBite.ts`: a bite under way, its `nibbleSeconds` and its `elapsedSeconds`. The caller draws `nibbleSeconds` as `feelerTimes[0] + random() * (feelerTimes[1] - feelerTimes[0])` when the fish turns to the lure, with no helper around it.
    - `stepFishingBite.ts`: the bite after `seconds`, given whether the strike was pressed, returning its next `FishingPhase` and bite: `Waiting` while it nibbles, `Biting` from `nibbleSeconds`, `Reeling` on a strike while biting, and `Aiming` on a strike while nibbling or once `biteTimeout` seconds of biting pass unstruck.
    - `stepFishingBite.test.ts` beside it asserts each of those four transitions on a fish with `biteTimeout: 5` and a bite with `nibbleSeconds: 1`.

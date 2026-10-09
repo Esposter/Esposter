@@ -7,8 +7,6 @@ touches:
   [
     "packages/genshin-world/src/models/inventory/MaterialType.ts",
     "packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts",
-    "packages/genshin-world/src/data/items/materials.json",
-    "packages/genshin-world/src/generated/nameText/**",
     "scripts/src/services/genshinAssets/items/**",
   ]
 ---

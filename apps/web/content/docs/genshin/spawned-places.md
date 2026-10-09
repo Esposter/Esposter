@@ -67,7 +67,6 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 | `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`        | Builds each region's Oculi slice from the points and the fit              |
 | `scripts/src/services/genshinAssets/oculi/OculusKindLabelIdMap.ts`     | Each Oculus kind's label on the official map                              |
 | `packages/genshin-world/src/models/oculus/OculusPlace.ts`              | A placed Oculus: its id, kind and ground position                         |
-| `packages/genshin-world/src/generated/oculi/`                          | One slice per region, imported on demand by the world                     |
 | `scripts/src/services/genshinAssets/points/constants.ts`               | The API, the references paths, the bar and the match's passes             |
 
 ## Sources

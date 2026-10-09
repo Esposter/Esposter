@@ -6,8 +6,6 @@ needs: [game-exports]
 touches:
   [
     "scripts/src/services/genshinAssets/items/**",
-    "packages/genshin-world/src/data/items/**",
-    "packages/genshin-world/src/generated/nameText/**",
     "packages/genshin-text/src/**",
     "packages/genshin-persona/src/generated/**",
   ]
@@ -26,7 +24,7 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 - **Its items are found exploring its place.** Each offering's items stand at the [spawned places](/docs/proposals/genshin/spawned-places) or come from its region's quests, as the wiki lists for each.
 - **What a level unlocks is its region's.** A level that changes the place itself, such as a stronger Lumenstone Adjuvant, belongs to its region's page, which reads the offering's level.
 - **One offering at a time, as its region is built.** Each is written with its region, on this rule.
-- **The tree's place is its own slice.** The Frostbearing Tree's place is written per region into `generated/frostbearingTreePlaces`, as the chests are, rather than into the region's landmark data, since the tree is not yet a landmark the world draws.
+- **The tree's place is its own slice.** The Frostbearing Tree's place is published per region as the `frostbearingTreePlaces` dataset, as the chests are, rather than into the region's landmark data, since the tree is not yet a landmark the world draws.
 - **The tree's row is named, not verbed.** A prompt row shows its target's name beside its kind's icon, as the statues' rows do ([map unlocking](/docs/genshin/map-unlocking)), so the tree's row is `InteractionKind.Activate` named by `UI_ELDERTREE_MAINUI_TITLE` ("Frostbearing Tree"), and the game's "Offer" (`UI_BAG_OFFERING_JUMP`) is a button of the tree's own screen, not of the row. The row waits on no decoding.
 - **Offering items are read by id.** An offering's offering items are the item ids its levels take, and the bag's count of each is offered together, so a tree whose levels take one item and an offering that takes several are one rule.
 
@@ -37,7 +35,7 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 **This still adds, in order:**
 
 1. **The tree's items and name.** `scripts/src/services/genshinAssets/items/buildItems.ts` adds the item the tree's levels take and every item their rewards pay, read with `readFrostbearingTreeLevels` from `genshin-world` as it already reads the forge recipes, the wallet's ids left out as now. `pnpm -C scripts genshin:assets items` republishes `items/materials`, and `pnpm -C scripts genshin:text names` writes their names into the name chunks that already exist. `GameTextKey.FrostbearingTree` takes `UI_ELDERTREE_MAINUI_TITLE`, written with `pnpm -C scripts genshin:text write`. Test: a case of `buildItems`'s own suite asserts that every item the tree's levels take or pay, less the wallet's, is in the built materials.
-2. **The tree in Dragonspine**, Mondstadt's: a stand-in drawn on the ground at its place in `generated/frostbearingTreePlaces/mondstadt.json`, an `Activate` row while it is in reach, F on it offering through `offerBagItems`, and its held count kept in the save.
+2. **The tree in Dragonspine**, Mondstadt's: a stand-in drawn on the ground at its place in the `frostbearingTreePlaces/mondstadt` record, an `Activate` row while it is in reach, F on it offering through `offerBagItems`, and its held count kept in the save.
 3. **Each region's offerings**, with its region.
 
 ## Data and measures

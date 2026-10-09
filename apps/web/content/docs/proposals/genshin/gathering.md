@@ -33,8 +33,6 @@ flowchart TD
 
 **Built:** the plants and specialties, as [gathering](/docs/genshin/gathering) records, but for the four cooking ingredients and one specialty its notes name as left out; the mining outcrops' rank, respawn and standing, as [mining outcrops](/docs/genshin/mining-outcrops) records; the investigation cap, as [investigation](/docs/genshin/investigation) records; and the ores in the world, as [gathering](/docs/genshin/gathering) records: their points with each respawn, the struck share beside the points, the character's hits feeding them, and the pieces a broken ore drops.
 
-**Left of the first step:** the regenerated place slices for the Ores label wait on the static-data host: bulk generated JSON stays out of `generated/` until the Azure Blob design for generated static data lands, and `pnpm -C scripts genshin:assets gathering` writes them locally meanwhile. Until then the committed Mondstadt slice holds no ore, and the ores stand in the world only where the slice is regenerated locally.
-
 **This adds, in order:**
 
 1. **Mining outcrops' places and draw**, drawn each day from Adventure Rank 30, once the ley line places are placed.
