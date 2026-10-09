@@ -1,32 +1,38 @@
 <script setup lang="ts">
 import type { CharacterPack } from "#src/models/character/CharacterPack";
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 
+import CharacterTerms from "#src/components/Character/Terms/Index.vue";
 import { readCharacterIdNamesMap } from "#src/services/character/readCharacterIdNamesMap";
 import { readCharacterPackFolder } from "#src/services/character/readCharacterPackFolder";
 import { readCharacterPackZip } from "#src/services/character/readCharacterPackZip";
 import { readPickedCharacterPack } from "#src/services/character/readPickedCharacterPack";
-import { getResultAsync, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, takeOne } from "@esposter/shared";
 
 interface Props {
   // The character the screen shows, whom a picked release is kept for unless its names say whose it is
   characterId: number;
+  // Where the character's pack is read from, the browser's kept copy or the host's, none where it is drawn as its body's
+  // Capsule
+  characterPackReader?: CharacterPackReader;
   // Removes the character's kept pack, called once the player confirms it
   confirmRemoval: () => void;
   // Where the host serves the game's published data, which the characters' names are read from
   gameDataBaseUrl: string;
-  // Whether the character is drawn from a pack, the browser's or the host's, rather than as its body's capsule
-  hasCharacterPack: boolean;
   // Whether the browser keeps a pack the player loaded for the character
   isCharacterPackKept: boolean;
+  // Keeps a release whose terms the player accepted, rejecting where the browser did not keep it
+  keepCharacterPack: (characterPack: CharacterPack) => Promise<void>;
 }
 
-const { characterId, confirmRemoval, gameDataBaseUrl, hasCharacterPack, isCharacterPackKept } = defineProps<Props>();
-// A release read and its terms accepted, which its host keeps
-const emit = defineEmits<{ keep: [characterPack: CharacterPack] }>();
+const { characterId, characterPackReader, confirmRemoval, gameDataBaseUrl, isCharacterPackKept, keepCharacterPack } =
+  defineProps<Props>();
 const zipInput = useTemplateRef("zipInput");
 const folderInput = useTemplateRef("folderInput");
 const isChoosing = ref(false);
 const isConfirmingRemoval = ref(false);
+// The key of the reader whose terms are open, so they close once the character's pack changes or goes
+const termsCharacterPackReaderKey = ref("");
 const isPending = ref(false);
 const errorMessage = ref("");
 // The release read and waiting on its terms, which nothing keeps until the player accepts them
@@ -78,13 +84,37 @@ onMounted(() => {
       <button
         type="button"
         @click="
-          emit('keep', characterPack);
-          characterPack = undefined;
+          async () => {
+            if (!characterPack) return;
+
+            const acceptedCharacterPack = characterPack;
+            characterPack = undefined;
+            errorMessage = '';
+            await getResultAsync(() => keepCharacterPack(acceptedCharacterPack)).match(noop, (error) => {
+              console.error(error);
+              errorMessage = error.message;
+            });
+          }
         "
       >
         Accept the terms and keep the model
       </button>
       <button type="button" @click="characterPack = undefined">Cancel</button>
+    </div>
+  </div>
+  <!-- The terms bundled with the model the character is drawn from, the credit the release carries, read as it ships
+       Them whichever copy the model is read from -->
+  <div
+    v-else-if="characterPackReader && characterPackReader.key === termsCharacterPackReaderKey"
+    class="terms"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="character-model-terms-title"
+  >
+    <p id="character-model-terms-title">The terms of this character's model, as its release ships them</p>
+    <CharacterTerms :key="characterPackReader.key" :character-pack-reader />
+    <div class="actions">
+      <button type="button" @click="termsCharacterPackReaderKey = ''">Close</button>
     </div>
   </div>
   <div class="loader">
@@ -108,12 +138,17 @@ onMounted(() => {
       </button>
       <button type="button" @click="isConfirmingRemoval = false">Cancel</button>
     </template>
-    <button v-else-if="isCharacterPackKept" type="button" @click="isConfirmingRemoval = true">
-      Remove this character's model
-    </button>
-    <button v-else-if="!hasCharacterPack && !isPending" type="button" @click="isChoosing = true">
-      Load this character's official model
-    </button>
+    <template v-else>
+      <button v-if="characterPackReader" type="button" @click="termsCharacterPackReaderKey = characterPackReader.key">
+        The model's terms
+      </button>
+      <button v-if="isCharacterPackKept" type="button" @click="isConfirmingRemoval = true">
+        Remove this character's model
+      </button>
+      <button v-else-if="!characterPackReader && !isPending" type="button" @click="isChoosing = true">
+        Load this character's official model
+      </button>
+    </template>
     <input
       ref="zipInput"
       accept=".zip,application/zip"

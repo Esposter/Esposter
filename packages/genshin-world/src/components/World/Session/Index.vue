@@ -665,11 +665,11 @@ defineExpose({ jumpTo, readCameraPosition });
           <template #default="{ characterId }">
             <CharacterPackLoader
               :character-id
+              :character-pack-reader="getCharacterPackReader(characterId)"
               :game-data-base-url
-              :has-character-pack="Boolean(getCharacterPackReader(characterId))"
               :is-character-pack-kept="characterIdPackHashMap.has(characterId)"
+              :keep-character-pack="storeCharacterPack"
               :confirm-removal="() => removeCharacterPack(characterId)"
-              @keep="(characterPack) => storeCharacterPack(characterPack)"
             />
           </template>
         </CharacterScreen>
