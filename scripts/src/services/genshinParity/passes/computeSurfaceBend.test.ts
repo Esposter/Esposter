@@ -1,5 +1,5 @@
 import { computeSurfaceBend, getSurfaceBendReading } from "#src/services/genshinParity/passes/computeSurfaceBend";
-import { SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { SHAPE_NORMAL_RESOLUTION_DEGREES, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeSurfaceBend, () => {
@@ -34,6 +34,23 @@ describe(computeSurfaceBend, () => {
     expect(getSurfaceBendReading({ exportsAngle: 10.5, family: 0, halves: [10, 12], oursAngle: 10.5 })).toStrictEqual({
       gate: 2,
       value: 0,
+    });
+  });
+
+  test("never gates below the normal target's resolution, so float noise on both sides holds", () => {
+    expect.hasAssertions();
+
+    expect(getSurfaceBendReading({ exportsAngle: 0, family: 0, halves: [0, 0.0002], oursAngle: 0.0006 })).toStrictEqual(
+      { gate: SHAPE_NORMAL_RESOLUTION_DEGREES, value: 0.0006 },
+    );
+  });
+
+  test("fails a real bend, ours' 10 degrees against the exports' none, at the resolution", () => {
+    expect.hasAssertions();
+
+    expect(getSurfaceBendReading({ exportsAngle: 0, family: 0, halves: [0, 0], oursAngle: 10 })).toStrictEqual({
+      gate: SHAPE_NORMAL_RESOLUTION_DEGREES,
+      value: 10,
     });
   });
 });
