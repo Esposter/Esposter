@@ -38,8 +38,8 @@ const mergeQuestProgress = (
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   reputation.level === than.level ? reputation.exp > than.exp : reputation.level > than.level;
 
-// A guest's save merged into the account's one when both exist. The landmarks and achievements are grow-only, so they
-// Union, and an achievement keeps the larger count. A quest keeps the further of the two steps, since a step is never
+// A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
+// Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A quest keeps the further of the two steps, since a step is never
 // Undone, and on the same step each objective's count takes the larger. Each character's Companionship EXP and the
 // Adventure EXP keep the larger, as a counter only grows. Each kind of
 // Wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never mixed.
@@ -56,6 +56,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   const companionshipExp = { ...account.companionshipExp };
   for (const [characterId, guestExp] of Object.entries(guest.companionshipExp))
     companionshipExp[characterId] = Math.max(companionshipExp[characterId] ?? 0, guestExp);
+  const craftedCounts = { ...account.crafting.craftedCounts };
+  for (const [recipeId, guestCount] of Object.entries(guest.crafting.craftedCounts))
+    craftedCounts[recipeId] = Math.max(craftedCounts[recipeId] ?? 0, guestCount);
   const wishPity = { ...account.wishPity };
   for (const bannerKind of Object.values(BannerKind))
     if (guest.wishPity[bannerKind].wishCount > account.wishPity[bannerKind].wishCount)
@@ -70,6 +73,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
     companionshipExp,
+    crafting: {
+      craftedCounts,
+      learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],
+    },
     inventory: account.inventory,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,

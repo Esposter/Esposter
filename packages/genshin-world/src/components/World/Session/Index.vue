@@ -116,11 +116,16 @@ const screenKind = ref(ScreenKind.World);
 const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTables.weaponDataMap);
 // The cross-system reactions of this screen, one emitter the systems share
 const events = createWorldEvents();
-const { achievementProgressMap, inventory, setInventory, setWallet, wallet, wishPityMap } = useWorldSave({
-  emitGrant: () => emit("grant"),
-  events,
-  savedState,
-});
+const {
+  achievementProgressMap,
+  craftedCountMap,
+  craftingProgress,
+  inventory,
+  setInventory,
+  setWallet,
+  wallet,
+  wishPityMap,
+} = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -267,6 +272,8 @@ useWorldSaveSync({
     achievementProgressMap: achievementProgressMap.value,
     adventureExp: savedState.adventureExp,
     companionshipExpMap: savedState.companionshipExpMap,
+    craftedCountMap: craftedCountMap.value,
+    craftingProgress: craftingProgress.value,
     inventory: inventory.value,
     quests: questProgressMap.value,
     reputation: savedState.reputation,

@@ -20,6 +20,8 @@ describe(mergeGenshinSave, () => {
   const ACCOUNT_EXP = 100;
   const GUEST_EXP = 200;
   const CHARACTER_ID = "6";
+  const RECIPE_ID = 22_007;
+  const OTHER_RECIPE_ID = 22_008;
   const ACCOUNT_LEVEL = 1;
   const GUEST_LEVEL = 2;
   const WISH_KIND = BannerKind.Standard;
@@ -145,6 +147,26 @@ describe(mergeGenshinSave, () => {
 
     expect(merged.adventureExp).toBe(GUEST_EXP);
     expect(merged.companionshipExp).toStrictEqual({ [CHARACTER_ID]: GUEST_EXP });
+  });
+
+  test("unions the learned recipes and keeps each recipe's larger crafted count", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      crafting: { craftedCounts: { [RECIPE_ID]: ACCOUNT_COUNT }, learnedRecipeIds: [RECIPE_ID] },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      crafting: {
+        craftedCounts: { [OTHER_RECIPE_ID]: ACCOUNT_COUNT, [RECIPE_ID]: GUEST_COUNT },
+        learnedRecipeIds: [OTHER_RECIPE_ID],
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).crafting).toStrictEqual({
+      craftedCounts: { [OTHER_RECIPE_ID]: ACCOUNT_COUNT, [RECIPE_ID]: GUEST_COUNT },
+      learnedRecipeIds: [RECIPE_ID, OTHER_RECIPE_ID],
+    });
   });
 
   test("keeps the further Reputation by its level, then its EXP", () => {

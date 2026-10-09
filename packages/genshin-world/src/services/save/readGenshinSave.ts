@@ -13,6 +13,7 @@ export const readGenshinSave = (
     achievements,
     adventureExp,
     companionshipExp,
+    crafting,
     inventory,
     quests,
     reputation,
@@ -28,6 +29,10 @@ export const readGenshinSave = (
   companionshipExpMap: new Map(
     Object.entries(companionshipExp).map(([characterId, exp]) => [Number(characterId), exp]),
   ),
+  craftedCountMap: new Map(
+    Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),
+  ),
+  craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
   inventory: toInventory(inventory, nameText, weaponDataMap),
   quests: new Map(Object.entries(quests)),
   reputation,

@@ -15,6 +15,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 - the bag: each entry by its item id, with its bag id, its count and a weapon's or an artifact's level, and the id the next entry takes;
 - the carried quests' progress, by quest id, and the unlocked landmarks, by id;
 - each achievement's count and the moment it finished, by achievement id;
+- the bench's recipes learned from instructions, and each recipe's crafted count, by recipe id ([crafting](/docs/genshin/crafting));
 - each kind of wish's counters;
 - Adventure EXP, Mondstadt's Reputation (its level and EXP) and each character's Companionship EXP, by character id.
 

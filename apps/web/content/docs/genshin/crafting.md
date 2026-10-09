@@ -62,6 +62,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`             | Whether a recipe is open at a rank, and learned where an instruction opens it               |
 | `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`           | A recipe learned from an instruction in the bag                                             |
 | `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`           | The slice imported on demand and checked against its shape                                  |
+| `packages/genshin-world/src/models/crafting/CraftingSave.ts`                    | The save's crafting slice: the learned recipes and each recipe's crafted count              |
 | `packages/genshin-world/src/generated/crafting/recipes.json`                    | The bench's recipes, a few hundred of them                                                  |
 | `packages/genshin-world/src/components/Crafting/Screen/Index.vue`               | The bench's screen: the open recipes, the crafter, the count and the craft                  |
 | `packages/genshin-interface/src/components/CraftingScreen/Index.vue`            | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft |
@@ -74,7 +75,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - **The gadget instructions' sources are not read.** Each gadget's recipe is offered once its instruction is learned, but where the instruction is obtained in the world is left to the pages that place those sources.
 - **The screen is reached through its fixture.** The recipe list, the crafter's pick, the count and the craft are the `CraftingScreen` unit under `genshin-interface`, wrapped by the world's `Crafting/Screen`, which opens as an NPC screen. Its words are the game's own text ids, and its look waits on the bench's passes against the clip.
 - **A batch's talent extra with no room is left out.** The craft is checked whole first, so the bag's room goes to the craft's own results before a talent's extra is added, and an extra that finds no room is dropped rather than refusing the craft.
-- **Crafting Performed counts this visit.** The save holds no count of crafts yet, so the line counts the batches crafted since the bench opened.
+- **Crafting Performed counts the save's crafts.** The save holds each recipe's crafted count by its id, beside the recipes learned, so the line counts every batch of that recipe since the player first crafted it, across visits. A guest's counts merge into the account's by the larger, as the counts only grow.
 - **The item table gains the crafting items.** `genshin:assets items` reads each recipe's materials and result from the material table, so every crafting item has its row and name, not only the drops'.
 
 ## Sources

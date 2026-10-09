@@ -16,6 +16,8 @@ describe(readGenshinSave, () => {
   const ADVENTURE_EXP = 1200;
   const CHARACTER_ID = "6";
   const COMPANIONSHIP_EXP = 300;
+  const RECIPE_ID = 22_007;
+  const CRAFTED_COUNT = 4;
   const REPUTATION = { exp: 150, level: 2 };
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const FORGED_WEAPON_ID = 13_401;
@@ -67,6 +69,7 @@ describe(readGenshinSave, () => {
     achievements: { [ACHIEVEMENT_ID]: { count: 1, finishedAt: FINISHED_AT } },
     adventureExp: ADVENTURE_EXP,
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
+    crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     inventory: {
       items: [
         { id: 0, itemId: FORGED_WEAPON_ID, level: 1, quantity: 1 },
