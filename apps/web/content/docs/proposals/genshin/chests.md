@@ -10,7 +10,7 @@ Chests are the open world's main reward for exploring it, and the most of what a
 
 ## Decisions
 
-- **Opened with F, rewarded two ways.** Its Primogems, Adventure EXP, Mora and Sigils go straight to the wallet and the bag. Its weapons, artifacts and Character EXP materials pour out as drops to pick up, as the enemies' drops are, or go straight to the bag where the chest stands somewhere a drop would fall away. The wallet part is built. The drops' pools are the wiki's: each tier's weapons, the artifact sets it can give, and its Character EXP materials by star. An artifact a chest gives is rolled by the [artifact enhancement](/docs/proposals/genshin/artifact-enhancement) page's rules.
+- **Opened with F, rewarded two ways.** Its Primogems, Adventure EXP, Mora and Sigils go straight to the wallet and the bag. Its weapons, artifacts and Character EXP materials pour out as drops to pick up, as the enemies' drops are, or go straight to the bag where the chest stands somewhere a drop would fall away. Of the wallet's part, a Common, Exquisite or Precious chest's Primogems and Mora are built. The drops' pools are the wiki's: each tier's weapons, the artifact sets it can give, and its Character EXP materials by star. An artifact a chest gives is rolled by the [artifact enhancement](/docs/proposals/genshin/artifact-enhancement) page's rules.
 - **A locked chest waits on what is beside it.** As the wiki describes, a locked chest opens once the enemies near it are defeated or the puzzle near it is solved. Which camp or puzzle locks which chest is listed nowhere per chest, so a chest is locked by the camp or the [puzzle](/docs/proposals/genshin/puzzles) whose reach it stands in, the reading closest to the rule the wiki gives, and stands unlocked where it stands in none.
 - **Hidden chests are dug up.** A chest the map marks as buried offers Dig when the player stands at its place, and appears when dug.
 - **Sealed chests are freed first.** A chest sealed in Dendro vines or ice is freed by Pyro, and one sealed in rock by a blunt attack or one that deals poise damage, through [combat](/docs/genshin/combat)'s hits. The map's sealed label does not say which seal a place holds, so which one each place holds is measured, not read.
@@ -40,7 +40,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Common chests in Windrise's area, opened and rewarded in full.** The wallet's share is built for every tier. What is left is the drops, and the area: the places name no catalogue area, which needs the region outlines the exploration progress reads, so the Windrise's chests cannot yet be told from the rest of Mondstadt's.
+1. **Common chests in Windrise's area, opened and rewarded in full.** The Primogems and Mora are built for the Common, Exquisite and Precious kinds. What is left is the drops, and the area: the places name no catalogue area, which needs the region outlines the exploration progress reads, so the Windrise's chests cannot yet be told from the rest of Mondstadt's.
 2. **The other rewards and tiers.** Adventure EXP and Sigils, which the wallet does not hold yet; Luxurious and Remarkable, once their Mora and blueprints are settled.
 3. **The locks by camps.** Waits on the reach a camp locks a chest within, measured.
 4. **Digging and seals**, once a recording settles what a dug or freed place holds and which seal each sealed place wears.
