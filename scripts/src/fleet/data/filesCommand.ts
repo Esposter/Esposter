@@ -16,14 +16,14 @@ export const filesCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const parityDirectory = args.directory || getParityDirectory();
     const directories = args._.length > 0 ? args._ : await readStandardInput();
+    // One directory is read at a time, its stats already batched within it, so a long list never holds every directory
+    // Open at once, and each listing prints in input order as it is read
     const result = await getResultAsync(async () => {
-      const listings = await Promise.all(
-        directories.map(async (directory) => ({
-          directory,
-          files: (await readDirectory(join(parityDirectory, directory))).files,
-        })),
-      );
-      for (const listing of listings) console.info(JSON.stringify(listing));
+      for (const directory of directories) {
+        // oxlint-disable-next-line no-await-in-loop -- A directory is read before the next opens, so the open handles never stack
+        const { files } = await readDirectory(join(parityDirectory, directory));
+        console.info(JSON.stringify({ directory, files }));
+      }
     });
     result.match(noop, (error) => {
       console.error(error);
