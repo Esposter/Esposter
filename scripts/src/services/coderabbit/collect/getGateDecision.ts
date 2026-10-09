@@ -12,9 +12,9 @@ import {
 
 // A release gets one review, so its status is the whole answer: nothing is pushed to `develop` while the pull
 // Request is open, and the flip to completed arrives as its own status event. No check at all is told apart from a
-// Pending one, which resolves itself. A skipped incremental pass is the bot declining to review again, so the full
-// Review it already completed stands when it read the head; commits that landed after it are a review the bot did not
-// Run, asked for as a skip is. Any other finished state is the bot running no review — a skip for the plan's file
+// Pending one, which resolves itself unless the bot dropped the review (`readCheckWaitEndsAtMs`). A skipped
+// Incremental pass is the bot declining to review again, so the full review it already completed stands when it read
+// The head; commits that landed after it are a review the bot did not run, asked for as a skip is. Any other finished state is the bot running no review — a skip for the plan's file
 // Limit or its credits, a failed review — whose wording carries its own counts, so it is matched by elimination.
 export const getGateDecision = (
   checkStatus: CheckStatus | undefined,
@@ -22,7 +22,7 @@ export const getGateDecision = (
   reviewedSha: string,
 ): GateDecision => {
   if (!checkStatus) return { kind: GateDecisionKind.Missing, reason: "no CodeRabbit check on the pull request" };
-  else if (!checkIsSlotFree(checkStatus)) return { kind: GateDecisionKind.Exit, reason: "the review is running" };
+  else if (!checkIsSlotFree(checkStatus)) return { kind: GateDecisionKind.Running, reason: "the review is running" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === COMPLETED_DESCRIPTION)
     return { kind: GateDecisionKind.Proceed, reason: "the review is complete" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === INCREMENTAL_SKIPPED_DESCRIPTION) {

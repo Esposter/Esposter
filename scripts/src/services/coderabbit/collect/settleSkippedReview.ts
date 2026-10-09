@@ -2,6 +2,7 @@ import type { SkippedReviewInput } from "#src/models/coderabbit/collect/SkippedR
 import type { SkippedReviewSettlement } from "#src/models/coderabbit/collect/SkippedReviewSettlement";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import { REVIEW_ASK_MARKER, REVIEW_ASK_WAITS_MS } from "#src/services/coderabbit/collect/constants";
@@ -11,13 +12,14 @@ import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatu
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 import { takeOne } from "@esposter/shared";
 
-// A window the bot finished without a review is asked for it again, a wait apart, up to the ask cap, and once the wait
-// After the last ask passes with the bot still skipping, the window is too big to review and is due a re-cut. Only the
-// Collector's own asks count, by their marker: a person's ask, or the rate limit's, spends none of them. The bot states
-// No deadline for a skip, so each wait is the collector's own, slept out by the retrigger unless the bot's answer to
-// The ask fires the cycle first
+// A window the bot finished without a review — or whose check never came, or whose review stayed pending past the
+// Time a review takes — is asked for it again, a wait apart, up to the ask cap, and once the wait after the last ask
+// Passes with the bot still skipping, the window is too big to review and is due a re-cut. Only the collector's own
+// Asks count, by their marker: a person's ask, or the rate limit's, spends none of them. The bot states no deadline for
+// A skip, so each wait is the collector's own, slept out by the retrigger unless the bot's answer to the ask fires the
+// Cycle first
 export const settleSkippedReview = ({
-  isCheckMissing,
+  gateKind,
   isDryRun,
   issueComments,
   nowMs,
@@ -44,14 +46,19 @@ export const settleSkippedReview = ({
       };
     else if (askCount >= askCap) return { isRecutDue: true };
   }
-  // Read again, as before the push: a review a person started during the drain would be cancelled by the ask
+  // Read again, as before the push: a review a person started during the drain would be cancelled by the ask. A check
+  // The gate read as pending must still be, since the ask is for that review and one that finished meanwhile owes none
   const checkStatus = readCheckStatus(pullRequest);
-  if (!(checkStatus === undefined ? isCheckMissing : checkIsSlotFree(checkStatus)))
+  const isAskOwed =
+    checkStatus === undefined
+      ? gateKind === GateDecisionKind.Missing
+      : checkIsSlotFree(checkStatus) !== (gateKind === GateDecisionKind.Running);
+  if (!isAskOwed)
     return {
       isRecutDue: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
-        reason: "a review started during the run, or its status could not be read — the ask is not owed",
+        reason: "the check moved during the run, or its status could not be read — the ask is not owed",
       },
     };
   else if (isDryRun)

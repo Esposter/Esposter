@@ -32,12 +32,14 @@ import {
   MAIN_BRANCH,
   PASS_BUCKET,
   PENDING_BUCKET,
+  PENDING_CHECK_WAIT_MS,
   QUEUE_BRANCH,
   RATE_LIMITED_DESCRIPTION,
-  REPAIR_ATTEMPT_TIMEOUT_MS,
   REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_COMMANDS,
+  REPAIR_REGENERATE_TIMEOUT_MS,
+  REPAIR_SESSION_TIMEOUT_MS,
   RETRIGGER_BUFFER_MS,
   RETRIGGER_SLEEP_CAP_MS,
   REVIEW_FIXES_BRANCH,
@@ -52,6 +54,7 @@ import { getFailureSignature } from "#src/services/coderabbit/collect/getFailure
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
+import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -136,11 +139,13 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   );
   const greenSpawn: SpawnSyncReturns<string> = { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
   const repairedReason = `${MAIN_BRANCH} repaired — its push runs the cycle again`;
-  // What `gh` answers: the login, the window pull requests, the reviews, the issue comments, the repository's newest
-  // Commit comments, CI's runs for main's head, a red run's jobs and log, no open issue, and `[[]]` for every other
-  // Paginated list — the one page of nothing a `--slurp` returns. The pull requests are kept as GitHub would hold them:
-  // A merge closes its window and a create opens one, so a run reads back what it wrote. Every commit comment is dated
-  // At the epoch, so a test reading them pins the clock there
+  // The bottom window's review, pending since the epoch, waited on until the pending wait ends
+  const runningReason = `pull request #${pullRequest} — the review is running; asked for once it has waited until ${new Date(PENDING_CHECK_WAIT_MS).toISOString()}`;
+  // What `gh` answers: the login, the window pull requests, a check whose state was set at the epoch, the reviews, the
+  // Issue comments, the repository's newest commit comments, CI's runs for main's head, a red run's jobs and log, no
+  // Open issue, and `[[]]` for every other paginated list — the one page of nothing a `--slurp` returns. The pull
+  // Requests are kept as GitHub would hold them: a merge closes its window and a create opens one, so a run reads back
+  // What it wrote. Every commit comment and the check are dated at the epoch, the instant a test reading them pins
   const collectorSha = "collectorSha";
   const baseInput = { collectorSha, isDryRun: false };
   const answerGh = (
@@ -178,7 +183,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           state: WindowPullRequestState.Open,
         });
         return "";
-      } else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
+      } else if (args[0] === "pr" && args[1] === "view") return Temporal.Instant.fromEpochMilliseconds(0).toString();
+      else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
       else if (args[0] === "run" && args[1] === "view")
         return args.includes("--json") ? JSON.stringify(redRunJobs) : "";
       else if (args[0] === "repo" && args[1] === "view")
@@ -367,14 +373,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       stdio: "pipe",
     });
     expect(prompt).toBe(
-      getRepairPrompt({
-        collectorSha,
-        failedLog: "",
-        installFailure: installTail,
-        mainSha,
-        remainingMinutes: Temporal.Duration.from({ milliseconds: REPAIR_ATTEMPT_TIMEOUT_MS }).total("minutes"),
-        runUrl: redRun.url,
-      }),
+      getRepairPrompt({ collectorSha, failedLog: "", installFailure: installTail, mainSha, runUrl: redRun.url }),
     );
   });
 
@@ -407,6 +406,38 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
       `${repairSha} ${mainSha}`,
     );
+  });
+
+  // Each part of an attempt runs on its own clock, so an install that ran out the regenerators' clock and a session
+  // That ran most of its own still leave the verify of the repair its whole suite
+  test("verifies a session's repair on the suite's own clock, however long the install and the session ran", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockImplementation((args) => {
+      if (args.join(" ") === INSTALL_COMMAND.join(" ")) vi.setSystemTime(Date.now() + REPAIR_REGENERATE_TIMEOUT_MS);
+      return greenSpawn;
+    });
+    runSession.mockImplementation(() => {
+      commitFile(`${TEST_FILENAME}.ts`, "");
+      runGit(
+        ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+        getCwd(),
+      );
+      vi.setSystemTime(Date.now() + REPAIR_SESSION_TIMEOUT_MS - 1);
+      return Promise.resolve({ isEnded: true });
+    });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
   });
 
   // A session's repair is verified as the cut it becomes, and one that fails there counts against its signature in the
@@ -468,6 +499,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("leaves a claimed commit whose patch does not apply to main where it is", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
     commitFile(TEST_FILENAME, " ");
@@ -478,8 +510,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `pull request #${pullRequest} — the review is running`,
-      retriggerDelaySeconds: undefined,
+      reason: runningReason,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: undefined,
     });
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
@@ -744,6 +776,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("holds every window while the release from develop is still reviewing", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([], [], [], [], [], [getLegacyPullRequest(WindowPullRequestState.Open)]);
@@ -753,7 +786,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `pull request #${pullRequest} from ${DEVELOP_BRANCH} to ${MAIN_BRANCH} is open — no window opens until its review completes and it merges`,
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: undefined,
     });
     expect(getPrCalls("merge")).toHaveLength(0);
@@ -782,6 +815,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("opens nothing over an open window while no stacking guard reaches it", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh(openPullRequests);
@@ -790,8 +824,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `pull request #${pullRequest} — the review is running`,
-      retriggerDelaySeconds: undefined,
+      reason: runningReason,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: undefined,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
@@ -803,6 +837,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("opens nothing over an open window whose own copy lacks the stacking guard, though main carries it", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
     publish(DEVELOP_BRANCH, configSha);
     publish(getWindowBranch(pullRequest), deleteFile(".coderabbit.yaml"));
@@ -813,8 +848,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `pull request #${pullRequest} — the review is running`,
-      retriggerDelaySeconds: undefined,
+      reason: runningReason,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: undefined,
     });
     expect(getPrCalls("create")).toHaveLength(0);
@@ -824,6 +859,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("stacks the next window over an open one when its base's config lets the stack reach it", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
     const developSha = publish(DEVELOP_BRANCH, configSha);
     publish(getWindowBranch(pullRequest), developSha);
@@ -835,7 +871,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1, getWindowBranch(pullRequest)),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: queueSha,
     });
     // The body lists the window's commits, which the test does not restate: the flags around it are what is asserted
@@ -1154,12 +1190,20 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         baseRefName: number === 0 ? MAIN_BRANCH : getWindowBranch(number - 1),
       })),
     );
+    // The bottom review started a moment ago, so its pending wait ends after the hour turns over
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[0] === "pr" && args[1] === "view" ? new Date(nowMs).toISOString() : (answerRest?.(args) ?? ""),
+    );
     readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: windowNumbers.map((number) => `pull request #${number} — the review is running`).join("; "),
+      reason: [
+        `pull request #${pullRequest} — the review is running; asked for once it has waited until ${new Date(nowMs + PENDING_CHECK_WAIT_MS).toISOString()}`,
+        ...windowNumbers.slice(1).map((number) => `pull request #${number} — the review is running`),
+      ].join("; "),
       retriggerDelaySeconds: Temporal.Duration.from({
         milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
       }).total("seconds"),
@@ -1173,13 +1217,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("waits on an open window when a pull request is named", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh(openPullRequests);
     readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd(), pullRequest });
 
-    expect(outcome.reason).toBe(`pull request #${pullRequest} — the review is running`);
+    expect(outcome.reason).toBe(runningReason);
     expect(runDrainStep).not.toHaveBeenCalled();
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });

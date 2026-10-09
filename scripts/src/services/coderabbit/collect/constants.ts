@@ -174,8 +174,19 @@ export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 // Every headless session's wall clock. A session past it is killed with its whole process tree and reads as not ended,
 // So its step counts the attempt and the run retries a minute later (`ATTEMPT_RETRY_DELAY_SECONDS`)
 export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
-// One repair attempt's deadline, covering the regenerators, their verify, the session and the repair step's verify
-export const REPAIR_ATTEMPT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
+// How long a repair's install and regenerators may run before a regenerator is no longer started: on the runner the
+// Install takes seconds and the regenerators two to three minutes together
+export const REPAIR_REGENERATE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+// The repair session's own wall clock, counted from its launch, so the install and the regenerators before it spend
+// None of it. Its repairs have run from a minute to most of twenty, its own checks among them
+export const REPAIR_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
+// One run of the repair's check suite (`checkIsGreen`), counted from its first check, so the session before it spends
+// None of it. The whole suite passes in about a quarter of an hour on the runner, three quarters of it the tests
+export const REPAIR_VERIFY_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 25 }).total("milliseconds");
+// The longest one repair attempt runs, its clocks end to end: the install and the regenerators, the verify of what
+// They moved, the session that answers what they did not, and the verify of its commit
+export const REPAIR_ATTEMPT_TIMEOUT_MS: number =
+  REPAIR_REGENERATE_TIMEOUT_MS + REPAIR_SESSION_TIMEOUT_MS + 2 * REPAIR_VERIFY_TIMEOUT_MS;
 // How long one run may spend from its job's start before it launches no further session: a session that could end
 // Past it ends the run idle with the minute's retrigger instead (`assertCycleBudget`). A run its job's timeout kills
 // Writes no retrigger, so that timeout sits above this plus the longest step that launches one
@@ -264,6 +275,10 @@ export const REVIEW_ASK_WAITS_MS: number[] = [15, 60, 60].map((minutes) =>
 );
 // How long the bottom window may go without a CodeRabbit check before it is asked like a skipped one
 export const MISSING_CHECK_WAIT_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
+// How long the bottom window's check may stay pending, from the status that set it, before the review is read as one
+// The bot dropped and asked for like a skipped one. A window's review completes in about a quarter of an hour, so a
+// Check pending four times that long is not a review still running
+export const PENDING_CHECK_WAIT_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How far back a failure signature's repair attempts are counted. Without a span, a signature as common as one test
 // Job would stay exhausted for good after its third failure in any week
 export const REPAIR_SIGNATURE_SPAN_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");

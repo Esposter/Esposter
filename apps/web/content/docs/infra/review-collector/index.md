@@ -53,16 +53,16 @@ flowchart TD
   E -->|no| CL{A window closed without merging,<br/>not by a re-cut}
   CL -->|yes| PZ[Exit — a person's pause]
   CL -->|no| BW{Bottom window's review}
-  BW -->|running, rate limited, or skipped or<br/>without a check and asked, a wait apart| SY
+  BW -->|running, rate limited, or skipped, without a check<br/>or pending past its wait and asked, a wait apart| SY
   BW -->|skipped past the last ask's wait| RC[Re-cut it and every window above,<br/>its replacement at half the cap] --> SY
   BW -->|complete| MG[Merge it, retarget the next to main, delete its branch,<br/>drain its findings — past the cap, defer them to an issue] --> BW
   BW -->|no window open| SY
   SY[Rewrite ai/queue onto develop or the fixes,<br/>parking a commit it cannot carry on ai/held/*] --> OB{A slot free in the rolling hour,<br/>stacking allowed, something owed}
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
   OB -->|no| MR{main red on CI}
-  MR -->|yes, its signature under the cap| RG[Regenerators, else Claude repairs<br/>inside the deadline — push, exit]
+  MR -->|yes, its signature under the cap| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
   MR -->|yes, past the cap| RI[One issue for the signature, exit]
-  MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, an ask's wait]
+  MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, an ask's wait, a check's wait]
 ```
 
 Three properties make the picture safe to fire from anything:

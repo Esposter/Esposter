@@ -343,13 +343,14 @@ creation, and the bottom window merges as soon as its review completes, whatever
 credential then fixes or rejects every finding onto `ai/review-fixes`; a finding still open past the drain's attempts
 gets a `Deferred` reply and one issue lists them, and the walk goes on. The fixes lead the next window, `ai/queue` is
 rewritten onto them, and the collector replies once per finding — a bot reply to that reply is never drained again
-unless it carries a new suggestion. A review the bot skips, or a bottom window with no check, is asked for a wait
-apart up to the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut again at half the cap. A commit no window can carry past
-its attempts is parked on `ai/held/<short-sha>` with an issue saying how to re-land it. A commit carrying an
+unless it carries a new suggestion. A review the bot skips, a bottom window with no check, or one whose check stays
+pending past `PENDING_CHECK_WAIT_MS`, is asked for a wait apart up to the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut
+again at half the cap. A commit no window can carry past its attempts is parked on `ai/held/<short-sha>` with an issue
+saying how to re-land it. A commit carrying an
 `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and is
 parked instead once no cut applies it past its attempts. A red `main` is repaired after the walk and the openings,
-under a deadline per attempt and counted per failure signature, with an issue once its attempts run out. Every
-session runs under a wall clock, a session that never starts is
+each part of an attempt on its own clock and the attempts counted per failure signature, with an issue once its
+attempts run out. Every session runs under a wall clock, a session that never starts is
 retried five minutes later, and a hold that lifts on a clock schedules its own wake, so no stage needs a person to
 restart it. Its pace is the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`)
 carries one window under the cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a
@@ -373,7 +374,7 @@ flowchart LR
   C -->|cut under the cap, stacked,<br/>as the rolling hour frees a slot| W[review/n pull requests]
   W -->|opened| R[CodeRabbit<br/>one review per window]
   R -->|status completed| C
-  R -->|skipped, rate limited or no check| C
+  R -->|skipped, rate limited, no check<br/>or pending past its wait| C
   C -->|ask a wait apart up to the cap,<br/>then re-cut at half the cap| W
   C -->|bottom window merged| M[(main)]
   C -->|drain: fix or reject every finding| F[(ai/review-fixes)]

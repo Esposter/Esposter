@@ -4,6 +4,7 @@ import type { postComment as basePostComment } from "#src/services/coderabbit/co
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import {
   CHECK_NAME,
   PASS_BUCKET,
@@ -33,7 +34,14 @@ vi.mock(import("#src/services/coderabbit/collect/readCheckStatus"), () => ({
 describe(settleSkippedReview, () => {
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
-  const baseInput = { isCheckMissing: false, isDryRun: false, issueComments: [], nowMs: 0, pullRequest, viewerLogin };
+  const baseInput = {
+    gateKind: GateDecisionKind.Skipped,
+    isDryRun: false,
+    issueComments: [],
+    nowMs: 0,
+    pullRequest,
+    viewerLogin,
+  };
   const skippedCheck: CheckStatus = { bucket: PASS_BUCKET, description: "", name: CHECK_NAME };
   const askBody = `${PROBE_COMMENT}\n<!-- ${REVIEW_ASK_MARKER} -->`;
   const markedAsk: GitHubEntry = {
@@ -127,7 +135,24 @@ describe(settleSkippedReview, () => {
       isRecutDue: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
-        reason: "a review started during the run, or its status could not be read — the ask is not owed",
+        reason: "the check moved during the run, or its status could not be read — the ask is not owed",
+      },
+    });
+    expect(postComment).not.toHaveBeenCalled();
+  });
+
+  // The ask is for the review the gate read as pending past its wait, so one that finished meanwhile has a verdict the
+  // Next run reads instead
+  test("asks nothing for a review pending past its wait that finished during the run", () => {
+    expect.hasAssertions();
+
+    readCheckStatus.mockReturnValue(skippedCheck);
+
+    expect(settleSkippedReview({ ...baseInput, gateKind: GateDecisionKind.Running })).toStrictEqual({
+      isRecutDue: false,
+      outcome: {
+        kind: CycleOutcomeKind.Idle,
+        reason: "the check moved during the run, or its status could not be read — the ask is not owed",
       },
     });
     expect(postComment).not.toHaveBeenCalled();

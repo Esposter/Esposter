@@ -15,7 +15,7 @@ describe(getGateDecision, () => {
   const olderSha = "older";
 
   test.each([
-    ["pending", "Review in progress", GateDecisionKind.Exit],
+    ["pending", "Review in progress", GateDecisionKind.Running],
     ["pass", "Review completed", GateDecisionKind.Proceed],
     ["pass", "Review rate limited", GateDecisionKind.RateLimited],
     ["fail", "Review failed", GateDecisionKind.Skipped],

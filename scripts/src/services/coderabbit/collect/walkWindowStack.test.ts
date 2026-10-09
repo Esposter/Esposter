@@ -10,6 +10,8 @@ import {
   MAIN_BRANCH,
   MISSING_CHECK_WAIT_MS,
   PASS_BUCKET,
+  PENDING_BUCKET,
+  PENDING_CHECK_WAIT_MS,
   QUEUE_BRANCH,
   REVIEW_ASK_MARKER,
   REVIEW_ASK_WAITS_MS,
@@ -51,12 +53,14 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const viewerLogin = "viewerLogin";
   const baseInput = { collectorSha: "", developSha: "", isDryRun: false, queueSha: "", viewerLogin };
   const askBody = `${PROBE_COMMENT}\n<!-- ${REVIEW_ASK_MARKER} -->`;
-  // What `gh` answers: the windows on every list, the bottom window's comments, and one page of nothing for every other
-  // List. Each close records where `develop` stood on the remote when it was made
+  // What `gh` answers: the windows on every list, a check whose state was set at the epoch, the bottom window's
+  // Comments, and one page of nothing for every other list. Each close records where `develop` stood on the remote when
+  // It was made
   const answerGh = (windows: WindowPullRequest[], bottomComments: GitHubEntry[]): string[] => {
     const closedOverDevelopShas: string[] = [];
     runGh.mockImplementation((args) => {
       if (args[0] === "pr" && args[1] === "list") return JSON.stringify(windows);
+      else if (args[0] === "pr" && args[1] === "view") return new Date(0).toISOString();
       else if (args[0] === "pr" && args[1] === "close") closedOverDevelopShas.push(readSha(`origin/${DEVELOP_BRANCH}`));
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/issues/${takeOne(windows).number}/comments`))
         return JSON.stringify([bottomComments]);
@@ -125,7 +129,7 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom] })).resolves.toStrictEqual({
       blockReasons: [
-        `pull request #${bottom.number} — no CodeRabbit check yet; asked for once it has waited until ${new Date(MISSING_CHECK_WAIT_MS).toISOString()}`,
+        `pull request #${bottom.number} — no CodeRabbit check on the pull request; asked for once it has waited until ${new Date(MISSING_CHECK_WAIT_MS).toISOString()}`,
       ],
       drainedPullRequests: [],
       retriggerDelaySeconds: getRetriggerDelaySeconds(MISSING_CHECK_WAIT_MS),
@@ -140,6 +144,43 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     readCheckStatus.mockReturnValue(undefined);
     answerGh([bottom], []);
     vi.setSystemTime(MISSING_CHECK_WAIT_MS);
+
+    await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom] })).resolves.toStrictEqual({
+      blockReasons: [
+        `pull request #${bottom.number} — asked 1 of ${REVIEW_ASK_WAITS_MS.length} times for the review the bot did not run — its answer fires the cycle again`,
+      ],
+      drainedPullRequests: [],
+      retriggerDelaySeconds: getRetriggerDelaySeconds(takeOne(REVIEW_ASK_WAITS_MS, 0)),
+    });
+    expect(getPrCalls(["comment"])).toStrictEqual([[["pr", "comment", bottom.number.toString(), "--body", askBody]]]);
+  });
+
+  // A review the bot dropped sends no status event, so the walk wakes itself at the end of the wait rather than waiting
+  // On one that never comes
+  test("waits on a bottom window's pending check until the pending wait has passed, waking when it ends", async () => {
+    expect.hasAssertions();
+
+    const bottom = getWindow(0, MAIN_BRANCH);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    answerGh([bottom], []);
+
+    await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom] })).resolves.toStrictEqual({
+      blockReasons: [
+        `pull request #${bottom.number} — the review is running; asked for once it has waited until ${new Date(PENDING_CHECK_WAIT_MS).toISOString()}`,
+      ],
+      drainedPullRequests: [],
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
+    });
+    expect(getPrCalls(["comment"])).toStrictEqual([]);
+  });
+
+  test("asks for a bottom window's review once its check has been pending past the wait", async () => {
+    expect.hasAssertions();
+
+    const bottom = getWindow(0, MAIN_BRANCH);
+    readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
+    answerGh([bottom], []);
+    vi.setSystemTime(PENDING_CHECK_WAIT_MS);
 
     await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom] })).resolves.toStrictEqual({
       blockReasons: [

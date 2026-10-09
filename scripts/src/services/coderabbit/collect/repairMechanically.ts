@@ -15,8 +15,8 @@ import { runGit } from "#src/services/shared/runGit";
 // Reading a log to reach the command this runs first. Nothing here classifies the red: the regenerators run, and
 // Whether they answered it is the same check suite the cut earns. A red they leave untouched reaches the session
 // Having spent nothing; one they move without answering costs the single verify that found that out, and the head
-// Is restored so the session starts from the tree it would have found. Every regenerator and the verify run inside the
-// Attempt's deadline, and a regenerator is not started once it has passed: what is left then reads as still red.
+// Is restored so the session starts from the tree it would have found. The regenerators run inside their own deadline,
+// And one is not started once it has passed; the verify of whatever they moved then runs on its own clock.
 //
 // Returns the repair's commit, or nothing when the tree did not move or moved without going green.
 export const repairMechanically = ({
@@ -36,7 +36,7 @@ export const repairMechanically = ({
   if (readDirtyPaths(cwd).length === 0) {
     console.info("no regenerator moved the tree — the red is the session's");
     return undefined;
-  } else if (!checkIsGreen(cwd, deadlineMs)) {
+  } else if (!checkIsGreen(cwd)) {
     console.info("the regenerated tree is still red — restoring it for the session");
     runGit(["reset", "--hard"], cwd);
     runGit(["clean", "--force", "-d"], cwd);
