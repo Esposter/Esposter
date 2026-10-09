@@ -2,23 +2,27 @@ import type { AgentConsoleTheme } from "@/models/agentConsole/AgentConsoleTheme"
 import type { AgentEvent } from "agent-console-server/contracts";
 
 import { AgentConsoleReaction } from "@/models/agentConsole/AgentConsoleReaction";
+import { notifyWhenHidden } from "@/services/agentConsole/notifyWhenHidden";
 import { AgentEventType } from "agent-console-server/contracts";
 
-// A turn ending or a prompt waiting on a verdict, handed to the theme. Only events that happened after the page
-// Connected count: a replayed log is history, and a reload must not ring for every turn it already showed
+// A turn ending or a prompt waiting on a verdict. The console notifies a hidden tab of it for every theme, and then the
+// Theme reacts on top of that. Only events that happened after the page connected count: a replayed log is history, and
+// A reload must not ring for every turn it already showed
 export const reactToEvents = (
   theme: AgentConsoleTheme,
   sessionTitle: string,
   events: AgentEvent[],
   connectedAt: Date,
 ) => {
+  const react = (reaction: AgentConsoleReaction, title: string, body: string) => {
+    notifyWhenHidden(title, body);
+    theme.reactions[reaction]?.(title, body);
+  };
+
   for (const event of events)
     if (event.createdAt < connectedAt) continue;
     else if (event.type === AgentEventType.TurnResult)
-      theme.reactions[AgentConsoleReaction.TurnEnded](sessionTitle, event.isError ? event.subtype : event.result);
+      react(AgentConsoleReaction.TurnEnded, sessionTitle, event.isError ? event.subtype : event.result);
     else if (event.type === AgentEventType.PermissionRequest)
-      theme.reactions[AgentConsoleReaction.AttentionNeeded](
-        sessionTitle,
-        `${event.toolName} is waiting for permission`,
-      );
+      react(AgentConsoleReaction.AttentionNeeded, sessionTitle, `${event.toolName} is waiting for permission`);
 };
