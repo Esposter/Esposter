@@ -12,13 +12,12 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
-import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
+import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -99,20 +98,7 @@ export const useWorldCombat = ({
     );
     for (const character of characters.value) {
       const kit = characterIdKitMap.value.get(character.id);
-      if (kit)
-        combatantMap.set(character.id, {
-          ascension: character.ascension,
-          attributes: computeCharacterAttributes(
-            getCharacterAttributeLines(character, statTables),
-            elementalResonances,
-          ),
-          characterId: character.id,
-          constellationCount: character.constellationCount,
-          elementalResonances,
-          kit,
-          level: character.level,
-          weaponType: characterDataMap.get(character.id)?.weaponType,
-        });
+      if (kit) combatantMap.set(character.id, createCombatant(character, kit, elementalResonances, statTables));
     }
     return combatantMap;
   });
