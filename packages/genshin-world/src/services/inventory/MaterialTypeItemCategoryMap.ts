@@ -5,4 +5,5 @@ import { ItemCategory } from "genshin-interface";
 export const MaterialTypeItemCategoryMap = {
   [MaterialType.CharacterDevelopmentMaterial]: ItemCategory.CharacterDevelopmentItem,
   [MaterialType.Exchange]: ItemCategory.Material,
+  [MaterialType.WeaponExpStone]: ItemCategory.Material,
 } as const satisfies Record<MaterialType, ItemCategory>;

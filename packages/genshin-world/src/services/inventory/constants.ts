@@ -2,6 +2,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
+import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { ItemCategory } from "genshin-interface";
 
@@ -43,3 +45,18 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
 };
 // Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
 export const MORA_ITEM_ID = 202;
+// The item id each currency the wallet holds is filed under in the game's material table, so a drop or a reward naming
+// One is a wallet grant, never a bag item
+const CurrencyItemIdMap: Record<Currency, number> = {
+  [Currency.AcquaintFate]: 224,
+  [Currency.GenesisCrystal]: 203,
+  [Currency.IntertwinedFate]: 223,
+  [Currency.MasterlessStardust]: 222,
+  [Currency.MasterlessStarglitter]: 221,
+  [Currency.MasterlessStellaFortuna]: 104_300,
+  [Currency.Mora]: MORA_ITEM_ID,
+  [Currency.OriginalResin]: ORIGINAL_RESIN_ITEM_ID,
+  [Currency.Primogem]: 201,
+};
+// Every item id the wallet takes in: each currency's, and Adventure EXP, which the Adventure Rank takes
+export const WALLET_ITEM_IDS: readonly number[] = [ADVENTURE_EXP_ITEM_ID, ...Object.values(CurrencyItemIdMap)];

@@ -45,7 +45,8 @@ describe(collectForgeOrder, () => {
     startedAt: EPOCH,
     unitSeconds: UNIT_SECONDS,
   });
-  const collectArguments = { definitions, inventory: emptyInventory, random: () => 0, talents: [] };
+  const weapons = new Map<number, Pick<ItemDefinition, "name" | "rarity">>();
+  const collectArguments = { definitions, inventory: emptyInventory, random: () => 0, talents: [], weapons };
 
   test("should take in the units done by now and leave the rest queued from where they stopped", () => {
     expect.hasAssertions();
@@ -133,5 +134,37 @@ describe(collectForgeOrder, () => {
     expect(countInventoryItem(result.inventory.items, RESULT_ID)).toBe(3);
     expect(result.order?.count).toBe(1);
     expect(result.order?.startedAt.equals(EPOCH.add({ seconds: 2 * UNIT_SECONDS }))).toBe(true);
+  });
+
+  test("should grant a weapon result as a weapon in the bag", () => {
+    expect.hasAssertions();
+
+    const WEAPON_ID = 11_406;
+    const weaponRecipe: ForgeRecipe = {
+      ...recipe,
+      kind: ForgeRecipeKind.Weapon,
+      results: [{ count: 1, itemId: WEAPON_ID, weight: 1 }],
+    };
+    const result = collectForgeOrder(weaponRecipe, order(1), {
+      ...collectArguments,
+      now: EPOCH.add({ seconds: UNIT_SECONDS }),
+      weapons: new Map([[WEAPON_ID, { name: "Dull Blade", rarity: 1 }]]),
+    });
+
+    expect(result.inventory.items).toStrictEqual([
+      {
+        definition: {
+          category: ItemCategory.Weapon,
+          id: WEAPON_ID,
+          name: "Dull Blade",
+          rank: 0,
+          rarity: 1,
+          stackLimit: 1,
+        },
+        id: 1,
+        level: 1,
+        quantity: 1,
+      },
+    ]);
   });
 });
