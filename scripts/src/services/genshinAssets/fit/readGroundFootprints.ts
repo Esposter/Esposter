@@ -14,10 +14,10 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// Every place a region file stands a landmark on inside a square round the centre, each a disc on its point: a
-// Building's radius the half diagonal of the footprint its kit's options give, a capital's with none the farthest corner
-// Of its city area's placements from its place, and any other the bar's radius. The city areas are read only when a
-// Capital needs them
+// Every place a region file stands a landmark on inside a square round the centre, each a disc on its point: a capital's
+// Radius the farthest corner of its city area's placements from its place, since the city's whole architecture stands
+// On it, another building's the half diagonal of the footprint its kit's options give, and any other the bar's radius.
+// The city areas are read only when a capital needs them
 export const readGroundFootprints = async (
   centre: GroundPoint,
   halfSide: number,
@@ -45,15 +45,6 @@ export const readGroundFootprints = async (
         id,
         position: { x, z },
       } = landmark;
-      const options = "building" in landmark ? landmark.building.options : undefined;
-      if (options && "width" in options && "depth" in options)
-        return {
-          id,
-          radius: roundFitted(Math.hypot(options.width, options.depth) / 2),
-          source: GroundFootprintSource.BuildingKit,
-          x,
-          z,
-        };
       const isCapital = Object.values(RegionCapitalMap).some(({ landmarkId }) => landmarkId === id);
       if (isCapital) {
         cityAreas ??= readCityAreas();
@@ -69,6 +60,15 @@ export const readGroundFootprints = async (
           return { id, radius: roundFitted(radius), source: GroundFootprintSource.CityArea, x, z };
         }
       }
+      const options = "building" in landmark ? landmark.building.options : undefined;
+      if (options && "width" in options && "depth" in options)
+        return {
+          id,
+          radius: roundFitted(Math.hypot(options.width, options.depth) / 2),
+          source: GroundFootprintSource.BuildingKit,
+          x,
+          z,
+        };
       return { id, radius: barRadius, source: GroundFootprintSource.BarRadius, x, z };
     }),
   );

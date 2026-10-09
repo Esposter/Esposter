@@ -5488,7 +5488,7 @@
   "maxHeight": 299,
   "minHeight": -201,
   "residual": {
-    "amplitude": 8.65,
+    "amplitude": 8.8,
     "octaves": 3,
     "scale": 32,
     "seed": 1,
@@ -5549,7 +5549,7 @@
         { "falloff": 64, "radius": 60, "x": 0, "z": 0 },
         { "falloff": 64, "radius": 60, "x": 0, "z": 0 },
         { "falloff": 64, "radius": 60, "x": 44.38, "z": -0.51 },
-        { "falloff": 64, "radius": 6.4, "x": 391.51, "z": -517.41 }
+        { "falloff": 64, "radius": 256.51, "x": 391.51, "z": -517.41 }
       ]
     }
   }
