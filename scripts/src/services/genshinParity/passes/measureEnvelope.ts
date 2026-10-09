@@ -20,10 +20,11 @@ interface Targets {
   part: Float32Array;
 }
 type WitnessTargetsRead = Awaited<ReturnType<typeof readWitnessTargets>>;
-const TARGET_NAMES: WitnessTargetName[] = [TargetName.Part, TargetName.Depth, TargetName.Normal];
+const TARGET_NAMES: WitnessTargetName[] = [TargetName.Part, TargetName.Depth, TargetName.GeometryNormal];
+// The normal is the geometry's, before the exports' normal maps bend it, as the shape pass reads every family's
 const toTargets = ({ targets }: WitnessTargetsRead): Targets => ({
   depth: targets.depth ?? new Float32Array(),
-  normal: targets.normal ?? new Float32Array(),
+  normal: targets.geometryNormal ?? new Float32Array(),
   part: targets.part ?? new Float32Array(),
 });
 // The Oak's shape read on its envelope, a family of scattered cards: the exports' and ours at the reference's camera
