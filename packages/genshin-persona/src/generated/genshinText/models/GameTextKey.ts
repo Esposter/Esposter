@@ -116,6 +116,7 @@ export enum GameTextKey {
   ForgeMysticEnhancementOreRefusal = "110208304",
   Fowl = "1695194124",
   Friends = "UI_FRIEND_TITLE",
+  Friendship = "3501231455",
   FrostlampFlower = "1823058028",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
@@ -292,6 +293,8 @@ export enum GameTextKey {
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   StormbearerMountains = "490004829",
   StormterrorsLair = "775762325",
+  // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title
+  StoryUnlocksAt = "2616170868",
   StrangeTooth = "2715317724",
   SumeruRose = "691451364",
   SweetFlower = "1330975132",
