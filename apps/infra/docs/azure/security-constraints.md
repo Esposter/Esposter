@@ -58,3 +58,13 @@ Migration path: move server access to a non-key credential once the Railway iden
 Switching to deny-all requires a complete allowlist of app, function, deployment, and admin source networks first. The app currently uses connection-string access with no private endpoint.
 
 Migration path: identify all source networks, add private endpoints or access restrictions, then test all blob, table, and queue flows before tightening the default action.
+
+## Keyless Game-Data Publisher
+
+The hosted game data is written to the `app-assets` container under `genshin/data/` on each account, and that publish authenticates without a key. `DefaultAzureCredential` resolves to the owner's `az login` on their workstation, so neither a shared key nor a connection string sits on any disk.
+
+The owner's principal holds a Storage Blob Data Contributor grant scoped to the `app-assets` container on `devstesposter001` and on `prodstesposter001`, declared in `src/azure/resources/Microsoft.Authorization/roleAssignments/jimmyChenDevstesposter001AppAssetsStorageBlobDataContributor.ts` and its prod twin. The grant stops at the container, so it cannot write any other container. The subscription Owner role carries no blob data actions, which is why the grant is a separate declaration.
+
+This path differs from the connection-string exception at the top of this page. That exception exists because Railway has no identity to present to Azure. The publisher runs on a workstation that already holds an Azure login, so it needs no key at all. Reads stay anonymous, because `app-assets` is public for blob reads (see Storage Blob Public Access).
+
+Migration path: not applicable, since no key exists to migrate away from. A second maintainer who publishes needs a grant of their own on each container, declared the same way.
