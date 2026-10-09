@@ -39,5 +39,6 @@ flowchart LR
 
 ## Notes
 
+- The webpage editor offers no form blocks. A published page's sandbox cannot submit a form, so a survey invite block is the way it collects answers; the Forms plugin's component types stay registered so a saved form still loads.
 - Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside GrapesJS canvases and published pages bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.
 - The full list-to-blocks behaviour is tested once against the shared core; each wrapper test asserts only its own markup flavour.

@@ -21,7 +21,7 @@ const { css: cssFormat, html: htmlFormat } = jsBeautify;
 
 export const WebpageEditorPlugins: EditorConfig["plugins"] = [
   usePlugin(grapesJSBlocksBasic, { flexGrid: true }),
-  grapesJSPluginForms,
+  usePlugin(grapesJSPluginForms, { blocks: [] }),
   grapesJSComponentCountdown,
   grapesJSPluginExport,
   usePlugin(grapesJSTabs, { tabsBlock: { category: "Extra" } }),
