@@ -77,6 +77,7 @@ describe("diluc kit", () => {
       isAttackHeld: false,
       isAttackPressed: false,
       isBurstPressed: false,
+      isSkillHeld: false,
       isSkillPressed: false,
       locomotionState: LocomotionState.Idle,
     };
@@ -94,6 +95,7 @@ describe("diluc kit", () => {
           stamina,
           STEP_SECONDS,
           landedHits,
+          { ascension: 0, body: { x: 0, z: 0 }, characterId: DILUC_CHARACTER_ID, effects: [] },
         );
       };
       // Steps with no press until the action playing has run its seconds

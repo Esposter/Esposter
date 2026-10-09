@@ -59,7 +59,7 @@ Each character with a module has one file under `services/kit/characters/`, expo
 - **Lisa** (`createLisaKit`, avatar 10000006): four strikes, a charged attack, a collision and two plunges, Violet Arc's press and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, and match the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the shared effects above.
 - **Noelle** (`createNoelleKit`, avatar 10000034): four strikes, a charged attack, a collision and two plunges, Breastplate's press and Sweeping Time's two slashes. Her multipliers are read from proud skill groups 3431, 3432 and 3439, and match the wiki's Favonius Bladework - Maid, Breastplate and Sweeping Time values to two decimal places. Breastplate's shield and Sweeping Time's Geo infusion and ATK bonus are built, as the shared effects below.
 - **Mona** (`createMonaKit`, avatar 10000041): four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131 and 4132, and match the wiki's Ripple of Fate and Mirror Reflection of Doom values to two decimal places. Mirror Reflection is a summon, built as the shared effects below; the bubble's Hydro is built, its explosion is not.
-- **Bennett** (`createBennettKit`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below.
+- **Bennett** (`createBennettKit`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press and its two Charge Levels, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below, and A1's and A4's cooldown cuts are built with them.
 
 ## Shared effects
 
@@ -107,48 +107,54 @@ Each effect is on the party, in a list the character component holds, so a switc
 - **Breastplate's shield is set from Noelle's DEF.** It holds 160% of her DEF plus 769 for 12 seconds, and is recast over the one she holds. Its healing (21.28% of her DEF plus 102, on half of the hits it takes) and its C4 explosion are not built.
 - **Sweeping Time's converted attacks keep their normal poise.** The wiki's converted strikes and plunges have their own poise, which the kit does not switch to. The Geo infusion and the ATK bonus of 40% of her DEF are built, for 15 seconds past an 80-frame start.
 - **Noelle's charged attack is one cycle of its spin and its final slash.** A held spin's cycles are not built, so the charged attack hits once and then once more.
-- **Bennett's A1 and A4 are not built.** Both cut Passion Overload's cooldown, which the kit holds as one value, and A4 also stops a level-2 hold from launching Bennett. Passion Overload's hold levels are not built either.
+- **A skill with holds starts on its release.** A kit's `elementalSkillHolds` are ordered by their minimum seconds, and a release plays the highest level its held seconds reach, else the press, on that level's cooldown. The press therefore starts when the key is let go, as the game's Charge Levels do, rather than on the press.
+- **Passion Overload's Charge Levels' thresholds are provisional.** The hold that reaches Level 1 is 0.5 seconds and Level 2's is 1 second, and no table or wiki page gives them, so a recording of the skill measures them. The hold's hits and explosion, their multipliers and poise, and the cooldowns of 7.5 and 10 seconds are the wiki's and gcsim's.
+- **A cooldown multiplier is read as a skill's cooldown starts.** `getSkillCooldownMultiplier` takes the character's ascension, its id, the body and the team's effects, and each skill's cooldown is multiplied by it when the skill starts. Bennett's A1 cuts every Passion Overload by 20%, and A4 halves it while Bennett stands in a field he cast, which a field's `characterId` names.
+- **Bennett's A4 no-launch is not built.** Under the field, gcsim's Level 2 hold drops to a 175-frame animation without launching Bennett, and the kit keeps the 343-frame animation the field does not change.
+- **Bennett's hold boxes are circles.** The 3 by 3 box of the hold's second hit is priced as the circle to its far corner, 2.12 metres, as the other boxes are.
 - **An enemy's strike takes a shield through the combat shield.** `absorbKitShield` prices the strike's damage by `absorbShieldDamage` with the character's shield strength, the rule the combat page gives, so the Geo shield's 150% and the shield strength are the combat's, and the overflow is the damage to HP. The kit keeps no second absorption arithmetic.
 - **An enemy strikes the nearest live taunt within its aggro range.** `selectEnemyTaunt` picks, for each enemy on each step, the nearest taunt within `ENEMY_AGGRO_RANGE` ahead of the character, and a taunt with no seconds or no health left is not picked. The taunt takes the damage the strike would deal the active character, as the kit gives a taunt no defence of its own.
 - **The team's effects are the world screen's.** The screen holds them, the character on the field steps them, and the enemies and their strikes read them. The character clears them when it unmounts, so a shield or taunt does not outlive the character that cast it.
 
 ## Key files
 
-| File                                                                    | Role                                                                                      |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/character/SkillDepot.ts`             | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element     |
-| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                               |
-| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                             |
-| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                      |
-| `scripts/src/services/genshinAssets/stats/toTalentTables.ts`            | Each character's talent groups: their levels, parameters and labels, apart                |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`         | Each character's chunk and the loader map the world imports them through                  |
-| `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                                 |
-| `packages/genshin-world/src/generated/talentMultipliers/`               | Each character's multipliers per level, loaded on demand as the character joins           |
-| `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`      | The loaded characters' multipliers, checked and merged by proud skill group               |
-| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                             |
-| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                           |
-| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers                 |
-| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Fantastic Voyage's field                           |
-| `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it                 |
-| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                               |
-| `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon            |
-| `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                               |
-| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`           | The nearest live taunt in an enemy's aggro range, which it strikes                        |
-| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`        | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                                |
-| `packages/genshin-world/src/services/kit/characters/lisaKit.ts`         | `createLisaKit`, Lisa's kit with Lightning Rose's discharges                              |
-| `packages/genshin-world/src/services/kit/characters/noelleKit.ts`       | `createNoelleKit`, Noelle's kit with Breastplate's shield and Sweeping Time's buffs       |
-| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | A shield takes the strike's damage through the combat's absorption                        |
-| `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                   |
-| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Searing Onslaught's chain, Dawn's infusion and phoenix |
-| `packages/genshin-world/src/models/kit/KitSkillChain.ts`                | A skill's follow-up presses and the window each press leaves open                         |
-| `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                       |
-| `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                          |
-| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                               |
-| `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with     |
-| `packages/genshin-world/src/services/kit/effects/infuseKitHits.ts`      | Infuses a step's landed hits from the kit's normal attacks, charged attack and plunges    |
-| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts` | The combatant with its buffs added to the pricing                                         |
-| `packages/genshin-world/src/services/kit/constants.ts`                  | The targeting weights and the kit's shared timing constants                               |
-| `packages/genshin-world/src/services/party/healPartyMember.ts`          | Heals a standing member up to all its HP                                                  |
+| File                                                                    | Role                                                                                                 |
+| :---------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/SkillDepot.ts`             | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element                |
+| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                                          |
+| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                                        |
+| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                                 |
+| `scripts/src/services/genshinAssets/stats/toTalentTables.ts`            | Each character's talent groups: their levels, parameters and labels, apart                           |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`         | Each character's chunk and the loader map the world imports them through                             |
+| `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                                            |
+| `packages/genshin-world/src/generated/talentMultipliers/`               | Each character's multipliers per level, loaded on demand as the character joins                      |
+| `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`      | The loaded characters' multipliers, checked and merged by proud skill group                          |
+| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                                        |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                                      |
+| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers                            |
+| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Passion Overload's Charge Levels and Fantastic Voyage's field |
+| `packages/genshin-world/src/models/kit/KitSkillHold.ts`                 | A skill's hold level: its action, cooldown and the seconds held to reach it                          |
+| `packages/genshin-world/src/models/kit/KitSkillCooldownState.ts`        | What a skill's cooldown reads as it starts, for `getSkillCooldownMultiplier`                         |
+| `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it                            |
+| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                                          |
+| `packages/genshin-world/src/services/kit/characters/amberKit.ts`        | `createAmberKit`, Amber's kit with Baron Bunny's taunt and Fiery Rain's summon                       |
+| `packages/genshin-world/src/services/kit/effects/stepKitTaunt.ts`       | A taunt's explosion, once its seconds or its health run out                                          |
+| `packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`           | The nearest live taunt in an enemy's aggro range, which it strikes                                   |
+| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts`        | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles                                           |
+| `packages/genshin-world/src/services/kit/characters/lisaKit.ts`         | `createLisaKit`, Lisa's kit with Lightning Rose's discharges                                         |
+| `packages/genshin-world/src/services/kit/characters/noelleKit.ts`       | `createNoelleKit`, Noelle's kit with Breastplate's shield and Sweeping Time's buffs                  |
+| `packages/genshin-world/src/services/kit/effects/absorbKitShield.ts`    | A shield takes the strike's damage through the combat's absorption                                   |
+| `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                              |
+| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Searing Onslaught's chain, Dawn's infusion and phoenix            |
+| `packages/genshin-world/src/models/kit/KitSkillChain.ts`                | A skill's follow-up presses and the window each press leaves open                                    |
+| `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                                  |
+| `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                                     |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                                          |
+| `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with                |
+| `packages/genshin-world/src/services/kit/effects/infuseKitHits.ts`      | Infuses a step's landed hits from the kit's normal attacks, charged attack and plunges               |
+| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts` | The combatant with its buffs added to the pricing                                                    |
+| `packages/genshin-world/src/services/kit/constants.ts`                  | The targeting weights and the kit's shared timing constants                                          |
+| `packages/genshin-world/src/services/party/healPartyMember.ts`          | Heals a standing member up to all its HP                                                             |
 
 ## Sources
 

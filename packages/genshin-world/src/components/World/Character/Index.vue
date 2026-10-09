@@ -149,6 +149,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     isAttackHeld: inputState.heldActions.has(InputAction.NormalAttack),
     isAttackPressed,
     isBurstPressed,
+    isSkillHeld: inputState.heldActions.has(InputAction.ElementalSkill),
     isSkillPressed,
     locomotionState: phase.state,
   };
@@ -168,6 +169,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     characterController.stamina,
     FIXED_STEP_SECONDS,
     landedHits,
+    { ascension: combatant.ascension, body: kitBody.position, characterId, effects },
   );
   if (infusedElement !== undefined) infuseKitHits(combatant.kit, infusedElement, landedHits, landedStart);
   if (action) {

@@ -19,6 +19,7 @@ describe(stepKit, () => {
     isAttackHeld: false,
     isAttackPressed: false,
     isBurstPressed: false,
+    isSkillHeld: false,
     isSkillPressed: false,
     locomotionState: LocomotionState.Idle,
   };
@@ -39,6 +40,7 @@ describe(stepKit, () => {
         stamina,
         STEP_SECONDS,
         landedHits,
+        { ascension: 0, body: { x: 0, z: 0 }, characterId: TRAVELER_CHARACTER_ID, effects: [] },
       );
     };
     return { kitState, landedHits, partyMember, stamina, step };

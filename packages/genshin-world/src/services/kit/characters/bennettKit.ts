@@ -4,12 +4,14 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
+import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { isInKitField } from "#src/services/kit/effects/isInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -44,6 +46,17 @@ const PRESS_HIT_AREA: AttackArea = Object.freeze({ angle: (3 * Math.PI) / 2, hei
 // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, Fantastic Voyage's circle of radius 6
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 6 });
+// Measured: gcsim v2.47.2 (MIT) bennett/skill.go, Passion Overload's hold hits: a circle of radius 2.5 at 0.5 metres
+// Ahead for the first, a box of 3 by 3 at the body for the second, and the Level 2 explosion's circle of radius 3.5 at
+// One metre ahead. Each reach is its offset plus its radius, and the box is priced as the circle to its far corner
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
+const CHARGE_FIRST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
+const CHARGE_SECOND_HIT_AREA: AttackArea = Object.freeze({
+  angle: 2 * Math.PI,
+  height: 2,
+  radius: Math.hypot(1.5, 1.5),
+});
+const CHARGE_EXPLOSION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4.5 });
 // Provisional: the reach the targeting reads for the skill and burst, as the Traveler's are, until the wiki gives them
 const SWORD_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 6, radius: 5 });
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
@@ -58,6 +71,26 @@ const BENNETT_FIELD_HP_THRESHOLD = 0.7;
 const BENNETT_FIELD_BUFF_SECONDS = 126 / 60;
 // The field's life runs from the burst's start to its duration past the first tick
 const BENNETT_BURST_START_SECONDS = 34 / 60;
+
+// Measured: the wiki's Passion Overload page, the press's cooldown of 5 seconds and the hold's of 7.5 and 10 seconds
+// https://genshin-impact.fandom.com/wiki/Passion_Overload
+const BENNETT_PRESS_COOLDOWN_SECONDS = 5;
+const BENNETT_CHARGE_LEVEL_1_COOLDOWN_SECONDS = 7.5;
+const BENNETT_CHARGE_LEVEL_2_COOLDOWN_SECONDS = 10;
+// Measured: gcsim v2.47.2 (MIT) bennett/skill.go, the Level 1 hold's two hits at 45 and 57 frames and its animation of 98
+// Frames, and the Level 2 hold's two hits at 112 and 121 frames, its explosion at 166 and its animation of 343 frames
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
+const CHARGE_LEVEL_1_FIRST_HITMARK_SECONDS = 45 / 60;
+const CHARGE_LEVEL_1_SECOND_HITMARK_SECONDS = 57 / 60;
+const CHARGE_LEVEL_2_FIRST_HITMARK_SECONDS = 112 / 60;
+const CHARGE_LEVEL_2_SECOND_HITMARK_SECONDS = 121 / 60;
+const CHARGE_LEVEL_2_EXPLOSION_HITMARK_SECONDS = 166 / 60;
+const CHARGE_LEVEL_1_SECONDS = 98 / 60;
+const CHARGE_LEVEL_2_SECONDS = 343 / 60;
+// Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. A recording of
+// The skill's hold measures them
+const CHARGE_LEVEL_1_MINIMUM_HELD_SECONDS = 0.5;
+const CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS = 1;
 
 // A kit's normal attacks, charged attack and plunges are physical, so none of them applies a gauge unless infused. Their
 // Poise is the wiki's Strike of Fortune advanced properties, and their blunt is none
@@ -74,6 +107,80 @@ const createNormalAttack = (
   seconds,
   targetingArea: SWORD_TARGETING_AREA,
 });
+
+// Passion Overload's Level 1 and Level 2 hold's hits, at their talent multipliers, each Charge Level hit dealing 1U of Pyro
+// Measured: the wiki's Passion Overload page, the Charge Level hits' multipliers at group indices 1 to 4 and the explosion
+// At index 5, and their poise of 100 and the explosion's 250, from its advanced properties
+const createChargeLevel1 = (talentMultiplierMap: TalentMultiplierMap): KitAction => ({
+  hits: [
+    {
+      element: Element.Pyro,
+      gauge: 1,
+      hitArea: CHARGE_FIRST_HIT_AREA,
+      hitmarkSeconds: CHARGE_LEVEL_1_FIRST_HITMARK_SECONDS,
+      poiseDamage: 100,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
+    },
+    {
+      element: Element.Pyro,
+      gauge: 1,
+      hitArea: CHARGE_SECOND_HIT_AREA,
+      hitmarkSeconds: CHARGE_LEVEL_1_SECOND_HITMARK_SECONDS,
+      poiseDamage: 100,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
+    },
+  ],
+  seconds: CHARGE_LEVEL_1_SECONDS,
+  targetingArea: SKILL_TARGETING_AREA,
+});
+
+const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction => ({
+  hits: [
+    {
+      element: Element.Pyro,
+      gauge: 1,
+      hitArea: CHARGE_FIRST_HIT_AREA,
+      hitmarkSeconds: CHARGE_LEVEL_2_FIRST_HITMARK_SECONDS,
+      poiseDamage: 100,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 3),
+    },
+    {
+      element: Element.Pyro,
+      gauge: 1,
+      hitArea: CHARGE_SECOND_HIT_AREA,
+      hitmarkSeconds: CHARGE_LEVEL_2_SECOND_HITMARK_SECONDS,
+      poiseDamage: 100,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 4),
+    },
+    {
+      element: Element.Pyro,
+      gauge: 1,
+      hitArea: CHARGE_EXPLOSION_HIT_AREA,
+      hitmarkSeconds: CHARGE_LEVEL_2_EXPLOSION_HITMARK_SECONDS,
+      poiseDamage: 250,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 5),
+    },
+  ],
+  seconds: CHARGE_LEVEL_2_SECONDS,
+  targetingArea: SKILL_TARGETING_AREA,
+});
+
+// Fantastic Voyage's field lowers Passion Overload's cooldown by half at Ascension 4 for Bennett standing in it, and
+// Ascension 1 lowers every Passion Overload's cooldown by 20%
+// Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
+const getSkillCooldownMultiplier = ({ ascension, body, characterId, effects }: KitSkillCooldownState): number => {
+  let multiplier = 1;
+  if (ascension >= 1) multiplier *= 0.8;
+  if (
+    ascension >= 4 &&
+    effects.some(
+      (effect) => effect.kind === "field" && effect.characterId === characterId && isInKitField(effect, body),
+    )
+  )
+    multiplier *= 0.5;
+  return multiplier;
+};
 
 // The field's tick, written for the character who cast it. From the second tick a character under 70% of its HP is
 // Healed by 577 plus 6% of Bennett's Max HP, and one above it gains an ATK bonus of 56% of Bennett's base ATK. Either way
@@ -107,9 +214,8 @@ const createFieldTick =
     });
   };
 
-// Bennett's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Passion Overload's
-// Press and Fantastic Voyage. Its multipliers are read from its proud skill groups. Passion Overload's hold levels and
-// The cooldown its A1 and A4 cut are not built, so the press stands at its cooldown
+// Bennett's kit at talent level 1: five strikes, a charged attack, a collision and two plunges, Passion Overload's press
+// And its two Charge Levels, and Fantastic Voyage. Its multipliers are read from its proud skill groups
 export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
@@ -151,6 +257,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     onStart: ({ body, combatant, effects }) =>
       addKitEffect(effects, {
         centre: { x: body.position.x, z: body.position.z },
+        characterId: combatant.characterId,
         kind: "field",
         nextTickSeconds: BENNETT_FIELD_FIRST_TICK_SECONDS,
         onTick: createFieldTick(talentMultiplierMap, combatant),
@@ -180,6 +287,20 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     seconds: 42 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
+  // Held past each minimum and released, the skill plays that Charge Level, ordered by their minimum seconds
+  elementalSkillHolds: [
+    {
+      action: createChargeLevel1(talentMultiplierMap),
+      cooldownSeconds: BENNETT_CHARGE_LEVEL_1_COOLDOWN_SECONDS,
+      minimumHeldSeconds: CHARGE_LEVEL_1_MINIMUM_HELD_SECONDS,
+    },
+    {
+      action: createChargeLevel2(talentMultiplierMap),
+      cooldownSeconds: BENNETT_CHARGE_LEVEL_2_COOLDOWN_SECONDS,
+      minimumHeldSeconds: CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS,
+    },
+  ],
+  getSkillCooldownMultiplier,
   highPlunge: {
     hits: [
       {
@@ -251,5 +372,5 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     poiseDamage: 25,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
   },
-  skillCooldownSeconds: 5,
+  skillCooldownSeconds: BENNETT_PRESS_COOLDOWN_SECONDS,
 });

@@ -18,4 +18,7 @@ export interface KitState {
   // The presses of a skill chain played so far, zero once none is open, and the seconds since the last of them
   skillChainCount: number;
   skillChainSeconds: number;
+  // The seconds the skill has been held, zero once let go, and the seconds it was held when it was let go this step
+  skillHeldSeconds: number;
+  skillReleasedSeconds: number;
 }

@@ -2,6 +2,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
 import type { KitState } from "#src/models/kit/KitState";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
@@ -31,11 +32,14 @@ export const stepKit = (
   stamina: Stamina,
   stepSeconds: number,
   landedHits: KitHit[],
+  cooldownState: KitSkillCooldownState,
 ): KitAction | undefined => {
-  const { height, isAttackHeld, isAttackPressed, locomotionState } = input;
+  const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
   kitState.locomotionState = locomotionState;
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
+  kitState.skillReleasedSeconds = isSkillHeld ? 0 : kitState.skillHeldSeconds;
+  kitState.skillHeldSeconds = isSkillHeld ? kitState.skillHeldSeconds + stepSeconds : 0;
   kitState.skillChainSeconds += stepSeconds;
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;
@@ -65,7 +69,8 @@ export const stepKit = (
     const isSkillOrBurst =
       action === kit.elementalSkill ||
       action === kit.elementalBurst ||
-      kit.elementalSkillChain?.followUps.includes(action) === true;
+      kit.elementalSkillChain?.followUps.includes(action) === true ||
+      kit.elementalSkillHolds?.some((hold) => hold.action === action) === true;
     const isAllowed =
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
@@ -85,5 +90,5 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
-  return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits);
+  return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, cooldownState);
 };
