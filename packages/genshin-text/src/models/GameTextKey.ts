@@ -114,8 +114,8 @@ export enum GameTextKey {
   ForgeFineEnhancementOreRefusal = "1652126048",
   ForgeMysticEnhancementOreRefusal = "110208304",
   Fowl = "1695194124",
-  Friendship = "3501231455",
   Friends = "UI_FRIEND_TITLE",
+  Friendship = "3501231455",
   FrostlampFlower = "1823058028",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
