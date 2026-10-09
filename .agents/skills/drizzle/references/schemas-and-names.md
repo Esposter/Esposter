@@ -38,7 +38,7 @@ The export is derived from the DDL name and the schema, never chosen, so it can 
 
 An enum's export is its DDL name with `Enum` (`roomTypeEnum`), since it shares its name with the TS enum it is built from. `packages/db-schema/src/schema.test.ts` derives the expected export from each table's and enum's own config and fails on any other name, and on anything left in `public`.
 
-A relation key is a name we choose (`user`, `sessionsInAuth`), except where better-auth joins on it: its adapter derives the key from the model name, so the relations between `auth` tables are keyed by the export (`usersInAuth`, `sessionsInAuth`, `accountsInAuth`), and better-auth's model names point at the exports through `apps/web/server/services/auth/authModelOptions.ts`.
+A relation key is a name we choose (`user`, `sessionsInAuth`), except where better-auth joins on it: its adapter derives the key from the model name, so the relations between `auth` tables are keyed by the export for a join to one row (`usersInAuth`) and by the export plus `s` for a join to many (`accountsInAuths`), and better-auth's model names point at the exports through `apps/web/server/services/auth/authModelOptions.ts`.
 
 ## Moving a table or an enum to another schema
 
