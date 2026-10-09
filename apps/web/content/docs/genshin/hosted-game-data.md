@@ -186,7 +186,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/commands/verifyCommand.ts`                             | `genshin:data verify`                                                                                                |
 | `scripts/src/services/gameData/commands/pruneCommand.ts`                              | `genshin:data prune`                                                                                                 |
 | `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`               | Builds each character's profile in every language, one index a language                                              |
-| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`              | Builds each volume's body in every language, one index a language                                                    |
+| `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts`              | The book bodies' records, each language's indexed by volume id                                                       |
 | `scripts/src/services/genshinText/buildTextChunks.ts`                                 | Builds one record a language of a set of text ids, shared by the achievements, the archive, the names and the quests |
 | `scripts/src/services/genshinText/readNameTextIds.ts`                                 | Collects every `nameTextId` the world cites, from the published records and the data files the lock does not name    |
 | `scripts/src/models/gameData/GameDataBuild.ts`                                        | What a builder returns: the notes it reports and the records it publishes                                            |
@@ -198,7 +198,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `packages/genshin-world/src/services/data/readGameDataObject.ts`                      | Fetches one object by its hash, memoized by URL                                                                      |
 | `packages/genshin-world/src/services/shared/fetchJson.ts`                             | The fetch itself: the timeout, the HTTP error and the JSON                                                           |
 | `packages/genshin-world/src/services/data/constants.ts`                               | `GAME_DATA_BLOB_PATH`, the path under the container                                                                  |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`                 | Reads a character's profile record, its Friendship Level and its namecard                                            |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`                 | The Profile tab's reader: the character's entry of its language's profile index                                      |
 | `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                                                  |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`                   | The Profile tab, which reads its character's record                                                                  |
 | `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and stat tables arrive, with the base URL among its props                             |

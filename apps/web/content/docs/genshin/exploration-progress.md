@@ -32,7 +32,7 @@ flowchart TD
 | :--------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`    | An area's count and percentage, the done weight over its total                                   |
 | `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts`       | The doings an area's unlocked statue has done                                                    |
-| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | Fetches the Mondstadt slice by its key and checks it against its schema                          |
+| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | The Mondstadt slice, fetched from the hosted game data and parsed                                |
 | `packages/genshin-world/src/composables/useExplorationAreas.ts`                    | Reads the slice as the world opens, logging a slice that fails                                   |
 | `packages/genshin-world/src/components/Map/Overlay/Index.vue`                      | Shows each filled area's count and percentage under its name, and lists them for a screen reader |
 | `packages/genshin-world/src/models/exploration/ExplorationArea.ts`                 | An area's total and the doings its progress counts                                               |
