@@ -35,7 +35,7 @@ flowchart TD
 ## Not built yet
 
 - **Touching, fighting and claiming.** No outcrop is placed, so none spawns its region's enemies on a touch, reveals its blossom or offers its claim. The places wait on [spawned places](/docs/proposals/genshin/spawned-places), and the enemies per region on the wiki's table, which is not in the dump.
-- **The claims' rewards.** Each refresh row holds reward rows keyed 4001 to 4110, and each chest row a reward id, but none of those ids is in the dump's reward table, and the mapping from a key to a World Level is not stated. The rewards wait on a table that names them.
+- **The claims' rewards.** Not read yet: each refresh row lists its reward previews, one a World Level, which name them, as the [proposal](/docs/proposals/genshin/ley-line-outcrops) sets out.
 - **Fontaine, Natlan and Snezhnaya.** Their kinds are read, but their sections are not in the dump's section order table, so no outcrop is drawn there.
 - **Nod-Krai.** The refresh rows name no kind for it.
 - **The states and the reset.** The transitions from waiting through fighting and cleared to claimed, and the reset that starts each kind over, are the proposal's still.
