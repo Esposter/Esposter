@@ -303,6 +303,10 @@ export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minu
 // (`GITHUB_OUTAGE_REGEX`): an outage is minutes to hours, so a run a minute apart would spend a runner per minute
 // Learning it is still down
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
+// How soon a run GitHub's content-creation limit refused is retried when nothing states a wait
+// (`GITHUB_CONTENT_CREATION_LIMIT_REGEX`): the limit counts creations per minute, and GitHub's own advice for a
+// Secondary limit stating no wait is at least a minute
+export const CONTENT_CREATION_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // How soon a window whose ask the re-read check withheld is read again (`settleReviewAsk`): a check that moved under
 // The run may have sent its status event while the run held the group, and one that could not be read sends none
 export const CHECK_REREAD_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");

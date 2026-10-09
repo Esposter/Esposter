@@ -1,6 +1,10 @@
 import type { spawnSync as baseSpawnSync } from "node:child_process";
 
-import { OUTAGE_RETRY_DELAY_SECONDS, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import {
+  CONTENT_CREATION_RETRY_DELAY_SECONDS,
+  OUTAGE_RETRY_DELAY_SECONDS,
+  RETRIGGER_BUFFER_MS,
+} from "#src/services/coderabbit/collect/constants";
 import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { readOutageRetryDelaySeconds } from "#src/services/coderabbit/collect/readOutageRetryDelaySeconds";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -73,5 +77,17 @@ describe(readOutageRetryDelaySeconds, () => {
     answerProbe(headers, body);
 
     expect(readOutageRetryDelaySeconds(rateLimitMessage)).toBe(expectedDelaySeconds);
+  });
+
+  // No header states the content-creation limit, and it counts per minute, so the outage's five minutes would idle the
+  // Cycle four minutes past the limit
+  test("waits a minute on the content-creation limit when the probe states no wait", () => {
+    expect.hasAssertions();
+
+    answerProbe(["HTTP/2.0 200 OK"], { resources: { graphql: { remaining: 1, reset: resetAtSeconds } } });
+
+    expect(readOutageRetryDelaySeconds("GraphQL: was submitted too quickly (addComment)")).toBe(
+      CONTENT_CREATION_RETRY_DELAY_SECONDS,
+    );
   });
 });

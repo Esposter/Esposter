@@ -1,8 +1,12 @@
 import type { RateLimitView } from "#src/models/coderabbit/collect/RateLimitView";
 
-import { OUTAGE_RETRY_DELAY_SECONDS, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import {
+  CONTENT_CREATION_RETRY_DELAY_SECONDS,
+  OUTAGE_RETRY_DELAY_SECONDS,
+  RETRIGGER_BUFFER_MS,
+} from "#src/services/coderabbit/collect/constants";
 import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
-import { GITHUB_RATE_LIMIT_REGEX } from "#src/services/shared/constants";
+import { GITHUB_CONTENT_CREATION_LIMIT_REGEX, GITHUB_RATE_LIMIT_REGEX } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
@@ -12,7 +16,8 @@ import { spawnSync } from "node:child_process";
 // So `rate_limit` is asked with them — which spends nothing of the primary limit: a secondary limit still in force
 // Refuses it too, with the seconds to wait in `Retry-After`, and a primary one shows as a resource with nothing left,
 // Its `reset` the epoch seconds `x-ratelimit-reset` carries; the latest of those is the wait. A probe stating neither,
-// The limit lifted meanwhile or the probe itself refused without the header, leaves the five minutes
+// The limit lifted meanwhile or the probe itself refused without the header, leaves the five minutes — or a minute for the
+// Content-creation limit, which counts creations per minute and is stated by no header at all
 export const readOutageRetryDelaySeconds = (message: string): number => {
   if (!GITHUB_RATE_LIMIT_REGEX.test(message)) return OUTAGE_RETRY_DELAY_SECONDS;
 
@@ -32,9 +37,11 @@ export const readOutageRetryDelaySeconds = (message: string): number => {
       .filter(({ remaining }) => remaining === 0)
       .map(({ reset }) => reset),
   );
-  return Number.isFinite(resetAtSeconds)
-    ? getRetriggerDelaySeconds(
-        Temporal.Duration.from({ seconds: resetAtSeconds }).total("milliseconds") - Date.now() + RETRIGGER_BUFFER_MS,
-      )
+  if (Number.isFinite(resetAtSeconds))
+    return getRetriggerDelaySeconds(
+      Temporal.Duration.from({ seconds: resetAtSeconds }).total("milliseconds") - Date.now() + RETRIGGER_BUFFER_MS,
+    );
+  return GITHUB_CONTENT_CREATION_LIMIT_REGEX.test(message)
+    ? CONTENT_CREATION_RETRY_DELAY_SECONDS
     : OUTAGE_RETRY_DELAY_SECONDS;
 };
