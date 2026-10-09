@@ -1,11 +1,16 @@
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
+import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
+import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
+import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 import type { Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
+import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScript";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -27,7 +32,9 @@ declare global {
     __fakeLock: boolean;
     __frameTimes: FrameSample[];
     __hooked: boolean;
+    __gpuCalls?: GpuCall[];
     __renderer?: StallRenderer;
+    __traceTimes?: number[];
     __TRES__DEVTOOLS__?: { subscribers: Set<(message: DevtoolsMessage) => void> };
   }
 }
@@ -110,7 +117,11 @@ const readPrograms = (page: Page): Promise<null | number> =>
   page.evaluate(() => window.__renderer?.info.memory.programs ?? null);
 
 // One state: the frames drawn while its drive runs, summarised with the programs held before and after it
-const measureState = async (page: Page, name: string, drive: () => Promise<void>): Promise<StallState> => {
+const measureState = async (
+  page: Page,
+  name: string,
+  drive: () => Promise<void>,
+): Promise<TracedState & { state: StallState }> => {
   await page.evaluate(() => {
     window.__frameTimes = [];
   });
@@ -119,12 +130,12 @@ const measureState = async (page: Page, name: string, drive: () => Promise<void>
   const frames = await page.evaluate(() => window.__frameTimes);
   const programsAfter = await readPrograms(page);
 
-  return summarizeStallState(name, frames, programsBefore, programsAfter);
+  return { frames, name, state: summarizeStallState(name, frames, programsBefore, programsAfter) };
 };
 
 // The states of one run, in order: the cold orbit straight after load, where the first sight of each pipeline lands, then
 // A second orbit, then a walk, each after a pause so one state's frames do not run into the next
-const measureStates = async (page: Page): Promise<StallState[]> => {
+const measureStates = async (page: Page): Promise<(TracedState & { state: StallState })[]> => {
   const coldOrbit = await measureState(page, "cold orbit", () => orbit(page, ORBIT_MS));
   await page.waitForTimeout(PAUSE_MS);
   const secondOrbit = await measureState(page, "second orbit", () => orbit(page, ORBIT_MS));
@@ -135,17 +146,19 @@ const measureStates = async (page: Page): Promise<StallState[]> => {
 };
 
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
-// And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves
-export const measureStalls = async ({ height, scale, screen, width }: StallOptions): Promise<string> => {
+// And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
+// Each GPU call the page makes is recorded too, and the slow frames are named by the calls they made
+export const measureStalls = async ({ height, scale, screen, trace, width }: StallOptions): Promise<string> => {
   const browser = await chromium.launch({
     args: ["--disable-gpu-vsync", "--disable-frame-rate-limit"],
     channel: "msedge",
   });
   const errors: string[] = [];
   // The browser is closed whether the run measures or fails
-  const { loadMs, states } = await getResultAsync(async () => {
+  const { gpuTrace, loadMs, measured } = await getResultAsync(async () => {
     const context = await browser.newContext({ deviceScaleFactor: scale, viewport: { height, width } });
     await context.addInitScript({ content: RECORD_FRAMES_SCRIPT });
+    if (trace) await context.addInitScript({ content: TRACE_GPU_SCRIPT });
 
     const page = await context.newPage();
     page.on("pageerror", (error) => errors.push(String(error)));
@@ -162,7 +175,11 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
     await page.evaluate(hookRenderer);
     await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
-    return { loadMs: loadEnd - loadStart, states: await measureStates(page) };
+    const measuredStates = await measureStates(page);
+    const tracedGpu: GpuTrace | undefined = trace
+      ? await page.evaluate(() => ({ calls: window.__gpuCalls ?? [], times: window.__traceTimes ?? [] }))
+      : undefined;
+    return { gpuTrace: tracedGpu, loadMs: loadEnd - loadStart, measured: measuredStates };
   }).match(
     async (value) => {
       await browser.close();
@@ -174,6 +191,7 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     },
   );
 
+  const states = measured.map(({ state }) => state);
   const label = `${screen} ${width}x${height} at scale ${scale}`;
   const rows = states.map(
     (state) =>
@@ -183,10 +201,11 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
     `${label}, load ${loadMs} ms, ${errors.length} errors`,
     "state | frames | max ms | >50 | >250 | programs before->after | growth (ms:count)",
     ...rows,
-  ].join("\n");
+  ];
+  if (gpuTrace) report.push(...summarizeGpuTrace(gpuTrace, measured));
   await mkdir(STALLS_DIRECTORY, { recursive: true });
-  const path = join(STALLS_DIRECTORY, `${screen}-${width}x${height}-scale${scale}.json`);
-  await writeFile(path, JSON.stringify({ errors: errors.slice(0, 10), label, loadMs, states }, null, 2));
+  const path = join(STALLS_DIRECTORY, `${screen}-${width}x${height}-scale${scale}${trace ? "-trace" : ""}.json`);
+  await writeFile(path, JSON.stringify({ errors: errors.slice(0, 10), gpuTrace, label, loadMs, states }, null, 2));
 
-  return `${report}\n${path}`;
+  return `${report.join("\n")}\n${path}`;
 };

@@ -14,6 +14,11 @@ export const stallsCommand: SubCommandsDef[string] = defineCommand({
       description: "The viewport in CSS pixels, as WIDTHxHEIGHT",
       type: "string",
     },
+    trace: {
+      default: false,
+      description: "Records each GPU call the page makes, and names the slow frames by the calls they made",
+      type: "boolean",
+    },
   },
   meta: {
     description:
@@ -22,6 +27,8 @@ export const stallsCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const [width = 0, height = 0] = args.size.split(SIZE_SEPARATOR).map(Number);
-    console.log(await measureStalls({ height, scale: Number(args.scale), screen: args.screen, width }));
+    console.log(
+      await measureStalls({ height, scale: Number(args.scale), screen: args.screen, trace: args.trace, width }),
+    );
   },
 });
