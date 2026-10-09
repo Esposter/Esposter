@@ -2,7 +2,7 @@ import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSk
 import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 
 import { toCharacterTalentKit } from "#src/services/genshinAssets/stats/toCharacterTalentKit";
-import { CombatTalent } from "genshin-world";
+import { CombatTalent, Element } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(toCharacterTalentKit, () => {
@@ -47,6 +47,56 @@ describe(toCharacterTalentKit, () => {
         [CombatTalent.ElementalSkill]: 12,
         [CombatTalent.NormalAttack]: 11,
       },
+    });
+  });
+
+  test("takes the set of the form element first, ahead of the sets listed before it", () => {
+    expect.hasAssertions();
+    const FIRE_BURST_ID = 4;
+    const WIND_BURST_ID = 5;
+    const formSkillMap: ReadonlyMap<number, ExcelSkillRow> = new Map<number, ExcelSkillRow>([
+      ...skillMap,
+      [
+        FIRE_BURST_ID,
+        {
+          cdTime: 18,
+          costElemType: Element.Pyro,
+          costElemVal: 70,
+          id: FIRE_BURST_ID,
+          maxChargeNum: 1,
+          nameTextMapHash: 0,
+          proudSkillGroupId: 14,
+        },
+      ],
+      [
+        WIND_BURST_ID,
+        {
+          cdTime: 15,
+          costElemType: Element.Anemo,
+          costElemVal: 60,
+          id: WIND_BURST_ID,
+          maxChargeNum: 1,
+          nameTextMapHash: 0,
+          proudSkillGroupId: 15,
+        },
+      ],
+    ]);
+    const FIRE_DEPOT: ExcelSkillDepotRow = {
+      energySkill: FIRE_BURST_ID,
+      id: 3,
+      skills: [NORMAL_ATTACK_ID, SKILL_ID, 0, 0],
+    };
+    const WIND_DEPOT: ExcelSkillDepotRow = {
+      energySkill: WIND_BURST_ID,
+      id: 4,
+      skills: [NORMAL_ATTACK_ID, SKILL_ID, 0, 0],
+    };
+    expect(
+      toCharacterTalentKit(CHARACTER_ID, [FIRE_DEPOT, WIND_DEPOT], formSkillMap, Element.Anemo)?.talentGroupIds,
+    ).toStrictEqual({
+      [CombatTalent.ElementalBurst]: 15,
+      [CombatTalent.ElementalSkill]: 12,
+      [CombatTalent.NormalAttack]: 11,
     });
   });
 

@@ -48,17 +48,17 @@
     "passives": [
       {
         "phase": 1,
-        "proudSkillGroupId": 521
+        "proudSkillGroupId": 721
       },
       {
         "phase": 4,
-        "proudSkillGroupId": 522
+        "proudSkillGroupId": 722
       }
     ],
     "talentGroupIds": {
-      "ElementalBurst": 539,
-      "ElementalSkill": 532,
-      "NormalAttack": 530
+      "ElementalBurst": 739,
+      "ElementalSkill": 732,
+      "NormalAttack": 730
     }
   },
   {
@@ -88,17 +88,17 @@
     "passives": [
       {
         "phase": 1,
-        "proudSkillGroupId": 521
+        "proudSkillGroupId": 721
       },
       {
         "phase": 4,
-        "proudSkillGroupId": 522
+        "proudSkillGroupId": 722
       }
     ],
     "talentGroupIds": {
-      "ElementalBurst": 539,
-      "ElementalSkill": 532,
-      "NormalAttack": 531
+      "ElementalBurst": 739,
+      "ElementalSkill": 732,
+      "NormalAttack": 731
     }
   },
   {
