@@ -45,7 +45,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 1. **Claim it.** Take the top unclaimed item of your lane, append ` — running` to its line, and commit that one line straight away, so no other runner takes it.
 2. **Check the memory first.** If free physical memory is under about 4 GB (read off `Get-CimInstance Win32_OperatingSystem`, in kilobytes), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
-4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item from the queue in the same commit. The roadmap holds open work only.
+4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output.
 5. **If the measure misses,** commit nothing and change no parameter. Put the number on the item's line in place of ` — running`, and report it. A miss is a call for the main session, never a second run with a guessed value.
 6. **Start the next runnable item of the lane** whenever the memory gate leaves room, beside the ones still running, until none is left. Then report and end.
 
