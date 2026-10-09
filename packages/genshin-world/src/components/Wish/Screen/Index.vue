@@ -30,7 +30,7 @@ import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -63,7 +63,7 @@ const bannerKinds = computed(() =>
 );
 const bannerKind = ref(bannerKinds.value[0]);
 const bannerLabels = computed(() =>
-  Object.fromEntries(BannerKinds.map((kind) => [kind, gameText[BannerKindGameTextKeyMap[kind]]])),
+  Object.fromEntries(BannerKinds.map((kind) => [kind, splitGameTextColors(gameText[BannerKindGameTextKeyMap[kind]])])),
 );
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
@@ -109,6 +109,18 @@ const currencies = computed(() =>
   })),
 );
 const isWeaponWish = computed(() => bannerKind.value === BannerKind.WeaponEvent);
+// The Epitomized Path's Fate Points in the game's words and colours, which only the weapon wish shows
+const fatePoints = computed(() =>
+  isWeaponWish.value
+    ? splitGameTextColors(
+        fillGameTextValues(
+          gameText[GameTextKey.WishFatePoint],
+          pityMap.value[BannerKind.WeaponEvent].fatePoints,
+          FATE_POINT_LIMIT,
+        ),
+      )
+    : [],
+);
 const banner = computed(() => banners.value.find(({ kind }) => kind === bannerKind.value));
 const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
   items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
@@ -175,15 +187,7 @@ const wish = (count: number) => {
       :banner-kinds
       :banner-labels
       :currencies
-      :fate-points="
-        isWeaponWish
-          ? fillGameTextValues(
-              gameText[GameTextKey.WishFatePoint],
-              pityMap[BannerKind.WeaponEvent].fatePoints,
-              FATE_POINT_LIMIT,
-            )
-          : ''
-      "
+      :fate-points
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
       :pool
       :purchases
