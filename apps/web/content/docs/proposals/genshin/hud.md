@@ -40,6 +40,8 @@ flowchart TD
 
 1. **The looks.** Each piece's look is replaced with the game's, read off the copied captures and `hud-world-pickup`. Paimon's mark is built (traced from the same frame, as the Decisions say). `world-hud-hidden.mkv` re-measures the composite later; it gates nothing. The stamina meter, party, health and skill buttons are built first, each measured with `genshin:parity compare hud-world-pickup` before and after; the quest tracker's altitude line ("Higher 1540m") comes last, since it waits on the navigated objective's height, which no region data carries until a height is extracted and published by the Mac.
 
+The looks, as built so far (`hud-world-pickup`, head 3ee1c42c1f: mean 10.34%, shape 0.220, tone 9.50%, FLIP 0.4321): the party's rows are built, each name right of its HP bar and left of its portrait, with no slot number (mean 10.34%, shape 0.237, FLIP 0.4319). The health bar was tried with the level before the bar and the numbers over it, and was reverted: its mean rose to 10.35%. The stamina meter has no frame to measure against, since `hud-world-pickup` shows it hidden at full stamina. The skill buttons' three discs carry the game's sprint, attack and jump glyphs rather than the skill and burst icons, so they wait on a glyph pass.
+
 ## What this does not propose
 
 - **The pieces of features the world lacks**: the chat and the top right's shortcuts.
