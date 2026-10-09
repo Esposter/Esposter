@@ -10,27 +10,31 @@ import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedSha
 import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be pushed.
 // Every count is the bot's own: the diff against the window's base (`main`, or the window below), since its one review
 // Reads everything above that base — a window `develop` already carries unopened included. A commit alone over the
 // Room never reaches here unheld — the sync reshapes it first, or parks it past the reshaper's cap — so a hold is the
-// Residual case the opener parks. The queue is cut to `fileCap`, which a re-cut halves.
+// Residual case the opener parks. Fixes and queue alike are cut to `fileCap`, which a re-cut halves — all but the first
+// Fix, which only the bot's own cap holds back.
 export const portWindow = ({ baseSha, cwd, developSha, fileCap, fixShas, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
-  for (const sha of fixShas)
-    if (pickCommit(sha, cwd) === PickOutcome.Conflict)
-      throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
-  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see. The
-  // Bot's own cap is their measure rather than `fileCap`, so under a halved cap the window is the fixes alone
-  if (fixShas.length > 0 && readWindowFileCount(baseSha, cwd) > REVIEW_FILE_CAP)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the window's base`,
-    );
+  // The fixes lead, cut at a commit boundary by the same count as the queue: fixes that alone pass the cap go out over
+  // As many windows as it takes, each the fixes alone, and the queue waits behind the last of them. The first fix the
+  // Window cannot take is held as a queue commit is, the window being the fixes before it, so a fix no window can take
+  // — alone over the bot's cap, or conflicting once a fix before it was parked — is parked by the opener rather than
+  // Failing every run while nothing shrinks the fixes. A re-cut's smaller cap cuts them too, but never the first: one
+  // The bot's own cap holds goes out alone rather than parked, so only a fix no review could read is ever parked
+  for (const [fixCount, sha] of fixShas.entries()) {
+    const beforeSha = readHeadSha(cwd);
+    const outcome = pickCommit(sha, cwd);
+    const capFileCount = fixCount === 0 ? REVIEW_FILE_CAP : fileCap;
+    if (outcome === PickOutcome.Conflict || readWindowFileCount(baseSha, cwd) > capFileCount) {
+      runGit(["reset", "--hard", beforeSha], cwd);
+      return { fileCount: readWindowFileCount(baseSha, cwd), fixCount, heldSha: sha, queueShas: [] };
+    }
+  }
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
   const fixesHeadSha = readHeadSha(cwd);
