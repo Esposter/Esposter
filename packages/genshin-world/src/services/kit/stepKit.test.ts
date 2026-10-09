@@ -1,7 +1,7 @@
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
-import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";

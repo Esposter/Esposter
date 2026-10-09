@@ -5,6 +5,7 @@ export enum AzureContainer {
   ClickerAssets = "clicker-assets",
   DeadLetter = "deadletter",
   DungeonsAssets = "dungeons-assets",
+  GenshinAssets = "genshin-assets",
   MessageAssets = "message-assets",
   PrivateUserAssets = "private-user-assets",
   PublicUserAssets = "public-user-assets",

@@ -1,6 +1,6 @@
 ---
 title: Map unlocking
-description: The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. Teleport Waypoints and domain entrances wait on exploring.
+description: The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems. Teleport Waypoints and domain entrances wait on exploring.
 ---
 
 # Map unlocking
@@ -23,23 +23,28 @@ flowchart TD
 - **Kept with the player's progress, as the bag and the wallet are.** The unlocked ids are the world screen's state, so they last for the world's session and are not saved across a reload, since nothing persists the world's progress yet.
 - **An area is filled while a landmark in it is unlocked.** `computeFilledAreaIds` gives the areas unlocked landmarks stand in. The map's drawing outlines only filled areas, `computeAreaLabels` names only filled areas, and the marks drawn are the unlocked landmarks alone, so the minimap shows the same.
 - **Only unlocked places are jumps.** The jump list, the map's marks and the minimap receive the unlocked landmarks, and a party that falls is jumped to the unlocked landmark nearest its body. With none unlocked it is left where it fell.
+- **A first unlock pays its point's Primogems.** `pnpm -C scripts genshin:assets trans-points` writes the open world's transport point rewards into a slice, each point's Adventure EXP and Primogems joined from its reward row. Windrise's statue is the one statue the world holds with its point (point 4, in `LandmarkIdStatuePointIdMap`), so its first unlock adds five Primogems to the wallet, once, since only a locked landmark is offered to resonate with. Its fifty Adventure EXP wait on the Adventure EXP the adventure rank keeps, which no screen holds yet.
 
 ## Key files
 
-| File                                                              | Role                                                                        |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/map/computeFilledAreaIds.ts` | The areas that unlocked landmarks stand in, which are the filled ones       |
-| `packages/genshin-world/src/services/map/computeAreaLabels.ts`    | Names only the filled areas, at their outline or their unlocked landmarks   |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`     | Draws the outlines of filled areas and the marks of the unlocked landmarks  |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`    | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`      | Every region's jump landmarks, read once, before the unlocked ones are kept |
+| File                                                                               | Role                                                                        |
+| :--------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/map/computeFilledAreaIds.ts`                  | The areas that unlocked landmarks stand in, which are the filled ones       |
+| `packages/genshin-world/src/services/map/computeAreaLabels.ts`                     | Names only the filled areas, at their outline or their unlocked landmarks   |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`                      | Draws the outlines of filled areas and the marks of the unlocked landmarks  |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Holds the unlocked ids, offers the locked statues as rows, and unlocks on F |
+| `packages/genshin-world/src/composables/useJumpLandmarks.ts`                       | Every region's jump landmarks, read once, before the unlocked ones are kept |
+| `scripts/src/services/genshinAssets/transPoints/writeTransPointRewards.ts`         | Writes the open world's transport point rewards into the slice              |
+| `packages/genshin-world/src/generated/transPoints/scene3.json`                     | The written slice, imported on demand                                       |
+| `packages/genshin-world/src/services/transPoint/readOpenWorldTransPointRewards.ts` | Loads the slice, checking it against its shape as it arrives                |
 
 ## Notes
 
 - **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a recording the user records ([roadmap](/docs/genshin/roadmap), recordings owed), so the unlock is instant here.
-- **Waypoints wait on exploring.** Teleport Waypoints are not landmarks of the region data until [exploring](/docs/proposals/genshin/exploring) fits them, so no waypoint is unlocked, rewarded or pointed to yet.
+- **Waypoints wait on exploring.** Teleport Waypoints are not landmarks of the region data until [exploring](/docs/proposals/genshin/exploring) fits them, so no waypoint is unlocked, rewarded or pointed to yet. The slice already holds every open-world point's reward, so a waypoint needs only its point id to be matched.
 
 ## Sources
 
 - [Galesong Hill](https://www.icy-veins.com/genshin-impact/galesong-hill), Icy Veins: the first activation of a Statue of The Seven lights the surrounding area and reveals the nearby teleport waypoints.
 - [Let the Wind Lead](https://www.powerpyx.com/genshin-impact-let-the-wind-lead-walkthrough), PowerPyx: whether the Windrise statue is already active depends on the player's progress.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TransPointRewardConfigData`, each transport point's reward, and `RewardExcelConfigData`, the Adventure EXP and Primogems each reward pays.

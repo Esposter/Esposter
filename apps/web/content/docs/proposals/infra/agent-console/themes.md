@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Themes
 
-The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. It holds the default and the Genshin theme, and the parts a theme sets are its reactions — the default's is a browser notification for a hidden session — and its avatar, which the Genshin theme reads off the persona plugin's line in the session-start context ([as built](/docs/infra/claude-interface/agent-console)). This proposal is the rest of what a theme may set, and the rest of the Genshin theme. Here the hidden-tab notification moves out of the default's reactions and into the console, so every theme gets it.
+The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. It holds the default and the Genshin theme, and the parts a theme sets are its avatar, which the Genshin theme reads off the persona plugin's line in the session-start context, and its reactions, which add to the console's own hidden-tab notification ([as built](/docs/infra/claude-interface/agent-console)). This proposal is the rest of what a theme may set, and the rest of the Genshin theme.
 
 ## What a theme may add
 

@@ -8,7 +8,15 @@ describe(toTalentUpgradeMap, () => {
   const OTHER_GROUP_ID = 999;
   const MATERIAL_ID = 104_323;
   const ROWS: ExcelProudSkillRow[] = [
-    { breakLevel: 0, coinCost: 0, costItems: [], level: 1, proudSkillGroupId: GROUP_ID },
+    {
+      breakLevel: 0,
+      coinCost: 0,
+      costItems: [],
+      level: 1,
+      paramDescList: [],
+      paramList: [],
+      proudSkillGroupId: GROUP_ID,
+    },
     {
       breakLevel: 2,
       coinCost: 12_500,
@@ -17,10 +25,28 @@ describe(toTalentUpgradeMap, () => {
         { count: 0, id: 0 },
       ],
       level: 2,
+      paramDescList: [],
+      paramList: [],
       proudSkillGroupId: GROUP_ID,
     },
-    { breakLevel: 6, coinCost: 0, costItems: [], level: 11, proudSkillGroupId: GROUP_ID },
-    { breakLevel: 2, coinCost: 12_500, costItems: [], level: 2, proudSkillGroupId: OTHER_GROUP_ID },
+    {
+      breakLevel: 6,
+      coinCost: 0,
+      costItems: [],
+      level: 11,
+      paramDescList: [],
+      paramList: [],
+      proudSkillGroupId: GROUP_ID,
+    },
+    {
+      breakLevel: 2,
+      coinCost: 12_500,
+      costItems: [],
+      level: 2,
+      paramDescList: [],
+      paramList: [],
+      proudSkillGroupId: OTHER_GROUP_ID,
+    },
   ];
 
   test("keeps each named group's levels from the second up to the materials' last, with its filled cost slots", () => {

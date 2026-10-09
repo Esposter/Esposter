@@ -49,7 +49,7 @@ A trigger type the map does not name is not watched, and its achievements never 
 
 ## Notes
 
-- **Nothing emits a finished quest yet.** `advanceAchievements` is built and tested, but the world starts no quest, so no event reaches it and every achievement reads zero. [The proposal](/docs/proposals/genshin/achievements) names the quest page that will emit them.
+- **Only quest triggers move yet.** The [quests](/docs/genshin/quests) page emits each finished sub-quest and each finished main quest, so the quest triggers count; the other trigger types wait on the pages that record their doings, as the [proposal](/docs/proposals/genshin/achievements) names.
 - **A namecard is not granted.** A category's completion is checked by `checkIsAchievementCategoryComplete`, and its namecard item is kept on the category. Namecards are the [companionship](/docs/proposals/genshin/companionship) page's, which holds no namecard list yet.
 - **The quest ids the table names are not all in the dump.** About two-thirds of the sub-quest ids the quest triggers name are in the dump's quest table; the rest name quests the dump does not carry, so their achievements stay at zero until that data is read.
 - **The screen's look is provisional.** Its places follow the quest screen's grid, not the English client, and its category icons, its Primogem glyph and its tab shapes are not built.

@@ -73,7 +73,9 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     // Replaced rather than merged, so an upload naming none clears what the previous write set
     storeMockBlobMetadata(this.containerName, this.name, options?.metadata);
     this.container.set(this.name, buffer);
-    return { _response: createMockResponse(201) };
+    // The etag the write minted, which a conditional write on the same blob checks against next
+    const { etag } = readMockBlobDates(this.containerName, this.name);
+    return { _response: createMockResponse(201), etag };
   }
 
   uploadBrowserData(): Promise<BlobUploadCommonResponse> {

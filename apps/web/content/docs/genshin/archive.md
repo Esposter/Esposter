@@ -30,15 +30,15 @@ flowchart TD
 
 The `genshin:assets archive` writer reads each section's codex table from the dump, names each entry by the game's English text, and keeps only the entries whose name the English text holds. Each section is written compact as its own slice, and the names of every kept entry go into the world's own chunk per language, as the [achievements](/docs/genshin/achievements) do.
 
-| Section       | Codex table                                                               | Named by                                  | Opened by                                          |
-| :------------ | :------------------------------------------------------------------------ | :---------------------------------------- | :------------------------------------------------- |
-| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix     | a weapon, when it is in the bag                    |
-| Living Beings | `AnimalCodexExcelConfigData`, animal rows only                            | `AnimalDescribeExcelConfigData`           | not yet: no animal is struck (see Notes)           |
-| Tutorials     | "PushTipsCodexExcelConfigData"                                            | nothing in the dump, so it holds no entry | not built                                          |
-| Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                        | not yet: no viewpoint is taken in                  |
-| Travel Log    | `QuestCodexExcelConfigData`                                               | the parent main quest's title             | not yet: no quest finish is counted into it        |
-| Books         | `BooksCodexExcelConfigData`                                               | the book's material                       | not yet: no book is read                           |
-| Materials     | `MaterialCodexExcelConfigData`                                            | the material's row                        | any bag item that is not equipment, by its item id |
+| Section       | Codex table                                                               | Named by                                  | Opened by                                                               |
+| :------------ | :------------------------------------------------------------------------ | :---------------------------------------- | :---------------------------------------------------------------------- |
+| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix     | a weapon, when it is in the bag                                         |
+| Living Beings | `AnimalCodexExcelConfigData`, animal rows only                            | `AnimalDescribeExcelConfigData`           | not yet: no animal is struck (see Notes)                                |
+| Tutorials     | "PushTipsCodexExcelConfigData"                                            | nothing in the dump, so it holds no entry | not built                                                               |
+| Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                        | not yet: no viewpoint is taken in                                       |
+| Travel Log    | `QuestCodexExcelConfigData`                                               | the parent main quest's title             | a main quest's finish opens its entry, by the quest id each entry names |
+| Books         | `BooksCodexExcelConfigData`                                               | the book's material                       | not yet: no book is read                                                |
+| Materials     | `MaterialCodexExcelConfigData`                                            | the material's row                        | any bag item that is not equipment, by its item id                      |
 
 The codex's own order is kept: each section's entries are sorted by the table's sort order, and the Equipment section lists its weapons before its sets. A codex row the game has left out is not kept.
 
@@ -48,7 +48,7 @@ The codex's own order is kept: each section's entries are sorted by the table's 
 
 ## The unlock
 
-The Archive opens once its quest is done, the Archon Quest Unexpected Power, main quest 353 in the dump. The Paimon menu's Archive entry is enabled only once that quest's completion is known to the world, so its slices and names are read the first time it unlocks, not with the world. Nothing completes a main quest yet, so the entry stays disabled until the quest page feeds the world its completions.
+The Archive opens once its quest is done, the Archon Quest Unexpected Power, main quest 353 in the dump. The Paimon menu's Archive entry is enabled only once that quest's completion is known to the world, so its slices and names are read the first time it unlocks, not with the world. A main quest finished on the [quests](/docs/genshin/quests) page is what completes it, so the entry opens once the quest page finishes that quest.
 
 ## The screen
 

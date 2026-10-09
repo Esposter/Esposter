@@ -31,7 +31,7 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
   const { attack, attributeTotalMap } = combatant.attributes;
   const { gauge, internalCooldownTag, isBlunt, poiseDamage, talentMultiplier } = kitHit;
   const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
-  const element = gauge === undefined ? undefined : combatant.element;
+  const element = gauge === undefined ? undefined : (kitHit.element ?? combatant.element);
   if (gauge !== undefined && element !== undefined && internalCooldownTag !== undefined) {
     const cooldownKey = `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`;
     const internalCooldown = enemy.internalCooldownMap.get(cooldownKey) ?? { hitIndex: 0, startSeconds: -Infinity };

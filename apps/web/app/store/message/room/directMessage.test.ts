@@ -1,12 +1,15 @@
 // @vitest-environment nuxt
+import { useSession } from "@/services/auth/authClient.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { RoomType } from "@esposter/db-schema";
+import { createMessageEntity, MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -87,5 +90,31 @@ describe(useDirectMessageStore, () => {
     await rejectedHideDirectMessage;
 
     expect(directMessages.value).toStrictEqual([firstDirectMessage]);
+  });
+
+  // The invite is the reader's own message in the friend's direct message, which is created where it does not
+  // exist; the reader stays where they are, so the send never navigates
+  test("inviteFriend sends the link as the reader's message in a new direct message", async () => {
+    expect.hasAssertions();
+
+    const sender = createUser({ name: "sender" });
+    useSession.mockReturnValue(ref({ data: { user: { id: sender.id } } }));
+    const friendDirectMessage = createRoom("", RoomType.DirectMessage);
+    const inviteLink = "https://esposter.test/messages/invite/abcd1234";
+    const sentMessages: unknown[] = [];
+    trpcMsw.room.directMessage.createDirectMessage.mutation(() => friendDirectMessage);
+    trpcMsw.message.createMessage.mutation(({ input }) => {
+      sentMessages.push(input);
+      return createMessageEntity({ message: input.message, roomId: input.roomId, type: input.type, userId: sender.id });
+    });
+    const directMessageStore = useDirectMessageStore();
+    const { directMessages } = storeToRefs(directMessageStore);
+    const { inviteFriend } = directMessageStore;
+    await inviteFriend(second.id, inviteLink);
+
+    expect(directMessages.value).toStrictEqual([friendDirectMessage]);
+    expect(sentMessages).toStrictEqual([
+      { files: [], message: inviteLink, replyRowKey: "", roomId: friendDirectMessage.id, type: MessageType.Message },
+    ]);
   });
 });

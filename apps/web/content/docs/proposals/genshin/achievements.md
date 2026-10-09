@@ -17,10 +17,9 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 
 ## Scope and order
 
-1. **Quest finishes reach the watchers.** The quest page that starts and finishes quests emits a `QuestFinished` for each sub-quest and a `ParentQuestFinished` for each main quest once its last sub-quest is done, and calls `advanceAchievements` with the same doing it hands `advanceQuest`. Until it does, the table and the screen read zero.
-2. **Exploring's triggers**, as the chest, waypoint, area, statue, offering and gathering pages land.
-3. **Each server-fired achievement**, with the page that builds its subject.
-4. **The namecard grant**, with companionship's namecard list.
+1. **Exploring's triggers**, as the chest, waypoint, area, statue, offering and gathering pages land.
+2. **Each server-fired achievement**, with the page that builds its subject.
+3. **The namecard grant**, with companionship's namecard list.
 
 ## Data and measures
 

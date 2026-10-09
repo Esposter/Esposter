@@ -1,6 +1,7 @@
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { Currency } from "#src/models/inventory/Currency";
+import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { describe, expect, test } from "vitest";
@@ -21,6 +22,7 @@ describe(buyShopGood, () => {
     minPlayerLevel: ADVENTURE_RANK,
     priceCount: STARGLITTER_PRICE,
     priceItemId: 221,
+    refresh: ShopRefresh.Monthly,
   };
   const limitedGood: ShopGood = { ...fateGood, buyLimit: 1 };
 

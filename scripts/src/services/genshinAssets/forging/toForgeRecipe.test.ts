@@ -14,6 +14,7 @@ describe(toForgeRecipe, () => {
     forgeType: ENHANCEMENT_FORGE_TYPE,
     id: 11_001,
     isDefaultShow: true,
+    mainRandomDropId: 0,
     materialItems: [
       { count: 2, id: 101_001 },
       { count: 0, id: 0 },
@@ -25,20 +26,21 @@ describe(toForgeRecipe, () => {
     scoinCost: 5,
     ...overrides,
   });
+  const fixedResults = [{ count: 1, itemId: 104_011, weight: 1 }];
 
-  test("should write an enhancement ore with its forge points, seconds, Mora and queue size", () => {
+  test("should write an enhancement ore with its forge type, forge points, seconds, Mora and queue size", () => {
     expect.hasAssertions();
 
-    expect(toForgeRecipe(createRow({}), [])).toStrictEqual({
+    expect(toForgeRecipe(createRow({}), [], fixedResults)).toStrictEqual({
       forgePoint: 400,
+      forgeType: ENHANCEMENT_FORGE_TYPE,
       id: 11_001,
       kind: ForgeRecipeKind.Enhancement,
       materials: [{ count: 2, id: 101_001 }],
       mora: 5,
       playerLevel: 2,
       queueSize: 40,
-      resultCount: 1,
-      resultItemId: 104_011,
+      results: fixedResults,
       seconds: 3,
       unlockItemIds: [],
     });
@@ -61,8 +63,9 @@ describe(toForgeRecipe, () => {
       scoinCost: 500,
     });
 
-    expect(toForgeRecipe(weaponRow, [221_003])).toStrictEqual({
+    expect(toForgeRecipe(weaponRow, [221_003], [{ count: 1, itemId: 11_406, weight: 1 }])).toStrictEqual({
       forgePoint: 0,
+      forgeType: WEAPON_FORGE_TYPE,
       id: 13_001,
       kind: ForgeRecipeKind.Weapon,
       materials: [
@@ -72,25 +75,23 @@ describe(toForgeRecipe, () => {
       mora: 500,
       playerLevel: 2,
       queueSize: 1,
-      resultCount: 1,
-      resultItemId: 11_406,
+      results: [{ count: 1, itemId: 11_406, weight: 1 }],
       seconds: 10,
       unlockItemIds: [221_003],
     });
   });
 
-  test("should leave out the gadgets' widgets and a result a drop table draws", () => {
+  test("should leave out the gadgets' widgets", () => {
     expect.hasAssertions();
 
-    expect(toForgeRecipe(createRow({ forgeType: WIDGET_FORGE_TYPE }), [])).toBeUndefined();
-    expect(toForgeRecipe(createRow({ resultItemId: 0 }), [])).toBeUndefined();
+    expect(toForgeRecipe(createRow({ forgeType: WIDGET_FORGE_TYPE }), [], fixedResults)).toBeUndefined();
   });
 
   test("should refuse a recipe hidden with no diagram to open it", () => {
     expect.hasAssertions();
 
     expect(() =>
-      toForgeRecipe(createRow({ forgeType: WEAPON_FORGE_TYPE, isDefaultShow: false }), []),
+      toForgeRecipe(createRow({ forgeType: WEAPON_FORGE_TYPE, isDefaultShow: false }), [], fixedResults),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 11001, is hidden with no diagram to open it]`,
     );

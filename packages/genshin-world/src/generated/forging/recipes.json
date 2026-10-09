@@ -1,6 +1,7 @@
 [
   {
     "forgePoint": 400,
+    "forgeType": 1,
     "id": 11001,
     "kind": "Enhancement",
     "materials": [
@@ -12,13 +13,19 @@
     "mora": 5,
     "playerLevel": 2,
     "queueSize": 40,
-    "resultCount": 1,
-    "resultItemId": 104011,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104011,
+        "weight": 1
+      }
+    ],
     "seconds": 3,
     "unlockItemIds": []
   },
   {
     "forgePoint": 2000,
+    "forgeType": 1,
     "id": 11002,
     "kind": "Enhancement",
     "materials": [
@@ -30,13 +37,19 @@
     "mora": 10,
     "playerLevel": 2,
     "queueSize": 20,
-    "resultCount": 1,
-    "resultItemId": 104012,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104012,
+        "weight": 1
+      }
+    ],
     "seconds": 6,
     "unlockItemIds": []
   },
   {
     "forgePoint": 10000,
+    "forgeType": 1,
     "id": 11003,
     "kind": "Enhancement",
     "materials": [
@@ -48,13 +61,19 @@
     "mora": 50,
     "playerLevel": 5,
     "queueSize": 10,
-    "resultCount": 1,
-    "resultItemId": 104013,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104013,
+        "weight": 1
+      }
+    ],
     "seconds": 180,
     "unlockItemIds": []
   },
   {
     "forgePoint": 2000,
+    "forgeType": 1,
     "id": 11004,
     "kind": "Enhancement",
     "materials": [
@@ -66,13 +85,19 @@
     "mora": 10,
     "playerLevel": 2,
     "queueSize": 20,
-    "resultCount": 1,
-    "resultItemId": 104012,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104012,
+        "weight": 1
+      }
+    ],
     "seconds": 6,
     "unlockItemIds": []
   },
   {
     "forgePoint": 10000,
+    "forgeType": 1,
     "id": 11005,
     "kind": "Enhancement",
     "materials": [
@@ -84,13 +109,19 @@
     "mora": 50,
     "playerLevel": 5,
     "queueSize": 10,
-    "resultCount": 1,
-    "resultItemId": 104013,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104013,
+        "weight": 1
+      }
+    ],
     "seconds": 180,
     "unlockItemIds": []
   },
   {
     "forgePoint": 10000,
+    "forgeType": 1,
     "id": 11006,
     "kind": "Enhancement",
     "materials": [
@@ -102,13 +133,19 @@
     "mora": 50,
     "playerLevel": 5,
     "queueSize": 10,
-    "resultCount": 1,
-    "resultItemId": 104013,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104013,
+        "weight": 1
+      }
+    ],
     "seconds": 180,
     "unlockItemIds": []
   },
   {
     "forgePoint": 10000,
+    "forgeType": 1,
     "id": 11007,
     "kind": "Enhancement",
     "materials": [
@@ -120,13 +157,52 @@
     "mora": 50,
     "playerLevel": 5,
     "queueSize": 10,
-    "resultCount": 1,
-    "resultItemId": 104013,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 104013,
+        "weight": 1
+      }
+    ],
     "seconds": 180,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 1,
+    "id": 12001,
+    "kind": "Enhancement",
+    "materials": [
+      {
+        "count": 3,
+        "id": 101004
+      },
+      {
+        "count": 10,
+        "id": 106
+      }
+    ],
+    "mora": 100,
+    "playerLevel": 30,
+    "queueSize": 1,
+    "results": [
+      {
+        "count": 6,
+        "itemId": 104013,
+        "weight": 10000
+      },
+      {
+        "count": 100,
+        "itemId": 102,
+        "weight": 10000
+      }
+    ],
+    "seconds": 5,
+    "unlockItemIds": []
+  },
+  {
+    "forgePoint": 0,
+    "forgeType": 3,
     "id": 13001,
     "kind": "Weapon",
     "materials": [
@@ -146,13 +222,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11406,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11406,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 13002,
     "kind": "Weapon",
     "materials": [
@@ -172,13 +254,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11407,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11407,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 13003,
     "kind": "Weapon",
     "materials": [
@@ -198,13 +286,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15406,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15406,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 13004,
     "kind": "Weapon",
     "materials": [
@@ -224,13 +318,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15407,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15407,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 13005,
     "kind": "Weapon",
     "materials": [
@@ -250,13 +350,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12406,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12406,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 13006,
     "kind": "Weapon",
     "materials": [
@@ -276,13 +382,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12407,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12407,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 13007,
     "kind": "Weapon",
     "materials": [
@@ -302,13 +414,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14406,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14406,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 13008,
     "kind": "Weapon",
     "materials": [
@@ -328,13 +446,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14407,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14407,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 13009,
     "kind": "Weapon",
     "materials": [
@@ -354,13 +478,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13402,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13402,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 13010,
     "kind": "Weapon",
     "materials": [
@@ -380,13 +510,19 @@
     "mora": 500,
     "playerLevel": 5,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13403,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13403,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": []
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 13011,
     "kind": "Weapon",
     "materials": [
@@ -406,8 +542,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12411,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12411,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221010
@@ -415,6 +556,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 13012,
     "kind": "Weapon",
     "materials": [
@@ -434,8 +576,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14412,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14412,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221011
@@ -443,6 +590,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 13013,
     "kind": "Weapon",
     "materials": [
@@ -462,8 +610,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13409,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13409,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221012
@@ -471,6 +624,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 15001,
     "kind": "Weapon",
     "materials": [
@@ -490,8 +644,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11414,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11414,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221013
@@ -499,6 +658,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 15002,
     "kind": "Weapon",
     "materials": [
@@ -518,8 +678,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15414,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15414,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221016
@@ -527,6 +692,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 15003,
     "kind": "Weapon",
     "materials": [
@@ -546,8 +712,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12414,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12414,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221014
@@ -555,6 +726,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 15004,
     "kind": "Weapon",
     "materials": [
@@ -574,8 +746,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14414,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14414,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       100865,
@@ -584,6 +761,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 15005,
     "kind": "Weapon",
     "materials": [
@@ -603,8 +781,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13414,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13414,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221015
@@ -612,6 +795,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 16001,
     "kind": "Weapon",
     "materials": [
@@ -631,8 +815,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11417,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11417,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221020
@@ -640,6 +829,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 16002,
     "kind": "Weapon",
     "materials": [
@@ -659,8 +849,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15417,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15417,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221021
@@ -668,6 +863,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 16003,
     "kind": "Weapon",
     "materials": [
@@ -687,8 +883,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12417,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12417,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221019
@@ -696,6 +897,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 16004,
     "kind": "Weapon",
     "materials": [
@@ -715,8 +917,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14417,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14417,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221023
@@ -724,6 +931,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 16005,
     "kind": "Weapon",
     "materials": [
@@ -743,8 +951,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13417,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13417,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221022
@@ -752,6 +965,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 17001,
     "kind": "Weapon",
     "materials": [
@@ -771,8 +985,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11425,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11425,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221024
@@ -780,6 +999,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 17002,
     "kind": "Weapon",
     "materials": [
@@ -799,8 +1019,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15425,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15425,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221025
@@ -808,6 +1033,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 17003,
     "kind": "Weapon",
     "materials": [
@@ -827,8 +1053,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12425,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12425,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221026
@@ -836,6 +1067,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 17004,
     "kind": "Weapon",
     "materials": [
@@ -855,8 +1087,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14425,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14425,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221027
@@ -864,6 +1101,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 17005,
     "kind": "Weapon",
     "materials": [
@@ -883,8 +1121,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13425,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13425,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221028
@@ -892,6 +1135,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 18001,
     "kind": "Weapon",
     "materials": [
@@ -911,8 +1155,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11431,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11431,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221042
@@ -920,6 +1169,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 18002,
     "kind": "Weapon",
     "materials": [
@@ -939,8 +1189,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15431,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15431,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221046
@@ -948,6 +1203,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 18003,
     "kind": "Weapon",
     "materials": [
@@ -967,8 +1223,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12431,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12431,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221043
@@ -976,6 +1237,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 18004,
     "kind": "Weapon",
     "materials": [
@@ -995,8 +1257,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14431,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14431,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221045
@@ -1004,6 +1271,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 18005,
     "kind": "Weapon",
     "materials": [
@@ -1023,8 +1291,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13431,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13431,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221044
@@ -1032,6 +1305,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 3,
     "id": 19001,
     "kind": "Weapon",
     "materials": [
@@ -1051,8 +1325,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 11433,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 11433,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221047
@@ -1060,6 +1339,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 4,
     "id": 19002,
     "kind": "Weapon",
     "materials": [
@@ -1079,8 +1359,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 15433,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 15433,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221048
@@ -1088,6 +1373,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 5,
     "id": 19003,
     "kind": "Weapon",
     "materials": [
@@ -1107,8 +1393,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 12433,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 12433,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221049
@@ -1116,6 +1407,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 6,
     "id": 19004,
     "kind": "Weapon",
     "materials": [
@@ -1135,8 +1427,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 14433,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 14433,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221050
@@ -1144,6 +1441,7 @@
   },
   {
     "forgePoint": 0,
+    "forgeType": 7,
     "id": 19005,
     "kind": "Weapon",
     "materials": [
@@ -1163,8 +1461,13 @@
     "mora": 500,
     "playerLevel": 10,
     "queueSize": 1,
-    "resultCount": 1,
-    "resultItemId": 13433,
+    "results": [
+      {
+        "count": 1,
+        "itemId": 13433,
+        "weight": 1
+      }
+    ],
     "seconds": 10,
     "unlockItemIds": [
       221051

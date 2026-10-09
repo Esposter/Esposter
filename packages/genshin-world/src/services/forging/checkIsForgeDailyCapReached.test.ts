@@ -3,6 +3,7 @@ import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeDailyCapReached";
+import { FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsForgeDailyCapReached, () => {
@@ -11,14 +12,14 @@ describe(checkIsForgeDailyCapReached, () => {
   const EPOCH_GAME_DAY = EPOCH.toZonedDateTimeISO("Asia/Shanghai").subtract({ hours: 4 }).toPlainDate();
   const recipe: ForgeRecipe = {
     forgePoint: 10_000,
+    forgeType: FORGE_ENHANCEMENT_TYPE,
     id: 11_003,
     kind: ForgeRecipeKind.Enhancement,
     materials: [{ count: 4, id: 101_003 }],
     mora: 50,
     playerLevel: 5,
     queueSize: 10,
-    resultCount: 1,
-    resultItemId: 104_013,
+    results: [{ count: 1, itemId: 104_013, weight: 1 }],
     seconds: 180,
     unlockItemIds: [],
   };

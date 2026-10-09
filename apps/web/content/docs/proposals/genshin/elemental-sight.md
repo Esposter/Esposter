@@ -24,13 +24,13 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** no trail is drawn, since none of the three pages that leave one is built, and no quest is carried in the world to leave a clue.
+**Today:** no trail is drawn, since none of the three pages that leave one is built. The carried quests are in the world, but their go-to steps place no target yet, so a quest leaves no clue.
 
 **This adds, each with its page:**
 
 1. **Reputation's bounties**, once [Reputation](/docs/proposals/genshin/reputation) places each bounty's target.
 2. **Puzzles' Seelies**, once [Puzzles](/docs/proposals/genshin/puzzles) places each Seelie's court.
-3. **Quests' clues**, once a quest is carried in the world and its objectives' targets are placed.
+3. **Quests' clues**, once the [quests](/docs/proposals/genshin/quests) page places the go-to triggers its carried quests name.
 
 ## Data and measures
 

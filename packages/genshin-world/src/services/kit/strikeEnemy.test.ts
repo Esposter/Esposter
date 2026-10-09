@@ -13,7 +13,7 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { TRAVELER_KIT } from "#src/services/kit/constants";
+import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -58,6 +58,17 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
 
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("applies the element a hit deals over its character's own", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Hydro };
+    strikeEnemy(enemy, kitHit, createCombatant(Element.Pyro), NEVER_CRITICAL);
+
+    expect(enemy.elementalState.auras.has(AuraType.Hydro)).toBe(true);
+    expect(enemy.elementalState.auras.has(AuraType.Pyro)).toBe(false);
   });
 
   test("applies an element on the first hit of its internal cooldown, keyed by attacker and tag", () => {
