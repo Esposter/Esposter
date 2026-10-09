@@ -6,11 +6,13 @@ import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
+import type { LayerClassifier } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
+import { computeGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
@@ -52,17 +54,26 @@ const computeTriangleArea = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy
   const [vx, vy, vz] = [cx - ax, cy - ay, cz - az];
   return Math.hypot(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx) / 2;
 };
+// A triangle's slope as the ground's paint reads it: one minus the upward share of its unit normal, zero when flat
+const computeFaceSlope = ([ax, ay, az]: Vector, [bx, by, bz]: Vector, [cx, cy, cz]: Vector): number => {
+  const [ux, uy, uz] = [bx - ax, by - ay, bz - az];
+  const [vx, vy, vz] = [cx - ax, cy - ay, cz - az];
+  const [normalX, normalY, normalZ] = [uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx];
+  const length = Math.hypot(normalX, normalY, normalZ);
+  return length === 0 ? 0 : 1 - Math.abs(normalY) / length;
+};
 // The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
 // Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
 // Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
-// Is read for, each face's samples kept with the texture they were read through. A face whose centroid `checkKept`
-// Refuses counts for nothing
+// Is read for, and the layer `classifyLayer` puts its face in, each face's samples kept with the texture they were read
+// Through. A face whose centroid `checkKept` refuses counts for nothing
 const readFaceSamples = (
   { faceGroups, faces, faceUvs, uvs }: ObjMesh,
   world: Vector[],
   diffuses: (Texture | undefined)[],
   part: string,
   checkKept: (centroid: Vector) => boolean = () => true,
+  classifyLayer?: LayerClassifier,
 ): { diffuse: Texture; samples: SurfaceSample[] }[] =>
   faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
     const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
@@ -71,6 +82,7 @@ const readFaceSamples = (
     if (!first || !second || !third || !diffuse) return [];
     const centroid = ([0, 1, 2] as const).map((axis) => (first[axis] + second[axis] + third[axis]) / 3) as Vector;
     if (!checkKept(centroid)) return [];
+    const layer = classifyLayer?.(centroid, computeFaceSlope(first, second, third));
     const [firstUv, secondUv, thirdUv] = (faceUvs[face] ?? [0, 0, 0]).map((index) => uvs[index] ?? [0, 0]) as [
       [number, number],
       [number, number],
@@ -80,7 +92,7 @@ const readFaceSamples = (
     const weight = computeTriangleArea(first, second, third) / points.length;
     const samples = points.map((uv) => {
       const { colour, coverage } = sampleSurfaceTexture(diffuse, uv);
-      return { colour, part, weight: weight * coverage };
+      return { colour, layer, part, weight: weight * coverage };
     });
     return [{ diffuse, samples }];
   });
@@ -93,8 +105,9 @@ const readSurface = (
   diffuses: (Texture | undefined)[],
   part: string,
   checkKept?: (centroid: Vector) => boolean,
+  classifyLayer?: LayerClassifier,
 ): ReadSurface => {
-  const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept);
+  const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept, classifyLayer);
   const diffuseWeightMap = new Map<Texture, number>();
   for (const { diffuse, samples } of faceSamples)
     diffuseWeightMap.set(diffuse, (diffuseWeightMap.get(diffuse) ?? 0) + sumWeights(samples));
@@ -131,11 +144,13 @@ const withPartDetails = (
 // Are its placed meshes, each drawn with its submeshes' diffuse textures, and its terrain tiles, each drawn with its base
 // Map and read only where its faces stand within the terrain radius of the world's origin, the ground beyond which the
 // Screen never shows. Every face is read where it stands in the world and weighted by its area there. Writes no file: the
-// Caller writes what this returns
+// Caller writes what this returns. A family given a `layerClassifiers` entry also returns each layer's mean colour, over
+// The faces its classifier puts in that layer
 export const fitSurfaceColours = async <Family extends string>(
   component: DerivedAssetComponent,
   meshRegexMap: Record<Family, RegExp>,
   terrainRadius: number,
+  layerClassifiers: Partial<Record<Family, LayerClassifier>> = {},
 ): Promise<Record<Family, FittedFamily>> => {
   const directory = getComponentDirectory(component);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
@@ -169,7 +184,10 @@ export const fitSurfaceColours = async <Family extends string>(
   };
   // A placed mesh is one part, named by its mesh, since a material can span parts: the statue's stone levels all draw one
   // Material, and its gold dish sits in it
-  const readPlacementSurface = async (placement: AssetPlacement): Promise<ReadSurface> => {
+  const readPlacementSurface = async (
+    placement: AssetPlacement,
+    classifyLayer?: LayerClassifier,
+  ): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${placement.mesh}${OBJ_EXTENSION}`));
     const diffuses = await Promise.all(
       placement.materials.map(async (materialPathId) => {
@@ -178,33 +196,50 @@ export const fitSurfaceColours = async <Family extends string>(
         return texture;
       }),
     );
-    return readSurface(mesh, toWorldVertices(mesh.vertices, placement), diffuses, placement.mesh);
+    return readSurface(
+      mesh,
+      toWorldVertices(mesh.vertices, placement),
+      diffuses,
+      placement.mesh,
+      undefined,
+      classifyLayer,
+    );
   };
   // A terrain tile is never placed: its vertices are local to its column and row, which are its offset in the world
-  const readTerrainSurface = async (tile: string): Promise<ReadSurface> => {
+  const readTerrainSurface = async (tile: string, classifyLayer?: LayerClassifier): Promise<ReadSurface> => {
     const mesh = await readObjMesh(join(meshDirectory, `${tile}${OBJ_EXTENSION}`));
     const { column, row } = TERRAIN_TILE_REGEX.exec(tile)?.groups ?? {};
     const [offsetX, offsetZ] = [Number(column) * TERRAIN_TILE_SIZE, Number(row) * TERRAIN_TILE_SIZE];
     const world = mesh.vertices.map(([x, y, z]): Vector => [x + offsetX, y, z + offsetZ]);
     const baseMap = join(textureDirectory, `${tile}${TERRAIN_BASE_MAP_SUFFIX}.png`);
     const diffuses = [existsSync(baseMap) ? await getTexture(baseMap) : undefined];
-    return readSurface(mesh, world, diffuses, "", ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius);
+    return readSurface(
+      mesh,
+      world,
+      diffuses,
+      "",
+      ([x, , z]) => Math.hypot(x - originX, z - originZ) <= terrainRadius,
+      classifyLayer,
+    );
   };
-  const readFamilySurfaces = async (regex: RegExp): Promise<ReadSurface[]> => {
+  const readFamilySurfaces = async (regex: RegExp, classifyLayer?: LayerClassifier): Promise<ReadSurface[]> => {
     const placed = await Promise.all(
-      placements.filter(({ mesh }) => regex.test(mesh)).map((placement) => readPlacementSurface(placement)),
+      placements
+        .filter(({ mesh }) => regex.test(mesh))
+        .map((placement) => readPlacementSurface(placement, classifyLayer)),
     );
     const tiles = meshFiles
       .filter((file) => file.endsWith(OBJ_EXTENSION))
       .map((file) => basename(file, OBJ_EXTENSION))
       .filter((tile) => regex.test(tile) && TERRAIN_TILE_REGEX.test(tile));
-    const terrain = await Promise.all(tiles.map((tile) => readTerrainSurface(tile)));
+    const terrain = await Promise.all(tiles.map((tile) => readTerrainSurface(tile, classifyLayer)));
     return [...placed, ...terrain];
   };
   return Object.fromEntries(
     await Promise.all(
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(async ([family, regex]) => {
-        const reads = await readFamilySurfaces(regex);
+        const classifyLayer = layerClassifiers[family];
+        const reads = await readFamilySurfaces(regex, classifyLayer);
         const samples = reads.flatMap((read) => read.samples);
         if (!samples.some(({ weight }) => weight > 0))
           throw new InvalidOperationError(
@@ -213,7 +248,14 @@ export const fitSurfaceColours = async <Family extends string>(
             "has no placed mesh or terrain tile whose covered faces can be read",
           );
         const familySurface = withDetail(computeSurfaceTones(samples), reads);
-        return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }] as const;
+        return [
+          family,
+          {
+            ...familySurface,
+            parts: withPartDetails(computePartSurfaces(samples), reads),
+            ...(classifyLayer === undefined ? {} : { layers: computeGroundLayerColours(samples) }),
+          },
+        ] as const;
       }),
     ),
   ) as Record<Family, FittedFamily>;
