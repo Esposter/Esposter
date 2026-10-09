@@ -1,4 +1,5 @@
-// A file directly inside a directory, its size in bytes and its mtime in whole seconds
+// A file an entry lists, its name relative to the entry (empty for a single-file entry), its size in bytes and its mtime
+// In whole seconds
 export interface FileEntry {
   mtime: number;
   name: string;
