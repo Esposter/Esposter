@@ -4,6 +4,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import {
   AMBER_CHARACTER_ID,
   AYAKA_CHARACTER_ID,
+  BARBARA_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
   DILUC_CHARACTER_ID,
   JEAN_CHARACTER_ID,
@@ -14,6 +15,7 @@ import {
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
+import { createBarbaraKit } from "#src/services/kit/characters/barbaraKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { createJeanKit } from "#src/services/kit/characters/jeanKit";
@@ -27,6 +29,7 @@ import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMap: TalentMultiplierMap) => Kit>> = {
   [AMBER_CHARACTER_ID]: createAmberKit,
   [AYAKA_CHARACTER_ID]: createAyakaKit,
+  [BARBARA_CHARACTER_ID]: createBarbaraKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
   [JEAN_CHARACTER_ID]: createJeanKit,

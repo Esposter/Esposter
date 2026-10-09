@@ -6,8 +6,9 @@ import type { Party } from "#src/models/party/Party";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Rolls a hit's party heal, if the hit has one and its striker's character holds a shield or the heal is unshielded,
-// And on a pass heals each member of the party by the flat HP plus the striker's ATK and DEF shares, each as a share of
-// That member's own Max HP. It returns whether it healed, so a hit with several enemies rolls until one heal passes
+// And on a pass heals each member of the party by the flat HP plus the striker's ATK, DEF and Max HP shares, each as a
+// Share of that member's own Max HP. It returns whether it healed, so a hit with several enemies rolls until one heal
+// Passes
 export const healKitParty = (
   party: Party,
   characterIdCombatantMap: Map<number, Combatant>,
@@ -25,7 +26,8 @@ export const healKitParty = (
   const healedHp =
     healParty.flatHealth +
     healParty.defenseShare * striker.attributes.defense +
-    (healParty.attackShare ?? 0) * striker.attributes.attack;
+    (healParty.attackShare ?? 0) * striker.attributes.attack +
+    (healParty.maxHealthShare ?? 0) * striker.attributes.maxHealth;
   for (const characterId of party.characterIdMemberMap.keys()) {
     const member = characterIdCombatantMap.get(characterId);
     if (member) healPartyMember(party, characterId, healedHp / member.attributes.maxHealth);
