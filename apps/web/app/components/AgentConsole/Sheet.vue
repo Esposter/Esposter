@@ -49,6 +49,17 @@ const height = computed({
     consoleHeight.value = newHeight;
   },
 });
+// The pages' width the reader dragged them to, never so wide the tabs beside them keep less than the pages' least width,
+// Whatever was saved on a wider window
+const paneMaxWidth = computed(() =>
+  Math.max(AGENT_CONSOLE_PANE_MIN_WIDTH, windowWidth.value - AGENT_CONSOLE_PANE_MIN_WIDTH),
+);
+const width = computed({
+  get: () => Math.min(paneWidth.value, paneMaxWidth.value),
+  set: (newWidth) => {
+    paneWidth.value = newWidth;
+  },
+});
 // Opening moves focus into the sheet, to the control that asks for it with autofocus — the composer — or else to the
 // Sheet itself, so the keys are the console's until the reader clicks back into the world
 onConsoleFocusRequest(async () => {
@@ -186,13 +197,13 @@ onConsoleFocusRequest(async () => {
         </UiTabs>
         <template v-if="isPaneOpen">
           <UiResizeHandle
-            v-model="paneWidth"
+            v-model="width"
             is-reversed
             label="Resize the pages"
-            :max="windowWidth"
+            :max="paneMaxWidth"
             :min="AGENT_CONSOLE_PANE_MIN_WIDTH"
           />
-          <AgentConsolePaneSidePane :style="{ width: `${paneWidth}px` }" shrink-0 min-h-0 />
+          <AgentConsolePaneSidePane :style="{ width: `${width}px` }" shrink-0 min-h-0 />
         </template>
       </div>
     </div>
