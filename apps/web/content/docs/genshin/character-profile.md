@@ -1,6 +1,6 @@
 ---
 title: Character profile
-description: The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text. The model's space, the voice line with its voice actor and the namecard view are not drawn yet.
+description: The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text. The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
 ---
 
 # Character profile
@@ -26,7 +26,7 @@ flowchart LR
 - **A story or voice-over opens at its Friendship Level.** Its open conditions name the level, and one with no level opens at once. One whose conditions name anything besides a level or none stays locked whatever the level.
 - **A locked story with a level to open at shows the game's unlock line,** `Lv. {0} unlocks: {1}`, with that level and its title, and no text. This is the game's own line by its text id, so nothing is phrased here. A locked story no level opens shows its title alone.
 - **The tab sits in the character menu's panel,** widened from the characters' row's left edge so the list and the text share it. The reference is the game's separate Profile / Story page with its own header, and that page is not built; the tab's layout and colours are provisional until the user compares them.
-- **The namecard is the avatar icon's name with the namecard prefix,** for every playable character but Xinyan, Yae Miko and Momoka, who have none. The writer stores it per character; the namecard view that shows it is not built.
+- **The namecard is the avatar icon's name with the namecard prefix,** for every playable character but Xinyan, Yae Miko and Momoka, who have none. The writer stores it per character; the panel shows the namecard's name once the Friendship holds it, and its art is not drawn yet.
 - **The Friendship Level is read from the save's Companionship EXP,** through the [companionship](/docs/genshin/companionship) level table, once the screen is given the save's companionship slice.
 
 ## Notes
@@ -43,9 +43,9 @@ flowchart LR
 | `scripts/src/models/genshinAssets/profile/ExcelFetterVoiceRow.ts`          | A voice-over row of the fetters table, read as a story row                                   |
 | `scripts/src/services/genshinAssets/profile/getNamecardIconName.ts`        | The namecard convention and the characters with none                                         |
 | `packages/genshin-world/src/services/profile/ProfileTextLoaderMap.ts`      | The generated loader of each character's chunk, imported on demand                           |
-| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile and its Friendship Level                                         |
+| `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile, its Friendship Level and its namecard's name text id            |
 | `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.ts` | The unlock rule                                                                              |
 | `packages/genshin-world/src/services/profile/toCharacterProfileEntries.ts` | Turns the stories and voice-overs into the panel's entries, locked ones with the unlock line |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`        | The wrapper that loads the profile for the screen's character                                |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`         | Opens the Profile tab for the chosen character                                               |
-| `packages/genshin-interface/src/components/CharacterMenuProfile/Index.vue` | The list and the chosen story's text                                                         |
+| `packages/genshin-interface/src/components/CharacterMenuProfile/Index.vue` | The list, the chosen story's text and the namecard's name plate                              |

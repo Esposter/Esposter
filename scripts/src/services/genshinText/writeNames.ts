@@ -3,6 +3,7 @@ import type { CharacterData, WeaponData } from "genshin-world";
 import { COOKING_RECIPES_PATH, PROCESSING_RECIPES_PATH } from "#src/services/genshinAssets/cooking/constants";
 import { CRAFTING_RECIPES_PATH } from "#src/services/genshinAssets/crafting/constants";
 import { ENEMY_KINDS_PATH } from "#src/services/genshinAssets/enemies/constants";
+import { FRIENDSHIP_PATH } from "#src/services/genshinAssets/friendship/constants";
 import { MATERIALS_PATH } from "#src/services/genshinAssets/items/constants";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
@@ -17,7 +18,8 @@ import { join } from "node:path";
 // Every name the world cites by text id is written into the world's own chunk per language.
 // Each character's, weapon's and enemy kind's comes from `genshin:assets stats` and `genshin:assets enemies`.
 // Each dish's, processing's and crafted item's comes from `genshin:assets Cooking` and `crafting`, each material's from
-// `genshin:assets items`. A name a language lacks takes English's and says so.
+// `genshin:assets items`, and each namecard's from `genshin:assets friendship`.
+// A name a language lacks takes English's and says so.
 export const writeNames = (): string[] => {
   const notes: string[] = [];
   const datas = ["characters.json", "weapons.json"].flatMap((fileName) =>
@@ -32,8 +34,12 @@ export const writeNames = (): string[] => {
   const materials = parseMachineJson<{ nameTextId: string }[]>(
     readFileSync(join(WORLD_DATA_DIRECTORY, MATERIALS_PATH), "utf8"),
   );
+  const friendship = parseMachineJson<{ namecards: { nameTextId: number }[] }>(readFileSync(FRIENDSHIP_PATH, "utf8"));
   const textIds = [
-    ...new Set([...datas, ...enemyKinds, ...recipes, ...materials].map(({ nameTextId }) => nameTextId)),
+    ...new Set([
+      ...[...datas, ...enemyKinds, ...recipes, ...materials].map(({ nameTextId }) => nameTextId),
+      ...friendship.namecards.map(({ nameTextId }) => String(nameTextId)),
+    ]),
   ].toSorted();
   const englishTextMap = readTextMap(GameLanguage.English);
   // Every language is read before the last run's chunks are removed, so a text map that fails to read leaves them
