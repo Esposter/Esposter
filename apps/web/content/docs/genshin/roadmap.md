@@ -187,6 +187,7 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `login-dawn.mkv`, `login-day.mkv`, `login-dusk.mkv`, `login-night.mkv` — the title at each hour on the current build, the camera at rest.
 - [ ] `login-door-rest.mkv` — the door at rest on the current build.
 - [ ] `shop-paimons-bargains.mkv` — Paimon's Bargains opened from the Paimon menu, its two Fates for Masterless Starglitter and Stardust shown with their prices and limits, 30 seconds at most; the names of items 221 and 222 are read from those prices, and the pairing [Shops](/docs/genshin/shops) settles from the table is confirmed or corrected by them.
+- [ ] `shop-mondstadt-grocery.mkv` — the Mondstadt grocery's stock opened from its vendor, its goods' names and Mora prices shown, 20 seconds at most; confirms or corrects that shop 1004 is the grocery, as [Shops](/docs/genshin/shops) reads it from the table's order.
 - [ ] `opening-japanese.mkv`, `opening-korean.mkv` — launch to the title, the client's language set to each.
 - [ ] `world-hud.mkv` — standing still in the open world, the whole HUD on screen, then the minimap turning as the view turns.
 - [ ] `map-top-bar.mkv` — the map on M opened from standing still in the open world, its top bar in view with the Original Resin counter, 10 seconds at most; the counter's place and type are measured from it.
