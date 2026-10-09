@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
@@ -16,6 +17,8 @@ const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
 const formatScales = (scales: readonly number[]): string => scales.map((scale) => scale.toFixed(3)).join(" ");
 // The square of a block a family's pixels are split into two halves by, so each half spreads over the whole surface
 const SPLIT_BLOCK_PIXELS = 32;
+// The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
+const NO_GATE_REASON = "no gate: the family lies within one half";
 // The pixels both part targets draw a family at, as a mask over the pixels, and the half of it ('even' or 'odd' blocks)
 const computeFamilyMask = (
   firstPart: Float32Array,
@@ -63,28 +66,29 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
       writeStructureDiff(referenceId, albedo.termMaps, exportsRead),
     ]);
     // The gate is the sampling floor: the exports' family split into two halves of blocks, each measured against the
-    // Other, the least a surface of the same distribution can read off a finite patch of it
-    const measured = albedo.comparisons.map((comparison) => ({
-      colour: comparison.colour,
-      family: comparison.family,
-      gate: computeStatisticalStructure(
-        exportsLightness,
-        exportsLightness,
-        computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 0),
-        computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 1),
-        width,
-        height,
-      ),
-      scales: comparison.scales,
-      structure: computeStatisticalStructure(
-        exportsLightness,
-        oursLightness,
-        computeFamilyMask(exportsPart, oursPart, comparison.family, width),
-        computeFamilyMask(exportsPart, oursPart, comparison.family, width),
-        width,
-        height,
-      ),
-    }));
+    // Other, the least a surface of the same distribution can read off a finite patch of it. A family held within one
+    // Half has no floor to read, so it has no gate
+    const measured = albedo.comparisons.map((comparison) => {
+      const evenMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 0);
+      const oddMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 1);
+      return {
+        colour: comparison.colour,
+        family: comparison.family,
+        gate:
+          evenMask.includes(1) && oddMask.includes(1)
+            ? computeStatisticalStructure(exportsLightness, exportsLightness, evenMask, oddMask, width, height)
+            : undefined,
+        scales: comparison.scales,
+        structure: computeStatisticalStructure(
+          exportsLightness,
+          oursLightness,
+          computeFamilyMask(exportsPart, oursPart, comparison.family, width),
+          computeFamilyMask(exportsPart, oursPart, comparison.family, width),
+          width,
+          height,
+        ),
+      };
+    });
     return {
       notes: [
         `${referenceId} exports | ours | lightness apart: ${diffPath}`,
@@ -94,11 +98,13 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
             `${referenceId} ${families[family] ?? family} structure by scale, finest first (pixel-aligned, diagnostic): ${formatScales(scales)}`,
         ),
       ],
-      readings: measured.flatMap(({ colour, family, gate, structure }) => {
+      readings: measured.flatMap(({ colour, family, gate, structure }): ParityPassReading[] => {
         const name = `${referenceId} ${families[family] ?? family}`;
         return [
           { gate: COLOUR_GATE, name: `${name} colour`, unit: "ΔE", value: colour },
-          { gate, name: `${name} structure`, unit: "share", value: structure },
+          gate === undefined
+            ? { gate: 0, name: `${name} structure`, reason: NO_GATE_REASON, unit: "share" }
+            : { gate, name: `${name} structure`, unit: "share", value: structure },
         ];
       }),
     };
