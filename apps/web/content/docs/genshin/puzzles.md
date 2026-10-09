@@ -48,6 +48,16 @@ An `ElementalMonument` holds its element, its own elemental state, whether it is
 
 `ELEMENTAL_MONUMENT_LIT_SECONDS` is provisional until a recording of a timed monument going out measures it.
 
+## The Seelie
+
+A `Seelie` holds its start and its court on the ground, its progress along the route between them, its state and the time it has been left unfollowed. It is `Resting` where it was found, becomes `Led` once the player follows it, walks its route while followed and `Settled` at the court. Left unfollowed for `SEELIE_RETURN_SECONDS` it goes back to its start, `Resting`, and a settled one stays settled. `stepSeelie` moves it on the fixed step, and the caller reports whether the player is following it that step. A route's walk takes `SEELIE_ROUTE_SECONDS` provisionally.
+
+The map gives one point per Seelie and no court, so a Seelie's court and start are not yet fitted into the world: the court is the one the wiki says a Seelie settles in, and the placed court is still to come.
+
+## The Time Trial Challenge
+
+A `TimeTrialChallenge` holds its clock's limit and what is left of it, its state, and how many of its targets are struck against how many it asks for. `startTimeTrialChallenge` starts an idle one from its marker, `strikeTimeTrialTarget` counts a target done and solves the challenge once the last is, and `stepTimeTrialChallenge` runs the clock on the fixed step and fails it when it runs out. A solved challenge is the solve event: the world reads its `Solved` state, and the chest it spawns is granted by the chests opening. The map gives no limit or target count per challenge, so both come from the world's data once measured.
+
 ## Key files
 
 | File                                                                        | Role                                                                        |
@@ -58,7 +68,13 @@ An `ElementalMonument` holds its element, its own elemental state, whether it is
 | `packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`     | A strike on a monument, lighting it by its element or a reaction of its own |
 | `packages/genshin-world/src/services/puzzle/stepElementalMonument.ts`       | A monument's elemental state on the fixed step, and its time going out      |
 | `packages/genshin-world/src/services/puzzle/checkIsMonumentPuzzleSolved.ts` | Whether every monument of a puzzle is lit together                          |
-| `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's provisional lit time                                   |
+| `packages/genshin-world/src/models/puzzle/Seelie.ts`                        | A Seelie's start, court, route progress and state                           |
+| `packages/genshin-world/src/models/puzzle/TimeTrialChallenge.ts`            | A challenge's clock, targets and state                                      |
+| `packages/genshin-world/src/services/puzzle/stepSeelie.ts`                  | A Seelie led while followed, settled at its court or sent back to rest      |
+| `packages/genshin-world/src/services/puzzle/startTimeTrialChallenge.ts`     | Starts an idle challenge's clock from its marker                            |
+| `packages/genshin-world/src/services/puzzle/strikeTimeTrialTarget.ts`       | Counts a target done, solving the challenge on its last                     |
+| `packages/genshin-world/src/services/puzzle/stepTimeTrialChallenge.ts`      | Runs a challenge's clock on the fixed step, failing it when it runs out     |
+| `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's lit time, and a Seelie's return and route times        |
 | `packages/genshin-world/src/generated/puzzles/`                             | One slice per region, imported on demand once the world places them         |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`       | Each kind's labels on the official map                                      |
 | `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes each region's puzzle places from the points                          |

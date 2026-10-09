@@ -6,7 +6,7 @@ model: claude-haiku-5-5
 
 # Puzzles
 
-Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](/docs/proposals/genshin/spawned-places), they are struck by the [character kits](/docs/proposals/genshin/character-kits), and they unlock the [chests](/docs/proposals/genshin/chests) beside them, so this page waits on all three. Its places and the monument's state machine are built, as the [as-built page](/docs/genshin/puzzles) records; what follows is what remains.
+Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](/docs/proposals/genshin/spawned-places), they are struck by the [character kits](/docs/proposals/genshin/character-kits), and they unlock the [chests](/docs/proposals/genshin/chests) beside them, so this page waits on all three. Its places and the state machines of the monument, the Seelie and the Time Trial Challenge are built, as the [as-built page](/docs/genshin/puzzles) records; what follows is what remains.
 
 ## Decisions
 
@@ -38,8 +38,8 @@ flowchart TD
 **This adds, in order:**
 
 1. **The framework in the world, with Elemental Monuments in Mondstadt.** The Mondstadt slice is placed into the world, its monuments drawn and struck by the kit's element hits on the fixed step, and each puzzle of monuments wired from the wiki's description of it. The wiring is the step's first input, and it is not yet written.
-2. **Seelies**, with Elemental Sight's trail.
-3. **Time Trial Challenges.**
+2. **Seelies**: each Seelie's court fitted, since the map gives none, then the Seelie placed, followed and drawn in the world, with Elemental Sight's trail.
+3. **Time Trial Challenges**: each challenge's limit and targets set, then placed and started from its marker in the world. The chest a solve spawns is granted by the [chests](/docs/proposals/genshin/chests) opening.
 4. **Shrines of Depths**, with the keys the statues give.
 5. **Each region's own mechanisms**, with its region.
 
@@ -48,6 +48,7 @@ flowchart TD
 - **Read from the wiki:** each mechanism kind's states, each puzzle's wiring and effect, and each monument's element and whether it stays lit once lit.
 - **Placed by the spawned places:** built, the writer's slices by kind from the official map's marks ([as-built](/docs/genshin/puzzles)).
 - **Measured:** a timed monument's time lit, a Seelie's route and speed, and each challenge's limit where the wiki gives none, off recordings, provisional until then. A timed monument's time lit is provisional at sixty seconds until a recording measures it.
+- **Not in the map:** the map gives one point per Seelie and none for its court, and no target count for a challenge. The court and the targets are fitted or read from a recording before a Seelie or a challenge is placed.
 
 ## Key files
 
