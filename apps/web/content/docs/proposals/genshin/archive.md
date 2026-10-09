@@ -50,7 +50,7 @@ Its caller for the artifact sets is wherever the player's artifacts change, whic
 | File                                                            | Role after the change                                |
 | :-------------------------------------------------------------- | :--------------------------------------------------- |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue` | The defeat that counts toward a living being's entry |
-| `scripts/src/services/genshinAssets/enemies/writeEnemyKinds.ts` | Already reads the living beings' codex               |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts` | Already reads the living beings' codex               |
 
 ## Sources
 

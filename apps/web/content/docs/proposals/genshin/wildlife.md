@@ -66,7 +66,7 @@ packages/genshin-world/src/services/wildlife/
 | `packages/genshin-world/src/services/enemy/stepEnemy.ts`           | Beside the animals' own fleeing step                  |
 | `packages/genshin-world/src/models/enemy/EnemyCamp.ts`             | Animals placed as camps                               |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`    | Steps and draws the animals in reach with the enemies |
-| `scripts/src/services/genshinAssets/enemies/writeEnemyKinds.ts`    | Writes the animals' rows beside the enemies'          |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`    | Builds the animals' rows beside the enemies'          |
 | `packages/genshin-world/src/services/interaction/getHeldPickUp.ts` | Picks up a material source                            |
 
 ## Sources
