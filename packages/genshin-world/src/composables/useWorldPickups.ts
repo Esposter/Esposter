@@ -35,6 +35,7 @@ export const useWorldPickups = ({
   gameText,
   getWorldNow,
   inventory,
+  nameText,
   serverClockOffsetMs,
   setInventory,
   setWallet,
@@ -45,6 +46,7 @@ export const useWorldPickups = ({
   gameText: GameText;
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
+  nameText: Readonly<Record<string, string>>;
   serverClockOffsetMs: number;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
@@ -66,7 +68,7 @@ export const useWorldPickups = ({
     const drops = worldDrops.value.map(({ id, itemId, position: { x, z } }) => ({
       id,
       kind: InteractionKind.PickUp,
-      name: itemId === MORA_ITEM_ID ? gameText[GameTextKey.Mora] : getItemDefinition(itemId, gameText).name,
+      name: itemId === MORA_ITEM_ID ? gameText[GameTextKey.Mora] : getItemDefinition(itemId, nameText).name,
       position: { x, y: getWorldHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
@@ -78,7 +80,7 @@ export const useWorldPickups = ({
         {
           id,
           kind: InteractionKind.PickUp,
-          name: toItemDefinition(item, gameText).name,
+          name: toItemDefinition(item, nameText).name,
           position: { x, y: getWorldHeight(x, z), z },
         },
       ];
@@ -103,7 +105,7 @@ export const useWorldPickups = ({
       worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
       return;
     }
-    const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
+    const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, nameText);
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);
     bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
@@ -119,7 +121,7 @@ export const useWorldPickups = ({
     if (!place) return;
     const item = idGatheringItemMap.value.get(place.kind);
     if (!item) return;
-    const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
+    const addition = addInventoryItem(inventory.value, toItemDefinition(item, nameText), 1);
     setInventory(addition.inventory);
     bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });

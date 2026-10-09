@@ -77,7 +77,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                       | the profile card's rank, EXP bar and World Level                 |
 | `packages/genshin-world/src/services/enemy/createEnemy.ts`                          | spawns an enemy at its World Level's level                       |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`                     | spawns the camps, and respawns them when the World Level changes |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                      | the World Level the world plays at, handed down to its enemies   |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                     | the World Level the world plays at, handed down to its enemies   |
 
 ## Sources
 

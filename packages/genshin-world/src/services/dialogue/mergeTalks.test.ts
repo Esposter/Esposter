@@ -2,10 +2,10 @@ import { TALK } from "#src/services/dialogue/constants.test";
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
 import { describe, expect, test } from "vitest";
 
-// The same talk id as the sample, begun at another line, so the two are told apart by their start alone
-const OTHER_START_TALK = { ...TALK, startLineId: "4" };
-
 describe(mergeTalks, () => {
+  // The same talk id as the sample, begun at another line, so the two are told apart by their start alone
+  const OTHER_START_TALK = { ...TALK, startLineId: "4" };
+
   test("holds the earlier source's talk where two sources hold one id", () => {
     expect.hasAssertions();
 

@@ -2,7 +2,6 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
@@ -15,10 +14,10 @@ export const pickUpDroppedItem = (
   { count, itemId }: DroppedItem,
   inventory: Inventory,
   wallet: Wallet,
-  gameText: GameText,
+  names: Readonly<Record<string, string>>,
 ): DroppedItemPickUp => {
   if (itemId === MORA_ITEM_ID)
     return { inventory, overflow: 0, wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] + count } };
-  const definition = getItemDefinition(itemId, gameText);
+  const definition = getItemDefinition(itemId, names);
   return { ...addInventoryItem(inventory, definition, count), wallet };
 };

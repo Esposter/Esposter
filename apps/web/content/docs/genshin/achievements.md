@@ -72,7 +72,7 @@ The Achievements screen has no parity measure yet. Its look waits on `achievemen
 | `packages/genshin-world/src/services/achievement/readAchievements.ts`                   | The slices read on demand, checked against their schemas              |
 | `packages/genshin-world/src/services/achievement/AchievementTextLoaderMap.ts`           | The words in each language, imported on demand                        |
 | `packages/genshin-world/src/components/Achievement/Screen/Index.vue`                    | The Achievements screen the Paimon menu opens                         |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                          | Loads the slices and words when the screen opens, and shows it        |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                         | Loads the slices and words when the screen opens, and shows it        |
 | `scripts/src/services/genshinAssets/achievements/writeAchievements.ts`                  | The writer: the table's rows, mapped and checked, into the two slices |
 | `scripts/src/services/genshinAssets/achievements/writeAchievementText.ts`               | The writer of every title and description in each language            |
 | `scripts/src/services/genshinAssets/achievements/toAchievement.ts`                      | One row mapped to an achievement, its trigger's ids split             |

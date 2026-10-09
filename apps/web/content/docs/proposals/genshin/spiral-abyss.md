@@ -34,11 +34,11 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 ## Key files
 
-| File                                                           | Role after the change                                          |
-| :------------------------------------------------------------- | :------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Enters the Abyss's chambers and returns to the world           |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`         | A chamber's waves, as camps of its scene                       |
-| `packages/genshin-world/src/models/inventory/Wallet.ts`        | The Primogems the stars' rewards give, resolved from their ids |
+| File                                                            | Role after the change                                          |
+| :-------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Enters the Abyss's chambers and returns to the world           |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`          | A chamber's waves, as camps of its scene                       |
+| `packages/genshin-world/src/models/inventory/Wallet.ts`         | The Primogems the stars' rewards give, resolved from their ids |
 
 ## Sources
 

@@ -19,8 +19,7 @@ export const submitAndReadBuffers = async (
   device.queue.submit([encoder.finish()]);
   await Promise.all(stagings.map((staging) => staging.mapAsync(GPUMapMode.READ)));
   return stagings.map((staging) => {
-    // oxlint-disable-next-line unicorn/prefer-spread -- an ArrayBuffer is not iterable: slice copies the mapped range, which unmap detaches
-    const values = new Float32Array(staging.getMappedRange().slice(0));
+    const values = new Float32Array(new Float32Array(staging.getMappedRange()));
     staging.unmap();
     staging.destroy();
     return values;

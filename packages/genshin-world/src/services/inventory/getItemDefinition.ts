@@ -1,5 +1,4 @@
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
-import type { GameText } from "genshin-text";
 
 import materialsJson from "#src/data/items/materials.json";
 import { materialDataSchema } from "#src/models/inventory/MaterialData";
@@ -14,10 +13,10 @@ const materialDataMap = new Map(
     .map((materialData) => [materialData.id, materialData]),
 );
 
-// An item's definition in the reader's language, its name read from the game text by its text id
-export const getItemDefinition = (itemId: number, gameText: GameText): ItemDefinition => {
+// An item's definition in the reader's language, its name read from the name-text chunks by its text id
+export const getItemDefinition = (itemId: number, names: Readonly<Record<string, string>>): ItemDefinition => {
   const materialData = materialDataMap.get(itemId);
   if (!materialData)
     throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the materials' table");
-  return toItemDefinition(materialData, gameText);
+  return toItemDefinition(materialData, names);
 };

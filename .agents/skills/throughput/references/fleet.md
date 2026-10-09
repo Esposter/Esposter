@@ -22,7 +22,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A proposal unit carries the same three fields a queue item does, in its frontmatter** (the `docs` skill, `references/page-frontmatter.md`), each optional:
   - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
   - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
-  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`.
+  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses `ForgeScreen`. A long list may wrap over the lines below its key, as the formatter writes it.
 - **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
@@ -32,6 +32,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
   Nothing ready means the machine stays idle and says nothing.
 
+- **A lane's worktree is `~/Esposter/wt/<lane>`**, the same path on every machine and in every session (`runner`, `bench`, `bench2`, `cpu`, `perf`, `ci`). A one-off worktree is `~/Esposter/wt/<name>` and is removed with `remove-worktree.sh` when done. The short root keeps `node_modules/.pnpm` under Windows' 260-character limit, which a scratchpad path does not.
 - **A fresh worktree is set up in two installs, never one.** `pnpm i --frozen-lockfile` leaves the workspace state without the `autoDedupe` setting, which `verifyDepsBeforeRun: error` rejects as "changed"; the `pnpm i --offline` that follows records it, and runs no network resolve, so the lockfile stays as committed. In a worktree: `pnpm i --frozen-lockfile && pnpm i --offline`.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 

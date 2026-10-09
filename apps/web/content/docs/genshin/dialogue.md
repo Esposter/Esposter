@@ -98,7 +98,7 @@ The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-aut
 | `packages/genshin-world/src/services/dialogue/constants.test.ts`     | The hand-written sample talk every runner suite walks                 |
 | `packages/genshin-world/src/services/dialogue/constants.ts`          | The provisional reveal and auto-play timings                          |
 | `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`      | A talk run over the world: reveal, keys, auto-play and skip           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`       | Mounts the talk over the world while its screen is open               |
+| `packages/genshin-world/src/components/World/Session/Index.vue`      | Mounts the talk over the world while its screen is open               |
 | `packages/genshin-interface/src/components/DialogueScreen/Index.vue` | The speaker's name, the line written out in place, and the replies    |
 | `packages/genshin-interface/src/models/DialogueChoiceIcon.ts`        | The marks a reply is drawn beside                                     |
 | `packages/genshin-world/src/models/world/Resident.ts`                | A resident placed in a region's data, and the talk F begins with them |

@@ -55,7 +55,7 @@ The pivot's height, the field of view, the pitch's limits, the default, nearest 
 | `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | the sphere cast along the arm                                         |
 | `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | how far into the next step a frame has come                           |
 | `packages/genshin-world/src/components/World/Character/Index.vue` | runs the camera each frame on the blended body, and locks the pointer |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`    | shows the cursor on Left Alt, and holds the orbit on in photo mode    |
+| `packages/genshin-world/src/components/World/Session/Index.vue`   | shows the cursor on Left Alt, and holds the orbit on in photo mode    |
 
 ## Sources
 

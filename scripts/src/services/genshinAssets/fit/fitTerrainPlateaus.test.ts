@@ -4,20 +4,19 @@ import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPl
 import { getPlateauHeight, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const STEP = 4;
-const SIZE = 41;
-const ORIGIN = -80;
-const PLATEAU_RADIUS = 24;
-
-const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid => {
-  const values = new Float64Array(SIZE * SIZE);
-  for (let row = 0; row < SIZE; row++)
-    for (let column = 0; column < SIZE; column++)
-      values[row * SIZE + column] = getValue(ORIGIN + column * STEP, ORIGIN + row * STEP);
-  return { originX: ORIGIN, originZ: ORIGIN, size: SIZE, step: STEP, values };
-};
-
 describe(fitTerrainPlateaus, () => {
+  const STEP = 4;
+  const SIZE = 41;
+  const ORIGIN = -80;
+  const PLATEAU_RADIUS = 24;
+  const createGrid = (getValue: (x: number, z: number) => number): TerrainResidualGrid => {
+    const values = new Float64Array(SIZE * SIZE);
+    for (let row = 0; row < SIZE; row++)
+      for (let column = 0; column < SIZE; column++)
+        values[row * SIZE + column] = getValue(ORIGIN + column * STEP, ORIGIN + row * STEP);
+    return { originX: ORIGIN, originZ: ORIGIN, size: SIZE, step: STEP, values };
+  };
+
   test("finds a plateau the residual is one of, at its centre and height", () => {
     expect.hasAssertions();
 

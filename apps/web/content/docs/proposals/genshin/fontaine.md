@@ -2,6 +2,16 @@
 title: Fontaine
 description: Proposal — Fontaine, the Hydro nation of justice, on a raised continental plate that ends in a vast waterfall. A Belle Époque capital of mansard roofs, clock towers and aqueducts, canals and aquabus lines, research institutes of brass machinery, and a whole second world under the water. The underwater Sea of Bygone Eras is a layer of its own.
 model: claude-opus-5-5
+needs: [game-exports, parity-page]
+touches:
+  [
+    "packages/genshin-world/src/models/fontaine/**",
+    "packages/genshin-world/src/services/fontaine/**",
+    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
+    "packages/genshin-world/parity/main.ts",
+    "packages/genshin-world/parity/models/ScreenFixture.ts",
+    "scripts/src/services/genshinParity/shared/openParityPage.ts",
+  ]
 ---
 
 # Fontaine
@@ -64,6 +74,15 @@ New files:
 ```text
 packages/genshin-world/src/services/fontaine/   ← aqueduct, clock tower and machinery generators (the building kit is built)
 ```
+
+**Still to build, in order:**
+
+1. **The Court of Fontaine's witness claims**, for the roadmap's `fontaine-every-renderer`, as [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions shape a capital's claims; its first step adds `witnessComponents` to `ScreenFixture` if no region has yet.
+   - `models/fontaine/FontainePartFamily.ts` (`Ground`, `Buildings`) and `services/fontaine/FontainePartFamilyMeshRegexMap.ts`: `/^BigWorldTerrain_/u` for `Ground`, and for `Buildings` `/^Area_Fd_Build_/u`, Fontaine's code in the game's mesh names.
+   - `services/fontaine/FontaineUndrawnMeshRegexMap.ts` over `~/Esposter/genshin-parity/extracted/fontaine/`: `props` `/^Area_(?:Fd|Common)_Prop_/u`, `plants` `/^Area_Xm_Lvy_/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`. Today's witness places little past the terrain tiles, since the city is found again by `city-areas-reextract`; these entries already match every mesh name the export holds.
+   - The fixture's `witnessComponents` takes `fontaine` with the two maps.
+   - Proof: the Inventory pass, `pnpm -C scripts genshin:parity passes fontaine --pass Inventory`, reads 0 renderers unclaimed.
+2. **The aqueduct, clock tower and machinery generators**, each fitted against its exports when the passes reach its shape.
 
 ## Sources
 

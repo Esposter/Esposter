@@ -57,7 +57,7 @@ flowchart TD
 | `packages/genshin-world/src/components/World/Character/Index.vue`              | The kit's landed hits strike the monuments in reach |
 | `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | A mechanism in reach to act on                      |
 | `packages/genshin-world/src/models/world/RegionData.ts`                        | Gains each region's mechanisms and puzzles          |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                 | Steps the mechanisms in reach on the fixed step     |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                | Steps the mechanisms in reach on the fixed step     |
 
 ## Sources
 

@@ -56,7 +56,7 @@ The records give one place for most residents, so most have a day spot and no ni
 | `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts` | The spot shown, held while the resident is in view across a change                |
 | `packages/genshin-world/src/composables/useResidentSpots.ts`               | The shown spot of each resident, read each frame from the clock and the camera    |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`           | Holds the residents' spots and exposes them to the world screen                   |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`             | Lists the residents at their shown spot as talk prompts                           |
+| `packages/genshin-world/src/components/World/Session/Index.vue`            | Lists the residents at their shown spot as talk prompts                           |
 | `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                   |
 | `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the birth records to names, talks and regions |
 | `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                  |

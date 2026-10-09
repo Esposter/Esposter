@@ -59,7 +59,7 @@ The camera is never held under the ground or the water's surface: after each ste
 | `packages/genshin-engine/src/camera/createFreeCamera.ts`           | the flight: look, move by height, and the clamp above the ground                            |
 | `packages/genshin-engine/src/collision/createGroundQuery.ts`       | the ground's height and normal at a point, and the water's level                            |
 | `packages/genshin-world/src/components/World/FreeCamera/Index.vue` | the world's wiring: the loop run before the origin's shift, on the scene's ground           |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | reads the input once a frame, owns the origin, and mounts it only under tuning              |
+| `packages/genshin-world/src/components/World/Session/Index.vue`    | reads the input once a frame, owns the origin, and mounts it only under tuning              |
 | `packages/genshin-world/src/services/constants.ts`                 | the fixed step's length, and the priority a camera runs at                                  |
 
 ## Sources

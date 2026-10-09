@@ -3,29 +3,28 @@ import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion
 import { fillRegionHarmonically } from "#src/services/genshinParity/reference/fillRegionHarmonically";
 import { describe, expect, test } from "vitest";
 
-const CHANNELS = 4;
-const OPAQUE = 255;
-const INTERFACE_COLOUR = [0, 0, 0, OPAQUE];
-const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
-
-// A frame's pixels, each its colour at its own column and row, the region's own pixels set to the interface's colour
-const getFrame = (
-  width: number,
-  height: number,
-  region: ParityRegion,
-  getColour: (column: number, row: number) => number[],
-): Uint8Array => {
-  const pixels = new Uint8Array(width * height * CHANNELS);
-  for (let row = 0; row < height; row++)
-    for (let column = 0; column < width; column++) {
-      const isInside =
-        column >= region.x && column < region.x + region.width && row >= region.y && row < region.y + region.height;
-      pixels.set(isInside ? INTERFACE_COLOUR : getColour(column, row), (row * width + column) * CHANNELS);
-    }
-  return pixels;
-};
-
 describe(fillRegionHarmonically, () => {
+  const CHANNELS = 4;
+  const OPAQUE = 255;
+  const INTERFACE_COLOUR = [0, 0, 0, OPAQUE];
+  const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
+  // A frame's pixels, each its colour at its own column and row, the region's own pixels set to the interface's colour
+  const getFrame = (
+    width: number,
+    height: number,
+    region: ParityRegion,
+    getColour: (column: number, row: number) => number[],
+  ): Uint8Array => {
+    const pixels = new Uint8Array(width * height * CHANNELS);
+    for (let row = 0; row < height; row++)
+      for (let column = 0; column < width; column++) {
+        const isInside =
+          column >= region.x && column < region.x + region.width && row >= region.y && row < region.y + region.height;
+        pixels.set(isInside ? INTERFACE_COLOUR : getColour(column, row), (row * width + column) * CHANNELS);
+      }
+    return pixels;
+  };
+
   const flatColour = [50, 120, 200, OPAQUE];
 
   test("fills a region surrounded by a flat border flat", () => {

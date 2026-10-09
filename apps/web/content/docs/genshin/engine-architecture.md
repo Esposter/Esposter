@@ -78,7 +78,7 @@ Every generator and every per-frame selection is benched under the `bench` skill
 
 ## The world screen is composition
 
-`World/Screen/Index.vue` only composes. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
+`World/Screen/Index.vue` loads the names and the stat tables the save is read by, then opens `World/Session/Index.vue`, which only composes. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
 
 ```mermaid
 flowchart LR
@@ -100,4 +100,5 @@ flowchart LR
 | `packages/genshin-engine/src/renderer/createGenshinRenderer.ts` | The renderer every scene draws through                         |
 | `packages/genshin-engine/src/streaming/createTileStreamer.ts`   | The tile streamer, run the same over a worker pool or a test   |
 | `packages/genshin-world/src/workers/terrainTile.worker.ts`      | The worker the ground's tiles are generated in                 |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`  | The world's screen, owning its own canvas, the app mounts      |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`  | The world's screen the app mounts, loading what the save reads |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | The world's session, owning its own canvas                     |

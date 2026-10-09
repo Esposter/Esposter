@@ -17,6 +17,7 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createKitState } from "#src/services/kit/createKitState";
+import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
@@ -209,6 +210,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   }
 
   action?.onStart?.({ body: kitBody, combatant, kitEffectState });
+  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState });
   // The summons' hits land from their own bodies, priced by the combatants that cast them, and the step's own hits from
   // The turned body and the character on the field
   const strikes: KitStrike[] = [

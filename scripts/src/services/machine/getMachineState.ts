@@ -14,7 +14,7 @@ export const getMachineState = (
   cpuAveragePercentage: number,
   sampleCount: number,
   freeGigabytes: number,
-  totalGigabytes = totalmem() / GIBIBYTE,
+  totalGigabytes: number = totalmem() / GIBIBYTE,
 ): MachineState => {
   if (freeGigabytes < totalGigabytes * GATE_MEMORY_SHARE) return MachineState.Tight;
   if (

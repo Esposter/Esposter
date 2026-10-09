@@ -2,7 +2,7 @@
 title: Character controller
 description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type but the medium female body's clip-read speeds moves by today, and each state approved by its own measure against those readings.
 model: claude-opus-5-5
-needs: [game-exports]
+needs: [game-install, game-exports]
 ---
 
 # Character controller
@@ -42,8 +42,12 @@ The readings are named work before any constant changes. Each is an open questio
 
 **This adds, in order:**
 
-1. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter as it drains on a wall, in a glide and while treading water, published ones first.
-2. **The other body types**, each in turn.
+1. **The medium male body's clip-read entry**, then the tall female's, the tall male's and the short female's, one a build.
+   - Run `pnpm -C scripts genshin:assets locomotion Boy` with the game closed (`Lady`, `Male` and `Loli` for the others). It prints each clip's seconds, ground covered, speed, recorded speed and rise.
+   - Write `BodyTypeLocomotionMap[BodyType.MediumMale]` as `{ ...PROVISIONAL_LOCOMOTION, ... }` with the eleven fields the medium female entry overrides, each off the same clip of `Ani_Avatar_Boy_` as its `Girl` twin, as `~/Esposter/genshin-parity/extracted/locomotion/Girl/locomotion.json` holds them: `walkSpeed`, `runSpeed` and `sprintSpeed` the `WalkCycle`, `RunCycle` and `SprintCycle` speeds; `dashSpeed` and `dashSeconds` the `SprintBS` speed and seconds; `climbSpeed` the `ClimbU` rise a second; `climbJumpHeight` and `climbJumpSeconds` the `ClimbDashU` rise and seconds; `swimSpeed` and `swimDashSpeed` the `SwimF` and `SwimDash` speeds; and `drownSeconds` the `SwimDie` seconds, each to two decimals.
+   - Add the run to `Locomotion.reference.ts` as an investigation beside the medium female body's: its command, the readings and their outcome. A clip the body type lacks leaves its field provisional, and the investigation names it.
+   - The readings are data, so no unit test is owed; the printed readings in the reference are their proof.
+2. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter as it drains on a wall, in a glide and while treading water, published ones first. Until one is found, `world-movement.mkv` on the roadmap's Recordings owed list is the clip that answers them.
 
 Each state is approved by its own measure against the readings, as the motion pass judges any motion: a run between two landmarks takes the recording's time within that recording's noise, and a jump's apex stands at the recording's height. A unit test then holds each measure, so no later state retunes it.
 

@@ -5,18 +5,17 @@ import { SEELIE_RETURN_SECONDS, SEELIE_ROUTE_SECONDS } from "#src/services/puzzl
 import { stepSeelie } from "#src/services/puzzle/stepSeelie";
 import { describe, expect, test } from "vitest";
 
-const START = { x: 0, z: 0 };
-const COURT = { x: 10, z: 0 };
-
-const createSeelie = (state: SeelieState): Seelie => ({
-  court: COURT,
-  progress: 0,
-  start: START,
-  state,
-  unfollowedSeconds: 0,
-});
-
 describe(stepSeelie, () => {
+  const START = { x: 0, z: 0 };
+  const COURT = { x: 10, z: 0 };
+  const createSeelie = (state: SeelieState): Seelie => ({
+    court: COURT,
+    progress: 0,
+    start: START,
+    state,
+    unfollowedSeconds: 0,
+  });
+
   test("is led once followed while resting", () => {
     expect.hasAssertions();
 

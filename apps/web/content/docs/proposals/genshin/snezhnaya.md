@@ -2,6 +2,16 @@
 title: Snezhnaya
 description: Proposal — Snezhnaya, the Cryo nation and home of the Fatui. A frozen tundra of birch forests and snowbound peaks, settlements gathered around Kresnik's Torches, factories of an industry more advanced than any other nation's, and its capital Snezhnograd below the palace of its archon. Snow and cold are its standing weather.
 model: claude-opus-5-5
+needs: [game-exports, parity-page]
+touches:
+  [
+    "packages/genshin-world/src/models/snezhnaya/**",
+    "packages/genshin-world/src/services/snezhnaya/**",
+    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
+    "packages/genshin-world/parity/main.ts",
+    "packages/genshin-world/parity/models/ScreenFixture.ts",
+    "scripts/src/services/genshinParity/shared/openParityPage.ts",
+  ]
 ---
 
 # Snezhnaya
@@ -45,6 +55,15 @@ Snezhnograd's main street, the Zapolyarny Palace, The Korolevskiy Theater, Centr
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise of the tundra and the peaks |
 
 The industrial and capital kits and the Kresnik's Torch are built, as [its as-built page](/docs/genshin/snezhnaya) describes.
+
+**Still to build, in order:**
+
+1. **Everfrozen Earth's witness claims**, which the roadmap's `snezhnaya-every-renderer` waits on, in the per-capital shape [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions give; if no region has put `witnessComponents` on `ScreenFixture` yet, this step does first, by Inazuma's first step.
+   - `models/snezhnaya/SnezhnayaPartFamily.ts` with `Ground` alone, and `services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap.ts` matching it to `/^BigWorldTerrain_/u`. Snezhnograd is not in the game's data the export reads, so no house of the region's own is there for the capital kit to stand in for, and the family for its buildings waits on the city's meshes and their code.
+   - `services/snezhnaya/SnezhnayaUndrawnMeshRegexMap.ts` for the rest of `~/Esposter/genshin-parity/extracted/snezhnaya/`: `commonBuildings` `/^Area_Common_(?:Build|Stairs)_/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`, which cover each mesh it names.
+   - `snezhnaya` goes into the fixture's `witnessComponents` with the two.
+   - Proof: `pnpm -C scripts genshin:parity passes snezhnaya --pass Inventory` leaves 0 renderers unclaimed.
+2. **Snezhnograd, its torches and its birches**, once the `snezhnaya-capital` re-extraction finds the city in the game's data.
 
 ## Sources
 

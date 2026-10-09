@@ -2,7 +2,7 @@ import type { ChildProcess } from "node:child_process";
 import type { PackageJson } from "type-fest";
 
 import { spawn, spawnSync } from "node:child_process";
-import { globSync, readFileSync, rmSync, watch } from "node:fs";
+import { existsSync, globSync, readFileSync, rmSync, statSync, watch } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { defineNuxtModule, useLogger } from "nuxt/kit";
@@ -11,8 +11,11 @@ const CONFIGURATION_PACKAGE_NAME = "configuration";
 // The exit code Windows gives a process the console's Ctrl+C ended, which Node reports with no `SIGINT` signal
 const STATUS_CONTROL_C_EXIT = 0xc000013a;
 const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-// The line tsdown prints as a build writes its `dist`, which marks a watcher's first build as done
+// The lines tsdown prints as a build starts and as it has written its `dist`
+const BUILD_START_TEXT = "Build start";
 const BUILD_COMPLETE_TEXT = "Build complete";
+// The published-shape checks read what `build` packs, which a dev watcher never publishes, so `build` alone runs them
+const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-attw", "--no-publint"];
 const WORKSPACE_PROTOCOL = "workspace:";
 const SOURCE_PATTERNS = ["src/**/*.ts", "src/**/*.vue"];
 const logger = useLogger("watch-packages");
@@ -63,44 +66,58 @@ export default defineNuxtModule({
     // The packages whose watcher is being restarted for a change to their file list rather than having failed
     const restartingPackageNames = new Set<string>();
     let isClosing = false;
-    // A cleaning tsdown watcher deletes the last build's files as each rebuild starts, so a page loaded mid-rebuild
-    // Finds no `dist` to import. The watchers overwrite in place instead, and each `dist` is cleared once here so a
-    // Hashed chunk from an earlier session is not left for a size snapshot to measure
-    for (const packageName of watchedPackageNames) {
-      const packageDirectory = packageDirectoryMap.get(packageName);
-      if (packageDirectory) rmSync(join(packageDirectory, "dist"), { force: true, recursive: true });
-    }
     // A watcher exits when its config fails to reload, which a rebuild of the configuration `dist` it imports causes by
     // Cleaning it mid-reload, so an exit respawns it after a pause rather than leaving its package silently stale. A
     // Ctrl+C reaches every watcher before Nuxt's close hook runs, so a watcher it ended stays ended rather than being
     // Respawned into a shutting-down process and orphaned on the console
-    // Each `dist` was just cleared, so a page served before a package's first build lands fails on a missing module:
-    // Nuxt waits for every watcher's first build before it serves. A watcher that exits first releases its wait too,
-    // So a package whose build fails leaves its error in the console rather than holding the server back for good
+    // A cleaning tsdown watcher deletes the last build's files as each rebuild starts, so a page loaded mid-rebuild
+    // Finds no `dist` to import. The watchers overwrite in place instead, and a finished build removes every file in its
+    // `dist` it did not write — tsdown rewrites each output on every build, so an older file is a stale hashed chunk
+    const pruneStaleFiles = (packageName: string, buildStartMs: number) => {
+      const packageDirectory = packageDirectoryMap.get(packageName);
+      if (!packageDirectory) return;
+      const distDirectory = join(packageDirectory, "dist");
+      for (const path of globSync("**/*", { cwd: distDirectory, withFileTypes: false })) {
+        const filePath = join(distDirectory, path);
+        if (statSync(filePath).isFile() && statSync(filePath).mtimeMs < buildStartMs) rmSync(filePath, { force: true });
+      }
+    };
+    // A warm start serves the last session's `dist` while the watchers rebuild it, so Nuxt waits only for a package
+    // With no `dist` yet, whose page would otherwise fail on a missing module. A watcher that exits first releases its
+    // Wait too, so a package whose build fails leaves its error in the console rather than holding the server back
     const firstBuildResolverMap = new Map<string, () => void>();
-    const firstBuilds = Array.from(
-      watchedPackageNames,
-      (packageName) =>
-        new Promise<void>((resolve) => {
-          firstBuildResolverMap.set(packageName, resolve);
-        }),
-    );
+    const firstBuilds = [...watchedPackageNames]
+      .filter((packageName) => {
+        const packageDirectory = packageDirectoryMap.get(packageName);
+        return packageDirectory !== undefined && !existsSync(join(packageDirectory, "dist"));
+      })
+      .map(
+        (packageName) =>
+          new Promise<void>((resolve) => {
+            firstBuildResolverMap.set(packageName, resolve);
+          }),
+      );
     const resolveFirstBuild = (packageName: string) => {
       firstBuildResolverMap.get(packageName)?.();
       firstBuildResolverMap.delete(packageName);
     };
     const spawnWatcher = (packageName: string) => {
-      const watcher = spawn(process.execPath, [tsdownPath, "--watch", "--no-clean"], {
+      const watcher = spawn(process.execPath, [tsdownPath, ...DEV_WATCH_ARGUMENTS], {
         cwd: packageDirectoryMap.get(packageName),
         stdio: ["ignore", "pipe", "inherit"],
       });
       // The watcher's output still reaches the console; a tail of the last chunk is kept so the marker is found even
       // When a chunk boundary splits it
       let outputTail = "";
+      let buildStartMs = Date.now();
       watcher.stdout?.on("data", (chunk: Buffer) => {
         process.stdout.write(chunk);
         const output = outputTail + chunk.toString();
-        if (output.includes(BUILD_COMPLETE_TEXT)) resolveFirstBuild(packageName);
+        if (output.includes(BUILD_START_TEXT)) buildStartMs = Date.now();
+        if (output.includes(BUILD_COMPLETE_TEXT)) {
+          pruneStaleFiles(packageName, buildStartMs);
+          resolveFirstBuild(packageName);
+        }
         outputTail = output.slice(-BUILD_COMPLETE_TEXT.length);
       });
       watcher.on("exit", (code, signal) => {
@@ -142,7 +159,8 @@ export default defineNuxtModule({
       for (const sourceWatcher of sourceWatchers) sourceWatcher.close();
       for (const watcher of watcherMap.values()) watcher.kill();
     });
-    logger.info(`Waiting for the first build of ${watchedPackageNames.size} watched packages`);
+    if (firstBuilds.length > 0)
+      logger.info(`Waiting for the first build of ${firstBuilds.length} packages with no dist`);
     await Promise.all(firstBuilds);
   },
 });

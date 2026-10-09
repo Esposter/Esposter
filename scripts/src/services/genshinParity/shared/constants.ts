@@ -57,15 +57,17 @@ export const YT_DLP_PINNED_TOOL: PinnedTool = {
   isArchive: false,
 };
 // A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
-export const YT_CAPTURE_REGEX = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
-export const CLIP_NAME_REGEX = /^[\w-]+$/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const CLIP_NAME_REGEX: RegExp = /^[\w-]+$/u;
 // The world package's parity page, which renders a screen without Nuxt. Its port is 3011 unless `GENSHIN_PARITY_PORT`
 // Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
 // Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3011"}/parity/`;
 // The page a screen is shot on, by its query
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";

@@ -10,8 +10,8 @@ import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { drawForgeResult } from "#src/services/forging/drawForgeResult";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
+import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { ItemCategory } from "genshin-interface";
 
 // The bag, the Adventure EXP and order after every unit of a queue's order done by `now` is taken in. Each done unit yields
 // One result drawn by weight from its recipe's results, and an extra copy of it at the chance the talents of this forge type
@@ -90,14 +90,7 @@ const toResultDefinition = (
   if (recipe.kind === ForgeRecipeKind.Weapon) {
     const weapon = weapons.get(itemId);
     if (!weapon) throw new InvalidOperationError(Operation.Read, String(itemId), "has no weapon definition");
-    return {
-      category: ItemCategory.Weapon,
-      id: itemId,
-      name: weapon.name,
-      rank: 0,
-      rarity: weapon.rarity,
-      stackLimit: 1,
-    };
+    return toWeaponDefinition({ id: itemId, name: weapon.name, rarity: weapon.rarity });
   }
   const definition = definitions.get(itemId);
   if (!definition) throw new InvalidOperationError(Operation.Read, String(itemId), "has no definition in the bag");

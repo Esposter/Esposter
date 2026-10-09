@@ -18,7 +18,7 @@ describe(compareFamilyColour, () => {
     const oursTargets = createTargets([0, 0, undefined, undefined], [0, 0, 0, 0]);
 
     const colours = (
-      await compareFamilyColour(exportsTargets, oursTargets, 4, 2, async (input) => scoreLabelSimilarity(input))
+      await compareFamilyColour(exportsTargets, oursTargets, 4, 2, (input) => scoreLabelSimilarity(input))
     ).comparisons.map(({ colour, family }) => ({ colour, family }));
 
     expect(colours).toStrictEqual([

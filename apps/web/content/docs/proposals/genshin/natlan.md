@@ -2,6 +2,16 @@
 title: Natlan
 description: Proposal — Natlan, the Pyro nation, west of Sumeru's desert. Volcanoes and lava, hot springs and waterfalls, canyons, rainforest, and six tribes each with its own settlement and look, under saturated colour and painted murals. One kit with a variant per tribe, and the Stadium of the Sacred Flame at the centre.
 model: claude-opus-5-5
+needs: [game-exports, parity-page]
+touches:
+  [
+    "packages/genshin-world/src/models/natlan/**",
+    "packages/genshin-world/src/services/natlan/**",
+    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
+    "packages/genshin-world/parity/main.ts",
+    "packages/genshin-world/parity/models/ScreenFixture.ts",
+    "scripts/src/services/genshinParity/shared/openParityPage.ts",
+  ]
 ---
 
 # Natlan
@@ -70,6 +80,15 @@ New files:
 ```text
 packages/genshin-engine/src/kits/architecture/  ← the tribe-variant building kit's remaining parts, murals, lava channels
 ```
+
+**Still to build, in order:**
+
+1. **The People of the Springs' witness claims**, owed to the roadmap's `natlan-every-renderer`. Their shape is the one [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions give every capital; `witnessComponents` goes on `ScreenFixture` first where no earlier region added it, as Inazuma's first step describes.
+   - `models/natlan/NatlanPartFamily.ts` (`Ground`, `Buildings`) and `services/natlan/NatlanPartFamilyMeshRegexMap.ts`: the terrain tiles `/^BigWorldTerrain_/u` as `Ground`, and the tribe's houses `/^Area_Nt_Build_/u` as `Buildings`, which the kit's tribe building stands in for.
+   - `services/natlan/NatlanUndrawnMeshRegexMap.ts`, read off `~/Esposter/genshin-parity/extracted/natlan/`: `props` `/^Area_(?:Nt|Common)_Prop_/u`, `lights` `/^Area_Nt_Light_/u`, `plants` `/^Area_Nt_Grass_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^Eff_/u`, which leave no mesh of the export unmatched.
+   - `natlan` is added to the fixture's `witnessComponents` with them.
+   - Proof: `pnpm -C scripts genshin:parity passes natlan --pass Inventory`, 0 renderers unclaimed. The `natlan-capital` re-extraction later widens the witness, and its own Inventory run reports any name these miss.
+2. **The tribe-variant kit's remaining parts, murals and lava channels**, fitted against the exports when the passes reach their shape.
 
 ## Sources
 

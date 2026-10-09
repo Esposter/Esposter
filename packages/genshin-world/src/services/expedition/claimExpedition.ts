@@ -3,7 +3,6 @@ import type { ExpeditionClaim } from "#src/models/expedition/ExpeditionClaim";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsExpeditionReturned } from "#src/services/expedition/checkIsExpeditionReturned";
@@ -21,7 +20,7 @@ export const claimExpedition = (
   place: ExpeditionPlace,
   inventory: Inventory,
   wallet: Wallet,
-  gameText: GameText,
+  names: Readonly<Record<string, string>>,
   now: Temporal.Instant,
   random: () => number,
 ): ExpeditionClaim | undefined => {
@@ -36,7 +35,7 @@ export const claimExpedition = (
     const count = minCount + Math.floor(random() * (maxCount - minCount + 1));
     if (itemId === MORA_ITEM_ID) moraCount += count;
     else {
-      const addition = addInventoryItem(claimedInventory, getItemDefinition(itemId, gameText), count);
+      const addition = addInventoryItem(claimedInventory, getItemDefinition(itemId, names), count);
       if (addition.overflow > 0) return undefined;
       claimedInventory = addition.inventory;
     }

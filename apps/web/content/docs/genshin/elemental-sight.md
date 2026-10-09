@@ -74,7 +74,7 @@ flowchart TD
 | `packages/genshin-world/src/services/elementalSight/checkIsInSightReach.ts` | Whether a ground point lies within the range                       |
 | `packages/genshin-world/src/components/World/EnemyNameTags/Index.vue`       | The enemies' names over their heads, projected each frame          |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`            | The sight's scene and uniforms, written each frame from the screen |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`              | The binding that steps the sight, and the screens that end it      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | The binding that steps the sight, and the screens that end it      |
 
 ## Sources
 

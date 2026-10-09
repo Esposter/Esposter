@@ -2,10 +2,10 @@ import { MachineState } from "#src/models/machine/MachineState";
 import { getMachineState } from "#src/services/machine/getMachineState";
 import { describe, expect, test } from "vitest";
 
-const LARGE_MACHINE_GIGABYTES = 32;
-const SMALL_MACHINE_GIGABYTES = 16;
-
 describe(getMachineState, () => {
+  const LARGE_MACHINE_GIGABYTES = 32;
+  const SMALL_MACHINE_GIGABYTES = 16;
+
   test("is idle when a full window sits under the CPU target with room to spare", () => {
     expect.hasAssertions();
 

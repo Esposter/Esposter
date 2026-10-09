@@ -14,11 +14,11 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **Three make one of the tier above.** Ascension and talent materials are crafted from three of the same material a tier below, as the recipes hold them. A tier row that does not take exactly three of one material is an error, not a recipe.
 - **Recipes are learned, where the table hides them.** The [crafting page](/docs/genshin/crafting) settles how each recipe opens. This covers the baits, Condensed Resin, and the Pure Water and Strength Tonic formulas. It supersedes the earlier wording that every potion waits on its instructions, because the table shows the Heatshield and Desiccant potions from the start, with no instruction to open them. Revised 2026-10-08 by the build that wrote the [crafting](/docs/genshin/crafting) page.
 - **Condensed Resin** is crafted from 60 Original Resin, and one crystal core, as the [crafting page](/docs/genshin/crafting) counts them. Five are held at most, which is the item's own stack limit in the bag, as [Original Resin](/docs/proposals/genshin/original-resin) decides.
-- **A character's crafting talent.** The character chosen to craft may carry a passive that refunds one material at 25% or doubles the result at 10% for its kind of recipe, as the wiki lists them, drawn from the world's seeded random source and read from the character's passive. Not built: it waits on the passives.
+- **A character's crafting talent.** The wiki's Crafting Talents category holds thirteen talents, one per character, read from each talent page's infobox. Each is one of four effects, applied to the crafter's craft through the world's seeded random source: a double product at 10% (Eula, Sucrose, Layla, Albedo, Ayaka, Alhaitham, Wriothesley, on their kind of recipe), a refund of one material at 25% (Xingqiu, Mona, Dori), a refund of one material at 20% for potions (Lisa), or one extra regional talent material at 25% for a talent book (Yae Miko) or 10% (Prune). The effects are settled; the join from each talent to its character's passive proud skill group, read off the game tables, is not built.
 - **Crafted many at once.** A recipe is crafted as many times as the bag and wallet can pay for, checked whole before anything is spent, and refused whole where the bag has no room for every result. This is built.
 - **The bench is where the game puts one.** Each crafting bench stands where the city's streaming records place it, or where the [spawned places](/docs/proposals/genshin/spawned-places) fit it if they do not, and is used through the [interaction](/docs/proposals/genshin/interaction) prompts. The official map marks no crafting bench, so the spawned places cannot place one; the streaming records must, which the scene's extraction reads and which is not read yet.
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
-- **A gadget's instructions are unsourced.** The table holds each gadget's recipe hidden with no instruction item to open it. Until a source names the instructions, the gadgets are not offered. The wiki was not reachable from the build that wrote the [crafting](/docs/genshin/crafting) page, so its gadget instructions are still to be read there.
+- **A gadget's instructions come from the wiki.** The table holds each gadget's recipe hidden with no instruction item to open it. The wiki's Gadgets pages answer through the persona reader, which is how the instructions are read; their reputation and Frostbearing Tree sources are the wiki's too. Until they are read, the gadgets are not offered.
 
 ## How it works
 
@@ -49,7 +49,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Read from the wiki, not yet read:** which characters' passives bonus which kinds of recipe, and the gadgets' instructions.
+- **Read from the wiki, not yet joined:** the crafting talents' proud skill groups, from the game tables, and the gadgets' instructions, from the wiki's gadget pages.
 - **Not measured.** Crafting takes no time in the game and has no timed state, so no compute-queue item is owed.
 
 ## Key files

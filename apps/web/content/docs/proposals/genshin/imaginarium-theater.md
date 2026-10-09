@@ -53,12 +53,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role after the change                               |
-| :------------------------------------------------------------- | :-------------------------------------------------- |
-| `packages/genshin-world/src/models/party/Party.ts`             | The Principal Cast's four on each stage             |
-| `packages/genshin-world/src/models/character/Character.ts`     | A character's stats as fixed for the run            |
-| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`         | A stage's enemies                                   |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Enters the Theater's scene and returns to the world |
+| File                                                            | Role after the change                               |
+| :-------------------------------------------------------------- | :-------------------------------------------------- |
+| `packages/genshin-world/src/models/party/Party.ts`              | The Principal Cast's four on each stage             |
+| `packages/genshin-world/src/models/character/Character.ts`      | A character's stats as fixed for the run            |
+| `packages/genshin-world/src/models/enemy/EnemyCamp.ts`          | A stage's enemies                                   |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Enters the Theater's scene and returns to the world |
 
 ## Sources
 

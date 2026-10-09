@@ -15,7 +15,6 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
-import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
@@ -40,27 +39,15 @@ export const useWorldCombat = ({
   events,
   onPartyRevived,
   placeWorldDrops,
+  statTables,
 }: {
   events: WorldEvents;
   onPartyRevived: () => void;
   placeWorldDrops: (enemy: Enemy, enemyDrops: EnemyDrops) => void;
+  statTables: StatTables;
 }) => {
-  // The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
-  // Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
-  // Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
-  // Are logged and leave it so
-  const statTables = shallowRef<StatTables>();
-  const characters = shallowRef<Character[]>([]);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(readStatTables).match(
-    (newStatTables) => {
-      statTables.value = newStatTables;
-      characters.value = [createCharacter(TRAVELER_CHARACTER_ID, newStatTables.characterDataMap)];
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  // The player's characters, the Traveler alone as a new player's, on the field, and their party
+  const characters = shallowRef<Character[]>([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
   const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
   // The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
   // Character's chunk on demand. The Traveler's kit is built from them once they arrive, and nothing is priced until then
@@ -88,20 +75,14 @@ export const useWorldCombat = ({
       kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
     return kitMap;
   });
-  // How the character on the field moves, its body type's, once the roster has arrived
-  const locomotion = computed(() =>
-    statTables.value
-      ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap)
-      : undefined,
-  );
-  // Each character's combat once the roster has arrived and its kit is built from its loaded multipliers, a character whose
-  // Chunk has not arrived having none yet. The character on the field's combat and its party member are what the HUD's
-  // Health and skills read
+  // How the character on the field moves, its body type's
+  const locomotion = computed(() => getCharacterLocomotion(getActiveCharacterId(party), statTables.characterDataMap));
+  // Each character's combat once its kit is built from its loaded multipliers, a character whose chunk has not arrived
+  // Having none yet. The character on the field's combat and its party member are what the HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
     const combatantMap = new Map<number, Combatant>();
-    if (!statTables.value) return combatantMap;
     // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
-    const { characterDataMap } = statTables.value;
+    const { characterDataMap } = statTables;
     const elementalResonances = getElementalResonances(
       (party.teams[party.deployedTeamIndex]?.characterIds ?? []).flatMap((characterId) => {
         const element = characterDataMap.get(characterId)?.element;
@@ -114,7 +95,7 @@ export const useWorldCombat = ({
         combatantMap.set(character.id, {
           ascension: character.ascension,
           attributes: computeCharacterAttributes(
-            getCharacterAttributeLines(character, statTables.value),
+            getCharacterAttributeLines(character, statTables),
             elementalResonances,
           ),
           characterId: character.id,
@@ -193,7 +174,6 @@ export const useWorldCombat = ({
     locomotion,
     party,
     respawnParty,
-    statTables,
     strikeParty,
     worldRandom,
   };

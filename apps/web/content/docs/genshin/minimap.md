@@ -25,13 +25,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                           | Role                                                                  |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`  | The drawing cut to a circle round the character, turned with the view |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`  | The one drawing it shares with the map                                |
-| `packages/genshin-world/src/components/Map/Pointer/Index.vue`  | The pointer at its centre                                             |
-| `packages/genshin-world/src/services/map/constants.ts`         | The metres it shows, and the marks' share of them                     |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Reads the character's ground point and the view's yaw for it          |
+| File                                                            | Role                                                                  |
+| :-------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`   | The drawing cut to a circle round the character, turned with the view |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`   | The one drawing it shares with the map                                |
+| `packages/genshin-world/src/components/Map/Pointer/Index.vue`   | The pointer at its centre                                             |
+| `packages/genshin-world/src/services/map/constants.ts`          | The metres it shows, and the marks' share of them                     |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Reads the character's ground point and the view's yaw for it          |
 
 ## Notes
 

@@ -52,12 +52,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role after the change                                 |
-| :------------------------------------------------------------- | :---------------------------------------------------- |
-| `packages/genshin-world/src/models/world/StatueLandmark.ts`    | A statue, its region's level read from the progress   |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts` | Fits the Oculi from the official map's points         |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`  | Marks a near Oculus                                   |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Holds the regions' state and the pool, and wires them |
+| File                                                            | Role after the change                                 |
+| :-------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/genshin-world/src/models/world/StatueLandmark.ts`     | A statue, its region's level read from the progress   |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`  | Fits the Oculi from the official map's points         |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`   | Marks a near Oculus                                   |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Holds the regions' state and the pool, and wires them |
 
 ## Sources
 

@@ -39,10 +39,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role after the change                          |
-| :------------------------------------------------------------- | :--------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue` | Where the trails' ends are handed to the sight |
-| `packages/genshin-world/src/components/Quest/Beam/Index.vue`   | The beam a quest's target already rises over   |
+| File                                                            | Role after the change                          |
+| :-------------------------------------------------------------- | :--------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue` | Where the trails' ends are handed to the sight |
+| `packages/genshin-world/src/components/Quest/Beam/Index.vue`    | The beam a quest's target already rises over   |
 
 ## Sources
 

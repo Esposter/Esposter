@@ -16,6 +16,14 @@ describe(parseProposalFrontmatter, () => {
     });
   });
 
+  test("reads a sequence a formatter wrapped over the lines below its key", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseProposalFrontmatter('---\ntitle: a\ntouches:\n  [\n    "apps/a/**",\n    "apps/b/**",\n  ]\n---\n'),
+    ).toStrictEqual({ needs: [], touches: ["apps/a/**", "apps/b/**"], waiting: "" });
+  });
+
   test("reads every field as empty when the page names none", () => {
     expect.hasAssertions();
 
