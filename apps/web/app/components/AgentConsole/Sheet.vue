@@ -36,7 +36,7 @@ watch(
   },
 );
 const sheet = useTemplateRef("sheet");
-const { height: windowHeight, width: windowWidth } = useWindowSize();
+const { height: windowHeight } = useWindowSize();
 // The height the reader dragged it to, or a little over half the window until they have. The sheet never stands taller
 // Than the world it sits in, whatever was saved on a taller window
 const height = computed({
@@ -50,10 +50,14 @@ const height = computed({
   },
 });
 // The pages' width the reader dragged them to, never so wide the tabs beside them keep less than the pages' least width,
-// Whatever was saved on a wider window
-const paneMaxWidth = computed(() =>
-  Math.max(AGENT_CONSOLE_PANE_MIN_WIDTH, windowWidth.value - AGENT_CONSOLE_PANE_MIN_WIDTH),
-);
+// Whatever was saved on a wider window. The row the two share is measured, past the gap between them, since the sheet's
+// Padding and that gap take their room from the window too
+const panes = useTemplateRef("panes");
+const { width: panesWidth } = useElementSize(panes);
+const paneMaxWidth = computed(() => {
+  const gap = panes.value ? Number.parseFloat(window.getComputedStyle(panes.value).columnGap) : 0;
+  return Math.max(AGENT_CONSOLE_PANE_MIN_WIDTH, panesWidth.value - gap - AGENT_CONSOLE_PANE_MIN_WIDTH);
+});
 const width = computed({
   get: () => Math.min(paneWidth.value, paneMaxWidth.value),
   set: (newWidth) => {
@@ -161,7 +165,7 @@ onConsoleFocusRequest(async () => {
       </div>
       <!-- The tab list and the one panel shown, which takes the height left under it and scrolls what does not fit. The
         Side pane of app pages stands beside it while a page is open there -->
-      <div flex flex-1 gap-2 min-h-0>
+      <div ref="panes" flex flex-1 gap-2 min-h-0>
         <UiTabs
           v-model="consolePanelType"
           is-filling
