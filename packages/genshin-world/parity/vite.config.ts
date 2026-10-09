@@ -11,4 +11,6 @@ export default defineConfig({
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin],
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   root: dirname(import.meta.dirname),
+  // A checkout other than the shared one serves on its own port through `GENSHIN_PARITY_PORT`
+  server: { port: Number(process.env.GENSHIN_PARITY_PORT ?? 3002), strictPort: true },
 });
