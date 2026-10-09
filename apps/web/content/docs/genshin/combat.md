@@ -74,7 +74,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
 
-The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them.
+The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The roll is drawn from the world's one seeded random source, the stream the kit's other rolls read, so a session's rolls repeat. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them.
 
 ### Internal cooldown
 

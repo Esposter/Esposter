@@ -81,6 +81,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
@@ -130,6 +131,7 @@ import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
+  createSeededRandom,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   GENSHIN_TONE_MAPPING,
   InputAction,
@@ -498,6 +500,8 @@ const kitEffectState: KitEffectState = { effects: [] };
 const clearKitEffects = () => {
   kitEffectState.effects = [];
 };
+// The world's one seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
+const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -890,6 +894,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :locomotion
           :origin
           :party
+          :random="worldRandom"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
         />
