@@ -19,7 +19,8 @@ import { takeOne } from "@esposter/shared";
 
 // The action the presses ask for once none is playing: a charged attack once a strike held past its hold has ended, a
 // Burst or a skill its gates allow in any state they may start in, else the string's next strike when it is pressed or
-// Queued on the ground. A skill with holds starts on its release, at the hold level its seconds held reach
+// Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, and a skill with
+// Holds starts on its release, at the hold level its seconds held reach
 export const startNextKitAction = (
   kitState: KitState,
   kit: Kit,
@@ -32,10 +33,13 @@ export const startNextKitAction = (
 ): KitAction | undefined => {
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
-  const isHeldThroughStrike = isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS;
-  if (isHeldThroughStrike && stamina.checkCanSpend(kit.chargedAttackStamina)) {
-    stamina.spend(kit.chargedAttackStamina);
-    return startKitAction(kitState, kit.chargedAttack, landedHits);
+  if (isStrikeEnded && kitState.attackHeldSeconds >= CHARGED_ATTACK_HOLD_SECONDS) {
+    const chargedAttackStamina = kit.chargedAttackStamina * (kit.getChargedAttackStaminaMultiplier?.(context) ?? 1);
+    if (stamina.checkCanSpend(chargedAttackStamina)) {
+      // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
+      if (chargedAttackStamina > 0) stamina.spend(chargedAttackStamina);
+      return startKitAction(kitState, kit.chargedAttack, landedHits);
+    }
   }
 
   const isBurstReady = partyMember.burstCooldownSeconds <= 0 && partyMember.energy >= kit.burstEnergyCost;

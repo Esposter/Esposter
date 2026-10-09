@@ -12,6 +12,7 @@ import {
   KAEYA_CHARACTER_ID,
   LISA_CHARACTER_ID,
   MONA_CHARACTER_ID,
+  NINGGUANG_CHARACTER_ID,
   NOELLE_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
   VENTI_CHARACTER_ID,
@@ -29,6 +30,7 @@ import { createJeanKit } from "#src/services/kit/characters/jeanKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
+import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
@@ -49,6 +51,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
   [LISA_CHARACTER_ID]: createLisaKit,
   [MONA_CHARACTER_ID]: createMonaKit,
+  [NINGGUANG_CHARACTER_ID]: createNingguangKit,
   [NOELLE_CHARACTER_ID]: createNoelleKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
