@@ -51,15 +51,17 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 // Develop otherwise — the first commit alone over the window's room is repackaged (`reshapeQueue`), and the result is
 // Pushed back under a lease on the sha that was read. A queue left on an old base carries commits written
 // Against files a drain has since repaired, and every one is a conflict the porter would hold on; here it is met
-// Once, by the drain's own session, and the working session's `git pull --rebase` afterwards replays only what
-// It committed since (`review-queue` skill). Returns the sha the port reads — the rewritten head, or the one
-// Read when nothing was rewritten — or nothing when the queue moved under the run: the push that moved it fires
-// A run of its own, and a port read off the stale head would hold on a conflict the next run resolves.
+// Once, by the drain's own session, and a commit past either step's attempt cap is parked rather than left in the
+// Port's way. The working session's `git pull --rebase` afterwards replays only what it committed since
+// (`review-queue` skill). Returns the sha the port reads — the rewritten head, or the one read when nothing was
+// Rewritten — or nothing when the queue moved under the run: the push that moved it fires a run of its own, and a
+// Port read off the stale head would hold on a conflict the next run resolves.
 export const syncQueue = async ({
   baseSha,
   collectorSha,
   cwd,
   developSha,
+  fileCap,
   isDryRun,
   owingFixesSha,
   queueSha,
@@ -80,11 +82,11 @@ export const syncQueue = async ({
       targetSha,
       viewerLogin,
     });
-    // An unresolved conflict leaves the queue where it was, for the port to hold on
-    if (replayOutcome !== ReplayOutcome.Replayed) return queueSha;
+    // A dry run resolves nothing, and leaves the queue where it was
+    if (replayOutcome === ReplayOutcome.Aborted) return queueSha;
   }
 
-  const isReshaped = await reshapeQueue({ baseSha, collectorSha, cwd, isDryRun, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ baseSha, collectorSha, cwd, fileCap, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
   else return pushRewrite(cwd, queueSha, isDryRun);
 };

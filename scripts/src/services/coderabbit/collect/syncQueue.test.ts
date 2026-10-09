@@ -14,6 +14,7 @@ import {
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
@@ -22,7 +23,7 @@ import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFi
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult } from "@esposter/shared";
+import { getResult, takeOne } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -50,9 +51,20 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     baseSha: readSha(`origin/${MAIN_BRANCH}`),
     collectorSha,
     cwd: getCwd(),
+    fileCap: REVIEW_FILE_CAP,
     isDryRun: false,
     viewerLogin,
   });
+  // A commit's attempts past the cap, read off its own comments, while the issue a park opens finds none open before it
+  const mockExhaustedAttempts = (marker: string, sha: string): void => {
+    const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
+      body: getMarker(marker, sha, [collectorSha]),
+      id,
+      updated_at: "",
+      user: { login: viewerLogin },
+    }));
+    runGh.mockImplementation(([command]) => (command === "issue" ? "[]" : JSON.stringify([commitComments])));
+  };
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
@@ -214,7 +226,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       runGit(["checkout", "HEAD", "--", filePath], getCwd());
       runGit(["add", filePath], getCwd());
       runGit(["-c", "core.editor=true", "commit", "--allow-empty"], getCwd());
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -249,7 +261,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     vi.stubEnv("GIT_EDITOR", "true");
     runSession.mockImplementation(() => {
       resolveConflict();
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -296,7 +308,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     vi.stubEnv("GIT_EDITOR", "true");
     runSession.mockImplementation(() => {
       resolveConflict();
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -335,7 +347,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, queueSha } = setupConflict();
     runSession.mockImplementation(() => {
       runGit(["cherry-pick", "--abort"], getCwd());
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -348,7 +360,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
@@ -376,19 +388,19 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     `);
   });
 
-  test("leaves a conflict past the attempt cap to a person without spending a session", async () => {
+  test("parks a conflict past the attempt cap on its held branch, opens one issue and replays the rest", async () => {
     expect.hasAssertions();
 
-    const { developSha, queueSha } = setupConflict();
-    const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      body: getMarker(SYNC_FAILED_MARKER, queueSha, [collectorSha]),
-      id,
-      updated_at: "",
-      user: { login: viewerLogin },
-    }));
-    runGh.mockReturnValue(JSON.stringify([commitComments]));
+    const { developSha, queueSha: conflictSha } = setupConflict();
+    switchTo(conflictSha);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
+    mockExhaustedAttempts(SYNC_FAILED_MARKER, conflictSha);
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
-    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
+    assert.exists(syncedSha);
+    expect(readSha(`origin/${getHeldBranch(conflictSha)}`)).toBe(conflictSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath]);
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
         [
@@ -399,10 +411,47 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
             "--slurp",
           ],
         ],
+        [
+          [
+            "issue",
+            "list",
+            "--state",
+            "open",
+            "--author",
+            "viewerLogin",
+            "--label",
+            "ready-for-agent",
+            "--limit",
+            "1000",
+            "--json",
+            "number,body",
+          ],
+        ],
+        [
+          [
+            "issue",
+            "create",
+            "--title",
+            "Held: a.ts (1 commit)",
+            "--label",
+            "ready-for-agent",
+            "--body",
+            "<!-- review-collector held commit:6ca8469b467e76e23cc04181de825f8d94960a44 -->
+      its conflict with develop failed the resolver 3 times
+
+      - 6ca8469b467e76e23cc04181de825f8d94960a44 a.ts, held on \`ai/held/6ca8469b46\`
+
+      To re-land them, on \`ai/queue\`:
+
+      1. \`git fetch origin\`
+      2. For each held branch above, in order: \`git cherry-pick --no-commit origin/<branch>\` (never \`-x\`, since a copy naming the held sha stays out of the owed set), settle what the cause names by splitting it under the cap or resolving the conflict, then \`git commit\`
+      3. \`pnpm ai:queue:push\`, after which each new commit ports like any other
+      4. \`git push origin --delete <branch>\` for each held branch, then close this issue",
+          ],
+        ],
       ]
     `);
     expect(runSession).not.toHaveBeenCalled();
-    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
 
   // The count reads only the attempts made against this collector's source: markers another collector's code ran
@@ -424,7 +473,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     vi.stubEnv("GIT_EDITOR", "true");
     runSession.mockImplementation(() => {
       resolveConflict();
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -461,7 +510,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runSession.mockImplementation(() => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -469,7 +518,13 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).toHaveBeenCalledExactlyOnceWith({
       cwd: getCwd(),
       model: SessionRoleModelMap[SessionRole.Reshape],
-      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP + 1, roomFileCount: REVIEW_FILE_CAP, sha: oversizedSha }),
+      prompt: getReshapePrompt({
+        excludedGlobs: [],
+        fileCap: REVIEW_FILE_CAP,
+        fileCount: REVIEW_FILE_CAP + 1,
+        roomFileCount: REVIEW_FILE_CAP,
+        sha: oversizedSha,
+      }),
     });
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
     const claimedSha = readSha(`${syncedSha}~2`);
@@ -487,14 +542,64 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const owingFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(filePath, ""));
     const fittingSha = commitFiles(overflowPaths.slice(1), "");
     const queueSha = publish(QUEUE_BRANCH, "HEAD");
-    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
+    runSession.mockResolvedValue({ isEnded: false });
 
-    await expect(syncQueue({ ...readBaseInput(), developSha, owingFixesSha, queueSha })).resolves.toBe(queueSha);
+    await expect(
+      syncQueue({ ...readBaseInput(), developSha, owingFixesSha, queueSha }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper exited non-zero (attempt 1 of 3 on 952ae52f83e9f5f1f5b08942298f8ea112cfb80e)]`,
+    );
     expect(runSession).toHaveBeenCalledExactlyOnceWith({
       cwd: getCwd(),
       model: SessionRoleModelMap[SessionRole.Reshape],
-      prompt: getReshapePrompt({ fileCount: REVIEW_FILE_CAP, roomFileCount: REVIEW_FILE_CAP - 1, sha: fittingSha }),
+      prompt: getReshapePrompt({
+        excludedGlobs: [],
+        fileCap: REVIEW_FILE_CAP,
+        fileCount: REVIEW_FILE_CAP,
+        roomFileCount: REVIEW_FILE_CAP - 1,
+        sha: fittingSha,
+      }),
     });
+  });
+
+  // The bot counts a commit after the base's path filters, so a file under one costs the window nothing: measured raw,
+  // This commit is one over the room and would cost a session to repackage what a window already takes whole
+  test("leaves unreshaped a commit whose files past the base's path filters fit the room", async () => {
+    expect.hasAssertions();
+
+    commitFile(".coderabbit.yaml", 'reviews:\n  path_filters:\n    - "!**/generated/**"\n');
+    const developSha = publish(DEVELOP_BRANCH, publish(MAIN_BRANCH, "HEAD"));
+    commitFiles([`generated/${TEST_FILENAME}`, ...overflowPaths.slice(1)], "");
+    const queueSha = publish(QUEUE_BRANCH, "HEAD");
+
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
+    expect(runSession).not.toHaveBeenCalled();
+  });
+
+  // A window re-cut after the bot kept skipping it is cut to less than the bot's own cap, and its room shrinks with it
+  test("reshapes against the cap it is given", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    const oversizedSha = commitFiles([filePath, nestedPath], "");
+    const queueSha = publish(QUEUE_BRANCH, "HEAD");
+    runSession.mockImplementation(() => {
+      for (const path of [filePath, nestedPath]) {
+        runGit(["checkout", oversizedSha, "--", path], getCwd());
+        runGit(["commit", "--quiet", "--message", path], getCwd());
+      }
+      return Promise.resolve({ isEnded: true });
+    });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, fileCap: 1, queueSha });
+
+    assert.exists(syncedSha);
+    expect(runSession).toHaveBeenCalledExactlyOnceWith({
+      cwd: getCwd(),
+      model: SessionRoleModelMap[SessionRole.Reshape],
+      prompt: getReshapePrompt({ excludedGlobs: [], fileCap: 1, fileCount: 2, roomFileCount: 1, sha: oversizedSha }),
+    });
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
   // The copy a resolution left this run sits behind the reshaped commit, and rides the replay of what followed it
@@ -507,7 +612,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = publish(QUEUE_BRANCH, "HEAD");
     runSession.mockImplementation(() => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
@@ -537,7 +642,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runSession.mockImplementation(() => {
       reshape(oversizedSha, 0);
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -587,7 +692,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         ],
         getCwd(),
       );
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -629,7 +734,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       switchTo(baseSha);
       commitFile(filePath, fixContent);
       getResult(() => runGit(["merge", theirsSha], getCwd())).unwrapOr("");
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -660,22 +765,73 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
-  test("leaves a commit past the reshape attempt cap to the port and a person", async () => {
+  // A commit that no longer applies without the parked one goes to the same issue, and what follows both still ports
+  test("parks a commit past the reshape attempt cap, with what no longer applies without it, and replays the rest", async () => {
     expect.hasAssertions();
 
-    const { developSha, oversizedSha, queueSha } = setupOversized();
-    runGh.mockReturnValue(
-      JSON.stringify([
-        Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-          body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]),
-          id,
-          updated_at: "",
-          user: { login: viewerLogin },
-        })),
-      ]),
-    );
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    const oversizedSha = commitFiles(overflowPaths, "");
+    const dependentSha = commitFile(takeOne(overflowPaths, 0), " ");
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
+    mockExhaustedAttempts(RESHAPE_FAILED_MARKER, oversizedSha);
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
-    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBe(queueSha);
+    assert.exists(syncedSha);
+    expect(readSha(`origin/${getHeldBranch(oversizedSha)}`)).toBe(oversizedSha);
+    expect(readSha(`origin/${getHeldBranch(dependentSha)}`)).toBe(dependentSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "api",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments?per_page=100",
+            "--paginate",
+            "--slurp",
+          ],
+        ],
+        [
+          [
+            "issue",
+            "list",
+            "--state",
+            "open",
+            "--author",
+            "viewerLogin",
+            "--label",
+            "ready-for-agent",
+            "--limit",
+            "1000",
+            "--json",
+            "number,body",
+          ],
+        ],
+        [
+          [
+            "issue",
+            "create",
+            "--title",
+            "Held: a/0 a/1 a/2 a/3 a/4 a/5 a/6 a/7 a/8 a/9 a/10 a/11 a/12 a/13 a/14 a/15 a/16 a/17 a/18 a/19 a/20 a/21 a/22 a/23 a/24 a/25 a/26 a/27 a/28 a/29 a/30 a/31 a/32 a/33 a/34 a/35 a/36 a/37 a/38 a/39 a/40 a/41 a/42 a/43 a/44 a/45 a/46 a/47 a/48 a/49 a/50 a/51 a/52 a/53 a/54 a/55 a/56 a/57 a/58 a/59 a/60 a/61 a/62 a/63 a/64 a/65 a/66 a/67 a/68 a/69 a/70 a/71 a/72 a/73 a/74 a/75 a/76 a/77 a/78 a/79 a/80 a/81 a/82 a/83 a/84 a/85 a/86 a/87 a/88 a/89 a/90 a/91 a/92 a/93 a/94 a/95 a/96 a/97 a/98 a/99 a/100 a/101 a/102 a/103 a/104 a/105 a/106 a/107 a/108 a/109 a/110 a/111 a/112 a/113 a/114 a/115 a/116 a/117 a/118 a/119 a/120 a/121 a/122 a/123 a/124 a/125 a/126 a/127 a/128 a/129 a/130 a/131 a/132 a/133 a/134 a/135 a/136 a/137 a/138 a/139 a/140 a/141 a/142 a/143 a/144 a/145 a/146 a/147 a/148 a/149 a/150 (2 commits)",
+            "--label",
+            "ready-for-agent",
+            "--body",
+            "<!-- review-collector held commit:30e00c79f6d80fba63a7669701f892f6b3cb1a45 -->
+      its reshaping under the window's room failed 3 times
+
+      - 30e00c79f6d80fba63a7669701f892f6b3cb1a45 a/0 a/1 a/2 a/3 a/4 a/5 a/6 a/7 a/8 a/9 a/10 a/11 a/12 a/13 a/14 a/15 a/16 a/17 a/18 a/19 a/20 a/21 a/22 a/23 a/24 a/25 a/26 a/27 a/28 a/29 a/30 a/31 a/32 a/33 a/34 a/35 a/36 a/37 a/38 a/39 a/40 a/41 a/42 a/43 a/44 a/45 a/46 a/47 a/48 a/49 a/50 a/51 a/52 a/53 a/54 a/55 a/56 a/57 a/58 a/59 a/60 a/61 a/62 a/63 a/64 a/65 a/66 a/67 a/68 a/69 a/70 a/71 a/72 a/73 a/74 a/75 a/76 a/77 a/78 a/79 a/80 a/81 a/82 a/83 a/84 a/85 a/86 a/87 a/88 a/89 a/90 a/91 a/92 a/93 a/94 a/95 a/96 a/97 a/98 a/99 a/100 a/101 a/102 a/103 a/104 a/105 a/106 a/107 a/108 a/109 a/110 a/111 a/112 a/113 a/114 a/115 a/116 a/117 a/118 a/119 a/120 a/121 a/122 a/123 a/124 a/125 a/126 a/127 a/128 a/129 a/130 a/131 a/132 a/133 a/134 a/135 a/136 a/137 a/138 a/139 a/140 a/141 a/142 a/143 a/144 a/145 a/146 a/147 a/148 a/149 a/150, held on \`ai/held/30e00c79f6\`
+      - 71e76ca9ac525b421af70b9e7338a94e2508e11f a/0, held on \`ai/held/71e76ca9ac\`
+
+      To re-land them, on \`ai/queue\`:
+
+      1. \`git fetch origin\`
+      2. For each held branch above, in order: \`git cherry-pick --no-commit origin/<branch>\` (never \`-x\`, since a copy naming the held sha stays out of the owed set), settle what the cause names by splitting it under the cap or resolving the conflict, then \`git commit\`
+      3. \`pnpm ai:queue:push\`, after which each new commit ports like any other
+      4. \`git push origin --delete <branch>\` for each held branch, then close this issue",
+          ],
+        ],
+      ]
+    `);
     expect(runSession).not.toHaveBeenCalled();
   });
 

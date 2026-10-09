@@ -14,15 +14,17 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be pushed.
 // Every count is the bot's own: the diff against the window's base (`main`, or the window below), since its one review
-// Reads everything above that base — a window `develop` already carries unopened included. A commit alone over the cap never reaches here unheld — the sync
-// Reshapes it first — so a hold is the residual case: a reshaping or a resolution past its attempt cap.
-export const portWindow = ({ baseSha, cwd, developSha, fixShas, queueSha }: PortInput): PortResult => {
+// Reads everything above that base — a window `develop` already carries unopened included. A commit alone over the
+// Room never reaches here unheld — the sync reshapes it first, or parks it past the reshaper's cap — so a hold is the
+// Residual case the opener parks. The queue is cut to `fileCap`, which a re-cut halves.
+export const portWindow = ({ baseSha, cwd, developSha, fileCap, fixShas, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
-  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
+  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see. The
+  // Bot's own cap is their measure rather than `fileCap`, so under a halved cap the window is the fixes alone
   if (fixShas.length > 0 && readWindowFileCount(baseSha, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
@@ -58,7 +60,7 @@ export const portWindow = ({ baseSha, cwd, developSha, fixShas, queueSha }: Port
     if (outcome === PickOutcome.Empty) {
       runGit(["reset", "--hard", beforeSha], cwd);
       continue;
-    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(baseSha, cwd) > REVIEW_FILE_CAP) {
+    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(baseSha, cwd) > fileCap) {
       runGit(["reset", "--hard", beforeSha], cwd);
       heldSha = sha;
       break;

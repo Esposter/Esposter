@@ -1,5 +1,6 @@
 import { DEVELOP_BRANCH, MAIN_BRANCH, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { runGit } from "#src/services/shared/runGit";
@@ -33,5 +34,25 @@ describe(readCherryShas, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["merge-base", `origin/${MAIN_BRANCH}`, queueSha], getCwd()).trim()).toBe(mainSha);
     expect(runGit(["cherry", developSha, queueSha], getCwd())).toBe(`+ ${rewrittenSha}\n+ ${owedSha}\n`);
     expect(readCherryShas(developSha, queueSha, getCwd())).toStrictEqual([owedSha]);
+  });
+
+  // A held branch carries the commit under the sha it had when it was parked, and the queue may hold either a later
+  // Copy of it or the original a held copy names
+  test("owes no commit a held branch carries, under any identity", () => {
+    expect.hasAssertions();
+
+    const rootSha = readSha("HEAD");
+    const originalSha = commitFile(filePath, "");
+    switchTo(rootSha);
+    pick(originalSha);
+    const heldOriginalSha = commitFile(nestedPath, "");
+    const owedSha = commitFile(`${nestedPath}.ts`, "");
+    const queueSha = publish(QUEUE_BRANCH, owedSha);
+    switchTo(rootSha);
+    const heldCopySha = pick(heldOriginalSha);
+    for (const heldSha of [originalSha, heldCopySha])
+      runGit(["update-ref", `refs/remotes/origin/${getHeldBranch(heldSha)}`, heldSha], getCwd());
+
+    expect(readCherryShas(rootSha, queueSha, getCwd())).toStrictEqual([owedSha]);
   });
 });

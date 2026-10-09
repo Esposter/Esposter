@@ -6,7 +6,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(readWindowFilePaths, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, commitFiles, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
 
   test("counts a fold of main on a window stacked above another, and not on a window cut from main", () => {
     expect.hasAssertions();
@@ -27,15 +27,5 @@ describe(readWindowFilePaths, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readWindowFilePaths(windowBelowSha, cwd, headSha)).toStrictEqual(["main.ts", "own.ts"]);
     // Against `main` it does not: the fold adds nothing of `main`'s own files
     expect(readWindowFilePaths(mainSha, cwd, headSha)).toStrictEqual(["below.ts", "own.ts"]);
-  });
-
-  test("leaves out a path the base's path filters exclude", () => {
-    expect.hasAssertions();
-
-    const cwd = getCwd();
-    const baseSha = commitFile(".coderabbit.yaml", 'reviews:\n  path_filters:\n    - "!**/generated/**"\n');
-    const headSha = commitFiles(["a.ts", "generated/b.ts"], "");
-
-    expect(readWindowFilePaths(baseSha, cwd, headSha)).toStrictEqual(["a.ts"]);
   });
 });

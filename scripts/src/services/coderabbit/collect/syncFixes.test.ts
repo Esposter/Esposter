@@ -11,6 +11,7 @@ import {
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -79,7 +80,7 @@ describe(syncFixes, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       writeFileSync(join(getCwd(), filePath), resolvedContent);
       runGit(["add", filePath], getCwd());
       runGit(["cherry-pick", "--continue"], getCwd());
-      return Promise.resolve({ isEnded: true, isStarted: true });
+      return Promise.resolve({ isEnded: true });
     });
     const result = await syncFixes({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha });
 
@@ -108,24 +109,28 @@ describe(syncFixes, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
   });
 
-  test("fails the run on a conflict past the attempt cap", async () => {
+  // The fix's conflict failed the resolver past its cap: it waits on its held branch, its finding open again, and the
+  // Fix behind it ports rather than every fix waiting on the one
+  test("parks a fix past the attempt cap and pushes the rest", async () => {
     expect.hasAssertions();
 
-    const { developSha, owingFixesSha } = setupMovedDevelop(filePath);
+    const { developSha, owingFixesSha: conflictSha } = setupMovedDevelop(filePath);
+    switchTo(conflictSha);
+    const owingFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(nestedPath, ""));
     const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      body: getMarker(SYNC_FAILED_MARKER, owingFixesSha, [collectorSha]),
+      body: getMarker(SYNC_FAILED_MARKER, conflictSha, [collectorSha]),
       id,
       updated_at: "",
       user: { login: viewerLogin },
     }));
-    runGh.mockReturnValue(JSON.stringify([commitComments]));
+    // The attempts are read off the commit's comments, and the issue the park opens finds none open before it
+    runGh.mockImplementation(([command]) => (command === "issue" ? "[]" : JSON.stringify([commitComments])));
+    const result = await syncFixes({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha });
 
-    await expect(
-      syncFixes({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, ai/review-fixes conflicts with develop past the attempt cap, so a person rebases it (the conflicting fix's commit comments say which)]`,
-    );
+    expect(result.outcome).toBeUndefined();
+    expect(readSha(`origin/${getHeldBranch(conflictSha)}`)).toBe(conflictSha);
+    expect(readSha(`origin/${REVIEW_FIXES_BRANCH}`)).toBe(result.owingFixesSha);
+    expect(readSubjects(`${developSha}..${result.owingFixesSha}`)).toStrictEqual([nestedPath]);
     expect(runSession).not.toHaveBeenCalled();
-    expect(readSha(`origin/${REVIEW_FIXES_BRANCH}`)).toBe(owingFixesSha);
   });
 });
