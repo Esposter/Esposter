@@ -37,13 +37,14 @@ export const assignSectionParts = (
   return sectionReaches.map((reaches) => {
     const sectorCounts = new Map<string, number>();
     for (let sector = 0; sector < angleCount; sector++) {
-      const [furthest] = [...reaches]
-        .map(([part, sectors]): [string, number] => [part, sectors[sector] ?? 0])
-        .toSorted(([, firstRadius], [, secondRadius]) => secondRadius - firstRadius);
+      const [furthest] = Array.from(reaches, ([part, sectors]): [string, number] => [
+        part,
+        sectors[sector] ?? 0,
+      ]).toSorted(([, firstRadius], [, secondRadius]) => secondRadius - firstRadius);
       if (furthest && furthest[1] > 0) sectorCounts.set(furthest[0], (sectorCounts.get(furthest[0]) ?? 0) + 1);
     }
     const reachSums = new Map(
-      [...reaches].map(([part, sectors]) => [part, sectors.reduce((sum, radius) => sum + radius, 0)]),
+      Array.from(reaches, ([part, sectors]) => [part, sectors.reduce((sum, radius) => sum + radius, 0)]),
     );
     const [best] = [...sectorCounts].toSorted(
       ([firstPart, firstCount], [secondPart, secondCount]) =>

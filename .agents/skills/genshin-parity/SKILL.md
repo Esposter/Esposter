@@ -35,6 +35,7 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 - **Taking a note's level and decay at the frame the voice's median attack predicts**, not at the note's loudest frame. The first piece then barely decays, jumps far less often than the game's and loses pitch agreement (`apps/web/content/docs/genshin/music.md`, "Not yet").
 - **A decay per octave of overtones on the synthesizer.** The fit reads the second piece's overtones dying faster than their fundamentals, yet playing it moves neither score, for an oscillator an octave on every note (`apps/web/content/docs/genshin/music.md`, "Not yet").
 - **Holding the first piece's pitch with the catalogue's recordings** by their levels, by two layered on a voice or by an octave equaliser on each voice. Solved for pitch alone, none reaches the synthesizer's agreement, and the equaliser held out across time stays further under it (`apps/web/content/docs/genshin/sampled-instruments.md`, "What the passes found").
+- **Softening a component to match a recording's blur.** A recording softens everything it shows, but the game draws its text crisp, so a component is never blurred to a capture: `compare` softens our shot by its capture's measured sigma (`apps/web/content/docs/genshin/parity.md`, `references/toolbox.md` "Softness").
 - **Keeping noise levels past `MUSIC_DECIMALS`.** It moves the listening score by hundredths of a decibel.
 
 ## Rules

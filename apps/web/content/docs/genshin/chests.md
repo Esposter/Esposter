@@ -1,11 +1,11 @@
 ---
 title: Chests
-description: The official Teyvat Interactive Map's chests, fitted into each region's generated slice by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed; opening, rewards, locks and digging wait on the proposal's later steps.
+description: The official Teyvat Interactive Map's chests, fitted into each region's generated slice by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once; locks, digging, seals, the bag's drops and the other tiers wait on the proposal's later steps.
 ---
 
 # Chests
 
-The servers' chests are not in the client's data, so the official map's public points stand in for them, as the [spawned places](/docs/genshin/spawned-places) page describes. This page is the first half of the [chests](/docs/proposals/genshin/chests) proposal: each chest the map marks on the ground is carried into the scene by the fit's transform and written into its region's slice, with its kind. Nothing opens or pays out yet.
+The servers' chests are not in the client's data, so the official map's public points stand in for them, as the [spawned places](/docs/genshin/spawned-places) page describes. This page is the first half of the [chests](/docs/proposals/genshin/chests) proposal: each chest the map marks on the ground is carried into the scene by the fit's transform and written into its region's slice, with its kind. Opening one is the second half, below.
 
 ## How it works
 
@@ -24,6 +24,18 @@ flowchart TD
 ## The kinds
 
 `ChestKind` names seven. The five tiers are the map's own labels, Common to Remarkable, one per chest. Buried and Sealed are places the map marks with no tier: a Buried chest is dug up where it stands and a Sealed one is freed of its seal first. A dug or freed place's contents are not yet settled, since the map gives no tier for it and the buried and sealed points stand well apart from every tiered chest, so none can be read off a neighbour.
+
+## Opening
+
+`openChest` opens one chest. It rolls the kind's Primogems and Mora within their ranges into the wallet and keeps the chest as opened, so a second opening pays nothing. The ranges are the wiki's chest reward table, one range per tier, not banded by Adventure Rank, since the table lists no bands.
+
+| Kind      | Primogems | Mora         |
+| :-------- | :-------- | :----------- |
+| Common    | 0 to 2    | 257 to 996   |
+| Exquisite | 2 to 5    | 756 to 1,367 |
+| Precious  | 5 to 10   | 1,433        |
+
+A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
 
 ## The writer
 
@@ -47,8 +59,11 @@ flowchart TD
 | `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                          |
 | `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                 |
 | `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                 |
+| `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                              |
+| `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                         |
 | `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                                            |
 
 ## Sources
 
+- [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the chest reward table's ranges per tier.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the writer reads as references.

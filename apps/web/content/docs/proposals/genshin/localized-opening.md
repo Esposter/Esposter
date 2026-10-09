@@ -21,13 +21,13 @@ flowchart LR
 - **Recordings are the references.** A public recording of each client's opening, found before any of the game is recorded by hand, gives the logo, its place and how the screens differ, the way the English and Japanese recordings already do ([parity](/docs/genshin/parity)).
 - **A layout differs only where a recording shows it.** Every language reuses the English measures unless its own recording differs, and the visual suite gains an image only for a language that does.
 - **The opening already knows the language.** It takes the reader's language for the title splash, so a screen whose layout differs reads the same prop.
-- **A localized reference is compared in its client's words.** A reference naming a `language` in its props has the parity page load that language's text for the screen ([parity](/docs/genshin/parity)), so the mainland's health notice, 7 to 12 seconds into its launch recording (`captures/bili-av532052219.mp4`, its logo at 3 to 6 seconds and its door at 12 to 17), is the reference `health-notice-mainland`, compared in the [roadmap](/docs/genshin/roadmap)'s compute queue.
+- **A localized reference is compared in its client's words.** A reference naming a `language` in its props has the parity page load that language's text for the screen ([parity](/docs/genshin/parity)). The mainland's health notice, 7 to 12 seconds into its launch recording (`captures/bili-av532052219.mp4`, its logo at 3 to 6 seconds and its door at 12 to 17), is the reference `health-notice-mainland`, already compared in its own words (its row in the parity reference snapshot).
 
 ## Scope
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.
-- The mainland's door with its prompt, a reference over its whole interface once the queued stills of 12 to 17 seconds name the frame where the prompt first stands whole.
+- The mainland's door with its prompt. Its reference `login-interface-door-mainland` is registered at 15.5 seconds, the first of the 12 to 17 second stills with the prompt whole, and its whole-frame compare waits in the [roadmap](/docs/genshin/roadmap)'s compute queue.
 - The Japanese and Korean clients' openings, each waiting on a public recording found of it.
 
 ## Key files

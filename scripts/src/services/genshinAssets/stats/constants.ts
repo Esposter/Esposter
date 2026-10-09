@@ -36,6 +36,9 @@ export const PLAYABLE_AVATAR_USE_TYPE = "AVATAR_FORMAL";
 export const EMPTY_PROPERTY_TYPE = "FIGHT_PROP_NONE";
 // The item id a slot holding nothing names: an unused cost slot of a phase, and a weapon refined by a copy alone
 export const EMPTY_ITEM_ID = 0;
+// The Traveler's two avatars, and the element their form is by default until a statue gives them another
+export const TRAVELER_AVATAR_IDS: ReadonlySet<number> = new Set([10000005, 10000007]);
+export const TRAVELER_DEFAULT_ELEMENT: Element = Element.Anemo;
 // The last level a combat talent's materials raise it to. Each level past it is a constellation's, which no material pays for
 export const MAX_MATERIAL_TALENT_LEVEL = 10;
 // The seven elements as the game's tables spell them, which a skill's energy names and each character's element is read from

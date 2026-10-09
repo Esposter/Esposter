@@ -14,13 +14,17 @@ import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The Adventure EXP's share of the rank's bar, and the rank and World Level the profile card shows
+  adventureExpProgress: number;
+  adventureRank: number;
   // Whether a screen is built, which its entry opens; an unbuilt one's entry is drawn disabled
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
   // The game's words in the reader's language
   gameText: GameText;
+  worldLevel: number;
 }
 
-const { checkIsBuilt, gameText } = defineProps<Props>();
+const { adventureExpProgress, adventureRank, checkIsBuilt, gameText, worldLevel } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: [] }>();
 const backButton = useTemplateRef("backButton");
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
@@ -81,10 +85,10 @@ onMounted(() => {
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
     <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
-    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
+    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }} {{ adventureRank }}</p>
     <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
-    <div class="exp-bar"><div class="exp-fill" /></div>
-    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
+    <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
+    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }} {{ worldLevel }}</p>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
     <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
     <div class="contents">
@@ -306,7 +310,6 @@ onMounted(() => {
 }
 
 .exp-fill {
-  width: 31%;
   height: 100%;
   background: #ccfe66;
 }

@@ -16,6 +16,7 @@ import {
 } from "#src/services/genshinAssets/world/constants";
 import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerrainTiles";
 import { exportWorldStreams } from "#src/services/genshinAssets/world/exportWorldStreams";
+import { getCityStreamName } from "#src/services/genshinAssets/world/getCityStreamName";
 import { getCoveredTiles } from "#src/services/genshinAssets/world/getCoveredTiles";
 import { getPrefabNames } from "#src/services/genshinAssets/world/getPrefabNames";
 import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBlobName";
@@ -25,7 +26,9 @@ import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStre
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
+import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
+import { selectCapitalCityArea } from "#src/services/genshinAssets/world/selectCapitalCityArea";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
@@ -54,7 +57,9 @@ export const deriveCapitalWorld = async (
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
-  const streamNames = capital.cityArea ? [...tileNames, `Area_${capital.cityArea}_City`] : tileNames;
+  const cityCode = capital.cityArea || (selectCapitalCityArea(await readCityAreas(), place)?.code ?? "");
+  if (!cityCode) lines.push(`no city area within ${ARCHITECTURE_VIEW_METRES} metres of the capital`);
+  const streamNames = cityCode ? [...tileNames, getCityStreamName(cityCode)] : tileNames;
   const streamAssetNames = new Set(
     streamNames.flatMap((streamName) => [getStreamBlobName(streamName), `${streamName}${STREAM_INDEX_SUFFIX}`]),
   );

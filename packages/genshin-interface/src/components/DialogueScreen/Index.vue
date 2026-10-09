@@ -104,9 +104,6 @@ const lineParts = computed(() => {
   letter-spacing: calc(var(--unit) * 2.3);
   line-height: calc(var(--unit) * 32);
   text-align: center;
-  /* The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice: softened
-     to the recording's blur, which scores best of those tried */
-  filter: blur(calc(var(--unit) * 1.5));
 }
 
 .unrevealed {

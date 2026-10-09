@@ -3,8 +3,8 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
-import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
+import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
@@ -65,7 +65,8 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
     // The gate is the sampling floor: the exports' family split into two halves of blocks, each measured against the
     // Other, the least a surface of the same distribution can read off a finite patch of it
     const measured = albedo.comparisons.map((comparison) => ({
-      ...comparison,
+      colour: comparison.colour,
+      family: comparison.family,
       gate: computeStatisticalStructure(
         exportsLightness,
         exportsLightness,
@@ -74,6 +75,7 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
         width,
         height,
       ),
+      scales: comparison.scales,
       structure: computeStatisticalStructure(
         exportsLightness,
         oursLightness,

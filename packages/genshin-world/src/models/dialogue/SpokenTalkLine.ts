@@ -8,15 +8,15 @@ import { z } from "zod";
 // "" for an unvoiced line
 export interface SpokenTalkLine extends BaseTalkLine {
   kind: TalkLineKind.Spoken;
-  speakerTextId: string;
   // The speaker's role under the name by text id, "" for none
   speakerRoleTextId: string;
+  speakerTextId: string;
   voiceId: string;
 }
 
 export const spokenTalkLineSchema = baseTalkLineSchema.safeExtend({
   kind: z.literal(TalkLineKind.Spoken),
-  speakerTextId: z.string(),
   speakerRoleTextId: z.string(),
+  speakerTextId: z.string(),
   voiceId: z.string(),
 }) satisfies z.ZodType<SpokenTalkLine>;

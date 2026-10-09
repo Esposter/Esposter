@@ -4,6 +4,7 @@ import { achievementsCommand } from "#src/services/genshinAssets/commands/achiev
 import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
+import { cityAreasCommand } from "#src/services/genshinAssets/commands/cityAreasCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
@@ -64,6 +65,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     locomotion: locomotionCommand,
     timings: timingsCommand,
     witness: witnessCommand,
+    "city-areas": cityAreasCommand,
     music: musicCommand,
     sounds: soundsCommand,
     playlist: playlistCommand,

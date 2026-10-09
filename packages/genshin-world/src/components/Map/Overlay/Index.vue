@@ -14,13 +14,20 @@ import { computeExplorationProgress } from "#src/services/exploration/computeExp
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
+import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
+import { computeZoomMetresAtShare } from "#src/services/map/computeZoomMetresAtShare";
+import { computeZoomShare } from "#src/services/map/computeZoomShare";
 import {
+  MAP_DRAG_THRESHOLD_PIXELS,
   MAP_LABEL_OUTLINE_SHARE,
   MAP_LABEL_SHARE,
   MAP_OVERLAY_MARK_SHARE,
   MAP_PROGRESS_OFFSET_SHARE,
   MAP_PROGRESS_SHARE,
   MAP_VIEW_METRES,
+  MAP_ZOOM_DRAWING_HEIGHT,
+  MAP_ZOOM_TRACK_HEIGHT,
+  MAP_ZOOM_TRACK_TOP,
 } from "#src/services/map/constants";
 import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
@@ -41,9 +48,70 @@ interface Props {
 const { camera, explorationAreas, gameText, landmarks, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
-// The open map is placed on the player, the drawn metres across its width at the zoom slider's default
-const view = computed(() => ({ x: camera.x - MAP_VIEW_METRES / 2, z: camera.z - MAP_VIEW_METRES / 2 }));
-const markRadius = MAP_VIEW_METRES * MAP_OVERLAY_MARK_SHARE;
+const map = useTemplateRef("map");
+const zoomTrack = useTemplateRef("zoomTrack");
+// The drawn metres across the map's width, which the wheel and the slider change from the default, and the offset the
+// Map is dragged to from the player
+const metres = ref(MAP_VIEW_METRES);
+const pan = ref({ x: 0, z: 0 });
+const view = computed(() => ({
+  x: camera.x + pan.value.x - metres.value / 2,
+  z: camera.z + pan.value.z - metres.value / 2,
+}));
+const markRadius = computed(() => metres.value * MAP_OVERLAY_MARK_SHARE);
+const zoomThumbY = computed(() => MAP_ZOOM_TRACK_TOP + computeZoomShare(metres.value) * MAP_ZOOM_TRACK_HEIGHT);
+// A press's start and last place, whether it has travelled far enough to pan, and whether the slider is being dragged.
+// These are not drawn, so they are plain variables rather than state
+let pressStart = { x: 0, y: 0 };
+let pointer = { x: 0, y: 0 };
+let isPanning = false;
+let isDragged = false;
+let isSlidingZoom = false;
+const onMapPointerDown = (event: PointerEvent) => {
+  isPanning = true;
+  isDragged = false;
+  pressStart = { x: event.clientX, y: event.clientY };
+  pointer = pressStart;
+  map.value?.setPointerCapture(event.pointerId);
+};
+const onMapPointerMove = (event: PointerEvent) => {
+  if (!isPanning || !map.value) return;
+  isDragged ||= Math.hypot(event.clientX - pressStart.x, event.clientY - pressStart.y) > MAP_DRAG_THRESHOLD_PIXELS;
+  const { height, width } = map.value.getBoundingClientRect();
+  // The map is drawn over the screen's larger side, so a pixel is that many metres of the drawn width
+  const metresPerPixel = metres.value / Math.max(width, height);
+  pan.value = {
+    x: pan.value.x - (event.clientX - pointer.x) * metresPerPixel,
+    z: pan.value.z - (event.clientY - pointer.y) * metresPerPixel,
+  };
+  pointer = { x: event.clientX, y: event.clientY };
+};
+const onMapPointerUp = () => {
+  isPanning = false;
+};
+// A drag that ends on a landmark is not a choice of it, so the click that follows it is stopped before the landmark
+const onMapClickCapture = (event: MouseEvent) => {
+  if (!isDragged) return;
+  event.stopPropagation();
+  isDragged = false;
+};
+const setZoomAtPointer = (clientY: number) => {
+  if (!zoomTrack.value) return;
+  const { height, top } = zoomTrack.value.getBoundingClientRect();
+  const drawingY = ((clientY - top) / height) * MAP_ZOOM_DRAWING_HEIGHT;
+  metres.value = computeZoomMetresAtShare((drawingY - MAP_ZOOM_TRACK_TOP) / MAP_ZOOM_TRACK_HEIGHT);
+};
+const onZoomPointerDown = (event: PointerEvent) => {
+  isSlidingZoom = true;
+  zoomTrack.value?.setPointerCapture(event.pointerId);
+  setZoomAtPointer(event.clientY);
+};
+const onZoomPointerMove = (event: PointerEvent) => {
+  if (isSlidingZoom) setZoomAtPointer(event.clientY);
+};
+const onZoomPointerUp = () => {
+  isSlidingZoom = false;
+};
 // Each counted area's progress as the unlocked landmarks leave it, keyed by its catalogue area
 const explorationProgressMap = computed(
   () =>
@@ -81,17 +149,24 @@ onMounted(() => {
        Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
     <svg
+      ref="map"
       class="map"
-      :viewBox="`${view.x} ${view.z} ${MAP_VIEW_METRES} ${MAP_VIEW_METRES}`"
+      :viewBox="`${view.x} ${view.z} ${metres} ${metres}`"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
+      @click.capture="(event) => onMapClickCapture(event)"
+      @pointercancel="onMapPointerUp()"
+      @pointerdown="(event) => onMapPointerDown(event)"
+      @pointermove="(event) => onMapPointerMove(event)"
+      @pointerup="onMapPointerUp()"
+      @wheel="metres = computeWheelZoomMetres(metres, $event.deltaY)"
     >
       <MapDrawing :landmarks :mark-radius @select="(landmark) => emit('jump', computeJumpPose(landmark))" />
       <template v-for="{ id, name, progress, x, z } of areaLabels" :key="id">
         <text
           class="area-name"
-          :font-size="MAP_VIEW_METRES * MAP_LABEL_SHARE"
-          :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
+          :font-size="metres * MAP_LABEL_SHARE"
+          :stroke-width="metres * MAP_LABEL_OUTLINE_SHARE"
           :x
           :y="z"
         >
@@ -100,24 +175,33 @@ onMounted(() => {
         <text
           v-if="progress"
           class="area-progress"
-          :font-size="MAP_VIEW_METRES * MAP_PROGRESS_SHARE"
-          :stroke-width="MAP_VIEW_METRES * MAP_LABEL_OUTLINE_SHARE"
+          :font-size="metres * MAP_PROGRESS_SHARE"
+          :stroke-width="metres * MAP_LABEL_OUTLINE_SHARE"
           :x
-          :y="z + MAP_VIEW_METRES * MAP_PROGRESS_OFFSET_SHARE"
+          :y="z + metres * MAP_PROGRESS_OFFSET_SHARE"
         >
           {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
         </text>
       </template>
       <MapPointer :size="markRadius" :x="camera.x" :yaw="camera.yaw" :z="camera.z" />
     </svg>
-    <svg class="zoom" viewBox="0 0 56 270" aria-hidden="true">
+    <svg
+      ref="zoomTrack"
+      class="zoom"
+      viewBox="0 0 56 270"
+      aria-hidden="true"
+      @pointercancel="onZoomPointerUp()"
+      @pointerdown="(event) => onZoomPointerDown(event)"
+      @pointermove="(event) => onZoomPointerMove(event)"
+      @pointerup="onZoomPointerUp()"
+    >
       <rect class="zoom-track" x="23" y="43" width="10" height="194" rx="5" />
       <path class="zoom-stop" d="M 28 16.5 L 39.5 28 L 28 39.5 L 16.5 28 Z" />
       <path class="zoom-sign" d="M 28 22 V 34 M 22 28 H 34" />
       <path class="zoom-stop" d="M 28 110.5 L 40.5 123 L 28 135.5 L 15.5 123 Z" />
-      <path class="zoom-thumb" d="M 28 116 L 32 123 L 28 130 L 24 123 Z" />
       <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
       <path class="zoom-sign" d="M 22 253 H 34" />
+      <path class="zoom-thumb" d="M 0 -7 L 4 0 L 0 7 L -4 0 Z" :transform="`translate(28 ${zoomThumbY})`" />
     </svg>
     <ul class="progress-list">
       <li v-for="{ id, name, progress } of areaProgresses" :key="id">
@@ -160,6 +244,7 @@ onMounted(() => {
   left: calc(var(--unit) * 45);
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 .area-name,
@@ -177,6 +262,7 @@ onMounted(() => {
   left: 0;
   width: calc(var(--unit) * 56);
   height: calc(var(--unit) * 270);
+  touch-action: none;
 }
 
 .zoom-track {

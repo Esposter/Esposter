@@ -2,6 +2,10 @@
 
 Read while a subagent is running, before launching several at once, or when cleaning up after a batch.
 
+- **A haiku agent stops at the first obstacle unless its prompt names the way past it.**
+  - Unprompted, it ends on "the wiki returns 402", "the search API refuses", "too large for this pass" or "needs a design call", with nothing built.
+  - So the prompt names the working route for each known obstacle (the repo's own wiki reader, yt-dlp's `bilisearch:`/`ytsearch:`, the dump's fallback source), settles the design calls itself, and says that a report of nothing built is a failed run.
+  - A unit that comes back empty is relaunched with the obstacle's route written in, never left.
 - **An interim report is not a result.** An agent that ends its turn waiting on its own background run ("the run is still going, I'll commit when it reports") can stop there for good. When no final report follows within the run's expected time, read its commits, take what it left unbuilt, and give that to a new agent; never wait on it again.
 - Never spawn a duplicate agent for the same task; wait for the completion notification, then verify its commit yourself (git log, the grep audits, the diff) before building on it. Never read its output file: it is the whole transcript (the `context-efficiency` skill).
 

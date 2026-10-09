@@ -11,6 +11,8 @@ This page builds on [interaction](/docs/genshin/interaction), whose prompts, dro
 ## Decisions
 
 - **Three numbers come from one recording.** A clip of the English PC client at 1080 high and 60 frames a second: the character walking slowly up to a lone item from several metres away, then standing in a pile of more drops than the list shows, the wheel turned from the first row to the last, then F held until the pile is gone. It answers the reach (the distance at which the prompt appears, read by the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass), the window's rows (counted on a frame with the list full) and the held F's interval (frames between two pick ups). A published video is searched first.
+- **The clip is captured and its stills are written.** `captures/world-pickup.mkv` holds the recording, 30 seconds long, and `frames/world-pickup@0/` its 1800 stills at 60 a second. The compute queue's count of the window's rows and the held F's interval reads those stills, so those two numbers wait on no recording.
+- **The reach waits on a measure that does not exist yet.** The stills do not give the distance from the body to the item at the frame its prompt appears: no compute-queue command turns a frame into that distance, and the motion pass does not yet read the character's walk against the camera for this clip. The reach stays provisional until a motion item is queued and its measure written.
 
 ## Scope and order
 

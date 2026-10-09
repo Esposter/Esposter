@@ -25,7 +25,7 @@ flowchart LR
 
 - **One input for every device.** The touch controls write into the engine's `input` rather than moving the camera themselves: the stick's axes are added to the gamepad's left stick, a drag's turn to the pointer's look, and the jump button holds the jump key's code as a key would. So the character and its camera, and photo mode's camera, read one move and one look whatever drives them.
 - **The left half is a stick, the right half a look.** A finger landing on the left half holds a stick round the point it landed on, drawn there while it is held; its offset over the stick's reach is the move, and a finger pushed past the reach holds the stick at its rim in its direction. A finger landing on the right half drags the look by how far it moves. One finger holds each, and lifting it lets go, the stick back at rest.
-- **The jump button holds the jump.** It is the character's jump, as Space is, and photo mode's camera's rise. It is a button named in the game's words for a screen reader.
+- **The jump button holds the jump.** It is the character's jump, as Space is, and the tuning panel's free camera's rise. It is a button named in the game's words for a screen reader.
 - **Only on a touch screen.** The controls are drawn when the device's main pointer is coarse (`(pointer: coarse)`), so a computer's clicks still reach the world to lock the pointer. Hiding the HUD hides them, and they let go of whatever they held.
 
 ## Key files
@@ -39,7 +39,7 @@ flowchart LR
 ## Notes
 
 - **The stick's reach is in CSS pixels.** A thumb's travel is a distance on the glass, which CSS pixels follow on a phone where the game's screen units would shrink it with the window. The reach, the look's turn and the controls' sizes are provisional until the mobile client's recording is measured ([roadmap](/docs/genshin/roadmap)).
-- **Photo mode's camera rises by touch but does not fall.** The game's touch layout has no button to descend, so the free camera flown by touch climbs on the jump button and has no way back down.
+- **The tuning panel's free camera rises by touch but does not fall.** The game's touch layout has no button to descend, so the free camera flown by touch climbs on the jump button and has no way back down.
 
 ## Sources
 

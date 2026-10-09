@@ -50,6 +50,7 @@ import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { readAchievements } from "#src/services/achievement/readAchievements";
+import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
@@ -231,7 +232,9 @@ const quests: Quest[] = [];
 const questProgressMap = new Map<string, QuestProgress>();
 // The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
 // Completes a main quest yet, so the player stands at a new player's World Level 0
-const worldLevel = computeAdventureRankStanding(0, new Set<string>()).worldLevel;
+const adventureRankStanding = computeAdventureRankStanding(0, new Set<string>());
+const worldLevel = adventureRankStanding.worldLevel;
+const adventureExpProgress = computeAdventureRankProgress(0, adventureRankStanding.rank);
 const questTextMap: Record<string, string> = {};
 const trackedQuestId = ref("");
 // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
@@ -577,7 +580,8 @@ defineExpose({ jumpTo, readCameraPosition });
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
         <!-- The character walks the world with the camera behind it, held under any screen but the world, as a menu,
-        photo mode or a talk holds it, and photo mode's camera flies free from where the follow camera left it -->
+        photo mode or a talk holds it. Photo mode's camera orbits the held character, and under the tuning panel it flies
+        free from where the orbit left it -->
         <WorldCharacter
           v-if="!witness && locomotion"
           ref="character"
@@ -586,6 +590,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
+          :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
           :landmark-collider
           :locomotion
           :origin
@@ -593,7 +598,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @drown="respawnParty()"
         />
         <WorldFreeCamera
-          v-if="!witness && screenKind === ScreenKind.PhotoMode"
+          v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
           :origin
@@ -646,7 +651,14 @@ defineExpose({ jumpTo, readCameraPosition });
         <InteractionPromptList :interaction-prompts />
       </template>
     </HudScreen>
-    <MenuScreen v-model:screen-kind="screenKind" :game-text @quit="emit('quit')">
+    <MenuScreen
+      v-model:screen-kind="screenKind"
+      :adventure-exp-progress
+      :adventure-rank="adventureRankStanding.rank"
+      :game-text
+      :world-level
+      @quit="emit('quit')"
+    >
       <template #[ScreenKind.Map]>
         <MapOverlay
           :camera="mapCamera"

@@ -31,17 +31,17 @@ const toMatrix = ({ position, rotation, scale }: Pick<AssetPlacement, "position"
     new Quaternion(...toRightHandedRotation(rotation)),
     new Vector3(...scale),
   );
+// The meshes of one pooled profile, each with its vertices in the statue's frame
+interface PooledMesh {
+  mesh: string;
+  points: Vector3[];
+}
 // A part of the statue's stand or figure: the export part its section came from, and the stack its sections make from
 // Its foot at its axis, in the statue's frame
 interface StatueRun {
   part: string;
   position: number[];
   sections: RadialProfile["sections"];
-}
-// The meshes of one pooled profile, each with its vertices in the statue's frame
-interface PooledMesh {
-  mesh: string;
-  points: Vector3[];
 }
 // A pooled profile fitted by its outermost radius per band (`fitRadialProfile`), its sections each named for the export part
 // They came from (`assignSectionParts`) and cut into runs of one part, each run a stack standing at its own foot
