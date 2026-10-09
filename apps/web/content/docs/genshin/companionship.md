@@ -36,7 +36,7 @@ flowchart LR
 | File                                                                              | Role                                                                        |
 | :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`          | The grant to the deployed team but the Traveler, capped at the top level    |
-| `packages/genshin-world/src/services/friendship/computeFriendshipLevel.ts`        | The level a total EXP has reached                                           |
+| `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels            |
 | `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The generated levels, imported on demand and checked against their shape    |
 | `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The generated namecards, imported on demand and checked against their shape |
 | `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                          |

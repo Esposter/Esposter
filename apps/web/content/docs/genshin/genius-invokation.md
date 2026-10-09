@@ -72,6 +72,7 @@ Charged and plunging attacks are markers no tutorial skill uses, so the engine d
 - **The board holds only what the player is choosing.** `GcgScreen` keeps the dice picked, the card armed, the tuning and the switch and prepare choices, and every other choice leaves as an event. The session host plays each event through the engine and then runs the opponent through `advanceGcgOpponent`; a refused action leaves the duel as it was, and the board clears its choice either way.
 - **The scripted policy is the world's service.** The greedy policy (`takeGcgScriptedAction`) and `advanceGcgOpponent` left the tutorial duel's test, so the board and the tests drive one opponent.
 - **The reference is a public frame.** The board is judged against a frame at 407 seconds of the English PC client's tavern duel, cut from its 400-second segment (`gcg-yt-tvboQ_ZWO_I-400-410.mp4`). The board draws that frame's HP, dice, phase and turn, but not its characters, art or ornaments, which are the game's and are never drawn here. Its compare score is the snapshot's row.
+- **The Player Level reads the Friendship Level's rule.** The Player Level's total EXP is counted over its levels by `computeLevelReached`, the same function that reads a character's Friendship Level, so both read one rule over any `{ exp }` table. The level slice itself waits on the hosted game data.
 
 ## How it works
 
