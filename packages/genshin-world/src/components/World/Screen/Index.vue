@@ -3,9 +3,9 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { ArchiveSectionEntriesMap } from "#src/models/archive/ArchiveSectionEntriesMap";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
@@ -32,6 +32,7 @@ import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
+import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
@@ -62,8 +63,10 @@ import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
+import { BookBodyLoaderMap } from "#src/services/archive/BookBodyLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
 import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
+import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
@@ -359,10 +362,29 @@ const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgres
 // The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
 // Its progress starts empty, and the bag's items open their entries as it takes them in
 const archiveData = shallowRef<{
-  sectionEntriesMap: Record<ArchiveSection, ArchiveEntry[]>;
+  sectionEntriesMap: ArchiveSectionEntriesMap;
   textMap: Readonly<Record<string, string>>;
 }>();
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
+// The volume the Archive is reading, its title and its text in the reader's language
+const bookReading = shallowRef<{ body: string; title: string }>();
+// A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
+const readBook = (bookId: number) => {
+  if (!archiveData.value) return;
+  const { sectionEntriesMap, textMap } = archiveData.value;
+  const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
+  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
+  if (!book || !loadBody) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(async () => (await loadBody())[language]).match(
+    (body) => {
+      bookReading.value = { body, title: textMap[book.nameTextId] || "" };
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+};
 // The defeats of each Living Being, counted under its entry for the Archive to show
 const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
 // The main quests done, by id. The Archive opens once the quest it opens after is among them
@@ -642,6 +664,13 @@ const bagFullHint = ref("");
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
 // Ground as a smaller drop
 const pickUpWorldDrop = (worldDrop: WorldDrop) => {
+  // A volume is taken straight into the Archive, which opens its entry, and never into the bag
+  const books = archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
+  if (books.some(({ materialId }) => materialId === worldDrop.itemId)) {
+    archiveProgressMap.value = openArchiveBook(archiveProgressMap.value, books, worldDrop.itemId);
+    worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
+    return;
+  }
   const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
   setInventory(pickUp.inventory);
   setWallet(pickUp.wallet);
@@ -916,13 +945,22 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <template v-if="archiveData" #[ScreenKind.Archive]>
+        <BookReaderScreen
+          v-if="bookReading"
+          :body="bookReading.body"
+          :game-text
+          :title="bookReading.title"
+          @close="bookReading = undefined"
+        />
         <ArchiveScreen
+          v-else
           :game-text
           :kills-map="archiveKillsMap"
           :progress-map="archiveProgressMap"
           :section-entries-map="archiveData.sectionEntriesMap"
           :text-map="archiveData.textMap"
           @close="screenKind = ScreenKind.World"
+          @read-book="(entryId) => readBook(entryId)"
         />
       </template>
       <template #[ScreenKind.Quests]>

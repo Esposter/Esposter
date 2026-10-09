@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
+import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { GameText } from "genshin-text";
 
@@ -14,6 +15,8 @@ import { GameTextKey } from "genshin-text";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // The defeats of each Living Being, by its entry's id
+  killsMap: ArchiveKills;
   // The entries the player has met, by section
   progressMap: ArchiveProgress;
   // The Archive's entries of each section, in the codex's order
@@ -23,7 +26,7 @@ interface Props {
 }
 
 const { gameText, progressMap, sectionEntriesMap, textMap } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; readBook: [entryId: number] }>();
 const sections = ArchiveSectionOrder;
 const selectedSection = ref<ArchiveSection>(ArchiveSection.Equipment);
 const selectedEntries = computed(() => sectionEntriesMap[selectedSection.value]);
@@ -32,6 +35,10 @@ const openedCount = (section: ArchiveSection): number =>
   sectionEntriesMap[section].filter(({ id }) => progressMap.get(section)?.has(id)).length;
 // A locked entry reads "?" in place of its name until it opens
 const checkIsEntryOpened = (entryId: number): boolean => progressMap.get(selectedSection.value)?.has(entryId) ?? false;
+// An opened volume of the Books section is read; every other entry has nothing to read
+const readEntry = (entryId: number) => {
+  if (selectedSection.value === ArchiveSection.Books && checkIsEntryOpened(entryId)) emit("readBook", entryId);
+};
 // Q and E step between the sections, held at the first and the last
 useEventListener("keydown", (event) => {
   if (event.code !== QUEST_TAB_PREVIOUS_CODE && event.code !== QUEST_TAB_NEXT_CODE) return;
@@ -66,14 +73,19 @@ useEventListener("keydown", (event) => {
       </button>
     </div>
     <div class="entries" role="tabpanel" :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
-      <p
+      <button
         v-for="entry of selectedEntries"
         :key="entry.id"
         class="entry"
+        type="button"
         :data-opened="checkIsEntryOpened(entry.id) || undefined"
+        @click="readEntry(entry.id)"
       >
         {{ checkIsEntryOpened(entry.id) ? textMap[entry.nameTextId] : "?" }}
-      </p>
+        <span v-if="selectedSection === ArchiveSection.LivingBeings && checkIsEntryOpened(entry.id)" class="kills"
+          >×{{ killsMap.get(entry.id) ?? 0 }}</span
+        >
+      </button>
     </div>
   </GameScreen>
 </template>
@@ -187,5 +199,9 @@ useEventListener("keydown", (event) => {
 
 .entry[data-opened] {
   color: #e3c886;
+}
+
+.kills {
+  margin-inline-start: calc(var(--unit) * 16);
 }
 </style>
