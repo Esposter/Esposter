@@ -59,11 +59,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role after the change                                                |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/world/TreeSpeciesOptionsMap.ts`  | Each species' parameters, fitted                                     |
-| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue` | A placed tree, instanced per species once many stand                 |
-| `packages/genshin-world/src/components/World/Plants/Index.vue`        | Windrise's placed plants as stand-ins, one instanced draw per prefab |
+| File                                                                       | Role after the change                                                |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/world/createTreeSpeciesOptionsMap.ts` | Each species' parameters, fitted                                     |
+| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`      | A placed tree, instanced per species once many stand                 |
+| `packages/genshin-world/src/components/World/Plants/Index.vue`             | Windrise's placed plants as stand-ins, one instanced draw per prefab |
 
 New files:
 

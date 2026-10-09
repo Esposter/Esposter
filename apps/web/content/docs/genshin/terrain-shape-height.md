@@ -58,7 +58,7 @@ The features keep the residual off their own ground too: the composed height mul
 | `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise, scaled by its fade's weight      |
 | `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`   | The fade's weight at a point, bilinear in its grid, none outside it       |
 | `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point           |
-| `packages/genshin-world/src/services/world/getWorldHeight.ts`        | The world's ground, Windrise's fitted ground with every region's plateaus |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground, Windrise's fitted ground with every region's plateaus |
 
 ## Notes
 
