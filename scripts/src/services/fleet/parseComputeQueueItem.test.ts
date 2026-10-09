@@ -1,3 +1,4 @@
+import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { parseComputeQueueItem } from "#src/services/fleet/parseComputeQueueItem";
 import { describe, expect, test } from "vitest";
 
@@ -12,6 +13,8 @@ describe(parseComputeQueueItem, () => {
     ).toStrictEqual({
       area: "genshin",
       id: "liyue-capital",
+      kind: FleetEntryKind.Queue,
+      lane: "cpu",
       needs: ["game-install", "game-exports"],
       touches: ["extracted/liyue/world/world.json", "packages/genshin-world/src/data/liyue.json"],
     });
@@ -24,7 +27,14 @@ describe(parseComputeQueueItem, () => {
       parseComputeQueueItem(
         "- [ ] `[page]` {login-door} — Writes `INTERACTION_WINDOW_SIZE` in `packages/a/constants.ts`.",
       ),
-    ).toStrictEqual({ area: "genshin", id: "login-door", needs: [], touches: ["packages/a/constants.ts"] });
+    ).toStrictEqual({
+      area: "genshin",
+      id: "login-door",
+      kind: FleetEntryKind.Queue,
+      lane: "page",
+      needs: [],
+      touches: ["packages/a/constants.ts"],
+    });
   });
 
   test("reads a line without an id, or a line not an open item, as no entry", () => {

@@ -1,5 +1,6 @@
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 
+import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { parseKeyFilePaths } from "#src/services/fleet/parseKeyFilePaths";
 import { PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
 import { readProposalSummaries } from "#src/services/proposals/readProposalSummaries";
@@ -18,6 +19,8 @@ export const readProposalEntries = (): FleetEntry[] =>
     return {
       area,
       id: relativePath.replaceAll("/", "--"),
+      kind: FleetEntryKind.Unit,
+      lane: "",
       needs: [],
       touches: parseKeyFilePaths(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")),
     };

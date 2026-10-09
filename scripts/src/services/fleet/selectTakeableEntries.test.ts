@@ -2,6 +2,7 @@ import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
+import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 import { describe, expect, test } from "vitest";
@@ -13,6 +14,8 @@ const PROFILE: MachineProfile = { areas: ["genshin"], capabilities: ["game-insta
 const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   area: "genshin",
   id: "first",
+  kind: FleetEntryKind.Queue,
+  lane: "cpu",
   needs: [],
   touches: [],
   ...overrides,
