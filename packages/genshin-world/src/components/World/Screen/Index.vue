@@ -7,7 +7,6 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
@@ -30,9 +29,7 @@ import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
-import { useExplorationAreas } from "#src/composables/useExplorationAreas";
 import { useInteraction } from "#src/composables/useInteraction";
-import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
@@ -40,8 +37,8 @@ import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
-import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
@@ -60,8 +57,6 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
-import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
-import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { getResultAsync } from "@esposter/shared";
@@ -278,13 +273,9 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
   // No resident holds a standing talk yet, so no standing talk is merged in
   standingTalkMap: new Map<string, Talk>(),
 });
-// Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
-// Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
-const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
-// The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
-const explorationAreas = useExplorationAreas();
-const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedState.unlockedLandmarkIds);
-const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
+// The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
+const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
+  useWorldMap({ events, regionDataBaseUrl, setWallet, unlockedLandmarkIds: savedState.unlockedLandmarkIds, wallet });
 // The Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
@@ -316,29 +307,6 @@ const interactables = computed<Interactable[]>(() => {
   return [...pickUpInteractables.value, ...residentInteractables.value, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
-// The Primogems a statue pays on its first unlock, from the open world's transport points by its scene point. Only a
-// Locked landmark is offered to resonate with, so each is paid once
-const payFirstUnlockReward = (landmarkId: string) => {
-  const pointId = LandmarkIdStatuePointIdMap[landmarkId];
-  if (pointId === undefined) return;
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(readOpenWorldTransPointRewards).match(
-    (rewards) => {
-      const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
-      if (reward)
-        setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems });
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-};
-// A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
-const activateLandmark = (landmarkId: string) => {
-  unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
-  payFirstUnlockReward(landmarkId);
-  events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
-};
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
 const endTalk = () => {
   if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
@@ -369,12 +337,6 @@ useRafFn(() => {
   hudFrame.pivotX = (pivot.x + 1) / 2;
   hudFrame.pivotY = (1 - pivot.y) / 2;
 });
-// A jump's pose while the screen is faded for it: set, the screen fades to black, and once that fade ends the character
-// Is placed and the pose let go, so the screen fades back in
-const jumpPose = shallowRef<WorldJumpPose>();
-const jumpTo = (pose: WorldJumpPose) => {
-  jumpPose.value = pose;
-};
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
