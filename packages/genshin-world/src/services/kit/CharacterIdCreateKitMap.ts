@@ -8,6 +8,7 @@ import {
   BEIDOU_CHARACTER_ID,
   BENNETT_CHARACTER_ID,
   DILUC_CHARACTER_ID,
+  FISCHL_CHARACTER_ID,
   JEAN_CHARACTER_ID,
   KAEYA_CHARACTER_ID,
   KLEE_CHARACTER_ID,
@@ -28,6 +29,7 @@ import { createBarbaraKit } from "#src/services/kit/characters/barbaraKit";
 import { createBeidouKit } from "#src/services/kit/characters/beidouKit";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { createFischlKit } from "#src/services/kit/characters/fischlKit";
 import { createJeanKit } from "#src/services/kit/characters/jeanKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createKleeKit } from "#src/services/kit/characters/kleeKit";
@@ -51,6 +53,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [BEIDOU_CHARACTER_ID]: createBeidouKit,
   [BENNETT_CHARACTER_ID]: createBennettKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
+  [FISCHL_CHARACTER_ID]: createFischlKit,
   [JEAN_CHARACTER_ID]: createJeanKit,
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
   [KLEE_CHARACTER_ID]: createKleeKit,

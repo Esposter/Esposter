@@ -31,6 +31,7 @@ export const CHARACTER_MODEL_FETCH_TIMEOUT_MS = 60_000;
 export const TRAVELER_CHARACTER_ID = 10_000_007;
 // The characters whose kits are built on their own modules, by the avatar ids the game's tables give them
 export const DILUC_CHARACTER_ID = 10_000_016;
+export const FISCHL_CHARACTER_ID = 10_000_031;
 export const BENNETT_CHARACTER_ID = 10_000_032;
 export const MONA_CHARACTER_ID = 10_000_041;
 export const AMBER_CHARACTER_ID = 10_000_021;
