@@ -13,11 +13,12 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 ## Checks run once, before the commit
 
-- **An agent typechecks each package it edited once, before its commit.** It runs that package's own incremental check, `pnpm exec tsc --noEmit` (or `pnpm exec vue-tsc --noEmit` in a package with `.vue` files), at below-normal priority after the memory gate. A pass takes a few seconds and peaks under about two gigabytes, so a one-off check beats a standing watcher unless it runs more than about 750 times an hour, the break-even measured for `scripts`. An agent never checks `apps/web`, whose typecheck is CI's.
+- **Every heavy run takes a slot.** An agent's one-off typecheck, build and test run goes through `bash .agents/skills/throughput/scripts/run-in-slot.sh <command>`, which runs it in one of two machine-wide slots, taken by an atomic `mkdir`, and frees a slot whose holder died. Measured with four heavy runs launched together, four ran at once without it and two with it. A tsdown build peaks near 2 GB, so an unslotted wave took free memory down to about 1.3 GB.
+- **An agent typechecks each package it edited once, before its commit.** It runs that package's own incremental check, `pnpm exec tsc --noEmit` (or `pnpm exec vue-tsc --noEmit` in a package with `.vue` files), through the slot, at below-normal priority after the memory gate. A pass takes a few seconds and peaks under about two gigabytes, so a one-off check beats a standing watcher unless it runs more than about 750 times an hour, the break-even measured for `scripts`. An agent never checks `apps/web`, whose typecheck is CI's.
 - **It fixes the errors in its own files.** One in another agent's half-written file is that agent's to fix.
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
-- **Tests: the touched tests only.** Run `pnpm exec vitest run <paths>`.
-- **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean`, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
+- **Tests: the touched tests only,** through the slot: `pnpm exec vitest run <paths>`.
+- **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean` through the slot, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
 - **Everything else is the fixer's, once.** When every report is in, one `haiku` fixer runs each touched package's full checks and its build once and repairs what fails. CI on the push is the backstop.
 
 ## Search what git tracks
