@@ -8,7 +8,7 @@ import { mergeConfig } from "tsdown";
 // Are what the tooling in `scripts` reads back off the page, so the workspace resolves them from source under
 // `./parity/*`, and the published map, which ships no page, never carries the arm
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(templateCompilerOptions), {
-  entry: { index: "src/index.ts", terrainTileWorker: "src/workers/terrainTile.worker.ts" },
+  entry: { index: "src/index.ts", save: "src/save.ts", terrainTileWorker: "src/workers/terrainTile.worker.ts" },
   exports: {
     customExports: (exports, { isPublish }) =>
       isPublish ? exports : { ...exports, "./parity/*": { source: "./parity/*.ts" } },
