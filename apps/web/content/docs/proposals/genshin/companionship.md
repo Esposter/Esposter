@@ -3,6 +3,7 @@ title: Companionship
 description: Proposal — the namecard a Friendship Level opens, joined from the game's tables and shown by its words, the Serenitea Pot dialogue, and the commissions and random events that give the rest of the EXP.
 model: claude-opus-5-5
 needs: [game-exports]
+waiting: "the Serenitea Pot's companions invited (the serenitea-pot unit's first step), which the dialogue at 4 and 7 is said of; the commissions' routing step (the commissions unit); random events have no page"
 touches:
   [
     "scripts/src/services/genshinAssets/friendship/**",
@@ -42,7 +43,7 @@ flowchart LR
 
 **This adds, in order:**
 
-1. **The Serenitea Pot dialogue at 4 and 7**, with the [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)'s companions, whose talk it is.
+1. **The Serenitea Pot dialogue at 4 and 7**, with the [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)'s companions, whose talk it is. Waits on the companions being invited. The fetter tables hold no condition naming the pot (`FettersExcelConfigData` has only the level, quest, birthday, promotion and transit conditions), so the lines are looked up in `DialogExcelConfigData` and `NpcExcelConfigData` once that exists.
 2. **The commissions and random events' EXP.** The commissions' claim returns its Companionship EXP item, and routing it to the [friendship grant](/docs/genshin/companionship) is the claim caller's, built in the [commissions](/docs/proposals/genshin/commissions) proposal's routing step. Random events have no page yet.
 
 ## Data and measures
