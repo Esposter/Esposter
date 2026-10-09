@@ -117,7 +117,18 @@ export enum GameTextKey {
   // Recipe names; a recipe's own id for the same words repeats the English of these
   ForgeEnhancementOreRefusal = "1106263200",
   ForgeFineEnhancementOreRefusal = "1652126048",
+  // The forge screen's words: a recipe's forge time, the queue button with its count, a queue's state (idle, forging,
+  // Forged so far and the Adventure Rank it unlocks at), the support character's title and the total forge time
+  ForgeItemTime = "UI_FORGE_PAGE_ITEM_TIME",
   ForgeMysticEnhancementOreRefusal = "110208304",
+  ForgeQueueButton = "UI_FORGE_PAGE_QUEUE_BUTTON",
+  ForgeQueueForging = "UI_FORGE_PAGE_QUEUE_UNFINISH",
+  ForgeQueueIdle = "UI_FORGE_PAGE_QUEUE_FREE",
+  ForgeQueueLockLevel = "UI_FORGE_PAGE_QUEUE_LOCK_LEVEL",
+  ForgeQueueProgress = "UI_FORGE_PAGE_QUEUE_PROGRESS",
+  ForgeSupportCharacter = "UI_FORGE_PAGE_AVATAR_TITLE",
+  ForgeTimeRemaining = "UI_FLYING_ACTIVITY_TIME_RAMAIN",
+  ForgeTotalTime = "UI_FORGE_PAGE_NEED_TIME",
   Fowl = "1695194124",
   Friends = "UI_FRIEND_TITLE",
   Friendship = "3501231455",
