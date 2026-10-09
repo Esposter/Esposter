@@ -345,29 +345,31 @@ reply and one issue lists them, and the walk goes on. The fixes lead the next wi
 pass the cap, a fix alone over it parked — `ai/queue` is rewritten onto them, and the collector replies once per finding
 — a bot reply to that reply is never drained again unless it carries a new suggestion. A review the bot skips or a rate
 limit refused past its stated deadline, a bottom window with no check, or one whose check stays pending past
-`PENDING_CHECK_WAIT_MS`, is asked for a wait apart up to the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut again — a skip
-at half the cap — and a window off the stack's chain of bases is closed and cut again. A commit no window can carry past
-its attempts is parked on `ai/held/<short-sha>` with an issue, and re-landed by the collector itself once `main` moves.
-A commit carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main`
-unverified, and is parked instead once no cut applies it past its attempts, or at once when nothing in flight can move
-`main`. A red `main` is repaired after the walk and the openings — unless the queue already passes a job it failed, a
-transit gap its windows heal, which spends nothing — each part of an attempt on its own clock and the attempts counted
-per failure signature, with an issue once its attempts run out and a wake for when the oldest of them age out. Every
-session runs under a wall clock, a session that never starts is retried five minutes later, a run that fails or is
-killed is woken five minutes later, and a hold that lifts on a clock schedules its own wake, so no stage needs a person
-to restart it. The one red left unwoken is the same step failing on the same line in the newest runs,
-which a rerun would only meet again: it gets one issue, and the next push or event runs the cycle as usual. Its pace is
-the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one window under the
-cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a person is billing — a CodeRabbit
-plan or usage credits that refuse every review, under which windows keep being cut smaller, and the Claude Code
-subscription every session runs on; the tokens — the collector's `gh` login, which `gh auth logout` on its machine stops
-and only a person refreshes, and the Claude Code token only a person mints; and a pull request a person closes or opens
-on purpose — a window or a release from `develop` closed without merging pauses the collector until it is reopened, and
-a release opened by hand is never cut again, so one the bot keeps skipping waits for them. Every issue the collector
-opens is labelled for an agent, for a session to take up like any other. An external contributor's pull request enters
-at the same door: opened from an `external/*` branch against `ai/queue` — never `main`, where it would spend one of the
-plan's hourly reviews on arrival — and squash-merged onto the queue by a maintainer, where the collector cuts it like
-any session commit.
+`PENDING_CHECK_WAIT_MS`, is asked for a wait apart up to the ask cap (`REVIEW_ASK_WAITS_MS`) and then cut again — a
+skipped window's replacement at half its cap while it stands where that window did, and a release from `develop` a
+person opened into windows cut from its commits — and a window off the stack's chain of bases is closed and cut again. A
+commit no window can carry past its attempts is parked on `ai/held/<short-sha>` with an issue, and re-landed by the
+collector itself, on the next run at the `main` head it was parked at and then once at every later one. A commit
+carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main` unverified, and
+is parked instead once no cut applies it past its attempts — counted by its patch, which the queue's rewrites keep — or
+at once when nothing in flight can move `main`. A red `main` is repaired after the walk and the openings — unless the
+queue already passes a job it failed, a transit gap its windows heal, which spends nothing — each part of an attempt on
+its own clock and the attempts counted per failure signature, with an issue once its attempts run out and a wake for
+when the oldest of them age out. Every session runs under a wall clock, a session that never starts is retried five
+minutes later, a run that fails or is killed is woken five minutes later, and a hold that lifts on a clock schedules its
+own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on the same line
+in the newest runs, which a rerun would only meet again: it gets one issue, and the next push or event runs the cycle as
+usual. Its pace is the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one
+window under the cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a person is
+billing — a CodeRabbit plan or usage credits that refuse every review, under which windows keep being cut smaller, and
+the Claude Code subscription every session runs on; the tokens — the collector's `gh` login, which `gh auth logout` on
+its machine stops and only a person refreshes, and the Claude Code token only a person mints; a window or a release from
+`develop` a person closes without merging, which pauses the collector until it is reopened; and a commit no resolver can
+land past its caps, which stays on its held branch, its issue carrying the steps that land it by hand. Every issue the
+collector opens is labelled `ready-for-agent`, for a session to take up like any other. An external contributor's pull
+request enters at the same door: opened from an `external/*` branch against `ai/queue` — never `main`, where it would
+spend one of the plan's hourly reviews on arrival — and squash-merged onto the queue by a maintainer, where the
+collector cuts it like any session commit.
 The design, the plan's figures and the fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
@@ -380,16 +382,17 @@ flowchart LR
   W -->|opened| R[CodeRabbit<br/>one review per window]
   R -->|status completed| C
   R -->|skipped, rate limited, no check<br/>or pending past its wait| C
-  C -->|ask a wait apart up to the cap,<br/>then re-cut, a skip at half the cap| W
+  C -->|ask a wait apart up to the cap, then re-cut —<br/>a skip at half the cap, a release into windows| W
   C -->|bottom window merged| M[(main)]
   C -->|drain: fix or reject every finding| F[(ai/review-fixes)]
   F -->|leads the next window,<br/>ai/queue rewritten onto it| Q
   C -->|one reply per finding| W
   C -->|past the attempts: deferred findings, a park,<br/>a red signature, the same collector red repeated| I[Issues]
   C -->|parked: a commit no cut carries| H[(ai/held/*)]
-  H -->|re-landed once main moves| Q
+  H -->|re-landed: next run at the head it was parked at,<br/>then once per main head| Q
   C -->|Express commits, unverified| M
-  M -->|push event, or CI red on its head:<br/>fast-forward develop, then after the walk repair the head| C
+  M -->|push event, or CI red on its head:<br/>fast-forward develop| C
+  C -->|after the walk, repair a red head — unless the queue<br/>passes a job it failed, a transit gap the windows heal| M
 ```
 
 ## <a name="packages">📦 Packages</a>
