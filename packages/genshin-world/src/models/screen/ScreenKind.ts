@@ -9,6 +9,7 @@ export enum ScreenKind {
   CharacterArchive = "CharacterArchive",
   Chat = "Chat",
   CoOp = "CoOp",
+  Crafting = "Crafting",
   Dialogue = "Dialogue",
   Events = "Events",
   Forge = "Forge",
