@@ -130,6 +130,11 @@ export const renderWitnessTargets = async (
     }
     const material = new MeshBasicNodeMaterial();
     material.toneMapped = false;
+    // The source's cut, so a card its material clips is drawn clipped in every target too, as the source draws it
+    if (mesh.material instanceof NodeMaterial) {
+      material.opacityNode = mesh.material.opacityNode;
+      material.alphaTest = mesh.material.alphaTest;
+    }
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
     // From the view into the world as `normalWorld` takes the geometry's

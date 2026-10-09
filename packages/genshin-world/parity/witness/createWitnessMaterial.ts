@@ -4,6 +4,7 @@ import type { Node } from "three/webgpu";
 
 import { WitnessKeyword } from "#parity/models/witness/WitnessKeyword";
 import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
+import { LEAF_SHADER } from "#parity/witness/constants";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { StoneNodeMaterial } from "genshin-engine";
 import { color, float, mix, normalMap, normalView, positionViewDirection, step, texture, vec3 } from "three/tsl";
@@ -17,7 +18,7 @@ import { color, float, mix, normalMap, normalView, positionViewDirection, step, 
 // Stone light, so a stand-in and its export differ only in what each draws; the mask's smoothness and metal wait on the
 // Pass's highlight
 export const createWitnessMaterial = (
-  { colors, floats, keywords, textures }: SceneMaterial,
+  { colors, floats, keywords, shader, textures }: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
 ): StoneNodeMaterial => {
   const material = new StoneNodeMaterial(loginStoneLight);
@@ -29,6 +30,11 @@ export const createWitnessMaterial = (
   const diffuse = getTexture(WitnessProperty.MainTexture);
   const tint = color(red, green, blue);
   material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
+  // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader clips them
+  if (shader === LEAF_SHADER && diffuse) {
+    material.opacityNode = texture(diffuse).a;
+    material.alphaTest = floats[WitnessProperty.Cutoff] ?? 0;
+  }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) material.normalNode = normalMap(texture(normal));
   const mask = getTexture(WitnessProperty.DetailMask);
