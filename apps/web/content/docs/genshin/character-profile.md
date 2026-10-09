@@ -17,7 +17,7 @@ flowchart LR
   LIST --> PANEL["The chosen story's title and text beside the list"]
 ```
 
-`pnpm -C scripts genshin:assets profile` builds each playable character's stories, voice-overs and namecard from the dump, in every language, and publishes them to the hosted game data as one index a language, each character keyed by its id ([hosted game data](/docs/genshin/hosted-game-data)). The panel reads the record of its character in the language the screen is in, so a reader downloads only that one record.
+`pnpm -C scripts genshin:assets profile` builds each playable character's stories, voice-overs and namecard from the dump, in every language, and publishes them to the hosted game data as one index a language, each character keyed by its id ([hosted game data](/docs/genshin/hosted-game-data)). The characters it covers are the ones in the `stats/characters` record that the stats step published. The panel reads the record of its character in the language the screen is in, so a reader downloads only that one record.
 
 ## Decisions
 

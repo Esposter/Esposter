@@ -2,8 +2,9 @@ import type { GameDataPublication } from "#src/models/gameData/GameDataPublicati
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/profile/ExcelAvatarRow";
 import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/ExcelFetterStoryRow";
 import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
-import type { CharacterData, ProfileText } from "genshin-world";
+import type { ProfileText } from "genshin-world";
 
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import {
   AVATAR_TABLE_NAME,
   FETTER_STORY_TABLE_NAME,
@@ -12,23 +13,18 @@ import {
 import { getNamecardIconName } from "#src/services/genshinAssets/profile/getNamecardIconName";
 import { selectFetterStoryRows } from "#src/services/genshinAssets/profile/selectFetterStoryRows";
 import { toProfileStory } from "#src/services/genshinAssets/profile/toProfileStory";
-import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { GameDataset, profileTextSchema } from "genshin-world";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { characterDataSchema, GameDataset, profileTextSchema } from "genshin-world";
+import { z } from "zod";
 
 // Every playable character's profile, its stories by fetter and its namecard, one entry a character in each language's index
-// Of the game data, every entry checked by the profile reader's schema before it is published. Returns the publication and a
-// Note of the count
-export const buildProfilePublication = (): { note: string; publication: GameDataPublication } => {
-  const characters = parseMachineJson<CharacterData[]>(
-    readFileSync(join(STATS_GENERATED_DIRECTORY, "characters.json"), "utf8"),
-  );
+// Of the game data, every entry checked by the profile reader's schema before it is published. The characters are read from
+// The game data their stats step published. Returns the publication and a note of the count
+export const buildProfilePublication = async (): Promise<{ note: string; publication: GameDataPublication }> => {
+  const characters = z.array(characterDataSchema).parse(await readPublishedGameData("stats/characters"));
   const characterIds = characters.map(({ id }) => id).toSorted((firstId, secondId) => firstId - secondId);
   const avatarRowMap = new Map(
     readExcelTable<ExcelAvatarRow>(AVATAR_TABLE_NAME).map((avatarRow) => [avatarRow.id, avatarRow]),
