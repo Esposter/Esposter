@@ -54,6 +54,13 @@ export const groundTopic: ReferenceTopic = {
       result:
         "The fit's error falls from 0.62 to 0.14 metres within 60 metres and from 2.71 to 0.79 within 700, and the Ground's normal from 10.0 to 6.2 degrees, which holds its gate, and its depth from 0.037 to 0.017. Its outline rises from 16.7 to 17.7 pixels, the paving's from 3.6 to 4.2 and the oak's depth from 0.19 to 0.21, so the change is not landed: a mixed result. Its flowers are about two pixels of the outline, which stays near 15.5 without them, and the outline's largest misses lie where the reference's oak canopy covers ground the stand-in shows and along the horizon, not on the cliffs. No terrain fit closes the outline gate while the oak's canopy does not match",
     },
+    {
+      method:
+        "The surface pass's albedo targets read back at the reference camera, the exports' Ground mean against ours and against each tone of the fitted palette in CIELab, then the base maps' size against the detail octaves' texel scale",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The paint's one colour, #707e5d, is the base maps' mean over every terrain face within the terrain radius, weighted by area: the meadow's green (51% of the samples), bare earth (37%) and a pale rock (11%) averaged, while the camera sees the meadow. The exports' Ground there reads L 46.1, a -21.1, b 24.3, 13.42 from ours and 1.99 from the palette's green, #53733e. One colour has no variance, so the structure reads 1.0000. A base map is 512 texels over a 1,024-metre tile, 2 metres a texel, but `SURFACE_DETAIL_METRES_PER_TEXEL` draws every texture's octaves at 4 centimetres a texel, 50 times too fine, and the base map's variance of 0.058 is the whole tile's layout: the detail tried on the ground drew that as per-pixel noise, structure 207.2",
+    },
   ],
   openQuestions: [],
 };

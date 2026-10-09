@@ -33,6 +33,27 @@ export const oakTopic: ReferenceTopic = {
       result:
         "Not a placement offset: the median of ours over the exports' depth is 1.006, and the signed gap changes sign with depth, ours 15% farther where the export's crown is nearest (27 to 37 metres) and 1 to 6% nearer past 64 metres. The leaves' signed mean is 0.06 of their 0.186 gap, so most of the 0.180 is per-pixel scatter rather than a shift. The export's leaves are 5.9-metre cards at random facings (mean cosine 0.50 against radial) with centroids peaking at 0.6 to 0.8 of their cluster's radius, so radial facing and a shell at the radius are not what the export shows, and the card size already matches it. Cards per cluster from 400 to 800 lower the depth to 0.164 and the normal to 47.7 degrees, the outline rises to 8.41 pixels, and the Ground's normal holds at 9.6 degrees, so it lands. 1600 cards a cluster never reached the page's ready state within the parity timeout and is not recorded",
     },
+    {
+      method:
+        "The oak's place in the scene against the witness layout's: the landmark's root height, then `oak.json`'s clusters tested as a k-means fixed point of the leaf mesh's triangles under each axis convention, then the shape pass with the root at the export's height and the clusters carried by the leaf placement",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The scene stands the oak's root on our ground plus -0.5 metres, at -0.53, where the export's stands at 0; and the fit reads the leaf mesh in its own frame, dropping its placement (0.6 metres down and a turn of 2.28 degrees, 1.6 to 2.4 metres at the crown's rim). With both exact the oak reads 9.06 pixels, 0.161 and 47.5 degrees (8.41, 0.164 and 47.7 before); with the root alone, 8.08, 0.174 and 47.4; the turn reversed, 8.87, 0.170 and 48.3. The canopy's readings are the cards' scatter, so a placement barely moves them",
+    },
+    {
+      method:
+        "The leaf mesh's vertex normals against its faces, a sphere about the crown, flattened hulls, a sphere per k-means cluster and the clusters' union gradient, then the normals averaged on a grid and read back on held-out cards, each by the mean angle per vertex",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The game's leaf normals are a smooth field over the crown, the underside pointing down and the top up: vertices within 3 metres agree to 18 degrees, while they stand 89 degrees from their own faces. Ours radiate from each of the 40 clusters' centres, 65 degrees from the game's; the clusters' union gradient at 1.5 radii reads 34 to 36 degrees, a flattened hull 52, and the grid's field 12.5 degrees at 3-metre cells, 15.1 at 4, 18.9 at 6 and 22.1 at 8, held out",
+    },
+    {
+      method:
+        "The witness's leaf material clipped at its `_Cutoff` against `_MainTex` alpha and every target material given its source's opacity and alpha test, then the shape pass",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The game's leaf texture is 81% cut at its `_Cutoff` of 0.5, but the witness draws its cards whole and every target draws ours whole too. Cut on both sides the oak reads 2.07 pixels over an outline 8.7 times longer, with 163,000 pixels apart against 73,000, a depth of 0.196 and a normal of 57.1 degrees, and the Ground's outline 3.80 pixels: leaf against leaf, the readings are the leaves' scatter. `_Cutoff` stands at 0.5 on nearly every exported stone material too, the login's and the paving's among them, so the clip is keyed on the foliage shader, never on the property",
+    },
   ],
   openQuestions: [
     "Its colour per part, the bark and the leaves each read from their own mesh's textures (`windrise/surfaces.json`), reads 3.29 ΔE against 2.30, from 3.82 with the family in one colour, so the gate still fails. Its surface structure reads 0.5499 share against 0.0324, failing, and its structure before this change was not read",
