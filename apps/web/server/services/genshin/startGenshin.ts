@@ -9,8 +9,10 @@ import { AzureContainer } from "@esposter/db-schema";
 
 export interface StartGenshinResult {
   etag?: string;
-  // Whether the account had no save before, so a guest save the browser holds is the one to upload
+  // Whether no save existed before, so a guest save the browser holds is the one to upload
   isNew: boolean;
+  // The session the save held before this start, which the start replaced
+  previousSessionId?: string;
   save: GenshinSave;
   serverNow: string;
   sessionId: string;
@@ -28,6 +30,7 @@ export const startGenshin = async (userId: string): Promise<StartGenshinResult> 
   return {
     etag: writtenEtag,
     isNew: envelope === undefined,
+    previousSessionId: envelope?.sessionId,
     save: startedEnvelope.save,
     serverNow: Temporal.Now.instant().toString(),
     sessionId: startedEnvelope.sessionId,
