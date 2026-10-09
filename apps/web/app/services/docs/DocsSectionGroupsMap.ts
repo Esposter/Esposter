@@ -164,6 +164,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "email-personalization",
       "email-preview-text",
       "email-web-view",
+      "flowchart-connectors",
       "flowchart-publish",
       "webpage-survey-invite-blocks",
       "dataset-row-cap-warning",
