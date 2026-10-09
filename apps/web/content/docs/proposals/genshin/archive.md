@@ -47,11 +47,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                                     | Role after the change                                 |
-| :----------------------------------------------------------------------- | :---------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`          | The defeat that counts toward a living being's entry  |
-| `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts` | Opens an artifact set's entry from the artifacts held |
-| `scripts/src/services/genshinAssets/enemies/writeEnemyKinds.ts`          | Already reads the living beings' codex                |
+| File                                                                | Role after the change                                |
+| :------------------------------------------------------------------ | :--------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`     | The defeat that counts toward a living being's entry |
+| `packages/genshin-world/src/services/archive/openArchiveEntries.ts` | Opens entries, beside which the artifact sets open   |
+| `scripts/src/services/genshinAssets/enemies/writeEnemyKinds.ts`     | Already reads the living beings' codex               |
 
 ## Sources
 

@@ -4,7 +4,6 @@ import type { FollowCameraOptions } from "#src/models/camera/FollowCameraOptions
 import {
   FOLLOW_CAMERA_ARM_STEP,
   FOLLOW_CAMERA_CLEARANCE,
-  FOLLOW_CAMERA_DEFAULT_DISTANCE,
   FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP,
   FOLLOW_CAMERA_EASE_OUT_SPEED,
   FOLLOW_CAMERA_FOV,
@@ -12,6 +11,7 @@ import {
   FOLLOW_CAMERA_MAX_PITCH,
   FOLLOW_CAMERA_MIN_DISTANCE,
   FOLLOW_CAMERA_MIN_PITCH,
+  FOLLOW_CAMERA_NEUTRAL_SENSITIVITY,
 } from "#src/camera/constants";
 import { InputAction } from "#src/models/input/InputAction";
 import { Euler, Vector3 } from "three";
@@ -20,12 +20,17 @@ import { Euler, Vector3 } from "three";
 // Short of straight up and down, and zooms it by the wheel within its range. The eye stands on the arm out from the
 // Pivot, short of the first landmark a sphere cast along the arm touches and of the first point stepped along it under
 // The ground or the water's surface: it is pulled in at once and eases back out once the way clears
-export const createFollowCamera = ({ camera, ground, landmarkCollider }: FollowCameraOptions): FollowCamera => {
+export const createFollowCamera = ({
+  camera,
+  ground,
+  landmarkCollider,
+  settings,
+}: FollowCameraOptions): FollowCamera => {
   const euler = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
   const armDirection = new Vector3();
   let yaw = euler.y;
   let pitch = euler.x;
-  let distance = FOLLOW_CAMERA_DEFAULT_DISTANCE;
+  let distance = settings.defaultDistance;
   let armLength = distance;
   camera.fov = FOLLOW_CAMERA_FOV;
   camera.updateProjectionMatrix();
@@ -36,7 +41,7 @@ export const createFollowCamera = ({ camera, ground, landmarkCollider }: FollowC
   const reset = (facing: number): void => {
     yaw = facing;
     pitch = 0;
-    distance = FOLLOW_CAMERA_DEFAULT_DISTANCE;
+    distance = settings.defaultDistance;
     turn();
   };
   // How far the arm reaches out from the pivot before the ground or the water's surface stands within its clearance
@@ -63,8 +68,14 @@ export const createFollowCamera = ({ camera, ground, landmarkCollider }: FollowC
         reset(facing);
         return;
       }
-      yaw += input.lookYaw;
-      pitch = Math.max(FOLLOW_CAMERA_MIN_PITCH, Math.min(FOLLOW_CAMERA_MAX_PITCH, pitch + input.lookPitch));
+      yaw += input.lookYaw * (settings.horizontalSensitivity / FOLLOW_CAMERA_NEUTRAL_SENSITIVITY);
+      pitch = Math.max(
+        FOLLOW_CAMERA_MIN_PITCH,
+        Math.min(
+          FOLLOW_CAMERA_MAX_PITCH,
+          pitch + input.lookPitch * (settings.verticalSensitivity / FOLLOW_CAMERA_NEUTRAL_SENSITIVITY),
+        ),
+      );
       distance = Math.max(
         FOLLOW_CAMERA_MIN_DISTANCE,
         Math.min(FOLLOW_CAMERA_MAX_DISTANCE, distance + input.zoomSteps * FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP),

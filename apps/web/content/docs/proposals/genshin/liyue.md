@@ -2,6 +2,16 @@
 title: Liyue
 description: Proposal — Liyue, the Geo nation of contracts and commerce. Towering karst pillars in a sea of clouds, stone forests standing in the sea, terraced paddies, golden ginkgo, and a harbour city climbing a cliff under a floating palace. The Chasm's vast mine is a layer below the ground, and Chenyu Vale's tea terraces are among mist and white-walled villages. A building kit of curved roofs, red columns and stone terraces builds its towns.
 model: claude-opus-5-5
+needs: [game-exports, parity-page]
+touches:
+  [
+    "packages/genshin-world/src/models/liyue/**",
+    "packages/genshin-world/src/services/liyue/**",
+    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
+    "packages/genshin-world/parity/main.ts",
+    "packages/genshin-world/parity/models/ScreenFixture.ts",
+    "scripts/src/services/genshinParity/shared/openParityPage.ts",
+  ]
 ---
 
 # Liyue
@@ -17,6 +27,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
   Liyue Harbor is a set of landmarks on authored stepped streets up the cliff, with its wharves below. Wangshu Inn is a tower on a rock pillar. Qingce Village is terraced paddies of still water around a great tree.
 
+- **Liyue Harbor claims its own witness**, by the rule [Inazuma](/docs/proposals/genshin/inazuma) settles for a capital; its houses are the meshes the region's code names, `Area_Ly_Build_` and `Area_LY_Build_`.
 - **The Chasm is a layer.** The surface Chasm is a vast open-pit mine with scaffolding, lifts and ruins in the heightfield and its meshes. The underground mines are their own layer in the [world map](/docs/genshin/world-map), dark except for the lamps and the glowing ore.
 - **Chenyu Vale is tea and mist.** It has terraced tea slopes, waterfalls, low mist in the valley, and villages in white walls with dark tiles and stepped gables.
 
@@ -31,6 +42,16 @@ flowchart TD
 ## Areas
 
 The catalogue holds Liyue's areas as the game names them: Bishui Plain, Minlin, Lisha, Qiongji Estuary, Mt. Laixin, the Sea of Clouds, The Chasm, The Chasm: Underground Mines, and Chenyu Vale's Upper Vale and Southern Mountain. Subareas include Liyue Harbor, Wangshu Inn, Qingce Village, Jueyun Karst, Huaguang Stone Forest, Guyun Stone Forest, Mt. Tianheng, Mt. Hulao, Mt. Aocang, Qingyun Peak, Stone Gate, Dihua Marsh, Luhua Pool, Lingju Pass, Tianqiu Valley, Guili Plains, Yaoguang Shoal, Cuijue Slope, Mingyun Village, Yilong Wharf, Nantianmen, The Chasm's Maw and The Glowing Narrows.
+
+## Still to build
+
+1. **Liyue Harbor's witness claims, next**, which the roadmap's `liyue-every-renderer` item waits on.
+   - If no region has given `ScreenFixture` its `witnessComponents` yet, that comes first, per [Inazuma](/docs/proposals/genshin/inazuma)'s first step.
+   - `models/liyue/LiyuePartFamily.ts` (`Ground`, `Buildings`) and `services/liyue/LiyuePartFamilyMeshRegexMap.ts`: `Ground` is `/^BigWorldTerrain_/u` and `Buildings` is `/^Area_(?:Ly|LY)_Build_/u`.
+   - `services/liyue/LiyueUndrawnMeshRegexMap.ts`, one entry per kind of mesh the export holds (`~/Esposter/genshin-parity/extracted/liyue/`): `props` `/^(?:Area_(?:Ly|Common)_Props?|Area_MdProps|Indoor_Ly)_/u`, `lights` `/^Area_(?:Ly|Common)_Light_/u`, `rocks` `/^(?:Area_Ly_Rock_|Stages_MDSRock)/u`, `plants` `/^(?:Area_Ly_Grass_|Stages_(?:Lvy|LYLvy|MdSGrass|SGrass|MdGrass|Deadbush))/u`, `plot` `/^Area_Ly_(?:Stairs|Plot)_/u`, `water` `/^Area_Ly_Water_/u`, `commonBuildings` `/^(?:Area_Common_Build_|Stages_Build)/u`, `dungeon` `/^Level_MdDungeon/u`, `items` `/^Item_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^(?:Eff_|Area_Common_Effect_)/u`. Between them and the two families, each mesh in today's export is claimed once.
+   - `witnessComponents.liyue` in the `World/Screen` fixture takes these two maps as `witnessFamilies` and `witnessUndrawn`.
+   - Proof: the Inventory pass (`pnpm -C scripts genshin:parity passes liyue --pass Inventory`) reports 0 unclaimed renderers on today's witness; as data, the maps owe no unit test.
+2. **The karst and stone-forest generators**, under `packages/genshin-world/src/services/liyue/`, each fitted to its exports once the passes come to shape.
 
 ## Build order
 

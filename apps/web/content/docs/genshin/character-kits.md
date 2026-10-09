@@ -250,6 +250,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 | `packages/genshin-world/src/services/kit/effects/healKitStriker.ts`       | Heals the character that struck an enemy by a hit's share of its ATK, per enemy struck                                            |
 | `packages/genshin-world/src/models/kit/KitEffectState.ts`                 | The team's effects, held on one owner so each write reassigns the list                                                            |
 | `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`         | Adds an effect, refreshing one of its kind on the same character from the same source                                             |
+| `packages/genshin-world/src/services/kit/effects/createKitSummon.ts`      | Builds a summon cast where its body stands, landing its hits from there, for its seconds or a tenth past its last hit             |
 | `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`       | Runs the effects' seconds down and drops those that run out                                                                       |
 | `packages/genshin-world/src/services/kit/effects/getKitInfusion.ts`       | The infusion on a character's normal attacks, charged attack and plunges, if one is on it                                         |
 | `packages/genshin-world/src/models/kit/KitBubble.ts`                      | A bubble holding an enemy: its seconds, its explosion and its Omen, until it bursts                                               |

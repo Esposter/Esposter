@@ -10,7 +10,7 @@ Schemas, constructors, and read paths for persisted data (save blobs, localStora
 ## The rule
 
 - One schema per entity, describing exactly what the code writes today.
-- Data that fails to parse resets to a fresh default (`toClicker` falls back to `new Clicker()`, a dungeons blob that fails `dungeonsSchema` starts a new game). The reset **is** the migration for what only the browser holds; a blob stored server-side is backfilled to the new shape instead (the `backfills` skill), so no one's save resets because a schema moved.
+- Data that fails to parse resets to a fresh default (`toClicker` falls back to `new Clicker()`, a dungeons blob that fails `dungeonsSchema` starts a new game). The reset **is** the migration for what only the browser holds; a blob stored server-side is backfilled to the new shape instead (the `backfills` skill), so no one's save resets because a schema moved. The Genshin save is the exception to the reset: its blob is the player's only copy, so one that no longer parses is answered as an error and left as it is ([save data](/docs/genshin/save-data)).
 - When a shape changes, change the schema and delete the old shape in the same commit — never ship a union of old + new or a read-side transform.
 
 ## Why

@@ -117,6 +117,10 @@ Those same bytes are also the key they are stored under: a retained version is a
 
 **Settled: no canonicalization step.** RFC 8785, the JSON Canonicalization Scheme, exists for the situation this is not — several independent implementations that must agree on a digest for the same logical object. Adopting it here would sort every key of every document on every save to defend against a case the repo does not have. If a schema's key order ever does change, the cost is one extra keyframe on the next save of each history, after which deltas resume against the new order: a one-off storage blip, never a wrong or unreadable version, because the store verifies every reconstruction against the key it was asked for. Reach for canonicalization only if a second producer of these bytes ever appears.
 
+## The Genshin save — instants read as the schema's ISO strings
+
+The Genshin save is a Zod-validated object written by `JSON.stringify`, its instants held as ISO strings that `genshinSaveSchema` reads with `z.iso.datetime()`. Both of its reads parse it as plain `JSON.parse`: the server's `readGenshinSaveState` and the signed-out `readGuestSave`. A revival would turn each instant into a `Date` the schema rejects, and every save would read as absent, so the schema owns the instants as strings and the reviver is left out.
+
 ## Machine JSON whose strings are paths — same rule, other side of the repo
 
 The same argument applies wherever a schema reads a document that a program wrote but a person named parts of: virrun's overlay manifests, task-cache entries, source-mirror publications and on-disk probe caches all carry repo-relative paths and symlink targets as plain `z.string()` fields. A path may legitimately be an ISO datetime (`2026-08-05T12:00:00Z` is a legal Linux filename), and a reviver reads shape rather than schema, so blanket revival turns that path into a `Date` the schema rejects — failing the whole read over one filename, and on the write-back path throwing after the command already ran, so every file it wrote is discarded.

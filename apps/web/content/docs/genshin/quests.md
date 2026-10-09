@@ -96,7 +96,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 ## Notes
 
 - **Only the Archon quests start, and a go-to does not move.** The carried prologue starts at Wanderer's Trail's first step, which asks to reach a place. No region data places that trigger yet, so the step stays where it is until the [quests proposal](/docs/proposals/genshin/quests) places it, and the carried quests' other steps wait behind it.
-- **Progress is held in memory.** The world keeps no save yet, so a reload starts the quests over, as it does the bag and the wallet.
+- **Progress is kept in the save.** The carried quests' progress is a slice of the [save](/docs/genshin/save-data), so a reload resumes them as it does the bag and the wallet.
 - **Quests are served in the bundle, not from a base URL.** Each carried quest and its words are imported on demand from the world's generated folder, through `QuestLoaderMap` and `QuestTextLoaderMap`, which a new carried quest adds a line to. The region data is served from a base URL, the quests are small enough not to be.
 - **A step keeps one objective.** A step that finishes on any of several places lists each as a condition, so the reader keeps the first condition that asks something. A step asking for two things at once would lose the second.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.

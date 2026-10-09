@@ -12,6 +12,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -250,14 +251,10 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           tickIndex: 0,
           tickIntervalSeconds: DANDELION_FIELD_TICK_INTERVAL_SECONDS,
         });
-        addKitEffect(kitEffectState, {
-          body: { facing, height, position: { x: position.x, z: position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: fieldDamageHits,
-          kind: "summon",
-          secondsRemaining: DANDELION_FIELD_SECONDS,
-        });
+        addKitEffect(
+          kitEffectState,
+          createKitSummon({ facing, height, position }, combatant, fieldDamageHits, DANDELION_FIELD_SECONDS),
+        );
       },
       seconds: 90 / 60,
       targetingArea: SKILL_TARGETING_AREA,

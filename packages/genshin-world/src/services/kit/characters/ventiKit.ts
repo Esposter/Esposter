@@ -1,18 +1,16 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -117,17 +115,6 @@ const STORM_OF_DEFIANCE_STATUS: EnemyStatus = {
   secondsRemaining: 10,
 };
 
-// A summon cast where a body stands, which lands its hits from there for its seconds, priced by Venti as he stood then.
-// The hits land a tenth of a second inside its seconds, so the step that lands the last still has it
-const createSummon = ({ facing, height, position }: KitBody, combatant: Combatant, hits: KitHit[]): KitSummon => ({
-  body: { facing, height, position: { x: position.x, z: position.z } },
-  combatant,
-  elapsedSeconds: 0,
-  hits,
-  kind: "summon",
-  secondsRemaining: Math.max(...hits.map(({ hitmarkSeconds }) => hitmarkSeconds)) + 0.1,
-});
-
 // Venti's first kit, at talent level 1: six shots, a fully charged aimed shot, a collision and two plunges, Skyward
 // Sonnet's press and hold, and Wind's Grand Ode's Stormeye. Its multipliers are read from his proud skill groups
 export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
@@ -197,7 +184,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       isAimed: true,
       onStart: ({ body, combatant, kitEffectState }) => {
         if (combatant.constellationCount < SPLITTING_GALES_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createSummon(body, combatant, splittingGalesHits));
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, splittingGalesHits));
       },
       seconds: FULL_AIM_FRAMES / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -216,7 +203,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         };
         addKitEffect(
           kitEffectState,
-          createSummon({ facing, height, position: stormeyePosition }, combatant, stormeyeHits),
+          createKitSummon({ facing, height, position: stormeyePosition }, combatant, stormeyeHits),
         );
         if (combatant.ascension < STORMEYE_PASSIVE_ASCENSION) return;
         const passiveSeconds = STORMEYE_START_FRAMES / 60 + stormeyeSeconds;
@@ -242,7 +229,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalSkill: {
       hits: [],
       onStart: ({ body, combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, createSummon(body, combatant, [pressHit])),
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, [pressHit])),
       seconds: PRESS_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

@@ -2,6 +2,13 @@
 title: Statues of The Seven
 description: Proposal — what is left of a Statue of The Seven past being a jump. Oculi are found once each and offered to their region's statues, the Statue's Blessing screen heals from one pool with its auto-recover, and a statue changes the Traveler's element. The levels, stamina and pool rules are built, on the Statues of The Seven as-built page.
 model: claude-haiku-5-5
+touches:
+  [
+    "packages/genshin-world/src/models/statue/**",
+    "packages/genshin-world/src/services/statue/**",
+    "packages/genshin-world/src/models/save/**",
+    "packages/genshin-world/src/services/save/**",
+  ]
 ---
 
 # Statues of The Seven
@@ -17,6 +24,8 @@ Each region's statues stand for its Archon, and they are the game's anchor for e
 - **The Traveler resonates with its element.** Interacting with a statue as the Traveler changes their element to the statue's region's, Natlan's after the quest step the wiki names, and the Traveler's [constellations](/docs/proposals/genshin/constellations) for that element come with its levels.
 - **F on a resonated statue opens the Statue's Blessing.** Its screen holds the pool, the party's portraits and the auto-recover's switch and threshold. This entry is an assumption about the game's menu, provisional until the screen is recorded.
 - **The threshold's steps are the game's.** Auto-recover's threshold is set on the screen in steps the game offers, which no source here lists, so the steps are provisional until a recording shows them.
+- **The statues' state is a slice of the save.** Each region's level and held count, and the ids of the Oculi found, are kept in the world's [save](/docs/genshin/save-data) as every slice after the wallet is, a save that predates the slice reading as a new player's: no region started and no Oculus found. A merge keeps the union of the found ids and, per region, the further level, then the larger held count, as Reputation's merge keeps the further progress.
+- **The Oculi's places are the generated ones.** `generated/oculi/<region>.json` already holds each region's Oculi from the official map's fit, 66 Anemoculi in Mondstadt, each with its id, kind and ground place, so an Oculus is named by that id and no new data is written.
 - **Auto-recover near a statue.** With it on and a threshold set, standing by a statue's base for two seconds revives the fallen and heals the members under the threshold from the pool, as the built rule does. The two seconds are the wiki's.
 
 ## How it works
@@ -39,11 +48,12 @@ flowchart TD
 
 **This still adds, in order:**
 
-1. **Oculi**, placed from the spawned places' fit of the official map, and the offer wired to them, so a found Oculus reaches its region.
-2. **The world's state**: each region's level and held count, the pool, and the auto-recover setting, held where the unlocked statues are, with a first resonance starting its region and the maximum fed to the character's stamina.
-3. **The Statue's Blessing screen** and auto-recover's two-second dwell, once the party has its health.
-4. **The Traveler's resonance**, once the Traveler's kit follows its element.
-5. **Each later region's Oculi and levels**, with that region.
+1. **The statues' state in the save, and an Oculus found.** `packages/genshin-world/src/models/statue/StatueProgressSave.ts` holds each region's `{ heldCount, level }` by region id and `foundOculusIds`, its schema defaulting to the new player's, and `models/save/GenshinSave.ts` gains it as `statues`, with `services/save/toGenshinSave.ts`, `readGenshinSave.ts` and `mergeGenshinSave.ts` carrying it as they carry `reputation`. `services/statue/findOculus.ts` is pure: an Oculus id not yet found joins the found ids; in a region already started (level 1 or more) it is offered at once through `offerItems`, returning the levels gained for the caller to pay; in a region not started it raises the held count alone, since `offerItems` on level 0 would start the region, which only a resonance does. A found id gives nothing a second time. The proof is `findOculus.test.ts` for those three cases and a `mergeGenshinSave.test.ts` case for the union and the further level.
+2. **Oculi in the world**: each region's Oculi from `generated/oculi/<region>.json`, imported as the region's existing chunk, drawn as a stand-in where none has been found, found by touch within a provisional `OCULUS_TOUCH_RADIUS`, paying its Adventure EXP and the levels `findOculus` returns, and marked on the minimap within the provisional distance the owed `oculus-minimap.mkv` re-measures.
+3. **A first resonance starts its region and feeds the stamina**: resonating with a statue starts its region at level 1 and pays level 1's row once, and `computeMaximumStamina` over the saved levels is the character's `staminaMaximum`.
+4. **The Statue's Blessing screen**, built from a public clip: `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=b6YZXYBegKA --from 0 --to 125 --name statue-blessing-public` (1080p60, a statue's healing shown), its frames read for the screen's pool, portraits and auto-recover switch. Its threshold's steps stay provisional until `statue-blessing.mkv` shows them, and auto-recover's two-second dwell comes with it.
+5. **The Traveler's resonance**, once the Traveler's kit follows its element, which the character kits unit the other machine holds is building.
+6. **Each later region's Oculi and levels**, with that region.
 
 ## Data and measures
 

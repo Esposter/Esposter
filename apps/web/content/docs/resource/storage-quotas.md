@@ -111,7 +111,7 @@ These blobs stay outside the ledger and are deliberately uncounted:
 
 - **Blobs uploaded before this shipped** — nothing backfills them ([persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only)).
 - **Room attachments** — the quota counts what a user keeps in their own resources, and a room's files belong to the room. Charging them to whoever uploaded tied a personal allowance to what someone gives a shared room, and put a number about chat in the resource explorer. The room-scoped replacement is written up as [room attachment quota](/docs/esbabbler/deferred/room-attachment-quota); until it lands, message uploads are bounded by nothing here.
-- **Everything outside the two charge paths** — avatars, room images and the per-user game-save blobs go through their own writes, and the subscription filter does not even deliver most of their events. A server-side write joins the ledger by calling `chargeStorageLedgerEntry`; one that does not is uncounted by omission rather than by design, which is the trade each new write path has to make deliberately.
+- **Everything outside the two charge paths** — avatars, room images and the per-user game-save blobs (Clicker, Dungeons and the Genshin save) go through their own writes, and the subscription filter does not even deliver most of their events. A server-side write joins the ledger by calling `chargeStorageLedgerEntry`; one that does not is uncounted by omission rather than by design, which is the trade each new write path has to make deliberately.
 
 Closing these needs a recompute that lists real object sizes per user. Worth doing once the counter has drifted enough to matter, and it is a one-shot backfill rather than a recurring sweep.
 

@@ -3,7 +3,9 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { describe, expect, test } from "vitest";
 
 describe("genshinSaveSchema", () => {
-  test("reads a save written before the slices were added as the new player holds them", () => {
+  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
+  // Would only hide a save nobody brought to it
+  test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {
       quests: EMPTY_GENSHIN_SAVE.quests,
@@ -11,6 +13,6 @@ describe("genshinSaveSchema", () => {
       wallet: EMPTY_GENSHIN_SAVE.wallet,
     };
 
-    expect(genshinSaveSchema.parse(predatingSave)).toStrictEqual(EMPTY_GENSHIN_SAVE);
+    expect(genshinSaveSchema.safeParse(predatingSave).success).toBe(false);
   });
 });

@@ -1,15 +1,13 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kamisato Ayaka's proud skill groups, read at her talent level. The attack group holds the first three strikes at 0 to 2,
@@ -116,17 +114,6 @@ const createFrostflakeHits = (
   },
 ];
 
-// A Frostflake Seki no To, a storm standing where Ayaka cast it and priced by her as she stood then. It lives a tenth of a
-// Second past its bloom, so the step that lands the bloom still has it on the field
-const createFrostflake = ({ facing, height, position }: KitBody, combatant: Combatant, hits: KitHit[]): KitSummon => ({
-  body: { facing, height, position: { x: position.x, z: position.z } },
-  combatant,
-  elapsedSeconds: 0,
-  hits,
-  kind: "summon",
-  secondsRemaining: FROSTFLAKE_BLOOM_FRAMES / 60 + 0.1,
-});
-
 // Kamisato Ayaka's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Hyouka,
 // Soumetsu's storm and Senho's infusion. Its multipliers are read from her proud skill groups. Senho's Cryo application
 // And movement, A1's and A4's effects, and every constellation but Blizzard Blade Seki no To are not built
@@ -165,10 +152,10 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst: {
       hits: [],
       onStart: ({ body, combatant, kitEffectState }) => {
-        addKitEffect(kitEffectState, createFrostflake(body, combatant, frostflakeHits));
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, frostflakeHits));
         if (combatant.constellationCount < BLIZZARD_BLADE_SEKI_NO_TO_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createFrostflake(body, combatant, smallFrostflakeHits));
-        addKitEffect(kitEffectState, createFrostflake(body, combatant, smallFrostflakeHits));
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, smallFrostflakeHits));
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, smallFrostflakeHits));
       },
       seconds: 125 / 60,
       targetingArea: SKILL_TARGETING_AREA,

@@ -1,7 +1,16 @@
 ---
 title: Gadgets
-description: Proposal — gadgets as the game runs them, on Z and its quick swap. Each gadget's behaviour is its kind in the game's own widget config, a collector, a detector, a gather point finder or a placed device; the data and cooldowns are built, and the quick-use slot, the detectors, the collectors, devices and the quick swap are not yet.
+description: Proposal — gadgets as the game runs them, on Z and its quick swap. Each gadget's behaviour is its kind in the game's own widget config, a collector, a detector, a gather point finder or a placed device; the data and cooldowns are built, and the gadgets in the bag, the quick-use slot, the detectors, the collectors, devices and the quick swap are not yet.
 model: claude-opus-5-5
+needs: [game-exports]
+touches:
+  [
+    "packages/genshin-world/src/models/inventory/MaterialType.ts",
+    "packages/genshin-world/src/services/inventory/MaterialTypeItemCategoryMap.ts",
+    "packages/genshin-world/src/data/items/materials.json",
+    "packages/genshin-world/src/generated/nameText/**",
+    "scripts/src/services/genshinAssets/items/**",
+  ]
 ---
 
 # Gadgets
@@ -17,6 +26,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **A cooldown runs on while paused.** A gadget that is not used up has a cooldown, shared within its cooldown group, which keeps counting while the world is paused under a menu, unlike every combat cooldown. It is kept as the moment it is ready, so it is read rather than ticked. The wiki states this; a recording confirms it ([Recordings owed](/docs/genshin/roadmap#recordings-owed)).
 - **Where a gadget may be used is the game's.** `WidgetUseableExcelConfigData` says where each may not be used: in another player's world, which waits on [co-op](/docs/genshin/deferred/co-op) being deferred, and in a domain's type or scene, which the [domains](/docs/proposals/genshin/domains) page supplies. The open world refuses none, so this check is not yet built.
 - **Made from instructions.** Most are crafted at the bench or forged once their instructions or diagram are used, which reputation and offerings give; a few come from quests and are kept.
+- **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (`generated/gadgets/gadgets.json`, eleven at this revision) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
 
 ## How it works
 
@@ -37,10 +47,14 @@ flowchart TD
 
 **This still adds, in order:**
 
-1. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand. The slot waits on the bag's items, which hold no widget material type yet.
-2. **Detectors**, the Treasure Compass to treasure boxes once a compass's city joins a region's chest slice, then the Oculus Resonance Stone once its target is settled.
-3. **Collectors and placed devices**, one kind at a time.
-4. **The quick swap.**
+1. **Gadgets in the bag.**
+   - `MaterialType` (`packages/genshin-world/src/models/inventory/MaterialType.ts`) gains `Widget = "MATERIAL_WIDGET"`, and `MaterialTypeItemCategoryMap` maps it to `ItemCategory.Gadget`.
+   - `writeItems` (`scripts/src/services/genshinAssets/items/writeItems.ts`) adds every id of `readGadgetRows()`'s slice to the item ids it writes; then `pnpm -C scripts genshin:assets items` rewrites `data/items/materials.json` and `pnpm -C scripts genshin:text names` its names into the existing name chunks.
+   - Test: `writeItems.test.ts` gains a case that every gadget the slice holds is written with `materialType` `MATERIAL_WIDGET`.
+2. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand: `Inventory` gains the equipped gadget, the bag's screen equips one from its tab, and the HUD shows it with its cooldown. It touches the bag's screen, so the fleet offers it only while no inventory unit holds that folder.
+3. **Detectors**, the Treasure Compass to treasure boxes once a compass's city joins a region's chest slice, then the Oculus Resonance Stone once its target is settled.
+4. **Collectors and placed devices**, one kind at a time.
+5. **The quick swap.**
 
 ## Data and measures
 

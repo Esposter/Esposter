@@ -9,6 +9,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Lisa's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -151,14 +152,10 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   elementalBurst: {
     hits: [{ hitArea: LIGHTNING_ROSE_HIT_AREA, hitmarkSeconds: 56 / 60, poiseDamage: 10, talentMultiplier: 0 }],
     onStart: ({ body, combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
-        combatant,
-        elapsedSeconds: 0,
-        hits: createDischarges(talentMultiplierMap),
-        kind: "summon",
-        secondsRemaining: LIGHTNING_ROSE_SECONDS,
-      }),
+      addKitEffect(
+        kitEffectState,
+        createKitSummon(body, combatant, createDischarges(talentMultiplierMap), LIGHTNING_ROSE_SECONDS),
+      ),
     seconds: 88 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },

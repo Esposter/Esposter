@@ -22,7 +22,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A proposal unit carries the same three fields a queue item does, in its frontmatter** (the `docs` skill, `references/page-frontmatter.md`), each optional:
   - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
   - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;
-  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses `ForgeScreen`. A long list may wrap over the lines below its key, as the formatter writes it.
+  - `touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses the sibling "ForgeScreen". A long list may wrap over the lines below its key, as the formatter writes it.
 - **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;

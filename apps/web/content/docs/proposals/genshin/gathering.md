@@ -2,7 +2,7 @@
 title: Gathering
 description: Proposal — the ores struck until they break, each region's mining outcrops of Magical Crystal Chunks, drawn each day from Adventure Rank 30 beside the ley line places, and the investigation spots that give artifacts, ingredients, ores or Mora. The plants and specialties are built as gathering points, all but five the world's types do not name yet, and the mining outcrops' rank, respawn and the investigation cap are built as rules.
 model: claude-haiku-5-5
-needs: [game-exports]
+touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]
 ---
 
 # Gathering
@@ -11,7 +11,9 @@ The plants and specialties the map marks are built as gathering points, picked w
 
 ## Decisions
 
-- **An ore is struck until it breaks.** A plant is picked with F, an ore is struck by attacks until it breaks, then its pieces drop to be picked up. How many hits an ore takes, by the kind of attack, is measured, so until a recording gives it, each ore's count is a provisional constant with a queue item. The constant lands with the ores' places, since a constant no reader holds is not kept before then.
+- **An ore is struck until it breaks.** A plant is picked with F, an ore is struck by attacks until it breaks, then its pieces drop to be picked up. What breaks it is the wiki's Mineral page, not a count of hits: an ore takes poise damage from melee or blunt hits, Iron Chunk, White Iron Chunk and Starsilver needing 200 from melee hits or 29 from blunt ones, and Crystal Chunk, Magical Crystal Chunk and the other crystal ores 2000 or 286. A hit adds its poise damage over the requirement of its class to the ore's broken share, so melee and blunt hits mix, and the ore breaks at a share of one; a hit neither melee nor blunt, a catalyst's or a bow's, adds nothing. A blunt hit is one whose `KitHit` sets `isBlunt`, its class taking precedence, and a melee hit is any other normal or charged attack of a sword, claymore or polearm wielder. The hit's `poiseDamage` is the kit's own, so the owed `ore-strike.mkv` only checks the result.
+- **An ore drops one piece, and up to two more.** One piece is certain and each of two more comes at 10%, drawn from the world's seeded random source, as the wiki's Mineral page gives it.
+- **An ore comes back as the wiki's Reset page gives it.** An Iron Chunk at the game's midnight, as a cooking ingredient does; a White Iron Chunk or Starsilver 24 hours after it breaks; a Crystal Chunk away from a mining outcrop 72 hours after.
 - **Mining outcrops come daily, and a mined one comes back at the next draw.** From Adventure Rank 30, a region's mining outcrops of Magical Crystal Chunks stand at a few places drawn each day beside the ley line outcrops' places, and come at 06:00 in UTC+8, two hours after the daily reset. The day's unmined outcrops are gone with the next day. Reputation's mining outcrop search marks them ([reputation](/docs/proposals/genshin/reputation)).
 - **Investigation spots.** A spot that sparkles gives a few artifacts, ingredients, ores or Mora once investigated. A player may investigate a hundred spots a day, after which no more spawn, and the Mora spots come back as their refresh says. The day is the game day, which starts at the 04:00 reset in UTC+8, so the count that the cap compares is kept from that reset.
 
@@ -31,15 +33,22 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Ores struck until they break**, once their hit count is measured.
-2. **Mining outcrops' places and draw**, drawn each day from Adventure Rank 30, once the ley line places are placed.
-3. **Investigation spots**, their places and rewards, with the daily cap's store counting them.
+1. **The ores' rules.**
+   - `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`: each ore's item id to its `{ blunt, melee }` poise requirement from the Decisions: Iron Chunk 101001, White Iron Chunk 101002 and Starsilver 101006 at 29 and 200; Crystal Chunk 101003, Magical Crystal Chunk 101004, Amethyst Lump 101008, Condessence Crystal 101009, Trishiraite 101224, Clearwater Jade 101241, Noctilucous Jade 100028 and Cor Lapis 100058 at 286 and 2000 (the dump's `MaterialExcelConfigData` ids, matched by name through `genshin:text find`).
+   - `packages/genshin-world/src/services/gathering/strikeOre.ts`: an ore's broken share after one hit, `{ isBlunt, isMelee, poiseDamage }` against its requirement; `rollOreDropCount.ts`: one, plus one for each of two draws under 0.1.
+   - `GatheringRespawn` gains `OneDay` and `ThreeDays`, with `ORE_ONE_DAY_RESPAWN_DURATION` and `ORE_THREE_DAYS_RESPAWN_DURATION` in `services/gathering/constants.ts`, and `computeGatheringRespawn` adds them as it adds `SPECIALTY_RESPAWN_DURATION`.
+   - Tests beside each: seven blunt hits of 4.2 break an Iron Chunk and six do not; a melee hit and a blunt hit add their own shares; a catalyst's hit adds nothing; the drop count reads 1 at draws of 0.5 and 3 at draws of 0.05; each new respawn lands its duration after the break.
+   - No data is written, and nothing in the world calls them yet.
+2. **The ores in the world.** Mondstadt's ore points written into its existing gathering slice by `writeGatheringPlaces`, the official map's Ores label (11) with each ore's respawn, the other regions' through the static-data host the pending design picks; then a struck ore's share kept beside the points, the hit fed from the character's strike loop in `components/World/Character/Index.vue` beside `strikeEnemy`, and the pieces dropped as an enemy's drops are.
+3. **Mining outcrops' places and draw**, drawn each day from Adventure Rank 30, once the ley line places are placed.
+4. **Investigation spots**, their places and rewards, with the daily cap's store counting them.
 
 ## Data and measures
 
 - **Read from the game's tables:** the ore rows of `GatherExcelConfigData` and the ore items' rows of `MaterialExcelConfigData`, with the ore categories of the official map.
 - **Placed by the spawned places:** each ore and outcrop from the official map's points, fitted as the [spawned places](/docs/genshin/spawned-places) page sets out.
-- **Measured:** the hits an ore takes by the kind of attack, off a recording (`ore-strike.mkv` on the [roadmap](/docs/genshin/roadmap)), provisional until then.
+- **Read from the wiki:** each ore's poise requirement, its drops and its respawn (the [Mineral](https://genshin-impact.fandom.com/wiki/Mineral) and Reset pages, through the persona's wiki reader).
+- **Checked against a recording:** the hits an ore takes by the kind of attack (`ore-strike.mkv` on the [roadmap](/docs/genshin/roadmap)), which confirms the rule and gates nothing.
 
 ## Key files
 

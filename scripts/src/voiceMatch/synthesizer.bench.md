@@ -9,9 +9,9 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-21T11:55:33.390Z
-- Commit: f4884ab706
-- Node: v26.9.0
+- Date: 2026-10-09T05:41:57.381Z
+- Commit: aa383a8c82
+- Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 31.9 GiB
@@ -20,6 +20,14 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| short  | 1.00×   | 1728.6454 | ±2.78% | 1748.1570 | 3       |
-| medium | 0.49×   | 3507.8487 | ±5.75% | 3588.6405 | 3       |
-| long   | 0.29×   | 6030.8536 | ±2.31% | 6078.7547 | 3       |
+| short  | 1.00×   | 1912.1608 | ±7.58% | 1952.9609 | 3       |
+| medium | 0.69×   | 2789.3945 | ±3.89% | 2814.9474 | 3       |
+| long   | 0.63×   | 3027.7515 | ±0.79% | 3038.4919 | 3       |
+
+## synthesizer > first sound - sentence shapes
+
+| task               | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ------------------ | ------- | --------- | ------ | --------- | ------- |
+| short first sound  | 1.00×   | 1229.3526 | ±1.60% | 1238.2384 | 3       |
+| medium first sound | 0.97×   | 1271.0135 | ±3.71% | 1290.4401 | 3       |
+| long first sound   | 0.97×   | 1273.4468 | ±4.20% | 1297.1404 | 3       |

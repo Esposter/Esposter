@@ -2,6 +2,8 @@
 title: Spawned places
 description: Proposal — where the game's servers' chests, Oculi, puzzle mechanisms, gathering points, camps and ley line places stand, each written into region data at its fitted place from the official map, stood on the ground beneath it, and checked against the wiki's counts.
 model: claude-opus-5-5
+needs: [game-exports]
+waiting: "the scene group export (the other machine)"
 ---
 
 # Spawned places
@@ -14,6 +16,7 @@ The servers' spawned places are not in the client's data, so the world holds non
 - **Only fitted places ship.** The map's data stays a reference; what enters the repository is each place's kind and its fitted position in the region's slice, as the chests' and the Oculi's are.
 - **Stood on what is beneath.** A map point has no height, so a fitted place stands on the ground under it, or on the top of a landmark whose collision holds it. An underground layer's points stand on that layer's own floor. A place whose height the ground cannot give is reported, never guessed.
 - **Oculi are written by kind, one slice per region.** The map labels each region's Oculi as its own kind, so a kind is the label and a region's slice holds its kind's points. Each kind's places are written into the world's generated folder like the chests', and a place's height is read where it stands.
+- **Camps come from the scene groups, not from the map's enemy marks.** The map marks each enemy by a family label (its Hilichurl label alone covers every kind of hilichurl), with no level and no camp, so grouping its points would guess both. The game's scene groups hold each camp's monsters with their monster ids, levels and places, so the camps are read from the scene group export the other machine is making, and the map's enemy marks only check them.
 - **Each kind is checked against the wiki's count.** The map's points are contributed by its users, so each kind's count in a region is held to the wiki's, and a shortfall or a surplus is reported per kind. The Oculi are checked already; the other kinds take their wiki counts as their pages land.
 
 ## How it works
@@ -32,7 +35,7 @@ flowchart TD
 
 **Still to add:**
 
-1. **The camps** the map marks, for [enemies](/docs/genshin/enemies). The map marks each enemy as a point of its own kind, not a camp, and a camp's members need the game's enemy kind id and its level at World Level 0, which the map does not give. The camps wait on a grouping of those points into camps and on the enemies' kind table being joined to the map's labels. The gathering points are placed by the [gathering](/docs/genshin/gathering) page.
+1. **The camps**, for [enemies](/docs/genshin/enemies): each scene group's monsters written into its region's `enemyCamps` as camps, each member with its monster id as `EnemyKindId`, its level at World Level 0 and its place, through the same region-axes step `placeMapPoints` takes. Waits on the scene group export the other machine is making; nothing else on this page is left to build before it. The gathering points are placed by the [gathering](/docs/genshin/gathering) page.
 
 ## Data and measures
 

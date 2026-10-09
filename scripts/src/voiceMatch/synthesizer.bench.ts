@@ -65,4 +65,20 @@ describe.skipIf(!isBenchable)("synthesizer", () => {
       { ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 1 },
     );
   });
+
+  // The wait before the first sound: the first chunk the stream yields, the rest of the sentence left unmade
+  test("first sound - sentence shapes", async ({ bench }) => {
+    await bench.compare(
+      ...Object.entries(SENTENCES).map(([shape, sentence]) =>
+        bench(`${shape} first sound`, async () => {
+          let isStopped = false;
+          const stream = synthesizer.streamSpeech(sentence, speaker, shape, () => isStopped);
+          await stream.next();
+          isStopped = true;
+          await stream.return(undefined);
+        }),
+      ),
+      { ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 1 },
+    );
+  });
 });

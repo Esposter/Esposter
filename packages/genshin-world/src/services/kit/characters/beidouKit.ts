@@ -13,6 +13,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -175,14 +176,15 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         )
       )
         continue;
-      addKitEffect(kitEffectState, {
-        body: { facing, height, position: { x: position.x, z: position.z } },
-        combatant,
-        elapsedSeconds: 0,
-        hits: [discharge],
-        kind: "summon",
-        secondsRemaining: hit.hitmarkSeconds + DISCHARGE_INTERVAL_SECONDS,
-      });
+      addKitEffect(
+        kitEffectState,
+        createKitSummon(
+          { facing, height, position },
+          combatant,
+          [discharge],
+          hit.hitmarkSeconds + DISCHARGE_INTERVAL_SECONDS,
+        ),
+      );
     }
   };
   // From six constellations, the Targe lands Bane of Evil's cut every 30 frames for its seconds, a hit of no damage, poise
@@ -237,13 +239,13 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       ],
       onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
-          body: { facing, height, position: { x: position.x, z: position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
+          ...createKitSummon(
+            { facing, height, position },
+            combatant,
+            combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
+            targeSeconds,
+          ),
           isFollowing: true,
-          kind: "summon",
-          secondsRemaining: targeSeconds,
         }),
       seconds: 58 / 60,
       targetingArea: SKILL_TARGETING_AREA,

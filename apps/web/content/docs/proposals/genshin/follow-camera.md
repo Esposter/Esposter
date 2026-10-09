@@ -35,17 +35,12 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the camera's numbers are provisional, its sensitivity and default distance are fixed, and photo mode orbits the held character within the follow camera's range, not the game's.
+**Today:** the camera's numbers are provisional, its sensitivity and default distance are read from the settings at the game's defaults, which the Settings screen does not set yet, and photo mode orbits the held character within the follow camera's range, not the game's.
 
 **This adds, in order:**
 
-1. **The settings the camera reads**, at the wiki's ranges, ahead of the Settings screen's rows for them.
-   - `packages/genshin-engine/src/models/camera/FollowCameraSettings.ts`: `horizontalSensitivity` and `verticalSensitivity`, each from 1 to 5, and `defaultDistance`, from 4.5 to 6.0.
-   - `camera/constants.ts` gains `FOLLOW_CAMERA_DEFAULT_SETTINGS`: both sensitivities at 3 and `defaultDistance` at today's `FOLLOW_CAMERA_DEFAULT_DISTANCE`, which it replaces, each marked `// Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export`.
-   - `FollowCameraOptions` gains `settings: FollowCameraSettings`, read on every call so a change takes at once. `look` scales `input.lookYaw` by `horizontalSensitivity / 3` and `input.lookPitch` by `verticalSensitivity / 3`, and `reset` returns to `defaultDistance`. `World/Character/Index.vue` passes `FOLLOW_CAMERA_DEFAULT_SETTINGS` until the Settings screen holds the rows.
-   - `camera/createFollowCamera.test.ts` gains two cases: a look at horizontal sensitivity 5 turns the camera five thirds as far as the same look at 3, and a reset after a zoom stands the eye at the settings' `defaultDistance`.
-2. **The references.** Recordings that show the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall, and solved. Photo mode's sliders and zoom, at their ends, are among them, so its range is solved too.
-3. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](/docs/proposals/genshin/menu-screens) build its Controls tab.
+1. **The references.** Recordings that show the game's camera in play are found, published ones first, each with a turn, a zoom through the wheel's range and a pass by a wall, and solved. Photo mode's sliders and zoom, at their ends, are among them, so its range is solved too.
+2. **The settings' rows on the Settings screen**, and the slope's pitch, once the [menu screens](/docs/proposals/genshin/menu-screens) build its Controls tab. The defaults the camera starts at are read off that tab's export, which replaces `FOLLOW_CAMERA_DEFAULT_SETTINGS`' provisional values.
 
 The camera is approved by its own measure: at each reference's state, the eye and the look solved from the recording match the camera's within that solve's noise.
 

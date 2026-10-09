@@ -44,7 +44,7 @@ flowchart LR
 - **Blended in the model's own order.** Every material is blended and writes its depth, as MMD draws one, so a texel the texture leaves clear shows what the materials before it drew. A material set to draw both faces is drawn from behind as well.
 - **Textures as the model samples them.** `createPmxTexture` decodes a texture unpremultiplied and unconverted, leaving the blend and the colour space to three, and unflipped, since a PMX model's texture coordinates run from the image's top left. Past its edges it repeats.
 - **It faces where its holder faces.** `CharacterModel` stands the model at the origin of whatever holds it, turned half round to face -z as a yaw of none does. The [character controller](/docs/genshin/character-controller)'s body faces the same way, so whatever moves the body moves the model by holding it.
-- **The Traveler stands where Windrise starts.** The world plays the Traveler (`TRAVELER_CHARACTER_ID`), drawn at `WINDRISE_START_POINT` on the ground until the controller's body holds it. Without the packs' address, as on the parity page, and in a witness render, no character is drawn.
+- **The Traveler rides the controller's body.** The world plays the Traveler (`TRAVELER_CHARACTER_ID`), drawn on the character controller's body from where Windrise starts. Without the packs' address, as on the parity page, and in a witness render, no character is drawn.
 
 ## Key files
 

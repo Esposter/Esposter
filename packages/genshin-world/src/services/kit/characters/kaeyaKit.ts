@@ -8,6 +8,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kaeya's proud skill groups, read at his talent level. The attack group holds the five strikes at 0 to 4, the charged
@@ -107,14 +108,10 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   elementalBurst: {
     hits: [],
     onStart: ({ body, combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
-        combatant,
-        elapsedSeconds: 0,
-        hits: createIcicleHits(talentMultiplierMap),
-        kind: "summon",
-        secondsRemaining: GLACIAL_WALTZ_SECONDS,
-      }),
+      addKitEffect(
+        kitEffectState,
+        createKitSummon(body, combatant, createIcicleHits(talentMultiplierMap), GLACIAL_WALTZ_SECONDS),
+      ),
     seconds: 78 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },

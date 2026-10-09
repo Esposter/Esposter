@@ -2,7 +2,12 @@
 title: Party
 description: Proposal — what is left of the game's party once its state, its switching, its falls and the HUD's list of it are built. Party Setup on L as a screen with its Quick Setup; the player's choice of the next member and the game over screen after a fall; the Elemental Resonance effects that wait on affliction durations, a reaction particle, and the Moondrift and Lunar-Bloom clauses; and the party kept between visits.
 model: claude-opus-5-5
-touches: ["packages/genshin-world/src/services/party/**"]
+needs: [media-engine]
+touches:
+  [
+    "packages/genshin-interface/src/components/PartySetupScreen/**",
+    "packages/genshin-world/src/components/Party/Screen/**",
+  ]
 ---
 
 # Party
@@ -17,7 +22,8 @@ This page builds on the [party](/docs/genshin/party) as built: the teams, the de
 - **A burst on a switch uses the burst once the member is on the field.** `Left Alt` with a member's number switches to it and uses its Elemental Burst, as the game's controls bind it, and a switch refused (a cooldown, a fallen member, an empty slot) uses none. The chord takes the press over from the plain number key, while `Left Alt` alone still shows the cursor. Built in the character's fixed step, which reads the press.
 - **Elemental Resonance needs a full team.** Two members of one element in a full team give that element's resonance, as the game's Team Bonus lists them; `getElementalResonances` gives the list in the game's element order. The effects that change a stat, a hit, a reaction, a skill or the stamina spent are built, as the [party](/docs/genshin/party) page describes; the rest are listed under Elemental Resonance's effects in the scope.
 - **The choice of the next member and the game over screen.** The game plays the fall, lets nobody switch until it ends, then asks the player for the next member; once every member is down, the game over screen offers a revive at the nearest teleport waypoint with 35% HP. Until these screens are built, the world brings the next standing member in slot order onto the field and revives a fallen team at the nearest statue on its own, as the [party](/docs/genshin/party) page describes.
-- **The party is kept between visits**, as the game keeps it on its server: the teams, the deployed one, the member on the field and who is down, beside the player's characters.
+- **The party is kept between visits**, as the game keeps it on its server: the teams, the deployed one, the member on the field and who is down, beside the player's characters. It is a slice of the world's [save](/docs/genshin/save-data), added as every slice after the wallet is, with the new player's party as its default, so it is kept by the account as well as in the browser.
+- **Party Setup's layout is the 4.0 screen, read off a public clip.** The current Party Setup, its region's background behind four standing members, is shown at 1080p and 60 frames a second in a public clip ([NEW PARTY SETUP SCREEN](https://www.youtube.com/watch?v=greLeGJE-Jg), 57 seconds). The screen is built from that clip's frames; the build does not wait for a recording, which measures it again later.
 
 ## How it works
 
@@ -40,7 +46,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Party Setup's screen**, its Configure Team's screen over the rules above, and Quick Setup. The screen's layout is measured off the game's own Party Setup recording before its style is settled ([parity](/docs/genshin/parity)), and its approval is the user's.
+1. **Party Setup's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=greLeGJE-Jg --from 0 --to 57 --name party-setup`, then `genshin:parity frames` over it at one a second; the builder looks through them and keeps, through `genshin:parity frame <capture> --at <s> --name party-setup`, one showing the deployed team at rest with its name, arrows and buttons in view. Build `PartySetupScreen` in `genshin-interface` (`components/PartySetupScreen/Index.vue` and `Index.fixture.ts`): the team's name, the arrows stepping between teams, four slots each naming its member with level and element mark (an empty slot's plus), and the Deploy, Configure Team and Quick Setup buttons, placed off that frame and worded by text id where `GameTextKey` holds the word, the rest an English constant marked provisional as "Team Standing By" is. Its world wrapper `components/Party/Screen/Index.vue` holds the `Party` and emits the team stepped to and the deploy through `deployPartyTeam`'s rules, and `components/World/Session/Index.vue` fills `MenuScreen`'s `ScreenKind.PartySetup` slot with it, as it fills the Wish slot, in place of `Menu/Placeholder`. The members stand as 2D name plates in this slice; their models follow the character screen's in a later one. A reference for the frame goes in `ParityReferenceMap`, its compare is queued for the user's eyes, and the standing members' models and Configure Team and Quick Setup's screens follow over the same rules.
 2. **The choice of the next member and the game over screen**, in place of the automatic next member and the statue's revive.
 3. **Elemental Resonance's effects that need a mechanism not built yet**, each one the party's or the combat's to add when the mechanism lands:
    - The affliction durations: Fervent Flames' Cryo, Soothing Water's Pyro, High Voltage's Hydro and Shattering Ice's Electro, each affecting the party member for 40% less time. The party members hold no elemental state and enemies' strikes apply none to them, so there is no duration to shorten. An aura's decay rate is set in `applyAura` with no party context, so the resonances must reach `applyElement` first.

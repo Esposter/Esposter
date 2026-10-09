@@ -1,9 +1,9 @@
-import type { EdgeComponent, EdgeTypesObject } from "@vue-flow/core";
+import type { EdgeTypesObject } from "@vue-flow/core";
 
 import { ConnectionLineType } from "@vue-flow/core";
 
 // Every path type draws through one labelled edge, which owns the inline label editor a published edge does not need
-const FlowchartEditorEdge: EdgeComponent = defineAsyncComponent(
+const FlowchartEditorEdge: Component = defineAsyncComponent(
   () => import("@/components/FlowchartEditor/Edge/Index.vue"),
 );
 

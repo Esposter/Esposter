@@ -3,6 +3,13 @@ title: Trees and scatter
 description: Proposal — the rest of Genshin's plants on the vegetation's wind field. Every tree, bush and rock the game places stands where its record sets it, each species' parameters fitted to its own export and instanced per species, culled per instance on the GPU, and grass that yields to what passes through it. Species, impostors and the flowers scattered on each finest tile are built.
 model: claude-opus-5-5
 needs: [game-exports]
+touches:
+  [
+    "scripts/src/services/genshinAssets/world/checkIsPlantName.ts",
+    "scripts/src/services/genshinAssets/world/checkIsPlantName.test.ts",
+    "scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts",
+    "packages/genshin-world/src/data/windrise/plants.json",
+  ]
 ---
 
 # Trees and scatter
@@ -15,6 +22,7 @@ This page builds on the [vegetation](/docs/genshin/vegetation), the [trees](/doc
 - **A species is fitted once, in an object pass.** Each species' parameters are fitted against its own export as any object is: its outline, depth and normal in the shape pass, its unlit colour in the surface pass. The next species is the one `rank` prices largest.
 - **Instancing per species and detail.** Once a species stands many times, its mesh and its impostor are each one instanced draw for all its copies, the cross-over decided per instance.
 - **Instances are culled on the GPU.** A compute pass tests every instance of grass, scatter and trees against the frustum and distance and writes the survivors into an indirect draw, so a field of blades never passes through JavaScript. This is the engine's per-instance culling, added here as its first consumer ([engine architecture](/docs/genshin/engine-architecture)); occlusion against a depth pyramid follows when a city's bench shows the instances it would hide.
+- **A plant is named by its prefab, as a building is.** A placement's prefab is named through its path hash (`getPrefabNames` over `readAssetPathNames`), and a plant is a name holding `Tree`, `Bush`, `Shrub`, `Plant`, `Flower` or `Grass` that is not an effect, a decal, a drop or a pot (`^Eff_`, `Effect`, `Decal`, `^Item_`, `pot`), the way `checkIsArchitectureName` tells a building. Until its species is rebuilt, a placed tree's stand-in is our oak's impostor and any other plant's a low dome of the ground's green, each scaled by its placement and drawn as one instanced draw per prefab.
 - **Plants yield to what passes through.** Grass bends away from the character through a small trail texture around the viewer, written by the character controller.
 
 ## How it works
@@ -36,9 +44,10 @@ flowchart TD
 
 **This adds:**
 
-1. **Every placed plant**, from the layout pass, each species fitted to its export, the oak first.
-2. **Instancing and GPU culling** per species and detail level.
-3. **The trail**, with the character controller.
+1. **Windrise's placed plants, as stand-ins, next.** A new `scripts/src/services/genshinAssets/world/checkIsPlantName.ts` tells a plant's name as the Decisions set out, and its test, `checkIsPlantName.test.ts`, keeps `Stages_Unique_CyTree01_Lod1` and a bush and drops `Eff_` effects, `Item_Drop_Plant` drops and `Area_MdProps_Flowerpot02`. A new `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`, a `plants` fit in `DerivedAssetFitMap`, parses every placement of the two streams `DerivedAssetComponentMap` names for Windrise (`parseStreamingPlacements`, as `readWorldPlacements` reads them, but every prefab rather than the listed ones), keeps the plants within `GROUND_RADIUS` of the oak's foot, and writes `packages/genshin-world/src/data/windrise/plants.json`: each plant prefab's name and its places through `toRegionPlace` with their scale. `World/Landmark/Tree` draws them as the Decisions' stand-ins, and the layout pass (`genshin:parity passes windrise --pass Layout`) is queued as their measure.
+2. **Every placed plant's species**, from the layout pass, each fitted to its export, the oak first.
+3. **Instancing and GPU culling** per species and detail level.
+4. **The trail**, with the character controller.
 
 ## Deferred compute
 

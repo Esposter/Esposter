@@ -3,13 +3,11 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -19,6 +17,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -146,22 +145,6 @@ const LUPUS_FULGURIS_RECHARGE_SECONDS = 10;
 // Sigil's share of it, or the Wolf Within's Electro RES, which marks Lightning Fang standing
 const checkIsRazorBuff = (effect: KitEffect, characterId: number, source: string): effect is KitBuff =>
   effect.kind === "buff" && effect.characterId === characterId && effect.source === source;
-
-// A summon cast where Razor stands as a strike starts, which lands its one hit from there for its seconds, priced by him
-// As he stood then
-const createStrikeSummon = (
-  { facing, height, position }: KitBody,
-  combatant: Combatant,
-  hit: KitHit,
-  secondsRemaining: number,
-): KitSummon => ({
-  body: { facing, height, position: { x: position.x, z: position.z } },
-  combatant,
-  elapsedSeconds: 0,
-  hits: [hit],
-  kind: "summon",
-  secondsRemaining,
-});
 
 // Razor's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Claw and Thunder's
 // Press and hold with their Electro Sigils, and Lightning Fang with its Wolf Within. Its multipliers are read from his
@@ -305,11 +288,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           const isLightningFangLive = kitEffectState.effects.some((effect) =>
             checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
           );
-          if (isLightningFangLive)
-            addKitEffect(
-              kitEffectState,
-              createStrikeSummon(body, combatant, soulCompanionHit, soulCompanionHit.hitmarkSeconds + 0.1),
-            );
+          if (isLightningFangLive) addKitEffect(kitEffectState, createKitSummon(body, combatant, [soulCompanionHit]));
           if (
             combatant.constellationCount < LUPUS_FULGURIS_CONSTELLATION ||
             checkIsLupusFulgurisCharging(combatant.characterId, kitEffectState.effects)
@@ -317,7 +296,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             return;
           addKitEffect(
             kitEffectState,
-            createStrikeSummon(body, combatant, lupusFulgurisHit, hitmarkFrames / 60 + LUPUS_FULGURIS_RECHARGE_SECONDS),
+            createKitSummon(body, combatant, [lupusFulgurisHit], hitmarkFrames / 60 + LUPUS_FULGURIS_RECHARGE_SECONDS),
           );
           if (!isLightningFangLive) addElectroSigil(combatant.characterId, kitEffectState);
         },

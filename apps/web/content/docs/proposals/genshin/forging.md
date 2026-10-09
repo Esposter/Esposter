@@ -27,7 +27,7 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 **Still to build, in order:**
 
 1. **The forge screen, built now from the public clip.** Take its frames with `pnpm -C scripts genshin:parity frame` from `captures/yt-AVnbm8fESr0` (the recipe list, the order queue with its timers, and the claim state) into `references/forge-screen/` with their source noted. Then build `ScreenKind.Forge` and its component in the interface package on those frames, with its words by text id. Fixture the component, and queue its comparison for the user's eyes. The owed `forge-order-queue.mkv` re-measures it later; it does not gate the build.
-2. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen opens from the world's menu.
+2. **The blacksmith's place.** Waits on the scene group export the other machine is making (`Lua/Scene/3` groups carry each NPC's position); until then the screen is reached through its fixture, since the game's menus hold no forge.
 3. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them.
 
 ## Data and measures

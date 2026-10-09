@@ -14,6 +14,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -52,8 +53,6 @@ const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 // Measured: gcsim v2.47.2 (MIT) barbara/skill.go, the two droplets at 42 and 78 frames, which the wiki's Let the Show
 // Begin♪ notes give as two instances of damage at the start of the skill
 const DROPLET_HITMARK_FRAMES = [42, 78];
-// The droplets' summon lives a tenth of a second past its last droplet, so the step that lands it still has it
-const DROPLET_SUMMON_SECONDS = Math.max(...DROPLET_HITMARK_FRAMES) / 60 + 0.1;
 // Measured: gcsim v2.47.2 (MIT) barbara/skill.go, the Melody Loop starting 3 frames into the skill for its duration and
 // A frame, its regeneration on the character on the field as it starts and every 5 seconds after, the four heals the
 // Wiki's Let the Show Begin♪ notes give
@@ -218,14 +217,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     elementalSkill: {
       hits: [],
       onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
-        addKitEffect(kitEffectState, {
-          body: { facing, height, position: { x: position.x, z: position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: dropletHits,
-          kind: "summon",
-          secondsRemaining: DROPLET_SUMMON_SECONDS,
-        });
+        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, dropletHits));
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,

@@ -2,6 +2,16 @@
 title: Mondstadt
 description: Proposal — Mondstadt, the Anemo nation of wind and freedom, recreated first among the regions. Rolling meadows under a strong wind, a lake city of timber-framed houses and windmills, the vineyards of Dawn Winery, the ruined tower of Stormterror's Lair, and the snow and ruins of Dragonspine. A building kit of stone ground floors, framed upper storeys and steep roofs builds its towns.
 model: claude-opus-5-5
+needs: [game-exports, parity-page]
+touches:
+  [
+    "packages/genshin-world/src/models/mondstadt/**",
+    "packages/genshin-world/src/services/mondstadt/**",
+    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
+    "packages/genshin-world/parity/main.ts",
+    "packages/genshin-world/parity/models/ScreenFixture.ts",
+    "scripts/src/services/genshinParity/shared/openParityPage.ts",
+  ]
 ---
 
 # Mondstadt
@@ -18,11 +28,22 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **Species.** Broad oaks, with Windrise's great oak as a landmark, apple trees, pines on the slopes, grape rows at Dawn Winery, and dense old forest in Wolvendom and Whispering Woods.
 - **Windrise stays in Galesong Hill.** The game's own area table files Windrise under Galesong Hill, and the catalogue does too, so its oak and statue stay that area's landmarks; Mondstadt City's buildings are Starfell Valley's.
+- **Mondstadt City's witness claims are its own**, built as [Inazuma](/docs/proposals/genshin/inazuma)'s decision on a capital's claims sets out, its buildings found by the region's own code in their mesh names, `Area_MdBuild_`.
 - **Dragonspine is a snow biome with ruins.** It has snow ground, ice, frozen falls, snow and snowstorm weather, and the Entombed City's ruins. Skyfrost Nail is a landmark-tier spike mesh, and Starglow Cavern and Wyrmrest Valley are surface caves and hollows.
 
 ## Areas
 
 The catalogue holds Mondstadt's areas as the game names them: Starfell Valley, Galesong Hill, Windwail Highland, Brightcrown Mountains, Windrest Peak and Dragonspine. Subareas include Mondstadt City, Cider Lake, Starfell Lake, Windrise, Springvale, Dawn Winery, Whispering Woods, Wolvendom, Stormterror's Lair, Thousand Winds Temple, Starsnatch Cliff, Cape Oath, Falcon Coast, Dadaupa Gorge, Brightcrown Canyon, Stormbearer Mountains, Stormbearer Point, Musk Reef, Millhaven, Dornman Port, and Dragonspine's Skyfrost Nail, Entombed City, Starglow Cavern, Wyrmrest Valley and Snow-Covered Path.
+
+## Still to build
+
+1. **Mondstadt City's witness claims, next**, which the roadmap's `mondstadt-every-renderer` item waits on.
+   - The claims by component first, if `ScreenFixture` has no `witnessComponents` yet, exactly as [Inazuma](/docs/proposals/genshin/inazuma)'s first step specifies them.
+   - `models/mondstadt/MondstadtPartFamily.ts` (`Ground`, `Buildings`) and `services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`, in place of the `MondstadtCityPartFamilyMeshRegexMap.ts` the roadmap item names: `Ground` is `/^BigWorldTerrain_/u` and `Buildings` is `/^Area_Md[Bb]uild_/u`.
+   - `services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`, one entry per kind of mesh the export holds (`~/Esposter/genshin-parity/extracted/mondstadt/`): `props` `/^(?:Area_(?:Md|Common)_Prop|Area_MdProps|Area_ManorProps|Indoor_MdProps|Stages_Props)_/u`, `lights` `/^Area_Common_Light_/u`, `plants` `/^(?:Stages_(?:LYLvy|SGrass|MdLGrass|Deadbush)|Grass_Reed)/u`, `rocks` `/^Stages_MDSRock/u`, `items` `/^Item_/u`, `commonBuildings` `/^(?:Area_Common_Build_|Area_Dq_Build_|Stages_Build)/u`, `dungeon` `/^Level_MdDungeon/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^(?:Eff_|WaterfallRipple|Area_Common_Effect_)/u`. The families and these entries claim each mesh in today's export once.
+   - In the `World/Screen` fixture, `witnessComponents.mondstadt` holds the two maps: the families as `witnessFamilies`, the rest as `witnessUndrawn`.
+   - Proof: `genshin:parity passes mondstadt --pass Inventory`, run from `scripts`, finds no renderer unclaimed on today's witness; being data, the maps need no unit test.
+2. **The windmill and wall generators**, in `packages/genshin-world/src/services/mondstadt/`, each fitted against its exports when the passes reach its shape.
 
 ## Build order
 

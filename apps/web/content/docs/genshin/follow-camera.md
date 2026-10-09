@@ -28,8 +28,8 @@ sequenceDiagram
 ## The orbit
 
 - **A pivot above the body.** The eye stands on an arm out from a point above the body's feet, along the camera's yaw and pitch, and looks back along it at the pivot, so the camera's quaternion is its yaw and pitch alone.
-- **The look turns it once a frame.** The pointer, while locked, and the right stick turn the yaw and tilt the pitch, clamped short of looking straight up or down. The wheel's notches zoom it within its nearest and furthest distance. The steps of that frame read the yaw it turned to, so a move stays relative to where the player is looking.
-- **Reset puts it behind the body.** The middle mouse button or a pad's right stick press, the game's reset, swings it level behind the way the body faces at its default distance, as a jump from the [map](/docs/genshin/map) does on landing.
+- **The look turns it once a frame.** The pointer, while locked, and the right stick turn the yaw and tilt the pitch, clamped short of looking straight up or down, each scaled by its sensitivity setting over the middle of the game's range. The wheel's notches zoom it within its nearest and furthest distance. The steps of that frame read the yaw it turned to, so a move stays relative to where the player is looking.
+- **Reset puts it behind the body.** The middle mouse button or a pad's right stick press, the game's reset, swings it level behind the way the body faces at its default distance from the settings, as a jump from the [map](/docs/genshin/map) does on landing.
 - **It follows the body between steps.** The body moves in fixed steps and the view once a frame, so the pivot is the body's place blended between its last two steps by how far the frame has come into the next, which the fixed-step loop gives as its share of a step left over. Without the blend a body stepping at a fixed rate stutters against the display's own rate.
 
 ## Pulled in
@@ -44,18 +44,19 @@ Photo mode, chosen from the Paimon menu, holds the body where it stands and keep
 
 ## The numbers
 
-The pivot's height, the field of view, the pitch's limits, the default, nearest and furthest distances, a notch's zoom and the ease back out are provisional, in `packages/genshin-engine/src/camera/constants.ts`, until recordings of the game's camera in play solve them. The settings the game offers for this camera, its sensitivity, its default distance and its pitch following a slope, wait on the [menu screens](/docs/proposals/genshin/menu-screens)' Settings.
+The pivot's height, the field of view, the pitch's limits, the nearest and furthest distances, a notch's zoom and the ease back out are provisional, in `packages/genshin-engine/src/camera/constants.ts`, until recordings of the game's camera in play solve them. The camera's sensitivities and default distance are read from `FOLLOW_CAMERA_DEFAULT_SETTINGS` at the game's defaults, provisional until the Settings screen holds them; its pitch following a slope waits on the [menu screens](/docs/proposals/genshin/menu-screens)' Settings.
 
 ## Key files
 
-| File                                                              | Its role                                                              |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-engine/src/camera/createFollowCamera.ts`        | the orbit: look, zoom, reset, and the eye pulled in along the arm     |
-| `packages/genshin-engine/src/camera/constants.ts`                 | the camera's provisional numbers                                      |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | the sphere cast along the arm                                         |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`   | how far into the next step a frame has come                           |
-| `packages/genshin-world/src/components/World/Character/Index.vue` | runs the camera each frame on the blended body, and locks the pointer |
-| `packages/genshin-world/src/components/World/Session/Index.vue`   | shows the cursor on Left Alt, and holds the orbit on in photo mode    |
+| File                                                                | Its role                                                              |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------- |
+| `packages/genshin-engine/src/camera/createFollowCamera.ts`          | the orbit: look, zoom, reset, and the eye pulled in along the arm     |
+| `packages/genshin-engine/src/camera/constants.ts`                   | the camera's provisional numbers and default settings                 |
+| `packages/genshin-engine/src/models/camera/FollowCameraSettings.ts` | the settings the camera reads: its sensitivities and default distance |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`   | the sphere cast along the arm                                         |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`     | how far into the next step a frame has come                           |
+| `packages/genshin-world/src/components/World/Character/Index.vue`   | runs the camera each frame on the blended body, and locks the pointer |
+| `packages/genshin-world/src/components/World/Session/Index.vue`     | shows the cursor on Left Alt, and holds the orbit on in photo mode    |
 
 ## Sources
 
