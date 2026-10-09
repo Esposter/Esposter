@@ -30,6 +30,7 @@ import {
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
+  MOVED_BRANCH_RETRY_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
   PENDING_CHECK_WAIT_MS,
@@ -40,8 +41,11 @@ import {
   REPAIR_REGENERATE_COMMANDS,
   REPAIR_REGENERATE_TIMEOUT_MS,
   REPAIR_SESSION_TIMEOUT_MS,
+  REPAIR_SIGNATURE_SPAN_MS,
   RETRIGGER_BUFFER_MS,
   RETRIGGER_SLEEP_CAP_MS,
+  REVIEW_ASK_MARKER,
+  REVIEW_ASK_WAITS_MS,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SESSION_LIMITED_MARKER,
@@ -51,6 +55,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getFailureSignature } from "#src/services/coderabbit/collect/getFailureSignature";
+import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
@@ -60,6 +65,7 @@ import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { PROBE_COMMENT, REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
+import { takeOne } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -518,6 +524,29 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
+  // With no window open and none to cut, nothing in flight can move main under a claim, so the head it failed on is the
+  // Last it would meet: it is parked at once rather than counted on heads that never come
+  test("parks a claimed commit that does not apply to main at once when nothing in flight can move main", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const heldSha = commitFile(TEST_FILENAME, "");
+    publish(getHeldBranch(heldSha), heldSha);
+    commitFile(TEST_FILENAME, " ");
+    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
+    answerGh([]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `parked 1 claimed commits no cut onto ${MAIN_BRANCH} applies, with nothing in flight to move it`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(readSha(`origin/${getHeldBranch(claimedSha)}`)).toBe(claimedSha);
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+  });
+
   // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
   // Attempt against its signature and fails the run, as the fold does
   test("counts a repair that left no trailered commit against its signature and fails the run", async () => {
@@ -625,18 +654,24 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // Past its attempts a red is handed to the tracker once, and the repairer spends nothing more on it until the span or
-  // The collector moves on
-  test("opens one issue and repairs nothing once a signature is past its attempts", async () => {
+  // The collector moves on. Nothing reports its oldest attempt ageing out of the span, so the run wakes itself then
+  test("opens one issue, repairs nothing and wakes when the oldest attempt ages out once a signature is past its attempts", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    vi.useFakeTimers({ now: REPAIR_SIGNATURE_SPAN_MS - 1, toFake: ["Date"] });
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], getSignatureAttempts(SESSION_ATTEMPT_CAP), [redRun]);
-    await runCycle({ ...baseInput, cwd: getCwd() });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const issueCreates = runGh.mock.calls.filter(([args]) => args[0] === "issue" && args[1] === "create");
     const createArgs = issueCreates[0]?.[0] ?? [];
 
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(1 + RETRIGGER_BUFFER_MS),
+      targetSha: undefined,
+    });
     expect(issueCreates).toHaveLength(1);
     expect(createArgs[createArgs.indexOf("--body") + 1]?.split("\n")[0]).toBe(
       getMarker(REPAIR_EXHAUSTED_MARKER, signature, [collectorSha]),
@@ -961,7 +996,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
   });
 
-  // The lease is the compare-and-swap: a develop that moved under the run is refused and reported, never overwritten
+  // The lease is the compare-and-swap: a develop that moved under the run is refused and reported, never overwritten,
+  // And since no push to develop fires a run, the run wakes itself to measure again
   test("reports a develop that moved during the run and pushes nothing over it", async () => {
     expect.hasAssertions();
 
@@ -976,7 +1012,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures`,
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: MOVED_BRANCH_RETRY_DELAY_SECONDS,
       targetSha: undefined,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(movedSha);
@@ -1240,11 +1276,13 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: "asked for the review the limit refused — the bot's answer fires the cycle again",
-      retriggerDelaySeconds: undefined,
+      reason: `pull request #${pullRequest} — asked 1 of ${REVIEW_ASK_WAITS_MS.length} times for the review the limit refused — its answer fires the cycle again`,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(takeOne(REVIEW_ASK_WAITS_MS, 0)),
       targetSha: undefined,
     });
-    expect(getPrCalls("comment")).toStrictEqual([[["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]]]);
+    expect(getPrCalls("comment")).toStrictEqual([
+      [["pr", "comment", pullRequest.toString(), "--body", `${PROBE_COMMENT}\n<!-- ${REVIEW_ASK_MARKER} -->`]],
+    ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 
