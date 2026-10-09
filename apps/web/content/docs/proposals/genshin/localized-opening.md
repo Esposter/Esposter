@@ -27,11 +27,8 @@ flowchart LR
 
 ## Scope
 
-- **Next: the Japanese and Korean openings, from public clips.** Two public recordings are the references until the owed `opening-japanese.mkv` and `opening-korean.mkv` re-measure them, and they do not wait on them:
-  - the Japanese PC client's launch, [【原神】PCとiPhone13ProMaxの起動時間比較](https://www.youtube.com/watch?v=57d2PwbOdr0) (51 seconds): `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=57d2PwbOdr0 --from 0 --to 51 --name opening-japanese`;
-  - the Korean client's login at night, [원신 임팩트 - 로그인 화면 (야간)](https://www.youtube.com/watch?v=HFxhJB_N4Nk) (105 seconds): `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=HFxhJB_N4Nk --from 0 --to 105 --name opening-korean`.
-
-  Each is read a frame a second with `genshin:parity frames`, the builder picking from the images the seconds where the publisher splash, the title splash, the health notice and the door stand whole, and taking each with `genshin:parity frame <capture> --at <second> --name <reference>`. A clip that turns out to show a phone or another client's language is replaced by the next result of `ytsearch10:原神 起動 PC` or `ytsearch10:원신 로그인 화면 PC`. Each frame becomes a `ParityReferenceMap` entry named for its screen and language (`title-splash-japanese`, `health-notice-korean`, `login-interface-door-japanese`), with `props: { language: "Japanese" }` or `"Korean"` as `health-notice-mainland` has. `ParityReferenceMap.test.ts` proves each names a screen with a fixture, and each compare is queued as a `[page]` item for the user's eyes.
+- **Done: the Japanese PC client's health notice.** Its reference `health-notice-japanese` is the public recording's frame at 30 seconds (`yt-57d2PwbOdr0-opening-japanese.mp4`, clipped by `genshin:parity clip`), whole in its own words, scored over a region clear of the PC watermark and the recorder's icons. Its compare is a `[page]` item on the roadmap for the user's eyes.
+- **Not in the public clips.** The Japanese clip shows the PC client's title only as its iPhone capture, and no PC publisher splash, so `title-splash-japanese` and `publisher-splash-japanese` wait on a PC recording. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds, with no splash, health notice or door stage, so no Korean reference can be built from it, and it waits on a Korean launch recording.
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.

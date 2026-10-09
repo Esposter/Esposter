@@ -198,6 +198,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
   // The English PC client's notice, from the 2023 recording of its launch at 1080p, in the current build's wording
   "health-notice": { capture: "yt-sQNqMfmfkZU.mp4", screen: "SplashHealthNotice", seconds: 8 },
+  // The Japanese PC client's notice whole at 30 seconds of the public recording of its launch (the PC watermark top left and the
+  // Recorder's icons bottom right sit outside the region scored)
+  "health-notice-japanese": {
+    capture: "yt-57d2PwbOdr0-opening-japanese.mp4",
+    props: { language: "Japanese" },
+    region: { height: 480, width: 1520, x: 200, y: 300 },
+    screen: "SplashHealthNotice",
+    seconds: 30,
+  },
   // Mainland China's notice in its own words, from the public recording of an older build's launch its splash is taken
   // From, held from about 7 to 12 seconds
   "health-notice-mainland": {
