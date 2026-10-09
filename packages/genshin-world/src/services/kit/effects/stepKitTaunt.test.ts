@@ -1,5 +1,6 @@
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AMBER_CHARACTER_ID } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
@@ -8,7 +9,7 @@ import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
-const AMBER_KIT = createAmberKit(await readTalentMultipliers([AMBER_CHARACTER_ID]));
+const AMBER_KIT = createAmberKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AMBER_CHARACTER_ID]));
 
 const createTaunt = (health: number, secondsRemaining: number): KitTaunt => ({
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },

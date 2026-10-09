@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
@@ -12,7 +13,7 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,

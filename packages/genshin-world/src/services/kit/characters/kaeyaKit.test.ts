@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KAEYA_CHARACTER_ID } from "#src/services/character/constants";
@@ -13,7 +14,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KAEYA_KIT = createKaeyaKit(await readTalentMultipliers([KAEYA_CHARACTER_ID]));
+const KAEYA_KIT = createKaeyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAEYA_CHARACTER_ID]));
 
 const createKaeyaCombatant = (): Combatant => ({
   ascension: 0,

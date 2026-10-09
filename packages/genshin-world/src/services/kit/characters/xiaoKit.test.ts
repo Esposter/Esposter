@@ -3,6 +3,7 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID, XIAO_CHARACTER_ID } from "#src/services/character/constants";
@@ -17,8 +18,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XIAO_KIT = createXiaoKit(await readTalentMultipliers([XIAO_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const XIAO_KIT = createXiaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XIAO_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const createXiaoCombatant = (ascension: number): Combatant => ({
   ascension,

@@ -258,6 +258,7 @@ const {
   worldRandom,
 } = useWorldCombat({
   events,
+  gameDataBaseUrl,
   onPartyRevived: () => {
     const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
     if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));

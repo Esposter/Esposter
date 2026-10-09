@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -13,7 +14,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AYAKA_KIT = createAyakaKit(await readTalentMultipliers([AYAKA_CHARACTER_ID]));
+const AYAKA_KIT = createAyakaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AYAKA_CHARACTER_ID]));
 
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,

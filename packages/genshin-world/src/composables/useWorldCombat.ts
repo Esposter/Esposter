@@ -38,11 +38,13 @@ import { createSeededRandom } from "genshin-engine";
 // Host places it
 export const useWorldCombat = ({
   events,
+  gameDataBaseUrl,
   onPartyRevived,
   placeWorldDrops,
   statTables,
 }: {
   events: WorldEvents;
+  gameDataBaseUrl: string;
   onPartyRevived: () => void;
   placeWorldDrops: (enemy: Enemy, enemyDrops: EnemyDrops) => void;
   statTables: StatTables;
@@ -59,7 +61,9 @@ export const useWorldCombat = ({
   watchImmediate(deployedCharacterIds, (characterIds) => {
     // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readTalentMultipliers([...new Set([TRAVELER_CHARACTER_ID, ...characterIds])])).match(
+    getResultAsync(() =>
+      readTalentMultipliers(gameDataBaseUrl, [...new Set([TRAVELER_CHARACTER_ID, ...characterIds])]),
+    ).match(
       (newTalentMultipliers) => {
         talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
         loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, TRAVELER_CHARACTER_ID, ...characterIds])];

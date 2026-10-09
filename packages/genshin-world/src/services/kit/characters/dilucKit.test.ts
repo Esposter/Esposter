@@ -4,6 +4,7 @@ import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -18,7 +19,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
+const DILUC_KIT = createDilucKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DILUC_CHARACTER_ID]));
 
 describe("diluc kit", () => {
   const DILUC_COMBATANT: Combatant = {

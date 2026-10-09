@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -13,7 +14,7 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { describe, expect, test } from "vitest";
 
-const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
+const DILUC_KIT = createDilucKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DILUC_CHARACTER_ID]));
 
 describe(getBuffedCombatant, () => {
   const CHARACTER_ID = 1;

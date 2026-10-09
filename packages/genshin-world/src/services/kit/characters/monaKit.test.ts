@@ -4,6 +4,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { MONA_CHARACTER_ID } from "#src/services/character/constants";
@@ -23,7 +24,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const MONA_KIT = createMonaKit(await readTalentMultipliers([MONA_CHARACTER_ID]));
+const MONA_KIT = createMonaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MONA_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
 
