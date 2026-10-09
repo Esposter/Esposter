@@ -1,5 +1,6 @@
 import { ClaimStatus } from "#src/models/fleet/ClaimStatus";
 import { formatAge } from "#src/services/fleet/formatAge";
+import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { formatFleetTable } from "#src/services/fleet/formatFleetTable";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
@@ -24,7 +25,7 @@ await runMain(
         const state = status === ClaimStatus.Missed ? `miss: ${message.miss ?? ""}` : status.toLowerCase();
         return [
           entry,
-          message.machine,
+          formatClaimHolder(message),
           formatAge(now - Temporal.Instant.from(message.renewedAt).epochMilliseconds),
           state,
         ];

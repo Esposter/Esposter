@@ -1,8 +1,9 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { join } from "node:path";
 
-// The game's tables the Profile tab's stories and namecards are read from, in the dump beside its text maps
+// The game's tables the Profile tab's stories, voice-overs and namecards are read from, in the dump beside its text maps
 export const FETTER_STORY_TABLE_NAME = "FetterStoryExcelConfigData";
+export const FETTER_VOICE_TABLE_NAME = "FettersExcelConfigData";
 export const AVATAR_TABLE_NAME = "AvatarExcelConfigData";
 // The condition kinds a story's open list names: none, which opens it at once, a Friendship Level, which opens it at that level
 export const FETTER_NONE_CONDITION_TYPE = "FETTER_COND_NONE";

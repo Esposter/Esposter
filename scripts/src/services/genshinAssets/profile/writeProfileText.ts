@@ -1,10 +1,12 @@
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/profile/ExcelAvatarRow";
 import type { ExcelFetterStoryRow } from "#src/models/genshinAssets/profile/ExcelFetterStoryRow";
+import type { ExcelFetterVoiceRow } from "#src/models/genshinAssets/profile/ExcelFetterVoiceRow";
 import type { CharacterData, ProfileText } from "genshin-world";
 
 import {
   AVATAR_TABLE_NAME,
   FETTER_STORY_TABLE_NAME,
+  FETTER_VOICE_TABLE_NAME,
   PROFILE_GENERATED_DIRECTORY,
   PROFILE_TEXT_LOADER_MAP_PATH,
 } from "#src/services/genshinAssets/profile/constants";
@@ -37,6 +39,20 @@ export const writeProfileText = (): string[] => {
     new Set(characterIds),
   );
   const storyRowsMap = Map.groupBy(storyRows, ({ avatarId }) => avatarId);
+  // A voice-over is read as a story row, its title and line in the story's place, so both take the one conversion
+  const voiceRows = selectFetterStoryRows(
+    readExcelTable<ExcelFetterVoiceRow>(FETTER_VOICE_TABLE_NAME)
+      .filter(({ isHiden }) => !isHiden)
+      .map(({ avatarId, fetterId, openConds, voiceFileTextTextMapHash, voiceTitleTextMapHash }) => ({
+        avatarId,
+        fetterId,
+        openConds,
+        storyContextTextMapHash: voiceFileTextTextMapHash,
+        storyTitleTextMapHash: voiceTitleTextMapHash,
+      })),
+    new Set(characterIds),
+  );
+  const voiceRowsMap = Map.groupBy(voiceRows, ({ avatarId }) => avatarId);
   const namecardIconNameMap = new Map(
     characterIds.map((avatarId) => [
       avatarId,
@@ -57,6 +73,9 @@ export const writeProfileText = (): string[] => {
           namecardIconName: namecardIconNameMap.get(avatarId) ?? "",
           stories: (storyRowsMap.get(avatarId) ?? []).map((storyRow) =>
             toProfileStory(storyRow, textMap, englishTextMap),
+          ),
+          voices: (voiceRowsMap.get(avatarId) ?? []).map((voiceRow) =>
+            toProfileStory(voiceRow, textMap, englishTextMap),
           ),
         },
       ]),
@@ -102,6 +121,6 @@ ${loaderLines.join("\n")}
   );
   const namecardCount = [...namecardIconNameMap.values()].filter((namecardIconName) => namecardIconName !== "").length;
   return [
-    `${characterIds.length} profiles, ${storyRows.length} stories and ${namecardCount} namecards written in ${GameLanguages.length} languages`,
+    `${characterIds.length} profiles, ${storyRows.length} stories, ${voiceRows.length} voice-overs and ${namecardCount} namecards written in ${GameLanguages.length} languages`,
   ];
 };

@@ -5,7 +5,7 @@ description: How the local machine runs the work — the lanes, each worktree's 
 
 # Machine efficiency
 
-The work on this machine is many agents and a few long runners sharing one set of cores, one GPU and about 32 GB of memory. The rules an agent follows are in the `throughput` skill (`.agents/skills/throughput/references/machine-efficiency.md`); this page explains how the pieces fit and what each one buys, with the magnitude measured on this machine.
+The work on this machine is many agents and a few long runners sharing one set of cores, one GPU and about 32 GB of memory. The rules an agent follows are in the `throughput` skill (`.agents/skills/throughput/references/machine-efficiency.md`); this page covers what each one buys, with the magnitude measured on this machine.
 
 ## How the work runs
 
@@ -15,7 +15,7 @@ A **lane** is one thing doing work on the machine: the main session, a `haiku` a
 - **Each command launches its own browser.** A parity command opens an Edge for its own life and closes it with its page, so no browser outlives the command that started it, and a browser that grows across pages never builds up.
 - **Every heavy run takes a slot.** A typecheck, a build or a test run goes through `run-in-slot.sh`, which lets four of them run at once, each only while free memory is above an eighth of the machine's RAM, and holds the rest back. A tsdown build peaks near 2 GB, and many agents building at once took free memory down to about 1.3 GB; a fixed two slots then held the cores at about 37% with agents queued, so the count keeps the cores fed and the gate keeps memory.
 - **A worktree commit borrows the main checkout's tools.** The pre-commit hook used to run `pnpm` in a fresh worktree, which installed the whole workspace there and failed on an unbuilt `@esposter/shared` (102 to 179 s across three runs, each failing); its check and formatter now run from the main checkout's install, and a commit takes about 2 s (1.6 to 2.1 s across three runs).
-- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits while it is under an eighth of the machine's RAM, about 4 GB here. The machine watcher (`pnpm ai:machine:watch`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls. It also pushes the machine's heartbeat, a `refs/machines/<id>` commit every ten minutes carrying its CPU, GPU and free memory, which `pnpm ai:fleet:status` reads for the whole fleet ([Fleet](/docs/architecture/fleet)); a failed push prints one line and the watcher carries on.
+- **The memory gate and the machine watcher hold the rest.** Before a heavy run starts it reads the free memory and waits at the gate, about 4 GB here, as the throughput skill sets out. The machine watcher (`pnpm ai:machine:watch`, under Monitor) wakes the session only when the machine has gone idle or the gate is hit, so nothing polls. It also pushes the machine's heartbeat, a `refs/machines/<id>` commit every ten minutes carrying its CPU, GPU and free memory, which `pnpm ai:fleet:status` reads for the whole fleet ([Fleet](/docs/architecture/fleet)); a failed push prints one line and the watcher carries on.
 
 ```mermaid
 flowchart TD

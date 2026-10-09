@@ -20,8 +20,9 @@ describe(generateExports, () => {
     rmSync(packageDirectory, { force: true, recursive: true });
   });
 
-  // A module with no export is a program — listed, it would run on every import of the package — and a test or an
-  // Ambient declaration is not the package's surface, so only the nested module reaches the barrel, by a posix path
+  // A module with no export is a program — listed, it would run on every import of the package — a test or an ambient
+  // Declaration is not the package's surface, and a chunk module listed would be folded into the entry, so only the
+  // Nested module reaches the barrel, by a posix path
   test("lists every module with an export and nothing else", () => {
     expect.hasAssertions();
 
@@ -29,6 +30,7 @@ describe(generateExports, () => {
     writeFileSync(join(sourceDirectory, TEST_FILENAME, `${TEST_FILENAME}.ts`), `export type A = 0;`);
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.test.ts`), `export const a = 0;`);
     writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.d.ts`), `export declare const a: 0;`);
+    writeFileSync(join(sourceDirectory, `${TEST_FILENAME}.chunk.ts`), `export default 0;`);
     generateExports(packageDirectory, "typescript");
 
     expect(readFileSync(join(sourceDirectory, "index.ts"), "utf8")).toBe(

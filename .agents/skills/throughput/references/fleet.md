@@ -19,7 +19,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 ## The queue is pulled, never pushed
 
 - **Work is an entry with an id and its needs:** a compute-queue item on the roadmap, or an open proposal unit. An entry names what it writes, which is also its touch set.
-- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next`. That returns, and claims, the first entry that meets all of these:
+- **An idle machine takes its own next entry.** When its watcher prints an idle line, its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;
   - no one holds it;
@@ -27,11 +27,13 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
   Nothing ready means the machine stays idle and says nothing.
 
+- **A fresh worktree is set up in two installs, never one.** `pnpm i --frozen-lockfile` leaves the workspace state without the `autoDedupe` setting, which `verifyDepsBeforeRun: error` rejects as "changed"; the `pnpm i --offline` that follows records it, and runs no network resolve, so the lockfile stays as committed. In a worktree: `pnpm i --frozen-lockfile && pnpm i --offline`.
 - **The coordinator writes entries and settles calls.** It never assigns work by message and never waits on a machine's report, so the fleet grows without its cost growing.
 
 ## A claim is a ref
 
-- **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one machine wins. There is no lock service, and two different entries never contend.
+- **Claiming creates `refs/claims/<entry-id>` on origin, by pushing a parentless commit.** Git refuses the second create as not a fast-forward, so exactly one worker wins. There is no lock service, and two different entries never contend.
+- **A claim belongs to one worker; a machine runs many.** A holder is `{ machine, worker }`. `pnpm ai:fleet:next` prints the worker id it claimed under (`claimed <id> as worker <worker>`), taken from `FLEET_WORKER` or a new short id when the environment gives none. `hold` and `release` take that id as `--worker`, or read it from `FLEET_WORKER`. A worker adopts only a claim that matches both fields, so another worker on the same machine counts as holding the entry, and `next` moves on. A release stops only its own worker's hold, whose file is `~/.esposter/holds/<id>.<worker>.pid`. A claim written before workers reads as worker `""`.
 - **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line.
 - **A claim unrenewed for thirty minutes is stale.** It is taken over the same way, leased from the stale sha.
 - **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.

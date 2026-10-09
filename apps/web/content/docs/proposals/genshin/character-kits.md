@@ -39,7 +39,7 @@ flowchart TD
 
 1. **The Traveler's skill and burst** for the element a statue gives them, once the [statues page](/docs/proposals/genshin/statues-of-the-seven) holds the resonance, then one module per character as the [characters](/docs/genshin/characters) page draws each.
 2. **Passives**, each written with its character's module and opened by the phase its table names.
-3. **The other characters' modules**, in the dump's order, each over the same effects and its multipliers from the table. Built so far: the Traveler's, Diluc's, Bennett's, Mona's, Amber's, Kaeya's, Lisa's, Noelle's, Kamisato Ayaka's, Jean's, Barbara's and Razor's, as [character kits](/docs/genshin/character-kits) records.
+3. **The other characters' modules**, in the dump's order, each over the same effects and its multipliers from the table. Built so far: the Traveler's, Diluc's, Bennett's, Mona's, Amber's, Kaeya's, Lisa's, Noelle's, Kamisato Ayaka's, Jean's, Barbara's, Razor's, Venti's, Xiangling's and Beidou's, as [character kits](/docs/genshin/character-kits) records.
 
 ## Data and measures
 

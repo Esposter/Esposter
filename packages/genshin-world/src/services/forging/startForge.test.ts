@@ -4,6 +4,7 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/services/forging/constants";
 import { startForge } from "#src/services/forging/startForge";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -102,6 +103,18 @@ describe(startForge, () => {
     expect.hasAssertions();
 
     expect(startForge(recipe, 1.5, startArguments)).toBeUndefined();
+  });
+
+  test("should pay a recipe's Original Resin from the wallet, and be refused where the wallet holds too little", () => {
+    expect.hasAssertions();
+
+    const resinRecipe = { ...recipe, materials: [{ count: 10, id: ORIGINAL_RESIN_ITEM_ID }] };
+    const resinWallet = { ...wallet, [Currency.OriginalResin]: 20 };
+
+    expect(startForge(resinRecipe, 1, { ...startArguments, wallet: resinWallet })?.wallet[Currency.OriginalResin]).toBe(
+      10,
+    );
+    expect(startForge(resinRecipe, 3, { ...startArguments, wallet: resinWallet })).toBeUndefined();
   });
 
   test("should refuse in the Serenitea Pot a recipe that takes a Magical Crystal Chunk, and forge it anywhere else", () => {

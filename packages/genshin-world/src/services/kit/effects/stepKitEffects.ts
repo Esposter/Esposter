@@ -24,7 +24,7 @@ export const stepKitEffects = (
   for (const effect of kitEffectState.effects)
     if (effect.kind === "field") stepKitField(effect, stepSeconds, body, { activeCombatant, kitEffectState, party });
   const strikes = kitEffectState.effects.flatMap((effect) => {
-    if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds);
+    if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds, body);
     if (effect.kind === "taunt") return stepKitTaunt(effect);
     if (effect.kind === "bubble") return stepKitBubble(effect);
     if (effect.kind === "shield") return stepKitShield(effect, body);

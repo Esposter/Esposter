@@ -2,10 +2,10 @@
 import type { CharacterMenuProfileEntry } from "genshin-interface";
 import type { GameLanguage, GameText } from "genshin-text";
 
-import { CharacterMenuProfile } from "genshin-interface";
 import { readCharacterProfile } from "#src/services/profile/readCharacterProfile";
 import { toCharacterProfileEntries } from "#src/services/profile/toCharacterProfileEntries";
 import { getResultAsync } from "@esposter/shared";
+import { CharacterMenuProfile } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -25,7 +25,7 @@ const entries = ref<CharacterMenuProfileEntry[]>([]);
 getResultAsync(() => readCharacterProfile(avatarId, language, friendshipExp)).match(
   ({ friendshipLevel, profileText }) => {
     entries.value = toCharacterProfileEntries(
-      profileText.stories,
+      [...profileText.stories, ...profileText.voices],
       friendshipLevel,
       gameText[GameTextKey.StoryUnlocksAt],
     );

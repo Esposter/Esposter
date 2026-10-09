@@ -10,6 +10,8 @@ export interface KitSummon {
   combatant: Combatant;
   elapsedSeconds: number;
   hits: KitHit[];
+  // Whether the summon moves with the body on the field, standing where that body stands on each step, whoever it is
+  isFollowing?: true;
   kind: "summon";
   secondsRemaining: number;
   travel?: { metresPerSecond: number; startSeconds: number };

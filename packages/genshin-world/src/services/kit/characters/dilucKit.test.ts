@@ -164,7 +164,7 @@ describe("diluc kit", () => {
     const explosionHits: number[] = [];
     const tickHits: number[] = [];
     for (let frame = 0; frame < 230; frame++)
-      for (const { hit } of stepKitSummon(phoenix, FRAME_SECONDS))
+      for (const { hit } of stepKitSummon(phoenix, FRAME_SECONDS, { x: 0, z: 0 }))
         if (hit.hitArea.radius === 9.4) explosionHits.push(frame);
         else tickHits.push(frame);
     // Eight ticks, from the 12th frame after the slash's 100th, and the explosion at 202 frames

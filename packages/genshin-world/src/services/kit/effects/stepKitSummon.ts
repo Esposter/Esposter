@@ -1,11 +1,17 @@
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { GroundPoint } from "genshin-engine";
 
-// A summon's clock run on by a step: a travelling summon's body moves forward over the seconds it has been travelling,
-// Then each hit whose hitmark falls within the step lands from the summon's body, as the hits of an action do
-export const stepKitSummon = (summon: KitSummon, stepSeconds: number): KitStrike[] => {
+// A summon's clock run on by a step: a following summon's body stands where the body on the field stands, and a
+// Travelling summon's body moves forward over the seconds it has been travelling. Then each hit whose hitmark falls
+// Within the step lands from the summon's body, as the hits of an action do
+export const stepKitSummon = (summon: KitSummon, stepSeconds: number, body: GroundPoint): KitStrike[] => {
   const fromSeconds = summon.elapsedSeconds;
   summon.elapsedSeconds += stepSeconds;
+  if (summon.isFollowing) {
+    summon.body.position.x = body.x;
+    summon.body.position.z = body.z;
+  }
   if (summon.travel) {
     const { metresPerSecond, startSeconds } = summon.travel;
     const travelledSeconds =

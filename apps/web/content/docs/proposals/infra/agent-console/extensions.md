@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Extensions
 
-The [agent console](/docs/infra/claude-interface/agent-console) is worth more when the tooling around the work opens inside it. The rule for how is **the least code on either side**: a tool should not have to know the console exists, and the console should not have to know any tool. Three tiers meet that, cheapest first, and a tool uses the first that fits.
+Opening tooling inside the [agent console](/docs/infra/claude-interface/agent-console) adds more again. The rule for how is **the least code on either side**: a tool should not have to know the console exists, and the console should not have to know any tool. Three tiers meet that, cheapest first, and a tool uses the first that fits.
 
 The first tier has shipped: any page of the app opens in the console's [side pane](/docs/infra/claude-interface/agent-console/side-pane), and the [resource explorer](/docs/resource/explorer) joins with no change. What is left is the tier for tooling outside the app and the tier for first-party panels that need the scene.
 

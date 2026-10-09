@@ -20,7 +20,8 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 **Still to build, in order:**
 
 1. **The forge screen and the blacksmith's place.** After the recording owed on the roadmap, and with the region's placements.
-2. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, and the Mystic ore's and Magical Crystal Chunk's item definitions join the items slice, both wired by the screen that forges them.
+2. **The screen's wiring to the built rules.** The Adventure EXP a Mystic unit yields goes to the Adventure Rank, wired by the screen that forges them.
+3. **The weapons' item definitions.** The reason is in the [forging](/docs/genshin/forging) page's notes, and until the definitions are written a weapon unit's result has no definition in the bag.
 
 ## Data and measures
 
@@ -34,4 +35,4 @@ The blacksmith's recipes, queues, orders, daily cap, drop-table Mystic, forging 
 
 ## Sources
 
-- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The page was not reachable from this build, so the screen's layout waits on the recording instead.
+- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the blacksmith's screen. The screen's layout waits on the recording, since this build could not read the page.

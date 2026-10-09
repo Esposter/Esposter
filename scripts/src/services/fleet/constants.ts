@@ -1,7 +1,6 @@
+import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
-
-import { SITE_NAME } from "@esposter/shared";
 
 export const FLEET_REMOTE = "origin";
 export const CLAIM_REF_PREFIX = "refs/claims/";
@@ -26,6 +25,10 @@ export const STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 30 }
 // A renewal's load line samples the machine over this window, so a renewal is quick
 export const LOAD_SAMPLE_MILLISECONDS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const MACHINE_PROFILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine.json");
+// A running hold has one file per entry here, which a release deletes to stop the hold on this machine at once
+export const HOLDS_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "holds");
+// How often a hold checks its entry's file between renewals, so a local release is seen within this interval
+export const LOCAL_HOLD_POLL_MILLISECONDS: number = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 // The areas a machine holds when its profile is new: every area, until the user lends it fewer
 export const ALL_AREAS: readonly string[] = ["*"];
 // The capabilities read off the machine itself, which every run rewrites. Any other capability in a profile was set by

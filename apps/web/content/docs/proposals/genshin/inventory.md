@@ -11,7 +11,7 @@ This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet,
 ## Decisions
 
 - **Food heals its own target.** Using a food takes one from the bag and applies its own effect to the target it names, the selected character for most recovery dishes and the whole party for some, never past full health. It waits on each food's heal and target, which are the game's own figures and not yet read into the bag's data.
-- **Destroying from the screen.** The bag's destroy mode picks one entry at a time, and the destroy rule it uses is built: a weapon or an artifact of up to four stars.
+- **Destroying from the screen.** The bag's destroy mode picks one entry at a time, and the destroy rule it uses is the [inventory](/docs/genshin/inventory) page's.
 
 ## Scope and order
 

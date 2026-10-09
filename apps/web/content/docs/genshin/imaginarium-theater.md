@@ -24,7 +24,7 @@ flowchart TD
 
 ## The schedule and the difficulties
 
-`pnpm -C scripts genshin:assets imaginarium` writes two slices from the role combat tables, each imported on demand from `packages/genshin-world/src/generated/imaginarium/`. The two tables are not in the community dump the scripts read, so they were fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
+`pnpm -C scripts genshin:assets imaginarium` writes two slices from the role combat tables, each imported on demand from `packages/genshin-world/src/generated/imaginarium/`. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
 
 - **Seasons.** Every row of the schedule: its id, the moments it begins and ends in the game's time zone, the difficulty ids it runs and the reward group its Stellas draw from. The schedule ends with a season scheduled far ahead, which is not begun, so it is never played.
 - **Difficulties.** Every difficulty row: its id, its level from one to five, and its level floor. The floors are 60 for levels one and two and 70 for levels three to five.

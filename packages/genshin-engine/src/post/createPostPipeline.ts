@@ -3,6 +3,7 @@ import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
 
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
+import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
@@ -28,7 +29,7 @@ import {
   vec4,
   velocity,
 } from "three/tsl";
-import { RenderPipeline, ToonOutlinePassNode } from "three/webgpu";
+import { RenderPipeline } from "three/webgpu";
 
 const BLOOM_STRENGTH = 0.35;
 const BLOOM_RADIUS = 0.4;
@@ -64,7 +65,7 @@ export const createPostPipeline = ({
   // The view distance, it keeps that width up close and holds a constant width in the world past it
   const viewDistance = modelViewMatrix.mul(vec4(positionLocal, 1)).z.negate().max(MIN_VIEW_DISTANCE);
   const thicknessNode = outlineThickness.mul(outlineFadeDistance.div(viewDistance).min(1));
-  const scenePass = new ToonOutlinePassNode(scene, camera, outlineColor, thicknessNode, float(1));
+  const scenePass = new SharedToonOutlinePassNode(scene, camera, outlineColor, thicknessNode, float(1));
   const isTraa = antialiasingMode === AntialiasingMode.Traa;
   // Beside its colour, the scene pass writes the velocity TRAA resolves by and the stone's mask where the scene asks for
   // Them, every material but the stone's writing none into the mask
@@ -77,6 +78,7 @@ export const createPostPipeline = ({
   // Every pass holding render targets of its own, each released with the pipeline
   const passNodes: { dispose: () => void }[] = [scenePass];
   const postPipeline: PostPipeline = {
+    compileAsync: () => scenePass.compileAsync(renderer),
     dispose: () => {
       renderPipeline.dispose();
       for (const passNode of passNodes) passNode.dispose();

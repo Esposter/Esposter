@@ -2,6 +2,7 @@ import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
+import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 import { describe, expect, test } from "vitest";
@@ -13,6 +14,8 @@ const PROFILE: MachineProfile = { areas: ["genshin"], capabilities: ["game-insta
 const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   area: "genshin",
   id: "first",
+  kind: FleetEntryKind.Queue,
+  lane: "cpu",
   needs: [],
   touches: [],
   ...overrides,
@@ -24,6 +27,7 @@ const createClaim = (renewedAt: string, miss?: string): ClaimedRef => ({
     load: "",
     machine: "other",
     renewedAt,
+    worker: "9c01",
     ...(miss === undefined ? {} : { miss }),
   },
   sha: "a".repeat(40),
@@ -64,6 +68,20 @@ describe(selectTakeableEntries, () => {
     ]);
 
     expect(selectTakeableEntries(entries, PROFILE, claims, NOW).map(({ id }) => id)).toStrictEqual(["stale"]);
+  });
+
+  test("skips an entry a live claim of another worker on this machine holds", () => {
+    expect.hasAssertions();
+
+    const entries = [createEntry({ id: "first" }), createEntry({ id: "second" })];
+    const otherWorkerClaim: ClaimedRef = {
+      message: { claimedAt: RECENT, entry: "first", load: "", machine: PROFILE.id, renewedAt: RECENT, worker: "7f3a" },
+      sha: "a".repeat(40),
+    };
+
+    expect(
+      selectTakeableEntries(entries, PROFILE, new Map([["first", otherWorkerClaim]]), NOW).map(({ id }) => id),
+    ).toStrictEqual(["second"]);
   });
 
   test("keeps a missed entry out, however old its claim", () => {

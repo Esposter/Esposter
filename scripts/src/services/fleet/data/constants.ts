@@ -1,7 +1,6 @@
+import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
-
-import { SITE_NAME } from "@esposter/shared";
 
 // The folders a copy takes by default; frames and tmp are never copied, since frames are rebuilt where they are used
 export const DATA_FOLDERS: readonly string[] = ["extracted", "text", "references", "captures", "city-areas", "plans"];

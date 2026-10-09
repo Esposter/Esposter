@@ -15,6 +15,7 @@ export enum GameTextKey {
   AdventurerHandbook = "UI_ADVENTURE_CARD_TITLE",
   AjilenakhNut = "4280106100",
   AmakumoFruit = "3862594948",
+  AmethystLump = "2485846164",
   Apple = "2483588484",
   Archive = "UI_CODEX_HOME_TITLE",
   // The titles of the Archive's seven sections, each the codex's own
@@ -83,6 +84,7 @@ export enum GameTextKey {
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
+  CondessenceCrystal = "3736537308",
   CrystalChunk = "1448077684",
   CrystalCore = "2435040556",
   CrystalMarrow = "307506436",
@@ -99,6 +101,7 @@ export enum GameTextKey {
   ElementalBurst = "CONTROL_SKILL5",
   ElementalSkill = "CONTROL_SKILL2",
   EmbercoreFlower = "3599966252",
+  EnhancementOre = "2429162676",
   Events = "UI_STC_GAMEENTRYPAGE_ACTIVITY",
   // The quit prompt's button that exits the game to the desktop
   ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
@@ -106,6 +109,7 @@ export enum GameTextKey {
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
+  FineEnhancementOre = "377860124",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
   // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
@@ -114,8 +118,8 @@ export enum GameTextKey {
   ForgeFineEnhancementOreRefusal = "1652126048",
   ForgeMysticEnhancementOreRefusal = "110208304",
   Fowl = "1695194124",
-  Friendship = "3501231455",
   Friends = "UI_FRIEND_TITLE",
+  Friendship = "3501231455",
   FrostlampFlower = "1823058028",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
@@ -206,6 +210,7 @@ export enum GameTextKey {
   Lumitoile = "1497627716",
   Mail = "UI_PLAYER_PROFILE_MAIL",
 
+  MagicalCrystalChunk = "2057452708",
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
   MasterlessStardust = "3899400612",
@@ -221,6 +226,7 @@ export enum GameTextKey {
   Mora = "3578052980",
   MourningFlower = "1761418508",
   Mushroom = "1926602188",
+  MysticEnhancementOre = "3267705996",
   NakuWeed = "3623663804",
   NilotpalaLotus = "774700468",
   NoctilucousJade = "2726159796",
@@ -256,6 +262,7 @@ export enum GameTextKey {
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowRose = "2386700548",
+  RainbowdropCrystal = "3831100636",
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RedBerryshroom = "1096616044",
@@ -288,6 +295,7 @@ export enum GameTextKey {
   Stamina = "133358079",
   Starconch = "1463427132",
   Starshroom = "2119751124",
+  Starsilver = "1269908988",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   StormbearerMountains = "490004829",

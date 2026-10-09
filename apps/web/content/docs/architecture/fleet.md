@@ -40,7 +40,7 @@ Git is the only coordination. A claim is created by pushing a parentless commit 
 A machine's profile is `~/.esposter/machine.json`, written by `pnpm ai:fleet:profile`:
 
 - `id`, the name the machine's claims and heartbeat carry. A new profile takes the hostname.
-- `areas`, the areas the user lent the machine for. A new profile is lent `["*"]`, every area. An area the user did not lend is never worked, however idle the machine is.
+- `areas`, the areas the user lent the machine for. A new profile is lent `["*"]`, every area. What an area it did not lend means for an agent is the throughput skill's (`.agents/skills/throughput/references/fleet.md`).
 - `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present under the game folder, `game-exports` when the parity exports exist, and `media-engine` on macOS and on Windows when FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it by hand, and a capability the user set is kept.
 
 The game folder is the one holding `GenshinImpact_Data`, set by the `GENSHIN_GAME_DIRECTORY` variable and defaulting to `C:\Program Files\Genshin Impact\Genshin Impact game`. The tooling and the profile read the same folder. The MacBook holds the game at `~/Esposter/genshin-parity/game`, so its `GENSHIN_GAME_DIRECTORY` names that folder.
@@ -54,12 +54,13 @@ An entry is one unit of work a machine may take, from two sources, read in this 
 - **The compute queue.** Each open item under the roadmap's **Compute queue** heading (`apps/web/content/docs/genshin/roadmap.md`) has an id in braces and its needs after `needs`, such as `needs game-install, game-exports`. Its written paths are its touch set. An item under **Waiting** is not offered.
 - **The open proposal units** under `apps/web/content/docs/proposals/<area>/`, the same units `pnpm ai:proposals:report` reads. A proposal's area is its folder, its touch set is its Key files table, and it needs nothing.
 
-`pnpm ai:fleet:next` returns the first entry that meets every condition: the machine has its needs, the entry's area is lent, no live claim holds the entry, and its touch set overlaps no live claim's. A claim is stale, and so does not hold, once it has gone unrenewed for thirty minutes. Nothing takeable means the machine prints nothing and stays idle.
+`pnpm ai:fleet:next` returns the first entry that meets every condition: the machine has its needs, the entry's area is lent, no live claim holds the entry, and its touch set overlaps no live claim's. A claim is stale, and so does not hold, once it has gone unrenewed for thirty minutes. A runner passes its lane with `--lane <lane>` (`page` or `cpu`), so it never takes another lane's item, and `--kind queue` or `--kind unit` picks between roadmap items and proposal units. A queue line with no `{id}` is skipped, with one warning on stderr naming how many. Nothing takeable means the machine prints nothing and stays idle.
 
 ## Claims
 
-- **A claim is a ref.** `pnpm ai:fleet:claim <id>` pushes a parentless commit of the empty tree to `refs/claims/<id>`, its message `{ machine, entry, claimedAt, renewedAt, load }`. Exit 0 means the machine won. Exit 1 names the holder when the ref already exists. A push that origin refuses is told apart from a network failure by asking origin again: the ref being there means a held claim, and an unreachable origin is an error.
-- **A holder renews it.** `pnpm ai:fleet:hold <id>` claims the entry, then renews every ten minutes with a new commit leased from its own last one, carrying the latest load line. It runs in the background for as long as the runner works the entry.
+- **A claim is a ref.** `pnpm ai:fleet:claim <id>` pushes a parentless commit of the empty tree to `refs/claims/<id>`, its message `{ machine, worker, entry, claimedAt, renewedAt, load }`. Exit 0 means the worker won. Exit 1 names the holder, as `machine/worker`, when the ref already exists.
+- **Claims are per worker.** A holder is `machine/worker`, and the throughput skill's fleet reference says how each command takes the worker's id. A worker adopts only its own claim, so a live claim held by another worker on the same machine is taken as held, and each release stops only its own hold. A push that origin refuses is told apart from a network failure by asking origin again: the ref being there means a held claim, and an unreachable origin is an error.
+- **A holder renews it.** `pnpm ai:fleet:hold <id>` claims the entry, then renews every ten minutes with a new commit leased from the claim the remote holds at that moment, carrying the latest load line. At each renewal it stops when the ref is gone, when the claim is a miss, or when another machine or worker holds it. `pnpm ai:fleet:release` also deletes that worker's hold file under `~/.esposter/holds/`, which the hold polls every five seconds, so a local release ends it at once. It runs in the background for as long as the runner works the entry.
 - **A stale claim is taken over.** A claim unrenewed for thirty minutes is replaced with the same explicit lease, from the stale commit, so two machines taking the same stale claim cannot both land.
 - **A miss stays.** `pnpm ai:fleet:release <id> --miss "<text>"` writes the miss into the claim. A missed claim is never stale, so the entry waits for the coordinator's call, and its paths stay held for the same reason.
 - **A finished entry is released.** The landing commit deletes the entry's line from the roadmap, and `pnpm ai:fleet:release <id>` then deletes the ref, which ends the hold.
@@ -70,7 +71,7 @@ The watcher (`pnpm ai:machine:watch`, under Monitor) pushes `refs/machines/<id>`
 
 ## Game data crosses the local network only
 
-Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel. They move over SSH on the local network, authenticated and encrypted, and a machine off the network never holds the game exports, so it takes only the entries that need no game data. The design, including which folders are copied, is in the throughput skill's `references/fleet.md`.
+Exports and recordings move over SSH on the local network, authenticated and encrypted, and a machine off the network never holds the game exports, so it takes only the entries that need no game data. The design, including which folders are copied, is in the throughput skill's `references/fleet.md`.
 
 ## Game data over the LAN
 
@@ -95,7 +96,7 @@ A machine's first route to the game data is the game itself: download it from Ho
 | `scripts/src/fleet/claim/index.ts`                    | Claims an entry as a ref on origin, exit 0 when won and exit 1 naming the holder                          |
 | `scripts/src/fleet/hold/index.ts`                     | Claims an entry, then renews the claim every ten minutes until it is released                             |
 | `scripts/src/fleet/release/index.ts`                  | Deletes an entry's claim, or with a miss keeps it as the holder's final word                              |
-| `scripts/src/fleet/next/index.ts`                     | Claims the first entry this machine may take and prints its id                                            |
+| `scripts/src/fleet/next/index.ts`                     | Claims the first entry this worker may take and prints its id and worker                                  |
 | `scripts/src/fleet/status/index.ts`                   | Fetches every claim and heartbeat and prints the machines and the claims                                  |
 | `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                      |
 | `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                               |

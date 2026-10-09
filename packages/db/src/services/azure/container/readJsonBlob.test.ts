@@ -18,7 +18,7 @@ const setupContainerClient = () => {
       },
       upload: (body: Buffer, _contentLength: number, options?: BlockBlobUploadOptions) => {
         blobs.set(name, { body, options });
-        return Promise.resolve();
+        return Promise.resolve({ etag: "etag" });
       },
     }),
   } as unknown as ContainerClient;
@@ -34,7 +34,7 @@ describe(readJsonBlob, () => {
     expect.hasAssertions();
 
     const { blobs, containerClient } = setupContainerClient();
-    const storedByteLength = await writeJsonBlob(containerClient, blobName, serializedJson);
+    const { size: storedByteLength } = await writeJsonBlob(containerClient, blobName, serializedJson);
     const blob = blobs.get(blobName);
     const json = await readJsonBlob(containerClient, blobName);
 

@@ -18,6 +18,8 @@ const isDoorOpened = ref(false);
 const gameText = await useGameText();
 // The player's save, which the world starts from once it is loaded, and the lease the page holds for it
 const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs, takeBack } = await useGenshinSave();
+// The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
+const emit = defineEmits<{ load: []; ready: [] }>();
 </script>
 
 <template>
@@ -30,9 +32,15 @@ const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs,
         :language="gameText.language"
         :save="initialSave"
         :server-clock-offset-ms
-        @grant="(grant) => onWorldGrant(grant)"
-        @load="isLoaded = true"
-        @ready="isReady = true"
+        @grant="onWorldGrant()"
+        @load="
+          isLoaded = true;
+          emit('load');
+        "
+        @ready="
+          isReady = true;
+          emit('ready');
+        "
         @save="(save) => onWorldSave(save)"
       />
     </ClientOnly>

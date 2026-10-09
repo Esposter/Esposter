@@ -21,7 +21,7 @@ export const openSurfaceStatisticsPage = async (): Promise<SurfaceStatisticsPage
   const close = async (): Promise<void> => {
     await browser.close();
   };
-  return getResultAsync(async () => {
+  return getResultAsync(async (): Promise<SurfaceStatisticsPage> => {
     const page = await browser.newPage();
     await page.goto(PARITY_PAGE_ROOT, { waitUntil: "load" });
     await page.waitForFunction(() => Reflect.has(window, "computeSurfaceStatistics"));

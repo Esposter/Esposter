@@ -113,7 +113,7 @@ flowchart TD
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
 
-The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, takes it from the team's shields first, all at once, through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. An enemy within aggro range of a live taunt strikes the taunt instead, through `damageKitTaunt`.
+The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK through `getDamage` against the member on the field, takes it from the team's shields first, all at once, through `absorbKitShield`, and the world screen respawns the deployed team when all of it has fallen. A live taunt in aggro range takes the strike through `damageKitTaunt`.
 
 ## Decisions
 

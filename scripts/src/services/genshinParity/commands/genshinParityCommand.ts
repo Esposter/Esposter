@@ -40,6 +40,7 @@ import { shadowsCommand } from "#src/services/genshinParity/commands/shadowsComm
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
 import { solosCommand } from "#src/services/genshinParity/commands/solosCommand";
+import { stallsCommand } from "#src/services/genshinParity/commands/stallsCommand";
 import { stillCommand } from "#src/services/genshinParity/commands/stillCommand";
 import { traceCommand } from "#src/services/genshinParity/commands/traceCommand";
 import { trackCommand } from "#src/services/genshinParity/commands/trackCommand";
@@ -72,6 +73,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     track: trackCommand,
     glide: glideCommand,
     shoot: shootCommand,
+    stalls: stallsCommand,
     bands: bandsCommand,
     attacks: attacksCommand,
     decay: decayCommand,

@@ -50,7 +50,7 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### Starting and finishing
 
-`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. The other kinds have no start yet: a world or story quest starts from the talk that offers it, and a commission from the daily reset. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
+`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. The other kinds have no start yet, as the [quests proposal](/docs/proposals/genshin/quests) sets out, and a commission starts from the daily reset. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
 
 `doQuestEvent` hands one doing to every quest in progress. Each step moved past finishes its sub-quest, which `getFinishedQuestEvents` turns into a `QuestFinished` for `advanceAchievements`, and a quest its last step finishes into a `ParentQuestFinished`. A finished main quest is added to the set the Archive opens by, and its Travel Log entry opens, the entries read off the Archive's table when first needed. The world records a talk's end as a talk-to, a dropped item or a gathering point picked as a collect, an enemy defeated as a defeat under its kind, and a waypoint or landmark unlocked as an interact. A go-to has no doing yet, since a place's trigger is not placed in region data.
 
