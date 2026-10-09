@@ -2,8 +2,8 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
 import type { KitState } from "#src/models/kit/KitState";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
@@ -32,7 +32,7 @@ export const stepKit = (
   stamina: Stamina,
   stepSeconds: number,
   landedHits: KitHit[],
-  cooldownState: KitSkillCooldownState,
+  context: KitStepContext,
 ): KitAction | undefined => {
   const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
@@ -40,6 +40,8 @@ export const stepKit = (
   kitState.attackHeldSeconds = isAttackHeld ? kitState.attackHeldSeconds + stepSeconds : 0;
   kitState.skillReleasedSeconds = isSkillHeld ? 0 : kitState.skillHeldSeconds;
   kitState.skillHeldSeconds = isSkillHeld ? kitState.skillHeldSeconds + stepSeconds : 0;
+  kitState.sprintSeconds = locomotionState === LocomotionState.Sprint ? kitState.sprintSeconds + stepSeconds : 0;
+  if (kitState.sprintSeconds > 0) kit.onSprint?.(context, kitState);
   kitState.skillChainSeconds += stepSeconds;
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;
@@ -90,5 +92,5 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
-  return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, cooldownState);
+  return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
 };

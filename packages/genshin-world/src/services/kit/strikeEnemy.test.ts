@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -11,6 +12,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -172,5 +174,40 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemy, hydroHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
 
     expect(healthBeforeHydro - enemy.health).toBeCloseTo(damage);
+  });
+
+  test("adds an enemy's statuses' DMG taken to the damage bonus of each hit on it", () => {
+    expect.hasAssertions();
+
+    const OMEN_DAMAGE_TAKEN_BONUS = 0.42;
+    const enemy = createSturdyEnemy();
+    addEnemyStatus(enemy, { damageTakenBonus: OMEN_DAMAGE_TAKEN_BONUS, id: "omen", secondsRemaining: 4 });
+    const { talentMultiplier } = TRAVELER_KIT.plungeCollision;
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      damageBonus: OMEN_DAMAGE_TAKEN_BONUS,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier,
+    });
+
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("gives the enemy a hit's status before the hit's damage is taken", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const hit: KitHit = {
+      ...TRAVELER_KIT.plungeCollision,
+      enemyStatus: { damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 },
+    };
+
+    strikeEnemy(enemy, hit, createCombatant(), NEVER_CRITICAL);
+
+    expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
   });
 });

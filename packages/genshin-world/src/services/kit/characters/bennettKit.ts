@@ -4,7 +4,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
-import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -169,13 +169,14 @@ const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction
 // Ascension 1 lowers every Passion Overload's cooldown by 20%
 // Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
-const getSkillCooldownMultiplier = ({ ascension, body, characterId, effects }: KitSkillCooldownState): number => {
+const getSkillCooldownMultiplier = ({ body, combatant, effects }: KitStepContext): number => {
   let multiplier = 1;
-  if (ascension >= 1) multiplier *= 0.8;
+  if (combatant.ascension >= 1) multiplier *= 0.8;
   if (
-    ascension >= 4 &&
+    combatant.ascension >= 4 &&
     effects.some(
-      (effect) => effect.kind === "field" && effect.characterId === characterId && isInKitField(effect, body),
+      (effect) =>
+        effect.kind === "field" && effect.characterId === combatant.characterId && isInKitField(effect, body.position),
     )
   )
     multiplier *= 0.5;

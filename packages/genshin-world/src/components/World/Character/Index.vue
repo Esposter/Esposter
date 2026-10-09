@@ -169,7 +169,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     characterController.stamina,
     FIXED_STEP_SECONDS,
     landedHits,
-    { ascension: combatant.ascension, body: kitBody.position, characterId, effects },
+    { body: kitBody, combatant, effects },
   );
   if (infusedElement !== undefined) infuseKitHits(combatant.kit, infusedElement, landedHits, landedStart);
   if (action) {

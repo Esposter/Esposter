@@ -2,8 +2,8 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
 import type { KitState } from "#src/models/kit/KitState";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
@@ -26,7 +26,7 @@ export const startNextKitAction = (
   stamina: Stamina,
   isStrikeEnded: boolean,
   landedHits: KitHit[],
-  cooldownState: KitSkillCooldownState,
+  context: KitStepContext,
 ): KitAction | undefined => {
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
@@ -60,7 +60,7 @@ export const startNextKitAction = (
       ({ minimumHeldSeconds }) => kitState.skillReleasedSeconds >= minimumHeldSeconds,
     );
     const cooldownSeconds = hold?.cooldownSeconds ?? kit.skillCooldownSeconds;
-    partyMember.skillCooldownSeconds = cooldownSeconds * (kit.getSkillCooldownMultiplier?.(cooldownState) ?? 1);
+    partyMember.skillCooldownSeconds = cooldownSeconds * (kit.getSkillCooldownMultiplier?.(context) ?? 1);
     kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
     kitState.skillChainSeconds = 0;
     return startKitAction(kitState, hold?.action ?? kit.elementalSkill, landedHits);

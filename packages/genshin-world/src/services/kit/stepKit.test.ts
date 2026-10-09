@@ -1,6 +1,8 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { createKitState } from "#src/services/kit/createKitState";
@@ -11,6 +13,14 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const TRAVELER_COMBATANT: Combatant = {
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: TRAVELER_CHARACTER_ID,
+  elementalResonances: [],
+  kit: TRAVELER_KIT,
+  level: 90,
+};
 
 describe(stepKit, () => {
   const STEP_SECONDS = 0.1;
@@ -40,7 +50,7 @@ describe(stepKit, () => {
         stamina,
         STEP_SECONDS,
         landedHits,
-        { ascension: 0, body: { x: 0, z: 0 }, characterId: TRAVELER_CHARACTER_ID, effects: [] },
+        { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant: TRAVELER_COMBATANT, effects: [] },
       );
     };
     return { kitState, landedHits, partyMember, stamina, step };

@@ -2,7 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitSkillCooldownState } from "#src/models/kit/KitSkillCooldownState";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -40,7 +41,7 @@ const createBennettCombatant = (): Combatant => ({
 // Passion Overload pressed or held and released by the kit, its party member's cooldown read after the release
 const releaseSkill = (
   heldSeconds: number,
-  cooldownState: Pick<KitSkillCooldownState, "ascension" | "body" | "effects">,
+  { ascension, body, effects }: { ascension: number; body: GroundPoint; effects: KitEffect[] },
 ) => {
   const kitState = createKitState();
   const partyMember = createPartyMember();
@@ -55,10 +56,14 @@ const releaseSkill = (
     isSkillPressed: false,
     locomotionState: LocomotionState.Idle,
   };
-  const state = { ...cooldownState, characterId: BENNETT_CHARACTER_ID };
+  const context: KitStepContext = {
+    body: { facing: 0, height: 0, position: body },
+    combatant: { ...createBennettCombatant(), ascension },
+    effects,
+  };
   for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
-    stepKit(kitState, BENNETT_KIT, { ...idleInput, isSkillHeld: true }, partyMember, stamina, 0.1, landedHits, state);
-  const action = stepKit(kitState, BENNETT_KIT, idleInput, partyMember, stamina, 0.1, landedHits, state);
+    stepKit(kitState, BENNETT_KIT, { ...idleInput, isSkillHeld: true }, partyMember, stamina, 0.1, landedHits, context);
+  const action = stepKit(kitState, BENNETT_KIT, idleInput, partyMember, stamina, 0.1, landedHits, context);
   return { action, partyMember };
 };
 const NO_EFFECT_STATE = { ascension: 0, body: { x: 0, z: 0 }, effects: [] };

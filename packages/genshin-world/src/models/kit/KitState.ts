@@ -21,4 +21,6 @@ export interface KitState {
   // The seconds the skill has been held, zero once let go, and the seconds it was held when it was let go this step
   skillHeldSeconds: number;
   skillReleasedSeconds: number;
+  // The seconds the body has sprinted without pause, which a passive spends as it goes on
+  sprintSeconds: number;
 }

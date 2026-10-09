@@ -19,6 +19,14 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
+const DILUC_COMBATANT: Combatant = {
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: DILUC_CHARACTER_ID,
+  elementalResonances: [],
+  kit: DILUC_KIT,
+  level: 90,
+};
 
 const createCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -95,7 +103,7 @@ describe("diluc kit", () => {
           stamina,
           STEP_SECONDS,
           landedHits,
-          { ascension: 0, body: { x: 0, z: 0 }, characterId: DILUC_CHARACTER_ID, effects: [] },
+          { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant: DILUC_COMBATANT, effects: [] },
         );
       };
       // Steps with no press until the action playing has run its seconds
