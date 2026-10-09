@@ -11,7 +11,6 @@ import {
   UNLOCK_FORGE_USE_OP,
 } from "#src/services/genshinAssets/forging/constants";
 import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe";
-import { toForgeResults } from "#src/services/genshinAssets/forging/toForgeResults";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -23,7 +22,7 @@ export const writeForgingRecipes = (): void => {
   const randomRows = readExcelTable<ExcelForgeRandomRow>(FORGE_RANDOM_TABLE_NAME);
   const recipes = readExcelTable<ExcelForgeRow>(FORGE_TABLE_NAME)
     .flatMap((row) => {
-      const recipe = toForgeRecipe(row, unlockItemIdMap.get(row.id) ?? [], toForgeResults(row, randomRows));
+      const recipe = toForgeRecipe(row, unlockItemIdMap.get(row.id) ?? [], randomRows);
       return recipe ? [recipe] : [];
     })
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);
