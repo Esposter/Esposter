@@ -3,21 +3,21 @@ import type { Vector } from "#src/models/shared/Vector";
 import { createNearestColourReader } from "#src/services/genshinAssets/fit/createNearestColourReader";
 import { describe, expect, test } from "vitest";
 
-// A black point in the five-centimetre cell the query stands in, a white one just past it in the next, and a red one
-// Far off
-const POINTS: Vector[] = [
-  [0.001, 0, 0],
-  [0.051, 0, 0],
-  [1, 0, 0],
-];
-const COLOURS: Vector[] = [
-  [0, 0, 0],
-  [1, 1, 1],
-  [1, 0, 0],
-];
-const QUERY: Vector = [0.049, 0, 0];
-
 describe(createNearestColourReader, () => {
+  // A black point in the five-centimetre cell the query stands in, a white one just past it in the next, and a red one
+  // Far off
+  const POINTS: Vector[] = [
+    [0.001, 0, 0],
+    [0.051, 0, 0],
+    [1, 0, 0],
+  ];
+  const COLOURS: Vector[] = [
+    [0, 0, 0],
+    [1, 1, 1],
+    [1, 0, 0],
+  ];
+  const QUERY: Vector = [0.049, 0, 0];
+
   test("reads the nearest point in the next cell over a farther one in its own", () => {
     expect.hasAssertions();
 
