@@ -39,16 +39,17 @@ const pushQueueHead = (sha: string, cwd: string): boolean =>
     },
   );
 
-// Removes the replay worktree. Its removal never decides the push: on Windows git cannot delete a worktree holding an
-// Install's junctions ("Invalid argument"), and throwing there lost a push that had replayed cleanly, so the
-// Registration is pruned and the directory removed by node, which unlinks a junction without following it
+// Removes the replay worktree. The directory is removed by node, which unlinks an install's junction without following
+// It, where `git worktree remove` on Windows either fails on one ("Invalid argument") or deletes through it into the
+// Shared install; the registration is then pruned. Its removal never decides the push: throwing there lost a push that
+// Had replayed cleanly, so a failure of either step is only reported
 const removeReplayWorktree = (replayCwd: string, cwd: string): void => {
-  getResult(() => runGit(["worktree", "remove", "--force", replayCwd], cwd)).match(noop, () => {
-    runGit(["worktree", "prune"], cwd);
-    getResult(() => rmSync(replayCwd, { force: true, maxRetries: 3, recursive: true })).match(noop, (error) =>
-      console.warn(`The replay worktree ${replayCwd} is left behind: ${error.message}`),
-    );
-  });
+  getResult(() => rmSync(replayCwd, { force: true, maxRetries: 3, recursive: true })).match(noop, (error) =>
+    console.warn(`The replay worktree ${replayCwd} is left behind: ${error.message}`),
+  );
+  getResult(() => runGit(["worktree", "prune"], cwd)).match(noop, (error) =>
+    console.warn(`The replay worktree ${replayCwd} is left registered: ${error.message}`),
+  );
 };
 
 // One fetch, replay and push of the session's commits, as `pushQueue` describes. A push refused as stale is reported as
