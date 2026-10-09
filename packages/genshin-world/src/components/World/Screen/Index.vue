@@ -39,6 +39,7 @@ import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
@@ -197,6 +198,9 @@ const inputState = input.readInput(0);
 const screenKind = ref(ScreenKind.World);
 // The talk a resident has begun, which the talk host runs over the world while the talk screen is open
 const talk = shallowRef<Talk>();
+// The game of the card game the resident's talk offers a duel of, if it offers one, and the game being played now
+const talkDuelGameId = shallowRef<number>();
+const gcgGameId = shallowRef<number>();
 // The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
 // Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
 // Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
@@ -514,6 +518,11 @@ const talkMap = computed(
       questsInProgress.value.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)),
     ),
 );
+// The card game's duel a resident offers from the talk it begins, if that resident offers one
+const getTalkDuelGameId = (talkId: string) =>
+  [...(windrise.value?.regionDataMap.values() ?? [])]
+    .flatMap(({ residents }) => residents)
+    .find((resident) => resident.talkId === talkId)?.duelGameId;
 // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
 // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
@@ -861,6 +870,7 @@ defineExpose({ jumpTo, readCameraPosition });
               doQuestEvent({ kind: QuestObjectiveKind.Interact, targetId: interactable.id });
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
+              talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = ScreenKind.Dialogue;
             }
           }
@@ -1061,9 +1071,24 @@ defineExpose({ jumpTo, readCameraPosition });
     <DialogueTalk
       v-if="screenKind === ScreenKind.Dialogue && talk"
       :game-text
+      :is-duel-offered="talkDuelGameId !== undefined"
       :talk
       :text-map="questTextMap"
+      @duel="
+        gcgGameId = talkDuelGameId;
+        screenKind = ScreenKind.GcgDuel;
+      "
       @end="endTalk()"
+    />
+    <GcgSession
+      v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
+      :game-id="gcgGameId"
+      :game-text
+      :language
+      @leave="
+        gcgGameId = undefined;
+        screenKind = ScreenKind.World;
+      "
     />
     <div
       class="teleport-fade"
