@@ -3,7 +3,7 @@ title: Interaction
 description: Proposal — the held F's interval, the prompt list's window and the reach, each read off a recording of the game. The prompts over the world, the drops and residents in reach, F, the wheel and a held F's repeat are built, and the three numbers are provisional until the recording measures them.
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
-waiting: "interaction-reach.mkv, a walk up to a Windrise gathering point, owed on the Recordings owed list (the user); the window's rows and the held F's interval are the compute queue's world-prompt-rows (a runner)"
+waiting: "interaction-reach.mkv, a walk up to a Windrise gathering point, owed on the Recordings owed list (the user); the window's rows and the held F's interval wait on pickup-scroll.mkv, owed on the roadmap's Recordings owed list"
 ---
 
 # Interaction
