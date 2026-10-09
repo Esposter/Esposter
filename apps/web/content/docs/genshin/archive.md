@@ -36,7 +36,7 @@ The `genshin:assets archive` writer reads each section's codex table from the du
 
 | Section       | Codex table                                                               | Named by                                                               | Opened by                                                                                               |
 | :------------ | :------------------------------------------------------------------------ | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix                                  | a weapon, when it is in the bag                                                                         |
+| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix                                  | a weapon, when it is in the bag; a set, once the artifacts held cover all its pieces                    |
 | Living Beings | `AnimalCodexExcelConfigData`, animal and monster rows                     | `AnimalDescribeExcelConfigData`, then `MonsterDescribeExcelConfigData` | a monster's first defeat opens its entry and counts its kills; an animal waits on the wildlife's strike |
 | Tutorials     | `PushTipsCodexExcelConfigData`, tutorial rows                             | `PushTipsConfigData`'s title                                           | not yet: no tip is shown                                                                                |
 | Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                                                     | not yet: no viewpoint is taken in                                                                       |
@@ -48,7 +48,7 @@ The codex's own order is kept: each section's entries are sorted by the table's 
 
 ## Opening entries
 
-`openArchiveEntries` takes the progress and the bag's items and returns the progress with every item's entry opened. A weapon opens its Equipment entry by its id, a material opens its Materials entry by the same id, and an artifact opens none (see Notes). An entry already open stays open, and the progress given is not changed. The world screen's `setInventory` is the one way the bag changes, so a drop picked up, a gathering point taken and a wish's weapon all open their entries through it.
+`openArchiveEntries` takes the progress and the bag's items and returns the progress with every item's entry opened. A weapon opens its Equipment entry by its id, a material opens its Materials entry by the same id, and an artifact opens none (its set is opened by `openArchiveArtifactSets`, see Notes). An entry already open stays open, and the progress given is not changed. The world screen's `setInventory` is the one way the bag changes, so a drop picked up, a gathering point taken and a wish's weapon all open their entries through it.
 
 A defeated enemy opens its Living Beings entry and counts one more kill under it (`openArchiveEntry`, `countArchiveDefeat`). Each enemy kind carries its codex entry's id as `archiveEntryId`, so the count is kept by the entry, and the Living Beings entry shows it as "×N" once open.
 
@@ -70,7 +70,7 @@ The Archive opens once its quest is done, the Archon Quest Unexpected Power, mai
 
 - **A monster is named by its description.** A monster row's own name hash resolves to no text in any language; its name sits under the monster description table, which the dump lacks and which is fetched from AnimeGameData beside the others.
 - **Only the world's enemies are counted.** A monster the world places opens and counts its entry. The living beings of the wildlife are not struck yet, so their entries stay locked.
-- **An artifact set never opens yet.** A bag artifact carries no set id, so "every piece held" cannot be counted, and the Equipment section lists the sets as locked for good until the bag keeps the set with each artifact.
+- **An artifact set opens from the artifacts held.** `openArchiveArtifactSets` opens a set's Equipment entry once the artifacts given cover as many distinct slots as the set has pieces, read from `reliquarySets.json`. It is handed the Equipment entries' ids, so a set with no entry opens nothing, and an opened set stays open once its pieces are gone. Nothing calls it yet: the world keeps no artifacts in the bag until the first artifact drop, and that drop is its caller.
 - **A tutorial is named by its push tip's title.** The push tips codex joins the push tips table, which the dump lacks and which is fetched from AnimeGameData; only the tutorial kind is written, not the monsters' tips.
 - **Entries show a name only.** Descriptions and the pictures of viewpoints wait for their own pages, since they are not part of the names chunk.
 - **A book's body is not a text map entry.** The readable text lives in AnimeGameData's `Readable/` folder, one file a volume a language, named by the localization table; the dump keeps the readable folder beside its tables, fetched by `pnpm -C scripts genshin:text fetch` and never committed. Its volumes are the codex rows that resolve to a body in all fifteen languages: 267 of the codex's 285 rows. The other 18 are the rows the codex marks disused (`isDisuse`), which the game does not list; none is dropped for a missing name, document or body text.
@@ -90,6 +90,7 @@ The Archive screen has no parity measure yet. Its places follow the achievements
 | `packages/genshin-world/src/models/archive/ArchiveEntry.ts`               | One entry with its table id and its name's text id, with its schema              |
 | `packages/genshin-world/src/models/archive/ArchiveProgress.ts`            | The opened ids of each section                                                   |
 | `packages/genshin-world/src/services/archive/openArchiveEntries.ts`       | Opens the entries of a bag's items                                               |
+| `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts`  | Opens a set's Equipment entry once the artifacts held cover all its pieces       |
 | `packages/genshin-world/src/services/archive/readArchiveEntries.ts`       | The slices of every section, imported on demand and checked                      |
 | `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`     | The names in each language, imported on demand                                   |
 | `packages/genshin-world/src/services/archive/constants.ts`                | The main quest the Archive opens after                                           |
