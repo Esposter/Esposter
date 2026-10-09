@@ -1,15 +1,27 @@
 import type { SubCommandsDef } from "citty";
 
-import { writeStatTables } from "#src/services/genshinAssets/stats/writeStatTables";
+import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { buildStatTables } from "#src/services/genshinAssets/stats/buildStatTables";
 import { defineCommand } from "citty";
+import { GameDataset } from "genshin-world";
 
 export const statsCommand: SubCommandsDef[string] = defineCommand({
+  args: { ...dryRunArgs },
   meta: {
     description:
-      "Write the characters', weapons' and artifacts' attribute tables from the dump's game tables into genshin-world",
+      "Publish the characters', weapons' and artifacts' attribute tables from the dump's game tables to the game data",
     name: "stats",
   },
-  run: () => {
-    for (const note of writeStatTables()) console.log(note);
+  run: async ({ args }) => {
+    const { notes, publication } = buildStatTables();
+    for (const note of notes) console.log(note);
+    console.log(
+      await publishGameDataStep({
+        isDryRun: args["dry-run"],
+        publication,
+        scopes: [GameDataset.Stats, GameDataset.TalentMultipliers, GameDataset.TalentLabels],
+      }),
+    );
   },
 });

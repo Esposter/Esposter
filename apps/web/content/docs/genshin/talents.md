@@ -5,7 +5,7 @@ description: Each playable character's three combat talents levelled from 1 by t
 
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, written by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
 
 ## The tables
 
@@ -67,7 +67,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 | `packages/genshin-world/src/services/character/createCharacter.ts`  | Every combat talent at level 1                                                      |
 | `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`  | A character's talents from the first skill set that names all three                 |
 | `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`    | Each named group's levels from the second to the tenth, costs as the table has them |
-| `scripts/src/services/genshinAssets/stats/writeStatTables.ts`       | Writes both tables with the other stat tables                                       |
+| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`       | Builds both tables with the other stat tables                                       |
 
 ## Sources
 

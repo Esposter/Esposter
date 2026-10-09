@@ -1,8 +1,8 @@
+import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
 import type { ExcelCurveRow } from "#src/models/genshinAssets/stats/ExcelCurveRow";
 import type { ExcelProudSkillRow } from "#src/models/genshinAssets/stats/ExcelProudSkillRow";
 import type { ExcelWeaponLevelRow } from "#src/models/genshinAssets/stats/ExcelWeaponLevelRow";
 
-import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { getArtifactExpMaterials } from "#src/services/genshinAssets/stats/getArtifactExpMaterials";
 import { getArtifactMainAffixCurves } from "#src/services/genshinAssets/stats/getArtifactMainAffixCurves";
 import { getArtifactMainAffixPools } from "#src/services/genshinAssets/stats/getArtifactMainAffixPools";
@@ -19,14 +19,13 @@ import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { writeTalentTables } from "#src/services/genshinAssets/stats/writeTalentTables";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { mkdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { GameDataset } from "genshin-world";
 
-// The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables into
-// The world package, with the curves they grow along, only those any of them names. Every table is checked against the
-// World's schema as it is written; what the run noted, a property no attribute names among it, is returned once each
-export const writeStatTables = (): string[] => {
+// The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables, with
+// The curves they grow along, only those any of them names. Every table is checked against the World's schema as it is
+// Built, and each character's talent tables become entries of the talent indexes. What the run noted, a property no
+// Attribute names among it, is returned once each
+export const buildStatTables = (): { notes: string[]; publication: GameDataPublication } => {
   const notes: string[] = [];
   const characterDatas = getCharacterDatas(notes);
   const weaponDatas = getWeaponDatas(notes);
@@ -38,33 +37,36 @@ export const writeStatTables = (): string[] => {
     ...toTalentTables(proudSkillRows, new Set(Object.values(talentGroupIds))),
   }));
   const tableMap = {
-    "artifactExpMaterials.json": getArtifactExpMaterials(),
-    "artifactMainAffixCurves.json": getArtifactMainAffixCurves(notes),
-    "artifactMainAffixPools.json": getArtifactMainAffixPools(),
-    "artifactRarities.json": getArtifactRarityDatas(),
-    "artifactSets.json": getArtifactSetDatas(notes),
-    "characterConstellationKits.json": getCharacterConstellationKits(notes),
-    "characterGrowCurves.json": toGrowCurves(
+    artifactExpMaterials: getArtifactExpMaterials(),
+    artifactMainAffixCurves: getArtifactMainAffixCurves(notes),
+    artifactMainAffixPools: getArtifactMainAffixPools(),
+    artifactRarities: getArtifactRarityDatas(),
+    artifactSets: getArtifactSetDatas(notes),
+    characterConstellationKits: getCharacterConstellationKits(notes),
+    characterGrowCurves: toGrowCurves(
       readExcelTable<ExcelCurveRow>("AvatarCurveExcelConfigData"),
       new Set(characterDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),
     ),
-    "characters.json": characterDatas,
-    "characterSkillKits.json": getCharacterSkillKits(),
-    "characterTalentKits.json": characterTalentKits,
-    "talentUpgrades.json": toTalentUpgradeMap(proudSkillRows, combatGroupIds),
-    "weaponGrowCurves.json": toGrowCurves(
+    characters: characterDatas,
+    characterSkillKits: getCharacterSkillKits(),
+    characterTalentKits,
+    talentUpgrades: toTalentUpgradeMap(proudSkillRows, combatGroupIds),
+    weaponGrowCurves: toGrowCurves(
       readExcelTable<ExcelCurveRow>("WeaponCurveExcelConfigData"),
       new Set(weaponDatas.flatMap(({ growAttributes }) => growAttributes.map(({ curve }) => curve))),
     ),
-    "weaponLevelRequiredExps.json": toWeaponLevelRequiredExps(
+    weaponLevelRequiredExps: toWeaponLevelRequiredExps(
       readExcelTable<ExcelWeaponLevelRow>("WeaponLevelExcelConfigData"),
     ),
-    "weapons.json": weaponDatas,
+    weapons: weaponDatas,
   };
-  rmSync(STATS_GENERATED_DIRECTORY, { force: true, recursive: true });
-  mkdirSync(STATS_GENERATED_DIRECTORY, { recursive: true });
-  for (const [fileName, table] of Object.entries(tableMap))
-    writeJsonFile(join(STATS_GENERATED_DIRECTORY, fileName), table);
-  writeTalentTables(talentTables);
-  return [...new Set(notes)];
+  return {
+    notes: [...new Set(notes)],
+    publication: {
+      indexes: writeTalentTables(talentTables),
+      objects: Object.fromEntries(
+        Object.entries(tableMap).map(([stem, table]) => [`${GameDataset.Stats}/${stem}`, table]),
+      ),
+    },
+  };
 };
