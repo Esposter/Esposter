@@ -20,6 +20,7 @@ import {
   XIANGLING_CHARACTER_ID,
   XIAO_CHARACTER_ID,
   XINGQIU_CHARACTER_ID,
+  ZHONGLI_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
@@ -39,6 +40,7 @@ import { createVentiKit } from "#src/services/kit/characters/ventiKit";
 import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
 import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
+import { createZhongliKit } from "#src/services/kit/characters/zhongliKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
 // Character with none falls back to the Traveler's kit, as the roster does
@@ -61,4 +63,5 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [XIANGLING_CHARACTER_ID]: createXianglingKit,
   [XIAO_CHARACTER_ID]: createXiaoKit,
   [XINGQIU_CHARACTER_ID]: createXingqiuKit,
+  [ZHONGLI_CHARACTER_ID]: createZhongliKit,
 };

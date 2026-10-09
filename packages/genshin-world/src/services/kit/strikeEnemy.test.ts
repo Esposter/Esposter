@@ -264,4 +264,52 @@ describe(strikeEnemy, () => {
 
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
   });
+
+  test("adds a hit's additive base DMG bonus, read from its striker, to the base damage it is priced at", () => {
+    expect.hasAssertions();
+
+    const ADDITIVE_BASE_DAMAGE_BONUS = 278;
+    const enemy = createSturdyEnemy();
+    const combatant = createCombatant();
+    const hit: KitHit = {
+      ...TRAVELER_KIT.plungeCollision,
+      additiveBaseDamageBonus: ({ characterId }) => (characterId === CHARACTER_ID ? ADDITIVE_BASE_DAMAGE_BONUS : 0),
+    };
+    const damage = getDamage({
+      additiveBaseDamageBonus: ADDITIVE_BASE_DAMAGE_BONUS,
+      attackerLevel: LEVEL,
+      defense,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: hit.talentMultiplier,
+    });
+
+    strikeEnemy(enemy, hit, combatant, NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
+  test("takes an enemy's statuses' Physical RES reduction off the RES a physical hit reads", () => {
+    expect.hasAssertions();
+
+    const PHYSICAL_RESISTANCE_REDUCTION = 0.2;
+    const enemy = createSturdyEnemy();
+    addEnemyStatus(enemy, {
+      damageTakenBonus: 0,
+      id: "jade-shield",
+      physicalResistanceReduction: PHYSICAL_RESISTANCE_REDUCTION,
+      secondsRemaining: 1,
+    });
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      defense,
+      resistance: kind.physicalResistance - PHYSICAL_RESISTANCE_REDUCTION,
+      stat: ATTACK,
+      talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
+    });
+
+    strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
 });
