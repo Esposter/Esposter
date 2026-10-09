@@ -75,12 +75,15 @@ the change that moved it, as a bench's report is committed.
 | Shape | windrise-statue-day Statue outline | 0.4953 | 1 | px | yes |
 | Shape | windrise-statue-day Statue depth | 0.0017 | 0.0100 | share | yes |
 | Shape | windrise-statue-day Statue normal | 16.8221 | 10 | degrees | no |
-| Shape | windrise-statue-day Oak outline | 8.0799 | 1 | px | no |
-| Shape | windrise-statue-day Oak depth | 0.1744 | 0.0100 | share | no |
-| Shape | windrise-statue-day Oak normal | 47.3571 | 10 | degrees | no |
+| Shape | windrise-statue-day Oak outline | 2.2054 | 1 | px | no |
+| Shape | windrise-statue-day Oak depth | 0.1952 | 0.0100 | share | no |
+| Shape | windrise-statue-day Oak normal | 39.8770 | 10 | degrees | no |
 | Shape | windrise-statue-day Paving outline | 3.6744 | 1 | px | no |
 | Shape | windrise-statue-day Paving depth | 0.0008 | 0.0100 | share | yes |
 | Shape | windrise-statue-day Paving normal | 6.8099 | 10 | degrees | yes |
-| Shape | windrise-statue-day Ground outline | 8.1514 | 1 | px | no |
-| Shape | windrise-statue-day Ground depth | 0.0374 | 0.0100 | share | no |
-| Shape | windrise-statue-day Ground normal | 9.6368 | 10 | degrees | yes |
+| Shape | windrise-statue-day Ground outline | 3.9649 | 1 | px | no |
+| Shape | windrise-statue-day Ground depth | 0.0384 | 0.0100 | share | no |
+| Shape | windrise-statue-day Ground normal | 9.6667 | 10 | degrees | yes |
+| Shape | windrise-statue-day Oak envelope outline | 24.7152 | 9.9858 | px | no |
+| Shape | windrise-statue-day Oak envelope depth | 0.1410 | 0.0631 | share | no |
+| Shape | windrise-statue-day Oak envelope normal | 23.5909 | 15.3528 | degrees | no |
