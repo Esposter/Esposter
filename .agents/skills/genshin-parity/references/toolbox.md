@@ -4,15 +4,22 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 
 ## The interface
 
-| Unknown                       | Tool                                                      |
-| :---------------------------- | :-------------------------------------------------------- |
-| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path    |
-| A piece's motion              | `genshin:assets clips`: the decoded clip curves           |
-| A mark's shape                | `trace`, or the vector on Commons                         |
-| A colour, a size, a place     | `measure`, `zoom`, `polar`                                |
-| A timing                      | `frames`, `luma`                                          |
-| Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`) |
-| The game's words              | `genshin:text decode`, the install's text maps            |
+| Unknown                       | Tool                                                                                                                      |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path                                                                    |
+| A piece's motion              | `genshin:assets clips`: the decoded clip curves                                                                           |
+| A mark's shape                | `trace`, or the vector on Commons                                                                                         |
+| A colour, a size, a place     | `measure`, `zoom`, `polar`                                                                                                |
+| A timing                      | `frames`, `luma`                                                                                                          |
+| Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`)                                                                 |
+| The game's words              | `genshin:text decode`, the install's text maps                                                                            |
+| A recording's own blur        | `getCaptureSoftness`: its Gaussian sigma off the frame's interface edges, applied to our shot by `compare` (see Softness) |
+
+## Softness
+
+A recording softens what it shows: its compression and scaling blur every edge, where the game draws its text and borders crisp. So a component is drawn crisp, as the game draws it, and the softness is put on our shot in the comparison. `getCaptureSoftness` measures a capture's blur once per file, as the Gaussian sigma of its sharpest interface edges (`measureFrameSoftness`, the 10% to 90% spread of each edge over its own rise, `estimateEdgeSigma`), caches it beside the references under the file's hash, and `compare` blurs our screenshot by that sigma before scoring. Every reference taken from a recording gets its capture's sigma; a still shot in the game gets none, since nothing softened it.
+
+It lives in the comparison and not the component because a component blurred to match one recording is wrong for the game, and a blur on the text is still a blur on the reader's screen. A component that is softened to score well has been fitted to the video's compression rather than to the game.
 
 ## A scene, pass by pass
 

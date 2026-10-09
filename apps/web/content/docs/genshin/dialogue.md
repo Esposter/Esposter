@@ -67,19 +67,19 @@ Registered, not yet within the bar. Five references are cut from the English PC 
 
 The five are judged over their clean plate, the reference frame with its scored region filled from its surroundings (`isBackdrop`, see Parity above), so the overlay is scored against what the world shows there. The bare render is that plate with nothing drawn on it, so a state beats its bare render only by drawing the dialogue closer than the plate already is.
 
-| Reference                  | Plate before        | Plate now           | Bare render |
-| :------------------------- | :------------------ | :------------------ | :---------- |
-| `dialogue-choices-line`    | 10.03%, FLIP 0.2960 | 8.66%, FLIP 0.2807  | 9.64%       |
-| `dialogue-choices-replies` | 22.03%, FLIP 0.5781 | 15.08%, FLIP 0.4770 | 17.80%      |
-| `dialogue-choices-speaker` | 10.32%, FLIP 0.3272 | 8.38%, FLIP 0.3228  | 12.60%      |
-| `dialogue-line`            | 11.55%, FLIP 0.3967 | 10.47%, FLIP 0.3740 | 11.65%      |
-| `dialogue-paimon-line`     | 12.95%, FLIP 0.3395 | 9.73%, FLIP 0.3121  | 11.84%      |
+| Reference                  | Plate, component blurred | Plate, softened shot | Bare render |
+| :------------------------- | :----------------------- | :------------------- | :---------- |
+| `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | 9.22%, FLIP 0.2912   | 9.64%       |
+| `dialogue-choices-replies` | 15.08%, FLIP 0.4770      | 14.34%, FLIP 0.4678  | 17.80%      |
+| `dialogue-choices-speaker` | 8.38%, FLIP 0.3228       | 7.79%, FLIP 0.3167   | 12.60%      |
+| `dialogue-line`            | 10.47%, FLIP 0.3740      | 10.80%, FLIP 0.3844  | 11.65%      |
+| `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 9.98%, FLIP 0.3151   | 11.86%      |
 
-Every state now beats its bare render, by one to three and a half points, which is not yet the roadmap's 2% bar. What moved each figure, in the order it was fixed:
+Every state now beats its bare render, by 0.4 to 4.8 points, which is not yet the roadmap's 2% bar. What moved each figure, in the order it was fixed:
 
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without.
 - **Size and letter spacing.** The line is 26 units with 2.3 units of letter spacing, where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
-- **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The line is blurred 1.5 units: `dialogue-line` scored 11.22% at 0.5, 10.62% at 1, 10.47% at 1.5 and 10.64% at 2.5.
+- **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The component is drawn crisp, as the game draws it, and the comparison blurs our shot by the recording's own measured blur (`yt-nWBqOXWZuFg.mp4`, sigma 0.641, see the toolbox's Softness). A component blurred to the recording scored `dialogue-line` 0.33 points better (10.47%), but that blur is the video's and not the game's, so it is not shipped.
 - **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
 - **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
 - **Replies.** The pill's darkness is 0.22 of black, the best of 0.15 to 0.45 swept against the plate. The text starts 48 units in, past the mark's place, and moving the first pill up three pixels scored worse (23.78% against 22.03%), so its top stays where it was.

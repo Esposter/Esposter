@@ -6,6 +6,7 @@ import { computeUnderBlackShare } from "#src/services/genshinParity/display/comp
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
+import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
@@ -29,6 +30,8 @@ import { join } from "node:path";
 import sharp from "sharp";
 
 const GRID_SIZE = 6;
+// The least Gaussian sigma sharp blurs by, below which a recording's softness is too slight to draw
+const MIN_BLUR_SIGMA = 0.3;
 // The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
 // Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
 const getCeiling = ({ coverage, flip, name }: LayerScore): number => (name === FRAME_LAYER ? flip : coverage * flip);
@@ -60,6 +63,8 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   const backdropPath = reference.isBackdrop
     ? ((await getCleanPlatePath(referenceId, referencePath, region, { height, width })) ?? referencePath)
     : undefined;
+  // A recording softens what it shows, so our shot is softened by its capture's own measured blur before it is scored
+  const softness = reference.capture === undefined ? undefined : await getCaptureSoftness(reference.capture);
   const [shotPath = ""] = await shootScreen({
     backdropPath,
     height,
@@ -70,9 +75,8 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   });
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };
   const referenceRegion = await sharp(referencePath).removeAlpha().extract(extract).png().toBuffer();
-  const shotRegion = await sharp(shotPath)
-    .resize(width, height, { fit: "fill" })
-    .removeAlpha()
+  const shot = sharp(shotPath).resize(width, height, { fit: "fill" }).removeAlpha();
+  const shotRegion = await (softness !== undefined && softness >= MIN_BLUR_SIGMA ? shot.blur(softness) : shot)
     .extract(extract)
     .png()
     .toBuffer();
