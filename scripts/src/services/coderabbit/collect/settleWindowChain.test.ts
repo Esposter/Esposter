@@ -60,7 +60,7 @@ describe(settleWindowChain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [4, getWindowBranch(3)],
       [5, getWindowBranch(4)],
     ]);
-    const stack = settleWindowChain({
+    const { stack } = settleWindowChain({
       cwd: getCwd(),
       isDryRun: false,
       stackPullRequests: windows.toReversed(),
@@ -87,7 +87,7 @@ describe(settleWindowChain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [1, MAIN_BRANCH],
       [2, MAIN_BRANCH],
     ]);
-    const stack = settleWindowChain({ cwd: getCwd(), isDryRun: false, stackPullRequests: windows, viewerLogin });
+    const { stack } = settleWindowChain({ cwd: getCwd(), isDryRun: false, stackPullRequests: windows, viewerLogin });
 
     expect(stack).toStrictEqual([]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(mainSha);

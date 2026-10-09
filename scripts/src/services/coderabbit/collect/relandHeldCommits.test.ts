@@ -3,6 +3,7 @@ import type { runSession as baseRunSession } from "#src/services/coderabbit/coll
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import {
+  ATTEMPT_RETRY_DELAY_SECONDS,
   DEVELOP_BRANCH,
   MAIN_BRANCH,
   QUEUE_BRANCH,
@@ -37,16 +38,10 @@ describe(relandHeldCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const collectorSha = "collectorSha";
   const issueNumber = 1;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}`;
+  const relandInput = { collectorSha, isDryRun: false, viewerLogin };
   // The held commit's own comments as GitHub keeps them, so a run reads back the heads an earlier one recorded, and the
   // One issue the park opened
-  const setupHeldCommit = (queueContent: string, heldContent: string) => {
-    const mainSha = readSha(`origin/${MAIN_BRANCH}`);
-    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, queueContent));
-    publish(DEVELOP_BRANCH, queueSha);
-    switchTo(mainSha);
-    const heldSha = commitFile(TEST_FILENAME, heldContent);
-    const heldBranch = getHeldBranch(heldSha);
-    publish(heldBranch, heldSha);
+  const answerGh = (heldSha: string, heldBranch: string): GitHubEntry[] => {
     const comments: GitHubEntry[] = [];
     runGh.mockImplementation(([command, subcommand, flag, field = ""]) => {
       if (command === "issue" && subcommand === "list")
@@ -63,6 +58,17 @@ describe(relandHeldCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       }
       return JSON.stringify([comments]);
     });
+    return comments;
+  };
+  const setupHeldCommit = (queueContent: string, heldContent: string) => {
+    const mainSha = readSha(`origin/${MAIN_BRANCH}`);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, queueContent));
+    publish(DEVELOP_BRANCH, queueSha);
+    switchTo(mainSha);
+    const heldSha = commitFile(TEST_FILENAME, heldContent);
+    const heldBranch = getHeldBranch(heldSha);
+    publish(heldBranch, heldSha);
+    const comments = answerGh(heldSha, heldBranch);
     // `main` moves past the head the commit was parked at
     const moveMain = (): string => {
       switchTo(mainSha);
@@ -72,17 +78,21 @@ describe(relandHeldCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   };
   const readHeldBranches = (): string => runGit(["ls-remote", "origin", "refs/heads/ai/held/*"], getCwd());
 
-  // At the head a run first finds it held at nothing has changed for it, and once `main` moves the pick is tried again
-  test("re-lands a held commit once main moves, deleting its held branch and closing its issue", async () => {
+  // The run that first finds a commit held only records it and wakes the next, which tries the re-land at that head: in
+  // A quiet queue `main` may not move again for hours
+  test("re-lands a held commit on the run after the one that first found it held, at the same main head", async () => {
     expect.hasAssertions();
 
-    const { heldSha, moveMain, queueSha } = setupHeldCommit("", " ");
-    await relandHeldCommits({ collectorSha, cwd: getCwd(), isDryRun: false, viewerLogin });
+    const { heldSha, queueSha } = setupHeldCommit("", " ");
+    const seenRun = await relandHeldCommits({ ...relandInput, cwd: getCwd() });
     const unmovedQueueSha = readSha(`origin/${QUEUE_BRANCH}`);
-    moveMain();
-    await relandHeldCommits({ collectorSha, cwd: getCwd(), isDryRun: false, viewerLogin });
+    const relandRun = await relandHeldCommits({ ...relandInput, cwd: getCwd() });
     const relandedSha = readSha(`origin/${QUEUE_BRANCH}`);
 
+    expect([seenRun, relandRun]).toStrictEqual([
+      { retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS },
+      { retriggerDelaySeconds: undefined },
+    ]);
     expect(unmovedQueueSha).toBe(queueSha);
     expect(readSha(`${relandedSha}^`)).toBe(queueSha);
     expect(runGit(["show", `${relandedSha}:${TEST_FILENAME}`], getCwd())).toBe(" ");
@@ -112,18 +122,39 @@ describe(relandHeldCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { comments, heldBranch, heldSha, mainSha, moveMain, queueSha } = setupHeldCommit(" ", TEST_FILENAME);
     runSession.mockResolvedValue({ isEnded: true });
-    await relandHeldCommits({ collectorSha, cwd: getCwd(), isDryRun: false, viewerLogin });
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
     const movedMainSha = moveMain();
-    await relandHeldCommits({ collectorSha, cwd: getCwd(), isDryRun: false, viewerLogin });
-    await relandHeldCommits({ collectorSha, cwd: getCwd(), isDryRun: false, viewerLogin });
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
 
-    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(runSession).toHaveBeenCalledTimes(2);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(readHeldBranches()).toBe(`${heldSha}\trefs/heads/${heldBranch}\n`);
     expect(comments.map(({ body }) => body)).toStrictEqual([
-      `${getMarker(RELAND_MARKER, heldSha)}\n${getMarker(RELAND_MARKER, heldSha, [mainSha])}\nHeld while \`${MAIN_BRANCH}\` is at ${mainSha}: the collector tries its re-land once \`${MAIN_BRANCH}\` moves.`,
+      `${getMarker(RELAND_MARKER, heldSha)}\nHeld while \`${MAIN_BRANCH}\` is at ${mainSha}: the collector tries its re-land on its next run, and again each time \`${MAIN_BRANCH}\` moves.`,
+      `${getMarker(RELAND_MARKER, heldSha, [mainSha])}\nTried at \`${MAIN_BRANCH}\` ${mainSha} — the session left the pick unresolved; the next head tries again.`,
+      `${getMarker(RELAND_FAILED_MARKER, heldSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to re-land ${heldSha} onto ${QUEUE_BRANCH} at ${MAIN_BRANCH} ${mainSha} failed. See the collector run.`,
       `${getMarker(RELAND_MARKER, heldSha, [movedMainSha])}\nTried at \`${MAIN_BRANCH}\` ${movedMainSha} — the session left the pick unresolved; the next head tries again.`,
-      `${getMarker(RELAND_FAILED_MARKER, heldSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to re-land ${heldSha} onto ${QUEUE_BRANCH} at ${MAIN_BRANCH} ${movedMainSha} failed. See the collector run.`,
+      `${getMarker(RELAND_FAILED_MARKER, heldSha, [collectorSha])}\nAttempt 2 of ${SESSION_ATTEMPT_CAP} to re-land ${heldSha} onto ${QUEUE_BRANCH} at ${MAIN_BRANCH} ${movedMainSha} failed. See the collector run.`,
     ]);
+  });
+
+  // A claim the express lane parked in a quiet queue is still the queue's own commit: picked onto the queue it would
+  // Come back as the claim no cut applied, so it waits for the rewrite that drops it
+  test("leaves a held commit the queue still holds itself", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, `origin/${MAIN_BRANCH}`);
+    const heldSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    const heldBranch = getHeldBranch(heldSha);
+    publish(heldBranch, heldSha);
+    answerGh(heldSha, heldBranch);
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    const relandRun = await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+
+    expect(relandRun).toStrictEqual({ retriggerDelaySeconds: undefined });
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(heldSha);
+    expect(readHeldBranches()).toBe(`${heldSha}\trefs/heads/${heldBranch}\n`);
   });
 });

@@ -6,7 +6,6 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
-import { DEVELOP_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
 import { getSoonestDelay } from "#src/services/coderabbit/collect/getSoonestDelay";
@@ -29,8 +28,8 @@ import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 // Check, or one whose review has stayed pending past the time a review takes, is asked the same way once that wait
 // Ends; the run sleeps to the soonest of every wait, so a status event that never comes strands nothing. A window whose
 // Review is still not run past its last ask is cut again with every window above it — a skipped one at half the cap it
-// Was cut under — which ends the walk: the opener cuts the replacement in the same run. Nothing here fails the run, and
-// The walk never opens anything.
+// Was cut under, and the release from `develop` closed for its commits to be cut into windows — which ends the walk:
+// The opener cuts the replacement in the same run. Nothing here fails the run, and the walk never opens anything.
 export const walkWindowStack = async ({
   collectorSha,
   cwd,
@@ -117,13 +116,6 @@ export const walkWindowStack = async ({
     retriggerDelaySeconds = getSoonestDelay(retriggerDelaySeconds, settlement.retriggerDelaySeconds);
     if (settlement.outcome) blockReasons.push(`pull request #${number} — ${settlement.outcome.reason}`);
     if (!settlement.isRecutDue) continue;
-    // The release from `develop` predates the stack and has no window branch to cut again, so it is only ever asked
-    else if (!checkIsWindowBranch(headRefName)) {
-      blockReasons.push(
-        `pull request #${number} — the bot ran no review past the collector's last ask, and the release from ${DEVELOP_BRANCH} is never cut again`,
-      );
-      continue;
-    }
 
     const windowHistory = readWindowPullRequests(WindowPullRequestListState.All);
     const cutUnderFileCap = getWindowFileCap(
@@ -131,15 +123,20 @@ export const walkWindowStack = async ({
       readRecutFileCaps(windowHistory, viewerLogin),
     );
     // A window the bot keeps skipping is too big for one review, so its replacement is cut to half its cap. One whose
-    // Limit the bot left unanswered was never read at all, so it is cut again under the cap it had
+    // Limit the bot left unanswered was never read at all, so it is cut again under the cap it had. The release from
+    // `develop` is a person's, opened over whatever `develop` carried and measured against no cap, so it is closed and
+    // Its commits cut into windows under the opener's cap, which is the first measure they get
     const isRateLimited = gate.kind === GateDecisionKind.RateLimited;
+    const isRelease = !checkIsWindowBranch(headRefName);
+    const cause = isRateLimited
+      ? `the bot answered none of the collector's asks for the review the limit refused on pull request #${number}`
+      : `the bot skipped the review of pull request #${number} past the collector's last ask (${gate.reason})`;
+    const windowConsequence = isRateLimited ? "the window is opened again" : "the window is too big for one review";
     const recut = recutWindowStack({
       cwd,
-      fileCap: isRateLimited ? cutUnderFileCap : Math.max(1, Math.floor(cutUnderFileCap / 2)),
+      fileCap: isRateLimited || isRelease ? cutUnderFileCap : Math.max(1, Math.floor(cutUnderFileCap / 2)),
       isDryRun,
-      reason: isRateLimited
-        ? `the bot answered none of the collector's asks for the review the limit refused on pull request #${number}, so the window is opened again`
-        : `the bot skipped the review of pull request #${number} past the collector's last ask (${gate.reason}), so the window is too big for one review`,
+      reason: `${cause}, so ${isRelease ? "its commits are cut into windows under the cap" : windowConsequence}`,
       window,
     });
     blockReasons.push(recut.reason);

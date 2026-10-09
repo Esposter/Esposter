@@ -3,6 +3,7 @@ import type { RecutWindowStackInput } from "#src/models/coderabbit/collect/Recut
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
+import { checkIsWindowBranch } from "#src/services/coderabbit/collect/checkIsWindowBranch";
 import { closeRecutWindows } from "#src/services/coderabbit/collect/closeRecutWindows";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
@@ -11,9 +12,11 @@ import { runGit } from "#src/services/shared/runGit";
 import { takeOne } from "@esposter/shared";
 
 // A window that cannot be reviewed or merged as it stands is cut again rather than held: it and every window stacked
-// Above it are closed for the opener to cut anew (`closeRecutWindows`), with `develop` moved back to just below it.
+// Above it are closed for the opener to cut anew (`closeRecutWindows`), with `develop` moved back to just below it. The
+// Release from `develop` is the stack's bottom while it is open, as the cycle reads it, though no window list holds it.
 export const recutWindowStack = ({ cwd, fileCap, isDryRun, reason, window }: RecutWindowStackInput): CycleOutcome => {
-  const stack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
+  const openWindows = readWindowPullRequests(WindowPullRequestListState.Open);
+  const stack = orderWindowStack(checkIsWindowBranch(window.headRefName) ? openWindows : [window, ...openWindows]);
   const index = stack.findIndex(({ number }) => number === window.number);
   if (index === -1)
     return {
