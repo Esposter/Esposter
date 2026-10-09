@@ -29,7 +29,8 @@ stateDiagram-v2
   [*] --> Aiming: at a fishing point, rod out
   Aiming --> Waiting: cast
   Waiting --> Aiming: the lure within a fish's flee range, it flees
-  Waiting --> Biting: a fish within attract range takes the bait
+  Waiting --> Aiming: struck while a fish within attract range only nibbles, it is scared off
+  Waiting --> Biting: the nibble's seconds drawn from its feeler times pass, it bites
   Biting --> Aiming: not struck within its bite timeout
   Biting --> Reeling: struck
   Reeling --> Caught: its health worn to none
