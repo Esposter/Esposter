@@ -2,12 +2,12 @@
 import type { GameLanguage, GameText } from "genshin-text";
 import type { GenshinSave } from "genshin-world/save";
 
-import { GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
+import { GENSHIN_CHARACTER_PACK_BASE_URL, GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
+import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
-import { AzureContainer } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { GAME_DATA_BLOB_PATH, WorldScreen } from "genshin-world";
+import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -25,8 +25,9 @@ interface Props {
 const { gameText, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
-// The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URL its server
-// Serves region data at, and whether the tuning panel shows; quitting the game leaves for the app's home
+// The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URLs its server
+// Serves region data at and, in development alone, the developer's own character packs, and whether the tuning panel
+// Shows; quitting the game leaves for the app's home
 onMounted(() => {
   emit("load");
 });
@@ -34,8 +35,9 @@ onMounted(() => {
 
 <template>
   <WorldScreen
+    :character-pack-base-url="IS_DEVELOPMENT ? GENSHIN_CHARACTER_PACK_BASE_URL : undefined"
     :create-terrain-worker="() => new TerrainTileWorker()"
-    :game-data-base-url="`${containerBaseUrl}/${AzureContainer.AppAssets}/${GAME_DATA_BLOB_PATH}`"
+    :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
     :game-text
     :is-paused
     :is-tuning="IS_DEVELOPMENT || undefined"
