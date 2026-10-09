@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. A pure progression meets objectives as the Traveler's doings name them and moves step by step. J opens the quest screen, which lists the quests in progress under the game's four lists and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
+description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, which lists the quests in progress under the game's four lists and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
 ---
 
 # Quests
@@ -15,13 +15,15 @@ flowchart TD
   DECODE["The text maps, decoded from the installed client"] --> READ
   READ --> FILES["generated/quests: one file a quest, checked by its schema"]
   READ --> WORDS["generated/questText: the quests' words, one chunk a language"]
-  DOING["The Traveler's doing: a talk ended, a place reached,<br/>an item, an enemy, a thing"] --> ADVANCE["advanceQuest"]
-  FILES --> ADVANCE
+  FILES --> START["startQuests: the first Archon quest not finished starts"]
+  START --> PROGRESS["Quests in progress, from step 0"]
+  DOING["The Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
+  PROGRESS --> ADVANCE
   ADVANCE --> MET{"Every objective of the step met?"}
   MET -->|"no"| COUNT["The objective's count goes up, held at its own"]
   MET -->|"yes"| STEP["The next step, nothing met"]
   STEP --> DONE{"Past the last step?"}
-  DONE -->|"yes"| FINISHED["The quest is finished"]
+  DONE -->|"yes"| FINISHED["The quest is finished: ParentQuestFinished,<br/>its Travel Log entry opens"]
   J["J"] --> SCREEN["Quest screen: the four lists, the selected quest's step"]
   SCREEN -->|"Navigate, or F"| TRACKED["The quest navigated to"]
   TRACKED --> TARGET["findQuestTargetPosition: the objective's resident or landmark"]
@@ -46,6 +48,12 @@ The kinds are the game's five, and the quest screen files them under the game's 
 
 A quest's progress is the step it is on, which equals the number of steps once it is finished, and how many times each of that step's objectives has been met. `advanceQuest` takes a `QuestEvent`, the kind of the Traveler's doing and the id it names. Each objective of the current step that the event names is met once more, held at its count. Once every objective is met, the quest moves on to its next step with nothing met. An event no objective names leaves the quest where it was, and so does any event once the quest is finished.
 
+### Starting and finishing
+
+`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. The other kinds have no start yet: a world or story quest starts from the talk that offers it, and a commission from the daily reset. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
+
+`doQuestEvent` hands one doing to every quest in progress. Each step moved past finishes its sub-quest, which `getFinishedQuestEvents` turns into a `QuestFinished` for `advanceAchievements`, and a quest its last step finishes into a `ParentQuestFinished`. A finished main quest is added to the set the Archive opens by, and its Travel Log entry opens, the entries read off the Archive's table when first needed. The world records a talk's end as a talk-to, a dropped item or a gathering point picked as a collect, an enemy defeated as a defeat under its kind, and a waypoint or landmark unlocked as an interact. A go-to has no doing yet, since a place's trigger is not placed in region data.
+
 ### The quest screen
 
 `QuestScreen` is J's screen, through the screens' `ScreenKind.Quests`. Its tabs along the top list every quest, then each of the game's four lists, and Q and E step between them. Down the left, each list's quests sit under its heading in the game's words. On the right are the selected quest's title, its step with its first counted objective's "(n/m)", and its description, over the button that navigates to it, or cancels the navigation of the quest already navigated to. F presses that button. The screen reads the quests in progress, their progress and their text map, and the world screen holds the one navigated to.
@@ -66,24 +74,30 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 ## Key files
 
-| File                                                                   | Role                                                                |
-| :--------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/quest/Quest.ts`                     | A quest: its kind, words, steps and talks, with its schema          |
-| `packages/genshin-world/src/models/quest/QuestObjective.ts`            | One thing a step asks for, by its kind, target and count            |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`            | The Traveler's doing met against the current step, step by step     |
-| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts` | Where a navigated objective's target stands                         |
-| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`    | Each kind's list on the quest screen                                |
-| `packages/genshin-world/src/services/quest/constants.ts`               | The screen's tab order and keys, and the beam's distance and look   |
-| `packages/genshin-world/src/components/Quest/Screen/Index.vue`         | The quest screen J opens                                            |
-| `packages/genshin-world/src/components/Quest/Beam/Index.vue`           | The beam over the navigated objective                               |
-| `packages/genshin-world/src/models/quest/QuestId.ts`                   | The quests the world carries, the reader's inventory                |
-| `scripts/src/services/genshinText/writeQuests.ts`                      | The reader: every inventoried quest, its talks and words written    |
-| `scripts/src/services/genshinText/readQuestSteps.ts`                   | A quest's shown steps read off its scrambled binary output by shape |
-| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog table                                    |
+| File                                                                   | Role                                                                    |
+| :--------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/quest/Quest.ts`                     | A quest: its kind, words, steps and talks, with its schema              |
+| `packages/genshin-world/src/models/quest/QuestObjective.ts`            | One thing a step asks for, by its kind, target and count                |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`            | The Traveler's doing met against the current step, step by step         |
+| `packages/genshin-world/src/services/quest/startQuests.ts`             | The Archon quests started from the prologue's first                     |
+| `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`  | The steps and quests a progress moves past, as the achievements' events |
+| `packages/genshin-world/src/services/quest/readQuests.ts`              | The carried quests read off their tables and checked against the schema |
+| `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`  | The Travel Log entries of the finished main quests opened               |
+| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts` | Where a navigated objective's target stands                             |
+| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`    | Each kind's list on the quest screen                                    |
+| `packages/genshin-world/src/services/quest/constants.ts`               | The screen's tab order and keys, and the beam's distance and look       |
+| `packages/genshin-world/src/components/Quest/Screen/Index.vue`         | The quest screen J opens                                                |
+| `packages/genshin-world/src/components/Quest/Beam/Index.vue`           | The beam over the navigated objective                                   |
+| `packages/genshin-world/src/models/quest/QuestId.ts`                   | The quests the world carries, the reader's inventory                    |
+| `scripts/src/services/genshinText/writeQuests.ts`                      | The reader: every inventoried quest, its talks and words written        |
+| `scripts/src/services/genshinText/readQuestSteps.ts`                   | A quest's shown steps read off its scrambled binary output by shape     |
+| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog table                                        |
 
 ## Notes
 
-- **Nothing starts a quest yet.** The world screen's quest list is empty until quests are loaded and started, so J opens an empty screen. The [quests proposal](/docs/proposals/genshin/quests) lists what joins them to the world.
+- **Only the Archon quests start, and a go-to does not move.** The carried prologue starts at Wanderer's Trail's first step, which asks to reach a place. No region data places that trigger yet, so the step stays where it is until the [quests proposal](/docs/proposals/genshin/quests) places it, and the carried quests' other steps wait behind it.
+- **Progress is held in memory.** The world keeps no save yet, so a reload starts the quests over, as it does the bag and the wallet.
+- **Quests are served in the bundle, not from a base URL.** Each carried quest and its words are imported on demand from the world's generated folder, through `QuestLoaderMap` and `QuestTextLoaderMap`, which a new carried quest adds a line to. The region data is served from a base URL, the quests are small enough not to be.
 - **A step keeps one objective.** A step that finishes on any of several places lists each as a condition, so the reader keeps the first condition that asks something. A step asking for two things at once would lose the second.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.
 - **The quest screen is laid out, not yet likeness.** Its header, tabs, list, details and navigation button sit at the English client's 1080-high places, measured off the wiki's screenshot. Its five tab glyphs stand in as diamonds until traced, its header reads the game's "Quests" where the client reads "In Progress" (that text is not in the English the package carries), and its quest distances, kind and place marks, rewards row, Quest Overview button and UID are not built. The client draws the world blurred behind the screen; the parity page has no world to draw, so its frame scores 55.84% mean and 0.8998 FLIP, most of it that blur, and the screen's open, close and tab animations are not yet timed (the roadmap's Recordings owed).
