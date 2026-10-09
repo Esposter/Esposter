@@ -5,8 +5,8 @@ model: claude-haiku-5-5
 needs: [game-exports]
 touches:
   [
-    "packages/genshin-interface/src/components/Forge*/**",
-    "packages/genshin-world/src/components/Forge*/**",
+    "packages/genshin-interface/src/components/ForgeScreen/**",
+    "packages/genshin-world/src/components/Forge/**",
     "packages/genshin-world/src/services/forging/**",
   ]
 ---
