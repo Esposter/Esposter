@@ -291,6 +291,9 @@ export const HULL_CELL_SIZE = 1;
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
+// How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero is
+// Collapsed there all the same
+export const ORIGIN_TOLERANCE_METRES = 0.001;
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does

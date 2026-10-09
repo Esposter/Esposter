@@ -22,6 +22,17 @@ describe(composeSceneTree, () => {
     ]);
   });
 
+  test("does not flag a root at the origin whose subtree is placed off it, as a root authored in world space is", () => {
+    expect.hasAssertions();
+
+    const [root] = composeSceneTree(
+      [createSceneObject("1", "0", { childIds: ["2"] }), createSceneObject("2", "1", { position: [0.1, 0, 0] })],
+      new Map(),
+    );
+
+    expect(root?.flags).toStrictEqual([]);
+  });
+
   test("tops an object whose father no dump holds, and flags a father's children the dumps lack", () => {
     expect.hasAssertions();
 
