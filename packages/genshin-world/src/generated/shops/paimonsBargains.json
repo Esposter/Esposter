@@ -8,7 +8,8 @@
     "itemId": 223,
     "minPlayerLevel": 4,
     "priceCount": 5,
-    "priceItemId": 221
+    "priceItemId": 221,
+    "refresh": "Monthly"
   },
   {
     "beginTime": "2019-12-01T00:00:00+08:00",
@@ -19,7 +20,8 @@
     "itemId": 224,
     "minPlayerLevel": 4,
     "priceCount": 5,
-    "priceItemId": 221
+    "priceItemId": 221,
+    "refresh": "Monthly"
   },
   {
     "beginTime": "2019-12-01T00:00:00+08:00",
@@ -30,7 +32,8 @@
     "itemId": 223,
     "minPlayerLevel": 4,
     "priceCount": 75,
-    "priceItemId": 222
+    "priceItemId": 222,
+    "refresh": "Monthly"
   },
   {
     "beginTime": "2019-12-01T00:00:00+08:00",
@@ -41,6 +44,7 @@
     "itemId": 224,
     "minPlayerLevel": 4,
     "priceCount": 75,
-    "priceItemId": 222
+    "priceItemId": 222,
+    "refresh": "Monthly"
   }
 ]
