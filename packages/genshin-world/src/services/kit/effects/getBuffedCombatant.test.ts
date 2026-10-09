@@ -4,8 +4,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));

@@ -2,7 +2,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const LANDMARK_ID = "1";
 const OTHER_LANDMARK_ID = "2";

@@ -980,7 +980,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :talk
       :text-map="questTextMap"
-      @end="endTalk"
+      @end="endTalk()"
     />
     <div
       class="teleport-fade"
