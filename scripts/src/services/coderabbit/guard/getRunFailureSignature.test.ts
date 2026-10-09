@@ -1,6 +1,6 @@
-import { CI_FAILURE_CONCLUSION } from "#src/services/coderabbit/collect/constants";
+import { CI_FAILURE_CONCLUSION, CI_SUCCESS_CONCLUSION } from "#src/services/coderabbit/collect/constants";
 import { getFailureSignature } from "#src/services/coderabbit/collect/getFailureSignature";
-import { CI_SUCCESS_CONCLUSION, FAILURE_ANNOTATION_LEVEL } from "#src/services/coderabbit/guard/constants";
+import { FAILURE_ANNOTATION_LEVEL } from "#src/services/coderabbit/guard/constants";
 import { getRunFailureSignature } from "#src/services/coderabbit/guard/getRunFailureSignature";
 import { describe, expect, test } from "vitest";
 

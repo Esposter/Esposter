@@ -350,11 +350,12 @@ at half the cap — and a window off the stack's chain of bases is closed and cu
 its attempts is parked on `ai/held/<short-sha>` with an issue, and re-landed by the collector itself once `main` moves.
 A commit carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes straight to `main`
 unverified, and is parked instead once no cut applies it past its attempts, or at once when nothing in flight can move
-`main`. A red `main` is repaired after the walk and the openings, each part of an attempt on its own clock and the
-attempts counted per failure signature, with an issue once its attempts run out and a wake for when the oldest of them
-age out. Every session runs under a wall clock, a session that never starts is retried five minutes later, a run that
-fails or is killed is woken five minutes later, and a hold that lifts on a clock schedules its own wake, so no stage
-needs a person to restart it. The one red left unwoken is the same step failing on the same line in the newest runs,
+`main`. A red `main` is repaired after the walk and the openings — unless the queue already passes a job it failed, a
+transit gap its windows heal, which spends nothing — each part of an attempt on its own clock and the attempts counted
+per failure signature, with an issue once its attempts run out and a wake for when the oldest of them age out. Every
+session runs under a wall clock, a session that never starts is retried five minutes later, a run that fails or is
+killed is woken five minutes later, and a hold that lifts on a clock schedules its own wake, so no stage needs a person
+to restart it. The one red left unwoken is the same step failing on the same line in the newest runs,
 which a rerun would only meet again: it gets one issue, and the next push or event runs the cycle as usual. Its pace is
 the review budget's, not its own: each of the plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one window under the
 cap, so a backlog of hundreds of queue commits takes hours to drain. What still needs a person is billing — a CodeRabbit

@@ -11,8 +11,6 @@ export const GUARD_RUN_LIST_LIMIT = 100;
 export const GUARD_HELD_MARKER = "review-collector guard-held";
 // The step output the guard's dispatch reads: whether the cycle is woken
 export const IS_WAKING_OUTPUT = "isWaking";
-// A job's conclusion when it ended green, GitHub's own spelling, beside the red one (`CI_FAILURE_CONCLUSION`)
-export const CI_SUCCESS_CONCLUSION = "success";
 // A run still going, GitHub's own spelling: the one the guard belongs to, or one whose retrigger is still waiting
 export const RUN_IN_PROGRESS_STATUS = "in_progress";
 // A run cancelled, GitHub's own spelling: superseded while pending, or its retrigger or guard replaced by a newer run's

@@ -44,8 +44,14 @@ export const RELANDED_TRAILER = "Relanded";
 export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", "CodeQL.yaml"];
 
 export const CI_FAILURE_CONCLUSION = "failure";
+// A job's conclusion when it ended green, GitHub's own spelling, beside the red one
+export const CI_SUCCESS_CONCLUSION = "success";
 
 export const CI_COMPLETED_STATUS = "completed";
+// How many of a workflow's newest runs are read for the queue's newest verdict (`readQueueCheck`). Every branch's runs
+// Share the list, and each bump's branch reruns its own on every move of `main`, so the queue's are a small share of it
+// And a hundred reach back a couple of hours
+export const QUEUE_CHECK_RUN_LIST_LIMIT = 100;
 // How much of each failing job's log the repairer is handed: the summary a check prints sits at its end, and a
 // Job's whole log is every test it ran
 export const FAILED_LOG_TAIL_LINES = 80;
@@ -161,6 +167,9 @@ export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
 // Keys the one issue per failure signature whose repairs ran out: the repairer stops on that signature, and the walk
 // Never waits on it
 export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
+// On a red `main` head whose failing jobs the queue passes, against the queue commit whose run said so: a transit gap
+// The queued windows heal, recorded so a later pass reads it here rather than both runs' jobs (`checkIsTransitGap`)
+export const TRANSIT_GAP_MARKER = "review-collector transit-gap";
 // The collector's own `@coderabbitai review` on a window whose review the bot owes: skipped, check-less, dropped, or
 // Refused by a rate limit whose deadline has passed. Only these are counted, so an ask a person wrote spends nothing of
 // The window's asks
@@ -175,8 +184,8 @@ export const COLLECTOR_ISSUE_LABEL = "ready-for-agent";
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
-// On a held commit, one per `main` head: the head it was parked at, and each head a re-land of it was tried at, so a
-// Re-land is tried once per head (`relandHeldCommits`)
+// On a held commit: one with no head once a run has found it held, and one naming each `main` head a re-land of it was
+// Tried at, so a re-land is tried once per head (`relandHeldCommits`)
 export const RELAND_MARKER = "review-collector reland";
 // A held commit's failed re-land, counted against the cap on the held commit itself like the sync's marker
 export const RELAND_FAILED_MARKER = "review-collector reland-failed";
@@ -276,7 +285,8 @@ export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }
 // Deadline further out is slept in relays
 export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
-// A step failing for good should reach its cap and be routed around in minutes rather than on the next push
+// A step failing for good should reach its cap and be routed around in minutes rather than on the next push. A held
+// Commit's re-land a run left for the next is woken for the same way (`relandHeldCommits`)
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
 // Hours, so a run a minute apart would spend a runner per minute learning it is still down

@@ -3,8 +3,8 @@ import type { CollectorJobView } from "#src/models/coderabbit/guard/CollectorJob
 import type { CollectorRunView } from "#src/models/coderabbit/guard/CollectorRunView";
 import type { RedStreak } from "#src/models/coderabbit/guard/RedStreak";
 
-import { CI_FAILURE_CONCLUSION } from "#src/services/coderabbit/collect/constants";
-import { CI_SUCCESS_CONCLUSION, COLLECT_JOB_NAME, GUARD_RED_STREAK } from "#src/services/coderabbit/guard/constants";
+import { CI_FAILURE_CONCLUSION, CI_SUCCESS_CONCLUSION } from "#src/services/coderabbit/collect/constants";
+import { COLLECT_JOB_NAME, GUARD_RED_STREAK } from "#src/services/coderabbit/guard/constants";
 import { getRunFailureSignature } from "#src/services/coderabbit/guard/getRunFailureSignature";
 import { readJobAnnotations } from "#src/services/coderabbit/guard/readJobAnnotations";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";

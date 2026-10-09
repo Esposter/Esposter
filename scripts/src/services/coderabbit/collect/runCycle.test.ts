@@ -2,6 +2,7 @@ import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import type { CommitCommentsPage } from "#src/models/coderabbit/collect/CommitCommentsPage";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
+import type { QueueCheck } from "#src/models/coderabbit/collect/QueueCheck";
 import type { RunJobsView } from "#src/models/coderabbit/collect/RunJobsView";
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
@@ -24,6 +25,7 @@ import {
   CHECK_NAME,
   CI_COMPLETED_STATUS,
   CI_FAILURE_CONCLUSION,
+  CI_SUCCESS_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
   EXPRESS_TRAILER,
@@ -49,6 +51,7 @@ import {
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
   SESSION_LIMITED_MARKER,
+  TRANSIT_GAP_MARKER,
   WINDOW_OPENING_WINDOW_MS,
   WINDOW_RECUT_MARKER,
   WINDOW_TITLE,
@@ -136,7 +139,13 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const stackingConfig = 'reviews:\n  auto_review:\n    base_branches: ["^review/"]\n';
 
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
-  const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: CI_COMPLETED_STATUS, url: "" };
+  const redRun: MainCheck = {
+    conclusion: CI_FAILURE_CONCLUSION,
+    databaseId: 0,
+    status: CI_COMPLETED_STATUS,
+    url: "",
+    workflowDatabaseId: 0,
+  };
   // What the red run failed on, and the signature its repairs are counted under
   const redRunJobs: RunJobsView = { jobs: [{ conclusion: CI_FAILURE_CONCLUSION, name: "" }], workflowName: "" };
   const signature = getFailureSignature(
@@ -414,6 +423,97 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
+  // The queue's newest verdict on the workflow main is red on, answered over what `answerGh` set up: its run, listed
+  // Without a commit, and the one job it ran, which shares the red job's name, at the conclusion the test gives
+  const queueRun: QueueCheck = { ...redRun, databaseId: 1, headBranch: QUEUE_BRANCH, headSha: "" };
+  const answerQueueRun = (conclusion: string) => {
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] === "run" && args[1] === "list" && !args.includes("--commit")) return JSON.stringify([queueRun]);
+      else if (args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString())
+        return JSON.stringify({ jobs: [{ conclusion, name: "" }], workflowName: "" } satisfies RunJobsView);
+      else return answerRest?.(args) ?? "";
+    });
+  };
+
+  // A job main failed that the queue passes is one a window still queued heals, and no repair at main's head can pass
+  // Its verify while it is red: the gap spends no session and no attempt, and is recorded on the head
+  test("spends no session or attempt on a red main whose failing job the queue passes, and records the gap", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(CI_SUCCESS_CONCLUSION);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(spawnPnpm).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [queueRun.headSha])}`,
+    ]);
+  });
+
+  // The gap recorded against the queue's newest verdict is read off the head, so a later pass neither reads the queue
+  // Run's jobs again nor records the gap twice
+  test("reads a transit gap already recorded on main's head against the queue's newest verdict", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(CI_SUCCESS_CONCLUSION);
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[1]?.startsWith(`repos/{owner}/{repo}/commits/${mainSha}/comments?`)
+        ? JSON.stringify([[getMarked(getMarker(TRANSIT_GAP_MARKER, mainSha, [queueRun.headSha]))]])
+        : (answerRest?.(args) ?? ""),
+    );
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runSession).not.toHaveBeenCalled();
+    expect(
+      runGh.mock.calls.filter(
+        ([args]) => args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString(),
+      ),
+    ).toHaveLength(0);
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
+  });
+
+  // Only a job red on the queue too is main's own to repair: the session runs as it does with no queue verdict at all
+  test("repairs a red main whose failing job the queue fails too", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(CI_FAILURE_CONCLUSION);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runSession.mockImplementation(() => {
+      commitFile(`${TEST_FILENAME}.ts`, "");
+      runGit(
+        ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+        getCwd(),
+      );
+      return Promise.resolve({ isEnded: true });
+    });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+  });
+
   // Each part of an attempt runs on its own clock, so an install that ran out the regenerators' clock and a session
   // That ran most of its own still leave the verify of the repair its whole suite
   test("verifies a session's repair on the suite's own clock, however long the install and the session ran", async () => {
@@ -525,7 +625,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // With no window open and none to cut, nothing in flight can move main under a claim, so the head it failed on is the
-  // Last it would meet: it is parked at once rather than counted on heads that never come
+  // Last it would meet: it is parked at once rather than counted on heads that never come, and the run wakes the next
+  // For the held commits it found
   test("parks a claimed commit that does not apply to main at once when nothing in flight can move main", async () => {
     expect.hasAssertions();
 
@@ -540,7 +641,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
       reason: `parked 1 claimed commits no cut onto ${MAIN_BRANCH} applies, with nothing in flight to move it`,
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
       targetSha: undefined,
     });
     expect(readSha(`origin/${getHeldBranch(claimedSha)}`)).toBe(claimedSha);
@@ -871,6 +972,87 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       targetSha: undefined,
     });
     expect(getPrCalls("create")).toHaveLength(0);
+  });
+
+  // The release is a person's, opened over whatever `develop` carried: one the bot keeps skipping past its last ask is
+  // Closed with its branch kept, `develop` moves back to where it met `main`, and the same pass cuts its commits into a
+  // Window under the cap, since no event follows the close
+  test("closes a release from develop the bot skips past its last ask and opens a window of its commits", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(QUEUE_BRANCH, developSha);
+    const release: WindowPullRequest = { ...getLegacyPullRequest(WindowPullRequestState.Open), headRefOid: developSha };
+    const ask: GitHubEntry = {
+      ...getMarked(`${PROBE_COMMENT}\n<!-- ${REVIEW_ASK_MARKER} -->`),
+      updated_at: new Date(0).toISOString(),
+    };
+    answerGh([], [], [ask, ask, ask], [], [], [release]);
+    const answer = runGh.getMockImplementation();
+    runGh.mockImplementation((args) => {
+      if (args[0] === "pr" && args[1] === "close") release.state = WindowPullRequestState.Closed;
+      return answer?.(args) ?? "";
+    });
+    readCheckStatus.mockReturnValue({ bucket: PASS_BUCKET, description: "", name: CHECK_NAME });
+    vi.setSystemTime(takeOne(REVIEW_ASK_WAITS_MS, 2));
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getPrCalls("close")).toStrictEqual([[["pr", "close", release.number.toString()]]]);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
+      targetSha: developSha,
+    });
+  });
+
+  // A re-cut leaves its marker on the release it closed, which gave its commits back to the opener: no person's pause
+  test("opens a window over a release from develop that a re-cut closed", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(
+      [],
+      [],
+      [getMarked(`<!-- ${WINDOW_RECUT_MARKER} cap:1 -->`)],
+      [],
+      [],
+      [getLegacyPullRequest(WindowPullRequestState.Closed)],
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(1),
+      retriggerDelaySeconds: undefined,
+      targetSha: queueSha,
+    });
+  });
+
+  // A push to `develop` fires no run, so a `develop` that moved under the close of the windows off the chain owes the
+  // Run its wake, whatever the rest of the pass finds
+  test("wakes the cycle when develop moves under the close of the windows off the chain", async () => {
+    expect.hasAssertions();
+
+    const mainSha = readSha(`origin/${MAIN_BRANCH}`);
+    publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(QUEUE_BRANCH, mainSha);
+    installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${DEVELOP_BRANCH} ${mainSha}`);
+    answerGh([
+      getWindowPullRequest(WindowPullRequestState.Open, pullRequest + 1),
+      getWindowPullRequest(WindowPullRequestState.Open, pullRequest + 2),
+    ]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures; nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: MOVED_BRANCH_RETRY_DELAY_SECONDS,
+      targetSha: undefined,
+    });
+    expect(getPrCalls("close")).toStrictEqual([]);
   });
 
   test("opens nothing over an open window while no stacking guard reaches it", async () => {

@@ -1,10 +1,9 @@
 import type { CollectorJobView } from "#src/models/coderabbit/guard/CollectorJobView";
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
-import { CI_FAILURE_CONCLUSION } from "#src/services/coderabbit/collect/constants";
+import { CI_FAILURE_CONCLUSION, CI_SUCCESS_CONCLUSION } from "#src/services/coderabbit/collect/constants";
 import { getFailureSignature } from "#src/services/coderabbit/collect/getFailureSignature";
 import {
-  CI_SUCCESS_CONCLUSION,
   COLLECT_JOB_NAME,
   FAILURE_ANNOTATION_LEVEL,
   GUARD_RUN_LIST_LIMIT,
