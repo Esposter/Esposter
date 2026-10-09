@@ -77,7 +77,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
-import { PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
+import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -542,8 +542,11 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
-          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex((action) =>
-            inputState.pressedActions.has(action),
+          // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
+          const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
+            (action, index) =>
+              inputState.pressedActions.has(action) ||
+              inputState.pressedActions.has(PARTY_MEMBER_BURST_INPUT_ACTIONS[index] ?? action),
           );
           if (!isPaused && screenKind === ScreenKind.World && partyMemberIndex !== -1)
             switchPartyMember(party, partyMemberIndex, context.elapsed);

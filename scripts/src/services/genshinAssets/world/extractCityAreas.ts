@@ -31,6 +31,8 @@ export const extractCityAreas = async (candidates: readonly CityAreaCandidate[])
     addRequest(blob.block, AssetType.MiHoYoBinData, blob.name);
     addRequest(index.block, AssetType.MonoBehaviour, index.name);
   }
+  // Cleared first, so a name AnimeStudio exports nothing for is never read from an earlier run's leftovers
+  await rm(CITY_AREA_EXPORTS_DIRECTORY, { force: true, recursive: true });
   for (const { block, names, type } of requests.values())
     await runAnimeStudioBelowNormal(getNamedRawArgs(block, type, [...names], CITY_AREA_EXPORTS_DIRECTORY));
   const areas: CityArea[] = [];
