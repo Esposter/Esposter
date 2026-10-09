@@ -89,6 +89,11 @@ export const LOGIN_SHADOW_NORMAL_BIAS = 0.0125;
 export const LOGIN_SHADOW_INTENSITY = 1;
 export const LOGIN_NIGHT_SHADOW_BIAS = -0.006;
 export const LOGIN_NIGHT_SHADOW_INTENSITY = 0.8;
+// The shadow's softness, the radius its percentage-closer filter samples each texel from: the light's own at one, and
+// The night's moon over two texels, the radius whose shadow edges lie nearest the reference's (genshin:parity passes
+// Login --pass Light), where four softens them further and reads farther from it
+export const LOGIN_SHADOW_RADIUS = 1;
+export const LOGIN_NIGHT_SHADOW_RADIUS = 2;
 export const LOGIN_CLOUD_COVERAGE = 0;
 // The frames drawn before the scene is said to be ready: WebGPU compiles each pipeline on first use, so the first few
 // Frames can come out before every material has. A scene mounted at the door is ready only once the door has risen
