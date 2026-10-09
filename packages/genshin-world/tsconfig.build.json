@@ -1,1 +1,10 @@
-{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"] }
+{
+  "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"],
+  "compilerOptions": {
+    "paths": {
+      "#src/generated/bookBody/*/index.chunk": ["./build/generatedChunk.d.ts"],
+      "#src/generated/*": ["./build/generatedJson.d.ts"]
+    }
+  },
+  "include": ["../configuration/types/*.d.ts", "src/**/*.ts", "src/**/*.vue"]
+}

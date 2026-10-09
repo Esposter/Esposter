@@ -38,6 +38,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **A moved `dist` size snapshot is something newly bundled, never a `-u` to take** — and an export added to a bundled package moves `apps/functions`' and `apps/infra`'s snapshots too (`references/dist-size.md`).
 - **A package that is a Nuxt module builds its runtime unbundled beside a `src/module.ts` entry, and the app registers it by the path to that source**, never its package name, which `nuxt prepare` cannot load before the packages build (`references/nuxt-module-packages.md`).
 - **Presets live in `@esposter/configuration`, extended by path, and the base carries no framework assumption** (`references/tsconfig-presets.md`).
+- **A generated data chunk never enters the declaration program.** A loader's `import()` pulls the chunk and its JSON in, so the build tsconfig maps the generated paths to a shape-only stand-in (`apps/web/content/docs/architecture/build-pipeline.md`).
 - **Installs and the workspace graph are `AGENTS.md` and `apps/web/content/docs/architecture/monorepo-tooling.md`** — where `pnpm i` needs the network, ask for plain `pnpm i` rather than changing pnpm store settings.
 
 ## Reference pages

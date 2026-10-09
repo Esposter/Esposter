@@ -1,10 +1,12 @@
 import type { StatTables } from "#src/models/character/StatTables";
 
+import characters from "#src/generated/stats/characters.json";
 import { parseStatTables } from "#src/services/character/parseStatTables";
 
 // The game's stat tables, as `pnpm -C scripts genshin:assets stats` writes them from its own, each checked against its
 // Schema as it arrives. Each is imported on demand, so the build splits it into a chunk of its own rather than the
-// Package's, which every page of the opening downloads
+// Package's, which every page of the opening downloads. The character table is the exception: `getCharacterWeaponType`
+// Reads it synchronously, so the package holds it already and it is imported statically here rather than dynamically
 export const readStatTables = async (): Promise<StatTables> => {
   const [
     artifactExpMaterials,
@@ -13,7 +15,6 @@ export const readStatTables = async (): Promise<StatTables> => {
     artifactRarities,
     artifactSets,
     characterGrowCurves,
-    characters,
     weaponGrowCurves,
     weapons,
   ] = await Promise.all([
@@ -23,7 +24,6 @@ export const readStatTables = async (): Promise<StatTables> => {
     import("#src/generated/stats/artifactRarities.json"),
     import("#src/generated/stats/artifactSets.json"),
     import("#src/generated/stats/characterGrowCurves.json"),
-    import("#src/generated/stats/characters.json"),
     import("#src/generated/stats/weaponGrowCurves.json"),
     import("#src/generated/stats/weapons.json"),
   ]);
@@ -34,7 +34,7 @@ export const readStatTables = async (): Promise<StatTables> => {
     artifactRarities: artifactRarities.default,
     artifactSets: artifactSets.default,
     characterGrowCurves: characterGrowCurves.default,
-    characters: characters.default,
+    characters,
     weaponGrowCurves: weaponGrowCurves.default,
     weapons: weapons.default,
   });
