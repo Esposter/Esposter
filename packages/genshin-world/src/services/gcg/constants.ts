@@ -1,4 +1,5 @@
 import { Element, Elements } from "#src/models/Element";
+import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 
@@ -6,6 +7,10 @@ import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 export const GCG_DIE_FACES: (Element | GcgDieFace)[] = [...Elements, GcgDieFace.Omni];
 // The dice a side rolls at the start of each round, and the cards a side is dealt before the duel's first round
 export const GCG_DICE_COUNT = 8;
+// The supports a side's zone holds at most
+export const GCG_SUPPORT_LIMIT = 4;
+// The most dice a side holds at once: a die created past it is not made
+export const GCG_DICE_LIMIT = 16;
 export const GCG_STARTING_HAND_COUNT = 5;
 // The die a switch of character costs, of any face
 export const GCG_SWITCH_DICE_COUNT = 1;
@@ -62,3 +67,17 @@ export const GcgReactionPairs: [Element, Element, GcgReactionKind][] = [
   [Element.Hydro, Element.Dendro, GcgReactionKind.Bloom],
   [Element.Electro, Element.Dendro, GcgReactionKind.Quicken],
 ];
+// The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other six
+// Elements its own way, which the world's Element enum spells otherwise
+export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new Map<string, Element | GcgDamageKind>([
+  ["Physic", GcgDamageKind.Physical],
+  ["Fire", Element.Pyro],
+  ["Water", Element.Hydro],
+  ["Ice", Element.Cryo],
+  ["Electric", Element.Electro],
+  ["Wind", Element.Anemo],
+  ["Rock", Element.Geo],
+  ["Grass", Element.Dendro],
+]);
+// The name of a shared damage effect, its element or Physic and its damage: Effect_Damage_Fire_3 names Fire and 3
+export const GCG_EFFECT_DAMAGE_PATTERN = /^Effect_Damage_(?<element>\w+)_(?<count>\d+)$/u;
