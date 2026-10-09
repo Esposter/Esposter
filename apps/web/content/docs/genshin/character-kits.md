@@ -5,7 +5,7 @@ description: Genshin's character kits as built — every playable character's sk
 
 # Character kits
 
-A character's combat kit is its skills, cooldowns, costs and talent multipliers, and the game keeps those in its tables by the character's skill sets. What is built is the table side: each playable character's skill sets, written beside the stat tables by the stats run, and the targeting that turns an action to its enemy. The Traveler's first kit reads its multipliers from the same tables and sits in its own module, and every other character still fights with it until its own module is written. The kits' hits are [combat](/docs/genshin/combat)'s, and the kit's action state machine is documented there too.
+A character's combat kit is its skills, cooldowns, costs and talent multipliers, and the game keeps those in its tables by the character's skill sets. What is built is the table side: each playable character's skill sets, written beside the stat tables by the stats run, and the targeting that turns an action to its enemy. The Traveler's first kit reads its multipliers from the same tables and sits in its own module, as Diluc's, Bennett's and Mona's do, and a character with no module of its own fights with the Traveler's kit until one is written. The kits' hits are [combat](/docs/genshin/combat)'s, and the kit's action state machine is documented there too.
 
 ## Skill sets
 
