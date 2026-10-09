@@ -580,6 +580,17 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readTrailedShas([claimedSha], EXPRESS_TRAILER, getCwd())).toStrictEqual(new Set([claimedSha]));
     expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    // Counted before the push that carries the parts, so a refusal there costs the reshaper a turn rather than nothing
+    expect(runGh.mock.calls.filter(([args]) => args.includes("-f"))).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${oversizedSha}/comments`,
+          "-f",
+          `body=${getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP}: reshaped ${oversizedSha} into 2 commits`,
+        ],
+      ],
+    ]);
   });
 
   // A review's fixes lead every window, so a commit that fits the cap alone but not beside them would be held behind
