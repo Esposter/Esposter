@@ -50,7 +50,7 @@ const describeBuilds = (calls: GpuCall[]): string[] => {
   }
 
   return [...builds]
-    .toSorted((first, second) => second[1].ms - first[1].ms)
+    .toSorted(([, firstBuild], [, secondBuild]) => secondBuild.ms - firstBuild.ms)
     .slice(0, LISTED_BUILDS_PER_STATE)
     .map(([key, { count, ms }]) => `  built ${count}x for ${roundMs(ms)} ms: ${key}`);
 };

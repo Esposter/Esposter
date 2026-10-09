@@ -1,5 +1,5 @@
-import { createFlowerGeometry } from "#src/vegetation/createFlowerGeometry";
 import { FLOWER_COLOR_ATTRIBUTE_NAME, FLOWER_MATRIX_ATTRIBUTE_NAMES } from "#src/vegetation/constants";
+import { createFlowerGeometry } from "#src/vegetation/createFlowerGeometry";
 import {
   Box3,
   InstancedBufferAttribute,
