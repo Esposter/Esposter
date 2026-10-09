@@ -195,7 +195,7 @@ const submitAndReadPartials = async (
   encoder.copyBufferToBuffer(partials, 0, staging, 0, byteLength);
   device.queue.submit([encoder.finish()]);
   await staging.mapAsync(GPUMapMode.READ);
-  const partialSums = new Float32Array(staging.getMappedRange().slice(0));
+  const partialSums = new Float32Array([...staging.getMappedRange()]);
   staging.unmap();
   staging.destroy();
   return partialSums;

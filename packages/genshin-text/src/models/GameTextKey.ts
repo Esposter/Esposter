@@ -79,12 +79,12 @@ export enum GameTextKey {
   // The Paimon menu's link to the game's community, which opens a web page
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   CompatibilityMode = "1992637634",
+  CondessenceCrystal = "3736537308",
   // The quit prompt's first button, which goes back to the world
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
-  CondessenceCrystal = "3736537308",
   CrystalChunk = "1448077684",
   CrystalCore = "2435040556",
   CrystalMarrow = "307506436",
@@ -208,9 +208,9 @@ export enum GameTextKey {
   LotusHead = "1050026324",
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
-  Mail = "UI_PLAYER_PROFILE_MAIL",
-
   MagicalCrystalChunk = "2057452708",
+
+  Mail = "UI_PLAYER_PROFILE_MAIL",
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
   MasterlessStardust = "3899400612",
@@ -261,8 +261,8 @@ export enum GameTextKey {
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
-  RainbowRose = "2386700548",
   RainbowdropCrystal = "3831100636",
+  RainbowRose = "2386700548",
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RedBerryshroom = "1096616044",

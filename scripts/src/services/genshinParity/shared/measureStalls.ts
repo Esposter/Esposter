@@ -9,15 +9,15 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
 
+interface DevtoolsMessage {
+  data: { renderer: { instance?: StallRenderer; value?: { instance?: StallRenderer } } };
+  type: string;
+}
+
 // The window fields the page keeps for the run: the frames it drew, the renderer it hands over and the pointer lock the orbit fakes
 // The renderer as the run reads it: its program count is what grows as a pipeline first draws
 interface StallRenderer {
   info: { memory: { programs: number } };
-}
-
-interface DevtoolsMessage {
-  data: { renderer: { instance?: StallRenderer; value?: { instance?: StallRenderer } } };
-  type: string;
 }
 
 declare global {
@@ -98,7 +98,7 @@ const walk = async (page: Page, durationMs: number) => {
   );
 };
 
-const readPrograms = (page: Page): Promise<number | null> =>
+const readPrograms = (page: Page): Promise<null | number> =>
   page.evaluate(() => window.__renderer?.info.memory.programs ?? null);
 
 // One state: the frames drawn while its drive runs, summarised with the programs held before and after it
@@ -152,7 +152,7 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
   const loadMs = Date.now() - loadStart;
   await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
   await page.evaluate(hookRenderer);
-  await page.waitForFunction(() => window.__hooked === true, null, { timeout: HOOK_TIMEOUT_MS });
+  await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
   const states = await measureStates(page);
   await browser.close();
 
@@ -168,7 +168,7 @@ export const measureStalls = async ({ height, scale, screen, width }: StallOptio
   ].join("\n");
   await mkdir(STALLS_DIRECTORY, { recursive: true });
   const path = join(STALLS_DIRECTORY, `${screen}-${width}x${height}-scale${scale}.json`);
-  await writeFile(path, JSON.stringify({ errors: errors.slice(0, 10), loadMs, label, states }, null, 2));
+  await writeFile(path, JSON.stringify({ errors: errors.slice(0, 10), label, loadMs, states }, null, 2));
 
   return `${report}\n${path}`;
 };

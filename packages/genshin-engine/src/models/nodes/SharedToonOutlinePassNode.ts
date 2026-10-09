@@ -12,11 +12,9 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   #isCompiling = false;
   #outlineMaterial: NodeMaterial | undefined;
 
-  override updateBefore(frame: NodeFrame): boolean | undefined {
-    // The compile holds each toon mesh in the outline material, which the frame must not draw
-    if (this.#isCompiling) return undefined;
-
-    return super.updateBefore(frame);
+  // Every toon material is outlined by the one shared material, which three would build once per toon material given
+  _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
+    return this.#getSharedOutlineMaterial();
   }
 
   // Compiles the scene's pipelines, then the outline's over the same meshes: three's compile ignores the render-object
@@ -40,9 +38,11 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     }
   }
 
-  // Every toon material is outlined by the one shared material, which three would build once per toon material given
-  _getOutlineMaterial(_originalMaterial: Material): NodeMaterial {
-    return this.#getSharedOutlineMaterial();
+  override updateBefore(frame: NodeFrame): boolean | undefined {
+    // The compile holds each toon mesh in the outline material, which the frame must not draw
+    if (this.#isCompiling) return undefined;
+
+    return super.updateBefore(frame);
   }
 
   #getSharedOutlineMaterial(): NodeMaterial {

@@ -1,6 +1,6 @@
 // The WGSL kernels a surface's statistics are reduced by: a separable Gaussian pass, an elementwise term, and a sum over
 // The pixels. Every buffer is a flat f32 array a pixel to an element; the parameters are one uniform, read by each entry
-export const SURFACE_STATISTICS_SHADER = /* wgsl */ `
+export const SURFACE_STATISTICS_SHADER = /* Wgsl */ `
 struct Parameters {
   count: u32,
   width: u32,

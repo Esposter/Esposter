@@ -11,8 +11,8 @@ const STALLED_FRAME_MS = 250;
 export const summarizeStallState = (
   name: string,
   frames: FrameSample[],
-  programsBefore: number | null,
-  programsAfter: number | null,
+  programsBefore: null | number,
+  programsAfter: null | number,
 ): StallState => {
   const frameMs = frames.slice(1).map((frame, index) => frame.time - (frames[index]?.time ?? 0));
   const growthAt: StallState["growthAt"] = [];
