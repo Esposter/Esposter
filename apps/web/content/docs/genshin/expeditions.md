@@ -54,7 +54,7 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.ts`    | A place open by its rank, statue and quest                            |
 | `packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`        | The most expeditions out at once at a rank                            |
 | `packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`     | The scene points of the statues unlocked, the points a place names    |
-| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's slice, imported on demand and checked on arrival          |
+| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's places, fetched by key and checked on arrival             |
 | `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                        |
 | `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                 |
 

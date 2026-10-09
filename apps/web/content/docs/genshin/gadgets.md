@@ -51,7 +51,7 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 | `packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`    | Whether a gadget's group is ready at a moment                      |
 | `packages/genshin-world/src/services/gadget/startGadgetCooldown.ts`   | Starts a group's cooldown after a use that works or one that fails |
 | `packages/genshin-world/src/services/gadget/getCooldownGroup.ts`      | A gadget's group, its own id when the config gives none            |
-| `packages/genshin-world/src/services/gadget/readGadgetRows.ts`        | Reads the slice on demand                                          |
+| `packages/genshin-world/src/services/gadget/readGadgetRows.ts`        | Reads the gadgets by their key from the hosted game data           |
 | `packages/genshin-world/src/generated/gadgets/gadgets.json`           | The slice of the gadgets the config builds                         |
 | `scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`          | Each config widget of a built type as a row                        |
 | `scripts/src/services/genshinAssets/gadgets/buildGadgetRows.ts`       | Builds the slice from the widget config, for publishing            |

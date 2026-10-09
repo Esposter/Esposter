@@ -5,7 +5,7 @@ description: Every dataset genshin-world reads is published to Azure Blob Storag
 
 # Hosted game data
 
-Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, the enemy, Adventure Rank and material tables, the HUD's rects, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
+Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, the enemy, Adventure Rank and material tables, the HUD's rects, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left: the recipe, activity, talent table, reliquary set and expedition limit readers already fetch by key, though no screen calls them yet.
 
 ## How it works
 
@@ -166,6 +166,7 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **A combatant carries its weapon type.** The world's combat fills `weaponType` from the roster's table it already holds, so Bennett's field and the ores read the wielder off the combatant and nothing holds a copy of the table for a synchronous lookup. The field is optional: a character the roster's table does not hold wields nothing, and a test's combatant whose rules read no weapon leaves it out.
 - **A record holding several tables is parsed per field.** The friendship record carries the levels and the namecards, and each reader's schema takes only its own field, so a reader holds what it returns and nothing else.
 - **A step publishes its builders' records in one call.** Fishing's two builders share one scope, and a publish replaces every key under its scope, so a call per builder would drop the other builder's keys until its own call ran. Offerings publishes its two scopes in one call for the same reason.
+- **A reader nothing calls still moves.** The recipe, activity, talent table, reliquary set and expedition limit readers fetch their keys now, so the package imports none of their JSON ahead of the screen that calls them.
 
 ## Notes
 

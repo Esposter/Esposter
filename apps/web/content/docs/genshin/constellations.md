@@ -50,7 +50,7 @@ flowchart LR
 | `packages/genshin-world/src/models/character/Character.ts`                         | Gains the constellations active and the Stella Fortuna held                           |
 | `packages/genshin-world/src/services/character/activateConstellation.ts`           | The activation rule: the next constellation, one Stella Fortuna spent                 |
 | `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | The levels the active raises add to each combat talent                                |
-| `packages/genshin-world/src/services/character/readConstellationTables.ts`         | The table, imported on demand and checked against its shape                           |
+| `packages/genshin-world/src/services/character/readConstellationTables.ts`         | The table, fetched by its key from the hosted game data and checked against its shape |
 | `packages/genshin-world/src/services/wish/makeWishes.ts`                           | Counts a duplicate's Stella Fortuna to its character and a five-star's Masterless one |
 | `packages/genshin-world/src/generated/stats/characterConstellationKits.json`       | The written table                                                                     |
 | `scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`        | Each playable character's sets with their constellations, from the dump               |

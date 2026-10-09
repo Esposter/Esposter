@@ -44,7 +44,7 @@ flowchart TD
 | `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                  |
 | `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations     |
 | `packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`    | The exploration thresholds a progress passes between two percentages        |
-| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The generated slice, imported on demand and checked against its shape       |
+| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The slice, fetched by its key and checked against its shape                 |
 | `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
 | `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                          |
 | `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The reset the weekly limit counts from                                      |
