@@ -11,8 +11,9 @@ import { readSha } from "#src/services/coderabbit/collect/readSha";
 // Branch's newest verdict counts when its run read the head under any sha the head has (`readMainHeadIdentities`): it
 // Can predate a commit that has since reached both the queue and `main` — an express cut lands in the pass its own
 // Push fires — and pass the job that commit broke. Once the branch's tip carries the head, the run over that tip is
-// The verdict, read by its commit so a stale branch filter cannot hide it (`readCommitCheck`); one that ended with no
-// Verdict leaves nothing coming, and the newest stands. So does a head the tip does not carry — a bump or a repair
+// The verdict, read by its commit so a stale branch filter cannot hide it, and picked among that commit's runs by the
+// Branch, since `main`'s own red run over the same commit is no queued verdict (`readCommitCheck`); one that ended with
+// No verdict leaves nothing coming, and the newest stands. So does a head the tip does not carry — a bump or a repair
 // `main` took directly — since no queued run reads it before a fold brings it in.
 export const readCarryingCheck = (newestCheck: MainCheck, mainSha: string, cwd: string): MainCheck | undefined => {
   const identities = readMainHeadIdentities(mainSha, cwd);
@@ -22,7 +23,7 @@ export const readCarryingCheck = (newestCheck: MainCheck, mainSha: string, cwd: 
   const tipSha = readSha(`origin/${newestCheck.headBranch}`, cwd);
   if (tipSha === undefined || !checkIsCarried(tipSha)) return newestCheck;
 
-  const tipCheck = readCommitCheck(newestCheck.workflowDatabaseId.toString(), tipSha);
+  const tipCheck = readCommitCheck(newestCheck.workflowDatabaseId.toString(), tipSha, newestCheck.headBranch);
   if (tipCheck?.status !== CI_COMPLETED_STATUS) return undefined;
   return checkIsVerdict(tipCheck) ? tipCheck : newestCheck;
 };

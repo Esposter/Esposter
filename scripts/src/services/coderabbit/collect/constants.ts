@@ -50,7 +50,10 @@ export const CI_SUCCESS_CONCLUSION = "success";
 export const CI_COMPLETED_STATUS = "completed";
 // The fields every read of a workflow run asks `gh run list` for (`MainCheck`)
 export const CHECK_RUN_FIELDS =
-  "conclusion,createdAt,databaseId,headBranch,headSha,status,updatedAt,url,workflowDatabaseId";
+  "attempt,conclusion,createdAt,databaseId,headBranch,headSha,status,updatedAt,url,workflowDatabaseId";
+// How many of a commit's runs of one workflow are read for the newest on one branch (`readCommitCheck`): each branch a
+// Push moved onto the commit runs the workflow over it once, and a pull request's event once more, so a handful
+export const COMMIT_CHECK_RUN_LIST_LIMIT = 20;
 // How many of one branch's newest runs of a workflow are read for its newest verdict (`readQueueCheck`). The branch
 // Narrows the list on GitHub's side, and the only runs passed over are the pending ones a newer push superseded, which
 // Come a handful at a time
@@ -171,8 +174,14 @@ export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
 // Never waits on it
 export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
 // On a red `main` head whose failing jobs the queue passes, against the queue commit whose run said so: a transit gap
-// The queued windows heal, recorded so a later pass reads it here rather than both runs' jobs (`checkIsTransitGap`)
+// The queued windows heal, recorded so a later pass reads it here rather than both runs' jobs (`settleTransitGap`)
 export const TRANSIT_GAP_MARKER = "review-collector transit-gap";
+// On a red `main` head whose failing jobs the queue passes over the very same tree, once its failed jobs are run again:
+// No transit gap but a flake or a red of its own, re-run once per head and repaired once still red (`rerunRedCheck`)
+export const RERUN_MARKER = "review-collector rerun";
+// On the `main` head a repair was owed at when the run's budget could no longer hold it, keyed by its failure signature:
+// The run after it starts with the repair, ahead of the walk (`markRepairFirst`, `checkIsRepairFirst`)
+export const REPAIR_FIRST_MARKER = "review-collector repair-first";
 // The collector's own `@coderabbitai review` on a window whose review the bot owes: skipped, check-less, dropped, or
 // Refused by a rate limit whose deadline has passed. Only these are counted, so an ask a person wrote spends nothing of
 // The window's asks
@@ -324,6 +333,9 @@ export const MISSING_CHECK_WAIT_MS: number = Temporal.Duration.from({ minutes: 1
 // The bot dropped and asked for like a skipped one. A window's review completes in about a quarter of an hour, so a
 // Check pending four times that long is not a review still running
 export const PENDING_CHECK_WAIT_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// How long a repair-first mark holds, and how often one signature may be marked: a run that starts with the repair
+// Holds the walk behind it, so a red the repairer could not answer leaves the walk first again for the rest of the span
+export const REPAIR_FIRST_SPAN_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How far back a failure signature's repair attempts are counted. Without a span, a signature as common as one test
 // Job would stay exhausted for good after its third failure in any week
 export const REPAIR_SIGNATURE_SPAN_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");

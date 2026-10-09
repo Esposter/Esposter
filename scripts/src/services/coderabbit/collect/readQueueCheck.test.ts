@@ -15,6 +15,7 @@ const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 const getRun = (headBranch: string, conclusion: string): MainCheck => ({
+  attempt: 1,
   conclusion,
   createdAt: "",
   databaseId: 0,

@@ -14,7 +14,7 @@ import { settleUnappliedClaims } from "#src/services/coderabbit/collect/settleUn
 // Verifying the cut held both lanes forever. An intermediate red `main` is the repairer's, which is how every red
 // Resolves eventually. A push is the run's one irreversible act, so a lane that pushed ends the run. The cut goes
 // Even over a red `main`, since a claimed commit may be the repair and it reaches `main` this way alone; whether
-// `main` is red is asked only once the stack has been walked (`runRepairStep`).
+// `main` is red is asked after it, once the stack has been walked or, in a run marked for it, before (`runRepairStep`).
 export const runExpressLane = ({
   collectorSha,
   cwd,
