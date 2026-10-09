@@ -47,6 +47,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 - **A machine's own checkout** runs `git pull --rebase` before each entry and before each push. It pushes through `pnpm ai:queue:push` after each coherent chunk, never once at the end of a long entry. With many machines a push loses its race routinely, and the script retries with jittered backoff.
 - **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session runs `pnpm ai:queue:push` after every agent report. The script replays the session commits onto origin in a throwaway worktree, pushes, and moves the checkout's branch when no dirty file conflicts.
+- **A replay merges text, not meaning.** A change to a shared signature is typechecked once more after the rebase onto origin, right before its push, so callers another machine added meanwhile are migrated too. On 2026-10-09, `getTalentMultiplier` gained a parameter on the PC while the MacBook added seven kits calling it the old way. Both replays were clean, and 12 test files broke.
 - **Never stash, never `git add -A`, never a bare `--force-with-lease`**, on any machine (the `review-queue` skill).
 
 ## Game data stays on the machines that hold it
