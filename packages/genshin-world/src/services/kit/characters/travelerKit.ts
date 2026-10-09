@@ -1,3 +1,4 @@
+import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
@@ -54,8 +55,8 @@ const createNormalAttack = (
 
 // The Traveler's first kit, at talent level 1, as the wiki's Lumine's Foreign Ironwind gives it: five strikes, a charged
 // Attack, a collision and two plunges, then Palm Vortex and Gust Surge at the element a statue gives them, at 1U. Its
-// Multipliers are read from the Anemo form's proud skill groups, which match the wiki's to two decimal places
-export const TRAVELER_KIT: Kit = {
+// Multipliers are read from the loaded table's Anemo form's proud skill groups, which match the wiki's to two decimal places
+export const createTravelerKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
   // Measured: gcsim v2.47.2 (MIT) traveler/common/anemo charge.go, 60 fps frames,
@@ -67,14 +68,14 @@ export const TRAVELER_KIT: Kit = {
         hitmarkSeconds: 14 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 50.6,
-        talentMultiplier: getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
       },
       {
         hitArea: SWORD_HIT_AREA,
         hitmarkSeconds: 25 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 50.6,
-        talentMultiplier: getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
       },
     ],
     seconds: 58 / 60,
@@ -93,7 +94,7 @@ export const TRAVELER_KIT: Kit = {
         // Measured: gcsim v2.47.2 (MIT) sets no poise damage on the anemo burst, so none stands
         // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/burst.go
         poiseDamage: 0,
-        talentMultiplier: getTalentMultiplier(TRAVELER_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
     seconds: 105 / 60,
@@ -111,7 +112,7 @@ export const TRAVELER_KIT: Kit = {
         // Measured: gcsim v2.47.2 (MIT) sets no poise damage on the anemo skill, so none stands
         // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/skill.go
         poiseDamage: 0,
-        talentMultiplier: getTalentMultiplier(TRAVELER_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
       },
     ],
     seconds: 61 / 60,
@@ -127,7 +128,7 @@ export const TRAVELER_KIT: Kit = {
         hitmarkSeconds: 0,
         isBlunt: true,
         poiseDamage: 150,
-        talentMultiplier: getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
       },
     ],
     seconds: 0.4,
@@ -140,24 +141,49 @@ export const TRAVELER_KIT: Kit = {
         hitmarkSeconds: 0,
         isBlunt: true,
         poiseDamage: 100,
-        talentMultiplier: getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
       },
     ],
     seconds: 0.4,
     targetingArea: SWORD_TARGETING_AREA,
   },
   normalAttacks: [
-    createNormalAttack(getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0), 40.5, 16 / 60, 24 / 60),
-    createNormalAttack(getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1), 39.6, 10 / 60, 21 / 60),
-    createNormalAttack(getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2), 48.6, 19 / 60, 27 / 60),
-    createNormalAttack(getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3), 54, 23 / 60, 38 / 60),
-    createNormalAttack(getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4), 64.8, 14 / 60, 64 / 60),
+    createNormalAttack(
+      getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
+      40.5,
+      16 / 60,
+      24 / 60,
+    ),
+    createNormalAttack(
+      getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
+      39.6,
+      10 / 60,
+      21 / 60,
+    ),
+    createNormalAttack(
+      getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
+      48.6,
+      19 / 60,
+      27 / 60,
+    ),
+    createNormalAttack(
+      getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
+      54,
+      23 / 60,
+      38 / 60,
+    ),
+    createNormalAttack(
+      getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
+      64.8,
+      14 / 60,
+      64 / 60,
+    ),
   ],
   plungeCollision: {
     hitArea: PLUNGE_COLLISION_HIT_AREA,
     hitmarkSeconds: 0,
     poiseDamage: 25,
-    talentMultiplier: getTalentMultiplier(TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, TRAVELER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
   },
   skillCooldownSeconds: 5,
-};
+});

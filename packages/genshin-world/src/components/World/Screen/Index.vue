@@ -8,6 +8,7 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -21,6 +22,7 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
@@ -50,12 +52,12 @@ import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
+import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
@@ -80,11 +82,12 @@ import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { CharacterIdKitMap } from "#src/services/kit/CharacterIdKitMap";
-import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
+import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -103,6 +106,9 @@ import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEven
 import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
 import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
+import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
+import { readGenshinSave } from "#src/services/save/readGenshinSave";
+import { toGenshinSave } from "#src/services/save/toGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
@@ -113,7 +119,7 @@ import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useIntervalFn, useNow, useRafFn } from "@vueuse/core";
+import { useEventListener, useIntervalFn, useNow, useRafFn, watchImmediate } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
@@ -148,6 +154,10 @@ interface Props {
   qualityTier: QualityTier;
   // Where the host serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // The player's save the world's systems start from, a new player's when there is none
+  save?: GenshinSave;
+  // The server's clock minus this machine's, which every saved timer is read against
+  serverClockOffsetMs?: number;
 }
 
 const {
@@ -161,9 +171,12 @@ const {
   language,
   qualityTier,
   regionDataBaseUrl,
+  save,
+  serverClockOffsetMs = 0,
 } = defineProps<Props>();
-// Quitting the game leaves the world, which its host does
-const emit = defineEmits<{ quit: []; ready: [] }>();
+// Quitting the game leaves the world, which its host does. A grant is a change to the bag or the wallet the host saves
+// At once, and a save is every change to what the world holds, which the host saves on its own cadence
+const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
@@ -225,6 +238,22 @@ getResultAsync(() => QuestTextLoaderMap[language]()).match(
   },
 );
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
+// The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
+// Character's chunk on demand. The Traveler's kit is built from them once they arrive, and nothing is priced until then
+const talentMultipliers = shallowRef<TalentMultiplierMap>();
+const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
+watchImmediate(deployedCharacterIds, (characterIds) => {
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(() => readTalentMultipliers(characterIds)).match(
+    (newTalentMultipliers) => {
+      talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+});
+const travelerKit = computed(() => (talentMultipliers.value ? createTravelerKit(talentMultipliers.value) : undefined));
 // How the character on the field moves, its body type's, once the roster has arrived
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
@@ -234,7 +263,7 @@ const locomotion = computed(() =>
 // Skills read
 const characterIdCombatantMap = computed(() => {
   const combatantMap = new Map<number, Combatant>();
-  if (!statTables.value) return combatantMap;
+  if (!statTables.value || !travelerKit.value) return combatantMap;
   // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
   const { characterDataMap } = statTables.value;
   const elementalResonances = getElementalResonances(
@@ -252,7 +281,7 @@ const characterIdCombatantMap = computed(() => {
       ascension: character.ascension,
       characterId: character.id,
       elementalResonances,
-      kit: CharacterIdKitMap[character.id] ?? TRAVELER_KIT,
+      kit: CharacterIdKitMap[character.id] ?? travelerKit.value,
       level: character.level,
     });
   return combatantMap;
@@ -278,14 +307,16 @@ const hudMember = computed<HudMember | undefined>(() => {
 });
 // The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
 // Gives them something
+// The systems the save holds, read once as the world is made, so the world starts where the player left it
+const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE);
 const inventory = ref<Inventory>(EMPTY_INVENTORY);
-const wallet = ref<Wallet>(EMPTY_WALLET);
+const wallet = ref<Wallet>(savedState.wallet);
 const wishPityMap = ref(InitialBannerKindWishPityMap);
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
 // One stays in the progress map at its last step, so the quests in progress are those started and not yet finished
 const quests = shallowRef<Quest[]>([]);
-const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(new Map());
+const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(savedState.quests);
 const questsInProgress = computed(() =>
   quests.value.filter((quest) => {
     const progress = questProgressMap.value.get(quest.id);
@@ -437,8 +468,19 @@ const { gatheringItems, gatheringPlaces } = useGatheringPoints();
 const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
 const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
 const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
-const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(new Set());
+// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
+const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedState.unlockedLandmarkIds);
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
+// The systems as the save holds them, emitted on every change at once, so a grant's emit after its change carries it
+const gameSave = computed(() =>
+  toGenshinSave({
+    quests: questProgressMap.value,
+    unlockedLandmarkIds: unlockedLandmarkIds.value,
+    wallet: wallet.value,
+  }),
+);
+watch(gameSave, (newGameSave) => emit("save", newGameSave), { flush: "sync" });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point
@@ -475,7 +517,7 @@ const interactables = computed<Interactable[]>(() => {
       position: { x, y: getWorldHeight(x, z), z },
     }));
   // Each gathering point that stands now, named by its item, and drawn beside the drops as the same kind of row
-  const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime());
+  const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
   const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
     const item = idGatheringItemMap.value.get(kind);
     if (!item || !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now))
@@ -499,7 +541,7 @@ const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(readAchievements).match(
     ({ achievements }) => {
-      const now = Temporal.Instant.fromEpochMilliseconds(Date.now());
+      const now = getWorldNow();
       let primogems = 0;
       let nextProgressMap = achievementProgressMap.value;
       for (const achievementEvent of achievementEvents) {
@@ -508,7 +550,7 @@ const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
         nextProgressMap = advance.progressMap;
       }
       achievementProgressMap.value = nextProgressMap;
-      wallet.value = { ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + primogems };
+      setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + primogems });
     },
     (error) => {
       console.error(error);
@@ -525,7 +567,7 @@ const payFirstUnlockReward = (landmarkId: string) => {
     (rewards) => {
       const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
       if (reward)
-        wallet.value = { ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems };
+        setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems });
     },
     (error) => {
       console.error(error);
@@ -581,6 +623,12 @@ const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
 const setInventory = (nextInventory: Inventory) => {
   inventory.value = nextInventory;
   archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
+  emit("grant");
+};
+// Every change to the wallet goes through here, as the bag's does, so a grant or a purchase is saved at once
+const setWallet = (nextWallet: Wallet) => {
+  wallet.value = nextWallet;
+  emit("grant");
 };
 // The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
 const bagFullHint = ref("");
@@ -589,7 +637,7 @@ const bagFullHint = ref("");
 const pickUpWorldDrop = (worldDrop: WorldDrop) => {
   const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
   setInventory(pickUp.inventory);
-  wallet.value = pickUp.wallet;
+  setWallet(pickUp.wallet);
   bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
   doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
   worldDrops.value =
@@ -608,10 +656,7 @@ const pickUpGatheringPlace = (placeId: string) => {
   bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
   doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
   if (addition.overflow === 0)
-    gatheringPlaceIdPickedAtMap.value = new Map([
-      ...gatheringPlaceIdPickedAtMap.value,
-      [placeId, Temporal.Instant.fromEpochMilliseconds(Date.now())],
-    ]);
+    gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
 };
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
@@ -842,6 +887,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :exploration-areas
           :game-text
           :landmarks="unlockedLandmarks"
+          :server-clock-offset-ms
           :wallet
           @close="screenKind = ScreenKind.World"
           @jump="

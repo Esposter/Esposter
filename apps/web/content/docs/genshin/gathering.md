@@ -31,7 +31,7 @@ The slices are written by `pnpm -C scripts genshin:assets gathering`. It reads t
 
 - **A row is picked off the ground.** A gather row counts when it sits on the ground and saves its pick. The rows that save nothing belong to other pages, such as fishing, animals and events, and are not points here.
 - **An item is named as its label.** The item's English name is matched to the label of the same name the official map files under Local Specialties or Inventory / Materials. Ores are left out until they are struck, and Special Items, which holds the Oculi, is left to the statues' page.
-- **Each point is the fit's.** Every point of a labelled item is carried into the game's coordinates by the [spawned places](/docs/genshin/spawned-places) fit, its kind the item's id, and its region from its map area. Points on layers under the ground are left out, as the places' writer already does.
+- **Each point is the fit's.** Every point of a labelled item is carried into the game's coordinates by the [spawned places](/docs/genshin/spawned-places) fit and then into its region's axes, its kind the item's id, and its region from its map area. Points on layers under the ground are left out, as the places' writer already does.
 
 ## The respawn
 

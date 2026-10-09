@@ -5,6 +5,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { FollowCamera, InputState, LandmarkCollider, Locomotion } from "genshin-engine";
@@ -150,7 +151,11 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     locomotionState: phase.state,
   };
   const kitBody: KitBody = { facing: characterController.facing, height, position };
-  stepKitEffects(effects, FIXED_STEP_SECONDS, { activeCombatant: combatant, body: kitBody.position, party });
+  const summonStrikes = stepKitEffects(effects, FIXED_STEP_SECONDS, {
+    activeCombatant: combatant,
+    body: kitBody.position,
+    party,
+  });
   const infusedElement = getInfusedElement(effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
@@ -175,18 +180,25 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   }
 
   action?.onStart?.({ body: kitBody, combatant, effects });
-  const pricedCombatant = getBuffedCombatant(combatant, effects);
-  for (const hit of landedHits)
+  // The summons' hits land from their own bodies, priced by the combatants that cast them, and the step's own hits from
+  // The turned body and the character on the field
+  const strikes: KitStrike[] = [
+    ...summonStrikes,
+    ...landedHits.map((hit): KitStrike => ({ body: kitBody, combatant, hit })),
+  ];
+  landedHits.length = 0;
+  for (const { body: strikeBody, combatant: strikeCombatant, hit } of strikes) {
+    const pricedCombatant = getBuffedCombatant(strikeCombatant, effects);
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-        !checkIsInAttackArea(hit.hitArea, kitBody, enemy)
+        !checkIsInAttackArea(hit.hitArea, strikeBody, enemy)
       )
         continue;
       for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, Math.random))
-        gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
+        gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
     }
-  landedHits.length = 0;
+  }
 });
 const pivot = new Vector3();
 // Ahead of the floating origin's shift, whatever order it mounts in: the frame's look turns the camera once, the steps

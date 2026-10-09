@@ -8,14 +8,16 @@ import { applySimilarityTransform } from "#src/services/genshinAssets/points/app
 import { GROUND_LAYER } from "#src/services/genshinAssets/points/constants";
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 
-// Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and kept by
-// Region, each id under the given prefix. A point on a layer under the ground is left out for now, and so is one in an
-// Area no region is mapped to, each counted so the report says what was not placed. The other labels are none of its business
+// Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and then into
+// Its region's axes round the Windrise origin, each id under the given prefix. A point on a layer under the ground is left
+// Out for now, and so is one in an area no region is mapped to, each counted so the report says what was not placed. The
+// Other labels are none of its business
 export const placeMapPoints = <Kind>(
   points: readonly InteractiveMapPoint[],
   transform: SimilarityTransform,
   labelIdKindMap: ReadonlyMap<number, Kind>,
   idPrefix: string,
+  [originX, , originZ]: readonly [number, number, number],
 ): MapPointPlacement<Kind> => {
   const areaIdRegionMap = new Map(
     Object.entries(InteractiveMapRegionMap).map(([region, { areaId }]) => [areaId, region]),
@@ -34,10 +36,15 @@ export const placeMapPoints = <Kind>(
       placement.skippedUnmapped++;
       continue;
     }
-    const position = applySimilarityTransform(transform, { x: point.x_pos, z: point.y_pos });
+    const fitted = applySimilarityTransform(transform, { x: point.x_pos, z: point.y_pos });
+    const position = { x: roundFitted(fitted.x), z: roundFitted(fitted.z) };
     regionPlaces.set(region, [
       ...(regionPlaces.get(region) ?? []),
-      { id: `${idPrefix}-${point.id}`, kind, position: { x: roundFitted(position.x), z: roundFitted(position.z) } },
+      {
+        id: `${idPrefix}-${point.id}`,
+        kind,
+        position: { x: roundFitted(position.x - originX), z: roundFitted(originZ - position.z) },
+      },
     ]);
   }
   placement.places = Object.fromEntries(regionPlaces);
