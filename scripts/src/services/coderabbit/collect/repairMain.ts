@@ -3,6 +3,7 @@ import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
 
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import { assertCycleBudget } from "#src/services/coderabbit/collect/assertCycleBudget";
 import {
   EXPRESS_TRAILER,
   MAIN_BRANCH,
@@ -90,7 +91,8 @@ export const repairMain = async ({
     console.info("would repair — a dry run runs no Claude session");
     return {};
   }
-
+  // The whole attempt is budgeted, its clocks end to end, since the session's own clock is one the launcher cannot read
+  assertCycleBudget(REPAIR_ATTEMPT_TIMEOUT_MS);
   const deadlineMs = Date.now() + REPAIR_ATTEMPT_TIMEOUT_MS;
   runGit(["switch", "--detach", mainSha], cwd);
   // The tree the repairer's own checks run against is this head, not the one the event checked out (`INSTALL_COMMAND`)
