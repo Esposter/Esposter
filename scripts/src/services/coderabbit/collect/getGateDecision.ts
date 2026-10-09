@@ -13,7 +13,9 @@ import {
 // A release gets one review, so its status is the whole answer: nothing is pushed to `develop` while the pull
 // Request is open, and the flip to completed arrives as its own status event. No check at all is a person's
 // Problem, where a pending one resolves itself. A skipped incremental pass is the bot declining to review again, so
-// The full review it already completed stands when it read the head; commits that landed after it do not.
+// The full review it already completed stands when it read the head; commits that landed after it do not. Any other
+// Finished state is the bot running no review — a skip for the plan's file limit or its credits, a failed review —
+// Whose wording carries its own counts, so it is matched by elimination and the review is asked for once.
 export const getGateDecision = (
   checkStatus: CheckStatus | undefined,
   headSha: string,
@@ -35,9 +37,8 @@ export const getGateDecision = (
     };
   } else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
     return { kind: GateDecisionKind.RateLimited, reason: "rate limited — the bot ran nothing" };
-  else
-    return {
-      kind: GateDecisionKind.Fail,
-      reason: `unrecognised check state ${checkStatus.bucket} / ${checkStatus.description}`,
-    };
+  return {
+    kind: GateDecisionKind.Skipped,
+    reason: `the bot ran no review — ${checkStatus.bucket} / ${checkStatus.description}`,
+  };
 };

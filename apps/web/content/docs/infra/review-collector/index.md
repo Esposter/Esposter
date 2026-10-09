@@ -55,7 +55,8 @@ flowchart TD
   MR -->|no| CL{A window closed without merging}
   CL -->|yes| PZ[Exit — a person's pause]
   CL -->|no| BW{Bottom window's review}
-  BW -->|running or rate limited| SY
+  BW -->|running, rate limited, or skipped and asked once| SY
+  BW -->|skipped again after the ask, or no check| RD[Fail red after the walk — a person's]
   BW -->|complete| MG[Merge it, retarget the next to main,<br/>delete its branch, drain its findings] --> BW
   BW -->|no window open| SY
   SY[Rewrite ai/queue onto develop or the fixes] --> OB{Budget left, stacking allowed,<br/>something owed}

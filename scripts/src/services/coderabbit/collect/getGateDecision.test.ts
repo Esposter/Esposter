@@ -18,7 +18,8 @@ describe(getGateDecision, () => {
     ["pending", "Review in progress", GateDecisionKind.Exit],
     ["pass", "Review completed", GateDecisionKind.Proceed],
     ["pass", "Review rate limited", GateDecisionKind.RateLimited],
-    ["fail", "Review failed", GateDecisionKind.Fail],
+    ["fail", "Review failed", GateDecisionKind.Skipped],
+    ["pass", "Review skipped: 133 files exceed the limit of 100", GateDecisionKind.Skipped],
   ])("decides %s / %s as %s", (bucket, description, expected) => {
     expect.hasAssertions();
 
