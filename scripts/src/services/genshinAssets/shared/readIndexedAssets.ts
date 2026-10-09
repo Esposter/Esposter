@@ -2,18 +2,31 @@ import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset
 
 import { ASSET_INDEX_PATH } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { createReadStream, existsSync } from "node:fs";
+import { createInterface } from "node:readline";
 
-// Every asset of the index the predicate keeps, read in one pass over its lines
-export const readIndexedAssets = async (predicate: (asset: IndexedAsset) => boolean): Promise<IndexedAsset[]> => {
-  if (!existsSync(ASSET_INDEX_PATH))
-    throw new InvalidOperationError(Operation.Read, ASSET_INDEX_PATH, "no asset index: run `genshin:assets map` first");
+// One line of the index as its asset, or none for a line with no block, which no asset is listed under
+export const parseIndexLine = (line: string): IndexedAsset | undefined => {
+  const [name = "", type = "", block = "", pathId = ""] = line.split("\t");
+  return block ? { block, name, pathId, type } : undefined;
+};
+
+// Every asset of the index at the path the predicate keeps, streamed a line at a time: the index is too large to read
+// Whole, since a string holds at most about half a gigabyte, and only the kept rows are held
+export const readIndexedAssetsFrom = async (
+  indexPath: string,
+  predicate: (asset: IndexedAsset) => boolean,
+): Promise<IndexedAsset[]> => {
+  if (!existsSync(indexPath))
+    throw new InvalidOperationError(Operation.Read, indexPath, "no asset index: run `genshin:assets map` first");
   const assets: IndexedAsset[] = [];
-  for (const line of (await readFile(ASSET_INDEX_PATH, "utf8")).split("\n")) {
-    const [name = "", type = "", block = "", pathId = ""] = line.split("\t");
-    const asset = { block, name, pathId, type };
-    if (block && predicate(asset)) assets.push(asset);
+  const lines = createInterface({ crlfDelay: Infinity, input: createReadStream(indexPath, "utf8") });
+  for await (const line of lines) {
+    const asset = parseIndexLine(line);
+    if (asset && predicate(asset)) assets.push(asset);
   }
   return assets;
 };
+
+export const readIndexedAssets = (predicate: (asset: IndexedAsset) => boolean): Promise<IndexedAsset[]> =>
+  readIndexedAssetsFrom(ASSET_INDEX_PATH, predicate);
