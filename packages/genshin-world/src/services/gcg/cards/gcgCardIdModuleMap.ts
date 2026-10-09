@@ -1,6 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { burningFlame } from "#src/services/gcg/cards/burningFlame";
+import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
+import { dendroCore } from "#src/services/gcg/cards/dendroCore";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
@@ -17,11 +20,15 @@ import { starsigns } from "#src/services/gcg/cards/starsigns";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { timmie } from "#src/services/gcg/cards/timmie";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
-import { witchsScorchingHat } from "#src/services/gcg/cards/witchsScorchingHat";
 import { wineStainedTricorne } from "#src/services/gcg/cards/wineStainedTricorne";
+import { witchsScorchingHat } from "#src/services/gcg/cards/witchsScorchingHat";
+import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 
 // Every card a duel's module covers, by the card's id in the game's table
 export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, GcgCardModule>([
+  [GCG_BURNING_FLAME_ID, burningFlame],
+  [GCG_DENDRO_CORE_ID, dendroCore],
+  [GCG_CATALYZING_FIELD_ID, catalyzingField],
   [113_011, pyroInfusion],
   [112_031, reflection],
   [112_032, illusoryBubble],

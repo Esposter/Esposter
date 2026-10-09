@@ -81,3 +81,11 @@ export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new 
 ]);
 // The name of a shared damage effect, its element or Physic and its damage: Effect_Damage_Fire_3 names Fire and 3
 export const GCG_EFFECT_DAMAGE_PATTERN = /^Effect_Damage_(?<element>\w+)_(?<count>\d+)$/u;
+// The cards the reactions leave on their attacker's side: Burning Flame as a summon that stacks to two usages, and Dendro
+// Core and Catalyzing Field onstage, each with the usages it holds once it is left
+export const GCG_BURNING_FLAME_ID = 115;
+export const GCG_BURNING_FLAME_MAX_USAGES = 2;
+export const GCG_DENDRO_CORE_ID = 116;
+export const GCG_DENDRO_CORE_MAX_USAGES = 1;
+export const GCG_CATALYZING_FIELD_ID = 117;
+export const GCG_CATALYZING_FIELD_MAX_USAGES = 2;

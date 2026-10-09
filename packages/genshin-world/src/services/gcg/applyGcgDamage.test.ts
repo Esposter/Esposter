@@ -8,6 +8,7 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { GCG_BURNING_FLAME_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
@@ -218,5 +219,39 @@ describe(applyGcgDamage, () => {
       phaseWithStanding: GcgPhase.Action,
       winnerSideIndex: 0,
     });
+  });
+
+  test("should leave Burning Flame as a summon on the attacker's side, stacking to two usages", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const attacker = createSideState([createCharacterState(Element.Pyro)]);
+    const duel = createDuel([attacker, createSideState([createCharacterState(Element.Hydro, Element.Dendro)])]);
+    applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
+    const usagesAfterOne = attacker.summons.map(({ usages }) => usages);
+    takeOne(takeOne(duel.sides, 1).characters, 0).aura = Element.Dendro;
+    applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
+    takeOne(takeOne(duel.sides, 1).characters, 0).aura = Element.Dendro;
+    applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
+
+    expect({
+      cardIds: attacker.summons.map(({ cardId }) => cardId),
+      usagesAfterOne,
+      usagesAfterStacks: attacker.summons.map(({ usages }) => usages),
+    }).toStrictEqual({ cardIds: [GCG_BURNING_FLAME_ID], usagesAfterOne: [1], usagesAfterStacks: [2] });
+  });
+
+  test("should leave Dendro Core onstage on the attacker's side when a Bloom reaction triggers", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const attacker = createSideState([createCharacterState(Element.Hydro)]);
+    const duel = createDuel([attacker, createSideState([createCharacterState(Element.Dendro)])]);
+    applyGcgDamage(duel, 0, { damageType: Element.Hydro, value: ELEMENT_VALUE }, rule);
+    expect(attacker.onstages.map(({ cardId }) => cardId)).toStrictEqual([]);
+    takeOne(takeOne(duel.sides, 1).characters, 0).aura = Element.Dendro;
+    applyGcgDamage(duel, 0, { damageType: Element.Hydro, value: ELEMENT_VALUE }, rule);
+
+    expect(attacker.onstages).toStrictEqual([{ cardId: GCG_DENDRO_CORE_ID, counter: 0, rounds: 0, usages: 1 }]);
   });
 });
