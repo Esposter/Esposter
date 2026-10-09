@@ -25,6 +25,19 @@ export const MAP_PROGRESS_OFFSET_SHARE = 0.0265;
 // Provisional: the metres the open map shows across its width at the zoom slider's default, centred on the player; not
 // Yet read off the game's zoom levels, which needs the regions' true shapes to measure against
 export const MAP_VIEW_METRES = 400;
+// Provisional: the metres across the map's width at the slider's two ends, the closest and the furthest zoom. The range
+// Is spaced so the default sits where the reference's slider thumb does, and is read off the game's levels when measured
+export const MAP_VIEW_METRES_MIN = 100;
+export const MAP_VIEW_METRES_MAX = 2800;
+// Provisional: the share of the slider's track one wheel unit moves the zoom, a notch of the wheel moving it about a
+// Tenth of the track. Not yet read off the game's wheel
+export const MAP_WHEEL_ZOOM_SHARE = 0.0015;
+// The slider's track in its own drawing's units, its top and its height, its drawing being that many units high
+export const MAP_ZOOM_TRACK_TOP = 43;
+export const MAP_ZOOM_TRACK_HEIGHT = 194;
+export const MAP_ZOOM_DRAWING_HEIGHT = 270;
+// The pixels a press must travel before it pans the map, so a press that stays put still chooses a landmark
+export const MAP_DRAG_THRESHOLD_PIXELS = 4;
 // Provisional: a recording of a teleport, read frame by frame. How long a jump's fade to black and its fade back in
 // Take, in milliseconds
 export const TELEPORT_FADE_OUT_MS = 400;
