@@ -7,20 +7,20 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
-import { Element } from "#src/models/Element";
 import {
   AIRBORNE_LOCOMOTION_STATES,
   CHARGED_ATTACK_HOLD_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
 } from "#src/services/kit/constants";
+import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { startKitAction } from "#src/services/kit/startKitAction";
-import { IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER } from "#src/services/party/constants";
+import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
 import { takeOne } from "@esposter/shared";
 
 // The action the presses ask for once none is playing: a charged attack once a strike held past its hold has ended, a
 // Burst or a skill its gates allow in any state they may start in, else the string's next strike when it is pressed or
-// Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, and a skill with
-// Holds starts on its release, at the hold level its seconds held reach
+// Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, a skill starts
+// While a charge of it stands, and a skill with holds starts on its release, at the hold level its seconds held reach
 export const startNextKitAction = (
   kitState: KitState,
   kit: Kit,
@@ -50,7 +50,8 @@ export const startNextKitAction = (
   }
 
   // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set
-  const isSkillReady = partyMember.skillCooldownSeconds <= 0;
+  const isSkillReady =
+    getSkillReadySeconds(kit, context.combatant.elementalResonances, partyMember.skillCooldownSeconds) <= 0;
   const isChaining = kitState.skillChainCount > 0;
   const isSkillTriggered = kit.elementalSkillHolds ? kitState.skillReleasedSeconds > 0 : isSkillPressed;
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
@@ -61,16 +62,16 @@ export const startNextKitAction = (
       kitState.skillChainSeconds = 0;
       return startKitAction(kitState, followUp, landedHits);
     }
-    // The hold a release's seconds reach, if the skill has holds, and the cooldown its level or the skill sets
+    // The hold a release's seconds reach, if the skill has holds, and the cooldown its level or the skill adds to the
+    // Seconds until every charge is back
     const hold = kit.elementalSkillHolds?.findLast(
       ({ minimumHeldSeconds }) => kitState.skillReleasedSeconds >= minimumHeldSeconds,
     );
     const cooldownSeconds = hold?.cooldownSeconds ?? kit.skillCooldownSeconds;
-    const impetuousWindsMultiplier = context.combatant.elementalResonances.includes(Element.Anemo)
-      ? IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER
-      : 1;
-    partyMember.skillCooldownSeconds =
-      cooldownSeconds * (kit.getSkillCooldownMultiplier?.(context) ?? 1) * impetuousWindsMultiplier;
+    partyMember.skillCooldownSeconds +=
+      cooldownSeconds *
+      (kit.getSkillCooldownMultiplier?.(context) ?? 1) *
+      getImpetuousWindsSkillCooldownMultiplier(context.combatant.elementalResonances);
     kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
     kitState.skillChainSeconds = 0;
     const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;

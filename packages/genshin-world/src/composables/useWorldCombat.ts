@@ -19,6 +19,7 @@ import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
+import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
@@ -109,7 +110,8 @@ export const useWorldCombat = ({
   });
   const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
   const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
-  // The field member's figures the HUD's health and skill buttons show, none until the character on the field is known
+  // The field member's figures the HUD's health and skill buttons show, none until the character on the field is known.
+  // A skill with charges counts down only while none of them stands
   const hudMember = computed<HudMember | undefined>(() => {
     const combatant = activeCombatant.value;
     if (!combatant) return undefined;
@@ -122,7 +124,11 @@ export const useWorldCombat = ({
       health: partyMember.healthShare * combatant.attributes.maxHealth,
       level: combatant.level,
       maxHealth: combatant.attributes.maxHealth,
-      skillCooldown: partyMember.skillCooldownSeconds,
+      skillCooldown: getSkillReadySeconds(
+        combatant.kit,
+        combatant.elementalResonances,
+        partyMember.skillCooldownSeconds,
+      ),
       skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
     };
   });

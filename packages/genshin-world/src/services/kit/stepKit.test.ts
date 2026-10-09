@@ -187,6 +187,35 @@ describe(stepKit, () => {
     );
   });
 
+  test("spends a skill's charges a use each, and gives one back on each cooldown in turn", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalSkillCharges: 2 };
+    const partyMember = createPartyMember();
+    // A press from a kit at rest, so no action playing holds it back
+    const press = () =>
+      stepKit(
+        createKitState(),
+        kit,
+        { ...IDLE_INPUT, isSkillPressed: true },
+        partyMember,
+        createStamina(STAMINA_MAX),
+        STEP_SECONDS,
+        [],
+        {
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant: TRAVELER_COMBATANT,
+          kitEffectState: { effects: [] },
+        },
+      );
+    const actions = [press(), press(), press()];
+    partyMember.skillCooldownSeconds -= kit.skillCooldownSeconds;
+    actions.push(press(), press());
+
+    expect(actions).toStrictEqual([kit.elementalSkill, kit.elementalSkill, undefined, kit.elementalSkill, undefined]);
+    expect(partyMember.skillCooldownSeconds).toBe(2 * kit.skillCooldownSeconds);
+  });
+
   test("starts a burst only at full energy and empties the energy", () => {
     expect.hasAssertions();
 
