@@ -57,7 +57,7 @@ The dump at its revision lacked the three daily task tables, which the [game dat
 
 - **The scene swap.** The [proposal](/docs/proposals/genshin/commissions) owns how a scene task's groups stand in for its area's. The region data holds only hand-placed camps, and the area's groups are not extracted, so the slice carries each task's old and new group ids for that page to read.
 - **The handbook's Commissions tab and the commissions' words.** The tab lists the day's four, and the titles and descriptions are the game's text by their ids, in the reader's language. Neither has a consumer yet.
-- **The kept day.** The four dealt, their counts and their claims are not kept between visits, and the daily reset is not read, as the quests' progress is not kept yet.
+- **The kept day.** The four dealt, their counts and their claims are not in the [save](/docs/genshin/save-data), so a reload does not keep them, and the daily reset is not read.
 - **A quest task's finish.** It finishes with its quest, which the world does not report yet, so a quest task reads unfinished.
 - **Finishing counts.** `advanceCommission` counts a doing against a commission, but no defeat, gadget or challenge event is fed to it yet.
 - **Regions beyond Mondstadt.** Their pools join once their quests are done.
