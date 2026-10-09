@@ -34,7 +34,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
 import {
@@ -147,8 +146,9 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     kitState = createKitState();
     kitCharacterId = characterId;
   }
+  // A character whose talent multipliers have not arrived has no combatant yet, so it walks and does not fight
   const combatant = characterIdCombatantMap.get(characterId);
-  if (!combatant) throw new InvalidOperationError(Operation.Read, "combatant", `character ${characterId}`);
+  if (!combatant) return;
   const height = position.y - ground.getGround(position.x, position.z).height;
   const kitInput: KitInput = {
     height,
