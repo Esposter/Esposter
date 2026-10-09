@@ -2,6 +2,7 @@
 import type { DiffComment } from "@/models/agentConsole/DiffComment";
 import type { DiffRow } from "@/models/agentConsole/DiffRow";
 import type { FileEdit } from "@/models/agentConsole/FileEdit";
+import type { Except } from "type-fest";
 
 import { DiffRowType } from "@/models/agentConsole/DiffRowType";
 import { DiffSide } from "@/models/agentConsole/DiffSide";
@@ -24,7 +25,7 @@ const { diffCommentMap } = storeToRefs(agentConsoleSessionStore);
 const { deleteDiffComment, saveDiffComment } = agentConsoleSessionStore;
 const rows = computed(() => toDiffRows(fileEdit.oldText, fileEdit.newText));
 // The line whose comment box is open, and the text typed into it
-const openedLine = ref<Omit<DiffComment, "text">>();
+const openedLine = ref<Except<DiffComment, "text">>();
 const commentText = ref("");
 
 const openComment = (side: DiffSide, lineNumber: number, lineText: string) => {
@@ -83,7 +84,7 @@ const toRowCommentBoxes = (row: DiffRow) => {
           px-2
           ws-pre
           :style="DiffRowStyleMap[row.type].old"
-          v-bind="toLineControlAttributes(DiffSide.Old, toOldLineNumber(row))"
+          :="toLineControlAttributes(DiffSide.Old, toOldLineNumber(row))"
           @click="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
           @keydown.enter.self.prevent="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
           @keydown.space.self.prevent="openComment(DiffSide.Old, toOldLineNumber(row), row.oldLine)"
@@ -97,7 +98,7 @@ const toRowCommentBoxes = (row: DiffRow) => {
           b-l-solid
           ws-pre
           :style="DiffRowStyleMap[row.type].new"
-          v-bind="toLineControlAttributes(DiffSide.New, row.newLineNumber)"
+          :="toLineControlAttributes(DiffSide.New, row.newLineNumber)"
           @click="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
           @keydown.enter.self.prevent="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
           @keydown.space.self.prevent="openComment(DiffSide.New, row.newLineNumber, row.newLine)"
