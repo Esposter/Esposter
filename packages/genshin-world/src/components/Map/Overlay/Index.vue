@@ -41,7 +41,7 @@ interface Props {
 const { camera, explorationAreas, gameText, landmarks, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
-// The open map is centred on the player, the drawn metres across its width at the zoom slider's default
+// The open map is placed on the player, the drawn metres across its width at the zoom slider's default
 const view = computed(() => ({ x: camera.x - MAP_VIEW_METRES / 2, z: camera.z - MAP_VIEW_METRES / 2 }));
 const markRadius = MAP_VIEW_METRES * MAP_OVERLAY_MARK_SHARE;
 // Each counted area's progress as the unlocked landmarks leave it, keyed by its catalogue area
@@ -75,7 +75,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- The map on M, full screen as the game shows it: the one drawing of the catalogue centred on the player, north
+  <!-- The map on M, full screen as the game shows it: the one drawing of the catalogue placed on the player, north
        Up, each area's name and the player's pointer, the close button and the zoom slider. The jump list is kept for the
        Keyboard and a screen reader, since the game shows no list, and each filled area's progress is listed for a screen
        Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
@@ -152,9 +152,12 @@ onMounted(() => {
   background: #111317;
 }
 
+/* Provisional: the player's pointer sits 45 units right of and 50 units under the screen's centre in the reference, so
+   the drawing is centred on that place, the screen's own centre offset to it */
 .map {
   position: absolute;
-  inset: 0;
+  top: calc(var(--unit) * 50);
+  left: calc(var(--unit) * 45);
   width: 100%;
   height: 100%;
 }

@@ -31,6 +31,10 @@ interface ParityReferenceBase {
   // The part a comparison scores, in the reference's own pixels, so the world behind a menu never counts against it;
   // The whole frame when absent
   region?: ParityRegion;
+  // The rectangles within the region a comparison scores, in the reference's own pixels: every other pixel is masked
+  // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
+  // Absent
+  mask?: ParityRegion[];
   // The parity page's screen that recreates it, by its component's name
   screen: string;
 }

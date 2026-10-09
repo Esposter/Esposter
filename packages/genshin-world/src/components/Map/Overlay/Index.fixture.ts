@@ -1,3 +1,4 @@
+import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The map on M over the English PC client's Sea of Clouds, where Jueyun Karst lies: the player's pointer at the centre
@@ -7,4 +8,5 @@ export const props = {
   explorationAreas: [],
   gameText: ENGLISH_GAME_TEXT,
   landmarks: [],
+  wallet: EMPTY_WALLET,
 };

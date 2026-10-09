@@ -4,6 +4,7 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
+import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
@@ -74,8 +75,12 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     .png()
     .toBuffer();
   const { data } = await sharp(difference).greyscale().raw().toBuffer({ resolveWithObject: true });
+  // The scored rectangles are the reference's own, its whole region when it names none, so a mask's leftover never counts
+  const scoredRegions = reference.mask ?? [region];
+  const scoredMask = computeScoredMask(scoredRegions, region, region.width, region.height);
   const cellMeans = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => ({ count: 0, sum: 0 }));
   for (let index = 0; index < data.length; index++) {
+    if (!scoredMask[index]) continue;
     const column = Math.min(GRID_SIZE - 1, Math.floor(((index % region.width) / region.width) * GRID_SIZE));
     const row = Math.min(GRID_SIZE - 1, Math.floor((Math.floor(index / region.width) / region.height) * GRID_SIZE));
     const cell = cellMeans[row * GRID_SIZE + column];
@@ -84,7 +89,8 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     cell.count++;
   }
   const total = cellMeans.reduce((sum, cell) => sum + cell.sum, 0);
-  const meanDifference = toPercent(total, data.length);
+  const scoredCount = cellMeans.reduce((count, cell) => count + cell.count, 0);
+  const meanDifference = toPercent(total, scoredCount);
   console.log(`mean difference ${meanDifference.toFixed(2)}% (0 is identical)`);
   for (let row = 0; row < GRID_SIZE; row++)
     console.log(
@@ -98,12 +104,17 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   console.log(
     `shape ${edgeScore.toFixed(3)} (edges shared, 1 is identical), tone ${toneDifference.toFixed(2)}% (blurred colour)`,
   );
-  const { mean: flip } = await readFlipErrorMap(
-    referenceRegion,
-    shotRegion,
-    STRUCTURE_WIDTH,
-    Math.round((STRUCTURE_WIDTH / region.width) * region.height),
-  );
+  // FLIP's error map read at the structure's raster, its mean taken over the scored pixels alone
+  const flipHeight = Math.round((STRUCTURE_WIDTH / region.width) * region.height);
+  const { errorMap } = await readFlipErrorMap(referenceRegion, shotRegion, STRUCTURE_WIDTH, flipHeight);
+  const flipMask = computeScoredMask(scoredRegions, region, STRUCTURE_WIDTH, flipHeight);
+  const flipTotal = errorMap.reduce((sum, error, index) => sum + error * (flipMask[index] ?? 0), 0);
+  const flip =
+    flipTotal /
+    Math.max(
+      flipMask.reduce((count, scored) => count + scored, 0),
+      1,
+    );
   console.log(`FLIP ${flip.toFixed(4)} (perceptual, 0 is identical)`);
   // Where the reference shows channels under the tone curve's black at none, how many of ours do
   const [referenceUnderBlack, shotUnderBlack] = await Promise.all(

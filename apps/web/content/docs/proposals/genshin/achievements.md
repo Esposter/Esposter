@@ -1,60 +1,41 @@
 ---
 title: Achievements
-description: Proposal — the game's achievements on its own table. Each is a watcher of one trigger the table names, a quest finished, a chest opened, a waypoint unlocked, a fish caught, counted to its progress and paid in Primogems, its tiers chained by the table, its category's namecard given when the category is done; the triggers a scene group or a combat config fires on the game's servers are written one by one from their descriptions.
+description: Proposal — the achievements beyond the quest triggers already built: exploring's triggers as their pages land, the server-fired ones written one by one from their descriptions, and the namecard a finished category pays once companionship keeps namecards. The table, the quest triggers and the screen are built, as the achievements page describes.
 model: claude-opus-5-5
 ---
 
 # Achievements
 
-The game's achievements reward a player for what they have done anywhere in it: the quests, the exploring, the fishing, the combat feats and the odd discoveries. Each pays Primogems, and finishing a whole category earns its namecard. Achievements count what every other page records, so this page comes late, and waits on the [quests](/docs/proposals/genshin/quests) being advanced by the world's doings, which are most of what it watches.
+The table, the quest triggers and the Achievements screen are built, and the [achievements](/docs/genshin/achievements) page describes them. What is left is the triggers the other pages record, and the namecard a finished category pays. Each trigger type is wired once to the record it reads, so an achievement waits on the page that records its doing and moves once that page does.
 
 ## Decisions
 
-- **Every achievement is the game's own row.** `AchievementExcelConfigData` holds each: its category (`goalId`), its trigger (`triggerConfig`, a trigger type and its parameters), the count it needs (`progress`), its reward (`finishRewardId`), the tier before it (`preStageAchievementId`) and whether it is hidden until done. `AchievementGoalExcelConfigData` holds each category and its completion reward. Titles and descriptions are the game's by text id.
-- **A watcher per trigger type.** An achievement watches the one kind of doing its trigger names and counts it toward its progress. Most triggers are doings the world already records: a quest or a quest's parent finished, a chest opened, a waypoint or an area unlocked, a statue's or an offering's level, a material obtained, a fish caught. Each trigger type is wired once to the record it reads, and every achievement of that type works from then on.
-- **Server-fired triggers are written one by one.** Hundreds of achievements are triggered by a scene group's notice or a combat config, which run on the game's servers and are never in the client. Each of these is written from its own description, as a check over the world's doings, when the page building its subject lands: a puzzle's with the puzzle, a combat feat's with the kits.
-- **Tiers chain.** An achievement with a tier before it counts only once that tier is done, and its icon's stars show the tiers, as the game shows them.
-- **Paid in Primogems, and a namecard per category.** Each achievement's reward is its reward row, and finishing every achievement of a category that has an end gives its namecard; the open-ended categories give none.
-- **Kept with the player's progress**, each achievement's count and when it was done.
-
-## How it works
-
-```mermaid
-flowchart TD
-  DOING["A doing the world records"] --> WATCH{"An achievement watching its trigger type?"}
-  WATCH -->|"yes"| TIER{"Its tier before done, if any?"}
-  TIER -->|"yes"| COUNT["Counted toward its progress"]
-  COUNT --> DONE{"Progress reached?"}
-  DONE -->|"yes"| PAY["Primogems, and the next tier opens"]
-  PAY --> CAT{"Its category complete?"}
-  CAT -->|"yes"| CARD["The category's namecard"]
-```
+- **A watcher per trigger type, added as its page lands.** Exploring's triggers (chests, waypoints, areas, statues and offerings, materials, fish caught) join `AchievementTriggerEventKindMap` one trigger type at a time, each wired to the record its page keeps. A trigger type not in the map is not watched, so its achievements stay at zero until it is.
+- **Server-fired triggers are written one by one.** Hundreds are triggered by a scene group's notice or a combat config, which run on the game's servers and are never in the client. Each is written from its own description, as a check over the world's doings, when the page building its subject lands: a puzzle's with the puzzle, a combat feat's with the kits.
+- **A namecard, once companionship keeps one.** A category with an end pays the namecard item its reward names when every one of its achievements is finished, which `checkIsAchievementCategoryComplete` already tests. The open-ended categories pay none. The grant waits on the [companionship](/docs/proposals/genshin/companionship) page's namecard list.
+- **Settled for the triggers still to come (2026-10-09, from the table).** A quest trigger names a sub-quest's id, the `subId` of the quest table. A parent-quest trigger names a main quest's id, which finishes once its last sub-quest does. An OR trigger counts each named quest once, so an OR with a count of five needs five of its list.
 
 ## Scope and order
 
-**Today:** the Achievements screen kind exists with nothing behind it.
-
-**This adds, in order:**
-
-1. **The table, the watchers and the screen**, with the quest triggers first, since the quests already advance.
-2. **Exploring's triggers**: chests, waypoints, areas, statues and offerings, as those pages land.
+1. **Quest finishes reach the watchers.** The quest page that starts and finishes quests emits a `QuestFinished` for each sub-quest and a `ParentQuestFinished` for each main quest once its last sub-quest is done, and calls `advanceAchievements` with the same doing it hands `advanceQuest`. Until it does, the table and the screen read zero.
+2. **Exploring's triggers**, as the chest, waypoint, area, statue, offering and gathering pages land.
 3. **Each server-fired achievement**, with the page that builds its subject.
+4. **The namecard grant**, with companionship's namecard list.
 
 ## Data and measures
 
-- **Read from the game's tables:** `AchievementExcelConfigData` and `AchievementGoalExcelConfigData`, their reward rows, and their words by text id.
 - **Read from the wiki:** what a server-fired achievement asks for, wherever its own words are vague.
+- **Read from a recording:** the Achievements screen's look, once `achievements-screen.mkv` is on the roadmap's Recordings owed list.
 
 ## Key files
 
-| File                                                        | Role after the change                      |
-| :---------------------------------------------------------- | :----------------------------------------- |
-| `packages/genshin-world/src/models/quest/QuestEvent.ts`     | The doings an achievement's watcher reads  |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts` | Beside the watchers handed the same doings |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`    | `Achievements`, filled in                  |
-| `packages/genshin-world/src/models/inventory/Wallet.ts`     | The Primogems an achievement pays          |
+| File                                                                                    | Role after the change                             |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------ |
+| `packages/genshin-world/src/services/achievement/AchievementTriggerEventKindMap.ts`     | Each watched trigger type and the doing it counts |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`                             | Beside the watchers handed the same doings        |
+| `packages/genshin-world/src/services/achievement/checkIsAchievementCategoryComplete.ts` | The namecard's completion test, read by the grant |
 
 ## Sources
 
-- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: Primogems for each, a namecard for a category done, open-ended categories, and tiers shown as stars.
+- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the Primogems for each, a namecard for a category done, open-ended categories, and tiers shown as stars.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, progress, reward and tier, and the categories' table.

@@ -326,9 +326,25 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "LoginScreen",
     seconds: 12,
   },
-  // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot: the drawing, the area
-  // Names, the player's pointer, the zoom and the region tag, against the terrain the game paints
-  "map-overlay-jueyun": { screen: "MapOverlay", wikiTitle: "File:Map Stardust in Jueyun.png" },
+  // The English PC client's map on M over Jueyun Karst, the wiki's full-screen 1080p screenshot. Scored over its interface
+  // Layer alone, the pointer, the area names, the close button and the zoom slider, the terrain the game paints masked
+  // Out; the region tag, the top bar and the domains toggle wait on their text ids and are left out
+  "map-overlay-jueyun": {
+    mask: [
+      { height: 70, width: 70, x: 970, y: 555 },
+      { height: 68, width: 68, x: 1808, y: 15 },
+      { height: 262, width: 34, x: 12, y: 410 },
+      { height: 58, width: 236, x: 780, y: 160 },
+      { height: 54, width: 492, x: 476, y: 390 },
+      { height: 54, width: 296, x: 796, y: 490 },
+      { height: 55, width: 280, x: 1170, y: 590 },
+      { height: 50, width: 192, x: 456, y: 618 },
+      { height: 48, width: 262, x: 606, y: 950 },
+      { height: 48, width: 270, x: 1568, y: 918 },
+    ],
+    screen: "MapOverlay",
+    wikiTitle: "File:Map Stardust in Jueyun.png",
+  },
   // The English PC client's Mondstadt city from the wiki's 4K location image of 2024, in daylight (short shadows, a clear
   // Sky; the sun's minute waits on its shadows' edges). Its six landmarks are the corners of the two west and east towers'
   // Parapets and the gate tower's front corners, read by eye at 4x crops of the image's pixels

@@ -31,7 +31,7 @@ stateDiagram-v2
 
 ## Scope and order
 
-**Built:** a claimed boss's respawn and the week's reset and claim count, on the [Bosses](/docs/genshin/bosses) page.
+**Built:** the [bosses page](/docs/genshin/bosses) holds the claim and count rules.
 
 **This still adds, in order:**
 
@@ -58,6 +58,6 @@ stateDiagram-v2
 
 ## Sources
 
-- [Normal Bosses](https://genshin-impact.fandom.com/wiki/Normal_Bosses), Genshin Impact Wiki: arenas near waypoints, idle until approached, immune to Frozen and resistant to displacement, the Trounce Blossom for 40 resin and and its rewards.
+- [Normal Bosses](https://genshin-impact.fandom.com/wiki/Normal_Bosses), Genshin Impact Wiki: arenas near waypoints, idle until approached, immune to Frozen and resistant to displacement, the Trounce Blossom for 40 resin and its rewards.
 - [Weekly Bosses](https://genshin-impact.fandom.com/wiki/Weekly_Bosses), Genshin Impact Wiki: trounce domains opened by quests, Andrius in the open world, the quick challenge from Adventure Rank 40, the rewards with the billet's and Dream Solvent's chances, and the highest difficulty's first-clear reward.
-- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: each weekly boss's reward claimable once a week.
+- The Domains and Daily Reset sources are the [bosses page](/docs/genshin/bosses)'s.

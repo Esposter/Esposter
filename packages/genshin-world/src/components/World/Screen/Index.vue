@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Achievement } from "#src/models/achievement/Achievement";
+import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
+import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
@@ -21,6 +24,7 @@ import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
+import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
@@ -40,6 +44,8 @@ import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
+import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -227,6 +233,32 @@ const questTargetId = computed(() => {
   if (!trackedQuestId.value || !trackerQuest.value) return "";
   const { id, steps } = trackerQuest.value;
   return steps[questProgressMap.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
+});
+// The achievements, their categories and their words in the reader's language, read the first time the Achievements
+// Screen opens rather than with the world. No doing moves an achievement yet, so the progress opens empty
+const achievementData = shallowRef<{
+  achievements: Achievement[];
+  categories: AchievementCategory[];
+  textMap: Readonly<Record<string, string>>;
+}>();
+const achievementProgressMap = new Map<number, AchievementProgress>();
+watch(screenKind, (newScreenKind) => {
+  if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(async () => {
+    const [{ achievements, categories }, textMap] = await Promise.all([
+      readAchievements(),
+      AchievementTextLoaderMap[language](),
+    ]);
+    return { achievements, categories, textMap };
+  }).match(
+    (newAchievementData) => {
+      achievementData.value = newAchievementData;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
 });
 const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
 // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
@@ -591,6 +623,16 @@ defineExpose({ jumpTo, readCameraPosition });
               jumpTo(pose);
             }
           "
+        />
+      </template>
+      <template v-if="achievementData" #[ScreenKind.Achievements]>
+        <AchievementScreen
+          :achievements="achievementData.achievements"
+          :categories="achievementData.categories"
+          :game-text
+          :progress-map="achievementProgressMap"
+          :text-map="achievementData.textMap"
+          @close="screenKind = ScreenKind.World"
         />
       </template>
       <template #[ScreenKind.Quests]>

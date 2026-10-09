@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
@@ -18,6 +19,7 @@ import { friendshipCommand } from "#src/services/genshinAssets/commands/friendsh
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
+import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -35,6 +37,7 @@ import { reputationCommand } from "#src/services/genshinAssets/commands/reputati
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
+import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralAbyssCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
@@ -78,6 +81,8 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     crafting: craftingCommand,
     cooking: cookingCommand,
     forging: forgingCommand,
+    achievements: achievementsCommand,
+    home: homeCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
@@ -88,5 +93,6 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
+    "spiral-abyss": spiralAbyssCommand,
   },
 });
