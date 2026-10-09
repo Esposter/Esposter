@@ -13,11 +13,11 @@ interface Props {
 const { description, inheritedValue, title } = defineProps<Props>();
 const modelValue = defineModel<PermissionOverrideState>({ required: true });
 const descriptionId = useId();
-const items: UiMenuItem<PermissionOverrideState>[] = [
+const items = computed<UiMenuItem<PermissionOverrideState>[]>(() => [
   { title: "Deny", value: PermissionOverrideState.Deny },
   { title: inheritedValue ? "Inherit (allowed)" : "Inherit (denied)", value: PermissionOverrideState.Inherit },
   { title: "Allow", value: PermissionOverrideState.Allow },
-];
+]);
 </script>
 
 <!-- The three-state control the switch cannot carry: one segmented decision per row, the inherited answer named on
