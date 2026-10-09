@@ -32,7 +32,7 @@
     },
     {
       "areaId": "galesong-hill",
-      "heightOffset": -0.2,
+      "heightOffset": 0.77,
       "id": "windrise-statue-of-the-seven",
       "kind": "StatueOfTheSeven",
       "position": { "x": 44.38, "z": -0.51 },
