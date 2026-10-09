@@ -387,6 +387,34 @@ export const lightTopic: ReferenceTopic = {
       result:
         "The bridges' colour reads 15.27 ΔE at a half and 15.21 at none, its structure 0.394 against 0.387. At an eighth the rim stays under the stone's glow range and draws no pixel, so it reads 15.21 as none does. No fraction improved the bridges' glow, so the bridges draw none",
     },
+    {
+      method:
+        "The door session's stone colour on the shipped night light (passes login --pass Light), its bins split by family, by how the face lies to the sun, by height and by haze, and each bin's lightness apart from its hue and chroma",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The 14.26 ΔE over 33,745 pixels in 244 bins is the towers' 81% (28,853 pixels, 13.44 ΔE), the walkway's 12% (2,302, 25.37) and the door's 7% (2,590, 13.49); the bridges have no interior pixel in this frame. Lightness is 53% of the squared error, hue and chroma 47%. The towers and the door are too bright (ΔL +7.5 and +8.6) and too green (Δa −5.5 and −8.5), the walkway too dark (ΔL −7.3) and too red and blue (Δa +16.1, Δb −6.7). Sunlit faces (ramp coordinate 0.75 and over) carry 55% of the error at ΔL +6.1, grazing faces 26% at +6.3, and turned-away faces 18% at +8.8, with Δa −7.6, Δb +3.7 and chroma 34.5 against 40.1: the shaded stone is too bright and short of red, not too dark or too blue. The samples keep no shadow of their own, which enters only through the ramp coordinate, so a shadowed face cannot be told from a grazing one. By height, ours less the reference's lightness is +1.4 below the ground (matching), +5.7 from 0 to 5 metres (11,270 pixels, 16.3 ΔE), +9.6 from 5 to 10, +12.0 from 10 to 20 (the reference 16, ours 28) and +5.3 from 20 to 40. Clear stone, under a tenth of haze, is +8.3 and 16.3 ΔE; stone under half a haze and more is +1.3 and 7.8. Our render under the same light reads 0.5, so the gap is the light's form, not the renderer",
+    },
+    {
+      method:
+        "The night light's height darkening scanned from none to 0.4 on the same bins with the other terms held, the darkening at 0.18 solved again by calibrate --darkening 0.18 --write, and the ambient's scale and a red offset scanned at 0.14 and 0.18",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The darkening alone is best at 0.18 (13.96 ΔE), moving the 10 to 20 metre stone from +12.0 to +9.3 and leaving 0 to 5 metres at +5.3 at every rate scanned; the ambient's best, its scale at one and a red offset of 0.02 at 0.18, reads 13.68. Solved again at 0.18, calibrate hands back a light reading 14.39 (its linear residual 0.1991 under the spread 0.3528, the shipped light's 0.2004): the least squares falls while the ΔE rises, since it weighs its bins in linear light and the measure in CIELab. The shipped light with only its darkening set to 0.18 reads 13.96, but its approved night frame's Bridges glow colour moves from 12.19 to 12.27, a figure worse on an approved image, so it is not landed. The parameters the scene already has explain under 0.6 ΔE of the 14.26",
+    },
+    {
+      method:
+        "A height-dependent ambient on the night's stone, solved again over the door session's stone samples at each pair of a falloff in metres (one, three, five, ten, twenty, forty) and a top share (none, a quarter, a half, three quarters, nine tenths, whole): the sky's harmonics and the fading light scaled by a share that falls from whole at the ground to the top, at the darkening the light ships with (0.14) and at 0.18, each read by the stone colour's ΔE over its bins",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "No pair beats the light unchanged, which re-solved reads 14.258 ΔE at 0.14 (the shipped light's 14.2577) and 14.391 at 0.18. At 0.14 every other pair reads worse, from 14.279 (forty metres, nine tenths) to 17.201 (three metres, none); at 0.18 from 14.407 (forty metres, nine tenths) to 17.830 (one metre, none). A share below whole raises the error at every falloff and top tried, so a height falloff of the ambient is not what the stone's height error carries, and the term is not written",
+    },
+    {
+      method:
+        "The walkway's shadow on the stone beneath its deck, tested on the same samples by height alone: the stone from five metres under the ground up to its ground, from ten metres under to the ground, and from five under to five over, each set to the ramp's middle, the coordinate a face in shade takes at no sun visibility (`computeStoneRampCoordinate`), solved again and read by ΔE",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "The light unchanged reads 14.258. Shading the stone from five under to the ground reads 14.709, from ten under 14.705, and from five under to five over 14.276: the first two raise the band from five metres under the ground to the ground from 11.9 to 12.5, the 5 to 10 metre band from 14.5 to 15.1, the 10 to 20 from 16.2 to 17.3 and the 20 to 40 from 11.4 to 12.9. The shadow as a height band is worse, and the test places no footprint, so the walkway's own outline on the stone beneath stays untested until the shadow solve over the door session places it",
+    },
   ],
   openQuestions: [
     "Why the game shows the walkway's middle lane with a fraction of Ground02's glow though every input the program reads matches the witness's: a G-buffer variant the dump does not hold, the normal map's decode being the same; the witness still draws it whole, so the light is solved under a glow the frame does not show",
@@ -398,5 +426,6 @@ export const lightTopic: ReferenceTopic = {
     "What the day's and the dusk's falling ramps stand in for: not the sun's direction, and holding them to rise scores the dusk worse, so the highlight, the reflection and the normal maps the solve lacks first",
     "The reflection pass's light probes and cube, set at run time, which the unclamped ramp's lower half stands in for on turned-away faces until they are modelled; the highlight, a dielectric's, waits behind them, and its stone smoothness is to be fitted without _GlossMapScale",
     "How the deferred pass lights shading model 13, the rim glow's pixels, and what the post pass's haze adds after it",
+    "The night's stone, lighter than the game's from 0 to 40 metres (+5.7 at 0 to 5, +9.6 at 5 to 10, +12.0 at 10 to 20) and short of red on its turned-away faces (Δa −7.6), where the light's darkening, ambient scale and red offset explain under 0.6 ΔE of 14.26: the ground stone matches, while the first five metres above it stay +3.4 at the strongest darkening scanned, so a step at the ground is a term the light lacks. A height-dependent ambient falling from the ground does not close it, and the shadow on the stone beneath, placed by height alone, reads worse too (both recorded above). The candidate left is the walkway's own shadow on the stone beneath its deck, which the moon's direction still sets wrong (shadow edges 23.49 px against 2): the shadow solve over the door session comes first, then the stone light is solved again on the measure's own ΔE",
   ],
 };

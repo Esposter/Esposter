@@ -11,6 +11,11 @@ committed.
 | `character-attributes-panel` | `CharacterScreen` | 7.96% | 0.573 | 4.63% | 0.3422 |
 | `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 5.99% | 0.3337 |
 | `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
+| `dialogue-choices-line` | `DialogueTalk` | 39.58% | 0.199 | 37.47% | 0.7964 |
+| `dialogue-choices-replies` | `DialogueTalk` | 38.00% | 0.662 | 32.45% | 0.7431 |
+| `dialogue-choices-speaker` | `DialogueTalk` | 63.87% | 0.000 | 65.02% | 0.9586 |
+| `dialogue-line` | `DialogueTalk` | 37.63% | 0.144 | 35.52% | 0.8082 |
+| `dialogue-paimon-line` | `DialogueTalk` | 50.23% | 0.078 | 48.53% | 0.9182 |
 | `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |

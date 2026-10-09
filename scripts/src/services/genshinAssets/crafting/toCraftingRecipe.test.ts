@@ -62,7 +62,10 @@ describe(toCraftingRecipe, () => {
     const condensedResinRow = createRow({
       combineType: 6,
       isDefaultShow: false,
-      materialItems: [{ count: 60, id: 106 }],
+      materialItems: [
+        { count: 1, id: 100_085 },
+        { count: 60, id: 106 },
+      ],
       resultItemId: CONDENSED_RESIN_ITEM_ID,
       scoinCost: 100,
     });
@@ -70,13 +73,26 @@ describe(toCraftingRecipe, () => {
     expect(toCraftingRecipe(condensedResinRow, [221_007])).toStrictEqual({
       id: 11_002,
       kind: CraftingRecipeKind.CondensedResin,
-      materials: [{ count: 60, id: 106 }],
+      materials: [
+        { count: 1, id: 100_085 },
+        { count: 60, id: 106 },
+      ],
       mora: 100,
       playerLevel: 5,
       resultCount: 1,
       resultItemId: CONDENSED_RESIN_ITEM_ID,
       unlockItemIds: [221_007],
     });
+  });
+
+  test("should refuse Condensed Resin without its crystal core", () => {
+    expect.hasAssertions();
+
+    const resinOnlyRow = createRow({ materialItems: [{ count: 60, id: 106 }], resultItemId: CONDENSED_RESIN_ITEM_ID });
+
+    expect(() => toCraftingRecipe(resinOnlyRow, [])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 11002, is not one crystal core and sixty Original Resin]`,
+    );
   });
 
   test("should leave out a row that is not a bench craft", () => {

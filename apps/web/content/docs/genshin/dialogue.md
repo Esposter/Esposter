@@ -63,7 +63,17 @@ A region's data lists its residents beside its landmarks. Each resident has the 
 
 ## Parity
 
-Not scored yet. The reference is the English client's dialogue choices in `yt-nWBqOXWZuFg.mp4`, about 18 seconds in at 720 high. `DialogueTalk` mounts `DialogueScreen` and runs the reveal on `requestAnimationFrame`, so the line written out and the replies on offer live in its own state. The parity page's time control drives Web Animations, not that clock, and no prop sets the state, so a fixture cannot hold the revealed or the choosing state. Which way to settle it is a call for the main session: a clock or state prop on the talk, or the page taking genshin-interface's components as well.
+Registered, not yet within the bar. Five references are cut from the English PC client's dialogue in `yt-nWBqOXWZuFg.mp4` (1280 by 720) and shot as `DialogueTalk`, which takes a `startProgress` naming the line the talk is held on, so each state is the reference's own props rather than the reveal's clock. Sara's line with the Traveler's two replies is scored three ways, the speaker, the line and the replies, at 19 seconds. Sara's line with no replies is at 23 seconds, and Paimon's line at 29 seconds.
+
+| Reference                  | Mean difference | FLIP   |
+| :------------------------- | :-------------- | :----- |
+| `dialogue-choices-speaker` | 63.87%          | 0.9586 |
+| `dialogue-choices-line`    | 39.58%          | 0.7964 |
+| `dialogue-choices-replies` | 38.00%          | 0.7431 |
+| `dialogue-line`            | 37.63%          | 0.8082 |
+| `dialogue-paimon-line`     | 50.23%          | 0.9182 |
+
+These are the first scores, taken before any placement was tuned, and no tuning has moved them since. They are set by the band itself rather than its placement: the page draws no backdrop, so the translucent band and the pills sit over white where the game shows its scene. A backdrop is what the overlay needs, a frame of the same scene with its dialogue off, which the Recordings owed list asks for as `dialogue-backdrop.png`. `compare` also needs a backdrop field on `ParityReference`, since `isBackdrop` would draw the frame that already holds the game's own dialogue. The replies' score carries one known difference: the first reply is lit white, which no frame shows. The reveal and auto-play timings wait on `dialogue-reveal.mkv` and `dialogue-auto-skip.mkv`.
 
 ## Key files
 
@@ -86,7 +96,7 @@ Not scored yet. The reference is the English client's dialogue choices in `yt-nW
 
 - **The reveal is not visible in the published recording.** An English-language public recording of the dialogue choices, at 30 frames a second and 1280 by 720, shows each line whole in its first frame: two lines measured in full, the text's ink filling in one frame and not character by character. So `TALK_REVEAL_MS_PER_CHARACTER` stays provisional, and the next line is timed off a 60 frames a second recording of a line being written out, which is owed.
 - **The auto-play hold is not measured.** `TALK_AUTO_PLAY_HOLD_MS` waits on the same recording as the reveal, since no published clip found shows auto-play on.
-- **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700`, the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080. Its score is not taken: the frame draws the game's own line and replies in the backdrop, so `compare` cannot isolate the overlay from it, and a backdrop with its dialogue off is owed.
+- **The screen's place and colour are read off one frame.** The speaker's name is gold `#ffc700`, the brightest saturated pixel of its letters. The replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080. Its score is taken over the text and the pills alone (Parity above), since the frame draws the game's own line and replies, and the overlay itself waits on a backdrop with its dialogue off.
 - **The speaker's role is not drawn.** The recording sets a role under the name, as "Waitress, Good Hunter" does under Sara, from the dialog table's title text id, which the talk's schema does not hold yet.
 - **The Confirm prompt is not drawn.** The frame shows a controller's X mark and the word Confirm bottom right. The keyboard client's key for it is the reader's call.
 - **The selected reply's look is not settled.** Both replies in the frame are the same dark pill, and the first is marked by a controller's X prompt, which the keyboard client does not show. The screen still lights the selected reply white, which no frame shows.

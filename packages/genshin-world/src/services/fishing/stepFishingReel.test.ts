@@ -36,4 +36,12 @@ describe(stepFishingReel, () => {
       ).phase,
     ).toBe(FishingPhase.Lost);
   });
+
+  test("a caught or lost reel steps no further", () => {
+    expect.hasAssertions();
+
+    const caught = { ...reel, hp: 0, phase: FishingPhase.Caught };
+
+    expect(stepFishingReel(caught, { attack: 4, isReeling: false, seconds: SECONDS, zone: WHOLE_ZONE })).toBe(caught);
+  });
 });

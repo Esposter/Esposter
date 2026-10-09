@@ -7,8 +7,8 @@ import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, getResultAsync } from "@esposter/shared";
-import { mkdtempSync } from "node:fs";
+import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -47,7 +47,13 @@ export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePus
   // A worktree is a full checkout, which is why the fast-forward above needs none. It is registered in the checkout
   // Apart from its directory, so it is removed on every path, a refused push included, or one is left per retry
   const replayCwd = mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
-  runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd);
+  getResult(() => runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd)).match(
+    noop,
+    (error) => {
+      rmSync(replayCwd, { force: true, recursive: true });
+      throw error;
+    },
+  );
   const result = await getResultAsync(async () => {
     for (const commit of replayCommits)
       // oxlint-disable-next-line no-await-in-loop -- each commit is picked onto the tree the one before it left
@@ -58,10 +64,18 @@ export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePus
     syncCheckout(replayed, head, cwd);
     return QueuePushOutcome.Pushed;
   });
-  runGit(["worktree", "remove", "--force", replayCwd], cwd);
+  const removal = getResult(() => runGit(["worktree", "remove", "--force", replayCwd], cwd));
   return result.match(
-    (outcome) => outcome,
+    (outcome) =>
+      removal.match(
+        () => outcome,
+        (error) => {
+          throw error;
+        },
+      ),
+    // A replay that failed is the error thrown, and a removal that failed beside it is logged rather than masking it
     (error) => {
+      removal.match(noop, console.error);
       throw error;
     },
   );

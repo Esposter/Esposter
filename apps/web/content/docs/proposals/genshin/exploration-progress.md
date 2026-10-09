@@ -16,7 +16,7 @@ The game's map shows, for every area, how much of it a player has explored as a 
 - **Windrise's area is Galesong Hill.** The table counts per level-one area, and Windrise is a level-two area of Galesong Hill, so Windrise's statue completes Galesong Hill's waypoint and its count is Galesong Hill's.
 - **A waypoint is its area's statue.** Unlocking an area's Statue of The Seven completes its waypoint. Each of the four areas holds one waypoint event, so a statue completes one doing.
 - **The area panel is the area's label.** The count and the percentage sit under each filled area's name on the map, as built.
-- **The percentage is rounded down.** An area reads 100 only with all its weight done, so a near-complete area never shows as complete.
+- **The percentage is rounded down.** Once the measured weights fit the totals, an area reads 100 only with all its weight done, so a near-complete area never shows as complete. Until then the table's weights overshoot, so an area can read 100 early and pass it, as the [as-built page](/docs/genshin/exploration-progress) records.
 - **Counted once.** A doing counts once, kept with the player's progress, so a chest that never comes back and a waypoint unlocked once each add their weight a single time.
 - **A nation's thresholds raise its Reputation.** A nation's exploration reaching each of `ReputationExploreExcelConfigData`'s thresholds gives its Reputation reward once ([reputation](/docs/proposals/genshin/reputation)).
 
@@ -46,7 +46,7 @@ flowchart LR
 
 - **Read from the game's tables (built for Mondstadt):** `ExploreAreaTotalExpExcelConfigData`'s totals and `WorldAreaExploreEventConfigData`'s events for the four level-one areas.
 - **Read from the game's tables (waiting):** `ReputationExploreExcelConfigData`'s thresholds, whose rows name each nation by its city and the progress of its three levels, once Reputation is kept.
-- **Measured:** each kind's weight, off a recording of the English PC client's map before and after one statue, one chest, one camp and one gathered ingredient in Galesong Hill, the step in its percentage times its total. The clip is listed as owed on the [roadmap](/docs/genshin/roadmap).
+- **Measured:** each kind's weight, off a recording of the English PC client's map before and after one statue, one chest, one camp, one puzzle solved, one Oculus offered and one gathered ingredient in Galesong Hill, the step in its percentage times its total. The clip is listed as owed on the [roadmap](/docs/genshin/roadmap).
 
 ## Key files
 

@@ -42,6 +42,6 @@ export const statueTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Our statue's shape is two lathes fitted from its meshes (the stone and the figure, `windrise/statue.json`), which read an outline of 12.7 pixels against 1 and a normal of 37 degrees against 10: the stone's base and the dish are not round, and the figure is a robed body, so a lathe's outermost radius per band does not match its normals. Still the kits': the oak's height and shape, and which of the statue's levels the recordings show",
+    "Our statue's shape is two radial profiles fitted from its meshes (the stone and the figure, `windrise/statue.json`, a radius at each of 16 angles per tenth of a metre), which read an outline of 10.8 pixels against 1, a depth of 0.020 against 0.01 and a normal of 46 degrees against 10: a lathe read 12.7, 0.022 and 37, and 32 angles read 10.9, 0.019 and 49. The stone's base is not round and the figure is a robed body with arms, and the stand's base and its level-three mesh carry most of the normal error. Still the kits': the oak's height and shape, and which of the statue's levels the recordings show",
   ],
 };

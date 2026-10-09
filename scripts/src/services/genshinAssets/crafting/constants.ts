@@ -14,6 +14,9 @@ export const UNLOCK_COMBINE_USE_OP = "ITEM_USE_UNLOCK_COMBINE";
 export const TIER_MATERIAL_COUNT = 3;
 // Condensed Resin, the one recipe whose result is a crafted item of the resin's own kind
 export const CONDENSED_RESIN_ITEM_ID = 220007;
+// Condensed Resin takes one crystal core and this much Original Resin
+export const CONDENSED_RESIN_CRYSTAL_CORE_ITEM_ID = 100085;
+export const CONDENSED_RESIN_ORIGINAL_RESIN_COUNT = 60;
 // The kind of recipe each combine type the bench crafts is written as. Combine type six holds Condensed Resin beside
 // The resonance stones and Portable Waypoint, which no page places yet, so it is left out here
 export const CombineTypeCraftingRecipeKindMap: Record<number, CraftingRecipeKind> = {

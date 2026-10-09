@@ -6,6 +6,7 @@ import {
   MAIN_TEXTURE_SLOT,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_SIZE,
+  WITNESS_LAYOUT_FILE_NAME,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
@@ -103,7 +104,7 @@ export const writeWitnessLayout = async (
       scale: [1, 1, 1],
     });
   }
-  const path = join(directory.root, "witness.json");
+  const path = join(directory.root, WITNESS_LAYOUT_FILE_NAME);
   await writeFile(path, JSON.stringify(layout));
   return path;
 };

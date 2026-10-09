@@ -63,6 +63,10 @@ const areaLabels = computed(() =>
     z,
   })),
 );
+// The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
+const areaProgresses = computed(() =>
+  areaLabels.value.flatMap(({ id, name, progress }) => (progress ? [{ id, name, progress }] : [])),
+);
 const originalResin = computed(() => regenerateOriginalResin(wallet, Temporal.Now.instant())[Currency.OriginalResin]);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
@@ -73,7 +77,8 @@ onMounted(() => {
 <template>
   <!-- The map on M, full screen as the game shows it: the one drawing of the catalogue centred on the player, north
        Up, each area's name and the player's pointer, the close button and the zoom slider. The jump list is kept for the
-       Keyboard and a screen reader, since the game shows no list. A landmark chosen on the map or in the list jumps there -->
+       Keyboard and a screen reader, since the game shows no list, and each filled area's progress is listed for a screen
+       Reader beside the hidden drawing. A landmark chosen on the map or in the list jumps there -->
   <GameScreen class="map-overlay" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Map]">
     <svg
       class="map"
@@ -114,6 +119,11 @@ onMounted(() => {
       <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
       <path class="zoom-sign" d="M 22 253 H 34" />
     </svg>
+    <ul class="progress-list">
+      <li v-for="{ id, name, progress } of areaProgresses" :key="id">
+        {{ name }} {{ progress.doneCount }}/{{ progress.doingCount }} {{ progress.percentage }}%
+      </li>
+    </ul>
     <MapJumpList class="jumps" :game-text :landmarks @jump="(landmark) => emit('jump', computeJumpPose(landmark))" />
     <p class="resin">
       <span>{{ gameText[GameTextKey.OriginalResin] }}</span>
@@ -192,7 +202,8 @@ onMounted(() => {
   stroke-linecap: round;
 }
 
-.jumps {
+.jumps,
+.progress-list {
   position: absolute;
   width: 1px;
   height: 1px;

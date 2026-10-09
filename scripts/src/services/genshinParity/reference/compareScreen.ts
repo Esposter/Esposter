@@ -1,10 +1,10 @@
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
-import { getComponentReferenceIds } from "#src/services/genshinParity/passes/getComponentReferenceIds";
+import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import {
@@ -113,9 +113,7 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     console.log(
       `under the curve's black: reference ${formatUnderBlackShare(referenceUnderBlack)}, ours ${formatUnderBlackShare(shotUnderBlack)}`,
     );
-  const layerComponent =
-    witness ??
-    Object.values(DerivedAssetComponent).find((component) => getComponentReferenceIds(component).includes(referenceId));
+  const layerComponent = getLayerComponent(referenceId, witness);
   let layers: LayerScore[] = [];
   if (layerComponent) {
     const { gbuffer } = await readReferenceGbuffer(referenceId, layerComponent);

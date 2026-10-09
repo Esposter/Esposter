@@ -13,9 +13,10 @@ import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorld
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
-// Trunk's taper read off the export, its statue as two lathes and its water's level over the oak's foot, the last three
-// Exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's foot is the whole world's
-export const fitWindriseScene = (only: readonly string[] = []): Promise<string> =>
+// Trunk's taper read off the export, its statue as two radial profiles and its water's level over the oak's foot, the
+// Last three exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's foot is
+// The whole world's. The statue's angle count is its own option, the rest ignore it
+export const fitWindriseScene = (only: readonly string[] = [], angleCount?: number): Promise<string> =>
   runFits(
     {
       ground: () => fitRegionGround(DerivedAssetComponent.Windrise, { x: 0, z: 0 }),
@@ -26,7 +27,7 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<string> 
       ],
       oak: fitWindriseOak,
       paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
-      statue: fitWindriseStatue,
+      statue: () => fitWindriseStatue(angleCount),
       water: async () => {
         const [[, originY], waterLevel] = await Promise.all([
           readWorldOrigin(DerivedAssetComponent.Windrise),

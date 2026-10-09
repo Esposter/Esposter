@@ -1,6 +1,7 @@
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { Page } from "playwright";
 
+import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { connectSharedBrowser } from "#src/services/genshinParity/shared/connectSharedBrowser";
 import {
@@ -83,7 +84,9 @@ export const openParityPage = async ({
       const { assets, root } = getComponentDirectory(witness);
       await page.route(`**${WITNESS_PATH_PREFIX}**`, (route) => {
         const path = decodeURIComponent(new URL(route.request().url()).pathname.slice(WITNESS_PATH_PREFIX.length));
-        return route.fulfill({ path: path === WITNESS_LAYOUT_PATH ? join(root, "witness.json") : join(assets, path) });
+        return route.fulfill({
+          path: path === WITNESS_LAYOUT_PATH ? join(root, WITNESS_LAYOUT_FILE_NAME) : join(assets, path),
+        });
       });
     }
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments

@@ -45,17 +45,17 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Key files
 
-| File                                                                        | Role                                                                          |
-| :-------------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/crafting/writeCraftingRecipes.ts`       | The recipe slice written from the combine table                               |
-| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`           | One row as a recipe, refusing a tier that is not three of one material        |
-| `scripts/src/services/genshinAssets/crafting/readCombineUnlockItemIdMap.ts` | Each recipe's instruction items, read off the material table                  |
-| `packages/genshin-world/src/services/crafting/craftRecipe.ts`               | A batch crafted whole, or refused with nothing spent                          |
-| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts`     | How many of a recipe the bag, wallet and regenerated resin pay for            |
-| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`         | Whether a recipe is open at a rank, and learned where an instruction opens it |
-| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`       | A recipe learned from an instruction in the bag                               |
-| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`       | The slice imported on demand and checked against its shape                    |
-| `packages/genshin-world/src/generated/crafting/recipes.json`                | The bench's recipes, a few hundred of them                                    |
+| File                                                                    | Role                                                                          |
+| :---------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/crafting/writeCraftingRecipes.ts`   | The recipe slice written from the combine table                               |
+| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`       | One row as a recipe, refusing a tier that is not three of one material        |
+| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`       | Each recipe's instruction items, read off the material table                  |
+| `packages/genshin-world/src/services/crafting/craftRecipe.ts`           | A batch crafted whole, or refused with nothing spent                          |
+| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts` | How many of a recipe the bag, wallet and regenerated resin pay for            |
+| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`     | Whether a recipe is open at a rank, and learned where an instruction opens it |
+| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`   | A recipe learned from an instruction in the bag                               |
+| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`   | The slice imported on demand and checked against its shape                    |
+| `packages/genshin-world/src/generated/crafting/recipes.json`            | The bench's recipes, a few hundred of them                                    |
 
 ## Notes
 

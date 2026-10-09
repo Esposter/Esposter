@@ -51,6 +51,15 @@ describe(stepWildlife, () => {
     });
   });
 
+  test("keeps running on its last heading while the target is gone and its escape time has not passed", () => {
+    expect.hasAssertions();
+
+    const wildlife = createNearWildlife();
+    stepWildlife(wildlife, TARGET, STEP_SECONDS);
+    stepWildlife(wildlife, undefined, STEP_SECONDS);
+    expect(wildlife.position).toStrictEqual({ x: 0, z: 1 + WILDLIFE_FLEE_SPEED * STEP_SECONDS * 2 });
+  });
+
   test("goes idle once its escape time has passed with the target out of reach", () => {
     expect.hasAssertions();
 

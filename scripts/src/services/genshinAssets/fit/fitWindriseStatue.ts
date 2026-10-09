@@ -1,11 +1,12 @@
-import type { LatheProfile } from "#src/models/genshinAssets/fit/LatheProfile";
+import type { RadialProfile } from "#src/models/genshinAssets/fit/RadialProfile";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
+import { fitRadialProfile } from "#src/services/genshinAssets/fit/fitRadialProfile";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import {
+  STATUE_ANGLE_COUNT,
   STATUE_BAND_HEIGHT,
   STATUE_FIGURE_MESH_REGEX,
   STATUE_MESH_REGEX,
@@ -29,26 +30,25 @@ const toMatrix = ({ position, rotation, scale }: Pick<AssetPlacement, "position"
     new Quaternion(...toRightHandedRotation(rotation)),
     new Vector3(...scale),
   );
-const toPart = (points: Vector3[]): { position: number[]; sections: LatheProfile["sections"] } => {
-  const profile = fitLatheProfile(
+const toPart = (points: Vector3[], angleCount: number): { position: number[]; sections: RadialProfile["sections"] } => {
+  const profile = fitRadialProfile(
     points.map(({ x, y, z }) => [x, y, z] as const),
-    { bandHeight: STATUE_BAND_HEIGHT, tolerance: STATUE_RADIUS_TOLERANCE },
+    { angleCount, bandHeight: STATUE_BAND_HEIGHT, tolerance: STATUE_RADIUS_TOLERANCE },
   );
   return {
     position: [roundFitted(profile.axis[0]), roundFitted(profile.foot), roundFitted(profile.axis[1])],
-    sections: profile.sections.map(({ bottomRadius, height, topRadius }) => ({
-      bottomRadius: roundFitted(bottomRadius),
+    sections: profile.sections.map(({ height, radii }) => ({
       height: roundFitted(height),
-      topRadius: roundFitted(topRadius),
+      radii: radii.map((radius) => roundFitted(radius)),
     })),
   };
 };
-// The Statue of The Seven as two lathes, its stone (every level of the stand it is drawn on) and its figure, each a
-// Stack of sections standing at its own axis in the statue's frame: its root at the origin, unturned, so the landmark's
-// Place and turn set it down. Every statue mesh is taken into that frame by its placement, then pooled into its part
-// And fitted as a lathe by its outermost radius per band (`fitLatheProfile`), the outline a lathe is read off. Writes
-// `windrise/statue.json` and returns the report and its path
-export const fitWindriseStatue = async (): Promise<string[]> => {
+// The Statue of The Seven as two radial profiles, its stone (every level of the stand it is drawn on) and its figure,
+// Each a stack of sections standing at its own axis in the statue's frame: its root at the origin, unturned, so the
+// Landmark's place and turn set it down. Every statue mesh is taken into that frame by its placement, then pooled into
+// Its part and fitted by its outermost radius per band at each of `angleCount` angles (`fitRadialProfile`), the outline
+// And the surface the kit lofts from. Writes `windrise/statue.json` and returns the report and its path
+export const fitWindriseStatue = async (angleCount: number = STATUE_ANGLE_COUNT): Promise<string[]> => {
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   // The statue is spawned by its scene point, so its placements are read as the copies the witness lays out
   const placements = await readComponentPlacements(DerivedAssetComponent.Windrise, { isCopied: true });
@@ -67,10 +67,10 @@ export const fitWindriseStatue = async (): Promise<string[]> => {
     const pool = STATUE_FIGURE_MESH_REGEX.test(placement.mesh) ? figure : stone;
     pool.push(...points);
   }
-  const parts = [toPart(stone), toPart(figure)];
+  const parts = [toPart(stone, angleCount), toPart(figure, angleCount)];
   const path = await writeWorldData("windrise/statue.json", { parts });
   return [
-    `statue: stone ${parts[0]?.sections.length ?? 0} sections, figure ${parts[1]?.sections.length ?? 0} sections`,
+    `statue: stone ${parts[0]?.sections.length ?? 0} sections, figure ${parts[1]?.sections.length ?? 0} sections, ${angleCount} angles`,
     path,
   ];
 };

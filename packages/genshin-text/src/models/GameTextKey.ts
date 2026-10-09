@@ -99,6 +99,11 @@ export enum GameTextKey {
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   FlamingFlowerStamen = "2387249548",
   FluorescentFungus = "3996649804",
+  // The blacksmith's words for a day's forge points spent past the cap, one for each enhancement ore, by the text id its
+  // Recipe names; a recipe's own id for the same words repeats the English of these
+  ForgeEnhancementOreRefusal = "1106263200",
+  ForgeFineEnhancementOreRefusal = "1652126048",
+  ForgeMysticEnhancementOreRefusal = "110208304",
   Fowl = "1695194124",
   Friends = "UI_FRIEND_TITLE",
   FrostlampFlower = "1823058028",

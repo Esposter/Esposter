@@ -3,6 +3,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
@@ -23,7 +24,7 @@ export const readPathClearance = async (
   [x, y]: readonly [number, number],
 ): Promise<PiercedPart[]> => {
   const directory = getComponentDirectory(component);
-  const layout = jsonDateParse<SceneLayout>(await readFile(join(directory.root, "witness.json"), "utf8"));
+  const layout = jsonDateParse<SceneLayout>(await readFile(join(directory.root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
   const ray = new Ray(new Vector3(x, y, -PATH_START), new Vector3(0, 0, 1));
   const hit = new Vector3();
   const pierced: PiercedPart[] = [];

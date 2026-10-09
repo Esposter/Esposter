@@ -26,3 +26,5 @@ A batch leaves nothing to sweep but the branches and worktrees an older batch ma
 ## A batch that rebuilds the collector
 
 The review collector runs from `ai/queue`'s own checkout on every queue push, so a batch committing a change to the collector's code would run each half-wired step against GitHub the moment any session pushes. While such a batch commits, the collector's workflow is disabled (`gh workflow disable ReviewCollector.yaml`), so the queue keeps pushing for everyone else. It is enabled again once the change is reviewed, fixed and pushed. The collector run by hand with its workflow off is the `review-queue` skill's `references/running-by-hand.md`.
+
+- **A new wave is a new inline script.** Re-invoking a workflow by its `scriptPath` reruns that same wave, with its own agents and labels, whatever `args` it is handed. Passing an older wave's path to start a different one launches a duplicate of the older wave. Write each new wave's script inline, and use `scriptPath` only to resume or re-run that very script.
