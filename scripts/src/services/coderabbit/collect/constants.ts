@@ -185,10 +185,17 @@ export const COLLECTOR_ISSUE_LABEL = "ready-for-agent";
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
 // On a held commit: one with no head once a run has found it held, and one naming each `main` head a re-land of it was
-// Tried at, so a re-land is tried once per head (`relandHeldCommits`)
+// Tried at, so a head is tried again only once the wait after its last try passes (`relandHeldCommits`)
 export const RELAND_MARKER = "review-collector reland";
-// A held commit's failed re-land, counted against the cap on the held commit itself like the sync's marker
+// A held commit's re-land, counted against the cap on the held commit itself like the sync's marker: a pick that failed,
+// Or a return to the owed set of a commit its branch still carries, which the paths that parked it try again
 export const RELAND_FAILED_MARKER = "review-collector reland-failed";
+// The wait after the first and the second re-land of a held commit at one `main` head, before that head is tried again:
+// A quiet `main` may not move for hours, and the attempts are spent all the same. Its length is one short of the cap,
+// Since no try follows the last
+export const RELAND_RETRY_WAITS_MS: number[] = [30, 120].map((minutes) =>
+  Temporal.Duration.from({ minutes }).total("milliseconds"),
+);
 
 // How long the carry session in `pnpm ai:queue:push` may run, sooner than every session's `SESSION_TIMEOUT_MS`: one
 // Haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
@@ -286,7 +293,8 @@ export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }
 export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
 // A step failing for good should reach its cap and be routed around in minutes rather than on the next push. A held
-// Commit's re-land a run left for the next is woken for the same way (`relandHeldCommits`)
+// Commit's re-land a run left for the next, and one returned to the owed set, are woken for the same way
+// (`relandHeldCommits`)
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
 // Hours, so a run a minute apart would spend a runner per minute learning it is still down
