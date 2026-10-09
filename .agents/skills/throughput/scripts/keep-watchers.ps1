@@ -22,7 +22,12 @@ while ($true) {
     if ($isAlive) {
       $lastPass = if (Test-Path $log) { ((Get-Content $log -Raw) -split "Starting (?:incremental )?compilation")[-1] } else { "" }
       if ($lastPass -notmatch "error TS6307") { continue }
-      foreach ($process in $isAlive) { Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue; Stop-Process -Id $process.ParentProcessId -Force -ErrorAction SilentlyContinue }
+      foreach ($process in $isAlive) {
+        # The parent is stopped only while it is still the pnpm launcher this keeper started, never a reused PID
+        $parent = Get-CimInstance Win32_Process -Filter "ProcessId=$($process.ParentProcessId)" -ErrorAction SilentlyContinue
+        Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+        if ($parent -and $parent.CommandLine -match "pnpm" -and $parent.CommandLine -match "--watch") { Stop-Process -Id $parent.ProcessId -Force -ErrorAction SilentlyContinue }
+      }
       Write-Output ("{0:HH:mm:ss} restarting the {1} watcher, its file list stale" -f (Get-Date), $name)
     }
     $compiler = if (Get-ChildItem -Path (Join-Path $directory "src") -Recurse -Filter "*.vue" -ErrorAction SilentlyContinue | Select-Object -First 1) { "vue-tsc" } else { "tsc" }
