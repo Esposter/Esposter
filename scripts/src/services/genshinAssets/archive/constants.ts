@@ -11,6 +11,8 @@ export const EQUIP_AFFIX_TABLE_NAME = "EquipAffixExcelConfigData";
 export const MATERIAL_CODEX_TABLE_NAME = "MaterialCodexExcelConfigData";
 export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
 export const BOOKS_CODEX_TABLE_NAME = "BooksCodexExcelConfigData";
+export const DOCUMENT_TABLE_NAME = "DocumentExcelConfigData";
+export const LOCALIZATION_TABLE_NAME = "LocalizationExcelConfigData";
 export const VIEW_CODEX_TABLE_NAME = "ViewCodexExcelConfigData";
 export const QUEST_CODEX_TABLE_NAME = "QuestCodexExcelConfigData";
 export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
@@ -19,6 +21,8 @@ export const ANIMAL_DESCRIBE_TABLE_NAME = "AnimalDescribeExcelConfigData";
 export const MONSTER_DESCRIBE_TABLE_NAME = "MonsterDescribeExcelConfigData";
 export const PUSH_TIPS_CODEX_TABLE_NAME = "PushTipsCodexExcelConfigData";
 export const PUSH_TIPS_TABLE_NAME = "PushTipsConfigData";
+// The localization kind of a row that names a readable text, as the localization table spells it: a book's body is one
+export const LOC_TEXT_ASSET_TYPE = "LOC_TEXT";
 // The codex kind of a living being that is an animal, as the codex spells it
 export const ANIMAL_CODEX_TYPE = "CODEX_ANIMAL";
 // The kind of push tip a tutorial is, as the push tips table spells it: a monster's tip is not a tutorial
@@ -39,6 +43,25 @@ export const ARCHIVE_TEXT_GENERATED_DIRECTORY: string = join(
   "src",
   "generated",
   "archiveText",
+);
+// Where each book's body is written, one chunk per volume holding every language's text of it
+export const BOOK_BODY_GENERATED_DIRECTORY: string = join(
+  REPOSITORY_ROOT,
+  "packages",
+  "genshin-world",
+  "src",
+  "generated",
+  "bookBody",
+);
+// The loader map the bodies' chunks are imported through, written beside the Archive's other services
+export const BOOK_BODY_LOADER_MAP_PATH: string = join(
+  REPOSITORY_ROOT,
+  "packages",
+  "genshin-world",
+  "src",
+  "services",
+  "archive",
+  "BookBodyLoaderMap.ts",
 );
 export const ArchiveSectionFileNameMap: Record<ArchiveSection, string> = {
   [ArchiveSection.Books]: "books.json",
