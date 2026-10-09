@@ -581,8 +581,10 @@ defineExpose({ jumpTo, readCameraPosition });
         <CharacterScreen
           :active-character-id="getActiveCharacterId(party)"
           :characters
+          :companionship-exp-map="savedState.companionshipExpMap"
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
+          :language
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables
