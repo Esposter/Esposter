@@ -18,9 +18,23 @@ describe(computeResidentSpot, () => {
     expect(computeResidentSpot(RESIDENT, DAY_END_MINUTES)).toStrictEqual(NIGHT_SPOT);
   });
 
-  test("is absent in a period the resident keeps no spot for", () => {
+  test("keeps the day spot through the night when the resident has no night spot", () => {
     expect.hasAssertions();
-    expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_END_MINUTES)).toBeUndefined();
+    expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_END_MINUTES)).toStrictEqual(DAY_SPOT);
+    expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_START_MINUTES - 1)).toStrictEqual(DAY_SPOT);
+  });
+
+  test("is absent at night only where the data says the resident is absent then", () => {
+    expect.hasAssertions();
+    expect(
+      computeResidentSpot({ ...RESIDENT, absentAtNight: true, night: undefined }, DAY_END_MINUTES),
+    ).toBeUndefined();
+    expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES - 1)).toBeUndefined();
+    expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES)).toStrictEqual(DAY_SPOT);
+  });
+
+  test("is absent in the day when the resident keeps no day spot", () => {
+    expect.hasAssertions();
     expect(computeResidentSpot({ ...RESIDENT, day: undefined }, DAY_START_MINUTES)).toBeUndefined();
   });
 });
