@@ -7,12 +7,13 @@ import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 
 // A summon cast where its body stands, which lands its hits from there for its seconds, priced by the combatant that cast
 // It as it stood then. It copies the body, so the summon stays where it was cast. Its seconds default to
-// SUMMON_LINGER_SECONDS past its last hit, so the step that lands that hit still has it on the field
+// SUMMON_LINGER_SECONDS past its last hit, so the step that lands that hit still has it on the field, and a summon with no
+// Hit lingers that long from its cast
 export const createKitSummon = (
   { facing, height, position }: KitBody,
   combatant: Combatant,
   hits: KitHit[],
-  secondsRemaining = Math.max(...hits.map(({ hitmarkSeconds }) => hitmarkSeconds)) + SUMMON_LINGER_SECONDS,
+  secondsRemaining = Math.max(0, ...hits.map(({ hitmarkSeconds }) => hitmarkSeconds)) + SUMMON_LINGER_SECONDS,
 ): KitSummon => ({
   body: { facing, height, position: { x: position.x, z: position.z } },
   combatant,
