@@ -5,7 +5,7 @@ import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityP
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
-import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
+import { COLOUR_GATE, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
@@ -19,8 +19,6 @@ import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
 // A family's structure at each scale, finest first, to three places
 const formatScales = (scales: readonly number[]): string => scales.map((scale) => scale.toFixed(3)).join(" ");
-// The square of a block a family's pixels are split into two halves by, so each half spreads over the whole surface
-const SPLIT_BLOCK_PIXELS = 32;
 // The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
 const NO_GATE_REASON = "no gate: the family lies within one half";
 // The pixels both part targets draw a family at, as a mask over the pixels, and the half of it ('even' or 'odd' blocks)

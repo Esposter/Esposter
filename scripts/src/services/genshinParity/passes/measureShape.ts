@@ -3,6 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
+import { computeNormalMapAngles } from "#src/services/genshinParity/passes/computeNormalMapAngles";
 import {
   SHAPE_DEPTH_GATE,
   SHAPE_NORMAL_GATE_DEGREES,
@@ -13,11 +14,18 @@ import { measureFamilyTargets } from "#src/services/genshinParity/passes/measure
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
 
-const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Depth, WitnessTargetName.Normal];
+const TARGET_NAMES = [
+  WitnessTargetName.Part,
+  WitnessTargetName.Depth,
+  WitnessTargetName.Normal,
+  WitnessTargetName.GeometryNormal,
+];
 // How many of a failing family's parts its note names
 const NAMED_PART_COUNT = 5;
 // The shape pass: each family of ours against the exports' it stands for, target by target (`compareFamilyTargets`):
-// Its outline in pixels at the shape's width, and where both draw it, its depth's gap as a share and its normals' angle
+// Its outline in pixels at the shape's width, and where both draw it, its depth's gap as a share and its normals' angle.
+// Its notes give each family's own normal maps' bend (`computeNormalMapAngles`), the least a stand-in drawn without them
+// Reads on the normal
 export const measureShape = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
   measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead, page, camera) => {
     const toTargets = ({
@@ -36,6 +44,16 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
       exportsRead.families.length,
     );
     const diffPath = await writeShapeDiff(referenceId, exportsTargets, oursTargets, exportsRead);
+    const mapNotes = computeNormalMapAngles(
+      exportsTargets.normal,
+      exportsRead.targets.geometryNormal ?? new Float32Array(),
+      exportsTargets.part,
+      exportsRead.width,
+      exportsRead.families.length,
+    ).map(
+      ({ angle, family, halves: [evenAngle, oddAngle] }) =>
+        `${referenceId} ${exportsRead.families[family] ?? family}'s own normal maps bend its normals ${angle.toFixed(1)} degrees (${evenAngle.toFixed(1)} and ${oddAngle.toFixed(1)} over its halves of blocks), the least a stand-in drawn without them reads`,
+    );
     // A family's normals over their gate, named by the exported parts that carry most of their angle; one with no pixel
     // Both draw has no normals to name a part by, so its no-overlap reading alone reports it
     const partNotes = comparisons
@@ -53,7 +71,11 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
       });
     const envelopeReadings = await measureEnvelope(referenceId, exportsRead, oursRead, page, camera);
     return {
-      notes: [`${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`, ...partNotes],
+      notes: [
+        `${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`,
+        ...partNotes,
+        ...mapNotes,
+      ],
       readings: [
         ...comparisons.flatMap(({ depth, family, normal, outline }) => {
           const name = `${referenceId} ${exportsRead.families[family] ?? family}`;

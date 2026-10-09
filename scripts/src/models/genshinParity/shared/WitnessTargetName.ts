@@ -3,6 +3,7 @@ export enum WitnessTargetName {
   Albedo = "albedo",
   Depth = "depth",
   Emission = "emission",
+  GeometryNormal = "geometryNormal",
   Normal = "normal",
   Occlusion = "occlusion",
   Part = "part",
