@@ -46,7 +46,7 @@ flowchart TD
 3. **Katheryne's rewards.** Waits on Katheryne standing among Mondstadt's residents in region data, which the [resident schedules](/docs/proposals/genshin/resident-schedules) build: none of her name's text ids is a resident's yet.
 4. **The Paimon menu's rank gates**, as the systems' pages open.
 
-**Owed on the Mac:** the `worldLevelAdjustment` slice is a required key, so the blobs in storage that predate it are refused until the backfill (the `backfills` skill) adds `{ "isLowered": false }` to each. The backfill needs the Azure login, which only the Mac holds, and runs on dev, then prod.
+**No backfill is owed:** the `worldLevelAdjustment` slice is a required key, but on 2026-10-09 neither `devstesposter001` nor `prodstesposter001` holds a `genshin-assets` container (`az storage container list`), so no stored save predates it.
 
 ## Data and measures
 
