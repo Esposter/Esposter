@@ -18,6 +18,7 @@ import { fetchOk } from "#src/services/shared/fetchOk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { availableParallelism } from "node:os";
 import { join } from "node:path";
 
 const run = (command: string, args: string[], cwd?: string): void => {
@@ -42,7 +43,7 @@ const fetchSource = async (repository: string, sha: string, workDirectory: strin
 const retargetProjects = (root: string): void => {
   const projectPaths = readdirSync(root, { recursive: true })
     .map(String)
-    .filter((path) => path.endsWith(".csproj") && !path.includes("node_modules"));
+    .filter((path) => path.endsWith(".csproj"));
   for (const projectPath of projectPaths) {
     const absolutePath = join(root, projectPath);
     const retargeted = readFileSync(absolutePath, "utf8")
@@ -61,7 +62,7 @@ const retargetProjects = (root: string): void => {
 
 const buildCmakeLibrary = (source: string, build: string, options: string[], output: string): string => {
   run("cmake", ["-S", source, "-B", build, "-DCMAKE_BUILD_TYPE=Release", ...options]);
-  run("cmake", ["--build", build, "--config", "Release", "-j", "8"]);
+  run("cmake", ["--build", build, "--config", "Release", "-j", String(availableParallelism())]);
   return join(build, output);
 };
 
@@ -90,7 +91,8 @@ const buildAclLibrary = (projectDirectory: string, output: string): string => {
   return output;
 };
 
-// Builds the CLI and its natives for macOS, and returns the path the CLI is published to
+// Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
+// So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it
 export const buildAnimeStudio = async (directory: string): Promise<string> => {
   const workDirectory = join(directory, WORK_DIRECTORY_NAME);
   const publishDirectory = join(directory, PUBLISH_DIRECTORY_NAME);
@@ -132,7 +134,7 @@ export const buildAnimeStudio = async (directory: string): Promise<string> => {
     "-r",
     RUNTIME_IDENTIFIER,
     "--self-contained",
-    "false",
+    "true",
     "-o",
     publishDirectory,
   ]);
