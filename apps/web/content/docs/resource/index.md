@@ -70,6 +70,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dataset row-cap warning](/docs/resource/dataset-row-cap-warning) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Email preview text](/docs/resource/email-preview-text) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [Email web view](/docs/resource/email-web-view) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy
+- [Flowchart connectors](/docs/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [Flowchart publish](/docs/resource/flowchart-publish) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
 - [Resource file assets](/docs/resource/resource-file-assets) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
 - [Storage quotas](/docs/resource/storage-quotas) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header

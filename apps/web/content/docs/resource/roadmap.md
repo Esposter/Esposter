@@ -10,11 +10,9 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 ## Next
 
 - [ ] [Flowchart shapes](/docs/proposals/resource/flowchart-shapes) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place
-- [ ] [Flowchart connectors](/docs/proposals/resource/flowchart-connectors) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [ ] [Dashboard live canvas](/docs/proposals/resource/dashboard-live-canvas) — the editor draws each tile as its real visual over its bound data instead of a stock icon, so a dashboard is seen without publishing it
 - [ ] [Dashboard card and table visuals](/docs/proposals/resource/dashboard-card-and-table-visuals) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Dataset CSV export](/docs/proposals/resource/dataset-csv-export) — one Export CSV for every dataset provider without an export of its own, survey responses first, answers neutralised as formulas
-- [ ] [Webpage form blocks](/docs/proposals/resource/webpage-form-blocks) — stop offering form blocks, whose forms the published page's sandbox can never submit; the types stay so saved forms still load
 - [ ] [Webpage social preview](/docs/proposals/resource/webpage-social-preview) — a description and share image the published page unfurls with
 - [ ] [Program survey mode check](/docs/proposals/resource/program-survey-mode-check) — warn when the bound survey is Anonymous, which drops every participant token
 - [ ] [Program email invites](/docs/proposals/resource/program-email-invites) — the bound email exported per participant with their tokened link, and again for those still awaiting
@@ -27,6 +25,6 @@ Every product is already a resource behind one [explorer](/docs/resource/explore
 
 ## Later
 
-- [ ] Prune the page-builder plugin belt — absorb the block-registering plugins that are unmaintained or imported through `@ts-expect-error`, keep the engines (the webpage preset, the image editor, the exporter); lowest value per unit of effort in the [dependency admission](/docs/architecture/dependency-admission) analysis, so it goes last
+- [ ] Prune the page-builder plugin belt — absorb the block-registering plugins that are unmaintained or imported through `@ts-expect-error`, keep the engines (the webpage preset, the image editor, the exporter); lowest value per unit of effort in the [dependency admission](/docs/architecture/dependency-admission) analysis, so it goes last; a plugin that registers a component type a saved page may hold keeps its types, or the pruning migrates those pages first (the Forms plugin keeps its types with its blocks disabled, [survey invite blocks](/docs/resource/webpage-survey-invite-blocks) being the answer where a form was wanted)
 - [ ] [Content-addressed assets](/docs/proposals/resource/content-addressed-assets) — a publish references assets by content instead of cloning them, with reference rows written from a scan of each version's content and a count-but-never-collect period before anything is deleted
 - [ ] [Paid storage tiers](/docs/proposals/resource/paid-storage-tiers) — sell a larger allowance through a merchant-of-record checkout, with the tier column staying the one input to the quota gate. Blocked on wanting to take money at all, and on shipping account deletion + data export alongside it

@@ -2,6 +2,8 @@
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
+import { DEFAULT_EDGE_OPTIONS } from "@/services/flowchartEditor/constants";
+import { edgeTypes } from "@/services/flowchartEditor/EdgeTypeMap";
 import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
@@ -38,6 +40,8 @@ onMounted(async () => {
     v-else
     h-full
     :node-types
+    :edge-types
+    :default-edge-options="DEFAULT_EDGE_OPTIONS"
     :nodes="flowchartEditor.nodes"
     :edges="flowchartEditor.edges"
     @update:nodes="
