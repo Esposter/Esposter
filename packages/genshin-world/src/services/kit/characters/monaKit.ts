@@ -1,3 +1,4 @@
+import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
@@ -70,7 +71,7 @@ const createNormalAttack = (
 
 // Mirror Reflection's phantom: a tick every 59 frames from the first, which applies Hydro under an Elemental Skill ICD,
 // And an explosion that applies Hydro with no internal cooldown, the wiki's 1U for each
-const MIRROR_REFLECTION_HITS: KitHit[] = [
+const createMirrorReflectionHits = (talentMultiplierMap: TalentMultiplierMap): KitHit[] => [
   ...PHANTOM_TICK_HITMARK_FRAMES.map((frames): KitHit => ({
     element: Element.Hydro,
     gauge: 1,
@@ -78,7 +79,7 @@ const MIRROR_REFLECTION_HITS: KitHit[] = [
     hitmarkSeconds: frames / 60,
     internalCooldownTag: InternalCooldownTag.ElementalSkill,
     poiseDamage: 40,
-    talentMultiplier: getTalentMultiplier(MONA_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
   })),
   {
     element: Element.Hydro,
@@ -86,7 +87,7 @@ const MIRROR_REFLECTION_HITS: KitHit[] = [
     hitArea: PHANTOM_HIT_AREA,
     hitmarkSeconds: PHANTOM_EXPLOSION_HITMARK_FRAMES / 60,
     poiseDamage: 150,
-    talentMultiplier: getTalentMultiplier(MONA_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
   },
 ];
 
@@ -94,7 +95,7 @@ const MIRROR_REFLECTION_HITS: KitHit[] = [
 // Doom and Stellaris Phantasm. Its multipliers are read from its proud skill groups. Stellaris Phantasm's bubble applies
 // Its Hydro, but its explosion, the Omen and the damage bonus wait on the enemy's statuses, which are not built. Its
 // Passives wait too: A1's phantom is cast from a dash the kit does not hold, and A4's bonus is a standing one
-export const MONA_KIT: Kit = {
+export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
   chargedAttack: {
@@ -106,13 +107,13 @@ export const MONA_KIT: Kit = {
         // Measured: gcsim v2.47.2 (MIT) mona/charge.go, the charge at 66 frames and its cancel frame at 113
         hitmarkSeconds: 66 / 60,
         poiseDamage: 26.15,
-        talentMultiplier: getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
       },
     ],
     seconds: 113 / 60,
     targetingArea: SWORD_TARGETING_AREA,
   },
-  chargedAttackStamina: getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
+  chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
   // Measured: gcsim v2.47.2 (MIT) mona/burst.go, the bubble at 107 frames and its cancel frame at 127. The wiki's
   // Stellaris Phantasm applies 1U of Hydro on cast under an Elemental Burst ICD, with 50 poise
   elementalBurst: {
@@ -139,7 +140,7 @@ export const MONA_KIT: Kit = {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
         elapsedSeconds: 0,
-        hits: MIRROR_REFLECTION_HITS,
+        hits: createMirrorReflectionHits(talentMultiplierMap),
         kind: "summon",
         secondsRemaining: PHANTOM_EXPLOSION_HITMARK_FRAMES / 60,
       }),
@@ -154,7 +155,7 @@ export const MONA_KIT: Kit = {
         hitArea: HIGH_PLUNGE_HIT_AREA,
         hitmarkSeconds: 0,
         poiseDamage: 100,
-        talentMultiplier: getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
       },
     ],
     seconds: 0.4,
@@ -168,7 +169,7 @@ export const MONA_KIT: Kit = {
         hitArea: LOW_PLUNGE_HIT_AREA,
         hitmarkSeconds: 0,
         poiseDamage: 50,
-        talentMultiplier: getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
       },
     ],
     seconds: 0.4,
@@ -178,28 +179,28 @@ export const MONA_KIT: Kit = {
     createNormalAttack(
       STRIKE_HIT_AREA,
       7.65,
-      getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
+      getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
       11 / 60,
       29 / 60,
     ),
     createNormalAttack(
       STRIKE_HIT_AREA,
       7.35,
-      getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
+      getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
       14 / 60,
       30 / 60,
     ),
     createNormalAttack(
       STRIKE_HIT_AREA,
       9.15,
-      getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
+      getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
       25 / 60,
       54 / 60,
     ),
     createNormalAttack(
       FOURTH_STRIKE_HIT_AREA,
       11.85,
-      getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
+      getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
       27 / 60,
       67 / 60,
     ),
@@ -212,7 +213,7 @@ export const MONA_KIT: Kit = {
     hitArea: PLUNGE_COLLISION_HIT_AREA,
     hitmarkSeconds: 0,
     poiseDamage: 5,
-    talentMultiplier: getTalentMultiplier(MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
   },
   skillCooldownSeconds: 12,
-};
+});

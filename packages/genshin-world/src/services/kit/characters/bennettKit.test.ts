@@ -5,12 +5,15 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BENNETT_CHARACTER_ID } from "#src/services/character/constants";
-import { BENNETT_KIT } from "#src/services/kit/characters/bennettKit";
+import { createBennettKit } from "#src/services/kit/characters/bennettKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const BENNETT_KIT = createBennettKit(await readTalentMultipliers([BENNETT_CHARACTER_ID]));
 
 const MAX_HEALTH = 10_000;
 const BASE_ATTACK = 200;

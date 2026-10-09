@@ -1,3 +1,4 @@
+import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -78,12 +79,12 @@ const createNormalAttack = (
 // Healed by 577 plus 6% of Bennett's Max HP, and one above it gains an ATK bonus of 56% of Bennett's base ATK. Either way
 // The character on the field is infused with Pyro for 2.1 seconds. The heal's Healing Bonus is not read
 const createFieldTick =
-  (owner: Combatant) =>
+  (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
   ({ activeCombatant, effects, party, tickIndex }: KitFieldTick): void => {
     const { characterId } = activeCombatant;
     const { healthShare } = getPartyMember(party, characterId);
-    const flatHeal = getTalentMultiplier(BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
-    const maxHealthHeal = getTalentMultiplier(BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
+    const flatHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
+    const maxHealthHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
     if (tickIndex > 0 && healthShare < BENNETT_FIELD_HP_THRESHOLD) {
       const heal = flatHeal + maxHealthHeal * owner.attributes.maxHealth;
       healPartyMember(party, characterId, heal / activeCombatant.attributes.maxHealth);
@@ -91,7 +92,7 @@ const createFieldTick =
     if (healthShare > BENNETT_FIELD_HP_THRESHOLD)
       addKitEffect(effects, {
         amount:
-          getTalentMultiplier(BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) *
+          getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) *
           owner.attributes.attributeTotalMap[Attribute.BaseAttack],
         attribute: Attribute.Attack,
         characterId,
@@ -109,7 +110,7 @@ const createFieldTick =
 // Bennett's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Passion Overload's
 // Press and Fantastic Voyage. Its multipliers are read from its proud skill groups. Passion Overload's hold levels and
 // The cooldown its A1 and A4 cut are not built, so the press stands at its cooldown
-export const BENNETT_KIT: Kit = {
+export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 15,
   burstEnergyCost: 60,
   chargedAttack: {
@@ -119,21 +120,21 @@ export const BENNETT_KIT: Kit = {
         hitmarkSeconds: 10 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 45,
-        talentMultiplier: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
       },
       {
         hitArea: CHARGED_HIT_AREA,
         hitmarkSeconds: 21 / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 45,
-        talentMultiplier: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
       },
     ],
     seconds: 55 / 60,
     targetingArea: SWORD_TARGETING_AREA,
   },
   // The wiki's Strike of Fortune stamina, which its paramList row gives as well
-  chargedAttackStamina: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
+  chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
   // Measured: gcsim v2.47.2 (MIT) bennett/burst.go, the damage at 37 frames and the cancel frame at 53. The wiki's
   // Fantastic Voyage damage is 2U of Pyro with 200 poise, and it carries no internal cooldown
   elementalBurst: {
@@ -144,7 +145,7 @@ export const BENNETT_KIT: Kit = {
         hitArea: BURST_HIT_AREA,
         hitmarkSeconds: 37 / 60,
         poiseDamage: 200,
-        talentMultiplier: getTalentMultiplier(BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
     onStart: ({ body, combatant, effects }) =>
@@ -152,10 +153,11 @@ export const BENNETT_KIT: Kit = {
         centre: { x: body.position.x, z: body.position.z },
         kind: "field",
         nextTickSeconds: BENNETT_FIELD_FIRST_TICK_SECONDS,
-        onTick: createFieldTick(combatant),
+        onTick: createFieldTick(talentMultiplierMap, combatant),
         radius: BENNETT_FIELD_RADIUS,
         secondsRemaining:
-          getTalentMultiplier(BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 4) + BENNETT_BURST_START_SECONDS,
+          getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 4) +
+          BENNETT_BURST_START_SECONDS,
         tickIndex: 0,
         tickIntervalSeconds: BENNETT_FIELD_TICK_INTERVAL_SECONDS,
       }),
@@ -172,7 +174,7 @@ export const BENNETT_KIT: Kit = {
         hitArea: PRESS_HIT_AREA,
         hitmarkSeconds: 16 / 60,
         poiseDamage: 100,
-        talentMultiplier: getTalentMultiplier(BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
     seconds: 42 / 60,
@@ -185,7 +187,7 @@ export const BENNETT_KIT: Kit = {
         hitmarkSeconds: 38 / 60,
         isBlunt: true,
         poiseDamage: 150,
-        talentMultiplier: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
       },
     ],
     seconds: 68 / 60,
@@ -198,7 +200,7 @@ export const BENNETT_KIT: Kit = {
         hitmarkSeconds: 36 / 60,
         isBlunt: true,
         poiseDamage: 100,
-        talentMultiplier: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
       },
     ],
     seconds: 67 / 60,
@@ -208,35 +210,35 @@ export const BENNETT_KIT: Kit = {
     createNormalAttack(
       SWORD_CIRCLE_HIT_AREA,
       38.7,
-      getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
+      getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
       13 / 60,
       33 / 60,
     ),
     createNormalAttack(
       SWORD_CIRCLE_HIT_AREA,
       37.8,
-      getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
+      getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
       9 / 60,
       27 / 60,
     ),
     createNormalAttack(
       STRIKE_FAN_HIT_AREA,
       47.7,
-      getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
+      getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
       13 / 60,
       46 / 60,
     ),
     createNormalAttack(
       FOURTH_STRIKE_HIT_AREA,
       52.2,
-      getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
+      getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
       25 / 60,
       48 / 60,
     ),
     createNormalAttack(
       FIFTH_STRIKE_HIT_AREA,
       62.1,
-      getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
+      getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
       24 / 60,
       60 / 60,
     ),
@@ -247,7 +249,7 @@ export const BENNETT_KIT: Kit = {
     hitArea: PLUNGE_COLLISION_HIT_AREA,
     hitmarkSeconds: 0,
     poiseDamage: 25,
-    talentMultiplier: getTalentMultiplier(BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
   },
   skillCooldownSeconds: 5,
-};
+});

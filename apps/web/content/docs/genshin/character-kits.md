@@ -34,7 +34,7 @@ The stats run writes each playable character's combat talent multipliers into a 
 flowchart LR
   P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, one chunk per character"| M["talentMultipliers/avatarId.json, keyed by group"]
   M -->|"dynamic import when the character joins the party, checked by its schema"| R["readTalentMultipliers: merged by group"]
-  R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit: the Anemo form's hits' multipliers"]
+  R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit, createDilucKit, createBennettKit, createMonaKit: each kit's hits' multipliers"]
 ```
 
 ## Targeting
@@ -51,11 +51,11 @@ A hit can name its own element, which strikes the enemy as that element whatever
 
 ## Character modules
 
-Each character with a module has one file under `services/kit/characters/`, exporting its kit shaped like `TRAVELER_KIT`. `CharacterIdKitMap` keys them by avatar id, and a character with none fights with the Traveler's kit.
+Each character with a module has one file under `services/kit/characters/`, exporting a factory that builds its kit from the loaded multipliers, as `createTravelerKit` does. `CharacterIdCreateKitMap` keys them by avatar id, the world builds a character's kit once its chunk has arrived, and a character with none fights with the Traveler's kit.
 
-- **Diluc** (`DILUC_KIT`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
-- **Mona** (`MONA_KIT`, avatar 10000041): four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131 and 4132, and match the wiki's Ripple of Fate and Mirror Reflection of Doom values to two decimal places. Mirror Reflection is a summon, built as the shared effects below; the bubble's Hydro is built, its explosion is not.
-- **Bennett** (`BENNETT_KIT`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below.
+- **Diluc** (`createDilucKit`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
+- **Mona** (`createMonaKit`, avatar 10000041): four strikes, a charged attack, a collision and two plunges, all Hydro catalyst hits, Mirror Reflection of Doom and Stellaris Phantasm's bubble. Its multipliers are read from proud skill groups 4131 and 4132, and match the wiki's Ripple of Fate and Mirror Reflection of Doom values to two decimal places. Mirror Reflection is a summon, built as the shared effects below; the bubble's Hydro is built, its explosion is not.
+- **Bennett** (`createBennettKit`, avatar 10000032): five strikes, a charged attack, a collision and two plunges, Passion Overload's press, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its self infusion are built, as the shared effects below.
 
 ## Shared effects
 
@@ -105,12 +105,12 @@ Each effect is on the party, in a list the character component holds, so a switc
 | `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                          |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                        |
 | `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers              |
-| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `BENNETT_KIT`, Bennett's kit with Fantastic Voyage's field                             |
+| `packages/genshin-world/src/services/kit/characters/bennettKit.ts`      | `createBennettKit`, Bennett's kit with Fantastic Voyage's field                        |
 | `packages/genshin-world/src/services/kit/effects/stepKitField.ts`       | A field's schedule, run on each step, ticking while the body stands in it              |
-| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `MONA_KIT`, Mona's kit with Mirror Reflection's summon                                 |
+| `packages/genshin-world/src/services/kit/characters/monaKit.ts`         | `createMonaKit`, Mona's kit with Mirror Reflection's summon                            |
 | `packages/genshin-world/src/services/kit/effects/stepKitSummon.ts`      | A summon's clock, landing the hits whose hitmarks fall within each step                |
-| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `DILUC_KIT`, Diluc's kit with Dawn's infusion and A4                                   |
-| `packages/genshin-world/src/services/kit/CharacterIdKitMap.ts`          | Each built character's kit by avatar id, read by the roster                            |
+| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `createDilucKit`, Diluc's kit with Dawn's infusion and A4                              |
+| `packages/genshin-world/src/services/kit/CharacterIdCreateKitMap.ts`    | Each built character's kit factory by avatar id, read by the roster                    |
 | `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                       |
 | `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                            |
 | `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with  |

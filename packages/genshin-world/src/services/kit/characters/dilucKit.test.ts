@@ -5,9 +5,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
-import { DILUC_KIT } from "#src/services/kit/characters/dilucKit";
+import { createDilucKit } from "#src/services/kit/characters/dilucKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
 
 const createCombatant = (ascension: number): Combatant => ({
   ascension,
