@@ -81,7 +81,7 @@ The first publish stored 5,765 objects in each account: the 5,735 distinct recor
 
 The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names, the stat, enemy, Adventure Rank and material tables, the HUD's rects and the starting team's talent multipliers from it before the world opens, and hands the base and the tables to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
 
-A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, `readPublishedGameDataEntry`), never through genshin-world's build, which a step running under `tsx` may load stale. A fitted data file the package still keeps is read from disk first (`readWorldData`), since the fit that last wrote it holds its freshest copy, and from the dev account under its path less `.json` once it is published and gone.
+A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`), never through genshin-world's build, which a step running under `tsx` may load stale. A fitted data file the package still keeps is read from disk first (`readWorldData`), since the fit that last wrote it holds its freshest copy, and from the dev account under its path less `.json` once it is published and gone.
 
 ## Tests
 
@@ -212,7 +212,6 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/mergeGameDataLock.ts`                                  | Drops every entry a dataset or key scope names and lays the publication's entries over the rest                      |
 | `scripts/src/services/gameData/toGameDataKeyScopes.ts`                                | The keys a step republishes on their own, each checked to sit under a dataset                                        |
 | `scripts/src/services/gameData/readPublishedGameData.ts`                              | A record another step published, read through the lock on disk from the dev account                                  |
-| `scripts/src/services/gameData/readPublishedGameDataEntry.ts`                         | One entry of a published index, read the same way                                                                    |
 | `scripts/src/services/genshinAssets/shared/readWorldData.ts`                          | A fitted data file from disk while the package keeps it, else its published record                                   |
 | `packages/genshin-world/src/models/data/GameDataset.ts`                               | The datasets, each the scope a publish replaces and the first segment of its keys                                    |
 | `packages/genshin-world/src/models/data/GameDataKey.ts`                               | The lock's object keys, which type the key a reader names                                                            |
