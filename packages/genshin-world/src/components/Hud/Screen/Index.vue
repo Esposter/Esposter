@@ -19,9 +19,10 @@ import HudQuest from "#src/components/Hud/Quest/Index.vue";
 import HudSkills from "#src/components/Hud/Skills/Index.vue";
 import HudStamina from "#src/components/Hud/Stamina/Index.vue";
 import HudTouch from "#src/components/Hud/Touch/Index.vue";
+import interfaceRects from "#src/data/hud/interfaceRects.json";
 import { useMediaQuery } from "@vueuse/core";
 import { STAMINA_MAX } from "genshin-engine";
-import { GameScreen } from "genshin-interface";
+import { GameRect, GameScreen } from "genshin-interface";
 
 interface Props {
   camera: MapCamera;
@@ -77,32 +78,48 @@ const isTouch = useMediaQuery("(pointer: coarse)");
        Through to the world, and a press on a piece stays the piece's, never reaching the world's input as an attack -->
   <GameScreen class="hud" @mousedown.stop>
     <HudTouch v-if="isTouch" :game-text :input />
-    <div class="corner">
-      <HudPaimonButton :game-text @press="emit('menu')" />
-      <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
-    </div>
-    <div v-if="trackedQuest" class="quest">
-      <HudQuest :input :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
-    </div>
-    <div v-if="characterDataMap" class="party">
-      <HudParty :character-data-map :frame :input :name-text-map :party />
-    </div>
-    <div v-if="member" class="health">
-      <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />
-    </div>
-    <div v-if="member" class="skills">
-      <HudSkills
-        :burst-cooldown="member.burstCooldown"
-        :burst-cooldown-seconds="member.burstCooldownSeconds"
-        :energy="member.energy"
-        :energy-cost="member.energyCost"
-        :game-text
-        :input
-        :skill-cooldown="member.skillCooldown"
-        :skill-cooldown-seconds="member.skillCooldownSeconds"
-      />
-    </div>
-    <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
+    <!-- The page as the game's tree under `GrpMainPage` nests it: each piece a `GameRect` placed by its RectTransform
+         inside its game parent's -->
+    <GameRect #default="{ rect: hudRect }" :rect="interfaceRects.GrpMainPage">
+      <GameRect #default="{ rect: mapInfoRect }" :parent="hudRect" :rect="interfaceRects['GrpMainPage/MapInfo']">
+        <GameRect :parent="mapInfoRect" :rect="interfaceRects['GrpMainPage/MapInfo/BtnPlayerProfile']">
+          <HudPaimonButton :game-text @press="emit('menu')" />
+        </GameRect>
+        <GameRect
+          #default="{ rect: miniMapRect }"
+          :parent="mapInfoRect"
+          :rect="interfaceRects['GrpMainPage/MapInfo/GrpMiniMap']"
+        >
+          <GameRect :parent="miniMapRect" :rect="interfaceRects['GrpMainPage/MapInfo/GrpMiniMap/GrpBackMap']">
+            <HudMinimap :camera :game-text :landmarks @open="emit('map')" />
+          </GameRect>
+        </GameRect>
+      </GameRect>
+      <div v-if="trackedQuest" class="quest">
+        <HudQuest :input :quest="trackedQuest" :quest-progress :text-map="questTextMap" />
+      </div>
+      <GameRect v-if="characterDataMap" :parent="hudRect" :rect="interfaceRects['GrpMainPage/TeamBtnContainer']">
+        <HudParty :character-data-map :frame :input :name-text-map :party />
+      </GameRect>
+      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects['GrpMainPage/GameInfo/HPBarContainer']">
+        <HudHealth :game-text :health="member.health" :level="member.level" :max-health="member.maxHealth" />
+      </GameRect>
+      <GameRect v-if="member" :parent="hudRect" :rect="interfaceRects['GrpMainPage/GrpActionBtn']">
+        <HudSkills
+          :burst-cooldown="member.burstCooldown"
+          :burst-cooldown-seconds="member.burstCooldownSeconds"
+          :energy="member.energy"
+          :energy-cost="member.energyCost"
+          :game-text
+          :input
+          :skill-cooldown="member.skillCooldown"
+          :skill-cooldown-seconds="member.skillCooldownSeconds"
+        />
+      </GameRect>
+      <GameRect :parent="hudRect" :rect="interfaceRects['GrpMainPage/GameInfo/SPBar']">
+        <HudStamina :frame :game-text :max-stamina="STAMINA_MAX" />
+      </GameRect>
+    </GameRect>
     <slot name="prompts" />
   </GameScreen>
 </template>
@@ -112,40 +129,11 @@ const isTouch = useMediaQuery("(pointer: coarse)");
   pointer-events: none;
 }
 
-/* Provisional: each piece's place, read off the HUD's RectTransform tree once its block is found, and measured off a
-   Recording of the English PC client's world HUD until then */
-.corner {
-  position: absolute;
-  top: calc(var(--unit) * 24);
-  left: calc(var(--canvas-inset) + var(--unit) * 32);
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--unit) * 24);
-}
-
+/* Provisional: the quest tracker has no rect of its own in the HUD's tree, so it stays at its measured place under the
+   Minimap until the tree's rect for it is found */
 .quest {
   position: absolute;
   top: calc(var(--unit) * 270);
   left: calc(var(--canvas-inset) + var(--unit) * 32);
-}
-
-.party {
-  position: absolute;
-  top: 50%;
-  right: calc(var(--canvas-inset) + var(--unit) * 32);
-  translate: 0 -50%;
-}
-
-.health {
-  position: absolute;
-  bottom: calc(var(--unit) * 40);
-  left: 50%;
-  translate: -50% 0;
-}
-
-.skills {
-  position: absolute;
-  right: calc(var(--canvas-inset) + var(--unit) * 64);
-  bottom: calc(var(--unit) * 40);
 }
 </style>

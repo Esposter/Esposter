@@ -35,13 +35,13 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the shell stands at provisional places with every piece built: the stamina meter, the quest tracker, the party's portraits, the member's health and the skill and burst buttons.
+**Today:** every piece stands in its fitted rect of the game's tree, its looks still provisional: the stamina meter, the quest tracker, the party's portraits, the member's health and the skill and burst buttons.
 
 **This adds, in order:**
 
-1. **The HUD's block, exported and fitted.** `DerivedAssetComponent` (`scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts`) gains `Hud = "hud"`, and `DerivedAssetComponentMap` its entry: `{ clipPattern: "^Ani_InLevelMainPage_", interface: { anchorPattern: "^TeamBtn_MP$", root: "InLevelMainPage" }, roots: [], screen: "HudScreen" }`. `pnpm -C scripts genshin:assets interface hud` exports the tree into `~/Esposter/genshin-parity/extracted/hud/interface/interface.json` and prints it. A new `fitHud.ts`, keyed in `DerivedAssetFitMap`, runs `interfaceRects` as `fitLoginScene` does, writing `hud/interfaceRects.json` through `fitInterfaceRects`. `pnpm -C scripts genshin:assets fit hud --only interfaceRects` writes it. The proof is the file itself: its keys hold the Paimon button's, the minimap's, the party's and the skills' paths, which the next step's markup reads. No new test is owed, since `fitInterfaceRects` has its own.
-2. **Each piece placed by the fitted rects.** `Hud/Screen` nests a `GameRect` per piece in the tree's order, as `Login/Interface` does, and each built piece moves into its rect. It is measured with `pnpm -C scripts genshin:parity compare hud-world-pickup`, whose committed row (0.95%) must not rise; the user's eyes then judge the comparison, queued for them.
-3. **The looks and Paimon's mark.** Each piece's look is replaced with the game's, read off the copied captures and `hud-world-pickup`, and Paimon's mark is traced from the same frame with `genshin:parity trace`. `world-hud-hidden.mkv` re-measures the composite later; it gates nothing.
+1. **The looks and Paimon's mark.** Each piece's look is replaced with the game's, read off the copied captures and `hud-world-pickup`, and Paimon's mark is traced from the same frame with `genshin:parity trace`. `world-hud-hidden.mkv` re-measures the composite later; it gates nothing.
+
+The HUD's block is exported and fitted, and each piece is placed by its fitted rect, both built ([as-built page](/docs/genshin/hud)). The quest tracker has no rect in the HUD's tree and stays at its provisional place until one is found.
 
 ## What this does not propose
 
