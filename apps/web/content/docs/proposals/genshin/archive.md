@@ -20,7 +20,8 @@ The Archive's seven sections, their entries read from the game's codex tables, t
 flowchart LR
   DOING["Defeated, read, finished, shown, viewed, held as a set"] --> FIRST{"Its entry still locked?"}
   FIRST -->|"yes"| OPEN["Entry opened, kept with the progress"]
-  FIRST -->|"no"| COUNT["Living Beings: one more defeated"]
+  FIRST -->|"no, a defeat"| COUNT["Living Beings: one more defeated"]
+  OPEN -->|"a defeat"| COUNT
   OPEN --> SECTION["Its section's list, in the codex's order"]
 ```
 
