@@ -89,4 +89,8 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   grid-template-rows: auto 1fr;
   color: #ece5d8;
 }
+
+.head {
+  grid-column: 1 / -1;
+}
 </style>
