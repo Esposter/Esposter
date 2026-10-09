@@ -1,11 +1,11 @@
 ---
 title: Genius Invokation TCG
-description: The card game's rules engine and three decks of its opponents, the tutorial deck and decks 3 and 4, with their characters, skills and cards, built and tested but on no screen yet: a duel's dice and round, skills and cards paid in dice and energy, the phases' hooks, the reactions and the outcome. Scripted duels between the decks are played to their ends, but no duel screen opens one yet.
+description: The card game's rules engine, three decks of its opponents and its duel board: a duel's dice and round, skills and cards paid in dice and energy, the phases' hooks, the reactions and the outcome, played on a screen a resident's talk opens. The first duel is a Mondstadt resident's, against the tutorial deck, with deck 3 standing in for the player's deck until the game's own is built.
 ---
 
 # Genius Invokation TCG
 
-The card game is a rules engine of its own in `genshin-world`: a duel is a plain state over two sides, advanced by the actions a duel answers, and it shares only the elements with the world. This page is what is built of [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation). Each of the three decks' characters, their skills and their action cards has a module, and a duel plays them through the engine's public functions. No screen opens a duel yet, so the engine is driven by its tests and by whatever a later screen calls.
+The card game is a rules engine of its own in `genshin-world`: a duel is a plain state over two sides, advanced by the actions a duel answers, and it shares only the elements with the world. This page is what is built of [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation). Each of the three decks' characters, their skills and their action cards has a module, and a duel plays them through the engine's public functions. A resident's talk opens the duel board (`GcgScreen`), and a session host plays it: each of the player's choices is an engine action, and the opponent's turns are the scripted policy's, until the board leaves.
 
 ## Decisions
 
@@ -48,6 +48,14 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 - **The slice carries the text ids, and the words are the world's.** Each character and action card carries `nameTextId` and `descriptionTextId`, the dump's `nameTextMapHash` and `descTextMapHash` as numbers, and `pnpm -C scripts genshin:text gcg` writes every name and description the slices name into `generated/gcgText/<language>.json`, one chunk a language, which `GcgTextLoaderMap` imports on demand. A description is the card's full text, since the on-table text the dump also gives is missing from the text map for many cards. Two things a screen must handle: a character's description id names no text in any language of the dump, so its entry is empty, and most descriptions keep the game's reference tokens (`$[K…]` for a keyword, a character, a skill or a card, and `{SPRITE_PRESET#…}` for an icon) for the screen to resolve.
 
 Charged and plunging attacks are markers no tutorial skill uses, so the engine deals them no damage. The decks beyond the three this page names are the proposal's, not this page's.
+
+- **A duel is opened by its game id.** A resident names the game of the card game's own table it duels with (`duelGameId`), and `genshin:assets gcg` writes one small map, `generated/gcg/games.json`, from the game table: the game's opponent deck, and the player's deck the game names. Game 12, Diluc's, is the first: its opponent is deck 1, built, and it names deck 2 for the player, which is not built, so deck 3 stands in as the player's deck. That stand-in is provisional until the game's own deck is built.
+- **The seat is the build's, not the game's.** Resident 1201 of galesong hill holds game 12. The game's own link from an NPC to a game is not read yet, so the seat is chosen, and `RESIDENT_DUEL_GAME_ID_MAP` keeps it across a regeneration. `genshin:assets residents` cannot run on this machine, since it needs the extracted windrise data, so the region's row was edited by hand to match.
+- **A talk offers the duel as a reply on its opening line.** The reply is the game's own "I challenge you to a duel!" (text id `191219274`), offered after the talk's own replies. Choosing it leaves the talk for the board, and the board's leave returns to the world.
+- **A resident's talk is reachable only through a quest that carries it.** The world holds the talks of the quests in progress, and the world carries two quests, Wanderer's Trail and Bird's Eye View. Only Bird's Eye View has talks, and none of them is a resident's, so a seated duel is reachable in code but not from a fresh save. Writing a resident's talk into the world is the open gap, recorded on the [proposal](/docs/proposals/genshin/genius-invokation).
+- **The board holds only what the player is choosing.** `GcgScreen` keeps the dice picked, the card armed, the tuning and the switch and prepare choices, and every other choice leaves as an event. The session host plays each event through the engine and then runs the opponent through `advanceGcgOpponent`; a refused action leaves the duel as it was, and the board clears its choice either way.
+- **The scripted policy is the world's service.** The greedy policy (`takeGcgScriptedAction`) and `advanceGcgOpponent` left the tutorial duel's test, so the board and the tests drive one opponent.
+- **The reference is a public frame.** The board is judged against a frame at 407 seconds of the English PC client's tavern duel, cut from its 400-second segment (`gcg-yt-tvboQ_ZWO_I-400-410.mp4`). The board draws that frame's HP, dice, phase and turn, but not its characters, art or ornaments, which are the game's and are never drawn here. Its compare score is the snapshot's row.
 
 ## How it works
 
@@ -97,49 +105,74 @@ flowchart LR
 
 A skill follows the same path with its own costs, then its effect: a shared damage, dealt with the field's bonuses, then the character's script's own after-effects, such as Dawn's Pyro Infusion or Fantastic Voyage's Inspiration Field.
 
+## The duel from a talk
+
+```mermaid
+flowchart LR
+  TALK["A resident's talk, begun from the world"] --> OFFER{"Its resident has a game?"}
+  OFFER -->|"no"| TALK
+  OFFER -->|"yes, its duel reply is chosen"| SESSION["The session loads the game's decks and its words"]
+  SESSION --> BOARD["The board: the player's choices"]
+  BOARD --> ENGINE["The engine plays the choice, then the opponent's turns"]
+  ENGINE --> BOARD
+  ENGINE -->|"the duel ends"| WORLD["The board's leave returns to the world"]
+```
+
 ## Key files
 
-| File                                                                           | Role                                                                                     |
-| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/writeGcgStandardRule.ts`               | Writes the standard rule's slice from the dump's rule and reaction tables                |
-| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`                  | The rule row, with each listed reaction joined to its element pair                       |
-| `packages/genshin-world/src/generated/gcg/standardRule.json`                   | The written slice, imported on demand                                                    |
-| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`               | Imports the slice and checks it against its schema                                       |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                     | Opens a duel between two decks                                                           |
-| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`                    | A side's preparation, and the first roll once both have prepared                         |
-| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                     | A side's one reroll, and the action phase once both have rolled                          |
-| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                       | A skill paid in dice and energy, then the turn passes                                    |
-| `scripts/src/services/genshinAssets/gcg/writeGcgDeck.ts`                       | Writes one deck's slice from the dump's deck, character, skill, card and cost tables     |
-| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows: costs, kinds and text ids from the dump's plain fields                 |
-| `packages/genshin-world/src/generated/gcg/deck<id>.json`                       | The written slice of each opponent deck, imported on demand                              |
-| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, imported on demand                            |
-| `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                       | Reads a deck's slice by its id and checks it against its schema                          |
-| `packages/genshin-world/src/services/gcg/effects/createGcgTalentCard.ts`       | A talent card equipped to its character while she is active, with its skill used at once |
-| `packages/genshin-world/src/services/gcg/effects/createGcgWeaponCard.ts`       | A weapon card that only its kind of character may equip, and that adds one DMG           |
-| `packages/genshin-world/src/services/gcg/effects/summonGcgOceanicMimics.ts`    | The Oceanic Mimics summoned by the kind fewest on the field                              |
-| `packages/genshin-world/src/services/gcg/effects/canEatGcgFood.ts`             | Whether a character may eat a food, one a round                                          |
-| `packages/genshin-world/src/services/gcg/findGcgAdjacentCharacterIndex.ts`     | The standing character one step away, forward or back, round the side                    |
-| `packages/genshin-world/src/services/gcg/playGcgCard.ts`                       | A card played from a hand: placed by its kind, paid, then its module plays               |
-| `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                    | A skill's effect run for its active character, then its field's on-use hooks             |
-| `packages/genshin-world/src/services/gcg/dealGcgSkillDamage.ts`                | A skill's damage with the field's bonuses and doublings, then dealt                      |
-| `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                 | A skill's or card's costs, reduced by the field, paid from the dice chosen               |
-| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`                   | The roll-phase hooks of each side's field                                                |
-| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                 | The action-phase hooks, then the spent cards taken off                                   |
-| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`                    | The end-phase hooks, the rounds aged, then the spent cards taken off                     |
-| `packages/genshin-world/src/services/gcg/cards/gcgCardIdModuleMap.ts`          | Every card's module by its id                                                            |
-| `packages/genshin-world/src/services/gcg/cards/gcgEffectNameSkillModuleMap.ts` | Every character's script by its effect name                                              |
-| `packages/genshin-world/src/services/gcg/cards/`                               | One module per card and per character script, each from its text and its wiki page       |
-| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`                    | A hit's Frozen, reaction, shield and piercing, and its defeats                           |
-| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                | The round's end, and the end phase once both sides declare                               |
-| `packages/genshin-world/src/services/gcg/endGcgRound.ts`                       | The end phase: Frozen lapses, the draws, and the next round or the concession            |
-| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`                | A switch for one die of any face, as a combat action                                     |
-| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                        | Tuning a die by a discarded card, as a fast action                                       |
-| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`               | The free replacement a defeated active owes                                              |
-| `packages/genshin-world/src/services/gcg/payGcgCost.ts`                        | The dice a cost takes from the dice chosen, Omni standing in                             |
-| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                | The reaction an element pair makes under a rule                                          |
-| `scripts/src/services/genshinText/writeGcgText.ts`                             | The names and descriptions the slices name, one chunk of the world's per language        |
-| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game chunk by text id, imported on demand                           |
-| `packages/genshin-world/src/generated/gcgText/`                                | The card game's names and descriptions, one chunk a language                             |
+| File                                                                           | Role                                                                                                     |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/writeGcgStandardRule.ts`               | Writes the standard rule's slice from the dump's rule and reaction tables                                |
+| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`                  | The rule row, with each listed reaction joined to its element pair                                       |
+| `packages/genshin-world/src/generated/gcg/standardRule.json`                   | The written slice, imported on demand                                                                    |
+| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`               | Imports the slice and checks it against its schema                                                       |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                     | Opens a duel between two decks                                                                           |
+| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`                    | A side's preparation, and the first roll once both have prepared                                         |
+| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                     | A side's one reroll, and the action phase once both have rolled                                          |
+| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                       | A skill paid in dice and energy, then the turn passes                                                    |
+| `scripts/src/services/genshinAssets/gcg/writeGcgDeck.ts`                       | Writes one deck's slice from the dump's deck, character, skill, card and cost tables                     |
+| `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows: costs, kinds and text ids from the dump's plain fields                                 |
+| `packages/genshin-world/src/generated/gcg/deck<id>.json`                       | The written slice of each opponent deck, imported on demand                                              |
+| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, imported on demand                                            |
+| `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                       | Reads a deck's slice by its id and checks it against its schema                                          |
+| `packages/genshin-world/src/services/gcg/effects/createGcgTalentCard.ts`       | A talent card equipped to its character while she is active, with its skill used at once                 |
+| `packages/genshin-world/src/services/gcg/effects/createGcgWeaponCard.ts`       | A weapon card that only its kind of character may equip, and that adds one DMG                           |
+| `packages/genshin-world/src/services/gcg/effects/summonGcgOceanicMimics.ts`    | The Oceanic Mimics summoned by the kind fewest on the field                                              |
+| `packages/genshin-world/src/services/gcg/effects/canEatGcgFood.ts`             | Whether a character may eat a food, one a round                                                          |
+| `packages/genshin-world/src/services/gcg/findGcgAdjacentCharacterIndex.ts`     | The standing character one step away, forward or back, round the side                                    |
+| `packages/genshin-world/src/services/gcg/playGcgCard.ts`                       | A card played from a hand: placed by its kind, paid, then its module plays                               |
+| `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                    | A skill's effect run for its active character, then its field's on-use hooks                             |
+| `packages/genshin-world/src/services/gcg/dealGcgSkillDamage.ts`                | A skill's damage with the field's bonuses and doublings, then dealt                                      |
+| `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                 | A skill's or card's costs, reduced by the field, paid from the dice chosen                               |
+| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`                   | The roll-phase hooks of each side's field                                                                |
+| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                 | The action-phase hooks, then the spent cards taken off                                                   |
+| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`                    | The end-phase hooks, the rounds aged, then the spent cards taken off                                     |
+| `packages/genshin-world/src/services/gcg/cards/gcgCardIdModuleMap.ts`          | Every card's module by its id                                                                            |
+| `packages/genshin-world/src/services/gcg/cards/gcgEffectNameSkillModuleMap.ts` | Every character's script by its effect name                                                              |
+| `packages/genshin-world/src/services/gcg/cards/`                               | One module per card and per character script, each from its text and its wiki page                       |
+| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`                    | A hit's Frozen, reaction, shield and piercing, and its defeats                                           |
+| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                | The round's end, and the end phase once both sides declare                                               |
+| `packages/genshin-world/src/services/gcg/endGcgRound.ts`                       | The end phase: Frozen lapses, the draws, and the next round or the concession                            |
+| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`                | A switch for one die of any face, as a combat action                                                     |
+| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                        | Tuning a die by a discarded card, as a fast action                                                       |
+| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`               | The free replacement a defeated active owes                                                              |
+| `packages/genshin-world/src/services/gcg/payGcgCost.ts`                        | The dice a cost takes from the dice chosen, Omni standing in                                             |
+| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                | The reaction an element pair makes under a rule                                                          |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.vue`                   | The duel board: the events it emits and the props it takes, the duel as the engine holds it              |
+| `packages/genshin-world/src/components/Gcg/Session/Index.vue`                  | The duel's host: loads its game's decks and words, plays each player event, then the opponent            |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.fixture.ts`            | The board in the frame's state: its HP, dice and turn, with the tutorial and placeholder decks           |
+| `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts`          | The public frame the board is judged against, and what was found reading it                              |
+| `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`                | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
+| `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`             | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end   |
+| `packages/genshin-world/src/services/gcg/readGcgGame.ts`                       | A duel's game from the games map, by its game id in the game table                                       |
+| `packages/genshin-world/src/generated/gcg/games.json`                          | The games the world's residents duel with, each with its opponent's deck and the player's                |
+| `scripts/src/services/genshinAssets/gcg/writeGcgGames.ts`                      | Writes the games map from the dump's game table                                                          |
+| `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                         | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                   |
+| `packages/genshin-world/src/models/world/Resident.ts`                          | A resident's optional duel, by the game it duels with                                                    |
+| `packages/genshin-world/src/services/dialogue/constants.ts`                    | The reply a talk offers a duel with                                                                      |
+| `scripts/src/services/genshinText/writeGcgText.ts`                             | The names and descriptions the slices name, one chunk of the world's per language                        |
+| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game chunk by text id, imported on demand                                           |
+| `packages/genshin-world/src/generated/gcgText/`                                | The card game's names and descriptions, one chunk a language                                             |
 
 ## Sources
 
