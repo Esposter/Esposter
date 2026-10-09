@@ -1,6 +1,6 @@
+import type { Object3D } from "three";
 import type { Material, NodeFrame, NodeMaterial, Renderer } from "three/webgpu";
 
-import { Mesh } from "three";
 import { ToonOutlinePassNode } from "three/webgpu";
 
 // Three keys an outline material by the toon material it outlines and builds each one from scratch, though every one is
@@ -9,7 +9,7 @@ import { ToonOutlinePassNode } from "three/webgpu";
 // Once from the pass's nodes, and an object's skinned, instanced or morphed variant still compiles as its own pipeline
 export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   declare _createMaterial: () => NodeMaterial;
-  #isCompiling = false;
+  #onWarmed?: () => void;
   #outlineMaterial?: NodeMaterial;
 
   // Every toon material is outlined by the one shared material, which three would build once per toon material given
@@ -17,40 +17,45 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return this.#getSharedOutlineMaterial();
   }
 
-  // Compiles the scene's pipelines, then the outline's over the same meshes: three's compile ignores the render-object
-  // Function the outline sets, so each toon mesh is held in the outline material for the second compile. The pass's own
-  // Compile sets its render target and MRT, which fails to build some of the scene's shaders, so the renderer's is used
+  // Draws every object of the scene once, unseen, on the next frame, then waits for the GPU to finish it: each node
+  // Material, program and pipeline is then built where the frame draws it, so nothing the camera turns to or a change of
+  // Detail shows builds one mid-frame, and no pipeline the GPU compiles holds the frames after it. Three's own compile
+  // Cannot: it keys what it builds by a render's nesting, which it always takes as the outermost, and builds after its
+  // First await, by when the renderer's MRT a frame set is no longer the pass's
   override async compileAsync(renderer: Renderer): Promise<void> {
-    await renderer.compileAsync(this.scene, this.camera);
-    const outlineMaterial = this.#getSharedOutlineMaterial();
-    // A multi-material mesh is outlined group by group, so only its toon groups are held in the outline material
-    const heldMeshes: [Mesh, Material | Material[], Material | Material[]][] = [];
-    this.scene.traverse((object) => {
-      if (!(object instanceof Mesh)) return;
-      const material: Material | Material[] = object.material;
-      if (Array.isArray(material)) {
-        if (material.some((groupMaterial) => checkIsOutlined(groupMaterial)))
-          heldMeshes.push([
-            object,
-            material,
-            material.map((groupMaterial) => (checkIsOutlined(groupMaterial) ? outlineMaterial : groupMaterial)),
-          ]);
-      } else if (checkIsOutlined(material)) heldMeshes.push([object, material, outlineMaterial]);
+    await new Promise<void>((resolve) => {
+      this.#onWarmed = resolve;
     });
-    this.#isCompiling = true;
-    for (const [mesh, , heldMaterial] of heldMeshes) mesh.material = heldMaterial;
-    // The compile's failure is held until the meshes are restored, so no mesh stays in the outline material
-    const compiled = await Promise.allSettled([renderer.compileAsync(this.scene, this.camera)]);
-    for (const [mesh, material] of heldMeshes) mesh.material = material;
-    this.#isCompiling = false;
-    if (compiled[0].status === "rejected") throw compiled[0].reason;
+    // A WebGL fallback has no device, and three compiles its programs as it draws them
+    const { backend } = renderer;
+    if ("device" in backend && backend.device instanceof GPUDevice) await backend.device.queue.onSubmittedWorkDone();
   }
 
+  // After the frame's own draw, the warm draw: every object shown and unculled, drawn into a target of the pass's own
+  // Attachments, which three renders in the same context, so the frame and the shadow maps it drew are left as they were
   override updateBefore(frame: NodeFrame): boolean | undefined {
-    // The compile holds each toon mesh in the outline material, which the frame must not draw
-    if (this.#isCompiling) return undefined;
-
-    return super.updateBefore(frame);
+    super.updateBefore(frame);
+    const onWarmed = this.#onWarmed;
+    if (!onWarmed) return undefined;
+    const objectStates: [Object3D, boolean, boolean][] = [];
+    this.scene.traverse((object) => {
+      objectStates.push([object, object.visible, object.frustumCulled]);
+      object.visible = true;
+      object.frustumCulled = false;
+    });
+    const { renderTarget } = this;
+    const warmRenderTarget = renderTarget.clone();
+    this.renderTarget = warmRenderTarget;
+    super.updateBefore(frame);
+    this.renderTarget = renderTarget;
+    warmRenderTarget.dispose();
+    for (const [object, isVisible, isFrustumCulled] of objectStates) {
+      object.visible = isVisible;
+      object.frustumCulled = isFrustumCulled;
+    }
+    this.#onWarmed = undefined;
+    onWarmed();
+    return undefined;
   }
 
   #getSharedOutlineMaterial(): NodeMaterial {
@@ -61,12 +66,3 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
     return this.#outlineMaterial;
   }
 }
-
-// The base pass's own test for a material it outlines: a toon material that is not drawn as a wireframe
-const checkIsOutlined = (material: Material): boolean => {
-  const isToon =
-    ("isMeshToonMaterial" in material && material.isMeshToonMaterial === true) ||
-    ("isMeshToonNodeMaterial" in material && material.isMeshToonNodeMaterial === true);
-
-  return isToon && "wireframe" in material && material.wireframe === false;
-};

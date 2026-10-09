@@ -9,7 +9,7 @@ describe("genshin-engine", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 237.32 KB (243019 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 237.22 KB (242909 bytes)"`);
   });
 
   test("types size", () => {
