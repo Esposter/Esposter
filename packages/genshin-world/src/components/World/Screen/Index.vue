@@ -3,9 +3,6 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
-import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
-import type { ArchiveSectionEntriesMap } from "#src/models/archive/ArchiveSectionEntriesMap";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
@@ -53,6 +50,7 @@ import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
+import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { Currency } from "#src/models/inventory/Currency";
@@ -63,16 +61,7 @@ import { advanceAchievements } from "#src/services/achievement/advanceAchievemen
 import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
-import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
-import { BookBodyLoaderMap } from "#src/services/archive/BookBodyLoaderMap";
-import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
-import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
 import { openArchiveBook } from "#src/services/archive/openArchiveBook";
-import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
-import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
-import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
-import { readArchiveEntries } from "#src/services/archive/readArchiveEntries";
-import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -81,7 +70,6 @@ import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
-import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
@@ -337,58 +325,12 @@ const achievementData = shallowRef<{
   textMap: Readonly<Record<string, string>>;
 }>();
 const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(savedState.achievementProgressMap);
-// The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
-// Its progress starts empty, and the bag's items open their entries as it takes them in
-const archiveData = shallowRef<{
-  sectionEntriesMap: ArchiveSectionEntriesMap;
-  textMap: Readonly<Record<string, string>>;
-}>();
-const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
-// The volume the Archive is reading, its title and its text in the reader's language
-const bookReading = shallowRef<{ body: string; title: string }>();
-// The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
-// Volume or after the Archive has closed opens no reader
-let loadingBookId: number | undefined;
-watch(screenKind, (newScreenKind) => {
-  if (newScreenKind !== ScreenKind.Archive) loadingBookId = undefined;
-});
-// A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
-const readBook = (bookId: number) => {
-  if (!archiveData.value) return;
-  const { sectionEntriesMap, textMap } = archiveData.value;
-  const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
-  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
-  if (!book || !loadBody) return;
-  loadingBookId = bookId;
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => (await loadBody())[language]()).match(
-    (body) => {
-      if (loadingBookId !== bookId) return;
-      loadingBookId = undefined;
-      bookReading.value = { body, title: textMap[book.nameTextId] || "" };
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-};
-// The defeats of each Living Being, counted under its entry for the Archive to show
-const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
-const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
-watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
-  if (!newIsArchiveUnlocked || archiveData.value) return;
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => {
-    const [sectionEntriesMap, textMap] = await Promise.all([readArchiveEntries(), ArchiveTextLoaderMap[language]()]);
-    return { sectionEntriesMap, textMap };
-  }).match(
-    (newArchiveData) => {
-      archiveData.value = newArchiveData;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+// The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
+const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
+  events,
+  finishedMainQuestIds,
+  language,
+  screenKind,
 });
 watch(screenKind, (newScreenKind) => {
   if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
@@ -600,20 +542,6 @@ const payFirstUnlockReward = (landmarkId: string) => {
     },
   );
 };
-// The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when
-// First needed, since the Archive's own screen may not have been opened
-const openTravelLog = () => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(readTravelLogEntries).match(
-    (entries) => {
-      archiveProgressMap.value = openTravelLogEntries(archiveProgressMap.value, entries, finishedMainQuestIds.value);
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-};
-events.on("parentQuestFinish", openTravelLog);
 events.on("achievementEvents", advanceAchievementsWith);
 // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
 const activateLandmark = (landmarkId: string) => {
@@ -632,15 +560,9 @@ const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
   placedDropCount += drops.length;
   worldDrops.value = [...worldDrops.value, ...drops];
-  const { archiveEntryId } = getEnemyKind(enemy.enemyKindId);
-  archiveProgressMap.value = openArchiveEntry(archiveProgressMap.value, ArchiveSection.LivingBeings, archiveEntryId);
-  archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
+  events.emit("defeatEnemy", enemy);
   events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
 };
-// The Archive opens the entries of what the bag takes in
-events.on("bagChange", (nextInventory) => {
-  archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
-});
 // The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
 const bagFullHint = ref("");
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
