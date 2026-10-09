@@ -17,22 +17,22 @@ import { describe, expect, test } from "vitest";
 
 const NOELLE_KIT = createNoelleKit(await readTalentMultipliers([NOELLE_CHARACTER_ID]));
 
-const DEFENSE = 800;
-
-const createNoelleCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseHealth, value: 10_000 },
-    { attribute: Attribute.BaseDefense, value: DEFENSE },
-  ]),
-  characterId: NOELLE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: NOELLE_KIT,
-  level: 90,
-});
-
 describe("noelle kit", () => {
+  const DEFENSE = 800;
+
+  const createNoelleCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: 10_000 },
+      { attribute: Attribute.BaseDefense, value: DEFENSE },
+    ]),
+    characterId: NOELLE_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: NOELLE_KIT,
+    level: 90,
+  });
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

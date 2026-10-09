@@ -14,9 +14,10 @@ import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
-const CHARACTER_ID = 1;
 
 describe(getBuffedCombatant, () => {
+  const CHARACTER_ID = 1;
+
   test("adds a flat ATK buff to the attack and a damage bonus to its attribute, and ignores another character's buff", () => {
     expect.hasAssertions();
     const combatant = {

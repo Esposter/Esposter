@@ -19,27 +19,28 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
-const DILUC_COMBATANT: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: DILUC_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: DILUC_KIT,
-  level: 90,
-};
-
-const createCombatant = (ascension: number): Combatant => ({
-  ascension,
-  attributes: computeCharacterAttributes([]),
-  characterId: DILUC_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: DILUC_KIT,
-  level: 90,
-});
 
 describe("diluc kit", () => {
+  const DILUC_COMBATANT: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: DILUC_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: DILUC_KIT,
+    level: 90,
+  };
+
+  const createCombatant = (ascension: number): Combatant => ({
+    ascension,
+    attributes: computeCharacterAttributes([]),
+    characterId: DILUC_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: DILUC_KIT,
+    level: 90,
+  });
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

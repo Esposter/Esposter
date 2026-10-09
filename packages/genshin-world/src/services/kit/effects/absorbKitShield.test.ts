@@ -10,20 +10,23 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = TRAVELER_CHARACTER_ID;
-const OTHER_CHARACTER_ID = 2;
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
-const combatant: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 90,
-};
 
 describe(absorbKitShield, () => {
+  const CHARACTER_ID = TRAVELER_CHARACTER_ID;
+
+  const OTHER_CHARACTER_ID = 2;
+
+  const combatant: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  };
+
   test("absorbs damage up to its health and gives back the rest, and is spent when its health runs out", () => {
     expect.hasAssertions();
     const effects: KitEffect[] = [{ characterId: CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 12 }];

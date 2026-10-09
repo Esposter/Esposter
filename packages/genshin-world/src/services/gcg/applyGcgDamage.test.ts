@@ -15,8 +15,6 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -34,19 +32,22 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   usedCardIds: [],
   usedSkillIds: [],
 });
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  winnerSideIndex: undefined,
-});
 
 describe(applyGcgDamage, () => {
+  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
+
+  const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+    actingSideIndex: 0,
+    firstSideIndex: 0,
+    nextFirstSideIndex: 0,
+    outcome: undefined,
+    phase: GcgPhase.Action,
+    round: 1,
+    rule: TEST_RULE,
+    sides,
+    winnerSideIndex: undefined,
+  });
+
   const FULL_HP = 10;
   const PYRO_VALUE = 1;
   const ELEMENT_VALUE = 1;

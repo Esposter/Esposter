@@ -9,13 +9,11 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const SEED = 7;
-const TUTORIAL_DECK_ID = 1;
-const MAX_STEPS = 2000;
-
 // Plays a duel between two decks through the scripted policy each side takes its turns by, until its phase ends or the
 // Step limit is reached
 const playGcgDuel = (decks: Parameters<typeof createGcgDuel>[0], rule: GcgDuel["rule"]): GcgDuel => {
+  const SEED = 7;
+  const MAX_STEPS = 2000;
   const random = createSeededRandom(SEED);
   const duel = createGcgDuel(decks, random, rule);
   for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
@@ -28,7 +26,7 @@ describe("a duel between two copies of the tutorial deck", () => {
   test("should be played to its end through the engine's public functions", async () => {
     expect.hasAssertions();
 
-    const tutorialDeck = await readGcgDeck(TUTORIAL_DECK_ID);
+    const tutorialDeck = await readGcgDeck(1);
     const rule = await readGcgStandardRule();
     const duel = playGcgDuel([tutorialDeck, tutorialDeck], rule);
 
@@ -84,7 +82,7 @@ describe("the Oceanid duel's deck 2", () => {
     expect.hasAssertions();
 
     const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(2)], rule);
+    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(2)], rule);
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -98,7 +96,7 @@ describe("the Mondstadt challenger Marjorie's deck 11005", () => {
     expect.hasAssertions();
 
     const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(11_005)], rule);
+    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(11_005)], rule);
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
@@ -112,7 +110,7 @@ describe("the Mondstadt challenger Ellin's monster deck 11002", () => {
     expect.hasAssertions();
 
     const rule = await readGcgStandardRule();
-    const duel = playGcgDuel([await readGcgDeck(TUTORIAL_DECK_ID), await readGcgDeck(11_002)], rule);
+    const duel = playGcgDuel([await readGcgDeck(1), await readGcgDeck(11_002)], rule);
 
     expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,

@@ -13,20 +13,20 @@ import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const SEED = 6;
-const TUTORIAL_DECK_ID = 1;
-const LARGE_WIND_SPIRIT_ID = 115_011;
-
-const openDuel = async (): Promise<GcgDuel> => {
-  const random = createSeededRandom(SEED);
-  const deck = await readGcgDeck(TUTORIAL_DECK_ID);
-  const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
-  for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
-  for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
-  return duel;
-};
-
 describe("the Large Wind Spirit's Swirl conversion", () => {
+  const SEED = 6;
+  const TUTORIAL_DECK_ID = 1;
+  const LARGE_WIND_SPIRIT_ID = 115_011;
+
+  const openDuel = async (): Promise<GcgDuel> => {
+    const random = createSeededRandom(SEED);
+    const deck = await readGcgDeck(TUTORIAL_DECK_ID);
+    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
+    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
+    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
+    return duel;
+  };
+
   test("should convert to the Swirled element on the first Swirl its side makes, and not again", async () => {
     expect.hasAssertions();
 

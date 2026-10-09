@@ -15,8 +15,6 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
 const createCharacterState = (): GcgCharacterState => ({
   aura: GcgAura.None,
   character: {
@@ -38,6 +36,8 @@ const createCharacterState = (): GcgCharacterState => ({
 });
 
 describe(declareGcgRoundEnd, () => {
+  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
+
   const SEED = 7;
   const HAND_CARD_COUNT = 1;
   const DRAW_PILE_CARD_IDS = [201, 202, 203];

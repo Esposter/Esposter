@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-const LOCKFILE = `lockfileVersion: '9.0'
+describe(computeBuildKey, () => {
+  const LOCKFILE = `lockfileVersion: '9.0'
 
 importers:
 
@@ -34,7 +35,6 @@ snapshots:
   inner@2.0.0: {}
 `;
 
-describe(computeBuildKey, () => {
   let repositoryRoot: string;
   const writeRepositoryFile = (path: string, content: string) => {
     const filePath = join(repositoryRoot, path);

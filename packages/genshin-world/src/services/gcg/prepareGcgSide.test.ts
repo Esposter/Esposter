@@ -11,9 +11,9 @@ import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
-
 describe(prepareGcgSide, () => {
+  const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
+
   const SEED = 3;
   const CARD_COUNT = 12;
   const STARTING_HAND_COUNT = 5;
