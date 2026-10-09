@@ -16,7 +16,7 @@ const toEntryDefinition = (
 ): ItemDefinition => {
   const weaponData = weaponDataMap.get(itemId);
   if (!weaponData) return getItemDefinition(itemId, names);
-  return toWeaponDefinition({ id: itemId, name: getItemName(weaponData.nameTextId, names), rarity: weaponData.rarity });
+  return toWeaponDefinition(weaponData, getItemName(weaponData.nameTextId, names));
 };
 
 // The bag read from its save, each entry's definition read by the item's id from the game's tables, which name it in the

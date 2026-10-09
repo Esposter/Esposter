@@ -33,6 +33,9 @@ interface Props {
   destroyLabel: string;
   // The names of the entries chosen for a destroy, listed in its dialog
   destroyNames: string[];
+  // The materials the chosen entries return, each listed as its name and count, under the dialog's recovered label
+  destroyRecoveredLabel: string;
+  destroyRecoveredNames: string[];
   // The count beside the Destroy button, `{0}/{1} selected` filled in the reader's language
   destroySelectedLabel: string;
   // The destroy mode's opening line in the reader's language
@@ -71,6 +74,8 @@ const {
   destroyConfirmWarningLabel,
   destroyLabel,
   destroyNames,
+  destroyRecoveredLabel,
+  destroyRecoveredNames,
   destroySelectedLabel,
   destroyTipLabel,
   isConfirming,
@@ -193,6 +198,12 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
         <li v-for="(name, index) of destroyNames" :key="index">{{ name }}</li>
       </ul>
       <p class="confirm-warning">{{ destroyConfirmWarningLabel }}</p>
+      <template v-if="destroyRecoveredNames.length">
+        <p class="confirm-list-label">{{ destroyRecoveredLabel }}</p>
+        <ul class="confirm-names">
+          <li v-for="(name, index) of destroyRecoveredNames" :key="index">{{ name }}</li>
+        </ul>
+      </template>
       <div class="confirm-buttons">
         <button class="confirm-button" type="button" @click="emit('cancelDestroy')">{{ cancelLabel }}</button>
         <button class="confirm-button" type="button" @click="emit('confirmDestroy')">

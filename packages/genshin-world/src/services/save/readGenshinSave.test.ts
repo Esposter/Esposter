@@ -1,6 +1,7 @@
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -28,6 +29,9 @@ describe(readGenshinSave, () => {
       {
         ascensionPhases: [],
         baseExp: 0,
+        destroyReturnMaterial: 0,
+        destroyReturnMaterialCount: 0,
+        destroyRule: DestroyRule.None,
         growAttributes: [],
         id: FORGED_WEAPON_ID,
         nameTextId: FORGED_NAME_TEXT_ID,
@@ -42,6 +46,9 @@ describe(readGenshinSave, () => {
       {
         ascensionPhases: [],
         baseExp: 0,
+        destroyReturnMaterial: 0,
+        destroyReturnMaterialCount: 0,
+        destroyRule: DestroyRule.None,
         growAttributes: [],
         id: WISHED_WEAPON_ID,
         nameTextId: WISHED_NAME_TEXT_ID,
@@ -95,6 +102,9 @@ describe(readGenshinSave, () => {
         {
           definition: {
             category: ItemCategory.Weapon,
+            destroyReturnMaterial: 0,
+            destroyReturnMaterialCount: 0,
+            destroyRule: DestroyRule.None,
             id: FORGED_WEAPON_ID,
             name: NAMES[FORGED_NAME_TEXT_ID],
             rank: 0,
@@ -108,6 +118,9 @@ describe(readGenshinSave, () => {
         {
           definition: {
             category: ItemCategory.Weapon,
+            destroyReturnMaterial: 0,
+            destroyReturnMaterialCount: 0,
+            destroyRule: DestroyRule.None,
             id: WISHED_WEAPON_ID,
             name: NAMES[WISHED_NAME_TEXT_ID],
             rank: 0,

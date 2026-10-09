@@ -1,34 +1,88 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
-import { DESTROY_RARITY_LIMIT } from "#src/services/inventory/constants";
+import englishNameText from "#src/generated/nameText/English.json";
+import { Currency } from "#src/models/inventory/Currency";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const createItem = (id: number, category: ItemCategory): InventoryItem => ({
-  definition: { category, id, name: "", rank: 0, rarity: DESTROY_RARITY_LIMIT, stackLimit: 1 },
+const ORE_ID = 104_011;
+const MORA_ID = 202;
+
+const createWeapon = (id: number, rarity: number, destroyRule: DestroyRule): InventoryItem => ({
+  definition: {
+    category: ItemCategory.Weapon,
+    destroyReturnMaterial: destroyRule === DestroyRule.ReturnMaterial ? ORE_ID : 0,
+    destroyReturnMaterialCount: destroyRule === DestroyRule.ReturnMaterial ? rarity : 0,
+    destroyRule,
+    id: 11_101,
+    name: "",
+    rank: 0,
+    rarity,
+    stackLimit: 1,
+  },
   id,
   level: 1,
   quantity: 1,
 });
 
 describe(destroyInventoryItems, () => {
-  const weapon = createItem(0, ItemCategory.Weapon);
-  const artifact = createItem(1, ItemCategory.Artifact);
-  const material = createItem(2, ItemCategory.Material);
-  const items = [weapon, artifact, material];
-
-  test("removes every chosen entry the bag may destroy", () => {
+  test("destroys a 3-star weapon and returns its enhancement ore into the bag", () => {
     expect.hasAssertions();
 
-    expect(destroyInventoryItems(items, [weapon.id, artifact.id])).toStrictEqual([material]);
+    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
+
+    expect(
+      destroyInventoryItems({ items: [weapon], nextId: 1 }, EMPTY_WALLET, [weapon.id], englishNameText),
+    ).toStrictEqual({
+      inventory: { items: [{ definition: getItemDefinition(ORE_ID, englishNameText), id: 1, quantity: 3 }], nextId: 2 },
+      wallet: EMPTY_WALLET,
+    });
   });
 
-  test("refuses the whole destruction when one chosen entry is a material", () => {
+  test("returns Mora into the wallet rather than the bag", () => {
     expect.hasAssertions();
 
-    expect(() => destroyInventoryItems(items, [weapon.id, material.id])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Delete, name: destroyInventoryItem, 2]`,
+    const artifact: InventoryItem = {
+      definition: {
+        category: ItemCategory.Artifact,
+        destroyReturnMaterial: MORA_ID,
+        destroyReturnMaterialCount: 420,
+        destroyRule: DestroyRule.ReturnMaterial,
+        id: 20_002,
+        name: "",
+        rank: 0,
+        rarity: 1,
+        stackLimit: 1,
+      },
+      id: 0,
+      level: 0,
+      quantity: 1,
+    };
+
+    expect(
+      destroyInventoryItems({ items: [artifact], nextId: 1 }, EMPTY_WALLET, [artifact.id], englishNameText),
+    ).toStrictEqual({ inventory: { items: [], nextId: 1 }, wallet: { ...EMPTY_WALLET, [Currency.Mora]: 420 } });
+  });
+
+  test("refuses the whole destruction when a chosen weapon is 4-star, which its rule never destroys", () => {
+    expect.hasAssertions();
+
+    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
+    const fourStarWeapon = createWeapon(1, 4, DestroyRule.None);
+
+    expect(() =>
+      destroyInventoryItems(
+        { items: [weapon, fourStarWeapon], nextId: 2 },
+        EMPTY_WALLET,
+        [weapon.id, fourStarWeapon.id],
+        englishNameText,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Delete, name: getDestroyableItem, 1]`,
     );
   });
 });

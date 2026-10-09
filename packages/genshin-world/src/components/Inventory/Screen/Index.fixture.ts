@@ -1,5 +1,6 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
+import englishNameText from "#src/generated/nameText/English.json";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ItemCategory } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
@@ -28,5 +29,6 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
   inventory: { items: weapons, nextId: WEAPON_COUNT },
+  names: englishNameText,
   wallet: EMPTY_WALLET,
 };

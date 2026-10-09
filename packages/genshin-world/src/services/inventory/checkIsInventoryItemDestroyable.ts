@@ -1,8 +1,8 @@
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
-import { DESTROY_RARITY_LIMIT, EQUIPMENT_CATEGORIES } from "#src/services/inventory/constants";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 
-// Whether the bag may destroy an entry: a weapon or an artifact of up to four stars. Materials, food and the rest are
-// Never destroyed
+// Whether the bag may destroy an entry: the game's own destroy rule on its definition returns materials. An entry the rule
+// Is absent from, a material or food among them, is never destroyed
 export const checkIsInventoryItemDestroyable = ({ definition }: InventoryItem): boolean =>
-  EQUIPMENT_CATEGORIES.includes(definition.category) && definition.rarity <= DESTROY_RARITY_LIMIT;
+  definition.destroyRule === DestroyRule.ReturnMaterial;

@@ -21,6 +21,8 @@ export const props = {
   destroyConfirmWarningLabel: "The item(s) will be destroyed. This action cannot be undone.",
   destroyLabel: "Destroy",
   destroyNames: [],
+  destroyRecoveredLabel: "Recovered:",
+  destroyRecoveredNames: [],
   destroySelectedLabel: "0/2 selected",
   destroyTipLabel: "Select items to destroy",
   isDescending: true,
@@ -56,6 +58,7 @@ export const variants = {
   confirming: {
     cells: destroyingCells,
     destroyNames: ["Dull Blade"],
+    destroyRecoveredNames: ["Enhancement Ore x3"],
     destroySelectedLabel: "1/2 selected",
     isConfirming: true,
     isDestroying: true,

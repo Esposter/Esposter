@@ -4,6 +4,7 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
+import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -120,6 +121,11 @@ const { achievementProgressMap, inventory, setInventory, setWallet, wallet, wish
   events,
   savedState,
 });
+// A destroy's bag and wallet are applied together, since what it returns may be currency
+const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
+  setInventory(nextInventory);
+  setWallet(nextWallet);
+};
 // The player's characters' copies, which no save holds yet
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
@@ -577,9 +583,10 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           :initial-category="ItemCategory.Weapon"
           :inventory
+          :names="nameText"
           :wallet
           @close="screenKind = ScreenKind.World"
-          @update:inventory="(nextInventory) => setInventory(nextInventory)"
+          @destroy="(destruction) => applyDestruction(destruction)"
         />
       </template>
       <template #[ScreenKind.Wish]>
