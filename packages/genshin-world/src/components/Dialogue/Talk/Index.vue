@@ -6,19 +6,25 @@ import type { GameText } from "genshin-text";
 import { TalkLineKind } from "#src/models/dialogue/TalkLineKind";
 import { advanceTalk } from "#src/services/dialogue/advanceTalk";
 import { chooseTalkLine } from "#src/services/dialogue/chooseTalkLine";
-import { TALK_AUTO_PLAY_HOLD_MS, TALK_REVEAL_MS_PER_CHARACTER } from "#src/services/dialogue/constants";
+import {
+  DIALOGUE_DUEL_CHOICE_ID,
+  TALK_AUTO_PLAY_HOLD_MS,
+  TALK_REVEAL_MS_PER_CHARACTER,
+} from "#src/services/dialogue/constants";
 import { getTalkChoices } from "#src/services/dialogue/getTalkChoices";
 import { getTalkLine } from "#src/services/dialogue/getTalkLine";
 import { skipTalk } from "#src/services/dialogue/skipTalk";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { DialogueScreen, GameScreen } from "genshin-interface";
+import { DialogueChoiceIcon, DialogueScreen, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the resident offers a duel of the card game with the reply it opens with, once that opening line is whole
+  isDuelOffered?: boolean;
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
   // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
   startProgress?: TalkProgress;
@@ -27,8 +33,8 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { gameText, startProgress, talk, textMap } = defineProps<Props>();
-const emit = defineEmits<{ end: [] }>();
+const { gameText, isDuelOffered, startProgress, talk, textMap } = defineProps<Props>();
+const emit = defineEmits<{ duel: []; end: [] }>();
 const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId: talk.startLineId });
 const isAutoPlaying = ref(false);
 // The reply lit, -1 for none: as the game does, a reply is lit only by the pointer over it or the arrows
@@ -38,15 +44,21 @@ const elapsedMs = ref(0);
 const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progress.value.lineId) : undefined));
 const lineText = computed(() => (talkLine.value ? (textMap[talkLine.value.textId] ?? "") : ""));
 const lineLength = computed(() => [...lineText.value].length);
-const choices = computed(() =>
-  progress.value.isRevealed
-    ? getTalkChoices(talk, progress.value.lineId).map(({ icon, id, textId }) => ({
-        icon,
-        id,
-        text: textMap[textId] ?? "",
-      }))
-    : [],
-);
+// A duel offered is one more reply on the opening line, after the talk's own, and choosing it leaves the talk for the duel
+const choices = computed(() => {
+  if (!progress.value.isRevealed) return [];
+  const talkChoices = getTalkChoices(talk, progress.value.lineId).map(({ icon, id, textId }) => ({
+    icon,
+    id,
+    text: textMap[textId] ?? "",
+  }));
+  return isDuelOffered && progress.value.lineId === talk.startLineId
+    ? [
+        ...talkChoices,
+        { icon: DialogueChoiceIcon.Talk, id: DIALOGUE_DUEL_CHOICE_ID, text: gameText[GameTextKey.GcgChallenge] },
+      ]
+    : talkChoices;
+});
 const setProgress = (newProgress: TalkProgress) => {
   if (newProgress.lineId !== progress.value.lineId) selectedChoiceIndex.value = -1;
   if (newProgress.lineId !== progress.value.lineId || newProgress.isRevealed !== progress.value.isRevealed)
@@ -55,7 +67,8 @@ const setProgress = (newProgress: TalkProgress) => {
   if (!newProgress.lineId) emit("end");
 };
 const choose = (choiceLineId: string) => {
-  setProgress(chooseTalkLine(talk, progress.value, choiceLineId));
+  if (choiceLineId === DIALOGUE_DUEL_CHOICE_ID) emit("duel");
+  else setProgress(chooseTalkLine(talk, progress.value, choiceLineId));
 };
 
 useRafFn(({ delta }) => {

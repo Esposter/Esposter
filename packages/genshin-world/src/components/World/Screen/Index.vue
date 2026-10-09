@@ -39,6 +39,7 @@ import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
@@ -81,6 +82,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
@@ -130,6 +132,7 @@ import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
+  createSeededRandom,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   GENSHIN_TONE_MAPPING,
   InputAction,
@@ -195,6 +198,9 @@ const inputState = input.readInput(0);
 const screenKind = ref(ScreenKind.World);
 // The talk a resident has begun, which the talk host runs over the world while the talk screen is open
 const talk = shallowRef<Talk>();
+// The game of the card game the resident's talk offers a duel of, if it offers one, and the game being played now
+const talkDuelGameId = shallowRef<number>();
+const gcgGameId = shallowRef<number>();
 // The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
 // Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
 // Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
@@ -377,6 +383,12 @@ const archiveData = shallowRef<{
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
 // The volume the Archive is reading, its title and its text in the reader's language
 const bookReading = shallowRef<{ body: string; title: string }>();
+// The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
+// Volume or after the Archive has closed opens no reader
+let loadingBookId: number | undefined;
+watch(screenKind, (newScreenKind) => {
+  if (newScreenKind !== ScreenKind.Archive) loadingBookId = undefined;
+});
 // A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
 const readBook = (bookId: number) => {
   if (!archiveData.value) return;
@@ -384,9 +396,12 @@ const readBook = (bookId: number) => {
   const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
   const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
   if (!book || !loadBody) return;
+  loadingBookId = bookId;
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(async () => (await loadBody())[language]()).match(
     (body) => {
+      if (loadingBookId !== bookId) return;
+      loadingBookId = undefined;
       bookReading.value = { body, title: textMap[book.nameTextId] || "" };
     },
     (error) => {
@@ -489,6 +504,8 @@ const kitEffectState: KitEffectState = { effects: [] };
 const clearKitEffects = () => {
   kitEffectState.effects = [];
 };
+// The world's one seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
+const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -501,6 +518,11 @@ const talkMap = computed(
       questsInProgress.value.flatMap(({ talks }) => talks.map((questTalk) => [questTalk.id, questTalk] as const)),
     ),
 );
+// The card game's duel a resident offers from the talk it begins, if that resident offers one
+const getTalkDuelGameId = (talkId: string) =>
+  [...(windrise.value?.regionDataMap.values() ?? [])]
+    .flatMap(({ residents }) => residents)
+    .find((resident) => resident.talkId === talkId)?.duelGameId;
 // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
 // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
 const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
@@ -848,6 +870,7 @@ defineExpose({ jumpTo, readCameraPosition });
               doQuestEvent({ kind: QuestObjectiveKind.Interact, targetId: interactable.id });
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
+              talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = ScreenKind.Dialogue;
             }
           }
@@ -881,6 +904,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :locomotion
           :origin
           :party
+          :random="worldRandom"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
         />
@@ -1047,9 +1071,24 @@ defineExpose({ jumpTo, readCameraPosition });
     <DialogueTalk
       v-if="screenKind === ScreenKind.Dialogue && talk"
       :game-text
+      :is-duel-offered="talkDuelGameId !== undefined"
       :talk
       :text-map="questTextMap"
+      @duel="
+        gcgGameId = talkDuelGameId;
+        screenKind = ScreenKind.GcgDuel;
+      "
       @end="endTalk()"
+    />
+    <GcgSession
+      v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
+      :game-id="gcgGameId"
+      :game-text
+      :language
+      @leave="
+        gcgGameId = undefined;
+        screenKind = ScreenKind.World;
+      "
     />
     <div
       class="teleport-fade"

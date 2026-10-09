@@ -21,4 +21,18 @@ describe(AgentConsoleMarkdown, () => {
 
     expect(currentPagePath.value).toBe("/docs?a=1");
   });
+
+  test("opens an anchor on this page under another query in the side pane", async () => {
+    expect.hasAssertions();
+
+    const agentConsolePaneStore = useAgentConsolePaneStore();
+    const { currentPagePath } = storeToRefs(agentConsolePaneStore);
+    const pagePath = `${window.location.pathname}?b=2`;
+    const component = await mountSuspended(AgentConsoleMarkdown, {
+      props: { source: `[anchor](${pagePath}#heading)` },
+    });
+    await component.get("a").trigger("click");
+
+    expect(currentPagePath.value).toBe(pagePath);
+  });
 });

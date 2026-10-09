@@ -15,9 +15,10 @@ export const readMachineSample = async (): Promise<MachineSample> => {
   await sleep(LOAD_SAMPLE_MILLISECONDS);
   const cpuPercentage = getCpuPercentage(previousTotals, getCpuTotals(cpus()));
   const gpuPercentage = await readGpuPercentage();
+  const freeGigabytes = await readAvailableGigabytes();
   return {
     cpuPercentage,
-    freeGigabytes: await readAvailableGigabytes(),
+    ...(freeGigabytes === undefined ? {} : { freeGigabytes }),
     ...(gpuPercentage === undefined ? {} : { gpuPercentage }),
   };
 };

@@ -22,8 +22,26 @@ describe(prepareGcgSide, () => {
     cardIds: Array.from({ length: CARD_COUNT }, (_value, index) => index + 1),
     cards: [],
     characters: [
-      { element: Element.Pyro, hp: 10, id: 1, maxEnergy: 3, skills: [], weapon: "" },
-      { element: Element.Hydro, hp: 10, id: 2, maxEnergy: 3, skills: [], weapon: "" },
+      {
+        descriptionTextId: 2,
+        element: Element.Pyro,
+        hp: 10,
+        id: 1,
+        maxEnergy: 3,
+        nameTextId: 1,
+        skills: [],
+        weapon: "",
+      },
+      {
+        descriptionTextId: 2,
+        element: Element.Hydro,
+        hp: 10,
+        id: 2,
+        maxEnergy: 3,
+        nameTextId: 1,
+        skills: [],
+        weapon: "",
+      },
     ],
   };
 

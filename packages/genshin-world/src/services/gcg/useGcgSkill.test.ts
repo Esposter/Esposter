@@ -68,7 +68,16 @@ describe(useGcgSkill, () => {
   };
   const createCharacterState = (skills: GcgSkill[]): GcgCharacterState => ({
     aura: GcgAura.None,
-    character: { element: Element.Pyro, hp: 10, id: 1, maxEnergy: MAX_ENERGY, skills, weapon: "" },
+    character: {
+      descriptionTextId: 1002,
+      element: Element.Pyro,
+      hp: 10,
+      id: 1,
+      maxEnergy: MAX_ENERGY,
+      nameTextId: 1001,
+      skills,
+      weapon: "",
+    },
     energy: 0,
     hp: 10,
     isFrozen: false,

@@ -21,6 +21,7 @@ import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
@@ -40,6 +41,12 @@ describe(strikeEnemy, () => {
     health: STURDY_HEALTH,
     maxHealth: STURDY_HEALTH,
   });
+
+  const createCryoEnemy = (): Enemy => {
+    const enemy = createSturdyEnemy();
+    applyElement(enemy.elementalState, Element.Cryo, 1);
+    return enemy;
+  };
 
   const createCombatant = (element?: Element): Combatant => ({
     ascension: 0,
@@ -79,18 +86,43 @@ describe(strikeEnemy, () => {
       kit: TRAVELER_KIT,
       level: LEVEL,
     });
-    const cryoEnemy = createSturdyEnemy();
-    applyElement(cryoEnemy.elementalState, Element.Cryo, 1);
-    const plainEnemy = createSturdyEnemy();
-    applyElement(plainEnemy.elementalState, Element.Cryo, 1);
+    const resonatedEnemy = createCryoEnemy();
+    const unresonatedEnemy = createCryoEnemy();
 
-    strikeEnemy(cryoEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([Element.Cryo]), () => ROLL);
-    strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
+    strikeEnemy(resonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([Element.Cryo]), () => ROLL);
+    strikeEnemy(unresonatedEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
 
-    expect([cryoEnemy.health, plainEnemy.health]).toStrictEqual([
-      cryoEnemy.maxHealth - damage(true),
-      plainEnemy.maxHealth - damage(false),
+    expect([resonatedEnemy.health, unresonatedEnemy.health]).toStrictEqual([
+      resonatedEnemy.maxHealth - damage(true),
+      unresonatedEnemy.maxHealth - damage(false),
     ]);
+  });
+
+  test("draws its CRIT rolls from the seeded source, so the same seed prices the same hits", () => {
+    expect.hasAssertions();
+
+    const STRIKE_COUNT = 20;
+    const SEED = 1;
+    const OTHER_SEED = 2;
+    const combatant: Combatant = {
+      ...createCombatant(),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.CriticalDamage, value: 1 },
+        { attribute: Attribute.CriticalRate, value: 0.5 },
+      ]),
+    };
+    const strikeDamages = (seed: number): number[] => {
+      const random = createSeededRandom(seed);
+      return Array.from({ length: STRIKE_COUNT }, () => {
+        const enemy = createSturdyEnemy();
+        strikeEnemy(enemy, TRAVELER_KIT.plungeCollision, combatant, random);
+        return enemy.maxHealth - enemy.health;
+      });
+    };
+
+    expect(strikeDamages(SEED)).toStrictEqual(strikeDamages(SEED));
+    expect(strikeDamages(SEED)).not.toStrictEqual(strikeDamages(OTHER_SEED));
   });
 
   test("deals a physical hit the damage of the general formula", () => {

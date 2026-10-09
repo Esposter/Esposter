@@ -1,6 +1,6 @@
 ---
 title: Genius Invokation TCG
-description: Proposal — the card game against its residents, past its rules engine and the tutorial deck and decks 3 and 4, which are built: the duel is played on a screen at a resident's table, each further card is a module over the engine's shared effects, and invitationals, tavern challengers, the Card Shop and the Player Level follow.
+description: Proposal — the card game against its residents, past its rules engine, its three decks and its duel board, which are built: the board opens from a resident's talk, and what follows is a resident's talk held in the world, the game's own decks, each further card's module, and invitationals, tavern challengers, the Card Shop and the Player Level.
 model: claude-opus-5-5
 ---
 
@@ -18,27 +18,27 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Scope and order
 
-**Today:** the rules engine stands on the standard rule, and the tutorial deck and decks 3 and 4 each have their characters, skills and action cards built, with their calls on the [as-built page](/docs/genshin/genius-invokation). No screen opens a duel, so the duels are played only by the engine's tests.
+**Today:** the rules engine stands on the standard rule, and the tutorial deck and decks 3 and 4 each have their characters, skills and action cards built. The duel board opens from a resident's talk and plays the one seated duel, game 12, against deck 1 with deck 3 standing in for the player's deck; the [as-built page](/docs/genshin/genius-invokation) records the calls. The world holds only quests' talks, so no fresh save reaches that resident's talk yet.
 
 **This adds, in order:**
 
-1. **The duel screen**, opened from a resident's talk, with the card names and descriptions read by their text ids.
-2. **The other opponent decks**, each given the modules its cards and skills need. Deck 2 is next, the smallest of the rest, since deck 10 is not legal without Xiangling in its deck. Deck 2 is the enemy deck of the Oceanid duel (game 11), which no quest or tavern row names, so it is next as the smallest deck rather than as an early opponent's. The early duels play decks 30111 and 30112 (the tutorial quest's) and 11005 and 11002 (the Mondstadt challengers'), which the duel rows name and nothing has built; the [as-built page](/docs/genshin/genius-invokation) records the rows.
-3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
+1. **Resident talks in the world.** A resident's talk is held only when a quest in progress carries it, and the world carries two quests, of which only Bird's Eye View has talks, none of them a resident's. Writing each resident's talk into the world is what makes a seated duel reachable from a fresh save.
+2. **The game's own player deck for game 12.** The game names deck 2 for the player, which is not built; deck 3 stands in until it is, and the stand-in is recorded as provisional on the as-built page.
+3. **The other opponent decks**, each given the modules its cards and skills need. Deck 2 is next, the smallest of the rest, since deck 10 is not legal without Xiangling in its deck. Deck 2 is the enemy deck of the Oceanid duel (game 11), which no quest or tavern row names, so it is next as the smallest deck rather than as an early opponent's. The early duels play decks 30111 and 30112 (the tutorial quest's) and 11005 and 11002 (the Mondstadt challengers'), which the duel rows name and nothing has built; the [as-built page](/docs/genshin/genius-invokation) records the rows.
+4. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
 ## Data and measures
 
 - **Read from the game's tables:** the `GCG*` tables and the configs under `BinOutput/GCG`. The tables are fetched into the dump beside the standard rule's, and only the slices a duel loads are written into the world.
 - **Read from the wiki:** each card's effect where its configs are not read, and each duel rule's detail.
-- **Measured:** the duel screen's layout off a recording, through the recreation passes.
+- **Measured:** the duel board's layout against a whole-frame public recording of the board, which scores its tints, words and places. Its card art, ornate frame and profile plates are the game's and are not drawn, so they stay in the score until the user accepts the layout.
 
 ## Key files
 
-| File                                                     | Role after the change                          |
-| :------------------------------------------------------- | :--------------------------------------------- |
-| `packages/genshin-world/src/models/world/Resident.ts`    | A resident who challenges the player to a duel |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts` | Gains the duel's screen                        |
-| `packages/genshin-text/src/models/GameTextKey.ts`        | Gains the duel's interface words               |
+| File                                                             | Role after the change                                                                                 |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`   | Begins a resident's talk from the world, whose talks are the quests' until the residents' are written |
+| `scripts/src/services/genshinAssets/residents/writeResidents.ts` | Writes each resident's talk id, not yet the talk's own lines                                          |
 
 ## Sources
 

@@ -35,10 +35,10 @@ const openedCount = (section: ArchiveSection): number =>
   sectionEntriesMap[section].filter(({ id }) => progressMap.get(section)?.has(id)).length;
 // A locked entry reads "?" in place of its name until it opens
 const checkIsEntryOpened = (entryId: number): boolean => progressMap.get(selectedSection.value)?.has(entryId) ?? false;
-// An opened volume of the Books section is read; every other entry has nothing to read
-const readEntry = (entryId: number) => {
-  if (selectedSection.value === ArchiveSection.Books && checkIsEntryOpened(entryId)) emit("readBook", entryId);
-};
+// An opened volume of the Books section is read, so only it is a button; every other entry has nothing to read and is
+// No stop on the way to one
+const checkIsEntryReadable = (entryId: number): boolean =>
+  selectedSection.value === ArchiveSection.Books && checkIsEntryOpened(entryId);
 // Q and E step between the sections, held at the first and the last
 useEventListener("keydown", (event) => {
   if (event.code !== QUEST_TAB_PREVIOUS_CODE && event.code !== QUEST_TAB_NEXT_CODE) return;
@@ -73,19 +73,20 @@ useEventListener("keydown", (event) => {
       </button>
     </div>
     <div class="entries" role="tabpanel" :aria-label="gameText[ArchiveSectionGameTextKeyMap[selectedSection]]">
-      <button
+      <component
+        :is="checkIsEntryReadable(entry.id) ? 'button' : 'p'"
         v-for="entry of selectedEntries"
         :key="entry.id"
         class="entry"
-        type="button"
+        :type="checkIsEntryReadable(entry.id) ? 'button' : undefined"
         :data-opened="checkIsEntryOpened(entry.id) || undefined"
-        @click="readEntry(entry.id)"
+        @click="checkIsEntryReadable(entry.id) && emit('readBook', entry.id)"
       >
         {{ checkIsEntryOpened(entry.id) ? textMap[entry.nameTextId] : "?" }}
         <span v-if="selectedSection === ArchiveSection.LivingBeings && checkIsEntryOpened(entry.id)" class="kills"
           >×{{ killsMap.get(entry.id) ?? 0 }}</span
         >
-      </button>
+      </component>
     </div>
   </GameScreen>
 </template>
@@ -195,6 +196,7 @@ useEventListener("keydown", (event) => {
   background: rgb(40 50 70 / 0.72);
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 30);
+  text-align: start;
 }
 
 .entry[data-opened] {

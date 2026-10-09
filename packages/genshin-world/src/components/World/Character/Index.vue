@@ -15,7 +15,6 @@ import water from "#src/data/windrise/water.json";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { KIT_RANDOM_SEED } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
@@ -34,7 +33,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { useEventListener } from "@vueuse/core";
 import {
@@ -42,7 +40,6 @@ import {
   createFixedStepLoop,
   createFollowCamera,
   createGroundQuery,
-  createSeededRandom,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   InputAction,
   LocomotionState,
@@ -76,6 +73,9 @@ interface Props {
   origin: Vector3;
   // The deployed team, whose members' HP, energy and cooldowns the character's kit reads and writes
   party: Party;
+  // The world's one seeded random source, which the strikes' CRIT rolls and the kit's own rolls draw on, so a session's
+  // Rolls repeat
+  random: () => number;
 }
 
 const {
@@ -90,6 +90,7 @@ const {
   locomotion,
   origin,
   party,
+  random,
 } = defineProps<Props>();
 // The party went down through a drown, which the world screen answers with the respawn
 const emit = defineEmits<{ clearKitEffects: []; drown: [] }>();
@@ -114,8 +115,6 @@ let kitState = createKitState();
 let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
-// The stream the kit's own rolls read, such as a shield's heal, seeded so a session's rolls repeat
-const kitRandom = createSeededRandom(KIT_RANDOM_SEED);
 // The input an action plays under: the same presses with no move, so the body holds still while it plays
 const stillInput: InputState = { ...inputState, moveForward: 0, moveRight: 0 };
 const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
@@ -147,8 +146,9 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     kitState = createKitState();
     kitCharacterId = characterId;
   }
+  // A character whose talent multipliers have not arrived has no combatant yet, so it walks and does not fight
   const combatant = characterIdCombatantMap.get(characterId);
-  if (!combatant) throw new InvalidOperationError(Operation.Read, "combatant", `character ${characterId}`);
+  if (!combatant) return;
   const height = position.y - ground.getGround(position.x, position.z).height;
   const kitInput: KitInput = {
     height,
@@ -211,7 +211,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
         !checkIsInAttackArea(hit.hitArea, strikeBody, enemy)
       )
         continue;
-      for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, Math.random))
+      for (const energyDrop of strikeEnemy(enemy, hit, pricedCombatant, random))
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
       healKitStriker(party, pricedCombatant, hit);
       if (!isPartyHealed)
@@ -221,7 +221,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
           kitEffectState.effects,
           pricedCombatant,
           hit,
-          kitRandom,
+          random,
         );
     }
   }

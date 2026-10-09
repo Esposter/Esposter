@@ -14,7 +14,7 @@ export const reduceGcgCosts = (costs: GcgCost[], reduction: GcgCostReduction, ma
       if (
         remainingCount === 0 ||
         cost.kind === GcgCostKind.Energy ||
-        !isGcgCostMatched(cost, reduction, matchingElement)
+        !checkIsGcgCostMatched(cost, reduction, matchingElement)
       )
         return cost;
       const reducedCount = Math.min(cost.count, remainingCount);
@@ -24,7 +24,8 @@ export const reduceGcgCosts = (costs: GcgCost[], reduction: GcgCostReduction, ma
     .filter((cost) => cost.count > 0);
 };
 
-const isGcgCostMatched = (cost: GcgCost, reduction: GcgCostReduction, matchingElement: Element): boolean => {
+const checkIsGcgCostMatched = (cost: GcgCost, reduction: GcgCostReduction, matchingElement: Element): boolean => {
+  if (reduction.kind !== undefined && cost.kind !== reduction.kind) return false;
   if (reduction.element === undefined) return true;
   if (cost.kind === GcgCostKind.Dice) return cost.element === reduction.element;
   return cost.kind === GcgCostKind.Matching && matchingElement === reduction.element;

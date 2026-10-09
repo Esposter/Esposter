@@ -10,11 +10,12 @@ import { opendir, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 // A file another process removed between its listing and its stat is skipped, as the parity folder is written while
-// It is read; any other failure still reaches the caller
+// It is read; any other failure still reaches the caller. Its mtime is truncated to the second, as tar writes it, so a
+// File's copy reads the same mtime as its source
 const toFileEntry = async (absoluteDirectory: string, entry: Dirent): Promise<FileEntry | undefined> => {
   const absolutePath = join(absoluteDirectory, entry.name);
   return (await getResultAsync(() => stat(absolutePath))).match(
-    ({ mtimeMs, size }) => ({ mtime: Math.round(mtimeMs / MILLISECONDS_PER_SECOND), name: entry.name, size }),
+    ({ mtimeMs, size }) => ({ mtime: Math.floor(mtimeMs / MILLISECONDS_PER_SECOND), name: entry.name, size }),
     (error) => {
       if (!checkIsNotFound(error)) throw error;
       console.info(`skipped ${absolutePath}: it was removed while it was listed`);
@@ -44,7 +45,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
     for (const entry of entries) if (entry !== undefined) contents.files.push(entry);
     batch = [];
   };
-  for await (const entry of directory) {
+  for await (const entry of directory)
     if (entry.isDirectory()) contents.directories.push(entry.name);
     else if (entry.isFile()) {
       batch.push(entry);
@@ -52,7 +53,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
         // oxlint-disable-next-line no-await-in-loop -- A batch is flushed before the next one fills, so the stats never stack
         await flush();
     }
-  }
+
   await flush();
   return contents;
 };

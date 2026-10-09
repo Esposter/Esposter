@@ -7,5 +7,6 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 export interface GcgSkillModule {
   afterDamage?: (context: GcgEffectContext) => void;
   getDamage?: (context: GcgEffectContext) => GcgDamage;
+  getStandbyPiercing?: (context: GcgEffectContext) => number;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
 }

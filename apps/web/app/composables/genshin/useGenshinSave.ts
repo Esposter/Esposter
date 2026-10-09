@@ -5,7 +5,7 @@ import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
-import { checkIsServer, getResult } from "@esposter/shared";
+import { checkIsServer, getResult, noop } from "@esposter/shared";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
 
 // The save the Genshin page plays, loaded before the world is made. Signed in, it is the account's blob under the lease
@@ -33,9 +33,15 @@ export const useGenshinSave = async () => {
       Temporal.Instant.from(serverNow).epochMilliseconds - (sentAt + receivedAt) / 2,
     );
   };
+  // A browser that blocks its storage throws on the access, which is logged and read as no guest save, so a signed-in
+  // Player's account save still loads
   const readGuestSave = (): GenshinSave | undefined => {
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
-    const guestJson = window.localStorage.getItem(LocalStorageKey.GenshinSave);
+    const guestJson = getResult(
+      // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it. The read is already client-only, inside `useReadData`'s `onMounted`
+      () => window.localStorage.getItem(LocalStorageKey.GenshinSave),
+    )
+      .orTee(console.error)
+      .unwrapOr(null);
     if (!guestJson) return undefined;
     // eslint-disable-next-line no-restricted-properties -- the save keeps its instants as ISO strings, which a date revival would turn into Dates
     const parsedJson: unknown = getResult(() => JSON.parse(guestJson))
@@ -45,8 +51,10 @@ export const useGenshinSave = async () => {
     return result.success ? result.data : undefined;
   };
   const clearGuestSave = () => {
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
-    window.localStorage.removeItem(LocalStorageKey.GenshinSave);
+    getResult(
+      // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
+      () => window.localStorage.removeItem(LocalStorageKey.GenshinSave),
+    ).match(noop, console.error);
   };
   const startLease = async () => {
     const sentAt = Date.now();

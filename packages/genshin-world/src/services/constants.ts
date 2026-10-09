@@ -37,6 +37,9 @@ export const TUNING_TINT_CHANNELS = [
 // The character's body and the free camera move in fixed steps of a sixtieth of a second, so a motion is the same at any
 // Frame rate
 export const FIXED_STEP_SECONDS = 1 / 60;
+// The seed of the world's one seeded random source, which every roll the combat and the kit make draws on, so a session's
+// Rolls repeat
+export const WORLD_RANDOM_SEED = 1;
 // The frame priority what moves the camera runs at, ahead of the floating origin's shift at TresJS's default of none,
 // Whatever order it mounts in, so the shift reads where the camera now stands
 export const CAMERA_FRAME_PRIORITY = -1;

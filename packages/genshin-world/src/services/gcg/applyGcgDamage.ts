@@ -14,7 +14,6 @@ import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { burningFlame } from "#src/services/gcg/cards/burningFlame";
 import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import {
   GCG_AURA_ELEMENTS,
   GCG_BURNING_FLAME_ID,
@@ -30,6 +29,7 @@ import {
   GCG_SPREAD_DAMAGE,
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -41,9 +41,10 @@ import { takeOne } from "@esposter/shared";
 // A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement
 export const applyGcgDamage = (duel: GcgDuel, sourceSideIndex: number, damage: GcgDamage, rule: GcgRule): void => {
   const targetSideIndex = 1 - sourceSideIndex;
+  const standingBefore = listGcgStandingCharacters(duel);
   const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
   if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule);
-  settleGcgDefeats(duel);
+  settleGcgDefeats(duel, standingBefore);
   for (const side of duel.sides) pruneGcgZoneCards(side);
 };
 
@@ -153,10 +154,11 @@ const hurtGcgCharacter = (character: GcgCharacterState, value: number, isPiercin
 
 // Clears what each character at no HP held, asks a side for a replacement when its active fell and another stands, and
 // Ends the duel for the other side once a side has none standing
-const settleGcgDefeats = (duel: GcgDuel): void => {
+const settleGcgDefeats = (duel: GcgDuel, standingBefore: boolean[][]): void => {
   for (const [sideIndex, side] of duel.sides.entries()) {
-    for (const character of side.characters) {
+    for (const [characterIndex, character] of side.characters.entries()) {
       if (character.hp > 0) continue;
+      if (standingBefore[sideIndex]?.[characterIndex]) side.hasDefeatedCharacter = true;
       character.aura = GcgAura.None;
       character.energy = 0;
       character.isFrozen = false;
@@ -172,3 +174,18 @@ const settleGcgDefeats = (duel: GcgDuel): void => {
     }
   }
 };
+
+// A piercing hit on each opposing character on standby, which no shield stops, as a skill's after-effect deals it past its
+// Target. A defeated character is cleared, as an active one's would be
+export const applyGcgStandbyPiercing = (duel: GcgDuel, sourceSideIndex: number, value: number): void => {
+  const standingBefore = listGcgStandingCharacters(duel);
+  const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
+  for (const [index, character] of targetSide.characters.entries())
+    if (index !== targetSide.activeIndex) hurtGcgCharacter(character, value, true);
+  settleGcgDefeats(duel, standingBefore);
+  for (const side of duel.sides) pruneGcgZoneCards(side);
+};
+
+// Whether each character on each side stands before a hit lands, so a settle can tell the characters it defeats
+const listGcgStandingCharacters = (duel: GcgDuel): boolean[][] =>
+  duel.sides.map((side) => side.characters.map((character) => character.hp > 0));

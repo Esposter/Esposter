@@ -19,18 +19,22 @@ export const gcgDeckSchema = z.object({
   cards: z.array(
     z.object({
       costs: z.array(gcgDeckCostSchema),
+      descriptionTextId: z.int().positive(),
       effects: z.array(z.string()),
       id: z.int().positive(),
       kind: z.enum(GcgCardKind),
+      nameTextId: z.int().positive(),
     }),
   ),
   characterIds: z.array(z.int().positive()),
   characters: z.array(
     z.object({
+      descriptionTextId: z.int().positive(),
       element: z.enum(Element),
       hp: z.int().positive(),
       id: z.int().positive(),
       maxEnergy: z.int().nonnegative(),
+      nameTextId: z.int().positive(),
       skills: z.array(
         z.object({
           costs: z.array(gcgDeckCostSchema),

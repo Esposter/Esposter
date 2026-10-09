@@ -6,10 +6,10 @@ import { InputActionScreenKindMap } from "#src/services/screen/InputActionScreen
 
 // What is open once a frame's pressed actions are read, one screen at a time over the world: from the world a shortcut
 // Opens its screen, Escape and a pad's Start the Paimon menu among them; over a screen its own shortcut, Escape, Start
-// Or a pad's cancel closes it to the world, and every other shortcut waits. A talk stays open whatever is pressed, as
-// Only its own end closes it
+// Or a pad's cancel closes it to the world, and every other shortcut waits. A talk and a duel stay open whatever is
+// Pressed, as only their own end closes them
 export const getNextScreenKind = (screenKind: ScreenKind, pressedActions: ReadonlySet<InputAction>): ScreenKind => {
-  if (screenKind === ScreenKind.Dialogue) return screenKind;
+  if (screenKind === ScreenKind.Dialogue || screenKind === ScreenKind.GcgDuel) return screenKind;
 
   for (const action of pressedActions) {
     const actionScreenKind = InputActionScreenKindMap[action];

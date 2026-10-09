@@ -1,8 +1,8 @@
+import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { prepareGcgSide } from "#src/services/gcg/prepareGcgSide";
@@ -10,9 +10,9 @@ import { readGcgDeck } from "#src/services/gcg/readGcgDeck";
 import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
+import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-import { takeOne } from "@esposter/shared";
 
 const SEED = 11;
 const TUTORIAL_DECK_ID = 1;
@@ -91,13 +91,13 @@ describe("the tutorial deck's cards and skills", () => {
 
     const duel = await openTutorialDuel([Element.Hydro, Element.Hydro, Element.Hydro]);
     takeOne(duel.sides, 0).activeIndex = MONA_INDEX;
-    const fastResult = switchGcgCharacter(duel, 0, 0, 0);
+    const fastResult = switchGcgCharacter(duel, 0, 0, [0]);
     const actingAfterFast = duel.actingSideIndex;
     takeOne(duel.sides, 0).activeIndex = MONA_INDEX;
     takeOne(duel.sides, 0).dice = [Element.Hydro];
-    const combatResult = switchGcgCharacter(duel, 0, 1, 0);
+    const combatResult = switchGcgCharacter(duel, 0, 1, [0]);
 
-    expect({ actingAfterFast, actingAfterCombat: duel.actingSideIndex, combatResult, fastResult }).toStrictEqual({
+    expect({ actingAfterCombat: duel.actingSideIndex, actingAfterFast, combatResult, fastResult }).toStrictEqual({
       actingAfterCombat: 1,
       actingAfterFast: 0,
       combatResult: GcgActionResult.Done,

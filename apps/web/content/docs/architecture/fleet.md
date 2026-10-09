@@ -1,6 +1,4 @@
-| `scripts/src/fleet/data/index.ts` | The `ai:fleet:data` command: manifest, files, pull and push over ssh |
 ---
-
 title: Fleet
 description: How any number of machines share one backlog — each machine pulls its own next entry, claims it as a ref on origin and publishes its load as a ref, so the coordinator's cost does not grow with the machines.
 ---
@@ -78,9 +76,9 @@ Exports and recordings never travel through git, GitHub, a cloud drive or a Clau
 
 A machine's first route to the game data is the game itself: download it from HoYoverse's official CDN, then run the `genshin:assets` extraction locally. That works on any machine, on or off the LAN. `pnpm ai:fleet:data` is the faster route between machines whose owners allow SSH, because it copies the extracted files instead of re-extracting them.
 
-- **One-time setup on the receiving side:** enable Remote Login (on a Mac, System Settings, General, Sharing, Remote Login). Then on the pulling or pushing machine run `ssh-keygen -t ed25519 -f ~/.ssh/<name>` for a dedicated key, and append its public key to the receiver's `~/.ssh/authorized_keys`.
+- **One-time setup on the peer:** the command always connects to the peer, whether it pulls from it or pushes to it, so the peer enables Remote Login (on a Mac, System Settings, General, Sharing, Remote Login). Then on the machine running the command run `ssh-keygen -t ed25519 -f ~/.ssh/<name>` for a dedicated key, and append its public key to the peer's `~/.ssh/authorized_keys`. The receiving machine, where the files land, is the peer for a push and the machine running the command for a pull.
 - **The peer row** goes in `~/.esposter/peers.json`: `host`, `user`, `identityFile` (the dedicated key, never the commit-signing key), `repository` (the peer's checkout) and `parityDirectory` (its `~/Esposter/genshin-parity`).
-- **Commands:** `pnpm ai:fleet:data manifest` prints each directory's digest as JSON. `pull <peer>` and `push <peer>` compare the two manifests, list only the directories whose digests differ, and stream the files the receiver lacks through one tar pipe over ssh. `--dry-run` counts without copying, `--folders` overrides the default folders, `--source <dir>` copies a local folder instead of the parity directory, and `--into <subfolder>` lands it in a subfolder of the peer's parity directory.
+- **Commands:** `pnpm ai:fleet:data manifest` prints each directory's digest as JSON. `pull <peer>` and `push <peer>` compare the two manifests, list only the directories whose digests differ, and stream the files the receiver lacks through one tar pipe over ssh. `--dry-run` counts without copying, `--folders` overrides the default folders, `--source <dir>` puts a local folder in place of the local parity directory (what a push copies from, where a pull lands), and `--into <subfolder>` puts a subfolder of the peer's parity directory in place of it (where a push lands, what a pull copies from).
 - **Magnitude:** the manifest walk over this PC's six copied folders takes about 3.6 minutes (median of three, 202 to 238 s) and peaks at about 480 MiB of resident memory, with the folders written by another session during the walk. Its JSON is about 36 MiB across roughly 250,000 directories. Nothing is listed for a directory whose digest matches, so an unchanged copy costs one manifest per side.
 - **What is never copied:** `frames` and `tmp`. Deleting on the receiver is out of scope, so a copy only adds or replaces files.
 
@@ -99,6 +97,7 @@ A machine's first route to the game data is the game itself: download it from Ho
 | `scripts/src/fleet/release/index.ts`                  | Deletes an entry's claim, or with a miss keeps it as the holder's final word                              |
 | `scripts/src/fleet/next/index.ts`                     | Claims the first entry this machine may take and prints its id                                            |
 | `scripts/src/fleet/status/index.ts`                   | Fetches every claim and heartbeat and prints the machines and the claims                                  |
+| `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                      |
 | `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                               |
 | `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease          |
 | `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure    |

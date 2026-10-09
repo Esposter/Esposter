@@ -5,7 +5,9 @@ import type { ExcelGcgCostEntry } from "#src/models/genshinAssets/gcg/ExcelGcgSk
 export interface ExcelGcgCardRow {
   cardType: string;
   costList: ExcelGcgCostEntry[];
+  descTextMapHash: number;
   id: number;
+  nameTextMapHash: number;
   skillList: number[];
   tagList: string[];
 }

@@ -35,7 +35,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **The holder renews it every ten minutes** with an explicit `--force-with-lease=refs/claims/<id>:<its sha>`, and the renewal's message carries its latest utilization line.
 - **A claim unrenewed for thirty minutes is stale.** It is taken over the same way, leased from the stale sha.
 - **Finishing deletes the ref** right after the entry's landing commit is pushed. A missed entry keeps its claim ref, its message naming the miss, until the coordinator's call changes the entry.
-- **A claim never touches `ai/queue`**, so it starts no CI run. The old claim, a ` — running` line committed and pushed, cost a commit, a push and a CI run each.
+- **A claim never touches `ai/queue`**, so it starts no CI run. The old claim, a `— running` line committed and pushed, cost a commit, a push and a CI run each.
 
 ## Load is read, not reported
 

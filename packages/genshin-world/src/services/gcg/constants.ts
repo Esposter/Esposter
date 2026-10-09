@@ -70,17 +70,17 @@ export const GcgReactionPairs: [Element, Element, GcgReactionKind][] = [
 // The element or physical damage each damage effect's name spells: Physic is Physical, and the game spells the other six
 // Elements its own way, which the world's Element enum spells otherwise
 export const GcgEffectDamageNameMap: Map<string, Element | GcgDamageKind> = new Map<string, Element | GcgDamageKind>([
-  ["Physic", GcgDamageKind.Physical],
-  ["Fire", Element.Pyro],
-  ["Water", Element.Hydro],
-  ["Ice", Element.Cryo],
   ["Electric", Element.Electro],
-  ["Wind", Element.Anemo],
-  ["Rock", Element.Geo],
+  ["Fire", Element.Pyro],
   ["Grass", Element.Dendro],
+  ["Ice", Element.Cryo],
+  ["Physic", GcgDamageKind.Physical],
+  ["Rock", Element.Geo],
+  ["Water", Element.Hydro],
+  ["Wind", Element.Anemo],
 ]);
 // The name of a shared damage effect, its element or Physic and its damage: Effect_Damage_Fire_3 names Fire and 3
-export const GCG_EFFECT_DAMAGE_PATTERN = /^Effect_Damage_(?<element>\w+)_(?<count>\d+)$/u;
+export const GCG_EFFECT_DAMAGE_REGEX = /^Effect_Damage_(?<element>\w+)_(?<count>\d+)$/u;
 // The cards the reactions leave on their attacker's side: Burning Flame as a summon that stacks to two usages, and Dendro
 // Core and Catalyzing Field onstage, each with the usages it holds once it is left
 export const GCG_BURNING_FLAME_ID = 115;
@@ -90,4 +90,4 @@ export const GCG_DENDRO_CORE_MAX_USAGES = 1;
 export const GCG_CATALYZING_FIELD_ID = 117;
 export const GCG_CATALYZING_FIELD_MAX_USAGES = 2;
 // The two foods that stay on their character as a status for the round, so a character holds one of them a round
-export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_004];
+export const GCG_FOOD_STATUS_CARD_IDS: number[] = [333_001, 333_004, 333_005, 333_008];

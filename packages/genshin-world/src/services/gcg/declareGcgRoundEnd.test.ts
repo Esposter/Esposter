@@ -20,7 +20,16 @@ const TEST_RULE = gcgStandardRuleSchema.parse(standardRule);
 
 const createCharacterState = (): GcgCharacterState => ({
   aura: GcgAura.None,
-  character: { element: Element.Pyro, hp: 10, id: 1, maxEnergy: 3, skills: [], weapon: "" },
+  character: {
+    descriptionTextId: 2,
+    element: Element.Pyro,
+    hp: 10,
+    id: 1,
+    maxEnergy: 3,
+    nameTextId: 1,
+    skills: [],
+    weapon: "",
+  },
   energy: 0,
   hp: 10,
   isFrozen: false,

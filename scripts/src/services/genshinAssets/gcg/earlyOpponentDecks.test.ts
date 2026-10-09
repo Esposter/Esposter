@@ -10,13 +10,21 @@ const EARLY_OPPONENT_DECK_IDS = new Map<string, number>([
   ["Guest Challenge: Ellin", 11_002],
   ["Guest Challenge: Marjorie", 11_005],
 ]);
+// The player's deck the tutorial's Sucrose duel names in its game row, game 30111's card group
+const TUTORIAL_PLAYER_DECK_ID = 7;
 
 describe("early opponent decks", () => {
-  test("should name each first opponent's deck, and none of them one the generator builds", () => {
+  test("should pin each first opponent's deck the generator builds, and none it does not", () => {
     expect.hasAssertions();
 
     expect(
       [...EARLY_OPPONENT_DECK_IDS.values()].filter((deckId) => GcgDeckIdCreatedCardIdsMap.has(deckId)),
-    ).toStrictEqual([]);
+    ).toStrictEqual([30_112, 30_111]);
+  });
+
+  test("should build the player's deck the tutorial duel names", () => {
+    expect.hasAssertions();
+
+    expect(GcgDeckIdCreatedCardIdsMap.has(TUTORIAL_PLAYER_DECK_ID)).toBe(true);
   });
 });

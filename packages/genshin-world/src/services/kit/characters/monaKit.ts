@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -201,12 +202,11 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         elapsedSeconds: 0,
         hits: createMirrorReflectionHits(talentMultiplierMap),
         kind: "summon",
-        secondsRemaining: PHANTOM_EXPLOSION_HITMARK_FRAMES / 60,
+        secondsRemaining: PHANTOM_EXPLOSION_HITMARK_FRAMES / 60 + SUMMON_LINGER_SECONDS,
       }),
     seconds: 50 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
-  // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes
   getPassiveBonuses,
   highPlunge: {
     hits: [
@@ -266,6 +266,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       67 / 60,
     ),
   ],
+  // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes
   onSprint: ({ body, combatant, kitEffectState }: KitStepContext, kitState: KitState): void => {
     if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
     kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
@@ -275,7 +276,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       elapsedSeconds: 0,
       hits: createA1PhantomHits(talentMultiplierMap),
       kind: "summon",
-      secondsRemaining: A1_PHANTOM_SECONDS,
+      secondsRemaining: A1_PHANTOM_SECONDS + SUMMON_LINGER_SECONDS,
     });
   },
   // The collision's poise is the wiki's 5, and it applies no gauge of its own, 0U, as the wiki's table gives. The plunges

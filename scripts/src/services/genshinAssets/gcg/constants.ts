@@ -15,6 +15,13 @@ export const GCG_GENERATED_DIRECTORY: string = join(
   "gcg",
 );
 export const GCG_STANDARD_RULE_PATH: string = join(GCG_GENERATED_DIRECTORY, "standardRule.json");
+// The duels the world's residents play, by their game id in the game table; their decks are written into one map beside
+// The standard rule
+export const GCG_DUEL_GAME_IDS: number[] = [12];
+export const GCG_GAMES_PATH: string = join(GCG_GENERATED_DIRECTORY, "games.json");
+// The deck the player plays when the game names one no slice is written for: deck 3 stands in until the game's own deck is
+// Built, a provisional call recorded on the as-built page
+export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;
 // The card game's table names each element by its own name in capitals, which the world's Element enum spells otherwise
 export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Element>([
   ["GCG_ELEMENT_ANEMO", Element.Anemo],
@@ -32,6 +39,9 @@ export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number,
   [1, [113_011, 113_031, 112_031, 112_032]],
   [3, [111_041, 113_051, 113_052, 114_021]],
   [4, [125_011, 125_012, 122_011, 122_012, 122_013]],
+  [7, [113_011, 111_031, 115_011]],
+  [30_111, [113_011, 111_031, 115_011]],
+  [30_112, [113_031, 114_011, 111_031]],
 ]);
 // The cost types the dump names, each mapped to the duel's cost: a die of an element, a Matching die of the character's
 // Element, an Unaligned die of any face, or energy. Invalid costs are the dump's empty rows and are left out

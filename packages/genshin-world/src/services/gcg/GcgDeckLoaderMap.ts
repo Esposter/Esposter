@@ -4,4 +4,7 @@ export const GcgDeckLoaderMap: ReadonlyMap<number, () => Promise<unknown>> = new
   [1, async () => (await import("#src/generated/gcg/deck1.json")).default],
   [3, async () => (await import("#src/generated/gcg/deck3.json")).default],
   [4, async () => (await import("#src/generated/gcg/deck4.json")).default],
+  [7, async () => (await import("#src/generated/gcg/deck7.json")).default],
+  [30_111, async () => (await import("#src/generated/gcg/deck30111.json")).default],
+  [30_112, async () => (await import("#src/generated/gcg/deck30112.json")).default],
 ]);

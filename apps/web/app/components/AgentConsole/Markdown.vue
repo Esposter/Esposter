@@ -19,7 +19,11 @@ const openLinkInPane = (event: MouseEvent) => {
   const link = event.target instanceof Element ? event.target.closest("a") : null;
   if (!link || event.ctrlKey || event.metaKey || event.shiftKey) return;
   const url = new URL(link.href);
-  if (url.origin !== window.location.origin || (url.hash && url.pathname === window.location.pathname)) return;
+  if (
+    url.origin !== window.location.origin ||
+    (url.hash && url.pathname === window.location.pathname && url.search === window.location.search)
+  )
+    return;
   event.preventDefault();
   openPage(`${url.pathname}${url.search}`);
 };

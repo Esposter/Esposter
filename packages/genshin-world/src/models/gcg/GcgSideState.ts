@@ -16,6 +16,7 @@ export interface GcgSideState {
   drawPile: number[];
   hand: number[];
   hasDeclaredEnd: boolean;
+  hasDefeatedCharacter?: boolean;
   hasPrepared: boolean;
   hasRolled: boolean;
   isReplacementPending: boolean;

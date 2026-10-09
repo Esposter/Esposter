@@ -1,12 +1,12 @@
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
+import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
-import { dealGcgSkillDamage } from "#src/services/gcg/dealGcgSkillDamage";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -19,6 +19,8 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   const damage = parseGcgDamageEffect(skill.effect) ?? skillModule?.getDamage?.(context);
   if (damage === undefined && !skillModule?.afterDamage) return false;
   if (damage) dealGcgSkillDamage(context, damage);
+  const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
+  if (standbyPiercing) applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing);
   skillModule?.afterDamage?.(context);
   const side = takeOne(context.duel.sides, context.sideIndex);
   side.usedSkillIds.push(skill.id);

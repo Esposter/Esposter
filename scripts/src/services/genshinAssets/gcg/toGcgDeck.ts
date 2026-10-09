@@ -16,7 +16,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GcgCardKind, GcgCostKind, GcgSkillKind } from "genshin-world";
 
 // A deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct cards and
-// The cards its skills create, each with the effect names its skills carry
+// The cards its skills create, each with its name and description text ids and the effect names its skills carry
 export const toGcgDeck = (
   deckRow: ExcelGcgDeckRow,
   characterRows: ExcelGcgCharRow[],
@@ -49,10 +49,12 @@ const toCharacter = (
   if (!element) throw invalidRead(`character ${characterRow.id} names no element`);
   const weaponTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
   return {
+    descriptionTextId: characterRow.descTextMapHash,
     element,
     hp: characterRow.hp,
     id: characterRow.id,
     maxEnergy: characterRow.maxEnergy,
+    nameTextId: characterRow.nameTextMapHash,
     skills: characterRow.skillList.map((skillId) => toSkill(findRow(skillRows, skillId, "skill"), costTypes)),
     weapon: weaponTag ? weaponTag.slice("GCG_TAG_WEAPON_".length) : "",
   };
@@ -71,9 +73,11 @@ const toSkill = (skillRow: ExcelGcgSkillRow, costTypes: Set<string>): GcgDeckSli
 
 const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTypes: Set<string>): GcgDeckSliceCard => ({
   costs: toCosts(cardRow.costList, cardRow.id, costTypes),
+  descriptionTextId: cardRow.descTextMapHash,
   effects: cardRow.skillList.map((skillId) => findRow(skillRows, skillId, "skill").skillJson),
   id: cardRow.id,
   kind: toCardKind(cardRow),
+  nameTextId: cardRow.nameTextMapHash,
 });
 
 // The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
