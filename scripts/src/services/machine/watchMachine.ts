@@ -1,6 +1,9 @@
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
 import type { MachineState } from "#src/models/machine/MachineState";
 
+import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
+import { pushMachineHeartbeat } from "#src/services/fleet/pushMachineHeartbeat";
+import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
@@ -12,6 +15,7 @@ import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
+import { getResult } from "@esposter/shared";
 import { cpus } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
 
@@ -22,6 +26,9 @@ export const watchMachine = async (): Promise<void> => {
   let previousTotals: CpuTotals = getCpuTotals(cpus());
   let lastState: MachineState | undefined;
   let minutesInState = 0;
+  // The heartbeat is pushed on the first reading and then every renewal interval, leased from this machine's last commit
+  let lastHeartbeatMilliseconds = 0;
+  let lastHeartbeatSha: string | undefined;
   for (;;) {
     // oxlint-disable-next-line no-await-in-loop -- Each reading is one minute after the last, so the waits cannot overlap
     await sleep(SAMPLE_MILLISECONDS);
@@ -51,5 +58,31 @@ export const watchMachine = async (): Promise<void> => {
     );
     if (line !== undefined) console.info(line);
     lastState = state;
+    const profile = readMachineProfile();
+    const now = Temporal.Now.instant().epochMilliseconds;
+    if (profile !== undefined && now - lastHeartbeatMilliseconds >= RENEW_MILLISECONDS) {
+      lastHeartbeatMilliseconds = now;
+      // A failed push is one line, and forgets the last commit, so the next push leases from the remote's own commit
+      getResult(() =>
+        pushMachineHeartbeat(
+          {
+            at: Temporal.Now.instant().toString(),
+            cpu: cpuAveragePercentage,
+            freeMemory: freeGigabytes,
+            ...(gpuPercentage === undefined ? {} : { gpu: gpuPercentage }),
+            machine: profile.id,
+          },
+          lastHeartbeatSha,
+        ),
+      ).match(
+        (sha) => {
+          lastHeartbeatSha = sha;
+        },
+        (error) => {
+          lastHeartbeatSha = undefined;
+          console.error(`heartbeat not pushed: ${error.message}`);
+        },
+      );
+    }
   }
 };

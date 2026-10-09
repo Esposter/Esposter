@@ -88,7 +88,7 @@ import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { EMPTY_INVENTORY, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
@@ -121,7 +121,6 @@ import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
-import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
@@ -325,13 +324,13 @@ const hudMember = computed<HudMember | undefined>(() => {
     skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
   };
 });
-// The player's bag, wallet, wish counters and characters' copies, holding nothing as a new player's do until the world
-// Gives them something
-// The systems the save holds, read once as the world is made, so the world starts where the player left it
-const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE);
-const inventory = ref<Inventory>(EMPTY_INVENTORY);
+// The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
+// Names are the game's own in the reader's language, so the definitions are read from the game's tables as it loads
+const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, (itemId) => getItemDefinition(itemId, gameText));
+const inventory = ref<Inventory>(savedState.inventory);
 const wallet = ref<Wallet>(savedState.wallet);
-const wishPityMap = ref(InitialBannerKindWishPityMap);
+const wishPityMap = ref(savedState.wishPityMap);
+// The player's characters' copies, which no save holds yet
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
 // One stays in the progress map at its last step, so the quests in progress are those started and not yet finished
@@ -344,10 +343,10 @@ const questsInProgress = computed(() =>
   }),
 );
 // The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
-// Completes a main quest yet, so the player stands at a new player's World Level 0
-const adventureRankStanding = computeAdventureRankStanding(0, new Set<string>());
+// Completes a main quest yet, so the EXP is the saved one and the quests are none
+const adventureRankStanding = computeAdventureRankStanding(savedState.adventureExp, new Set<string>());
 const worldLevel = adventureRankStanding.worldLevel;
-const adventureExpProgress = computeAdventureRankProgress(0, adventureRankStanding.rank);
+const adventureExpProgress = computeAdventureRankProgress(savedState.adventureExp, adventureRankStanding.rank);
 const questTextMap = shallowRef<Readonly<Record<string, string>>>({});
 const trackedQuestId = ref("");
 // The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
@@ -368,7 +367,7 @@ const achievementData = shallowRef<{
   categories: AchievementCategory[];
   textMap: Readonly<Record<string, string>>;
 }>();
-const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(new Map());
+const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(savedState.achievementProgressMap);
 // The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
 // Its progress starts empty, and the bag's items open their entries as it takes them in
 const archiveData = shallowRef<{
@@ -383,10 +382,10 @@ const readBook = (bookId: number) => {
   if (!archiveData.value) return;
   const { sectionEntriesMap, textMap } = archiveData.value;
   const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
-  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
+  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId)?.[language] : undefined;
   if (!book || !loadBody) return;
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => (await loadBody())[language]).match(
+  getResultAsync(() => loadBody()).match(
     (body) => {
       bookReading.value = { body, title: textMap[book.nameTextId] || "" };
     },
@@ -514,12 +513,19 @@ const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback,
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedState.unlockedLandmarkIds);
 const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
-// The systems as the save holds them, emitted on every change at once, so a grant's emit after its change carries it
+// The systems as the save holds them, emitted on every change at once, so a grant's emit after its change carries it. The
+// Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
 const gameSave = computed(() =>
   toGenshinSave({
+    achievementProgressMap: achievementProgressMap.value,
+    adventureExp: savedState.adventureExp,
+    companionshipExpMap: savedState.companionshipExpMap,
+    inventory: inventory.value,
     quests: questProgressMap.value,
+    reputation: savedState.reputation,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
+    wishPityMap: wishPityMap.value,
   }),
 );
 watch(gameSave, (newGameSave) => emit("save", newGameSave), { flush: "sync" });

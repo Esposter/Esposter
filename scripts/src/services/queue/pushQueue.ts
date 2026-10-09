@@ -5,6 +5,7 @@ import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { checkIsRetried } from "#src/services/queue/checkIsRetried";
 import { checkIsStaleRefusal } from "#src/services/queue/checkIsStaleRefusal";
 import { MAX_PUSH_ATTEMPTS } from "#src/services/queue/constants";
+import { getRetryDelayMilliseconds } from "#src/services/queue/getRetryDelayMilliseconds";
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
 import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
@@ -14,6 +15,7 @@ import { getResult, getResultAsync, InvalidOperationError, noop, Operation } fro
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
 
 const REMOTE_QUEUE_REF = `origin/${QUEUE_BRANCH}`;
 const WORKTREE_PREFIX = "queue-push-";
@@ -100,9 +102,12 @@ const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
 // Again from a fresh fetch, up to `MAX_PUSH_ATTEMPTS`, and only then does the push fail
 export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePushOutcome> => {
   let outcome = await attemptPush(cwd);
-  for (let attempts = 1; checkIsRetried(outcome, attempts); attempts++)
-    // oxlint-disable-next-line no-await-in-loop -- each attempt fetches the remote the one before it was refused by
+  for (let attempts = 1; checkIsRetried(outcome, attempts); attempts++) {
+    // oxlint-disable-next-line no-await-in-loop -- each retry waits, then fetches the remote the attempt before it was refused by
+    await sleep(getRetryDelayMilliseconds(attempts));
+    // oxlint-disable-next-line no-await-in-loop -- as above
     outcome = await attemptPush(cwd);
+  }
 
   if (outcome === QueuePushOutcome.Refused)
     throw new InvalidOperationError(

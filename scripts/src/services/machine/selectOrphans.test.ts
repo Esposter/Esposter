@@ -22,6 +22,14 @@ describe(selectOrphans, () => {
     createProcess({ processId: 1 }),
     createProcess({ processId: 20 }),
   ];
+  // Git's bash, MSYS process 200, runs under claude.exe, and a `du` runs under that bash
+  const bash = createProcess({
+    msys: { parentProcessId: 1, processId: 200 },
+    name: "bash",
+    parentProcessId: 40,
+    processId: 210,
+  });
+  const claude = createProcess({ name: "claude", processId: 40 });
 
   test("selects a search over its CPU threshold whose parent is gone", () => {
     expect.hasAssertions();
@@ -33,5 +41,47 @@ describe(selectOrphans, () => {
     expect.hasAssertions();
 
     expect(selectOrphans(processes, 1)).toStrictEqual([processes[0], processes[3]]);
+  });
+
+  test("keeps an MSYS search whose Win32 parent is gone while its MSYS parent, the bash running it, is alive", () => {
+    expect.hasAssertions();
+
+    const du = createProcess({
+      cpuSeconds: 31,
+      msys: { parentProcessId: 200, processId: 201 },
+      name: "du",
+      parentProcessId: 999,
+      processId: 300,
+    });
+
+    expect(selectOrphans([bash, claude, du], undefined)).toStrictEqual([]);
+  });
+
+  test("selects an MSYS search whose MSYS parent and Win32 parent are both gone", () => {
+    expect.hasAssertions();
+
+    const du = createProcess({
+      cpuSeconds: 31,
+      msys: { parentProcessId: 200, processId: 201 },
+      name: "du",
+      parentProcessId: 999,
+      processId: 300,
+    });
+
+    expect(selectOrphans([claude, du], undefined)).toStrictEqual([du]);
+  });
+
+  test("keeps an MSYS search reparented to MSYS init while a live Windows process above it is listed", () => {
+    expect.hasAssertions();
+
+    const du = createProcess({
+      cpuSeconds: 31,
+      msys: { parentProcessId: 1, processId: 201 },
+      name: "du",
+      parentProcessId: 40,
+      processId: 300,
+    });
+
+    expect(selectOrphans([claude, du], undefined)).toStrictEqual([]);
   });
 });
