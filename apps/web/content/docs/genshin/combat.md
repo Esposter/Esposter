@@ -74,6 +74,8 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
 
+The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them.
+
 ### Internal cooldown
 
 A hit applies its element under an internal cooldown, kept per attacker, target and tag. `applyInternalCooldown` counts a hit into one and returns the share of its gauge it applies. A hit once the reset interval has passed restarts the timer and the count and applies; any other is the next hit of the group's gauge sequence. `DEFAULT_INTERNAL_COOLDOWN_GROUP` is the standard 2.5 seconds with every third hit applying, so Yoimiya's seven arrows melt on the first, fourth and seventh. `BURNING_INTERNAL_COOLDOWN_GROUP` applies once each two seconds.

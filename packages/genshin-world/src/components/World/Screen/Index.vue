@@ -92,6 +92,7 @@ import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
@@ -233,10 +234,22 @@ const locomotion = computed(() =>
 const characterIdCombatantMap = computed(() => {
   const combatantMap = new Map<number, Combatant>();
   if (!statTables.value) return combatantMap;
+  // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
+  const { characterDataMap } = statTables.value;
+  const elementalResonances = getElementalResonances(
+    (party.teams[party.deployedTeamIndex]?.characterIds ?? []).flatMap((characterId) => {
+      const element = characterDataMap.get(characterId)?.element;
+      return element ? [element] : [];
+    }),
+  );
   for (const character of characters.value)
     combatantMap.set(character.id, {
-      attributes: computeCharacterAttributes(getCharacterAttributeLines(character, statTables.value)),
+      attributes: computeCharacterAttributes(
+        getCharacterAttributeLines(character, statTables.value),
+        elementalResonances,
+      ),
       characterId: character.id,
+      elementalResonances,
       kit: TRAVELER_KIT,
       level: character.level,
     });

@@ -14,6 +14,7 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
   attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 1 }]),
   characterId,
   element,
+  elementalResonances: [],
   kit: TRAVELER_KIT,
   level: 1,
 });

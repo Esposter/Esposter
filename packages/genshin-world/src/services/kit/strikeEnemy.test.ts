@@ -7,6 +7,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
@@ -38,8 +39,50 @@ describe(strikeEnemy, () => {
     attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
     characterId: CHARACTER_ID,
     element,
+    elementalResonances: [],
     kit: TRAVELER_KIT,
     level: LEVEL,
+  });
+
+  test("gives Shattering Ice's CRIT Rate against a Cryo-affected enemy, and none without it", () => {
+    expect.hasAssertions();
+
+    const CRITICAL_DAMAGE = 0.5;
+    const ROLL = 0.2;
+    const { talentMultiplier } = TRAVELER_KIT.plungeCollision;
+    const damage = (isCritical: boolean): number =>
+      getDamage({
+        attackerLevel: LEVEL,
+        criticalDamage: CRITICAL_DAMAGE,
+        defense,
+        isCritical,
+        resistance: kind.physicalResistance,
+        stat: ATTACK,
+        talentMultiplier,
+      });
+    const createCriticalCombatant = (elementalResonances: Combatant["elementalResonances"]): Combatant => ({
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.CriticalDamage, value: CRITICAL_DAMAGE },
+        { attribute: Attribute.CriticalRate, value: 0.1 },
+      ]),
+      characterId: CHARACTER_ID,
+      elementalResonances,
+      kit: TRAVELER_KIT,
+      level: LEVEL,
+    });
+    const cryoEnemy = createSturdyEnemy();
+    applyElement(cryoEnemy.elementalState, Element.Cryo, 1);
+    const plainEnemy = createSturdyEnemy();
+    applyElement(plainEnemy.elementalState, Element.Cryo, 1);
+
+    strikeEnemy(cryoEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([Element.Cryo]), () => ROLL);
+    strikeEnemy(plainEnemy, TRAVELER_KIT.plungeCollision, createCriticalCombatant([]), () => ROLL);
+
+    expect([cryoEnemy.health, plainEnemy.health]).toStrictEqual([
+      cryoEnemy.maxHealth - damage(true),
+      plainEnemy.maxHealth - damage(false),
+    ]);
   });
 
   test("deals a physical hit the damage of the general formula", () => {

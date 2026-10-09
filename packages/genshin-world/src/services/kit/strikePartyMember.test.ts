@@ -22,6 +22,7 @@ describe(strikePartyMember, () => {
       { attribute: Attribute.Defense, value: DEFENSE },
     ]),
     characterId: 1,
+    elementalResonances: [],
     kit: TRAVELER_KIT,
     level: 1,
   };

@@ -14,7 +14,7 @@ This page builds on the [party](/docs/genshin/party) as built: the teams, the de
 - **Teams as the game keeps them.** The four default teams, Party 1 to 4, are renamed but never disbanded. A team added is named "Team Standing By" until renamed, at most fifteen are kept, and the deployed team is never disbanded. Disbanding a team before the deployed one keeps the deployed team deployed. Built as rules in `addPartyTeam`, `disbandPartyTeam` and `renamePartyTeam`.
 - **The name of an added team is provisional.** "Team Standing By" is an English constant for now: the game's own words come from their text id in the decoded client ([game text](/docs/genshin/game-text)), and no text id for it is in the generated text yet.
 - **A burst on a switch uses the burst once the member is on the field.** `Left Alt` with a member's number switches to it and uses its Elemental Burst, as the game's controls bind it, and a switch refused (a cooldown, a fallen member, an empty slot) uses none. The chord takes the press over from the plain number key, while `Left Alt` alone still shows the cursor. Built in the character's fixed step, which reads the press.
-- **Elemental Resonance needs a full team.** Two members of one element in a full team give that element's resonance, as the game's Team Bonus lists them; `getElementalResonances` gives the list in the game's element order. Combat applying each resonance's effect is left to combat.
+- **Elemental Resonance needs a full team.** Two members of one element in a full team give that element's resonance, as the game's Team Bonus lists them; `getElementalResonances` gives the list in the game's element order. The effects that change a stat or a hit are built, as the [party](/docs/genshin/party) page describes; the rest are listed under Elemental Resonance's effects in the scope.
 - **The choice of the next member and the game over screen.** The game plays the fall, lets nobody switch until it ends, then asks the player for the next member; once every member is down, the game over screen offers a revive at the nearest teleport waypoint with 35% HP. Until these screens are built, the world brings the next standing member in slot order onto the field and revives a fallen team at the nearest statue on its own, as the [party](/docs/genshin/party) page describes.
 - **The party is kept between visits**, as the game keeps it on its server: the teams, the deployed one, the member on the field and who is down, beside the player's characters.
 
@@ -35,13 +35,18 @@ flowchart TD
 
 ## Scope
 
-**Today:** the party's state and rules, switching on `1` to `4` and a pad's directions in play, a burst on a switch with `Left Alt`, the teams added, renamed and disbanded as rules, Elemental Resonance as a rule, the deployed team down the [HUD](/docs/genshin/hud)'s right, and the [character screen](/docs/genshin/character-screen) on `C`.
+**Today:** the party's state and rules, switching on `1` to `4` and a pad's directions in play, a burst on a switch with `Left Alt`, the teams added, renamed and disbanded as rules, Elemental Resonance as a rule with its built stat effects, the deployed team down the [HUD](/docs/genshin/hud)'s right, and the [character screen](/docs/genshin/character-screen) on `C`.
 
 **This adds, in order:**
 
 1. **Party Setup's screen**, its Configure Team's screen over the rules above, and Quick Setup. The screen's layout is measured off the game's own Party Setup recording before its style is settled ([parity](/docs/genshin/parity)), and its approval is the user's.
 2. **The choice of the next member and the game over screen**, in place of the automatic next member and the statue's revive.
-3. **Elemental Resonance's effects**, once combat reads `getElementalResonances`.
+3. **Elemental Resonance's effects that need a mechanism not built yet**, each one the party's or the combat's to add when the mechanism lands:
+   - Fervent Flames' Cryo-affected duration -40% and Soothing Water's Pyro-affected duration -40%. An aura's decay rate is set in `applyAura` with no party context, so the resonances must reach `applyElement` first.
+   - High Voltage's Electro particle, 100% on Superconduct, Overloaded, Electro-Charged, Quicken, Aggravate and Hyperbloom, on a 5 second cooldown. No reaction gives a particle yet, and no cooldown is kept for the team.
+   - Impetuous Winds' stamina consumption -15%, movement speed +10% and skill cooldown -5%. Their read sites are the kit's stamina spend and skill cooldown and the controller's locomotion, which the kit's shared effects are changing.
+   - Enduring Rock's DMG +15% while shielded and the enemy's Geo RES -20% for 15 seconds after a hit. No shielded character deals damage through a shield state, and no enemy keeps a RES debuff.
+   - Sprawling Greenery's timed Elemental Mastery, +30 for 6 seconds after Burning, Quicken or Bloom and +20 after Aggravate, Spread, Hyperbloom or Burgeon. The flat +50 is built; a timed buff is not.
 4. **The party kept between visits**, in the browser as the [menu screens](/docs/proposals/genshin/menu-screens)' settings are, until an account keeps it.
 
 ## Key files
