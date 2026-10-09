@@ -5,13 +5,14 @@ import { getResultAsync } from "@esposter/shared";
 import { freemem } from "node:os";
 
 // Free memory in gigabytes. Windows reports its free physical memory directly; macOS's figure leaves out what the
-// System hands back on demand, so its available memory is read from `vm_stat`, and a failed read is thrown rather than guessed
-export const readAvailableGigabytes = async (): Promise<number> => {
+// System hands back on demand, so its available memory is read from `vm_stat`, and a failed read is none rather than guessed
+export const readAvailableGigabytes = async (): Promise<number | undefined> => {
   if (process.platform !== "darwin") return freemem() / GIBIBYTE;
-  return (await getResultAsync(() => runMachineCommand("vm_stat", []))).match(
-    (output) => parseVmStat(output) / GIBIBYTE,
+  return (await getResultAsync(async () => parseVmStat(await runMachineCommand("vm_stat", [])) / GIBIBYTE)).match(
+    (gigabytes) => gigabytes,
     (error) => {
-      throw error;
+      console.error(error);
+      return undefined;
     },
   );
 };
