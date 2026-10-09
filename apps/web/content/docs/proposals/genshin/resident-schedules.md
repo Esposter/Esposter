@@ -11,19 +11,21 @@ The game's people keep hours. A hunter sells meat in Springvale by day and goes 
 ## Decisions
 
 - **Day and night, at the game's hours.** A resident's day runs from 06:00 to 19:00 and their night from 19:00 to 06:00, the hours the wiki's resident pages give, such as Draff selling in Springvale during the day. A resident has a spot for each, or for one only and is absent in the other.
-- **Their spots are the game's own records.** `BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json` places every open-world resident: its NPC id, its place, its turn, and the scene group and suites it belongs to. A resident placed twice has a day spot and a night spot. Which of the two is the day's is the server's, so it is matched to the wiki's daytime and nighttime location for that resident, and a resident the wiki shows at one time only is absent at the other.
+- **Their spots are the game's own records.** `BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json` places every open-world resident: its NPC id, its place and its turn. A resident the records place twice in one region is the same NPC at nearly the same spot, so its first place is its day spot and it has no night spot until one is matched. Built by `genshin:assets residents`, which writes the residents of each fitted region.
 - **Moved out of sight.** At the turn of the hour, a resident in view stays until out of view and then stands at their new spot, so nobody is seen to jump. Built.
 - **A vendor sells in their hours.** A resident who sells does so only in the hours their page gives, and offers no shop outside them, once the [shops](/docs/proposals/genshin/shops) sell.
 - **Read by the world's clock.** Where a resident stands is read from the world's clock each frame, so a jump in time from the Time screen moves them as the hours do. Built.
 
 ## What is left
 
-- **Mondstadt's residents in region data.** Every region's `residents` list is empty. Writing Mondstadt's residents needs a generator that reads the birth records, matches each placement to a resident by the wiki's day and night locations, and gives each a talk id, since a resident's talk is required by the schema. Until it runs, the rule has no residents to place.
+- **Night spots.** The wiki's daytime and nighttime locations are gallery pictures captioned by the hour, not text naming a place, and the records give a resident one place in most cases, so no night spot is matched yet. Matching one needs a reading of those pictures against the map.
+- **The other regions' residents.** Mondstadt, Liyue, Inazuma and Sumeru are written. Fontaine, Natlan and Nod-Krai have none, since the dump holds only the open world's scene 3 birth records and their scenes' records are not dumped. Snezhnaya has none, since its fit matched no statue or waypoint.
 - **Vendors' hours.** A vendor's shop is offered only in the hours its page gives, once [shops](/docs/proposals/genshin/shops) sell.
 
 ## Needs the user
 
-- **Which placement is the day's, where the wiki shows neither.** A recording of the resident's spot at each hour settles it, which only the user can make.
+- **Which placement is the day's, where a resident has two.** A recording of the resident's spot at each hour settles it, which only the user can make.
+- **Residents at night.** A resident with a day spot and no night spot is absent from seven at night to six in the morning, so most residents are absent at night. Whether they stay absent until night spots exist, or keep their day spot at night, is the user's call.
 
 ## What this does not propose
 
