@@ -24,6 +24,7 @@ export interface GcgCardModule {
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onSkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard) => GcgDamage | void;
+  onSwirl?: (context: GcgEffectContext, zoneCard: GcgZoneCard, element: Element) => void;
   onSwitch?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   permanentAura?: Element;
   play?: (context: GcgEffectContext, targetIndex: number | undefined) => void;
