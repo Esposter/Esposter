@@ -16,7 +16,7 @@ The claim is one trailer line, `Express: <one sentence on why nothing in it need
 
 A claim is never a proof, and nothing gates it. The cut is pushed to `main` as it applies, with no checks run on it: a gate there was a blocker with no end. A claimed commit that is red on its own is most often made green by the commit after it — the sweep's moves, then the import order the moves left behind — and that next commit cannot apply without the claimed one, so a verified cut held the claimed commit off `main` while the port held its fix off `develop`, forever. Unverified, the claimed commit lands, `main`'s own CI reads it, and a red it leaves is the [repair](/docs/infra/review-collector/repair)'s like any other red that lands on `main` unread. An intermediate red `main` is accepted; a stage that cannot resolve is not.
 
-The cut goes first even over a red `main`, because a claimed commit may be the repair — a session's own, or a person's past the repairer's attempts — and it reaches `main` this way alone. Only a run with nothing to cut asks whether `main` is red.
+The cut goes first even over a red `main`, because a claimed commit may be the repair — a session's own, or the one an issue asks for once a red is past the repairer's attempts — and it reaches `main` this way alone. Whether `main` is red is asked last in the pass, after the walk and the openings ([repair](/docs/infra/review-collector/repair)).
 
 ```mermaid
 flowchart TD
@@ -24,7 +24,7 @@ flowchart TD
   T -->|no| RV[Review lane]
   T -->|yes| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
   EX -->|something applied| PU[Push main unverified — exit, the push re-fires the cycle]
-  EX -->|nothing applied| MR[Repair main if it is red]
+  EX -->|nothing applied| MR[The walk and the openings,<br/>then the repair if main is red]
   PU --> CI[main's CI reads it — a red is the repairer's]
   PU --> FO[Next window: the fold merges main in<br/>the sync drops the original by its copy]
   EX -->|skipped, and a later owed commit conflicts without it| CA[The port carries it into the window]
@@ -41,7 +41,7 @@ flowchart TD
 
 | File                                                         | Role                                                                                         |
 | :----------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runExpressLane.ts`  | the lane as one step of the cycle — build and push, else repair                              |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`  | the lane as one step of the cycle — build the cut and push it                                |
 | `scripts/src/services/coderabbit/collect/readClaimedShas.ts` | which owed commits claim the lane                                                            |
 | `scripts/src/services/coderabbit/collect/readCherryShas.ts`  | what is owed at all — by patch id, and by no copy naming any identity the commit has carried |
 | `scripts/src/services/coderabbit/collect/portExpress.ts`     | the candidate on `main`                                                                      |

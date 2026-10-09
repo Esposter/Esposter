@@ -88,7 +88,7 @@ A loop that finds as much on one pass as it did on the last is not converging. T
 
 A session that finishes a unit of work does not stop to ask whether to go on. It takes up the first of these that exists, runs it to its own stop rule, commits and pushes it, and reads the list again, until the list is empty or the user redirects it. Each one is read off a command rather than a list someone keeps:
 
-1. **Something red.** A failing collector run or a held commit (`review-queue` skill), since every later piece of work lands on top of it. A review's findings are not on this list: the collector drains them into the next window itself.
+1. **Something red.** A failing collector run, or an issue the collector opened for what it routed around — commits parked on `ai/held/*`, findings deferred past the drain's attempts, a red `main` past its repairs (`review-queue` skill) — since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the collector drains them into the next window itself.
 2. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
 3. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
 4. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
