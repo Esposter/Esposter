@@ -19,6 +19,8 @@ export const ASSET_MAP_NAME = "gi_map";
 // It as tab separated lines, which a component's search reads in seconds
 export const ASSET_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET_MAP_NAME}.json`);
 export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index.tsv");
+// Where each shard of the map's blocks is run from while it is mapped: its symlinked blocks and its own asset map
+export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "shards");
 // AnimeStudio's command line (github.com/Escartem/AnimeStudio), unpacked where the user keeps it. It writes its CAB map
 // Into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
