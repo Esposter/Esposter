@@ -15,7 +15,7 @@ flowchart TD
   K -->|"no"| SKIP["Not a fleeing kind: left alone"]
   K -->|"yes"| L{"On the ground layer, in a mapped region?"}
   L -->|"no"| UG["Left out, as the chests are"]
-  L -->|"yes"| T["Carried into the game's coordinates by the fit's transform"]
+  L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
   T --> S["One slice per region in genshin-world's generated wildlife folder"]
   S --> V["Windrise's scene parses Mondstadt's slice and stands each animal at its place"]
   V --> F{"The character within the escape radius?"}

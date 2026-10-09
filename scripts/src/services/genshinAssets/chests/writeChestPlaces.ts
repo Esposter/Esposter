@@ -3,7 +3,6 @@ import { ChestKindLabelIdMap } from "#src/services/genshinAssets/chests/ChestKin
 import { CHEST_PLACES_GENERATED_DIRECTORY } from "#src/services/genshinAssets/chests/constants";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
-import { toRegionFramePlacement } from "#src/services/genshinAssets/points/toRegionFramePlacement";
 import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { ChestKind } from "genshin-world";
@@ -17,6 +16,6 @@ export const writeChestPlaces = async (): Promise<string> => {
     readFittedMapPoints(),
   ]);
   const labelIdKindMap = new Map(Object.values(ChestKind).map((kind) => [ChestKindLabelIdMap[kind], kind]));
-  const placement = toRegionFramePlacement(placeMapPoints(points, transform, labelIdKindMap, "chest"), origin);
+  const placement = placeMapPoints(points, transform, labelIdKindMap, "chest", origin);
   return writeMapPointSlices(CHEST_PLACES_GENERATED_DIRECTORY, placement, "chests");
 };

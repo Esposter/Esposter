@@ -17,7 +17,7 @@ flowchart TD
   L -->|"no"| UG["Left out: the layers under the ground are not placed yet"]
   L -->|"yes"| A{"In a mapped region's area?"}
   A -->|"no"| UM["Left out: no region holds it"]
-  A -->|"yes"| T["Carried into the game's coordinates by the fit's transform, to the centimetre"]
+  A -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes, to the centimetre"]
   T --> S["One slice per region in genshin-world's generated chests folder"]
 ```
 
@@ -39,21 +39,21 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 
 ## The writer
 
-`pnpm -C scripts genshin:assets chests` reads the points and the fit, and writes one slice per region as a compact list of places, each with its id (the map's point id), its kind and its position in the game's coordinates. It writes only its own slices, and the report counts each region's chests and what it left out. It does not read the game's tables, the wiki or the installed game.
+`pnpm -C scripts genshin:assets chests` reads the points and the fit, and writes one slice per region as a compact list of places, each with its id (the map's point id), its kind and its position in its region's axes. It writes only its own slices, and the report counts each region's chests and what it left out. It does not read the game's tables, the wiki or the installed game.
 
 - **The ground only.** Points on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out.
 - **Mapped areas only.** A point in an area no region is mapped to has no region to join, so it is counted and left out. The current run leaves none out.
 - **Mora chests are not chests of these kinds.** The map's Mora chests are not among the seven, so the writer does not place them.
 - **Not landmarks.** A landmark is built by a region kit, and a chest is acted on, so the places live in their own model rather than in `LandmarkKind`, and no kit draws them.
 - **Regions, not catalogue areas.** Each slice is a region, and a place does not yet name its catalogue area, since that needs the region outlines the exploration progress reads. The area each chest counts toward is not set.
-- **Region axes.** The fit carries a point into the game's axes, so the writer carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Puzzles, gathering, fishing and the Frostbearing Tree write the game's axes without this step, and need the same conversion.
+- **Region axes.** The fit carries a point into the game's axes, so `placeMapPoints` carries each place round the Windrise origin into its region's axes, x less the origin's x and z the origin's less the place's, as the landmarks and residents are. Every writer of a map point takes the same step through it, so no slice is left in the game's axes.
 - **No height is written.** A place stands on the ground at its point, and that height is read where the place is stood on, which the runtime step does when it lands.
 
 ## Key files
 
 | File                                                               | Role                                                                                             |
 | :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region, the ground and mapped areas, shared with the puzzles |
+| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region's axes, the ground and mapped areas, shared with the other map points |
 | `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                                           |
 | `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                      |
 | `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder                                                                                 |

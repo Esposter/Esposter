@@ -15,7 +15,7 @@ flowchart TD
   K -->|"no"| SKIP["Not a puzzle: left alone"]
   K -->|"yes"| L{"On the ground layer, in a mapped region?"}
   L -->|"no"| LEFT["Left out, and counted in the report"]
-  L -->|"yes"| T["Carried into the game's coordinates by the fit's transform"]
+  L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
   T --> S["One slice per region in genshin-world's generated puzzles folder"]
 ```
 

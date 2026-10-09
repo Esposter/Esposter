@@ -34,7 +34,7 @@ stateDiagram-v2
 
 `pnpm -C scripts genshin:assets fishing` writes four slices into the world's generated folder, each imported on demand and checked against its shape as it arrives:
 
-- **Points.** The official map's Fishing Point label, placed by the fit that already carries the statues and waypoints into the game's coordinates ([spawned places](/docs/genshin/spawned-places)), filed by region.
+- **Points.** The official map's Fishing Point label, placed by the fit that already carries the statues and waypoints into the game's coordinates ([spawned places](/docs/genshin/spawned-places)), carried into its region's axes by the same step as the chests, and filed by region.
 - **Fish and rods.** Every fish's hit points, attract and flee ranges, bite timeout, feeler range, moving zone and item, and every rod's base attack, multiplier, accuracy and maximum, read by the table's own names.
 - **Pools.** Each region's fishing pools, filed by the game's city id, each stock on a pool's list resolved to its table row with the fish weights kept in the table's order. A stock the table does not hold is an error, never a pool missing it.
 
