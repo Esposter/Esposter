@@ -27,7 +27,7 @@ The daily tasks, their dealing, their claims and Katheryne's bonus are built ([c
 1. **Scene tasks**, swapping their area's camp while open, once the area's groups are extracted.
 2. **Quest tasks and the kept day**: a quest's completion reaching its commission, and the day kept through the daily reset.
 3. **The handbook's Commissions tab** and the commissions' words.
-4. **Routing and the other regions**: the claim's items to the wallet, the bag and the Adventure Rank, the other regions' pools, and the sources of Encounter Points.
+4. **Routing and the other regions**: the claim's items to the wallet, the bag, the Adventure Rank and the [friendship grant](/docs/genshin/companionship), the other regions' pools, and the sources of Encounter Points.
 
 ## Data and measures
 
