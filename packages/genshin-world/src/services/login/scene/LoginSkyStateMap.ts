@@ -33,7 +33,7 @@ const NIGHT_LIGHT_DIRECTION = new Vector3(-0.67, 0.57, -0.476).normalize();
 // Over the cloud sea (the mean of its brightest two samples low in the frame) is read off each reference too. The
 // Day's and the dusk's cloud colours are solved by their spread against the recordings' (genshin:parity clouds); the
 // Dawn's and the night's so solved score their frames worse, so theirs stay read off the references. The stone's light
-// Is solved apart, as the game's deferred pass casts it (data/login/stoneLight.json), so the sun light here lends the
+// Is solved apart, as the game's deferred pass casts it (`login/stoneLight`), so the sun light here lends the
 // Stone only its direction and its shadow, and the hemisphere lights nothing of the login's. Each hour's haze, its
 // Density at the cloud sea's top and how fast it thins with height, is solved over that hour's frames under a light
 // Left free in each part's bins (genshin:parity calibrate --haze): the dawn's and the night's are a wall hiding all
