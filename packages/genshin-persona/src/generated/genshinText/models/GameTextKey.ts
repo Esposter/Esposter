@@ -77,6 +77,15 @@ export enum GameTextKey {
   CharacterWeapons = "UI_STC_CHARACTERPAGE_WEAPON",
   Chat = "UI_CHAT_CHAT_BUTTON",
   ClearwaterJade = "2720928108",
+  // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
+  CombineTypeBait = "COMBINE_TYPE_NAME10",
+  CombineTypeCharacterAscension = "COMBINE_TYPE_NAME5",
+  CombineTypeCharacterTalent = "COMBINE_TYPE_NAME3",
+  CombineTypeConsumable = "COMBINE_TYPE_NAME6",
+  CombineTypeEnhancement = "COMBINE_TYPE_NAME1",
+  CombineTypeFood = "COMBINE_TYPE_NAME12",
+  CombineTypePotion = "COMBINE_TYPE_NAME4",
+  CombineTypeWeaponAscension = "COMBINE_TYPE_NAME2",
   // The Paimon menu's link to the game's community, which opens a web page
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   CompatibilityMode = "1992637634",
