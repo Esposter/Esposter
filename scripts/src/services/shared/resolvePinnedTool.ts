@@ -9,7 +9,7 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A pinned tool's executable: fetched, checked against its checksum and unpacked the first time it is needed, and found
-// In its folder after that. Windows' own tar unpacks it, since it reads a zip and Git's tar does not
+// In its folder after that
 export const resolvePinnedTool = async ({
   archiveSha256,
   archiveUrl,
@@ -27,7 +27,8 @@ export const resolvePinnedTool = async ({
   await mkdir(directory, { recursive: true });
   const archivePath = join(directory, "archive.zip");
   await writeFile(archivePath, archive);
-  const tarPath = join(process.env.SystemRoot ?? String.raw`C:\Windows`, "System32", "tar.exe");
+  // Windows' own tar unpacks a zip; elsewhere the tar on the PATH does, as bsdtar and GNU tar both read one
+  const tarPath = process.env.SystemRoot ? join(process.env.SystemRoot, "System32", "tar.exe") : "tar";
   execFileSync(tarPath, ["-xf", archivePath, "-C", directory]);
   await rm(archivePath);
   const [unpacked] = globSync(executablePattern, { cwd: directory });
