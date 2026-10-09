@@ -1,4 +1,5 @@
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { CHROMA_FRAME_LENGTH, CHROMA_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
 import { describe, expect, test } from "vitest";
 
@@ -10,8 +11,8 @@ describe(computeChroma, () => {
     const tone = Float32Array.from({ length: CHROMA_FRAME_LENGTH }, (_value, index) =>
       Math.sin((2 * Math.PI * frequency * index) / CHROMA_SAMPLE_RATE),
     );
-    const tonal = computeChroma(tone, CHROMA_SAMPLE_RATE);
-    const silent = computeChroma(new Float32Array(CHROMA_FRAME_LENGTH), CHROMA_SAMPLE_RATE);
+    const tonal = computeChroma(computeChromaSpectrogram(tone, CHROMA_SAMPLE_RATE));
+    const silent = computeChroma(computeChromaSpectrogram(new Float32Array(CHROMA_FRAME_LENGTH), CHROMA_SAMPLE_RATE));
     const classes = [...tonal.classes];
 
     expect(classes.indexOf(Math.max(...classes))).toBe(9);

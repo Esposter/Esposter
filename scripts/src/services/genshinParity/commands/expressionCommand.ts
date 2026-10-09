@@ -8,6 +8,7 @@ import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldDat
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { fitMusicExpression } from "#src/services/genshinParity/music/fitMusicExpression";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
@@ -29,9 +30,10 @@ export const expressionCommand: SubCommandsDef[string] = defineCommand({
     )) {
       const segment = music.segments[index];
       if (!segment) continue;
-      const frames = computeAudibleFrames(computeChroma(game, LISTEN_SAMPLE_RATE).loudness);
+      const gameSpectrogram = computeChromaSpectrogram(game, LISTEN_SAMPLE_RATE);
+      const frames = computeAudibleFrames(computeChroma(gameSpectrogram).loudness);
       const { distance, heldOutDistance, windowGains } = fitMusicExpression(
-        computeBandLevels(ours, game, LISTEN_SAMPLE_RATE, frames),
+        computeBandLevels(computeChromaSpectrogram(ours, LISTEN_SAMPLE_RATE), gameSpectrogram, frames),
         frames.map((frame) => getFrameSeconds(frame, LISTEN_SAMPLE_RATE)),
         MUSIC_EXPRESSION_WINDOW_SECONDS,
       );

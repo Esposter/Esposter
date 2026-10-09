@@ -1,21 +1,12 @@
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
+import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+
 import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
-import {
-  CHROMA_FRAME_LENGTH,
-  CHROMA_HOP_LENGTH,
-  LISTEN_BAND_CENTRES,
-} from "#src/services/genshinParity/shared/constants";
+import { CHROMA_FRAME_LENGTH, LISTEN_BAND_CENTRES } from "#src/services/genshinParity/shared/constants";
 
 // Each octave band's energy frame by frame, between the half octaves either side of its centre, in the pitch classes'
 // Own frames
-export const computeBandEnergies = (samples: Float32Array, sampleRate: number): Float64Array[] => {
-  const { binCount, frameCount, magnitudes } = computeSpectrogram(
-    samples,
-    sampleRate,
-    CHROMA_FRAME_LENGTH,
-    CHROMA_HOP_LENGTH,
-  );
-  return LISTEN_BAND_CENTRES.map((centre) => {
+export const computeBandEnergies = ({ binCount, frameCount, magnitudes, sampleRate }: Spectrogram): Float64Array[] =>
+  LISTEN_BAND_CENTRES.map((centre) => {
     const [low, high] = computeBandBins(centre, sampleRate, CHROMA_FRAME_LENGTH, binCount);
     return Float64Array.from({ length: frameCount }, (_value, frame) => {
       let energy = 0;
@@ -23,4 +14,3 @@ export const computeBandEnergies = (samples: Float32Array, sampleRate: number): 
       return energy;
     });
   });
-};

@@ -14,6 +14,7 @@ import { computeAudibleFrames } from "#src/services/genshinParity/music/computeA
 import { computeBandEnergies } from "#src/services/genshinParity/music/computeBandEnergies";
 import { computeBandFloor } from "#src/services/genshinParity/music/computeBandFloor";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { computeGapsByOnsetAge } from "#src/services/genshinParity/music/computeGapsByOnsetAge";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { scoreShapedMusic } from "#src/services/genshinParity/music/scoreShapedMusic";
@@ -56,10 +57,11 @@ export const solveSampledVoices = async (
   base: Float32Array,
   expression: number[],
 ): Promise<{ baseline: ShapedMusicScore; solutions: SampledVoiceSolution[] }> => {
-  const frames = computeAudibleFrames(computeChroma(game, AUDIO_SAMPLE_RATE).loudness);
+  const gameSpectrogram = computeChromaSpectrogram(game, AUDIO_SAMPLE_RATE);
+  const frames = computeAudibleFrames(computeChroma(gameSpectrogram).loudness);
   const frameTimes = frames.map((frame) => getFrameSeconds(frame, AUDIO_SAMPLE_RATE));
   const onsets = voiceNotesList.flat().map(({ startTimeSeconds }) => startTimeSeconds);
-  const gameBands = computeBandEnergies(game, AUDIO_SAMPLE_RATE);
+  const gameBands = computeBandEnergies(gameSpectrogram);
   const floors = gameBands.map((energies) => computeBandFloor(energies));
   const computeFrameEnergies = (bands: Float64Array[]): Float64Array =>
     Float64Array.from({ length: bands.length * frames.length }, (_value, index) => {
@@ -69,7 +71,7 @@ export const solveSampledVoices = async (
   const targets = computeFrameEnergies(gameBands).map((energy, index) =>
     Math.max(energy, floors[Math.floor(index / frames.length)] ?? 0),
   );
-  const baseEnergies = computeFrameEnergies(computeBandEnergies(base, AUDIO_SAMPLE_RATE));
+  const baseEnergies = computeFrameEnergies(computeBandEnergies(computeChromaSpectrogram(base, AUDIO_SAMPLE_RATE)));
   const baseline = scoreShapedMusic(base, game, AUDIO_SAMPLE_RATE, frames);
   const references = voiceNotesList.map((voiceNotes, voice) =>
     computeVoicePitchReference(voiceNotes, voiceReleases[voice] ?? 0, voiceTunings[voice] ?? 0, game.length),
@@ -99,7 +101,7 @@ export const solveSampledVoices = async (
       if (!isCandidate && agreement <= nearest.agreement) continue;
       const expressed = applyMusicExpression(rendered, AUDIO_SAMPLE_RATE, expression, MUSIC_EXPRESSION_WINDOW_SECONDS);
       const candidate = {
-        energies: computeFrameEnergies(computeBandEnergies(expressed, AUDIO_SAMPLE_RATE)),
+        energies: computeFrameEnergies(computeBandEnergies(computeChromaSpectrogram(expressed, AUDIO_SAMPLE_RATE))),
         instrument,
         rendered: expressed,
       };

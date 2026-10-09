@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
 
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
 import { scoreMusicSegment } from "#src/services/genshinParity/music/scoreMusicSegment";
 import { LISTEN_SAMPLE_RATE } from "#src/services/genshinParity/shared/constants";
@@ -12,5 +13,8 @@ export const listenToMusic = async (
 ): Promise<{ id: number; score: MusicScore }[]> =>
   (await renderMusicSegments(component, screen)).map(({ game, id, ours }) => ({
     id,
-    score: scoreMusicSegment(ours, game, LISTEN_SAMPLE_RATE),
+    score: scoreMusicSegment(
+      computeChromaSpectrogram(ours, LISTEN_SAMPLE_RATE),
+      computeChromaSpectrogram(game, LISTEN_SAMPLE_RATE),
+    ),
   }));

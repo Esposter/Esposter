@@ -5,6 +5,7 @@ import type { NoteEventTime } from "pitch-transcription/notes";
 import { SAMPLED_VOICE_MAX_LAG } from "#src/services/genshinAssets/shared/constants";
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
+import { computeChromaSpectrogram } from "#src/services/genshinParity/music/computeChromaSpectrogram";
 import { computeLaggedAgreement } from "#src/services/genshinParity/music/computeLaggedAgreement";
 import { computeNoteChroma } from "#src/services/genshinParity/music/computeNoteChroma";
 import { renderFundamentals } from "#src/services/genshinParity/music/renderFundamentals";
@@ -21,14 +22,16 @@ export const computeVoicePitchReference = (
   length: number,
 ): { computeSolo: (rendered: Float32Array) => LaggedAgreement; fundamentals: SampledSolo } => {
   const fundamentals = computeChroma(
-    renderFundamentals(voiceNotes, release, tuning, AUDIO_SAMPLE_RATE, length),
-    AUDIO_SAMPLE_RATE,
+    computeChromaSpectrogram(
+      renderFundamentals(voiceNotes, release, tuning, AUDIO_SAMPLE_RATE, length),
+      AUDIO_SAMPLE_RATE,
+    ),
   );
   const noteChroma = computeNoteChroma(voiceNotes, fundamentals.loudness.length, AUDIO_SAMPLE_RATE);
   const frames = computeAudibleFrames(noteChroma.loudness);
   const computeSolo = (rendered: Float32Array) =>
     computeLaggedAgreement(
-      computeChroma(rendered, AUDIO_SAMPLE_RATE).classes,
+      computeChroma(computeChromaSpectrogram(rendered, AUDIO_SAMPLE_RATE)).classes,
       noteChroma.classes,
       frames,
       SAMPLED_VOICE_MAX_LAG,
