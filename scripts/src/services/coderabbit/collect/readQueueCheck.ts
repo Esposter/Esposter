@@ -1,33 +1,35 @@
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
-import type { QueueCheck } from "#src/models/coderabbit/collect/QueueCheck";
 
+import { checkIsVerdict } from "#src/services/coderabbit/collect/checkIsVerdict";
 import {
-  CI_FAILURE_CONCLUSION,
-  CI_SUCCESS_CONCLUSION,
+  CHECK_RUN_FIELDS,
+  DEVELOP_BRANCH,
   QUEUE_BRANCH,
   QUEUE_CHECK_RUN_LIST_LIMIT,
 } from "#src/services/coderabbit/collect/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 
-// The newest run of a red check's workflow on the queue that reached a verdict, green or red — a run cancelled while it
-// Waited behind another ran no job. The queue is rewritten onto the tree each window leaves, so its run reads every
-// Commit a later window carries to `main`. The branch is matched here, among the workflow's newest runs, rather than
-// By GitHub's per-workflow branch filter, which has gone stale on this repository (`readRedMainCheck`): a stale filter
-// Hands back an old verdict as the newest, where a list that holds no queue run hands back none
-export const readQueueCheck = ({ workflowDatabaseId }: MainCheck): QueueCheck | undefined =>
-  parseMachineJson<QueueCheck[]>(
+// A branch's newest run of a workflow that reached a verdict. The branch narrows the list on GitHub's side, so no other
+// Branch's runs share it: unfiltered, the Renovate branches each rerunning CI on every move of `main` filled a hundred
+// Runs in about an hour and a quarter and pushed the queue's verdict out of the list
+const readBranchCheck = (workflowDatabaseId: number, branch: string): MainCheck | undefined =>
+  parseMachineJson<MainCheck[]>(
     runGh([
       "run",
       "list",
       "--workflow",
       workflowDatabaseId.toString(),
+      "--branch",
+      branch,
       "--limit",
       QUEUE_CHECK_RUN_LIST_LIMIT.toString(),
       "--json",
-      "conclusion,databaseId,headBranch,headSha,status,url,workflowDatabaseId",
+      CHECK_RUN_FIELDS,
     ]),
-  ).find(
-    ({ conclusion, headBranch }) =>
-      headBranch === QUEUE_BRANCH && (conclusion === CI_SUCCESS_CONCLUSION || conclusion === CI_FAILURE_CONCLUSION),
-  );
+  ).find((check) => checkIsVerdict(check));
+// The newest verdict on a red check's workflow from what is still queued: the queue's, which is rewritten onto the tree
+// Each window leaves and so reads every commit a later window carries to `main` — or, where the queue has none,
+// `develop`'s, the windows in flight. Whether it read `main`'s red head at all is `settleTransitGap`'s question
+export const readQueueCheck = ({ workflowDatabaseId }: MainCheck): MainCheck | undefined =>
+  readBranchCheck(workflowDatabaseId, QUEUE_BRANCH) ?? readBranchCheck(workflowDatabaseId, DEVELOP_BRANCH);

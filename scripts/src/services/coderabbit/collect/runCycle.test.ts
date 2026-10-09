@@ -2,7 +2,6 @@ import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import type { CommitCommentsPage } from "#src/models/coderabbit/collect/CommitCommentsPage";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
-import type { QueueCheck } from "#src/models/coderabbit/collect/QueueCheck";
 import type { RunJobsView } from "#src/models/coderabbit/collect/RunJobsView";
 import type { WindowPullRequest } from "#src/models/coderabbit/collect/WindowPullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
@@ -32,6 +31,7 @@ import {
   INSTALL_COMMAND,
   INSTALL_OUTPUT_MAX_BUFFER_BYTES,
   MAIN_BRANCH,
+  MAIN_CHECK_WORKFLOW_FILES,
   MOVED_BRANCH_RETRY_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
@@ -141,11 +141,18 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
   const redRun: MainCheck = {
     conclusion: CI_FAILURE_CONCLUSION,
+    createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
     databaseId: 0,
+    headBranch: MAIN_BRANCH,
+    headSha: "",
     status: CI_COMPLETED_STATUS,
+    updatedAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
     url: "",
     workflowDatabaseId: 0,
   };
+  // CI's workflow, the one whose runs on a commit `answerGh` answers with the checks a test gives; no other workflow
+  // Has run on any commit, and no branch's runs are listed
+  const [ciWorkflowFile = ""] = MAIN_CHECK_WORKFLOW_FILES;
   // What the red run failed on, and the signature its repairs are counted under
   const redRunJobs: RunJobsView = { jobs: [{ conclusion: CI_FAILURE_CONCLUSION, name: "" }], workflowName: "" };
   const signature = getFailureSignature(
@@ -199,7 +206,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         });
         return "";
       } else if (args[0] === "pr" && args[1] === "view") return Temporal.Instant.fromEpochMilliseconds(0).toString();
-      else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
+      else if (args[0] === "run" && args[1] === "list")
+        return JSON.stringify(args.includes(ciWorkflowFile) ? mainChecks : []);
       else if (args[0] === "run" && args[1] === "view")
         return args.includes("--json") ? JSON.stringify(redRunJobs) : "";
       else if (args[0] === "repo" && args[1] === "view")
@@ -423,17 +431,33 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
-  // The queue's newest verdict on the workflow main is red on, answered over what `answerGh` set up: its run, listed
-  // Without a commit, and the one job it ran, which shares the red job's name, at the conclusion the test gives
-  const queueRun: QueueCheck = { ...redRun, databaseId: 1, headBranch: QUEUE_BRANCH, headSha: "" };
-  const answerQueueRun = (conclusion: string) => {
+  // The queue's newest verdict on the workflow main is red on, over the commit a test gives — a run that took the least
+  // Time a wake can be told from its buffer by
+  const getQueueRun = (headSha: string): MainCheck => ({
+    ...redRun,
+    databaseId: 1,
+    headBranch: QUEUE_BRANCH,
+    headSha,
+    updatedAt: Temporal.Instant.fromEpochMilliseconds(1).toString(),
+  });
+  // Answered over what `answerGh` set up: the run, listed without a commit for its own workflow, and the one job it
+  // Ran, which shares the red job's name, at the conclusion the test gives
+  const answerQueueRun = (headSha: string, conclusion: string): MainCheck => {
+    const queueRun = getQueueRun(headSha);
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) => {
-      if (args[0] === "run" && args[1] === "list" && !args.includes("--commit")) return JSON.stringify([queueRun]);
+      if (
+        args[0] === "run" &&
+        args[1] === "list" &&
+        !args.includes("--commit") &&
+        args[args.indexOf("--workflow") + 1] === queueRun.workflowDatabaseId.toString()
+      )
+        return JSON.stringify([queueRun]);
       else if (args[0] === "run" && args[1] === "view" && args[2] === queueRun.databaseId.toString())
         return JSON.stringify({ jobs: [{ conclusion, name: "" }], workflowName: "" } satisfies RunJobsView);
       else return answerRest?.(args) ?? "";
     });
+    return queueRun;
   };
 
   // A job main failed that the queue passes is one a window still queued heals, and no repair at main's head can pass
@@ -444,7 +468,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
-    answerQueueRun(CI_SUCCESS_CONCLUSION);
+    answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -456,7 +480,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
     expect(spawnPnpm).not.toHaveBeenCalled();
     expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
-      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [queueRun.headSha])}`,
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
     ]);
   });
 
@@ -468,11 +492,11 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
-    answerQueueRun(CI_SUCCESS_CONCLUSION);
+    const queueRun = answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) =>
       args[1]?.startsWith(`repos/{owner}/{repo}/commits/${mainSha}/comments?`)
-        ? JSON.stringify([[getMarked(getMarker(TRANSIT_GAP_MARKER, mainSha, [queueRun.headSha]))]])
+        ? JSON.stringify([[getMarked(getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha]))]])
         : (answerRest?.(args) ?? ""),
     );
     await runCycle({ ...baseInput, cwd: getCwd() });
@@ -493,7 +517,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
-    answerQueueRun(CI_FAILURE_CONCLUSION);
+    answerQueueRun(mainSha, CI_FAILURE_CONCLUSION);
     spawnPnpm.mockReturnValue(greenSpawn);
     runSession.mockImplementation(() => {
       commitFile(`${TEST_FILENAME}.ts`, "");
@@ -512,6 +536,88 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       retriggerDelaySeconds: undefined,
       targetSha: readSha(`origin/${MAIN_BRANCH}`),
     });
+  });
+
+  // The queue's newest verdict can predate a commit that has since reached both the queue and main, and pass the job
+  // That commit broke: the red is held while the queue's run over it goes, and since no event reports that run
+  // Concluding, the run wakes itself once a queue run's span from push to verdict has passed again
+  test("holds a red main the queue's newest verdict predates, waking once a queue run's span has passed", async () => {
+    expect.hasAssertions();
+
+    const verdictSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(DEVELOP_BRANCH, mainSha);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: getRetriggerDelaySeconds(1 + RETRIGGER_BUFFER_MS),
+      targetSha: undefined,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(0);
+  });
+
+  // The run over the queue's tip is read by its commit, so a branch filter that lags behind it cannot hide the verdict
+  // A held red waits on
+  test("judges a held red on the queue's run over its tip once that run concludes", async () => {
+    expect.hasAssertions();
+
+    const verdictSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    publish(DEVELOP_BRANCH, mainSha);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    const queueRun = answerQueueRun(verdictSha, CI_SUCCESS_CONCLUSION);
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[0] === "run" &&
+      args[1] === "list" &&
+      args[args.indexOf("--workflow") + 1] === queueRun.workflowDatabaseId.toString() &&
+      args[args.indexOf("--commit") + 1] === mainSha
+        ? JSON.stringify([getQueueRun(mainSha)])
+        : (answerRest?.(args) ?? ""),
+    );
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
+    ]);
+  });
+
+  // CodeQL scans main alone, so the queue never passes its gate: every red workflow on the head is judged on its own,
+  // And a CI red the queue heals does not hide it
+  test("repairs a CodeQL red beside a CI red the queue heals", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerQueueRun(mainSha, CI_SUCCESS_CONCLUSION);
+    const [, codeQlWorkflowFile = ""] = MAIN_CHECK_WORKFLOW_FILES;
+    const answerRest = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[0] === "run" && args[1] === "list" && args.includes(codeQlWorkflowFile)
+        ? JSON.stringify([{ ...redRun, databaseId: 2, workflowDatabaseId: 1 }])
+        : (answerRest?.(args) ?? ""),
+    );
+    answerRegenerated(() => greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: repairedReason,
+      retriggerDelaySeconds: undefined,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+    expect(getCommitCommentPosts(mainSha).map(([args]) => args[3]?.split("\n")[0])).toStrictEqual([
+      `body=${getMarker(TRANSIT_GAP_MARKER, mainSha, [mainSha])}`,
+      `body=${getMarker(REPAIR_FAILED_MARKER, signature, [collectorSha])}`,
+    ]);
   });
 
   // Each part of an attempt runs on its own clock, so an install that ran out the regenerators' clock and a session

@@ -304,8 +304,8 @@ export const runCycle = async ({
       ? getRetriggerDelaySeconds(getOpeningWaitMs(history, nowMs) + RETRIGGER_BUFFER_MS)
       : undefined;
   // A red `main` last, on the remote as the walk and the openings left it: its repair verdict wins, carrying the wake
-  // The stack and the openings are owed, and a signature past its repairs states the wake its oldest attempt ageing out
-  // Is owed
+  // The stack and the openings are owed, and a red held for the queue's run over it or a signature past its repairs
+  // States the wake that run concluding, or its oldest attempt ageing out, is owed
   const repaired = await runRepairStep({ collectorSha, cwd, isDryRun, viewerLogin });
   const retriggerDelaySeconds = getSoonestDelay(
     walkedRetriggerDelaySeconds,
