@@ -17,3 +17,5 @@ export const ADVENTURE_EXP_PER_RESIN = 5;
 export const WEEKLY_BOSS_CHEAP_CLAIMS = 3;
 export const WEEKLY_BOSS_CHEAP_RESIN = 30;
 export const WEEKLY_BOSS_RESIN = 60;
+// The rewards one Condensed Resin claims at a ley line or a domain
+export const CONDENSED_RESIN_CLAIM_COUNT = 3;

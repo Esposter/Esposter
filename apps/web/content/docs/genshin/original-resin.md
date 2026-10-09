@@ -7,7 +7,7 @@ description: The game's Original Resin as pure state. It regenerates a point eac
 
 The game keeps its energy for claiming challenge rewards as Original Resin. The wallet holds it as a count and the moment it last changed, so its regeneration is read to the present rather than run on a timer, and the page can be closed for a day and still show the resin filled. The map's top bar counts it. The claim's price, its Adventure EXP and the Primogem refill are pure services in `genshin-world`, read off the rules the [proposal](/docs/proposals/genshin/original-resin) settles.
 
-What spends it does not exist yet: no challenge leaves a blossom to claim, so the blossom's offer, its rewards and Condensed Resin are the proposal's still.
+The claim's ways to pay are pure services too: a blossom's offers, and a Condensed Resin spent for three rewards at a ley line or a domain. No challenge leaves a blossom to claim yet, so no offer is shown and the claims' rewards are the proposal's still.
 
 ## How it works
 
@@ -27,6 +27,8 @@ flowchart TD
 - **A refill passes the cap, to 2,000.** `refillOriginalResin` reads the regeneration to now, then adds to the count, filling to 2,000. Above 200 the resin does not regenerate.
 - **Primogem refills, six a game day.** Each restores 60 at 50, 100, 100, 150, 200 and 200 Primogems, the world's own and never sold. `refillOriginalResinWithPrimogems` refuses a refill short of its price, at the 2,000 cap, or once the day's six are used. The game's day starts at 04:00 in UTC+8, the game's server time, so the count restarts at that hour and not at midnight.
 - **A claim's price by its kind.** `computeBlossomClaimResin` prices one claim at a ley line or a domain at 20, a normal boss at 40, and a weekly boss at 30 for each of its first three claims in the week and 60 after them.
+- **A claim's offers.** `computeBlossomClaimOffers` lists how a blossom's claim is paid: one claim at its price; at a ley line or a domain also two claims at twice the price, and a Condensed Resin for three claims. A boss offers its one claim only.
+- **Condensed Resin's claim.** `spendCondensedResin` takes one Condensed Resin out of the bag for a ley line's or a domain's three claims, and refuses a boss. It spends no Original Resin, so it gives no Adventure EXP.
 - **Five Adventure EXP a point.** `claimOriginalResin` spends the resin, then gives five Adventure EXP a point through `gainAdventureExp`, so the EXP past rank 60 is paid into the wallet as Mora. A claim the resin does not cover returns undefined and spends nothing.
 - **Settled calls.** A new player holds the full 200. The resin's rarity is 3, the game's material table's `rankLevel`. Its name is the game's own text, `GameTextKey.OriginalResin`. Both the starting amount and the 04:00 reset are settled from the game's own design rather than checked against the wiki, which was not reachable when they were settled.
 
@@ -40,7 +42,7 @@ flowchart TD
 - **The blossoms.** No challenge leaves a blossom, so no F prompt offers a claim. The prices are ready for the [ley line outcrops](/docs/proposals/genshin/ley-line-outcrops), [domains](/docs/proposals/genshin/domains) and [bosses](/docs/proposals/genshin/bosses) to call.
 - **The claims' rewards.** A fixed reward is its rewardId in the reward table, which the dump holds, but the blossom table BlossomChestExcelConfigData that names each blossom's rewardId is not among the dump's tables. The rolled drops are the wiki's, not yet read. Both wait on a dump that carries the blossom table.
 - **Fragile Resin's refill.** The item is not in the materials the bag reads, and its use is the inventory's. The refill rule is ready for it.
-- **Condensed Resin.** Its crafting from 60 is the [crafting](/docs/proposals/genshin/crafting) bench's, and its claim of three rewards is the blossoms'.
+- **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](/docs/genshin/crafting) bench's.
 - **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.
 
 The top bar's place and type are provisional until a recording measures them. The line is on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list.
@@ -56,6 +58,10 @@ The top bar's place and type are provisional until a recording measures them. Th
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | A refill for the day's next price, the day's count restarting at the game's day            |
 | `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts`         | A claim's price by its blossom kind and the weekly boss's claims that week                 |
 | `packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`               | A claim: the resin spent, the Adventure EXP gained and the Mora past rank 60               |
+| `packages/genshin-world/src/services/originalResin/computeBlossomClaimOffers.ts`        | The ways a blossom's claim is paid: one, two at twice the price, or a Condensed Resin      |
+| `packages/genshin-world/src/services/originalResin/checkIsMultiClaimBlossom.ts`         | A ley line or a domain, the blossoms that can be doubled or paid in Condensed Resin        |
+| `packages/genshin-world/src/services/originalResin/spendCondensedResin.ts`              | A Condensed Resin taken from the bag for three claims, refused at a boss                   |
+| `packages/genshin-world/src/models/originalResin/BlossomClaimOffer.ts`                  | One way to pay a claim: its claim count, its resin and its Condensed Resin                 |
 | `packages/genshin-world/src/models/inventory/Wallet.ts`                                 | The count of each currency, the moment Original Resin last changed, and the day's refills  |
 | `packages/genshin-world/src/services/inventory/constants.ts`                            | A new player's wallet, holding Original Resin at the cap                                   |
 | `packages/genshin-world/src/components/Map/Overlay/Index.vue`                           | The count on the map's top bar, read when the map opens                                    |

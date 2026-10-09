@@ -32,12 +32,12 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the resin's count, its regeneration, its refills and a claim's price and Adventure EXP, on the [as-built page](/docs/genshin/original-resin).
+**Built:** the resin's count, its regeneration, its refills and a claim's price and Adventure EXP, on the [as-built page](/docs/genshin/original-resin). Also built: a blossom's ways to pay (`computeBlossomClaimOffers`) and a Condensed Resin's spend for three claims (`spendCondensedResin`).
 
 **This still adds, in order:**
 
 1. **The claim**, with the first challenge that spawns a blossom: its offer on F, the claim's fixed and rolled rewards, and the blossom's kept state.
-2. **Condensed Resin**, with the crafting bench, and its claim of three rewards at a ley line or a domain.
+2. **Condensed Resin's offer**, on F at a ley line or a domain, once a blossom is placed; its three claims' rewards go with the claim.
 
 ## Data and measures
 
