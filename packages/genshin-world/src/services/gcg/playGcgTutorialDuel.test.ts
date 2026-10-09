@@ -32,7 +32,7 @@ describe("a duel between two copies of the tutorial deck", () => {
     const rule = await readGcgStandardRule();
     const duel = playGcgDuel([tutorialDeck, tutorialDeck], rule);
 
-    expect({ isEnded: duel.phase === GcgPhase.Ended, hasOutcome: duel.outcome !== undefined }).toStrictEqual({
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
       isEnded: true,
     });
@@ -46,7 +46,33 @@ describe("a duel between opponent decks 3 and 4", () => {
     const rule = await readGcgStandardRule();
     const duel = playGcgDuel([await readGcgDeck(3), await readGcgDeck(4)], rule);
 
-    expect({ isEnded: duel.phase === GcgPhase.Ended, hasOutcome: duel.outcome !== undefined }).toStrictEqual({
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+});
+
+describe("the tutorial duels' decks: the player's deck 7 and the opponent decks 30111 and 30112", () => {
+  test("should play opponent deck 30111 against opponent deck 30112 to its end", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(30_111), await readGcgDeck(30_112)], rule);
+
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+
+  test("should play the player's deck 7 against opponent deck 30111 to its end", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(7), await readGcgDeck(30_111)], rule);
+
+    expect({ hasOutcome: duel.outcome !== undefined, isEnded: duel.phase === GcgPhase.Ended }).toStrictEqual({
       hasOutcome: true,
       isEnded: true,
     });

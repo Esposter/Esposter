@@ -21,6 +21,7 @@ export const endGcgRound = (duel: GcgDuel, rule: GcgRule, random: () => number):
     for (const character of side.characters) character.isFrozen = false;
     side.dice = [];
     side.hasDeclaredEnd = false;
+    side.hasDefeatedCharacter = false;
   }
   for (const sideIndex of [duel.firstSideIndex, 1 - duel.firstSideIndex])
     drawGcgCards(takeOne(duel.sides, sideIndex), rule.drawCount, rule.handCardLimit);
