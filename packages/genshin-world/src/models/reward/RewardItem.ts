@@ -8,8 +8,10 @@ export interface RewardItem {
   minCount: number;
 }
 
-export const rewardItemSchema = z.object({
-  itemId: z.int().positive(),
-  maxCount: z.int().positive(),
-  minCount: z.int().nonnegative(),
-}) satisfies z.ZodType<RewardItem>;
+// A claim draws a count between the least and the most, so a least above the most has no count to draw
+export const rewardItemSchema = z
+  .object({ itemId: z.int().positive(), maxCount: z.int().positive(), minCount: z.int().nonnegative() })
+  .refine(
+    ({ maxCount, minCount }) => minCount <= maxCount,
+    "Least count must not exceed most count",
+  ) satisfies z.ZodType<RewardItem>;
