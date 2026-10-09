@@ -185,6 +185,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuExit",
     wikiTitle: "File:Paimon Menu Exit Prompt.png",
   },
+  // The public frame of the card game's duel board at 1080 high from the English PC client, cut from 400 seconds of a
+  // Walkthrough, the frame at 407 seconds in the Action Phase: both sides' characters, the dice column and the hand. A
+  // Video's frame, so its art is not drawn and only its tints, words and places are scored
+  "gcg-duel-board": { capture: "gcg-yt-tvboQ_ZWO_I-400-410.mp4", screen: "GcgScreen", seconds: 7 },
   // The English PC client's Adventurer Handbook open at its experience, the wiki's screenshot, against which the
   // Book's tabs are placed while its pages wait on what they track
   "handbook-experience": { screen: "HandbookScreen", wikiTitle: "File:Adventurer Handbook Experience.png" },
