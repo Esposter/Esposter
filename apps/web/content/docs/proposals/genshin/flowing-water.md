@@ -26,7 +26,12 @@ The shapes and the flow are built: see [flowing water](/docs/genshin/flowing-wat
 
 ## Still to build
 
-1. **The capitals' waterfalls.** A new `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts` reads a region's `witness.json` (`~/Esposter/genshin-parity/extracted/<region>/`), keeps the placements whose mesh matches `/^Eff_Model_WaterFall_/u`, reads each mesh's vertices from `assets/Mesh/<mesh>.obj` and turns each into a sheet as the Decisions read it. A `waterfalls` fit in `DerivedAssetFitMap` writes them for Mondstadt and Liyue as a `waterfalls` list in `packages/genshin-world/src/data/regions/<region>.json`, which `RegionData` and its schema gain, each sheet's points as plain `{ x, y, z }`. A new `packages/genshin-world/src/components/World/Waterfalls/Index.vue` draws each region's sheets with `createWaterfallGeometry` and `createWaterfallMaterial`, mounted where `World/Water` is. Its test, `fitWaterfallSheets.test.ts`, places a quad 2 metres wide and 10 tall turned a quarter about the vertical and reads back its lip at the top edge's centre, `across` along the turned edge, a width of 2 and a drop of 10.
+```text
+scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts
+packages/genshin-world/src/components/World/Waterfalls/Index.vue
+```
+
+1. **The capitals' waterfalls.** A new `fitWaterfallSheets.ts` reads a region's `witness.json` (`~/Esposter/genshin-parity/extracted/<region>/`), keeps the placements whose mesh matches `/^Eff_Model_WaterFall_/u`, reads each mesh's vertices from `assets/Mesh/<mesh>.obj` and turns each into a sheet as the Decisions read it. A `waterfalls` fit in `DerivedAssetFitMap` writes them for Mondstadt and Liyue as a `waterfalls` list in `packages/genshin-world/src/data/regions/<region>.json`, which `RegionData` and its schema gain, each sheet's points as plain `{ x, y, z }`. A new `Index.vue` draws each region's sheets with `createWaterfallGeometry` and `createWaterfallMaterial`, mounted where `World/Water` is. Its test, `fitWaterfallSheets.test.ts`, places a quad 2 metres wide and 10 tall turned a quarter about the vertical and reads back its lip at the top edge's centre, `across` along the turned edge, a width of 2 and a drop of 10.
 2. **The rivers' courses**, from the water prefabs the streaming records place, named by their path hashes as `checkIsArchitectureName` names buildings, then each ribbon fitted to its mesh's centreline, width and level.
 
 ## Deferred compute

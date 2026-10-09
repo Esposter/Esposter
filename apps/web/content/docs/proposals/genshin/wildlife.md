@@ -38,9 +38,15 @@ stateDiagram-v2
 
 **Still to come, in order:**
 
+```text
+packages/genshin-world/src/services/wildlife/
+├── strikeWildlife.ts
+└── WildlifeKindDropMap.ts
+```
+
 1. **What a struck bird or beast gives.**
-   - `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`: each `WildlifeKind` to its `DroppedItem`, as the Decisions give them.
-   - `WildlifeState` gains `Struck`, and `packages/genshin-world/src/services/wildlife/strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
+   - `WildlifeKindDropMap.ts`: each `WildlifeKind` to its `DroppedItem`, as the Decisions give them.
+   - `WildlifeState` gains `Struck`, and `strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
    - Tests: `strikeWildlife.test.ts` (a Crimson Fox gives two Raw Meat once, and nothing when struck again) and a case in `stepWildlife.test.ts` (a struck animal in reach does not flee).
 2. **The strike reaching the animals.** The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so `components/World/Character/Index.vue`'s strike loop tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component draws the list it is given and skips a struck one.
 3. **Material sources, picked up.**

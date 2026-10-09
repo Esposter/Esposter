@@ -45,7 +45,13 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **The entrances, read from the scene points.** Add `DungeonExcelConfigData`, `DungeonEntryExcelConfigData` and `DailyDungeonConfigData` to `DUMP_TABLE_NAMES` in `scripts/src/services/genshinText/constants.ts` and run `pnpm -C scripts genshin:text fetch`. Then `scripts/src/services/genshinAssets/domains/writeDomainEntrances.ts`, behind a `genshin:assets domains` subcommand on the pattern of `forgingCommand`, reads every entry row of scene 3 whose type names a `DomainKind`, takes its point from `scene3_point.json` (a row whose point is missing is counted and left out), assigns it its region from the area table as `fit/fitRegionCapitals.ts` does, and writes it into that region's `packages/genshin-world/src/data/regions/<region>.json` landmarks as a `LandmarkKind.DomainEntrance` with its domain kind and the entry's id, its place carried round the Windrise origin (`readWorldOrigin`) as `chests/writeChestPlaces.ts` carries its points. `LandmarkKind` gains `DomainEntrance`, which no kit draws yet. The proof is `scripts/src/services/genshinAssets/domains/toDomainEntrance.test.ts`: a dumped entry row and its point become the landmark at the point's x and z less the origin with the kind its type names, and a row of `DUNGEON_ENTRY_TYPE_NORMAL` gives none.
+```text
+scripts/src/services/genshinAssets/domains/
+├── toDomainEntrance.test.ts
+└── writeDomainEntrances.ts
+```
+
+1. **The entrances, read from the scene points.** Add `DungeonExcelConfigData`, `DungeonEntryExcelConfigData` and `DailyDungeonConfigData` to `DUMP_TABLE_NAMES` in `scripts/src/services/genshinText/constants.ts` and run `pnpm -C scripts genshin:text fetch`. Then `writeDomainEntrances.ts`, behind a `genshin:assets domains` subcommand on the pattern of `forgingCommand`, reads every entry row of scene 3 whose type names a `DomainKind`, takes its point from `scene3_point.json` (a row whose point is missing is counted and left out), assigns it its region from the area table as `fit/fitRegionCapitals.ts` does, and writes it into that region's `packages/genshin-world/src/data/regions/<region>.json` landmarks as a `LandmarkKind.DomainEntrance` with its domain kind and the entry's id, its place carried round the Windrise origin (`readWorldOrigin`) as `chests/writeChestPlaces.ts` carries its points. `LandmarkKind` gains `DomainEntrance`, which no kit draws yet. The proof is `toDomainEntrance.test.ts`: a dumped entry row and its point become the landmark at the point's x and z less the origin with the kind its type names, and a row of `DUNGEON_ENTRY_TYPE_NORMAL` gives none.
 2. **The entrance's kit and its screen**: a stand-in kit drawn at each entrance, then the screen F opens, listing its levels and today's materials over the built opening rules.
 3. **The days' schedule and the levels by rank**, read from the tables item 1 fetches. The days' rule is built.
 4. **Entering a domain's scene and leaving it**, on the jump's fade.

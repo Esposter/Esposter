@@ -33,9 +33,15 @@ flowchart TD
 
 **This adds, in order:**
 
+```text
+packages/genshin-world/src/services/gathering/
+├── OreItemIdBreakPoiseMap.ts
+└── strikeOre.ts
+```
+
 1. **The ores' rules.**
-   - `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`: each ore's item id to its `{ blunt, melee }` poise requirement from the Decisions: Iron Chunk 101001, White Iron Chunk 101002 and Starsilver 101006 at 29 and 200; Crystal Chunk 101003, Magical Crystal Chunk 101004, Amethyst Lump 101008, Condessence Crystal 101009, Trishiraite 101224, Clearwater Jade 101241, Noctilucous Jade 100028 and Cor Lapis 100058 at 286 and 2000 (the dump's `MaterialExcelConfigData` ids, matched by name through `genshin:text find`).
-   - `packages/genshin-world/src/services/gathering/strikeOre.ts`: an ore's broken share after one hit, `{ isBlunt, isMelee, poiseDamage }` against its requirement; `rollOreDropCount.ts`: one, plus one for each of two draws under 0.1.
+   - `OreItemIdBreakPoiseMap.ts`: each ore's item id to its `{ blunt, melee }` poise requirement from the Decisions: Iron Chunk 101001, White Iron Chunk 101002 and Starsilver 101006 at 29 and 200; Crystal Chunk 101003, Magical Crystal Chunk 101004, Amethyst Lump 101008, Condessence Crystal 101009, Trishiraite 101224, Clearwater Jade 101241, Noctilucous Jade 100028 and Cor Lapis 100058 at 286 and 2000 (the dump's `MaterialExcelConfigData` ids, matched by name through `genshin:text find`).
+   - `strikeOre.ts`: an ore's broken share after one hit, `{ isBlunt, isMelee, poiseDamage }` against its requirement; `rollOreDropCount.ts`: one, plus one for each of two draws under 0.1.
    - `GatheringRespawn` gains `OneDay` and `ThreeDays`, with `ORE_ONE_DAY_RESPAWN_DURATION` and `ORE_THREE_DAYS_RESPAWN_DURATION` in `services/gathering/constants.ts`, and `computeGatheringRespawn` adds them as it adds `SPECIALTY_RESPAWN_DURATION`.
    - Tests beside each: seven blunt hits of 4.2 break an Iron Chunk and six do not; a melee hit and a blunt hit add their own shares; a catalyst's hit adds nothing; the drop count reads 1 at draws of 0.5 and 3 at draws of 0.05; each new respawn lands its duration after the break.
    - No data is written, and nothing in the world calls them yet.

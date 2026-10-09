@@ -43,9 +43,15 @@ stateDiagram-v2
 
 **This adds, in order:**
 
+```text
+packages/genshin-world/src/
+├── models/fishing/FishingBite.ts
+└── services/fishing/stepFishingBite.ts
+```
+
 1. **The bite and the nibbles, as a pure rule.** No source is owed: `packages/genshin-world/src/generated/fishing/fish.json` already holds each fish's `feelerTimes` and `biteTimeout`.
-   - `packages/genshin-world/src/models/fishing/FishingBite.ts`: a bite under way, its `nibbleSeconds` and its `elapsedSeconds`. The caller draws `nibbleSeconds` as `feelerTimes[0] + random() * (feelerTimes[1] - feelerTimes[0])` when the fish turns to the lure, with no helper around it.
-   - `packages/genshin-world/src/services/fishing/stepFishingBite.ts`: the bite after `seconds`, given whether the strike was pressed, returning its next `FishingPhase` and bite: `Waiting` while it nibbles, `Biting` from `nibbleSeconds`, `Reeling` on a strike while biting, and `Aiming` on a strike while nibbling or once `biteTimeout` seconds of biting pass unstruck.
+   - `FishingBite.ts`: a bite under way, its `nibbleSeconds` and its `elapsedSeconds`. The caller draws `nibbleSeconds` as `feelerTimes[0] + random() * (feelerTimes[1] - feelerTimes[0])` when the fish turns to the lure, with no helper around it.
+   - `stepFishingBite.ts`: the bite after `seconds`, given whether the strike was pressed, returning its next `FishingPhase` and bite: `Waiting` while it nibbles, `Biting` from `nibbleSeconds`, `Reeling` on a strike while biting, and `Aiming` on a strike while nibbling or once `biteTimeout` seconds of biting pass unstruck.
    - `stepFishingBite.test.ts` beside it asserts each of those four transitions on a fish with `biteTimeout: 5` and a bite with `nibbleSeconds: 1`.
 2. **The reel's zone and the fish's skills.** The zone travels on the fish's own `bonusWidth`, `bonusSpeed`, `bonusOffset` and `bonusDuration`, read provisionally until `fishing-reel.mkv` re-measures it, and the skills from `FishSkillExcelConfigData`, which the dump already holds.
 3. **Bait and the rod's choice**, which fish each bait draws read from the wiki's fish pages, each naming its bait, through the repository's wiki reader, with the crafting recipes and the rod's multiplier and accuracy.

@@ -53,7 +53,13 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The bench's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=qQILsaJKlsI --name crafting-table --from 0 --to 105` (Crafting Table, 105 seconds), then `genshin:parity frames <the path clip prints> 1`, of which the builder keeps the clearest frame of the recipe list by tab, the count and the craft with `genshin:parity frame yt-qQILsaJKlsI-crafting-table.mp4 --at <second> --name crafting-screen`. Then `ScreenKind.Crafting`, `packages/genshin-interface/src/components/CraftingScreen/` and its world wrapper `packages/genshin-world/src/components/Crafting/Screen/`, each with its fixture, each result named from the names chunk its recipe's `nameTextId` cites, the crafter chosen on it and `rollCraftingTalent`'s items added to the bag. Its comparison is queued for the user's eyes; until the bench stands it is reached through its fixture.
+```text
+packages/
+├── genshin-interface/src/components/CraftingScreen/
+└── genshin-world/src/components/Crafting/Screen/
+```
+
+1. **The bench's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=qQILsaJKlsI --name crafting-table --from 0 --to 105` (Crafting Table, 105 seconds), then `genshin:parity frames <the path clip prints> 1`, of which the builder keeps the clearest frame of the recipe list by tab, the count and the craft with `genshin:parity frame yt-qQILsaJKlsI-crafting-table.mp4 --at <second> --name crafting-screen`. Then `ScreenKind.Crafting`, `CraftingScreen/` and its world wrapper `Screen/`, each with its fixture, each result named from the names chunk its recipe's `nameTextId` cites, the crafter chosen on it and `rollCraftingTalent`'s items added to the bag. Its comparison is queued for the user's eyes; until the bench stands it is reached through its fixture.
 2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
 3. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
 4. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.

@@ -32,11 +32,19 @@ The daily tasks, their dealing, their claims and Katheryne's bonus are built ([c
 
 **This adds, in order:**
 
+```text
+packages/genshin-world/src/
+├── models/commission/CommissionDaySave.ts
+└── services/commission/
+    ├── checkIsCommissionDayCurrent.ts
+    └── computeDailyResetTime.ts
+```
+
 1. **The kept day.**
    - `CommissionDay` (`packages/genshin-world/src/models/commission/CommissionDay.ts`) gains `dealtAt: Temporal.Instant`.
-   - `packages/genshin-world/src/services/commission/computeDailyResetTime.ts`: the daily reset at or before `now`, its day's `DAILY_RESET_TIME` in `now`'s time zone, or the day before's when `now` is earlier, written as `computeWeeklyResetTime` is.
-   - `packages/genshin-world/src/services/commission/checkIsCommissionDayCurrent.ts`: whether a day's `dealtAt` is at or after the daily reset at or before `now`.
-   - The save: `packages/genshin-world/src/models/commission/CommissionDaySave.ts`, the schema of the day with `dealtAt` as an ISO string (`z.iso.datetime()`, as `AchievementProgressSave` keeps `finishedAt`) and the dealt and claimed lists each at most `COMMISSIONS_PER_DAY` long; `genshinSaveSchema` gains `commissionDay: commissionDaySaveSchema.default(...)` with an empty day dealt at the epoch, so a save that predates it reads as a new player's; `GenshinSaveState` gains `commissionDay`, read in `readGenshinSave` and written in `toGenshinSave`.
+   - `computeDailyResetTime.ts`: the daily reset at or before `now`, its day's `DAILY_RESET_TIME` in `now`'s time zone, or the day before's when `now` is earlier, written as `computeWeeklyResetTime` is.
+   - `checkIsCommissionDayCurrent.ts`: whether a day's `dealtAt` is at or after the daily reset at or before `now`.
+   - The save: `CommissionDaySave.ts`, the schema of the day with `dealtAt` as an ISO string (`z.iso.datetime()`, as `AchievementProgressSave` keeps `finishedAt`) and the dealt and claimed lists each at most `COMMISSIONS_PER_DAY` long; `genshinSaveSchema` gains `commissionDay: commissionDaySaveSchema.default(...)` with an empty day dealt at the epoch, so a save that predates it reads as a new player's; `GenshinSaveState` gains `commissionDay`, read in `readGenshinSave` and written in `toGenshinSave`.
    - Tests: `computeDailyResetTime.test.ts` (a moment before 04:00 reads the day before's reset, one at 04:00 reads its own) and `checkIsCommissionDayCurrent.test.ts` (dealt before the reset is stale, after it current), beside each; `readGenshinSave.test.ts` gains a day read back from its save with its `dealtAt`.
    - No caller deals yet, so nothing in the session changes.
 2. **Scene tasks**, swapping their area's camp while open. Waits on the area's groups, which the scene group export the other machine is making carries.

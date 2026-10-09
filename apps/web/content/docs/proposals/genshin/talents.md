@@ -41,8 +41,12 @@ flowchart TD
 
 **Still to build, in order:**
 
+```text
+packages/genshin-world/src/services/character/getTalentUpgradeRefusal.ts
+```
+
 1. **The Talents tab's upgrade, on the tab the character screen already draws.**
-   - **The rule.** A new `packages/genshin-world/src/services/character/getTalentUpgradeRefusal.ts` returns why a combat talent cannot rise now, a `TalentUpgradeRefusal` (`models/character/TalentUpgradeRefusal.ts`: `LastLevel`, `Phase`, `Mora`, `Materials`), or `undefined` when it can, counting the bag with `countInventoryItem`. `upgradeTalent` throws on its answer in place of its own checks. `getTalentUpgradeRefusal.test.ts` asserts each refusal and none when all is met; `upgradeTalent.test.ts` keeps passing unchanged.
+   - **The rule.** A new `getTalentUpgradeRefusal.ts` returns why a combat talent cannot rise now, a `TalentUpgradeRefusal` (`models/character/TalentUpgradeRefusal.ts`: `LastLevel`, `Phase`, `Mora`, `Materials`), or `undefined` when it can, counting the bag with `countInventoryItem`. `upgradeTalent` throws on its answer in place of its own checks. `getTalentUpgradeRefusal.test.ts` asserts each refusal and none when all is met; `upgradeTalent.test.ts` keeps passing unchanged.
    - **The tables.** `World/Session` loads `readTalentTables()`, which nothing calls yet, beside the stat tables, and hands `CharacterScreen` its `talentUpgradeMap` and `characterTalentKits`; a talent's upgrades are `talentUpgradeMap[kit.talentGroupIds[talent]]`.
    - **The tab.** `CharacterMenuTalents` (`packages/genshin-interface/src/components/CharacterMenuTalents/Index.vue`) gains `isUpgradeDisabled: boolean[]` and emits `upgrade: [index]` from an Upgrade button on each row, labelled by the `GameTextKey` `pnpm -C scripts genshin:text find "^Upgrade$"` finds and `genshin:text write` writes. `Character/Screen` disables a row whose refusal is set, and on `upgrade` calls `upgradeTalent` and emits the character, the bag and the wallet it returns. Its fixture gains a variant with one talent at 10, and the button's place, provisional in the row, is queued for the user's eyes against `character-talents`.
 2. **The kit's read of the additions**, which comes with the [character kits](/docs/proposals/genshin/character-kits).

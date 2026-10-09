@@ -42,10 +42,14 @@ flowchart LR
 
 **This adds:**
 
+```text
+packages/genshin-world/src/components/Character/Model/Index.reference.ts
+```
+
 1. **The Traveler's locomotion clips decoded**, the motion pass's first input.
    - `scripts/src/models/genshinAssets/shared/DerivedAssetComponent.ts` gains `Traveler = "traveler"`, and `DerivedAssetComponentMap` its entry: `clipPattern: "^Ani_Avatar_Girl_(Standby|WalkCycle|RunCycle|SprintCycle)$"`, `roots: []` and `screen: "WorldScreen"`, with a comment naming the clips' block, `00/00035183.blk` in the asset index. `DerivedAssetLandmarkMap` takes an empty `Traveler` entry, since it holds one for every component.
    - Run `pnpm -C scripts genshin:assets clips traveler` with the game closed. It prints each clip's seconds and, for each curve, the bone path it animates and its range.
-   - Write `packages/genshin-world/src/components/Character/Model/Index.reference.ts` in the shape of `World/Character/Locomotion.reference.ts`: the four clips with their block and seconds, the bone paths their curves move, which is the skeleton the fit maps the pack's bones onto, and the run that read them.
+   - Write `Index.reference.ts` in the shape of `World/Character/Locomotion.reference.ts`: the four clips with their block and seconds, the bone paths their curves move, which is the skeleton the fit maps the pack's bones onto, and the run that read them.
    - The entry is data and the printout is its proof, so no unit test is owed.
 2. **Its motion.** The motion pass reads the character's locomotion clips, exported from the game's blocks under `~/Esposter/genshin-parity/extracted/` and decoded by `genshin:assets clips` once the character's component names their pattern, and the pack's model. It writes the fitted parameters as data beside the character's in `genshin-world`. Each bone's track is judged against its clip's, as the motion pass judges any track. It goes to the [compute queue](/docs/genshin/roadmap) once its inputs are named (below), and waits on the Traveler's official pack under `~/Esposter/genshin-parity/characters/10000007/`, which the user downloads from HoYoverse's release.
 3. **Its scale**, measured from the game's own model of the character, replacing MMD's reckoned unit. The Traveler's model prefab is `Avatar_Girl_Sword_PlayerGirl_Model`, whose Animator the asset index places in `00/02666572.blk`; it becomes the Traveler component's root once its game object's path ID is read from that block, and the scale needs the pack's height as well.

@@ -23,7 +23,11 @@ The weathers, the blend between them, their particles and splashes, the lightnin
 
 ## Still to build
 
-1. **The turn as the game's chain, next.** A new `packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts` holds `Weather_Standard`'s rows as the Decisions read them, keyed by `WeatherKind`, a public fact of the game's table rather than data generated from it. A new `getNextAreaWeather.ts` beside it takes the current weather, the area's weathers and a draw from the world's seeded random source (`createSeededRandom`), and returns the next by the row's weights over the area's own weathers, or the current one where none is left. `useAreaWeather` calls it in place of turning to the next in list order. Its test, `getNextAreaWeather.test.ts`, reads Clear after Clear at a draw of 0 and Thunderstorm at 0.99, never Rain after Rain, Snow held, and an area whose list lacks Thunderstorm never turning to it.
+```text
+packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts
+```
+
+1. **The turn as the game's chain, next.** A new `WeatherKindTransitionWeightsMap.ts` holds `Weather_Standard`'s rows as the Decisions read them, keyed by `WeatherKind`, a public fact of the game's table rather than data generated from it. A new `getNextAreaWeather.ts` beside it takes the current weather, the area's weathers and a draw from the world's seeded random source (`createSeededRandom`), and returns the next by the row's weights over the area's own weathers, or the current one where none is left. `useAreaWeather` calls it in place of turning to the next in list order. Its test, `getNextAreaWeather.test.ts`, reads Clear after Clear at a draw of 0 and Thunderstorm at 0.99, never Rain after Rain, Snow held, and an area whose list lacks Thunderstorm never turning to it.
 2. **Each area's template**, from `WeatherExcelConfigData`, added to `DUMP_TABLE_NAMES` (`scripts/src/services/genshinText/constants.ts`) and fetched with `pnpm -C scripts genshin:text fetch`: each catalogue area joined to its game area by the English name of `WorldAreaConfigData`'s entry, and an area whose template is not `Weather_Standard` given its own rows.
 3. **Cities clear inside their outlines**, once the catalogue draws subareas' outlines.
 

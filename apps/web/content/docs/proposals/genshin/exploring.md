@@ -43,10 +43,14 @@ flowchart TD
 
 **This adds:**
 
+```text
+scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts
+```
+
 1. **Mondstadt's Teleport Waypoints, next.**
    - `LandmarkKind` gains `TeleportWaypoint`, with a `WaypointLandmark.ts` and schema beside `StatueLandmark.ts` in `packages/genshin-world/src/models/world/` joining `Landmark`'s union, and `JUMP_LANDMARK_KINDS` gains it.
    - `readSceneTransportPoints` carries each point's id, its key in the dump's category.
-   - A new `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, a `waypoints` fit in `DerivedAssetFitMap`, reads `readFittedMapPoints()` and `readSceneTransportPoints()`, keeps the map's ground waypoints in the region's map area (`InteractiveMapRegionMap`), pairs them as the Decisions say, and writes each paired point as a landmark round the world's origin, carried as `fitRegionCapitals` carries the waypoints' median, into `packages/genshin-world/src/data/regions/<region>.json` beside its other landmarks, replacing the waypoints it wrote before. It runs for Mondstadt first.
+   - A new `fitRegionWaypoints.ts`, a `waypoints` fit in `DerivedAssetFitMap`, reads `readFittedMapPoints()` and `readSceneTransportPoints()`, keeps the map's ground waypoints in the region's map area (`InteractiveMapRegionMap`), pairs them as the Decisions say, and writes each paired point as a landmark round the world's origin, carried as `fitRegionCapitals` carries the waypoints' median, into `packages/genshin-world/src/data/regions/<region>.json` beside its other landmarks, replacing the waypoints it wrote before. It runs for Mondstadt first.
    - The pure step from pairs to landmarks is `toWaypointLandmarks.ts`, and its test, `toWaypointLandmarks.test.ts`, carries one map waypoint by a known transform onto a transport point and reads back one landmark with that point's id, while a statue's label and a waypoint past the bar give none.
 2. **The game's arrival points**, read from the scene points.
 

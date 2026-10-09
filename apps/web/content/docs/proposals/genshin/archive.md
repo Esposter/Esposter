@@ -33,9 +33,15 @@ flowchart LR
 **This adds, in order:**
 
 1. **Artifact sets, as a rule.**
-   - `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts`: given the progress, the artifacts held (`Pick<Artifact, "setId" | "slot">`) and each set's piece count read from `data/items/reliquarySets.json` (`pieceItemIds.length` by `id`), the progress with the Equipment entry of every set whose held artifacts cover that many distinct slots opened, leaving the progress given as it was, as `openArchiveEntries` does. The rule is handed the Equipment entries' ids too, since sets 15004 and 15012 have none and open nothing.
+
+   ```text
+   packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts
+   ```
+
+   - `openArchiveArtifactSets.ts`: given the progress, the artifacts held (`Pick<Artifact, "setId" | "slot">`) and each set's piece count read from `data/items/reliquarySets.json` (`pieceItemIds.length` by `id`), the progress with the Equipment entry of every set whose held artifacts cover that many distinct slots opened, leaving the progress given as it was, as `openArchiveEntries` does. The rule is handed the Equipment entries' ids too, since sets 15004 and 15012 have none and open nothing.
    - The proof: `openArchiveArtifactSets.test.ts` beside it holds four slots of a five-piece set and leaves it locked, adds the fifth and opens it, opens the one-piece set 15009 on one circlet, and keeps an entry already open when its pieces are gone.
    - Its caller is wherever the player's artifacts change, which the first artifact drop brings.
+
 2. **Wildlife's Living Beings**, once an animal is struck and its kills count.
 3. **Tutorials' opening**, once a tip is shown.
 4. **Geography's viewpoints**, at their places, once the scene group export the other machine is making places each view codex row's group.
