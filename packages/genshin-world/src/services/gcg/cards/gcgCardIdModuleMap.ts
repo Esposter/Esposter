@@ -13,23 +13,35 @@ import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
+import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
+import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
 import { mondstadtHashBrown } from "#src/services/gcg/cards/mondstadtHashBrown";
 import { naganoharaMeteorSwarm } from "#src/services/gcg/cards/naganoharaMeteorSwarm";
 import { niwabiEnshou } from "#src/services/gcg/cards/niwabiEnshou";
 import { northernSmokedChicken } from "#src/services/gcg/cards/northernSmokedChicken";
+import { oceanicMimicFrog } from "#src/services/gcg/cards/oceanicMimicFrog";
+import { oceanicMimicRaptor } from "#src/services/gcg/cards/oceanicMimicRaptor";
+import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirrel";
 import { paimon } from "#src/services/gcg/cards/paimon";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
+import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
+import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
 import { starsigns } from "#src/services/gcg/cards/starsigns";
+import { strategize } from "#src/services/gcg/cards/strategize";
+import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
 import { thunderSummonersCrown } from "#src/services/gcg/cards/thunderSummonersCrown";
 import { timmie } from "#src/services/gcg/cards/timmie";
+import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutomaton";
+import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
+import { wangshuInn } from "#src/services/gcg/cards/wangshuInn";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
 import { whiteIronGreatsword } from "#src/services/gcg/cards/whiteIronGreatsword";
 import { wineStainedTricorne } from "#src/services/gcg/cards/wineStainedTricorne";
@@ -49,8 +61,15 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [113051, niwabiEnshou],
   [113052, aurousBlaze],
   [114021, theWolfWithin],
+  [122011, oceanicMimicSquirrel],
+  [122012, oceanicMimicRaptor],
+  [122013, oceanicMimicFrog],
+  [125011, shadowswordLoneGale],
+  [125012, shadowswordGallopingFrost],
   [213_011, flowingFlame],
   [213051, naganoharaMeteorSwarm],
+  [222011, streamingSurge],
+  [225011, transcendentAutomaton],
   [311201, ravenBow],
   [311301, whiteIronGreatsword],
   [311_302, sacrificialGreatsword],
@@ -59,14 +78,19 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_301, witchsScorchingHat],
   [312_302, crimsonWitchOfFlames],
   [312401, thunderSummonersCrown],
+  [312501, viridescentVenerersDiadem],
+  [321001, liyueHarborWharf],
   [321_003, jadeChamber],
+  [321005, wangshuInn],
   [321_006, favoniusCathedral],
   [322_001, paimon],
   [322002, katheryne],
   [322_007, timmie],
   [322_010, ellin],
+  [322011, ironTongueTian],
   [331_301, elementalResonanceWovenFlames],
   [332_001, theBestestTravelCompanion],
+  [332004, strategize],
   [332_007, whenTheCraneReturned],
   [332_008, starsigns],
   [333001, jueyunGuoba],

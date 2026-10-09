@@ -89,3 +89,17 @@ describe("a duel between two copies of the tutorial deck", () => {
     });
   });
 });
+
+describe("a duel between opponent decks 3 and 4", () => {
+  test("should be played to its end through the engine's public functions", async () => {
+    expect.hasAssertions();
+
+    const rule = await readGcgStandardRule();
+    const duel = playGcgDuel([await readGcgDeck(3), await readGcgDeck(4)], rule);
+
+    expect({ isEnded: duel.phase === GcgPhase.Ended, hasOutcome: duel.outcome !== undefined }).toStrictEqual({
+      hasOutcome: true,
+      isEnded: true,
+    });
+  });
+});

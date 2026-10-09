@@ -127,7 +127,7 @@ What still separates the recreation from the whole game once the world and its p
 | [Serenitea Pot](/docs/proposals/genshin/serenitea-pot)               | the player's realm, its placement editor and load, the depot, companions, gardens and ponds; Tubby's furnishings, Trust Rank and the realm's stores are built            |
 | [Spiral Abyss](/docs/proposals/genshin/spiral-abyss)                 | the chambers' scenes and enemy camps, the screen and the carried health, the blessings and the wormhole; the floors, clock, stars and periods are built                  |
 | [Imaginarium Theater](/docs/proposals/genshin/imaginarium-theater)   | the season's cast, the acts and events paid in Fantasia Flowers, the rewind and the Lobby; the season, Vigor, Blessing Level and Stella are built                        |
-| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the duel screen, the opponents' cards, invitationals and the Card Shop, past its built rules engine and tutorial deck                                                    |
+| [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation)   | the duel screen, the opponents' cards, invitationals and the Card Shop, past its built rules engine and its tutorial deck and decks 3 and 4                              |
 
 ## Scope and order
 

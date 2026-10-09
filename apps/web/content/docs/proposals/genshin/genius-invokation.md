@@ -1,6 +1,6 @@
 ---
 title: Genius Invokation TCG
-description: Proposal — the card game against its residents, past its rules engine and the tutorial deck, which are built: the duel is played on a screen at a resident's table, each further card is a module over the engine's shared effects, and invitationals, tavern challengers, the Card Shop and the Player Level follow.
+description: Proposal — the card game against its residents, past its rules engine and the tutorial deck and decks 3 and 4, which are built: the duel is played on a screen at a resident's table, each further card is a module over the engine's shared effects, and invitationals, tavern challengers, the Card Shop and the Player Level follow.
 model: claude-opus-5-5
 ---
 
@@ -10,7 +10,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Decisions
 
-- **Each card's effect is a module.** The game keeps its cards' behaviour in configs under `BinOutput/GCG`, which are written as each card's module over the engine's shared effects, from the card's own description where the configs are not read, as a character's kit is. A skill that names a shared effect, such as `Effect_Damage_<element>_<n>`, needs no module of its own; a character's own `Char_Skill_<id>` script is one. The tutorial deck's modules are built, as the [as-built page](/docs/genshin/genius-invokation) records.
+- **Each card's effect is a module.** The game keeps its cards' behaviour in configs under `BinOutput/GCG`, which are written as each card's module over the engine's shared effects, from the card's own description where the configs are not read, as a character's kit is. A skill that names a shared effect, such as `Effect_Damage_<element>_<n>`, needs no module of its own; a character's own `Char_Skill_<id>` script is one. The modules of the tutorial deck and of decks 3 and 4 are built, as the [as-built page](/docs/genshin/genius-invokation) records.
 - **Every card is the game's own row.** Characters, skills, costs and cards come from the `GCGCharExcelConfigData`, `GCGSkillExcelConfigData`, `GCGCostExcelConfigData` and `GCGCardExcelConfigData` tables, and names and descriptions are the game's by text id. The standard rule and the reactions are already read from the rule and reaction tables.
 - **Duels are against the game's opponents.** The residents the game seats for an Invitational and the tavern's challengers play the decks `GCGDeckExcelConfigData` gives them. Winning earns their cards and Lucky Coins, the Card Shop sells cards for Lucky Coins, and the player's Player Level grows by duels, as the game earns each.
 - **Opened at Adventure Rank 32 with its tutorial quest**, as the wiki gives it.
@@ -18,12 +18,12 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Scope and order
 
-**Today:** the rules engine stands on the standard rule, and the tutorial deck's three characters and fifteen action cards each have a module, with its calls on its [as-built page](/docs/genshin/genius-invokation). No screen opens a duel, so the tutorial duel is played only by the engine's tests.
+**Today:** the rules engine stands on the standard rule, and the tutorial deck and decks 3 and 4 each have their characters, skills and action cards built, with their calls on the [as-built page](/docs/genshin/genius-invokation). No screen opens a duel, so the duels are played only by the engine's tests.
 
 **This adds, in order:**
 
 1. **The duel screen**, opened from a resident's talk, with the card names and descriptions read by their text ids.
-2. **Every opponent deck's cards**, each given the module the engine needs to play it, in the order the game's opponents use them.
+2. **The other opponent decks**, each given the modules its cards and skills need. Deck 2 is next, the smallest of the rest, since deck 10 is not legal without Xiangling in its deck; which resident seats which deck is read from the game's data when that resident's duel is built.
 3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
 ## Data and measures
