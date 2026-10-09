@@ -51,10 +51,9 @@ const searchQuery = ref("");
 // Discord's dialog does. A friend with none keeps their place in the friends list behind every one who has one
 const friendRecencyMap = computed(() => {
   const recencyMap = new Map<PublicUser["id"], number>();
-  directMessages.value.forEach(({ id }, index) => {
+  for (const [index, { id }] of directMessages.value.entries())
     for (const { id: participantId } of getDirectMessageParticipants(id))
       if (!recencyMap.has(participantId)) recencyMap.set(participantId, index);
-  });
   return recencyMap;
 });
 const getFriendRecency = (userId: PublicUser["id"]) => friendRecencyMap.value.get(userId) ?? Number.MAX_SAFE_INTEGER;

@@ -26,6 +26,7 @@ describe(toForgeRecipe, () => {
     scoinCost: 5,
     ...overrides,
   });
+
   test("should write an enhancement ore with its forge type, forge points, seconds, Mora and queue size", () => {
     expect.hasAssertions();
 
