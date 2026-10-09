@@ -1,13 +1,13 @@
 ---
 title: Achievements
-description: Proposal — the achievements beyond the quest triggers already built: exploring's triggers as their pages land, the server-fired ones written one by one from their descriptions, and the namecard a finished category pays. The table, the quest triggers and the screen are built, as the achievements page describes.
+description: Proposal — the achievements beyond the quest triggers already built: exploring's triggers as their pages land, and the server-fired ones written one by one from their descriptions. The table, the quest triggers and the screen are built, as the achievements page describes.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/achievement/**"]
 ---
 
 # Achievements
 
-The table, the quest triggers and the Achievements screen are built, and the [achievements](/docs/genshin/achievements) page describes them. What is left is the triggers the other pages record, and the namecard a finished category pays. Each trigger type is wired once to the record it reads, so an achievement waits on the page that records its doing and moves once that page does.
+The table, the quest triggers and the Achievements screen are built, and the [achievements](/docs/genshin/achievements) page describes them. What is left is the triggers the other pages record, and the grant of a finished category's namecard. Each trigger type is wired once to the record it reads, so an achievement waits on the page that records its doing and moves once that page does.
 
 ## Decisions
 
@@ -19,17 +19,10 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 
 ## Scope and order
 
-1. **The namecards the finished categories pay, as a rule.** No source is owed: `packages/genshin-world/src/generated/achievements/categories.json` holds each category's `namecardItemId`.
+1. **Exploring's triggers**, each as its page's rule gains a caller in the world.
+2. **Each server-fired achievement**, with the page that builds its subject.
 
-   ```text
-   packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts
-   ```
-
-   - `computeAchievementNamecardItemIds.ts`: given the categories, the achievements and the progress map, the `namecardItemId` of every category with a non-zero one that `checkIsAchievementCategoryComplete` finds finished, in the categories' order.
-   - The proof: `computeAchievementNamecardItemIds.test.ts` beside it, on two categories of two achievements each, lists the namecard of the one with both finished, none for the one with one finished, and none for a finished category whose `namecardItemId` is zero.
-
-2. **Exploring's triggers**, each as its page's rule gains a caller in the world.
-3. **Each server-fired achievement**, with the page that builds its subject.
+The namecard a finished category pays is built: `computeAchievementNamecardItemIds` lists it from the progress, and the [achievements](/docs/genshin/achievements) page describes it. Its grant to the profile waits on the companionship page's namecard list.
 
 ## Data and measures
 
