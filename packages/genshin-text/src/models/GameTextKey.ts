@@ -17,6 +17,14 @@ export enum GameTextKey {
   AmakumoFruit = "3862594948",
   Apple = "2483588484",
   Archive = "UI_CODEX_HOME_TITLE",
+  // The titles of the Archive's seven sections, each the codex's own
+  ArchiveBooks = "UI_CODEX_BOOKS",
+  ArchiveEquipment = "UI_CODEX_EQUIPMENT",
+  ArchiveGeography = "UI_CODEX_VIEW",
+  ArchiveLivingBeings = "UI_CODEX_BIOS",
+  ArchiveMaterials = "UI_CODEX_MATERIAL",
+  ArchiveTravelLog = "UI_CODEX_QUEST",
+  ArchiveTutorials = "UI_CODEX_TIPS",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
   AttributeAnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
   AttributeAttack = "FIGHT_PROP_CUR_ATTACK",

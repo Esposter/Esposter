@@ -1,13 +1,14 @@
 import type { CommandDef } from "citty";
 
 import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
+import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
 import { clipsCommand } from "#src/services/genshinAssets/commands/clipsCommand";
 import { commissionsCommand } from "#src/services/genshinAssets/commands/commissionsCommand";
-import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
 import { cookingCommand } from "#src/services/genshinAssets/commands/cookingCommand";
+import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
@@ -20,6 +21,7 @@ import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsComm
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { homeCommand } from "#src/services/genshinAssets/commands/homeCommand";
+import { imaginariumCommand } from "#src/services/genshinAssets/commands/imaginariumCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
@@ -81,18 +83,20 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     crafting: craftingCommand,
     cooking: cookingCommand,
     forging: forgingCommand,
-    achievements: achievementsCommand,
     home: homeCommand,
+    achievements: achievementsCommand,
+    archive: archiveCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,
     gcg: gcgCommand,
     gadgets: gadgetsCommand,
     shops: shopsCommand,
-    reputation: reputationCommand,
     wildlife: wildlifeCommand,
+    reputation: reputationCommand,
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
     "spiral-abyss": spiralAbyssCommand,
+    imaginarium: imaginariumCommand,
   },
 });

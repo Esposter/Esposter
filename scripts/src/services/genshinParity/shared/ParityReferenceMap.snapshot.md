@@ -7,15 +7,23 @@ committed.
 
 | Reference | Screen | Mean difference | Shape | Tone | FLIP |
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
+| `character-artifacts` | `CharacterScreen` | 13.01% | 0.421 | 8.51% | 0.5022 |
+| `character-artifacts-tabs` | `CharacterScreen` | 6.73% | 0.478 | 4.96% | 0.3174 |
 | `character-attributes` | `CharacterScreen` | 8.10% | 0.758 | 5.59% | 0.3570 |
-| `character-attributes-panel` | `CharacterScreen` | 7.96% | 0.573 | 4.63% | 0.3422 |
-| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 5.99% | 0.3337 |
+| `character-attributes-panel` | `CharacterScreen` | 7.97% | 0.572 | 4.62% | 0.3422 |
+| `character-attributes-tabs` | `CharacterScreen` | 7.26% | 0.495 | 6.00% | 0.3337 |
 | `character-attributes-top` | `CharacterScreen` | 11.15% | 0.734 | 4.64% | 0.4087 |
-| `dialogue-choices-line` | `DialogueTalk` | 39.58% | 0.199 | 37.47% | 0.7964 |
-| `dialogue-choices-replies` | `DialogueTalk` | 38.00% | 0.662 | 32.45% | 0.7431 |
-| `dialogue-choices-speaker` | `DialogueTalk` | 63.87% | 0.000 | 65.02% | 0.9586 |
-| `dialogue-line` | `DialogueTalk` | 37.63% | 0.144 | 35.52% | 0.8082 |
-| `dialogue-paimon-line` | `DialogueTalk` | 50.23% | 0.078 | 48.53% | 0.9182 |
+| `character-constellation` | `CharacterScreen` | 23.13% | 0.624 | 16.95% | 0.7374 |
+| `character-constellation-tabs` | `CharacterScreen` | 27.18% | 0.481 | 20.98% | 0.8279 |
+| `character-talents` | `CharacterScreen` | 11.56% | 0.463 | 7.86% | 0.4587 |
+| `character-talents-tabs` | `CharacterScreen` | 6.42% | 0.468 | 4.75% | 0.3055 |
+| `character-weapons` | `CharacterScreen` | 10.91% | 0.477 | 7.10% | 0.4369 |
+| `character-weapons-tabs` | `CharacterScreen` | 6.94% | 0.499 | 5.03% | 0.3201 |
+| `dialogue-choices-line` | `DialogueTalk` | 10.34% | 0.893 | 9.46% | 0.3660 |
+| `dialogue-choices-replies` | `DialogueTalk` | 20.89% | 0.762 | 13.88% | 0.5405 |
+| `dialogue-choices-speaker` | `DialogueTalk` | 2.63% | 1.000 | 2.68% | 0.1807 |
+| `dialogue-line` | `DialogueTalk` | 15.68% | 0.557 | 9.36% | 0.5065 |
+| `dialogue-paimon-line` | `DialogueTalk` | 7.74% | 0.916 | 6.58% | 0.3145 |
 | `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |

@@ -28,7 +28,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                                                                                         |
 | A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                                                                                     |
 | Which pass is red, and its measure   | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md`                                                                      |
-| Every reference's score in one run   | `compare --all`: a reference missing its reference image or witness layout prints `not measured` and keeps its row; a named `compare` still fails                       |
+| Every reference's score in one run   | `compare --all`: a missing input prints `not measured`, a throw prints `failed`, and the run goes on keeping both rows; a named `compare` still fails                   |
 
 ### Inventory
 

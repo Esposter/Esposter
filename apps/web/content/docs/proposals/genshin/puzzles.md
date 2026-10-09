@@ -12,7 +12,7 @@ Much of the game's exploration is puzzles: monuments lit by an element, Seelies 
 
 - **A mechanism is a small state machine.** Each kind of mechanism is a deterministic step in the world, as an enemy's AI is, moved by the doings that reach it: a hit of an element through [combat](/docs/genshin/combat)'s rules, the character stepping on it, an interaction, or a timer on the fixed step. Its states are the wiki's description of the kind, and nothing else in the world knows its kind.
 - **A puzzle is its mechanisms and its goal, written per puzzle.** Which mechanisms make one puzzle and what solving it does is decided by a scene group on the game's servers, out of the client's reach, so each puzzle's wiring is written as data from the wiki's description of it and confirmed against a recording where the description leaves it open. A puzzle solved stays solved, kept with the player's progress, unless the wiki says it resets.
-- **Elemental Monuments.** A monument lights when struck by its element, a reaction's included. Some stay lit once lit; others go out after their time. A puzzle of monuments is solved once all of them are lit together. How a strike or a reaction lights a monument, and how a timed one goes out, is settled and built on the [as-built page](/docs/genshin/puzzles). A puzzle whose monuments must be lit in a set order, such as the Minacious Isle sequence a Seelie shows on a pillar, is written with its own sequence as its goal, once its region's puzzles are wired.
+- **Elemental Monuments.** A monument lights when struck by its element, a reaction's included. Some stay lit once lit; others go out after their time. A puzzle of monuments is solved once all of them are lit together. Settled: the element that lights a monument is the strike's own or a reaction's, as the [puzzles page](/docs/genshin/puzzles) records; a timed monument counts its time from its last strike on its own clock. A puzzle whose monuments must be lit in a set order, such as the Minacious Isle sequence a Seelie shows on a pillar, is written with its own sequence as its goal, once its region's puzzles are wired.
 - **Seelies led home.** A Seelie moves along its route toward its court as the player follows it, and goes back to its start if it is not led home in time. Settled in its court it spawns its chest. Elemental Sight draws its trail ([Elemental Sight](/docs/proposals/genshin/elemental-sight)). Its route is the game's server path, so it is the walk on the ground between its fitted start and court until a recording measures its turns.
 - **Time Trial Challenges.** Interacting with the challenge's marker starts its timer, and its targets, rings to pass, objects to strike or enemies to defeat, must all be done before it ends; done in time, it spawns its chest.
 - **Shrines of Depths.** A shrine is opened with one of its region's Shrine of Depths keys, which the region's statues give ([Statues of The Seven](/docs/proposals/genshin/statues-of-the-seven)), and holds a Luxurious chest. Each region keeps its own keys.
@@ -33,7 +33,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** no mechanism is in play. The places of the four kinds and an Elemental Monument's lit state are built, and only those, as the [as-built page](/docs/genshin/puzzles) records.
+**Today:** the [as-built page](/docs/genshin/puzzles) records what stands, and nothing is yet placed, drawn, struck or solved.
 
 **This adds, in order:**
 

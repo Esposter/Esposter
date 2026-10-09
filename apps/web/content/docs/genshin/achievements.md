@@ -27,7 +27,7 @@ flowchart TD
 
 ### The table
 
-`pnpm -C scripts genshin:assets achievements` reads the game's achievement table and its category table from the dump, and writes two slices into the world's generated folder. A disused achievement, one the game no longer offers, is left out; the rest are kept whole, with every trigger, since the screen lists all of a category and a category's end waits on every one of its achievements. Each row is checked against the world's own schema before it is written. The slices are written compact, the achievements one at about half a megabyte, and the world imports them on demand the first time the screen opens.
+`pnpm -C scripts genshin:assets achievements` reads the game's achievement table and its category table from the dump, and writes two slices into the world's generated folder. A disused achievement, one the game no longer offers, is left out; the rest are kept whole, with every trigger, since the screen lists all of a category and a category's end waits on every one of its achievements. Each row is validated against the world's schema before it is written. The slices are written compact, the achievements one at about half a megabyte, and the world imports them on demand the first time the screen opens.
 
 An achievement keeps its id, its category, its order there, its trigger type and the ids that trigger names, its count, the tier before it, whether it is hidden until it is done, its Primogems and its two text ids. A category keeps its name's text id, its order, and the namecard item its completion pays, which is zero for a category with no end.
 
@@ -49,14 +49,14 @@ A trigger type the map does not name is not watched, and its achievements never 
 
 ## Notes
 
-- **Nothing emits a finished quest yet.** `advanceAchievements` is built and tested, but the world starts no quest, so no event reaches it and every achievement reads zero. The quest page that starts and finishes quests is the one that calls it, with a `QuestFinished` for each sub-quest and a `ParentQuestFinished` for each main quest once its last sub-quest is finished.
+- **Nothing emits a finished quest yet.** `advanceAchievements` is built and tested, but the world starts no quest, so no event reaches it and every achievement reads zero. [The proposal](/docs/proposals/genshin/achievements) names the quest page that will emit them.
 - **A namecard is not granted.** A category's completion is checked by `checkIsAchievementCategoryComplete`, and its namecard item is kept on the category. Namecards are the [companionship](/docs/proposals/genshin/companionship) page's, which holds no namecard list yet.
 - **The quest ids the table names are not all in the dump.** About two-thirds of the sub-quest ids the quest triggers name are in the dump's quest table; the rest name quests the dump does not carry, so their achievements stay at zero until that data is read.
 - **The screen's look is provisional.** Its places follow the quest screen's grid, not the English client, and its category icons, its Primogem glyph and its tab shapes are not built.
 
 ## Parity
 
-The Achievements screen has no parity measure yet. Its look waits on a recording of the English client's screen, listed on the roadmap's Recordings owed list.
+The Achievements screen has no parity measure yet. Its look waits on `achievements-screen.mkv`, listed as owed on the roadmap.
 
 ## Key files
 

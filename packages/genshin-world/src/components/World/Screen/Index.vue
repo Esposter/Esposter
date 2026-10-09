@@ -2,6 +2,9 @@
 import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
+import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
+import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
@@ -25,6 +28,7 @@ import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
+import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
@@ -47,6 +51,10 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
+import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
+import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
+import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
+import { readArchiveEntries } from "#src/services/archive/readArchiveEntries";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
@@ -93,7 +101,7 @@ import {
   QualityTierSettingsMap,
   STAMINA_MAX,
 } from "genshin-engine";
-import { InteractionKind, ItemCategory } from "genshin-interface";
+import { CharacterMenuTab, InteractionKind, ItemCategory } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
@@ -242,6 +250,31 @@ const achievementData = shallowRef<{
   textMap: Readonly<Record<string, string>>;
 }>();
 const achievementProgressMap = new Map<number, AchievementProgress>();
+// The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
+// Its progress starts empty, and the bag's items open their entries as it takes them in
+const archiveData = shallowRef<{
+  sectionEntriesMap: Record<ArchiveSection, ArchiveEntry[]>;
+  textMap: Readonly<Record<string, string>>;
+}>();
+const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
+// The main quests done, by id. Nothing completes one yet, so the Archive stays locked
+const finishedMainQuestIds = shallowRef<ReadonlySet<number>>(new Set());
+const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
+watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
+  if (!newIsArchiveUnlocked || archiveData.value) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(async () => {
+    const [sectionEntriesMap, textMap] = await Promise.all([readArchiveEntries(), ArchiveTextLoaderMap[language]()]);
+    return { sectionEntriesMap, textMap };
+  }).match(
+    (newArchiveData) => {
+      archiveData.value = newArchiveData;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+});
 watch(screenKind, (newScreenKind) => {
   if (newScreenKind !== ScreenKind.Achievements || achievementData.value) return;
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -376,11 +409,16 @@ const placeWorldDrops = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   placedDropCount += drops.length;
   worldDrops.value = [...worldDrops.value, ...drops];
 };
+// Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in
+const setInventory = (nextInventory: Inventory) => {
+  inventory.value = nextInventory;
+  archiveProgressMap.value = openArchiveEntries(archiveProgressMap.value, nextInventory.items);
+};
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
 // Ground as a smaller drop
 const pickUpWorldDrop = (worldDrop: WorldDrop) => {
   const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
-  inventory.value = pickUp.inventory;
+  setInventory(pickUp.inventory);
   wallet.value = pickUp.wallet;
   worldDrops.value =
     pickUp.overflow > 0
@@ -394,7 +432,7 @@ const pickUpGatheringPlace = (placeId: string) => {
   const item = idGatheringItemMap.value.get(place.kind);
   if (!item) return;
   const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
-  inventory.value = addition.inventory;
+  setInventory(addition.inventory);
   if (addition.overflow === 0)
     gatheringPlaceIdPickedAtMap.value = new Map([
       ...gatheringPlaceIdPickedAtMap.value,
@@ -635,6 +673,15 @@ defineExpose({ jumpTo, readCameraPosition });
           @close="screenKind = ScreenKind.World"
         />
       </template>
+      <template v-if="archiveData" #[ScreenKind.Archive]>
+        <ArchiveScreen
+          :game-text
+          :progress-map="archiveProgressMap"
+          :section-entries-map="archiveData.sectionEntriesMap"
+          :text-map="archiveData.textMap"
+          @close="screenKind = ScreenKind.World"
+        />
+      </template>
       <template #[ScreenKind.Quests]>
         <QuestScreen
           :game-text
@@ -654,6 +701,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :active-character-id="getActiveCharacterId(party)"
           :characters
           :game-text
+          :initial-tab="CharacterMenuTab.Attributes"
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables
@@ -673,13 +721,14 @@ defineExpose({ jumpTo, readCameraPosition });
         <WishScreen
           v-model:character-copy-count-map="characterCopyCountMap"
           v-model:characters="characters"
-          v-model:inventory="inventory"
           v-model:pity-map="wishPityMap"
           v-model:wallet="wallet"
           :game-text
+          :inventory
           :name-text
           :stat-tables
           @close="screenKind = ScreenKind.World"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
     </MenuScreen>

@@ -5,7 +5,7 @@ description: The official Teyvat Interactive Map's puzzle marks fitted into each
 
 # Puzzles
 
-The client's data holds none of the servers' puzzle mechanisms either, so their places are taken from the official map's public points, the source the [spawned places](/docs/genshin/spawned-places) page names. This page is the first half of the [puzzles](/docs/proposals/genshin/puzzles) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. Nothing is placed in the world, drawn, struck or solved yet.
+The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](/docs/genshin/spawned-places) page. This page is the built half of the [puzzles](/docs/proposals/genshin/puzzles) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. Nothing is placed in the world, drawn, struck or solved yet.
 
 ## How it works
 
@@ -32,7 +32,7 @@ flowchart TD
 
 ## The writer
 
-`pnpm -C scripts genshin:assets puzzles` writes a slice for each region into `packages/genshin-world/src/generated/puzzles/` from the points and the fit, in the chests' format: a compact list of places, each by its map point id, kind and position in game coordinates. It touches no other slice, and its report gives each region's count of places and of those left out.
+`pnpm -C scripts genshin:assets puzzles` writes one slice per region in `packages/genshin-world/src/generated/puzzles/`, in the shape the [chests](/docs/genshin/chests) page describes. Its report lists each region's places and the ones it left out.
 
 - **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share.
 - **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out.
@@ -61,7 +61,7 @@ An `ElementalMonument` holds its element, its own elemental state, whether it is
 | `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's provisional lit time                                   |
 | `packages/genshin-world/src/generated/puzzles/`                             | One slice per region, imported on demand once the world places them         |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`       | Each kind's labels on the official map                                      |
-| `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes the puzzle places of every region                                    |
+| `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes each region's puzzle places from the points                          |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`               | Carries a kind's labelled points into their regions, shared with chests     |
 | `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`             | `genshin:assets puzzles`                                                    |
 

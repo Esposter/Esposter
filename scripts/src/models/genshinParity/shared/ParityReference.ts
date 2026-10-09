@@ -22,6 +22,10 @@ interface ParityReferenceBase {
   // The pixels, in the reference's own, its component's landmarks are seen at, read by eye and snapped to the nearest
   // Corner, which `pose` solves the camera from
   landmarks?: Record<string, [number, number]>;
+  // The rectangles within the region a comparison scores, in the reference's own pixels: every other pixel is masked
+  // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
+  // Absent
+  mask?: ParityRegion[];
   // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
   // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
   poseBar?: number;
@@ -31,10 +35,6 @@ interface ParityReferenceBase {
   // The part a comparison scores, in the reference's own pixels, so the world behind a menu never counts against it;
   // The whole frame when absent
   region?: ParityRegion;
-  // The rectangles within the region a comparison scores, in the reference's own pixels: every other pixel is masked
-  // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
-  // Absent
-  mask?: ParityRegion[];
   // The parity page's screen that recreates it, by its component's name
   screen: string;
 }

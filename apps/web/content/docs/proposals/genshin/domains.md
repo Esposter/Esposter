@@ -52,7 +52,7 @@ flowchart TD
 
 - **Read from the game's tables:** `DungeonExcelConfigData`, `DungeonEntryExcelConfigData`, `DailyDungeonConfigData` and the domains' reward rows; each domain scene's layout from its own scene data, as a region's is read. None of the first three is in the dump yet.
 - **Read from the wiki:** each domain's rolled drops by level, and the weekday schedule the daily table's fields are matched against, both of which the wiki's refusal to serve the fetch left unread.
-- **Measured:** the fade into and out of a domain, off a recording, as the jump's fade is. The clip is on the [roadmap](/docs/genshin/roadmap)'s Recordings owed list.
+- **Measured:** the fade into and out of a domain, off a recording, as the jump's fade is. The clip is listed on the [roadmap](/docs/genshin/roadmap).
 
 ## Key files
 

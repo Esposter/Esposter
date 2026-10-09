@@ -13,13 +13,12 @@ const decodeTarget = (name: string, values: Float32Array, positionLift: number):
     return values.map((value, index) => (index % 4 === 3 ? value : value - positionLift));
   return values;
 };
-// The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer,
-// Drawing only the ones named, each handed over as base64 and read here as its floats; told to, of the scene's own parts
-// In place of the exports', and given a direction, under the sun cast from it for this read alone
-export const readWitnessTargets = async (
+// One call of the witness page's `renderWitnessTargets`, drawing the names given and reading them back as floats: each
+// Handed over as base64 and decoded here, along with the parts and the view's size the page draws them at
+const readWitnessTargetsInCall = async (
   page: Page,
   names: readonly WitnessTargetName[],
-  isScene = false,
+  isScene: boolean,
   lightDirection?: Readonly<Vector>,
 ): Promise<
   Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
@@ -63,4 +62,29 @@ export const readWitnessTargets = async (
     ),
     width,
   };
+};
+// The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer.
+// The page draws them at the reference's full 1920 by 1080, not the structure's width, so each float target is 33 MB,
+// And one call moving all eight held the renderer for seconds, the shared browser closing the page under it in every
+// Run on it, where each target alone moves its 33 MB in about a second. So each target is drawn and read in a call of
+// Its own; the families, the parts and the view's size come from a call drawing none, which draws nothing. Told to, of
+// The scene's own parts in place of the exports', and given a direction, under the sun cast from it for this read alone
+export const readWitnessTargets = async (
+  page: Page,
+  names: readonly WitnessTargetName[],
+  isScene = false,
+  lightDirection?: Readonly<Vector>,
+): Promise<
+  Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
+    targets: Partial<Record<WitnessTargetName, Float32Array>>;
+  }
+> => {
+  const { families, height, parts, width } = await readWitnessTargetsInCall(page, [], isScene, lightDirection);
+  const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
+  for (const name of names) {
+    // oxlint-disable-next-line no-await-in-loop -- one target is drawn and read back before the next is drawn into it
+    const { targets: read } = await readWitnessTargetsInCall(page, [name], isScene, lightDirection);
+    Object.assign(targets, read);
+  }
+  return { families, height, parts, targets, width };
 };

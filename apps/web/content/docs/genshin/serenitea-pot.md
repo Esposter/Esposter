@@ -35,13 +35,13 @@ flowchart LR
 
 ## The tables
 
-`pnpm -C scripts genshin:assets home` writes two slices into the world's generated folder, from the game's tables in the dump. Three of them are not in the community dump the scripts read, so they are fetched from the AnimeGameData repository into the dump and never committed, as the [forging](/docs/genshin/forging) tables are.
+`pnpm -C scripts genshin:assets home` writes two slices into the world's generated folder, from the game's tables in the dump. Three of them are not in the community dump the scripts read, so they are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](/docs/genshin/forging) tables are.
 
 - **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds: between ten and twenty hours, the first blueprint fourteen. Each order makes one furnishing.
 - **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and over a thousand of the blueprints have one. The few dozen that no diagram names are open from the start.
 - **Trust and Adeptal Energy.** `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, written as one `levels.json`: each Trust Rank's EXP, companions and store limits, and each Adeptal Energy rank's comfort and the rates its stores fill at.
 
-The furnishings' own table, `HomeWorldFurnitureExcelConfigData`, is not read yet: its comfort is for the placement editor, which is not built.
+The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet: its comfort is for the placement editor, which is not built.
 
 ## The rules
 

@@ -16,8 +16,8 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
   // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
   // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
-  // Closure starts from the layout of game objects. The blob's placements, in the tiles its capital's view covers, are
-  // What holds the city's props and buildings, each a prefab rooted by its game object's name
+  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
+  // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
   [DerivedAssetComponent.Fontaine]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Inazuma]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Liyue]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },

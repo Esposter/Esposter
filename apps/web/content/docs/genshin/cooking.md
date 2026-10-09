@@ -31,7 +31,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets cooking` writes two slices from the game text dump: the dishes, from the cook recipe table with each dish's specialties and the instruction items that teach it, and the processings, from the compound table. The cook recipe, cook bonus and compound tables are not in the community dump the scripts read, so they are fetched from the AnimeGameData repository into the dump and never committed.
+`pnpm -C scripts genshin:assets cooking` writes two slices from the game text dump: the dishes, from the cook recipe table with each dish's specialties and the instruction items that teach it, and the processings, from the compound table. The cook recipe, cook bonus and compound tables are missing from the community dump, so they are fetched as the [game data formats](/docs/genshin/game-data-formats) page describes.
 
 - **Dishes.** A dish is written with its ingredients, the item each quality of its result is, its maximum proficiency, its rarity, its zone parameters, whether it is known from the start, its specialties, and the instruction items that teach it. Each result's quality is read off its item row's food quality, not its place in the table, and each specialty's chances are read in the order of the results.
 - **Processings.** Only the rows of the cooking type are written. A random processing draws its result from a drop table the build does not read, so it is left out. Each keeps its ingredients, its one result, the seconds a unit takes, how many may be queued, and whether it is known from the start.

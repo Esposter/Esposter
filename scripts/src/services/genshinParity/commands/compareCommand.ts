@@ -2,8 +2,10 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { ComparisonFailureRecovery } from "#src/models/genshinParity/reference/ComparisonFailureRecovery";
 import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { getMissingReferenceInputs } from "#src/services/genshinParity/reference/getMissingReferenceInputs";
@@ -11,6 +13,7 @@ import { writeParityScores } from "#src/services/genshinParity/reference/writePa
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -59,7 +62,21 @@ export const compareCommand: SubCommandsDef[string] = defineCommand({
         }
       }
       // oxlint-disable-next-line no-await-in-loop -- the parity page shoots one screen at a time
-      scores[referenceId] = await compareScreen(referenceId, args.witness);
+      const comparison = await getResultAsync(() => compareScreen(referenceId, args.witness));
+      comparison.match(
+        (score) => {
+          scores[referenceId] = score;
+        },
+        (error) => {
+          // A named reference fails the command as it always did, while `--all` reports the failure and goes on
+          if (!args.all) throw error;
+          console.log(`failed: ${error.message}`);
+          // Each reference's finalizers close its page, so the next one opens a page of its own, and a browser that
+          // Closed is replaced by the browser that page opens in
+          if (classifyComparisonFailure(error.message) === ComparisonFailureRecovery.RelaunchAndContinue)
+            console.log("the browser closed, so the next reference opens its page on a fresh one");
+        },
+      );
     }
     // A witness's scores price the exports, not the scene, so the committed report keeps the scene's own
     if (!args.witness) await writeParityScores(scores);

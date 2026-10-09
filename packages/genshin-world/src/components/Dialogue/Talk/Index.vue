@@ -20,7 +20,7 @@ interface Props {
   // The game's words in the reader's language
   gameText: GameText;
   // Where the talk is held when it opens, on any of its lines and written out whole or not; its first line unwritten
-  // when absent. The parity page holds a state the reference shows this way, the reveal's clock not running
+  // When absent. The parity page holds a state the reference shows this way, the reveal's clock not running
   startProgress?: TalkProgress;
   talk: Talk;
   // The talk's own words in the reader's language, by the game's text id
@@ -31,7 +31,8 @@ const { gameText, startProgress, talk, textMap } = defineProps<Props>();
 const emit = defineEmits<{ end: [] }>();
 const progress = ref<TalkProgress>(startProgress ?? { isRevealed: false, lineId: talk.startLineId });
 const isAutoPlaying = ref(false);
-const selectedChoiceIndex = ref(0);
+// The reply lit, -1 for none: as the game does, a reply is lit only by the pointer over it or the arrows
+const selectedChoiceIndex = ref(-1);
 // Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it for
 const elapsedMs = ref(0);
 const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progress.value.lineId) : undefined));
@@ -47,7 +48,7 @@ const choices = computed(() =>
     : [],
 );
 const setProgress = (newProgress: TalkProgress) => {
-  if (newProgress.lineId !== progress.value.lineId) selectedChoiceIndex.value = 0;
+  if (newProgress.lineId !== progress.value.lineId) selectedChoiceIndex.value = -1;
   if (newProgress.lineId !== progress.value.lineId || newProgress.isRevealed !== progress.value.isRevealed)
     elapsedMs.value = 0;
   progress.value = newProgress;

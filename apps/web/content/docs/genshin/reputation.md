@@ -44,8 +44,8 @@ flowchart TD
 | `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations     |
 | `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The generated slice, imported on demand and checked against its shape       |
 | `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
-| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims made since the week's reset, across every weekly kind            |
-| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The week's start the claim limit is counted from                            |
+| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                          |
+| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The reset the weekly limit counts from                                      |
 | `packages/genshin-world/src/generated/reputation/mondstadt.json`                        | The levels, requests and bounties, written from the dump                    |
 | `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, requests and bounties     |
 | `scripts/src/services/genshinAssets/reputation/writeMondstadtReputation.ts`             | Writes the slice from the dump's tables                                     |

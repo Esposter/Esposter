@@ -1,12 +1,12 @@
 ---
 title: Cooking
-description: Proposal — the stove and the cooking screen, what a dish does once eaten through the character kits, and the passives that bonus a kind of dish. The dishes, Auto Cook, specialties, processing and campfires are built and recorded on the Genshin area's cooking page.
+description: Proposal — the stove and the cooking screen, what a dish does once eaten through the character kits, passives included. What is built is recorded on the Genshin area's cooking page.
 model: claude-opus-5-5
 ---
 
 # Cooking
 
-Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. The dishes cooked by hand to proficiency, Auto Cook, the specialties, processing and campfires are built, as the [cooking](/docs/genshin/cooking) page records. What remains is the stove where a city cooks, the cooking screen, what a dish does once it is eaten, and the passives that bonus a kind of dish. The dishes are eaten through the [inventory](/docs/proposals/genshin/inventory)'s using.
+Food is how a party heals, revives and fights stronger in the game, and every dish is cooked from ingredients first gathered, hunted or bought. The dishes cooked by hand to proficiency, Auto Cook, the specialties, processing and campfires are built, as the [cooking](/docs/genshin/cooking) page records. What remains is the stove where a city cooks, the cooking screen, what a dish does once it is eaten, and the passives that bonus a kind of dish. Eating goes through the [inventory](/docs/proposals/genshin/inventory)'s using.
 
 ## Decisions
 
@@ -29,7 +29,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the dishes, Auto Cook, specialties, processing and campfires are built, and nothing makes a dish in the world, which has no stove and no screen.
+**Today:** the [cooking page](/docs/genshin/cooking) holds what is built, and nothing makes a dish in the world, which has no stove and no screen.
 
 **This adds, in order:**
 
@@ -51,5 +51,5 @@ flowchart TD
 
 ## Sources
 
-- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: stoves and campfires, the special dishes, and eating a dish's effects. Unreachable from this build, so the claims it backs wait on this page's recordings owed.
+- [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: stoves and campfires, the special dishes, and eating a dish's effects. Unreachable from this build, so its claims wait on this page's recordings owed.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the dish item rows and the passives' tables the remaining parts are read from.

@@ -11,8 +11,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
   // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
   [DerivedAssetComponent.Inazuma]: {},
-  // Liyue Harbor's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given: the
-  // Steps, plinths, walls, gates and towers its reference's 4x crops show (ParityReferenceMap's liyue-harbor-location)
+  // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
+  // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
+  // Nearest floor plate (Plot_05, 1.7 metres across) 142 metres off and its pillars 218 metres; its layout dumps name
+  // Stairs and boards (Area_Ly_Build_LYG_MT_Stairs_02) that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Liyue]: {},
   // The door's dais at its two front feet, and its arch's apex, halfway through its depth; the walkway's two wings by
   // The door's end and the near pair before them, at the top of their outer faces' front and back ends, the camera
@@ -48,15 +50,20 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
     wingRightBack: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.8125] },
     wingRightFront: { mesh: "LoginScene_Bridge01_20_Vo", share: [0, 1, 0.351] },
   },
-  // Mondstadt's landmarks name its capital's meshes, which the extraction has not yet given: the six corners its reference
-  // Names (ParityReferenceMap's mondstadt-city-location) are the towers' and the gate tower's parapets
+  // Mondstadt's six landmarks (ParityReferenceMap's mondstadt-city-location: the towers' and the gate tower's parapets)
+  // Name no mesh, so all six are dropped: the extraction holds the city's ruin blocks, flags and steps, none named a
+  // Tower, gate, wall or plinth, and its wall columns stand 412 metres or more off the city. Its layout dumps name a
+  // Stages_Build_BeaconTower01 that no OBJ exports, so a re-extraction is the way to name them
   [DerivedAssetComponent.Mondstadt]: {},
-  // The People of the Springs' landmarks (ParityReferenceMap's people-of-the-springs-location) name its capital's rigid
-  // Meshes and their shares, which the extraction has not yet given
+  // The People of the Springs' seven landmarks (ParityReferenceMap's people-of-the-springs-location: the spire and the
+  // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
+  // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.NodKrai]: {},
-  // Snezhnograd's landmarks name its capital's meshes, which the extraction has not yet given
+  // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
+  // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
+  // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
   // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Sumeru]: {},

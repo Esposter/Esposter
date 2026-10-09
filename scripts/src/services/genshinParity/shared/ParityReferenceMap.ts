@@ -4,6 +4,21 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 
 // Every screen the console recreates from the game, by the reference it is judged against
 export const ParityReferenceMap: Record<string, ParityReference> = {
+  // The English PC client's character screen on the Artifacts tab at 21:9, the same recording at 157.5 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-artifacts": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    screen: "CharacterScreen",
+    seconds: 157.5,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Artifacts tab open
+  "character-artifacts-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Artifacts" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 157.5,
+  },
   // The English PC client's character screen on Xilonen's Attributes tab at 21:9, from the user's own recording of the
   // Current build (session-2.mp4 at 154.4 seconds, before the character's model rises into the frame)
   "character-attributes": { capture: "session-2.mp4", screen: "CharacterScreen", seconds: 154.4 },
@@ -28,6 +43,51 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     seconds: 154.4,
   },
+  // The English PC client's character screen on the Constellation tab at 21:9, the same recording at 158.3 seconds, the tab settled (158 seconds still fades its node list in). Its panel is not drawn yet, so only the frame is scored
+  "character-constellation": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Constellation" },
+    screen: "CharacterScreen",
+    seconds: 158.3,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Constellation tab open
+  "character-constellation-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Constellation" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 158.3,
+  },
+  // The English PC client's character screen on the Talents tab at 21:9, the same recording at 159 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-talents": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Talents" },
+    screen: "CharacterScreen",
+    seconds: 159,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Talents tab open
+  "character-talents-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Talents" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 159,
+  },
+  // The English PC client's character screen on the Weapons tab at 21:9, the same recording at 156 seconds, the tab settled. Its panel is not drawn yet, so only the frame is scored
+  "character-weapons": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    screen: "CharacterScreen",
+    seconds: 156,
+  },
+  // The same frame's tab column, its words and their diamonds, clear of the scene's light, with the Weapons tab open
+  "character-weapons-tabs": {
+    capture: "session-2.mp4",
+    props: { initialTab: "Weapons" },
+    region: { height: 800, width: 900, x: 120, y: 180 },
+    screen: "CharacterScreen",
+    seconds: 156,
+  },
   // The Court of Fontaine from the wiki's location image at 4K, by day with the sun high. Its landmarks are rigid stone
   // And steel read off 4x crops: the arch's two feet, the bridge's two springs and the drum tower's roof corners
   "court-of-fontaine-location": {
@@ -46,10 +106,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Court of Fontaine.png",
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
-  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. The band's gradient
-  // Shows the scene behind it, which the page has no copy of, so only the text and the replies' pills are scored
+  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. The reference frame
+  // Is drawn behind the screen as its own backdrop until captures/dialogue-backdrop.png lands, so the band's gradient
+  // Darkens the game's own pixels twice where it is translucent; that bias sits under the band's cells and is named
   "dialogue-choices-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 28, width: 320, x: 480, y: 586 },
     screen: "DialogueTalk",
@@ -57,6 +119,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "dialogue-choices-replies": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 74, width: 250, x: 850, y: 463 },
     screen: "DialogueTalk",
@@ -64,6 +127,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "dialogue-choices-speaker": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 24, width: 80, x: 600, y: 546 },
     screen: "DialogueTalk",
@@ -72,6 +136,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same talk's line with no replies on offer, about 23 seconds in, its speaker's role line under the name left out
   "dialogue-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "knights-of-favonius" } },
     region: { height: 50, width: 800, x: 240, y: 586 },
     screen: "DialogueTalk",
@@ -80,6 +145,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Paimon's line about 29 seconds in, from the same recording
   "dialogue-paimon-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
+    isBackdrop: true,
     props: { startProgress: { isRevealed: true, lineId: "so-it-is-jean" } },
     region: { height: 30, width: 420, x: 430, y: 582 },
     screen: "DialogueTalk",

@@ -25,7 +25,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets crafting` writes the recipe slice from the game text dump's combine and material tables. The combine table is not in the community dump the scripts read, so it is fetched from the AnimeGameData repository and placed in the dump, never committed. A row is written when it is a craft at the bench and of one of these kinds:
+`pnpm -C scripts genshin:assets crafting` writes the recipe slice from the game text dump's combine and material tables. The combine table is not in the community dump the scripts read, so it is fetched as the [game data formats](/docs/genshin/game-data-formats) page describes. A row is written when it is a craft at the bench and of one of these kinds:
 
 - **Tiers**, the combine types that make three of a material for one of the next. Every tier row takes exactly three of one material for one item, and a row that does not is an error.
 - **Potions**, the combine types for Heatshield and Desiccant potions and for the formulas of Pure Water and Strength Tonic.

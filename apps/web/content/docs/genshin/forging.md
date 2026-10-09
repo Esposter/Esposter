@@ -28,7 +28,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets forging` writes one slice, the blacksmith's recipes, from the game's forge table `ForgeExcelConfigData`, with each recipe's diagrams read off the material table's uses. The forge table is not in the community dump the scripts read, so it is fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's combine table byte for byte, so the two share a revision.
+`pnpm -C scripts genshin:assets forging` writes one slice, the blacksmith's recipes, from the game's forge table `ForgeExcelConfigData`, with each recipe's diagrams read off the material table's uses. The forge table is not in the community dump the scripts read, so it is fetched as the [game data formats](/docs/genshin/game-data-formats) page describes. The repository's master matched the dump's combine table byte for byte, so the two share a revision.
 
 - **Enhancement ores.** The Normal, Fine and Mystic Enhancement Ores, each with its ingredients, its Mora, its seconds per item, the most one queue holds and its forge points. Ten Normal Enhancement Ores take thirty seconds and fifty Mora.
 - **Four-star weapons.** The swords, claymores, polearms, catalysts and bows, each forged from its region's billet with ores, one unit at a time. Each is open from the start or once its diagram is learned.
@@ -36,9 +36,9 @@ flowchart TD
 
 ## The rules
 
-- **Open.** A recipe is offered once the player's Adventure Rank reaches its rank, and, for a recipe a diagram opens, once it is learned. Using a diagram takes it from the bag and records the recipe as learned.
+- **Open.** Recipes open as the [crafting](/docs/genshin/crafting) page sets out. Using a diagram takes it from the bag and records the recipe as learned.
 - **Queues by rank.** One queue opens at first, a second at rank five, a third at ten and a fourth at fifteen, as the forge update table holds them. Splitting one recipe across queues forges it in parallel: each queue holds one order, of up to the recipe's queue size.
-- **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Its units then run one after another, each taking its seconds. The units done by a moment are taken into the bag together, and a unit whose results the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
+- **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Its units then run one after another, each taking its seconds. Finished units go to the bag as [cooking](/docs/genshin/cooking) describes, and a unit the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
 - **Real time, at any blacksmith.** A queue is kept with when its order began, so it finishes while the page is closed, and the forge is one state: what is forged is collected at any blacksmith.
 - **A daily cap.** An order's forge points count toward the game day's 400,000 when it is started, Normal, Fine and Mystic together. An order that would pass the cap is refused until the game day turns at four in the morning in the game's time zone, and the day's points restart with it. A weapon counts none.
 - **Refusal words.** The three enhancement ores' refusals are the game's own lines, kept in `genshin-text` under one key for each ore, for the screen to show once it is built.
@@ -52,7 +52,7 @@ flowchart TD
 | `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`            | Each recipe's diagrams, read off the material table's uses         |
 | `packages/genshin-world/src/models/forging/ForgeProgress.ts`                 | The learned recipes, the queues' orders and the day's forge points |
 | `packages/genshin-world/src/services/forging/startForge.ts`                  | An order started in a free queue, its materials and Mora taken     |
-| `packages/genshin-world/src/services/forging/collectForgeOrder.ts`           | The units done by a moment taken into the bag, the rest queued     |
+| `packages/genshin-world/src/services/forging/collectForgeOrder.ts`           | Each finished unit taken into the bag, the rest waiting            |
 | `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts` | Whether an order would pass the game day's forge points            |
 | `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`      | The queues an Adventure Rank opens                                 |
 | `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`            | A recipe learned from a diagram in the bag                         |
@@ -72,4 +72,4 @@ flowchart TD
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, "ForgeUpdateExcelConfigData" for the queues by rank, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
 - The English text map in the dump, by the three forge refusal lines' text ids, which name the day's cap and its reset.
-- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the cap, the reset and the talents. The page was not reachable from this build, so the claims it would back wait on a source.
+- [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the cap, the reset and the talents. That page was unreachable from this build, so its claims wait on a source.
