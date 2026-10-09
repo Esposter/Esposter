@@ -16,9 +16,13 @@ export const QUEST_CODEX_TABLE_NAME = "QuestCodexExcelConfigData";
 export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
 export const ANIMAL_CODEX_TABLE_NAME = "AnimalCodexExcelConfigData";
 export const ANIMAL_DESCRIBE_TABLE_NAME = "AnimalDescribeExcelConfigData";
-// The codex kind of a living being that is an animal, as the codex spells it. A monster is the other kind, whose name the
-// Dump does not carry, so the section lists only the animals
+export const MONSTER_DESCRIBE_TABLE_NAME = "MonsterDescribeExcelConfigData";
+export const PUSH_TIPS_CODEX_TABLE_NAME = "PushTipsCodexExcelConfigData";
+export const PUSH_TIPS_TABLE_NAME = "PushTipsConfigData";
+// The codex kind of a living being that is an animal, as the codex spells it
 export const ANIMAL_CODEX_TYPE = "CODEX_ANIMAL";
+// The kind of push tip a tutorial is, as the push tips table spells it: a monster's tip is not a tutorial
+export const PUSH_TIPS_TUTORIAL_TYPE = "PUSH_TIPS_TUTORIAL";
 // Where the slices and the names of every language are written, in the world's generated folder they are imported from
 export const ARCHIVE_GENERATED_DIRECTORY: string = join(
   REPOSITORY_ROOT,

@@ -30,21 +30,23 @@ flowchart TD
 
 The `genshin:assets archive` writer reads each section's codex table from the dump, names each entry by the game's English text, and keeps only the entries whose name the English text holds. Each section is written compact as its own slice, and the names of every kept entry go into the world's own chunk per language, as the [achievements](/docs/genshin/achievements) do.
 
-| Section       | Codex table                                                               | Named by                                  | Opened by                                                               |
-| :------------ | :------------------------------------------------------------------------ | :---------------------------------------- | :---------------------------------------------------------------------- |
-| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix     | a weapon, when it is in the bag                                         |
-| Living Beings | `AnimalCodexExcelConfigData`, animal rows only                            | `AnimalDescribeExcelConfigData`           | not yet: no animal is struck (see Notes)                                |
-| Tutorials     | "PushTipsCodexExcelConfigData"                                            | nothing in the dump, so it holds no entry | not built                                                               |
-| Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                        | not yet: no viewpoint is taken in                                       |
-| Travel Log    | `QuestCodexExcelConfigData`                                               | the parent main quest's title             | a main quest's finish opens its entry, by the quest id each entry names |
-| Books         | `BooksCodexExcelConfigData`                                               | the book's material                       | not yet: no book is read                                                |
-| Materials     | `MaterialCodexExcelConfigData`                                            | the material's row                        | any bag item that is not equipment, by its item id                      |
+| Section       | Codex table                                                               | Named by                                                               | Opened by                                                                                               |
+| :------------ | :------------------------------------------------------------------------ | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| Equipment     | `WeaponCodexExcelConfigData`, then `ReliquaryCodexExcelConfigData` by set | the weapon's row; a set's equip affix                                  | a weapon, when it is in the bag                                                                         |
+| Living Beings | `AnimalCodexExcelConfigData`, animal and monster rows                     | `AnimalDescribeExcelConfigData`, then `MonsterDescribeExcelConfigData` | a monster's first defeat opens its entry and counts its kills; an animal waits on the wildlife's strike |
+| Tutorials     | `PushTipsCodexExcelConfigData`, tutorial rows                             | `PushTipsConfigData`'s title                                           | not yet: no tip is shown                                                                                |
+| Geography     | `ViewCodexExcelConfigData`                                                | the view's own row                                                     | not yet: no viewpoint is taken in                                                                       |
+| Travel Log    | `QuestCodexExcelConfigData`                                               | the parent main quest's title                                          | a main quest's finish opens its entry, by the quest id each entry names                                 |
+| Books         | `BooksCodexExcelConfigData`                                               | the book's material                                                    | not yet: no book is read                                                                                |
+| Materials     | `MaterialCodexExcelConfigData`                                            | the material's row                                                     | any bag item that is not equipment, by its item id                                                      |
 
 The codex's own order is kept: each section's entries are sorted by the table's sort order, and the Equipment section lists its weapons before its sets. A codex row the game has left out is not kept.
 
 ## Opening entries
 
 `openArchiveEntries` takes the progress and the bag's items and returns the progress with every item's entry opened. A weapon opens its Equipment entry by its id, a material opens its Materials entry by the same id, and an artifact opens none (see Notes). An entry already open stays open, and the progress given is not changed. The world screen's `setInventory` is the one way the bag changes, so a drop picked up, a gathering point taken and a wish's weapon all open their entries through it.
+
+A defeated enemy opens its Living Beings entry and counts one more kill under it (`openArchiveEntry`, `countArchiveDefeat`). Each enemy kind carries its codex entry's id as `archiveEntryId`, so the count is kept by the entry, and the Living Beings entry shows it as "×N" once open.
 
 ## The unlock
 
@@ -56,9 +58,10 @@ The Archive opens once its quest is done, the Archon Quest Unexpected Power, mai
 
 ## Notes
 
-- **The monsters have no name in the dump.** Each monster row's name hash resolves to no text in any language, so the Living Beings section lists the animals only, and a defeated monster has no entry to count. A monster's name needs another source before its entries and its kill counts can be built.
+- **A monster is named by its description.** A monster row's own name hash resolves to no text in any language; its name sits under the monster description table, which the dump lacks and which is fetched from AnimeGameData beside the others.
+- **Only the world's enemies are counted.** A monster the world places opens and counts its entry. The living beings of the wildlife are not struck yet, so their entries stay locked.
 - **An artifact set never opens yet.** A bag artifact carries no set id, so "every piece held" cannot be counted, and the Equipment section lists the sets as locked for good until the bag keeps the set with each artifact.
-- **Tutorials hold no entries.** The push tips carry no name in the dump, so the section is written empty and the screen shows none.
+- **A tutorial is named by its push tip's title.** The push tips codex joins the push tips table, which the dump lacks and which is fetched from AnimeGameData; only the tutorial kind is written, not the monsters' tips.
 - **Entries show a name only.** Descriptions and the pictures of viewpoints wait for their own pages, since they are not part of the names chunk.
 - **The unlock quest is the wiki's.** The Archive waits on Unexpected Power as the Archive's wiki page describes, and the dump's main quest table names that quest under id 353.
 
@@ -84,8 +87,12 @@ The Archive screen has no parity measure yet. Its places follow the achievements
 | `scripts/src/services/genshinAssets/archive/readLivingBeingCandidates.ts` | The animal rows and their names                                                  |
 | `scripts/src/services/genshinAssets/archive/writeArchiveText.ts`          | Every entry's name in every language                                             |
 | `scripts/src/services/genshinText/writeTextChunks.ts`                     | The one writer of a per-language chunk, shared with the achievements' text       |
+| `scripts/src/services/genshinAssets/archive/readTutorialCandidates.ts`    | The tutorial push tips, each named by its title                                  |
+| `packages/genshin-world/src/models/archive/ArchiveKills.ts`               | The defeats of each Living Being, by its entry's id                              |
+| `packages/genshin-world/src/services/archive/countArchiveDefeat.ts`       | One more defeat counted under a Living Being's entry                             |
+| `packages/genshin-world/src/services/archive/openArchiveEntry.ts`         | One entry of a section opened, idempotently                                      |
 
 ## Sources
 
 - [Archive](https://genshin-impact.fandom.com/wiki/Archive), Genshin Impact Wiki: the Archive's unlock after Unexpected Power, its sections, and entries opened when first obtained or defeated.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the weapon, reliquary, animal, animal describe, books, material, view, quest and push tip codex tables, and the weapon, material, equip affix, reliquary set and main quest tables their names come from.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the weapon, reliquary, animal, animal describe, books, material, view, quest and push tip codex tables, and the weapon, material, equip affix, reliquary set and main quest tables their names come from; the monster describe and push tips tables, which the dump lacks and which are fetched beside it.

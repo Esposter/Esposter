@@ -7,6 +7,8 @@ import { z } from "zod";
 // A kind's row of the game's monster table: its family and type, its base stats and the level curve that scales each,
 // By the curve's own name in the game's curve table, and the share of each element's and physical damage it resists
 export interface EnemyKind {
+  // The id of the kind's entry in the Archive's Living Beings, which its defeats are counted under
+  archiveEntryId: number;
   attackCurve: string;
   baseAttack: number;
   baseDefense: number;
@@ -23,6 +25,7 @@ export interface EnemyKind {
 }
 
 export const enemyKindSchema = z.object({
+  archiveEntryId: z.int().positive(),
   attackCurve: z.string().min(1),
   baseAttack: z.number().nonnegative(),
   baseDefense: z.number().nonnegative(),

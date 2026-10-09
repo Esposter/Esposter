@@ -59,7 +59,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Notes
 
-- **The results have no names yet.** A craft takes its result as an item definition the caller reads. The materials table's rows the world holds cover only the drops, so the recipes' items need their names as game text keys, as the [gathering](/docs/genshin/gathering) items did, before a screen can show them.
+- **Each recipe carries its result's name.** A recipe's `nameTextId` is the text id of the item it makes, read from the material table, and `genshin:text names` writes it into the world's names chunk per language, so a bench screen can show it without a game text key.
 - **The bench is not placed.** The official map marks no crafting bench, and the scene's streaming records, which place one in a city, are not read yet, so no bench stands in the world and no prompt offers a craft.
 - **The gadget recipes are unsourced.** The table holds the gadgets' recipes hidden with no instruction to open them. The wiki was not reachable from this build to name the source, so they are left out until one does.
 - **Nothing is on a screen.** The recipes and their rules are data and services. The bench's screen is not built, as with the [shops](/docs/genshin/shops) and [expeditions](/docs/genshin/expeditions).

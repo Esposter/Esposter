@@ -11,7 +11,6 @@ export interface MonsterRow {
   hpBase: number;
   iceSubHurt: number;
   id: number;
-  nameTextMapHash: number;
   physicalSubHurt: number;
   propGrowCurves: { growCurve: string; type: string }[];
   rockSubHurt: number;

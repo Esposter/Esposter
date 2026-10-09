@@ -2,6 +2,7 @@
 // Archive's group it is shown in
 export interface AnimalCodexRow {
   describeId: number;
+  id: number;
   subType: string;
   type: string;
 }

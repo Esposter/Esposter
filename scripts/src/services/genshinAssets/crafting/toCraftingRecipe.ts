@@ -1,4 +1,5 @@
 import type { ExcelCombineRow } from "#src/models/genshinAssets/crafting/ExcelCombineRow";
+import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { CraftingRecipe } from "genshin-world";
 
 import {
@@ -14,9 +15,12 @@ import { CraftingRecipeKind, ORIGINAL_RESIN_ITEM_ID } from "genshin-world";
 
 // One bench recipe from its combine row and the instruction items that open it, or undefined for a row the bench does not
 // Craft. A tier takes exactly three of one material for one of the next, Condensed Resin exactly its crystal core and its
-// Original Resin, and a recipe that is hidden until an instruction
-// Opens it must name one, or the world would never offer it
-export const toCraftingRecipe = (row: ExcelCombineRow, unlockItemIds: number[]): CraftingRecipe | undefined => {
+// Original Resin, and a recipe that is hidden until an instruction opens it must name one, or the world would never
+// Offer it. A recipe is named by the item it makes
+export const toCraftingRecipe = (
+  row: ExcelCombineRow,
+  { materialMap, unlockItemIds }: { materialMap: Map<number, MaterialRow>; unlockItemIds: number[] },
+): CraftingRecipe | undefined => {
   if (row.recipeType !== COMBINE_RECIPE_TYPE) return undefined;
   const kind =
     row.resultItemId === CONDENSED_RESIN_ITEM_ID
@@ -47,11 +51,15 @@ export const toCraftingRecipe = (row: ExcelCombineRow, unlockItemIds: number[]):
     );
   if (!row.isDefaultShow && unlockItemIds.length === 0)
     throw new InvalidOperationError(Operation.Read, String(row.combineId), "is hidden with no instruction to open it");
+  const resultMaterial = materialMap.get(row.resultItemId);
+  if (!resultMaterial)
+    throw new InvalidOperationError(Operation.Read, String(row.combineId), "makes an item the material table lacks");
   return {
     id: row.combineId,
     kind,
     materials,
     mora: row.scoinCost,
+    nameTextId: String(resultMaterial.nameTextMapHash),
     playerLevel: row.playerLevel,
     resultCount: row.resultItemCount,
     resultItemId: row.resultItemId,

@@ -34,6 +34,7 @@ describe(computeCraftableCount, () => {
       { count: 1, id: CRYSTAL_CORE_ID },
     ],
     mora: 0,
+    nameTextId: "1",
     playerLevel: 1,
     resultCount: 1,
     resultItemId: 112_004,

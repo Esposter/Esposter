@@ -36,6 +36,7 @@ describe(toCookingRecipe, () => {
     inputVec: [{ count: 1, id: 100_011 }],
     isDefaultUnlocked: true,
     maxProficiency: 5,
+    nameTextMapHash: 1,
     qteParam: "0.63,0.4",
     qualityOutputVec: qualityOutputIds.map((id) => ({ count: 1, id })),
     rankLevel: 1,
