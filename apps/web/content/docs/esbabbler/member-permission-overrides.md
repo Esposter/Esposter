@@ -1,6 +1,6 @@
 ---
 title: Member permission overrides
-description: One member's own grant or denial of a room permission, stored beside their roles and folded into their effective bitfield.
+description: One member's own grant or denial of a room permission, stored beside their roles, folded into their effective bitfield, and edited from the roles panel.
 ---
 
 # Member Permission Overrides
@@ -31,9 +31,23 @@ The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermission
 
 ## Writing one
 
-`upsertMemberPermissionOverride` and `deleteMemberPermissionOverride` are gated by `ManageRoles`, and by `assertIsManageable` over the target, which is the same hierarchy check a role assignment goes through. The target must be a member of the room. An upsert may grant only the `allow` bits the actor holds, through `assertCanGrantPermissions`, so `ManageRoles` alone is not a way to grant oneself anything.
+`upsertMemberPermissionOverride` and `deleteMemberPermissionOverride` are gated by `ManageRoles`, and by `assertIsManageable` over the target, which is the same hierarchy check a role assignment goes through. The target must be a member of the room. An upsert may grant only the `allow` bits the actor holds, through `assertCanGrantPermissions`, so `ManageRoles` alone is not a way to grant oneself anything. An upsert returns the state the server left, and a delete leaves both fields zero.
+
+`readMemberPermissionOverrides` lists the room's rows to any member, as `readMemberRoles` does: a role assignment is already public to the room, and an override is the same kind of fact about the same member.
+
+Each write publishes `updateMemberPermissionOverride` on the role event path, carrying the state it left. `onUpdateMemberPermissionOverride` forwards it to every open client of the room, which applies it to its override map; the member whose override changed re-reads their own permissions, since every permission gate reads that bitfield.
 
 Leaving a room deletes the row with the membership, through the composite foreign key's cascade.
+
+## The Roles panel
+
+The Roles settings panel lists roles and members in two groups. A member appears while an override holds them, and while they are being added, which has no row until a first state is set.
+
+- **`Add role or member`** creates a role from the typed name, as before. A member is added from the `Add member` picker, which offers the members the room's list has loaded and opens their entry to set.
+- Selecting a role opens the role editor unchanged. Selecting a member opens the member editor: the same categories of permissions, each row a three-state segmented control — `Deny`, `Inherit`, `Allow`. The inherit segment names what the roles give, so `inherit` reads as the concrete answer it resolves to.
+- `Remove override` asks first, then deletes the row, and the member falls back to their roles.
+
+The member editor leaves out the Administrator bit, which no override can hold.
 
 ## Decisions
 
@@ -41,16 +55,20 @@ Leaving a room deletes the row with the membership, through the composite foreig
 - **An override never reaches Administrator.** Both the `allow` and `deny` bits exclude it at the write and at the fold, the same rule that keeps an owner from being locked out of their own room.
 - **Only the actor's held permissions may be granted.** Discord's rule for a channel entry, and the one `createRole` already applies to a role.
 - **Writes are a transaction, and an empty row is deleted.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show.
-
-## Not yet built
-
-The Roles panel's entry list, the `Add role or member` picker, the three-state control and the live role events are the parts of the [proposal](/docs/proposals/esbabbler/member-permission-overrides) still open. The procedures above have no caller in the client yet.
+- **Overrides are visible to the room, as role assignments are.** Reads and events take the member procedure, not the permission procedure, because the roles panel's data is already the room's own; a stricter read would hide from members a fact the roles already show them.
+- **The `genshin-assets` value in the table's migration is deliberate.** `storage.azureContainer` gained `genshin-assets` in the schema without a migration, and `db:gen` generated it with this table. The migration carries it so the migration chain matches the schema, and the Genshin side does not add it again.
 
 ## Key files
 
-| File                                                                      | Role                                                               |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `packages/db-schema/src/schema/message/roomMemberPermissionsInMessage.ts` | the table and its disjointness `CHECK`                             |
-| `packages/db/src/services/room/rbac/getPermissions.ts`                    | folds the member's row into the effective bitfield                 |
-| `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`       | the three-state write and the empty-row removal                    |
-| `apps/web/server/trpc/routers/role.ts`                                    | `upsertMemberPermissionOverride`, `deleteMemberPermissionOverride` |
+| File                                                                                            | Role                                                                  |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/roomMemberPermissionsInMessage.ts`                       | the table and its disjointness `CHECK`                                |
+| `packages/db-schema/src/relations/message/roomMemberPermissionsInMessageRelation.ts`            | the room relation the relational read takes                           |
+| `packages/db/src/services/room/rbac/getPermissions.ts`                                          | folds the member's row into the effective bitfield                    |
+| `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`                             | the three-state write, the empty-row removal and the state it returns |
+| `apps/web/server/trpc/routers/role.ts`                                                          | the upsert, delete and read procedures, and the override event        |
+| `apps/web/server/services/role/events/roleEventEmitter.ts`                                      | `updateMemberPermissionOverride`                                      |
+| `apps/web/app/store/message/room/role.ts`                                                       | the override map, its reads and writes                                |
+| `apps/web/app/composables/message/subscribables/useRoleSubscribables.ts`                        | applies the override event and re-reads the member's own permissions  |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/MemberEditor.vue`                | the member editor                                                     |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Role/Permission/OverrideListItem.vue` | the three-state row                                                   |
