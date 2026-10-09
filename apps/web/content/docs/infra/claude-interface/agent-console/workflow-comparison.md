@@ -41,19 +41,19 @@ flowchart TD
 
 ## Task by task
 
-| Task                                   | In the terminal                                               | In the console                                                                                            |
-| :------------------------------------- | :------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------- |
-| Start work                             | open a terminal, `cd`, run `claude`                           | open the page, type the repository path, or pick one a session already used                               |
-| Read a long tool input before allowing | scroll the prompt, the input often truncated                  | the card shows it whole, formatted                                                                        |
-| Review an edit                         | a second terminal or the editor, `git diff`                   | the turn's diff beside the conversation, per file, with a comment on any line sent back as one prompt     |
-| Find what a command printed earlier    | scroll back, or search the scrollback if the terminal can     | the timeline, each call collapsible, and a search over the session                                        |
-| Know how much context is left          | the status line, if configured                                | a gauge, with a warning before automatic compaction                                                       |
-| Run two sessions at once               | two terminal tabs, their state invisible from each other      | the session list, each with its state, one click apart                                                    |
-| Stop a runaway turn                    | escape                                                        | the stop button, or escape in the page                                                                    |
-| Hand a session to the terminal         | —                                                             | `claude --resume` on the same session id; nothing is lost either way                                      |
-| Undo a turn's edits                    | rewind, which can restore the files from its checkpoints      | rewind from any prompt, the files put back from the same checkpoints                                      |
-| Follow the review collector            | the Actions tab, the release pull request and commit comments | the same, until the [collector harbour](/docs/proposals/infra/agent-console/collector-harbour) view ships |
-| Hear the character                     | the persona plugin's hooks                                    | the same hooks, until the Genshin [theme](/docs/proposals/infra/agent-console/themes) ships               |
+| Task                                   | In the terminal                                               | In the console                                                                                                               |
+| :------------------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| Start work                             | open a terminal, `cd`, run `claude`                           | open the page, type the repository path, or pick one a session already used                                                  |
+| Read a long tool input before allowing | scroll the prompt, the input often truncated                  | the card shows it whole, formatted                                                                                           |
+| Review an edit                         | a second terminal or the editor, `git diff`                   | the turn's diff beside the conversation, per file, with a comment on any line of a file's whole diff sent back as one prompt |
+| Find what a command printed earlier    | scroll back, or search the scrollback if the terminal can     | the timeline, each call collapsible, and a search over the session                                                           |
+| Know how much context is left          | the status line, if configured                                | a gauge, with a warning before automatic compaction                                                                          |
+| Run two sessions at once               | two terminal tabs, their state invisible from each other      | the session list, each with its state, one click apart                                                                       |
+| Stop a runaway turn                    | escape                                                        | the stop button, or escape in the page                                                                                       |
+| Hand a session to the terminal         | —                                                             | `claude --resume` on the same session id; nothing is lost either way                                                         |
+| Undo a turn's edits                    | rewind, which can restore the files from its checkpoints      | rewind from any prompt, the files put back from the same checkpoints                                                         |
+| Follow the review collector            | the Actions tab, the release pull request and commit comments | the same, until the [collector harbour](/docs/proposals/infra/agent-console/collector-harbour) view ships                    |
+| Hear the character                     | the persona plugin's hooks                                    | the same hooks, until the Genshin [theme](/docs/proposals/infra/agent-console/themes) ships                                  |
 
 ## What the console costs
 
