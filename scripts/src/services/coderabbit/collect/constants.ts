@@ -36,6 +36,9 @@ export const EXPRESS_TRAILER = "Express";
 // Checks verify; it is what proves a session's commit is the repair it was asked for
 // (docs: infra/review-collector/repair)
 export const REPAIRS_TRAILER = "Repairs";
+// The held commit a re-land came from, one line per re-land its line of copies has been through: a copy parked again
+// Keeps them, so the count bounds a commit that keeps coming back only to be parked again (`relandHeldCommits`)
+export const RELANDED_TRAILER = "Relanded";
 // The workflows whose conclusion on `main`'s head says the branch is red — the ones the repairer answers: CI's
 // Checks, and the code-scanning alerts CodeQL's own gate turns into a red
 export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", "CodeQL.yaml"];
@@ -172,6 +175,11 @@ export const COLLECTOR_ISSUE_LABEL = "ready-for-agent";
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
+// On a held commit, one per `main` head: the head it was parked at, and each head a re-land of it was tried at, so a
+// Re-land is tried once per head (`relandHeldCommits`)
+export const RELAND_MARKER = "review-collector reland";
+// A held commit's failed re-land, counted against the cap on the held commit itself like the sync's marker
+export const RELAND_FAILED_MARKER = "review-collector reland-failed";
 
 // How long the carry session in `pnpm ai:queue:push` may run, sooner than every session's `SESSION_TIMEOUT_MS`: one
 // Haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits

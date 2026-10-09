@@ -23,6 +23,7 @@ import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFo
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
 import { orderWindowStack } from "#src/services/coderabbit/collect/orderWindowStack";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
+import { readCarriedPullRequests } from "#src/services/coderabbit/collect/readCarriedPullRequests";
 import { readCoderabbitConfig } from "#src/services/coderabbit/collect/readCoderabbitConfig";
 import { readLegacyReleasePullRequest } from "#src/services/coderabbit/collect/readLegacyReleasePullRequest";
 import { readMergedPullRequestsSince } from "#src/services/coderabbit/collect/readMergedPullRequestsSince";
@@ -30,10 +31,12 @@ import { readRecutFileCaps } from "#src/services/coderabbit/collect/readRecutFil
 import { readSessionLimitResetMs } from "#src/services/coderabbit/collect/readSessionLimitResetMs";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
+import { relandHeldCommits } from "#src/services/coderabbit/collect/relandHeldCommits";
 import { retargetStrandedWindows } from "#src/services/coderabbit/collect/retargetStrandedWindows";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runRepairStep } from "#src/services/coderabbit/collect/runRepairStep";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
+import { settleWindowChain } from "#src/services/coderabbit/collect/settleWindowChain";
 import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStack";
 import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -156,8 +159,9 @@ export const runCycle = async ({
   }
 
   // Bottom up, the stack is walked: the bottom merges and is drained once its review completes, a window above an
-  // Unmerged one waits, and a rate limit is settled wherever it refused a review
-  const stack = orderWindowStack(stackPullRequests);
+  // Unmerged one waits, and a rate limit is settled wherever it refused a review. A window off the chain from `main` is
+  // Closed first, for the opener to cut again
+  const stack = settleWindowChain({ cwd, isDryRun, stackPullRequests, viewerLogin });
   const walked = await walkWindowStack({
     collectorSha,
     cwd,
@@ -238,12 +242,20 @@ export const runCycle = async ({
       reviewsPerHour: REVIEWS_PER_HOUR,
     }) > 0
   ) {
-    // A pull request drained by an earlier run that opened nothing is answered by this cut too
+    // A pull request drained by an earlier run that opened nothing is answered by this cut too, and so are the re-cut
+    // Windows each one's drain carried
     const previousWindow = getNewestWindowPullRequest(history);
+    const openingHistory = history;
+    const repliedPullRequests = [
+      ...drainedPullRequests,
+      ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+    ];
     const answeredPullRequests = [
       ...new Set([
-        ...drainedPullRequests,
-        ...(previousWindow ? readMergedPullRequestsSince(previousWindow.createdAt) : []),
+        ...repliedPullRequests,
+        ...repliedPullRequests.flatMap((pullRequest) =>
+          readCarriedPullRequests(openingHistory, pullRequest, viewerLogin),
+        ),
       ]),
     ];
     // oxlint-disable-next-line no-await-in-loop -- each window is cut from the remote the one before it moved
@@ -269,6 +281,9 @@ export const runCycle = async ({
     openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
     history = readWindowPullRequests(WindowPullRequestListState.All);
   }
+  // The held commits whose `main` head moved since they were parked or last tried are picked back onto the queue, after
+  // The openings so a resolver's session never holds one; the queue push that lands one fires the run that cuts it
+  await relandHeldCommits({ collectorSha, cwd, isDryRun, viewerLogin });
 
   // The ceiling counts openings by when they were made, so it turns over on the clock with no event behind it: while it
   // Holds, the run wakes again once the oldest opening ages out of the hour, however many windows are open then

@@ -32,41 +32,44 @@ describe(orderWindowStack, () => {
     expect(orderWindowStack([])).toStrictEqual([]);
   });
 
-  test("refuses two window pull requests on the base of main", () => {
+  test("leaves every window off the chain when two share the base of main", () => {
     expect.hasAssertions();
 
-    expect(() =>
+    expect(
       orderWindowStack([getWindowPullRequest(1, MAIN_BRANCH), getWindowPullRequest(2, MAIN_BRANCH)]),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: coderabbit, the window stack forks on main — #1, #2 share its base]`,
-    );
+    ).toStrictEqual([]);
   });
 
-  test("refuses two window pull requests on one base", () => {
+  test("ends the chain below a fork, with the windows above it left off", () => {
     expect.hasAssertions();
 
     const bottom = getWindowPullRequest(1, MAIN_BRANCH);
 
-    expect(() =>
+    expect(
       orderWindowStack([
         bottom,
         getWindowPullRequest(2, getWindowBranch(1)),
         getWindowPullRequest(3, getWindowBranch(1)),
+        getWindowPullRequest(4, getWindowBranch(3)),
       ]),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: coderabbit, the window stack forks on review/1 — #2, #3 share its base]`,
-    );
+    ).toStrictEqual([bottom]);
   });
 
-  test("refuses a window whose base no open window carries", () => {
+  test("ends the chain at a gap, with the windows above it left off", () => {
     expect.hasAssertions();
 
-    expect(() => orderWindowStack([getWindowPullRequest(2, getWindowBranch(1))])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: coderabbit, the window stack has a gap — 1 open window pull requests are not reached from main]`,
-    );
+    const bottom = getWindowPullRequest(1, MAIN_BRANCH);
+
+    expect(
+      orderWindowStack([
+        bottom,
+        getWindowPullRequest(3, getWindowBranch(2)),
+        getWindowPullRequest(4, getWindowBranch(3)),
+      ]),
+    ).toStrictEqual([bottom]);
   });
 
-  test("refuses a loop among open windows rather than walking it forever", () => {
+  test("leaves a second window on one head off the chain rather than walking it forever", () => {
     expect.hasAssertions();
 
     const bottom = getWindowPullRequest(1, MAIN_BRANCH);
@@ -74,8 +77,6 @@ describe(orderWindowStack, () => {
     // Two open windows on one head: its base chain returns to the middle window
     const looping = { ...getWindowPullRequest(3, getWindowBranch(2)), headRefName: getWindowBranch(1) };
 
-    expect(() => orderWindowStack([bottom, middle, looping])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: coderabbit, the window stack loops at #2]`,
-    );
+    expect(orderWindowStack([bottom, middle, looping])).toStrictEqual([bottom, middle]);
   });
 });
