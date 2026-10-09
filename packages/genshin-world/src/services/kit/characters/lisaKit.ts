@@ -43,9 +43,9 @@ const CONDUCTIVE_STACK: EnemyStatus = {
   secondsRemaining: Infinity,
   stacks: 1,
 };
-// Provisional: the wiki's 1.9 seconds is the time the hold takes to charge in full, which the minimum is taken from, until a
-// Recording of the hold measures it. The wiki's Violet Arc page gives the maximum of 4 seconds, past which the skill is
-// Released by itself (https://genshin-impact.fandom.com/wiki/Violet_Arc)
+// Provisional: the wiki's 1.9 seconds is the time the hold takes to charge in full, which the minimum is taken from, until the
+// Roadmap's Recordings owed list entry `lisa-violet-arc-hold.mkv` measures it. The wiki's Violet Arc page gives a maximum
+// Of 4 seconds, past which the skill is released by itself (https://genshin-impact.fandom.com/wiki/Violet_Arc)
 const HOLD_MINIMUM_HELD_SECONDS = 1.9;
 const HOLD_MAXIMUM_HELD_SECONDS = 4;
 // Measured: gcsim v2.47.2 (MIT) lisa/burst.go, Lightning Rose's activation and each discharge reach a circle of radius 7

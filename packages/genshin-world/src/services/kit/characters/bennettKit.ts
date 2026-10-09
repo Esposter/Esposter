@@ -91,8 +91,8 @@ const CHARGE_LEVEL_2_SECONDS = 343 / 60;
 // Launch: its hits and explosion are the same, all of them landing before the animation ends
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
 const CHARGE_LEVEL_2_NO_LAUNCH_SECONDS = 175 / 60;
-// Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. A recording of
-// The skill's hold measures them
+// Provisional: the seconds a skill is held to reach each Charge Level, which no table or wiki page gives. The roadmap's
+// Recordings owed list holds the entry that measures them, `bennett-charge-levels.mkv`
 const CHARGE_LEVEL_1_MINIMUM_HELD_SECONDS = 0.5;
 const CHARGE_LEVEL_2_MINIMUM_HELD_SECONDS = 1;
 
