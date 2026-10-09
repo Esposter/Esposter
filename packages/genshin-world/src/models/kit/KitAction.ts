@@ -8,6 +8,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 // Target within when it starts, and what it sets going when it starts, if anything: the effects it adds to the party's
 export interface KitAction {
   hits: KitHit[];
+  // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
+  isAimed?: true;
   onStart?: (start: { body: KitBody; combatant: Combatant; effects: KitEffect[] }) => void;
   seconds: number;
   // The stamina the action drains each second it plays, if it drains any

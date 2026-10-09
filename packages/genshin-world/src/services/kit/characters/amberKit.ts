@@ -126,6 +126,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, AMBER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
       },
     ],
+    isAimed: true,
     seconds: FULL_AIM_SECONDS,
     targetingArea: SWORD_TARGETING_AREA,
   },
