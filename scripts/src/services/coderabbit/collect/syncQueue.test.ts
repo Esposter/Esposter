@@ -138,24 +138,23 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // The session pushed between the read and the rewrite's push: the lease refuses, and the push moved the queue
-  // Forward from the sha the run read — so what it gained rides the rewrite, and the retry's lease is the new head
-  const setupMovedQueue = (
-    movedPath: string,
-    movedContent: string,
-  ): { developSha: string; movedSha: string; queueSha: string } => {
+  // Forward from the sha the run read — so what it gained rides the rewrite, and the retry's lease is the new head.
+  // Develop added a file with the fix's side, so a gained commit adding it with the queue's conflicts with the rewrite
+  const carriedPath = `${nestedPath}.ts`;
+  const setupMovedQueue = (gainedPaths: string[]): { developSha: string; gainedShas: string[]; queueSha: string } => {
     const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, fixContent));
     switchTo(`${developSha}~1`);
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
-    const movedSha = publish(TEST_FILENAME, commitFile(movedPath, movedContent));
+    const gainedShas = gainedPaths.map((path) => commitFile(path, queueContent));
+    const movedSha = publish(TEST_FILENAME, "HEAD");
     installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${movedSha}`);
-    return { developSha, movedSha, queueSha };
+    return { developSha, gainedShas, queueSha };
   };
 
   test("carries what the session pushed under the rewrite and pushes under the lease it moved to", async () => {
     expect.hasAssertions();
 
-    const carriedPath = `${nestedPath}.ts`;
-    const { developSha, queueSha } = setupMovedQueue(carriedPath, "");
+    const { developSha, queueSha } = setupMovedQueue([carriedPath]);
     const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
     assert.exists(syncedSha);
@@ -163,14 +162,64 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([carriedPath, nestedPath]);
   });
 
-  test("leaves the rewrite unpushed when a commit the session pushed under it conflicts with it", async () => {
+  // The sync's minutes are never thrown away for one commit: the conflicting one is set aside with a record, and
+  // What the session pushed after it still rides the rewrite
+  test("parks a commit the session pushed under the rewrite that conflicts with it, and pushes the rest", async () => {
     expect.hasAssertions();
 
-    const { developSha, movedSha, queueSha } = setupMovedQueue(filePath, queueContent);
+    const { developSha, gainedShas, queueSha } = setupMovedQueue([filePath, carriedPath]);
+    const conflictSha = takeOne(gainedShas, 0);
+    runGh.mockReturnValue("[]");
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
 
-    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).resolves.toBeUndefined();
-    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
+    assert.exists(syncedSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([carriedPath, nestedPath]);
+    expect(readSha(`origin/${getHeldBranch(conflictSha)}`)).toBe(conflictSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+    expect(runGh.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          [
+            "issue",
+            "list",
+            "--state",
+            "open",
+            "--author",
+            "viewerLogin",
+            "--label",
+            "ready-for-agent",
+            "--limit",
+            "1000",
+            "--json",
+            "number,body",
+          ],
+        ],
+        [
+          [
+            "issue",
+            "create",
+            "--title",
+            "Held: a.ts (1 commit)",
+            "--label",
+            "ready-for-agent",
+            "--body",
+            "<!-- review-collector held commit:13475045b6ec345c9896f8f91d6f0b367d86098b -->
+      it was pushed to \`ai/queue\` while the collector rewrote it, and conflicts with the rewrite
+
+      - 13475045b6ec345c9896f8f91d6f0b367d86098b a.ts, held on \`ai/held/13475045b6\`
+
+      To re-land them, on \`ai/queue\`:
+
+      1. \`git fetch origin\`
+      2. For each held branch above, in order: \`git cherry-pick --no-commit origin/<branch>\` (never \`-x\`, since a copy naming the held sha stays out of the owed set), settle what the cause names by splitting it under the cap or resolving the conflict, then \`git commit\`
+      3. \`pnpm ai:queue:push\`, after which each new commit ports like any other
+      4. \`git push origin --delete <branch>\` for each held branch, then close this issue",
+          ],
+        ],
+      ]
+    `);
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test("leaves the rewrite unpushed when the session rewrote the queue's history under it", async () => {
