@@ -3,13 +3,13 @@ import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
 import { describe, expect, test } from "vitest";
 
-const STATE_NAME = "orbit";
-const FRAME_MS = 16;
-const SLOW_FRAME_MS = 60;
-const STALLED_FRAME_MS = 300;
-const PROGRAMS = 73;
-
 describe(summarizeStallState, () => {
+  const STATE_NAME = "orbit";
+  const FRAME_MS = 16;
+  const SLOW_FRAME_MS = 60;
+  const STALLED_FRAME_MS = 300;
+  const PROGRAMS = 73;
+
   test("counts the gaps between frames, not the first frame of the state", () => {
     expect.hasAssertions();
 

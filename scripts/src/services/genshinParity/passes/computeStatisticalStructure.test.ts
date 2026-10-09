@@ -1,26 +1,26 @@
 import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
 import { describe, expect, test } from "vitest";
 
-const WIDTH = 160;
-const HEIGHT = 160;
-const FULL_MASK = new Uint8Array(WIDTH * HEIGHT).fill(1);
-// A deterministic pseudo-random texture, so the shifted and flat cases are compared against the same detail
-const createTexture = (): Float32Array => {
-  let seed = 3;
-  return Float32Array.from({ length: WIDTH * HEIGHT }, () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return seed / 2 ** 32;
-  });
-};
-// The texture moved by whole pixels, wrapping at its edges, so its statistics are the texture's own
-const shiftTexture = (texture: Float32Array, shift: number): Float32Array =>
-  Float32Array.from(texture, (_value, index) => {
-    const x = index % WIDTH;
-    const y = Math.floor(index / WIDTH);
-    return texture[y * WIDTH + ((x + shift) % WIDTH)] ?? 0;
-  });
-
 describe(computeStatisticalStructure, () => {
+  const WIDTH = 160;
+  const HEIGHT = 160;
+  const FULL_MASK = new Uint8Array(WIDTH * HEIGHT).fill(1);
+  // A deterministic pseudo-random texture, so the shifted and flat cases are compared against the same detail
+  const createTexture = (): Float32Array => {
+    let seed = 3;
+    return Float32Array.from({ length: WIDTH * HEIGHT }, () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 2 ** 32;
+    });
+  };
+  // The texture moved by whole pixels, wrapping at its edges, so its statistics are the texture's own
+  const shiftTexture = (texture: Float32Array, shift: number): Float32Array =>
+    Float32Array.from(texture, (_value, index) => {
+      const x = index % WIDTH;
+      const y = Math.floor(index / WIDTH);
+      return texture[y * WIDTH + ((x + shift) % WIDTH)] ?? 0;
+    });
+
   test("scores near zero for the same detail moved across the surface", () => {
     expect.hasAssertions();
     const texture = createTexture();

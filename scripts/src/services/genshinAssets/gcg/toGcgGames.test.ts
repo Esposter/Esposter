@@ -4,12 +4,12 @@ import { GCG_PLACEHOLDER_PLAYER_DECK_ID } from "#src/services/genshinAssets/gcg/
 import { toGcgGames } from "#src/services/genshinAssets/gcg/toGcgGames";
 import { describe, expect, test } from "vitest";
 
-const gameRows: ExcelGcgGameRow[] = [
-  { cardGroupId: 2, enemyCardGroupId: 1, id: 12, ruleId: 2 },
-  { cardGroupId: 3, enemyCardGroupId: 4, id: 13, ruleId: 2 },
-];
-
 describe("toGcgGames", () => {
+  const gameRows: ExcelGcgGameRow[] = [
+    { cardGroupId: 2, enemyCardGroupId: 1, id: 12, ruleId: 2 },
+    { cardGroupId: 3, enemyCardGroupId: 4, id: 13, ruleId: 2 },
+  ];
+
   test("should name the placeholder deck for a player's deck no slice is written for", () => {
     expect.hasAssertions();
 

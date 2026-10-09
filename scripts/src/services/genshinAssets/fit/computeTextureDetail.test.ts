@@ -5,16 +5,6 @@ import { computeStatisticalStructure } from "#src/services/genshinParity/passes/
 import { computeSurfaceOctaves, SURFACE_DETAIL_METRES_PER_TEXEL } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const SIZE = 128;
-const FULL_MASK = new Uint8Array(SIZE * SIZE).fill(1);
-// The structure error a surface matched in distribution is held to: a reproduction of its export within the gate
-const GATE = 0.25;
-// A grey texture of the luminance each texel is given, as bytes
-const createTexture = (luminance: (x: number, y: number) => number): Texture => {
-  const data = Buffer.alloc(SIZE * SIZE);
-  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) data[y * SIZE + x] = Math.round(luminance(x, y));
-  return { data, info: { channels: 1, height: SIZE, width: SIZE } };
-};
 // The luminance of a texture whose texels are a sum of waves, each octave one cosine at its frequency in the world
 const createWaveLuminance =
   (octaves: { amplitude: number; frequency: number; phase: number }[]) =>
@@ -29,6 +19,15 @@ const createWaveLuminance =
 const toLuminance = (texture: Texture): Float32Array => Float32Array.from(texture.data, (byte) => byte / 128);
 
 describe(computeTextureDetail, () => {
+  const SIZE = 128;
+
+  // A grey texture of the luminance each texel is given, as bytes
+  const createTexture = (luminance: (x: number, y: number) => number): Texture => {
+    const data = Buffer.alloc(SIZE * SIZE);
+    for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) data[y * SIZE + x] = Math.round(luminance(x, y));
+    return { data, info: { channels: 1, height: SIZE, width: SIZE } };
+  };
+
   test("reads no detail off a flat texture", () => {
     expect.hasAssertions();
     expect(computeTextureDetail(createTexture(() => 128))).toStrictEqual({ bands: [0, 0, 0, 0], variance: 0 });
@@ -58,6 +57,18 @@ describe(averageSurfaceDetails, () => {
 });
 
 describe("detail closure", () => {
+  const SIZE = 128;
+  const FULL_MASK = new Uint8Array(SIZE * SIZE).fill(1);
+  // The structure error a surface matched in distribution is held to: a reproduction of its export within the gate
+  const GATE = 0.25;
+
+  // A grey texture of the luminance each texel is given, as bytes
+  const createTexture = (luminance: (x: number, y: number) => number): Texture => {
+    const data = Buffer.alloc(SIZE * SIZE);
+    for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) data[y * SIZE + x] = Math.round(luminance(x, y));
+    return { data, info: { channels: 1, height: SIZE, width: SIZE } };
+  };
+
   test("reproduces an export's band energies within the gate from octaves fitted to it", () => {
     expect.hasAssertions();
     const exported = createTexture(
