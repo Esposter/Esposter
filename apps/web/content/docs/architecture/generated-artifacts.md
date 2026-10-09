@@ -57,7 +57,7 @@ A generated `.ts` is source and is formatted as source — the generator emits t
 
 ## Review
 
-A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. So `generated/**` is on CodeRabbit's path filters beside the test snapshots and the migrations, and the commit that carries a regeneration claims the [express lane](/docs/infra/review-collector/express-lane) with an `Express:` trailer, reaching `main` on the checks alone instead of spending a window's file budget. The generator's own change is a separate commit that is reviewed in full.
+A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. So `generated/**` is on CodeRabbit's path filters beside the test snapshots and the migrations, which keeps it out of a window's file count as well as its review, and the commit that carries a regeneration claims the [express lane](/docs/infra/review-collector/express-lane) with an `Express:` trailer, reaching `main` on the checks alone instead of waiting in the queue for a window. The generator's own change is a separate commit that is reviewed in full.
 
 ## Key files
 
