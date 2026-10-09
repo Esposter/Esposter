@@ -1,6 +1,7 @@
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
+
 import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarizeCpuWindow";
 
 // A frame is slow past this many milliseconds, the same line the stall summary counts by
@@ -30,7 +31,7 @@ const describeCategories = (calls: GpuCall[]): string => {
     categories.set(category, { count: total.count + 1, ms: total.ms + call.duration });
   }
 
-  return [...categories].map(([category, { count, ms }]) => `${category} ${count} (${roundMs(ms)} ms)`).join(", ");
+  return Array.from(categories, ([category, { count, ms }]) => `${category} ${count} (${roundMs(ms)} ms)`).join(", ");
 };
 
 const describeFrame = (time: number, gapMs: number, trace: GpuTrace, frameIndexOf: Map<number, number>): string[] => {
@@ -39,7 +40,7 @@ const describeFrame = (time: number, gapMs: number, trace: GpuTrace, frameIndexO
   const totalMs = calls.reduce((total, call) => total + call.duration, 0);
   const listed = calls
     .filter((call) => call.duration >= LISTED_CALL_MS)
-    .toSorted((first, second) => second.duration - first.duration)
+    .toSorted((firstCall, secondCall) => secondCall.duration - firstCall.duration)
     .slice(0, LISTED_CALLS_PER_FRAME);
   const describeCall = (call: GpuCall): string =>
     `  ${roundMs(call.duration)} ms ${call.name} | ${call.label} | ${call.detail}`;
@@ -70,7 +71,7 @@ export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): strin
       .map((frame, index) => ({ gapMs: (frames[index + 1]?.time ?? frame.time) - frame.time, time: frame.time }));
     const isCold = name.startsWith("cold orbit");
     const stalled = isCold
-      ? gaps.toSorted((first, second) => second.gapMs - first.gapMs).slice(0, 1)
+      ? gaps.toSorted((firstGap, secondGap) => secondGap.gapMs - firstGap.gapMs).slice(0, 1)
       : gaps.filter(({ gapMs }) => gapMs > SLOW_FRAME_MS);
     lines.push(`${name}: ${stalled.length} frame(s) traced`);
     for (const { gapMs, time } of stalled) lines.push(...describeFrame(time, gapMs, trace, frameIndexOf));

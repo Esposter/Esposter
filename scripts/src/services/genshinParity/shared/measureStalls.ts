@@ -1,11 +1,12 @@
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
-import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { CpuCapture } from "#src/models/genshinParity/shared/CpuCapture";
+import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
+import type { BrowserContext, Page } from "playwright";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
@@ -14,7 +15,6 @@ import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScr
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { BrowserContext, Page } from "playwright";
 import { chromium } from "playwright";
 
 interface DevtoolsMessage {
@@ -32,8 +32,8 @@ declare global {
   interface Window {
     __fakeLock: boolean;
     __frameTimes: FrameSample[];
-    __hooked: boolean;
     __gpuCalls?: GpuCall[];
+    __hooked: boolean;
     __renderer?: StallRenderer;
     __traceTimes?: number[];
     __TRES__DEVTOOLS__?: { subscribers: Set<(message: DevtoolsMessage) => void> };
