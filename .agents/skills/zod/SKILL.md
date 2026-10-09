@@ -51,7 +51,7 @@ Runtime data crossing any trust boundary (EventGrid `event.data`, queue messages
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. The Genshin save's slices are the one `.prefault()` exception: a slice a save predates takes its empty value (`apps/web/content/docs/genshin/save-data.md`). A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 
