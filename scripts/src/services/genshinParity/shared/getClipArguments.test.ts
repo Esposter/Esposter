@@ -1,11 +1,11 @@
-import { CAPTURES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { CAPTURES_DIRECTORY, FFMPEG_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getClipArguments } from "#src/services/genshinParity/shared/getClipArguments";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(getClipArguments, () => {
   const url = "https://www.youtube.com/watch?v=abcdefghijk";
-  const ffmpegPath = "ffmpeg";
+  const ffmpegPath = join(FFMPEG_DIRECTORY, "ffmpeg.exe");
 
   test("downloads only the section, at the best MP4 up to 1080 high, merged by the given FFmpeg into captures", () => {
     expect.hasAssertions();
@@ -22,11 +22,17 @@ describe(getClipArguments, () => {
       "--merge-output-format",
       "mp4",
       "--ffmpeg-location",
-      "ffmpeg",
+      ffmpegPath,
       "--output",
       join(CAPTURES_DIRECTORY, "yt-%(id)s-login.%(ext)s"),
       url,
     ]);
+  });
+
+  test("leaves the FFmpeg on the PATH for yt-dlp to find, since it reads a location only as a path", () => {
+    expect.hasAssertions();
+
+    expect(getClipArguments(url, 60, 75.5, "login", "ffmpeg")).not.toContain("--ffmpeg-location");
   });
 
   test("refuses a section that does not end after it starts", () => {
