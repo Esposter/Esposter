@@ -41,6 +41,7 @@ const getSpeed = (state: LocomotionState, locomotion: Locomotion): number => {
 // Floats at its wading depth. The capsule is then pushed out of the landmarks, which stand it on a floor or hold it
 // Against a wall. A drowned body comes back where its stamina was last full, refilled
 export const createCharacterController = ({
+  getStaminaConsumptionMultiplier,
   ground,
   landmarkCollider,
   position,
@@ -57,7 +58,7 @@ export const createCharacterController = ({
   const capsule = new Capsule();
   const heldPresses = new Set<InputAction>();
   const phase: LocomotionPhase = { state: LocomotionState.Idle, stateSeconds: 0 };
-  const stamina = createStamina(staminaMaximum);
+  const stamina = createStamina(staminaMaximum, getStaminaConsumptionMultiplier);
   const contact: LocomotionContact = {
     isFacingWall: false,
     isGrounded: true,

@@ -4,6 +4,8 @@ import type { Vector3 } from "three";
 
 // The ground and the landmarks a body moves against, read in one frame of coordinates, and where its feet start in it
 export interface CharacterControllerOptions {
+  // The factor every stamina spend is multiplied by, read at each spend, and 1 when none is given
+  getStaminaConsumptionMultiplier?: () => number;
   ground: GroundQuery;
   landmarkCollider: LandmarkCollider;
   position: Vector3;

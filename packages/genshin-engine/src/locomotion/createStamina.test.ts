@@ -11,7 +11,55 @@ import { LocomotionState } from "#src/models/locomotion/LocomotionState";
 import { describe, expect, test } from "vitest";
 
 describe(createStamina, () => {
+  const CONSUMPTION_MULTIPLIER = 0.85;
+  const POOL_VALUE = 18;
+  const SECOND_CONSUMPTION_MULTIPLIER = 0.9;
+  const SPEND_AMOUNT = 20;
   const STEP_SECONDS = 0.5;
+
+  test("spends a dash at the consumption multiplier's share of its cost", () => {
+    expect.hasAssertions();
+
+    const stamina = createStamina(STAMINA_MAX, () => CONSUMPTION_MULTIPLIER);
+    stamina.step({ state: LocomotionState.Dash, stateSeconds: 0 }, true, true, STEP_SECONDS);
+
+    expect(stamina.value).toBe(STAMINA_MAX - DASH_STAMINA_COST * CONSUMPTION_MULTIPLIER);
+  });
+
+  test("reads the multiplier at each spend, so a change takes effect at the next one", () => {
+    expect.hasAssertions();
+
+    let multiplier = 1;
+    const stamina = createStamina(STAMINA_MAX, () => multiplier);
+    stamina.spend(SPEND_AMOUNT);
+    multiplier = CONSUMPTION_MULTIPLIER;
+    stamina.spend(SPEND_AMOUNT);
+
+    expect(stamina.value).toBe(STAMINA_MAX - SPEND_AMOUNT - SPEND_AMOUNT * CONSUMPTION_MULTIPLIER);
+  });
+
+  test("composes two multipliers by their product, not their sum", () => {
+    expect.hasAssertions();
+
+    const stamina = createStamina(STAMINA_MAX, () => CONSUMPTION_MULTIPLIER * SECOND_CONSUMPTION_MULTIPLIER);
+    stamina.spend(SPEND_AMOUNT);
+
+    expect(stamina.value).toBe(STAMINA_MAX - SPEND_AMOUNT * (CONSUMPTION_MULTIPLIER * SECOND_CONSUMPTION_MULTIPLIER));
+  });
+
+  test("checks a spend at its multiplied cost, so a pool short of the full amount still pays the reduced one", () => {
+    expect.hasAssertions();
+
+    const discountedStamina = createStamina(STAMINA_MAX, () => CONSUMPTION_MULTIPLIER);
+    const fullStamina = createStamina(STAMINA_MAX);
+    discountedStamina.value = POOL_VALUE;
+    fullStamina.value = POOL_VALUE;
+
+    expect({
+      discounted: discountedStamina.checkCanSpend(SPEND_AMOUNT),
+      full: fullStamina.checkCanSpend(SPEND_AMOUNT),
+    }).toStrictEqual({ discounted: true, full: false });
+  });
 
   test("spends a dash once, as it starts", () => {
     expect.hasAssertions();

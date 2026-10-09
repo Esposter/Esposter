@@ -29,7 +29,10 @@ import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
-import { PARTY_MEMBER_BURST_INPUT_ACTIONS } from "#src/services/party/constants";
+import {
+  IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER,
+  PARTY_MEMBER_BURST_INPUT_ACTIONS,
+} from "#src/services/party/constants";
 import { drownParty } from "#src/services/party/drownParty";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -104,7 +107,12 @@ const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating
 // Origin moves only what is drawn
 const ground = createGroundQuery((x, z) => getWorldHeight(x, z), water.level);
+// Whether the character on the field has Anemo's resonance, which Impetuous Winds is, read as it is asked
+const checkIsImpetuousWinds = (): boolean =>
+  characterIdCombatantMap.get(getActiveCharacterId(party))?.elementalResonances.includes(Element.Anemo) ?? false;
 const characterController = createCharacterController({
+  // Impetuous Winds cuts every stamina spend, the kit's and the body's, read from the same resonance as its speeds
+  getStaminaConsumptionMultiplier: () => (checkIsImpetuousWinds() ? IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER : 1),
   ground,
   landmarkCollider,
   position: new Vector3(
@@ -135,12 +143,10 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   const isSkillPressed = heldPresses.has(InputAction.ElementalSkill);
   // Impetuous Winds raises the speeds the controller moves the body by, read from the character on the field before the
   // Controller steps
-  const isImpetuousWinds =
-    characterIdCombatantMap.get(getActiveCharacterId(party))?.elementalResonances.includes(Element.Anemo) ?? false;
   characterController.step(
     kitState.action ? stillInput : inputState,
     followCamera?.yaw ?? 0,
-    isImpetuousWinds ? getImpetuousWindsLocomotion(locomotion) : locomotion,
+    checkIsImpetuousWinds() ? getImpetuousWindsLocomotion(locomotion) : locomotion,
     FIXED_STEP_SECONDS,
   );
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);

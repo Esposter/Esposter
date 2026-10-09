@@ -42,15 +42,18 @@ const computeSpend = (
 // The party's stamina, full to start at the maximum it is given. A step spends what its state costs, never below none;
 // With nothing spent it refills once the body has rested the delay in a state that refills, and the rest restarts in any
 // Other
-export const createStamina = (maximum: number): Stamina => {
+export const createStamina = (maximum: number, getStaminaConsumptionMultiplier: () => number = () => 1): Stamina => {
   let restSeconds = 0;
+  // The multiplier is read at each spend, so a change between two spends takes effect at the second
+  const getCost = (amount: number): number => amount * getStaminaConsumptionMultiplier();
   const stamina: Stamina = {
+    checkCanSpend: (amount) => stamina.value >= getCost(amount),
     maximum,
     refill: () => {
       stamina.value = stamina.maximum;
     },
     spend: (amount) => {
-      stamina.value = Math.max(0, stamina.value - amount);
+      stamina.value = Math.max(0, stamina.value - getCost(amount));
       restSeconds = 0;
     },
     step: (phase, isEntered, isMoving, stepSeconds) => {
