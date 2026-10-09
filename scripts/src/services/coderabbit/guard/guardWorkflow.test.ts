@@ -1,5 +1,10 @@
 import { readWorkflowLines } from "#src/services/coderabbit/collect/readWorkflowLines.test";
-import { COLLECT_JOB_NAME, COLLECTOR_WORKFLOW_FILE, IS_WAKING_OUTPUT } from "#src/services/coderabbit/guard/constants";
+import {
+  COLLECT_JOB_NAME,
+  COLLECTOR_WORKFLOW_FILE,
+  IS_WAKING_OUTPUT,
+  SETUP_STEP_NAMES,
+} from "#src/services/coderabbit/guard/constants";
 import { describe, expect, test } from "vitest";
 
 describe("guardWorkflow", () => {
@@ -26,5 +31,16 @@ describe("guardWorkflow", () => {
       wakeLine,
       wakeLine,
     ]);
+  });
+
+  // A setup step renamed would have its red counted towards a streak again, the cycle held on a checkout GitHub failed
+  test.each([...SETUP_STEP_NAMES])("reads past a red in the collect job's %s step", (stepName) => {
+    expect.hasAssertions();
+
+    const lines = readWorkflowLines(runnerName);
+
+    expect(lines.slice(lines.indexOf("  collect:"), lines.indexOf("  retrigger:"))).toContain(
+      `      - name: ${stepName}`,
+    );
   });
 });

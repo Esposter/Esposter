@@ -126,7 +126,8 @@ jobs:
     needs: collect
     if: needs.collect.outputs.retriggerDelaySeconds != ''
     runs-on: ubuntu-latest
-    # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs
+    # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs; the
+    # dispatch's own timeout ends inside it too, since a job's timeout reads as cancelled, which the guard never wakes
     timeout-minutes: 90
     # The built-in token starts no workflow runs except by `workflow_dispatch`, the one thing this job does
     permissions:
@@ -143,24 +144,26 @@ jobs:
         run: sleep "$DELAY_SECONDS"
 
       # The dispatch's ref only picks which copy of the caller's triggers runs — the caller pins this file. Asked
-      # until it lands, within the job's timeout: a retrigger an outage set is the one most likely to meet it still
-      # down, and a dispatch lost here is a pipeline idle until the next push
+      # until it lands, for twenty minutes: a retrigger an outage set is the one most likely to meet it still down,
+      # and one that never lands fails the job, which the guard then dispatches for
       - name: ♻️ Run the cycle again
+        timeout-minutes: 20
         env:
           GH_TOKEN: ${{ github.token }}
         run: until gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue; do sleep 60; done
 
-  # A run that failed or was killed writes no retrigger, so nothing would wake the cycle until an unrelated event: this
-  # wakes it five minutes later, a red the platform caused most likely clear by then. A cancelled run is woken only once
-  # it started: one superseded while pending is a run the newer one in its group already carries. A red the newest runs
-  # keep failing on alike — the same step, the same error line — is one no rerun answers and each wake may pay a
-  # session to meet again, so the guard opens one issue on it instead and wakes nothing; the next event or push wakes
-  # the cycle as usual. Its setup is the collect job's: a red that breaks it reads nothing, and is woken as before,
+  # A run that failed or was killed writes no retrigger, and a retrigger whose dispatch never landed wakes nothing, so
+  # nothing would wake the cycle until an unrelated event: this wakes it five minutes later, a red the platform caused
+  # most likely clear by then. A cancelled run is woken only once it started: one superseded while pending is a run
+  # the newer one in its group already carries, as is a retrigger a newer wake replaced. A red the newest runs keep
+  # failing on alike — the same step, the same error line — is one no rerun answers and each wake may pay a session to
+  # meet again, so the guard opens one issue on it instead and wakes nothing; the next event or push wakes the cycle
+  # as usual. Its setup is the collect job's: a red that breaks it reads nothing, and is woken as before,
   # since it fails before the cycle could spend anything
   guard:
     name: Guard
-    needs: collect
-    if: always() && (needs.collect.result == 'failure' || (needs.collect.result == 'cancelled' && needs.collect.outputs.isStarted == 'true'))
+    needs: [collect, retrigger]
+    if: always() && (needs.collect.result == 'failure' || (needs.collect.result == 'cancelled' && needs.collect.outputs.isStarted == 'true') || needs.retrigger.result == 'failure')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

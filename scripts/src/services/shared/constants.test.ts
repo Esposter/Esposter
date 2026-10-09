@@ -41,6 +41,8 @@ describe("constants", () => {
       isOutage: true,
       message: "fatal: unable to access 'https://github.com/Esposter/Esposter/': The requested URL returned error: 429",
     },
+    { isOutage: true, message: "GraphQL: was submitted too quickly (addComment)" },
+    { isOutage: true, message: "pull request create failed: GraphQL: was submitted too quickly (createPullRequest)" },
     { isOutage: false, message: "gh: Not Found (HTTP 404)" },
     { isOutage: false, message: "gh: Resource not accessible by integration (HTTP 403)" },
     { isOutage: false, message: "error: could not apply 0000000... fix: retry on HTTP 503" },

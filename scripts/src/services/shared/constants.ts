@@ -56,14 +56,22 @@ export const FIELD_SEPARATOR = "\u001F";
 // Excerpt.
 // oxlint-disable-next-line no-control-regex, typescript/no-inferrable-types -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
-// GitHub refusing a request for its rate, in the exact wording each tool gives it: a 429 as `gh` prints it — `(HTTP 429)`,
-// A bare `gh: HTTP 429`, or `HTTP 429: …` ending on the request's URL — or as `git` over HTTPS does, and a 403's own
-// Sentence, primary (`API rate limit exceeded for …`, GraphQL's `already exceeded`) or secondary (`You have exceeded a
-// Secondary rate limit`), opening a line or after `gh: `, `GraphQL: `, `HTTP 403: ` or Octokit's `HttpError: `. So a
-// Commit subject naming a limit, quoted in a git error, is not one; how long it lasts is GitHub's to state
+// GitHub's content-creation limit — a comment, an issue or a pull request created too soon after the last — as `gh`
+// Prints the GraphQL error its `pr comment`, `pr create`, `issue create` and `issue close --comment` meet. GitHub states
+// No wait for it in any header
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
-export const GITHUB_RATE_LIMIT_REGEX: RegExp =
-  /\(HTTP 429\)|^gh: HTTP 429$|HTTP 429\b.*\(https:\/\/\S+\)$|The requested URL returned error: 429\b|(?:^|gh: |GraphQL: |HTTP 403: |HttpError: )(?:API rate limit (?:already )?exceeded for |You have exceeded a secondary rate limit)/mu;
+export const GITHUB_CONTENT_CREATION_LIMIT_REGEX: RegExp = /GraphQL: was submitted too quickly\b/u;
+// GitHub refusing a request for its rate, in the exact wording each tool gives it: a 429 as `gh` prints it — `(HTTP 429)`,
+// A bare `gh: HTTP 429`, or `HTTP 429: …` ending on the request's URL — or as `git` over HTTPS does, a 403's own
+// Sentence, primary (`API rate limit exceeded for …`, GraphQL's `already exceeded`) or secondary (`You have exceeded a
+// Secondary rate limit`), opening a line or after `gh: `, `GraphQL: `, `HTTP 403: ` or Octokit's `HttpError: `, and the
+// Content-creation limit (`GITHUB_CONTENT_CREATION_LIMIT_REGEX`). So a commit subject naming a limit, quoted in a git
+// Error, is not one; how long it lasts is GitHub's to state
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const GITHUB_RATE_LIMIT_REGEX: RegExp = new RegExp(
+  String.raw`\(HTTP 429\)|^gh: HTTP 429$|HTTP 429\b.*\(https:\/\/\S+\)$|The requested URL returned error: 429\b|(?:^|gh: |GraphQL: |HTTP 403: |HttpError: )(?:API rate limit (?:already )?exceeded for |You have exceeded a secondary rate limit)|${GITHUB_CONTENT_CREATION_LIMIT_REGEX.source}`,
+  "mu",
+);
 // GitHub answering a server error or a rate limit rather than a verdict, in the exact wording each tool gives it —
 // `gh` as `(HTTP 503)` or `HTTP 503: …` ending on the request's URL, wherever the line was wrapped, `git` over HTTPS as
 // `The requested URL returned error: 503`, and every rate limit (`GITHUB_RATE_LIMIT_REGEX`) — so a commit subject
