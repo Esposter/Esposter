@@ -31,7 +31,7 @@ flowchart TD
   G -->|no| Z
   GR --> Z[Height fog in the sky's colour, never over the sky]
   Z --> SG{Elemental Sight on?}
-  SG -->|yes| SGL["Mute outside the reach, lit things in their colour, a ring at the edge"]
+  SG -->|yes| SGL["Mute inside the reach, lit things in their colour, a ring at the edge"]
   SG -->|no| B{Bloom on the tier?}
   SGL --> B
   B -->|yes| BL[Add what is brighter than nearly white]
