@@ -9,7 +9,6 @@ touches:
     "scripts/src/models/genshinAssets/imaginarium/**",
     "packages/genshin-world/src/models/imaginarium/**",
     "packages/genshin-world/src/services/imaginarium/**",
-    "packages/genshin-world/src/generated/imaginarium/**",
   ]
 ---
 

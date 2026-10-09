@@ -32,17 +32,7 @@ flowchart LR
 
 The barrel is one `export * from` line per module that exports something, read from rolldown's own parse rather than a TypeScript program, so it costs milliseconds and a name two modules export is a `TS2308` typecheck error rather than a name quietly missing from the package. It was ctix's until that silent drop and ctix's per-package program — most of a package's build — made it the one layer here worth replacing. It is generated on every build and never committed, which is why CI caches the generated `src/**/index.ts` files alongside `dist`, and a new module file reaches a sibling typechecking against source at the package's next `pnpm build`, which regenerates the barrel in the same pass. The flat `.` export it makes is the shape everywhere but the [Nuxt module package](/docs/architecture/nuxt-module-packages), which Nuxt reads file by file: `.agents/skills/build/references/barrels.md`.
 
-A loader's `import()` pulls each chunk and its JSON into the declaration program, so a generated data chunk's JSON never enters it: `genshin-world`'s `tsconfig.build.json` maps the generated `#src/generated/*` paths to a stand-in declaration (`build/generatedJson.d.ts`) that carries only the shape, its `include` drops the `parity` page, and the excludes it inherits from `tsconfig.build.base.json` drop the tests, whose `vitest` and `happy-dom` types the program had been reading. Measured on this PC, `genshin-world`'s declaration program fell from 7,983 files to 2,095 (4,294 JSON and 267 chunks to none), and the build (`node node_modules/tsdown/dist/run.mjs --no-clean`) measured:
-
-A book's body and a character's profile are published to the hosted game data, not generated into the package, so no build of `genshin-world` imports or bundles them: a reader fetches each one when it opens (`apps/web/content/docs/genshin/hosted-game-data.md`).
-
-| Run                                    | Wall            | Peak process tree  | Build complete |
-| :------------------------------------- | :-------------- | :----------------- | :------------- |
-| Before (HEAD)                          | 108 s           | 3,615 MB           | 95 s           |
-| After, quiet machine                   | 63 s            | 2,837 MB           | 55 s           |
-| After, two more runs on a busy machine | 122 s and 110 s | 2,778 and 2,693 MB | 63 s and 93 s  |
-
-The busy runs shared the machine's slots and free memory, so their wall time is contention, not the build. The declaration seconds were not timed separately. The emitted `index.d.ts` keeps its size (92,523 bytes before and after) and differs only in renumbered aliases. `characters.json` is one static import now, which removes the "INEFFECTIVE_DYNAMIC_IMPORT" warning without moving a byte out of the entry.
+The only data JSON `genshin-world` imports is its lock and one save bound: every dataset the package reads is published to the hosted game data and fetched when a screen needs it, so neither the bundle nor the declaration program reads a record ([hosted game data](/docs/genshin/hosted-game-data)). The package's `tsconfig.build.json` exists for its `include` alone, which drops the `parity` page, and the excludes it inherits from `tsconfig.build.base.json` drop the tests, whose `vitest` and `happy-dom` types the declaration program would otherwise read.
 
 ## The shared configuration package
 

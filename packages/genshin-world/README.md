@@ -51,7 +51,7 @@ import "genshin-world/style.css";
 
 Region data lives in `src/data/regions/<region>.json`, and your server serves it at the base URL, so a region is fetched as the camera comes within reach and released as it leaves.
 
-The game's data is not bundled. The opening's title logo and login screen, the character profiles, the book bodies and the world's ground, catalogue, tables and words are fetched from `game-data-base-url`, which `GameOpening` takes as `WorldScreen` does and which must serve each object that the package's `gameDataLock.json` names as `<base>/<sha256>.json`, with CORS for your page's origin. Esposter's own accounts admit only esposter.com and localhost, so another host must publish its own copy.
+The game's data is not bundled. Every record the world reads — the opening's title logo and login screen, the world's ground, catalogue and animals, the game's tables and words, the character profiles and the book bodies — is fetched from `game-data-base-url`, which `GameOpening` takes as `WorldScreen` does, and every reader the package exports (`readGameData`, `readStatTables` and the rest) takes the same base as its first argument. Your host must serve every object and index entry that the package's `gameDataLock.json` names, each as `<base>/<sha256>.json`, with CORS for your page's origin. Esposter's own accounts admit only Esposter's origins, so another host must publish its own copy.
 
 ## <a name="documentation">📖 Documentation</a>
 

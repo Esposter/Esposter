@@ -13,7 +13,7 @@ The fishing points stand where the official map places them, each region's pools
 flowchart LR
   MAP["The official map's Fishing Point label"] -->|"fit"| P["points, by region"]
   TABLES["Fish, rod, pool and stock tables"] -->|"genshin:assets fishing"| S["fish, rods and pools, published"]
-  P --> W["genshin-world, imported on demand"]
+  P --> W["genshin-world, fetched by key"]
   S --> W
   W --> R["Rules: stock by hour, refill, draw, lure, reel"]
 ```

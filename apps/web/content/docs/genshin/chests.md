@@ -61,7 +61,6 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 | `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                                 |
 | `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
 | `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                                         |
-| `packages/genshin-world/src/generated/chests/`                     | The chest slices, one per region                                                                                 |
 
 ## Sources
 

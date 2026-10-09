@@ -8,7 +8,6 @@ touches:
     "scripts/src/services/genshinAssets/world/checkIsPlantName.ts",
     "scripts/src/services/genshinAssets/world/checkIsPlantName.test.ts",
     "scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts",
-    "packages/genshin-world/src/data/windrise/plants.json",
     "packages/genshin-world/src/components/World/Plants/Index.vue",
     "scripts/src/services/genshinAssets/scene/WindrisePlantArrangementFamilies.ts",
   ]
@@ -70,7 +69,6 @@ New files:
 ```text
 scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts
 scripts/src/services/genshinAssets/world/checkIsPlantName.ts
-packages/genshin-world/src/data/windrise/plants.json
 packages/genshin-engine/src/culling/        ← the per-instance compute pass and its indirect draw
 ```
 

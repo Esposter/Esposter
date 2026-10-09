@@ -10,7 +10,6 @@ touches:
     "scripts/src/models/genshinAssets/gcg/**",
     "packages/genshin-world/src/models/gcg/**",
     "packages/genshin-world/src/services/gcg/**",
-    "packages/genshin-world/src/generated/gcg/**",
     "packages/genshin-world/src/services/friendship/**",
     "packages/genshin-world/src/services/profile/readCharacterProfile.ts",
     "scripts/src/services/genshinText/constants.ts",
@@ -31,7 +30,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 - **Opened at Adventure Rank 32 with its tutorial quest**, as the wiki gives it.
 - **The Player Level is the game's level table.** `GCGLevelExcelConfigData` holds ten levels, each with the EXP that passes it (the tenth passes none) and its reward id. A player who has finished the tutorial quest holds level one at no EXP. A challenger's games open by the level its week row names: Marjorie's `levelCondList` opens game 1021 at level 1 and the next four at levels 3, 5, 7 and 10, so a challenger offers each game once the Player Level reaches its level. The ladder is read as the Friendship Levels' is, by one shared rule, never a twin of it.
 - **Seating waits on the scene groups.** The challengers are absent from the dump's NPC birth records: neither NPC 9701 nor 9704 is among the 893 the open world places there, so their places are the `Lua/Scene/3` groups' that the scene group export reads.
-- **More decks wait on the static-data host.** Each further deck is a slice of its own and more card text in every language, the kind of bulk generated data the package stops adding until the static-data host's design lands. Its card modules are code and are written with the deck they serve.
+- **A further deck is a record of the hosted game data.** Each is a `gcg/deck<id>` record and more card text in every language, published by `genshin:assets gcg` and `genshin:text gcg`, with an entry of `GcgDeckLoaderMap` reading it by key. Its card modules are code and are written with the deck they serve.
 - **No duel against another player.** Duels with friends need other players, which [co-op](/docs/genshin/deferred/co-op) defers; the game gives them no reward either.
 - **The Player Level and the Friendship Level read one rule.** `computeLevelReached` counts the levels an EXP total has reached over any table of `{ exp }` rows, so the card game's level and the companionship level are the same function.
 
@@ -44,7 +43,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 1. **The Player Level and the games it opens.** Built: `GCGLevelExcelConfigData`, `GCGWeekLevelExcelConfigData` and `GCGGameExcelConfigData` are fetched into the dump, the rows are modelled, `toGcgLevels.ts` builds the slice's two parts from them, `services/gcg/listGcgOpenGameIds.ts` lists a challenger's open games, the world's `GcgPlayerLevel` and `GcgChallengerGame` types are in `models/gcg/`, and the friendship rule is moved to `services/shared/computeLevelReached.ts`, which `readCharacterProfile.ts` now reads. Left: `genshin:assets gcg` writing the slice, and `services/gcg/readGcgLevels.ts` reading it with its schemas. Both wait on the hosted game data, since the slice is published to Blob storage and never written into `generated/`. **Publish, for the Mac:** once the hosted game data is built, the slice goes through `publishGameDataStep` with its `writeGcgLevels` dry run.
 
 2. **Seating the challengers**, once the scene group export the other machine is making places NPCs 9701 and 9704. Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated game's standing talk is written from the dialogue its NPC's talk config names: the NPC's greeting line, then the duel reply `191219274`. A line with no English text is skipped, and where an NPC has no English challenge line its talk's first line stands in. The world's screen then passes the merged talk sources in place of its quest-only talk map. **Hook:** in `components/World/Session/Index.vue`, the `talkMap` computed becomes `mergeTalks(questTalks, getStandingTalks(residents, standingTalkMap))`, once the talks system's split lands.
-3. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them. Their slices are delivered through the static-data host the pending design picks, so they wait on that design (the other machine).
+3. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them. Each is published as its `gcg/deck<id>` record and read through `GcgDeckLoaderMap`.
 4. **Invitationals, tavern challengers, the Card Shop, and the EXP the duels pay into the Player Level.**
 
 ## Data and measures

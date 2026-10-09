@@ -20,7 +20,7 @@ flowchart TD
   P["The official map's points, fitted to the scene"] --> PL["Each point of a labelled item, placed by its region"]
   L --> PL
   PL --> SLICE["One record per region, and the items record beside them"]
-  SLICE -->|"on demand, as the world opens"| W["Standing points: nearest rows in reach"]
+  SLICE -->|"fetched by key as the session starts"| W["Standing points: nearest rows in reach"]
   W -->|"F picks it, bag takes it"| PK["Picked at the instant of the pick"]
   PK -->|"respawn has come"| W
 ```
@@ -70,7 +70,7 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 | `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits, fed to the ores beside the enemies  |
 | `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops   |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag            |
-| `packages/genshin-world/src/generated/gathering/`                                | The per-region slices and the items table                        |
+| `packages/genshin-world/src/services/gathering/readMondstadtGatheringPlaces.ts`  | Mondstadt's points, fetched by their `gathering/mondstadt` key   |
 
 ## Notes
 

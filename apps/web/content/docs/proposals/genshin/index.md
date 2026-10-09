@@ -41,16 +41,15 @@ flowchart TD
 
 ### Phase one: the world engine
 
-| Page                                                           | What it adds                                                                                                                 |
-| :------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| [Hosted game data](/docs/proposals/genshin/hosted-game-data)   | the rest of the game's generated tables and words published to Blob storage, after the profiles and book bodies that shipped |
-| [Recreation passes](/docs/proposals/genshin/recreation-passes) | a screen rebuilt in ordered passes, each gated by its own measure and frozen                                                 |
-| [Localized opening](/docs/proposals/genshin/localized-opening) | the publisher's splash and layouts as each client language shows                                                             |
-| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)       | the continent's heights from authored shapes, and the ground painted by biome                                                |
-| [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                                                                  |
-| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome                                                 |
-| [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them                                                   |
-| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom                                                  |
+| Page                                                           | What it adds                                                                  |
+| :------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| [Recreation passes](/docs/proposals/genshin/recreation-passes) | a screen rebuilt in ordered passes, each gated by its own measure and frozen  |
+| [Localized opening](/docs/proposals/genshin/localized-opening) | the publisher's splash and layouts as each client language shows              |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)       | the continent's heights from authored shapes, and the ground painted by biome |
+| [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                   |
+| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
+| [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
+| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom   |
 
 ### Phase two: the regions
 
