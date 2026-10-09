@@ -73,7 +73,7 @@ export const groundTopic: ReferenceTopic = {
         "A field of each layer's shares fitted from the classed base-map texels at 16, 32 and 64 metres, read at the reference's camera against the base maps before any was built, then the 32-metre field drawn and read by the Surface pass, with and without the shore's sand band over it",
       outcome: InvestigationOutcome.Found,
       result:
-        "Off the base maps: 64 metres misses the gate at about 3.2 ΔE for 11 KB, 32 metres holds at about 1.7 for 39 KB, and 16 metres gains a third of a ΔE for 138 KB; a slope factor inside a cell only misclasses more. Drawn at 32 metres, the Ground colour reads 1.54 ΔE against 2.30, from 9.10 under the slope bands, and 6.41 with the sand band laid over it, whose texels are three quarters earth. Statue and Paving hold, and the Shape pass's held readings hold",
+        "Off the base maps: 64 metres misses the gate at about 3.2 ΔE for 11 KB, 32 metres holds at about 1.7 for 39 KB, and 16 metres gains a third of a ΔE for 138 KB; a slope factor inside a cell only misclasses more. Drawn at 32 metres, the Ground colour reads 1.55 ΔE against 2.30, from 9.10 under the slope bands, and 6.41 with the sand band laid over it, whose texels are three quarters earth. No other family's colour moves (the Statue's 5.19, failing since its stacks landed, reads the same without the field), and the Shape pass's held readings hold",
     },
   ],
   openQuestions: [],
