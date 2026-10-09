@@ -17,6 +17,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.CoOp]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Dialogue]: { isHeld: false, isHudHidden: true, isPointerReleased: true },
   [ScreenKind.Events]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.Forge]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Friends]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.GcgDuel]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Inventory]: MENU_SCREEN_BEHAVIOUR,
