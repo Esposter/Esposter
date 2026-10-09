@@ -7,7 +7,7 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { AzureContainer } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { CHARACTER_PACK_BLOB_PATH, GAME_DATA_BLOB_PATH, WorldScreen } from "genshin-world";
+import { GAME_DATA_BLOB_PATH, WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -26,8 +26,7 @@ const { gameText, isPaused, language, save, serverClockOffsetMs } = defineProps<
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URL its server
-// Serves region data at, where its storage keeps the characters' packs, and whether the tuning panel shows; quitting
-// The game leaves for the app's home
+// Serves region data at, and whether the tuning panel shows; quitting the game leaves for the app's home
 onMounted(() => {
   emit("load");
 });
@@ -35,7 +34,6 @@ onMounted(() => {
 
 <template>
   <WorldScreen
-    :character-pack-base-url="`${containerBaseUrl}/${AzureContainer.AppAssets}/${CHARACTER_PACK_BLOB_PATH}`"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :game-data-base-url="`${containerBaseUrl}/${AzureContainer.AppAssets}/${GAME_DATA_BLOB_PATH}`"
     :game-text
