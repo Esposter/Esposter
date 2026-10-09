@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CharacterMenuProfileEntry } from "#src/models/CharacterMenuProfileEntry";
 
+import { computed, ref } from "vue";
+
 interface Props {
   // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
   entries: CharacterMenuProfileEntry[];

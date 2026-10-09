@@ -1,7 +1,7 @@
 import type { ProfileStory } from "#src/models/profile/ProfileStory";
 import type { CharacterMenuProfileEntry } from "genshin-interface";
 
-import { isProfileStoryUnlocked } from "#src/services/profile/isProfileStoryUnlocked";
+import { checkProfileStoryUnlocked } from "#src/services/profile/checkProfileStoryUnlocked";
 import { fillGameTextValues } from "genshin-text";
 
 // The stories as the Profile tab lists them: an open one by its title and text, a locked one by the game's unlock line
@@ -12,7 +12,7 @@ export const toCharacterProfileEntries = (
   unlocksText: string,
 ): CharacterMenuProfileEntry[] =>
   profileStories.map((profileStory) =>
-    isProfileStoryUnlocked(profileStory, friendshipLevel)
+    checkProfileStoryUnlocked(profileStory, friendshipLevel)
       ? { isLocked: false, text: profileStory.text, title: profileStory.title }
       : {
           isLocked: true,
