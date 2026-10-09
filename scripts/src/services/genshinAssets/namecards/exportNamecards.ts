@@ -8,7 +8,7 @@ import {
   NAMECARD_ICON_DIRECTORY,
   NAMECARD_ICON_PREFIX,
 } from "#src/services/genshinAssets/namecards/constants";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { ASSET_INDEX_PATH, GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -47,9 +47,11 @@ const exportBlockNamecards = (block: string, names: readonly string[], directory
 };
 // The namecards' art and icons the asset index names, each a PNG under its name in one of two folders. A folder already
 // Holding exactly those names is left as it is, so a rerun costs nothing. Any other is cleaned and exported block by
-// Block, then checked for every name the index holds
+// Block, then checked for every name the index holds. An index naming no namecard is refused before any folder is touched
 export const exportNamecards = async (): Promise<string> => {
   const assets = await readIndexedAssets(checkNamecardAsset);
+  if (assets.length === 0)
+    throw new InvalidOperationError(Operation.Read, ASSET_INDEX_PATH, "no namecard texture is indexed");
   const assetsByDirectory = Map.groupBy(assets, ({ name }) => getNamecardDirectory(name));
   const expectedNamesOf = (directory: string): string[] =>
     (assetsByDirectory.get(directory) ?? []).map(({ name }) => name);
