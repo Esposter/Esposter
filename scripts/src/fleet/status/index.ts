@@ -21,7 +21,7 @@ await runMain(
       const now = Temporal.Now.instant().epochMilliseconds;
       const machines = Array.from(readMachineHeartbeats(), ([id, heartbeat]) => [
         id,
-        formatMachineLoad(heartbeat.cpu, heartbeat.gpu, heartbeat.freeMemory),
+        formatMachineLoad(heartbeat.cpu, heartbeat.gpu, heartbeat.freeMemory, heartbeat.platform),
         formatAge(now - Temporal.Instant.from(heartbeat.at).epochMilliseconds),
       ]);
       const claims = Array.from(readClaimedRefs(), ([entry, { message }]) => {
