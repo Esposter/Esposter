@@ -11,7 +11,7 @@ Fishing is one of the game's pastimes: bait crafted for the fish wanted, a line 
 ## Decisions
 
 - **A point's stock is its region's pools, for now.** Each region's pools are the game's, filed by city. Neither the official map's points nor the dump's tables tie a point to one pool, so until a recording shows which pool a point draws from, a point draws from every pool of its region. Nod-Krai's city is filed under no pool, so its points draw nothing, and the fifty-four pools filed under city zero, which no region names, are left out until a recording places them.
-- **Stocks come back as the game sets them.** The day's stock is drawn from six to eighteen on the game's clock and the night's otherwise, and an emptied stock is back in full seventy-two hours on, the day's and the night's kept apart (built).
+- **Stocks come back as the game sets them.** The day's stock is drawn from six to eighteen on the game's clock and the night's otherwise, and each refills apart from the other once emptied, as the [fishing](/docs/genshin/fishing) page builds it.
 - **Bait is not tied to a fish yet.** The bait table's feature tags name no fish, and no fish row names the tags it wants, so which bait draws which fish waits on the crafting recipes and a recording of a bait at work. Each kind is drawn only by its own bait, crafted from its recipe.
 - **The bite is the fish's own.** A fish nibbles for a time within its feeler range and bites, and the bite is struck within its `biteTimeout` or lost. The timing and the caller's clock are not yet built.
 - **The reel's zone moves by the fish's own fields.** The moving zone's width, speed, offset and duration are the fish's, and the reel takes the zone as its input meanwhile. How the zone travels over its duration waits on a recording of the minigame, as the tension rate and the allowance do.
@@ -64,4 +64,4 @@ stateDiagram-v2
 ## Sources
 
 - [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the unlock after the Serenitea Pot, one bait per fish, the cast's distance, the bite and the tension, points emptied and back every 72 hours with separate day and night fish, and the Fishing Associations.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock, skill, rod, bait and proficiency tables.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the tables of fish, pools, stocks, skills, rods, baits and proficiency.

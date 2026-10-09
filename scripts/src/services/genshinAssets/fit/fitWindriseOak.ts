@@ -57,11 +57,11 @@ export const fitWindriseOak = async (): Promise<string[]> => {
     return { height, radius: roundFitted(radius) };
   });
   const path = await writeWorldData("windrise/oak.json", {
-    clusters: clusters.map(({ x, y, z, radius }) => ({
+    clusters: clusters.map(({ radius, x, y, z }) => ({
+      radius: roundFitted(radius),
       x: roundFitted(x),
       y: roundFitted(y),
       z: roundFitted(z),
-      radius: roundFitted(radius),
     })),
     trunk,
   });

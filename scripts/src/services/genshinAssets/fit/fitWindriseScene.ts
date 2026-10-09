@@ -24,8 +24,8 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<string> 
         await fitRegionLandmarks(DerivedAssetComponent.Windrise, "regions/mondstadt.json"),
         ...(await fitRegionCapitals()),
       ],
-      paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
       oak: fitWindriseOak,
+      paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
       statue: fitWindriseStatue,
       water: async () => {
         const [[, originY], waterLevel] = await Promise.all([

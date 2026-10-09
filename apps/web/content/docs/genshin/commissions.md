@@ -25,7 +25,7 @@ flowchart TD
 
 ## The daily tasks
 
-A commission is one daily task of Mondstadt's city, read from the game's daily task table. It names its pool, the scene point it is set at, the radius it begins and ends in, what finishes it and how far, the groups a scene task swaps, the quest a quest task is, and the reward tier it pays from. A **scene task** swaps its area's camp or objects for its own while it is open; a **quest task** is one of the quests the world carries. A scene task is finished by enemies defeated, gadgets used or a challenge cleared, and a quest task has no finish of its own, since its quest finishes it.
+A commission is one daily task of Mondstadt's city, read from the game's daily task table. It names its pool, the scene point it is set at, the radius it begins and ends in, what finishes it and how far, the groups a scene task swaps, the quest a quest task is, and the reward tier it pays from. A **scene task** puts its own camp or objects in place of its area's while it is open; a **quest task** is one of the quests the world carries. A scene task is finished by enemies defeated, gadgets used or a challenge cleared, and a quest task has no finish of its own, since its quest finishes it.
 
 ## Dealing
 
@@ -51,11 +51,11 @@ The Adventure Treasure Pack the wiki lists is not paid. The preview names its it
 
 `pnpm -C scripts genshin:assets commissions` writes `packages/genshin-world/src/generated/commissions/mondstadt.json` from the game text dump outside the repository. The run reads the daily task, reward and level tables and the reward previews, and refuses a level table that is not the game's twelve bands. The slice is imported on demand by `readMondstadtCommissions` and checked against its schema as it arrives.
 
-The dump at its revision lacked the three daily task tables, so they were taken from the same repository's files into the dump, as the shops' were, and nothing from them is committed.
+The dump at its revision lacked the three daily task tables, so they were fetched from that repository into the dump, as the shops' were, and nothing from them is committed.
 
 ## Not built yet
 
-- **The scene swap.** A scene task swaps its area's camp or objects for its own while it is open. The region data holds only hand-placed camps, and the area's groups are not extracted, so the slice carries each task's old and new group ids for that page to read.
+- **The scene swap.** The [proposal](/docs/proposals/genshin/commissions) owns how a scene task's groups stand in for its area's. The region data holds only hand-placed camps, and the area's groups are not extracted, so the slice carries each task's old and new group ids for that page to read.
 - **The handbook's Commissions tab and the commissions' words.** The tab lists the day's four, and the titles and descriptions are the game's text by their ids, in the reader's language. Neither has a consumer yet.
 - **The kept day.** The four dealt, their counts and their claims are not kept between visits, and the daily reset is not read, as the quests' progress is not kept yet.
 - **A quest task's finish.** It finishes with its quest, which the world does not report yet, so a quest task reads unfinished.

@@ -25,7 +25,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets crafting` writes the recipe slice from the game text dump's combine and material tables. The combine table is not in the community dump the scripts read, so it is fetched from the AnimeGameData repository into the dump and never committed. A row is written when it is a craft at the bench and of one of these kinds:
+`pnpm -C scripts genshin:assets crafting` writes the recipe slice from the game text dump's combine and material tables. The combine table is not in the community dump the scripts read, so it is fetched from the AnimeGameData repository and placed in the dump, never committed. A row is written when it is a craft at the bench and of one of these kinds:
 
 - **Tiers**, the combine types that make three of a material for one of the next. Every tier row takes exactly three of one material for one item, and a row that does not is an error.
 - **Potions**, the combine types for Heatshield and Desiccant potions and for the formulas of Pure Water and Strength Tonic.
@@ -67,4 +67,4 @@ A recipe the table shows from the start is open from the start. One it hides is 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `CombineExcelConfigData`, each craft's materials, Mora, rank and result, and `MaterialExcelConfigData`, whose instructions' uses name the recipes they open.
-- [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: crafted from 60 resin, five held at most, the figures the proposal settles its decisions from.
+- [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: the 60 resin a craft takes and the five a player can hold, the figures the proposal settles its decisions from.

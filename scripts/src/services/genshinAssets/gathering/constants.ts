@@ -9,8 +9,8 @@ export const GATHER_POINT_LOCATION_GROUND = "POINT_GROUND";
 export const GATHER_SAVE_TYPE_NONE = "GATHER_SAVE_TYPE_NONE";
 // The official map's top-level labels of the two categories a gathering point is marked under, Local Specialties and
 // Inventory / Materials. Ores are struck until they break and are not written yet, so their category is left out
-export const LOCAL_SPECIALTIES_LABEL_ID = 10;
-export const INVENTORY_MATERIALS_LABEL_ID = 60;
+const LOCAL_SPECIALTIES_LABEL_ID = 10;
+const INVENTORY_MATERIALS_LABEL_ID = 60;
 // How each category comes back once picked, as the wiki gives it: a local specialty after its duration, and a cooking
 // Ingredient at the game's midnight that follows the pick
 export const CATEGORY_RESPAWN_MAP: Record<number, GatheringRespawn> = {

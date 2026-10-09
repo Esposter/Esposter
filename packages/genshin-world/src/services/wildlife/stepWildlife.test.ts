@@ -7,13 +7,14 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
 import { describe, expect, test } from "vitest";
 
-const STEP_SECONDS = 0.5;
-const TARGET = { x: 0, z: 0 };
 // An animal one metre north of the target, within the escape radius and facing south
 const createNearWildlife = (): Wildlife =>
   createWildlife({ id: "animal", kind: WildlifeKind.Squirrel, position: { x: 0, z: 1 } });
 
 describe(stepWildlife, () => {
+  const STEP_SECONDS = 0.5;
+  const TARGET = { x: 0, z: 0 };
+
   test("leaves an idle animal out of the target's reach where it stands", () => {
     expect.hasAssertions();
 

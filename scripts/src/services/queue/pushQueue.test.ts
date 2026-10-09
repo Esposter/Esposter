@@ -5,8 +5,10 @@ import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
 import { QUEUE_BRANCH, SessionRoleModelMap } from "#src/services/coderabbit/collect/constants";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
+import { getCarryPrompt } from "#src/services/queue/getCarryPrompt";
 import { pushQueue } from "#src/services/queue/pushQueue";
 import { runGit } from "#src/services/shared/runGit";
+import { takeOne } from "@esposter/shared";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -17,6 +19,15 @@ const { runSession } = vi.hoisted(() => ({ runSession: vi.fn<typeof baseRunSessi
 vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
   runSession: runSession as unknown as typeof baseRunSession,
 }));
+
+// The session settles a stopped pick as its prompt asks: the conflicted path takes the merged content, and the pick
+// Is continued into a commit
+const settlePick = (cwd: string, path: string, content: string): Promise<SessionRun> => {
+  writeFileSync(join(cwd, path), content);
+  runGit(["add", path], cwd);
+  runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd);
+  return Promise.resolve({ isEnded: true, isStarted: true });
+};
 
 describe(pushQueue, () => {
   const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
@@ -37,14 +48,6 @@ describe(pushQueue, () => {
 printf '%s' '${content}' > ../clone/${path}
 git -C ../clone add ${path}
 git -C ../clone commit --quiet --message ${path}`);
-  };
-  // The session settles a stopped pick as its prompt asks: the conflicted path takes the merged content, and the pick
-  // Is continued into a commit
-  const settlePick = (cwd: string, path: string, content: string): Promise<SessionRun> => {
-    writeFileSync(join(cwd, path), content);
-    runGit(["add", path], cwd);
-    runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd);
-    return Promise.resolve({ isEnded: true, isStarted: true });
   };
   // A conflict on `a`: the remote added it, and the session's commit adds it again with other content. The commit is
   // Titled by the paths it touches, so its subject differs from the remote's and it is not read as a port
@@ -167,12 +170,15 @@ git -C ../clone commit --quiet --message ${path}`);
     runSession.mockImplementation(({ cwd }) => settlePick(cwd, "a", "a\nb"));
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
-    expect(runSession).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        model: SessionRoleModelMap[SessionRole.Carry],
-        prompt: expect.stringContaining(local),
-      }),
-    );
+    expect(runSession).toHaveBeenCalledTimes(1);
+
+    const [{ cwd, ...options }] = takeOne(runSession.mock.calls);
+
+    expect(cwd).not.toBe(getCwd());
+    expect(options).toStrictEqual({
+      model: SessionRoleModelMap[SessionRole.Carry],
+      prompt: getCarryPrompt(local, ["a"]),
+    });
     expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["a c", "a"]);
     expect(runGit(["show", `${remoteQueueRef}:a`], getCwd())).toBe("a\nb");
     expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
@@ -204,7 +210,7 @@ git -C ../clone commit --quiet --message ${path}`);
 
     runGit(["fetch", "--quiet", "origin", QUEUE_BRANCH], getCwd());
 
-    expect(runSession).toHaveBeenCalledOnce();
+    expect(runSession).toHaveBeenCalledTimes(1);
     expect(readSha(remoteQueueRef)).toBe(remote);
     expect(readSha("HEAD")).toBe(local);
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
@@ -219,7 +225,7 @@ git -C ../clone commit --quiet --message ${path}`);
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Waiting);
 
-    expect(runSession).toHaveBeenCalledOnce();
+    expect(runSession).toHaveBeenCalledTimes(1);
     expect(readSha(remoteQueueRef)).toBe(remote);
     expect(readSha("HEAD")).toBe(local);
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);

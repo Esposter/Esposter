@@ -49,10 +49,9 @@ export const pushQueue = async (cwd: string = REPOSITORY_ROOT): Promise<QueuePus
   const replayCwd = mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
   runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd);
   const result = await getResultAsync(async () => {
-    for (const commit of replayCommits) {
+    for (const commit of replayCommits)
       // oxlint-disable-next-line no-await-in-loop -- each commit is picked onto the tree the one before it left
       if (!(await carryReplayCommit(commit.sha, replayCwd))) return QueuePushOutcome.Waiting;
-    }
 
     const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
     runGit(["push", "--quiet", "origin", `${replayed}:refs/heads/${QUEUE_BRANCH}`], cwd);

@@ -6,6 +6,6 @@ const getPortKey = ({ authorDate, subject }: QueueCommit): string => `${authorDa
 // Where a subject alone can be another session's (`chore: format`). A local commit the remote already carries is the
 // Collector's port of it and is skipped; the rest are replayed in their order
 export const selectReplayCommits = (localCommits: QueueCommit[], remoteCommits: QueueCommit[]): QueueCommit[] => {
-  const remotePortKeys = new Set(remoteCommits.map(getPortKey));
+  const remotePortKeys = new Set(remoteCommits.map((commit) => getPortKey(commit)));
   return localCommits.filter((commit) => !remotePortKeys.has(getPortKey(commit)));
 };

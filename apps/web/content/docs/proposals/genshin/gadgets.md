@@ -10,7 +10,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 
 ## Decisions
 
-- **A gadget's kind is the game's own.** `BinOutput/Widget/ConfigWidget.json` names each gadget's kind, which the built data reads as the four kinds of the [gadgets](/docs/genshin/gadgets) page. Each kind is one small module. The config's other widgets, the cameras, the avatar attachments, the water sprite, the ability groups and the toys, are not among the four and wait on the pages that name them.
+- **A gadget's kind is the game's own.** `BinOutput/Widget/ConfigWidget.json` names each gadget's kind, which the built data reads as the four kinds of the [gadgets](/docs/genshin/gadgets) page. Each kind is one small module. The config's other widgets wait on the pages that name them, as the built page lists.
 - **A detector points to what the config spawns.** A Treasure Compass (`ConfigWidgetClientDetector`) spawns a treasure box of its city, and the Seelie detector (`ConfigWidgetTreasureMapDetector`) a Seelie crystal. No widget of the config spawns an Oculus, so the Oculus Resonance Stone's target is not in the config, and its detector is not settled until its target is read from another table.
 - **A compass works in its city.** The city table's open-state names put city 1 at Mondstadt (Mengde) and city 2 at Liyue, and the Mondstadt and Liyue compasses name those cities. The city table gives each city its areas, not its region, so a city joins a region's chest slice only once the areas are outlined; the Dragonspine compass names city 3, whose name is not read here.
 - **Equipped on Z, four on the quick swap.** One gadget is equipped to the quick-use slot and used with `Z`. Holding it opens the quick swap, which holds up to four gadgets chosen in the bag. Only a gadget the config marks equipable can be equipped.
@@ -37,7 +37,7 @@ flowchart TD
 
 **This still adds, in order:**
 
-1. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand. The bag's items do not yet include the widget material type, since the item writer names only two material types, so the slot waits on the items.
+1. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand. The item writer names only two material types, neither the widgets', so the slot waits on the items.
 2. **Detectors**, the Treasure Compass to treasure boxes once a compass's city joins a region's chest slice, then the Oculus Resonance Stone once its target is settled.
 3. **Collectors and placed devices**, one kind at a time.
 4. **The quick swap.**

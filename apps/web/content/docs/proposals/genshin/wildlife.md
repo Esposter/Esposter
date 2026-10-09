@@ -61,4 +61,4 @@ stateDiagram-v2
 ## Sources
 
 - [Wildlife](https://genshin-impact.fandom.com/wiki/Wildlife), Genshin Impact Wiki: fleeing when approached, boars' charge, Sumeru's that fight back and Chenyu Vale's that vanish, pets, item drops and material sources gone in smoke, fish struck or picked, weapon passives triggered but not artifact sets', and spawning near the player.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the environment animal table with each animal's escape radius, time, weathers and items, and the capture table.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: each animal's escape radius, time, weathers and items in the environment animal table, and the capture table.

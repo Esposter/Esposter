@@ -214,7 +214,6 @@ export enum GameTextKey {
   Primogem = "2696654964",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",
-  WinterIcelea = "3798480364",
   // The quest screen's button on the quest being navigated to
   QuestCancelNavigation = "TASK_TRACK_CLEAR",
   // The quest screen's lists, each a tab and a heading over its quests
@@ -223,58 +222,55 @@ export enum GameTextKey {
   QuestCategoryStory = "TASK_TYPE_BRANCH",
   QuestCategoryWorld = "TASK_TYPE_OTHERS",
   // The same button on any other quest
-  RedBerryshroom = "1096616044",
-  SkysplitGembloom = "801054964",
   QuestNavigate = "TASK_TRACK_ENSURE",
-  WitheringPurpurbloom = "1419660612",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
-  SprayfeatherGill = "4108433756",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
-  SaurianClawSucculent = "19028052",
   RainbowRose = "2386700548",
-  SpinelFruit = "1984022796",
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
+  RedBerryshroom = "1096616044",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
-  SpringOfTheFirstDewdrop = "1466037620",
   SakuraBloom = "3896942756",
   SandGreasePupa = "3925526556",
   SangoPearl = "4091966756",
-  Tidalga = "225224916",
+  SaurianClawSucculent = "19028052",
   SeaGanoderma = "4094014932",
   Seagrass = "2121074820",
   Settings = "UI_STC_GAMEENTRYPAGE_OPTION",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
   SilkFlower = "1404683740",
-  Viparyas = "3570846172",
   // The dialogue's button that runs on to the next reply or the end
   Skip = "UI_SKIP_BUTTON",
+  SkysplitGembloom = "801054964",
   SmallLampGrass = "144892988",
   Snapdragon = "3558597948",
-  SumeruRose = "691451364",
-  ZaytunPeach = "492153948",
   // The weapons' and artifacts' sort, by level or quality, ascending or descending
   SortAscending = "UI_RelicIterations_Ordering_Ascending",
   SortDescending = "UI_RelicIterations_Ordering_Descending",
   SortLevel = "SORT_BY_LEVEL",
   SortQuality = "SORT_BY_QUALITY",
-  Starshroom = "2119751124",
+  SpinelFruit = "1984022796",
+  SprayfeatherGill = "4108433756",
+  SpringOfTheFirstDewdrop = "1466037620",
   StainedMask = "3015475460",
   // The HUD's stamina meter, named for a screen reader
   Stamina = "133358079",
   Starconch = "1463427132",
+  Starshroom = "2119751124",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
   StormbearerMountains = "490004829",
   StormterrorsLair = "775762325",
   StrangeTooth = "2715317724",
+  SumeruRose = "691451364",
   SweetFlower = "1330975132",
   // Photo mode's own shutter, which the Paimon menu's entry into it says too
   TakePhoto = "UI_PIC_MAIN_PCPS_C",
   // The map's way to a place, as its button says
   Teleport = "UI_BUTTON_GOTO",
+  Tidalga = "225224916",
   Time = "UI_STC_GAMEENTRYPAGE_TIME",
   // The mainland client's publishing licence under its title logo: its approval, ISBN, publisher and copyright holder
   TitleLicence = "3231160485",
@@ -282,12 +278,14 @@ export enum GameTextKey {
   // The player's own title, a word per gender where the language has one
   Traveler = "UI_TEXT_QUEST_GUIDE_LABEL",
   Trishiraite = "239145148",
-  WindwheelAster = "3920833836",
   Uid = "UI_PLAYER_PROFILE_UID",
   Valberry = "2722402356",
+  Viparyas = "3570846172",
   WhisperingWoods = "2498537973",
   WhiteIronChunk = "1747175596",
   Windrise = "3796215893",
+  WindwheelAster = "3920833836",
+  WinterIcelea = "3798480364",
   Wish = "UI_GACHA_TITLE",
   // The wish's kinds, a set's button with its count in place of `{0}`, and the Epitomized Path with its Fate Points
   // In place of `{0}` of `{1}`
@@ -298,8 +296,10 @@ export enum GameTextKey {
   WishFatePoint = "UI_GACHA_WISH_POINT",
   WishStandard = "UI_GACHA_TYPE_02",
   WishWeaponEvent = "UI_GACHA_TYPE_04",
+  WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
+  ZaytunPeach = "492153948",
 }
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);

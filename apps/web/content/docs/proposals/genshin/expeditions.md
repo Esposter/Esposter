@@ -14,7 +14,7 @@ The sending, the return, the claim, the recall and the limit by rank are built, 
 - **Any character but the Traveler stays usable in the party while away.** The game sends them in name only, so the party reads nothing from an expedition.
 - **The expedition bonus is a chance by level, not a talent.** `ExpeditionBonusExcelConfigData` gives a chance per level of the sent character: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table does not say what a bonus gives, so the payload is open, and the earlier reading of this table as the talent's bonus is withdrawn.
 - **A character's expedition talent adds to a send or to a reward.** A passive that shortens an expedition or adds to its reward applies when its character is sent. Which passives do this is read from the characters' kits once the [character kits](/docs/proposals/genshin/character-kits) are built, not from the bonus table.
-- **Other nations' places open by their statues.** A nation's places join the slice when its statues are in the region data with their scene points, and each named statue condition is checked by `computeUnlockedStatuePointIds`.
+- **Other nations' places open by their statues.** A nation's places join the slice once the region data holds its statues and their scene points, and each named statue condition is checked by `computeUnlockedStatuePointIds`.
 
 ## Scope and order
 

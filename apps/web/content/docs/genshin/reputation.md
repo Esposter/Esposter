@@ -26,7 +26,7 @@ flowchart TD
 - **The levels.** `ReputationLevelExcelConfigData`'s rows for the nation, each with `nextLevelExp`, the EXP to leave that level, unlike Friendship's totals. The last level's is zero, and it earns no more EXP. Level 2 opens the mining outcrop search and level 4 the merchant discounts, the function ids the table names.
 - **Each reward.** A level's `rewardId`, and a request's or bounty's, read from the reward table. The nation's Reputation EXP is the item `ReputationCityExcelConfigData` names as its `virtualItemId`, so the reward is split into the EXP that item's count gives and the items it also pays. A request pays its EXP and Mora, a bounty its EXP and Mora, more of each at the harder difficulties.
 - **Requests and bounties.** The requests of the groups the levels name, each with its weight, and the nation's `HuntingRefreshExcelConfigData` bounties with the region each is hunted in.
-- **The tables the dump lacked.** The dump at its revision held `ReputationExploreExcelConfigData` but not the level, city, function, request, quest or hunting tables. Those six were fetched from the AnimeGameData repository into the dump's `ExcelBinOutput` and never committed.
+- **The tables the dump lacked.** The dump at its revision held the exploration table but not the level, city, function, request, quest or hunting tables. Those six were fetched from the AnimeGameData repository into the dump's `ExcelBinOutput` and never committed.
 
 ## Notes
 
@@ -45,7 +45,7 @@ flowchart TD
 | `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The generated slice, imported on demand and checked against its shape       |
 | `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
 | `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims made since the week's reset, across every weekly kind            |
-| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The Monday 04:00 reset at or before a moment, in the moment's zone          |
+| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The week's start the claim limit is counted from                            |
 | `packages/genshin-world/src/generated/reputation/mondstadt.json`                        | The levels, requests and bounties, written from the dump                    |
 | `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, requests and bounties     |
 | `scripts/src/services/genshinAssets/reputation/writeMondstadtReputation.ts`             | Writes the slice from the dump's tables                                     |
@@ -53,5 +53,5 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ReputationLevelExcelConfigData`, `ReputationCityExcelConfigData`, `ReputationFunctionExcelConfigData`, `ReputationRequestExcelConfigData`, `HuntingRefreshExcelConfigData` and `RewardExcelConfigData`, the tables the slice is written from.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ReputationLevelExcelConfigData`, `ReputationCityExcelConfigData`, the function table, `ReputationRequestExcelConfigData`, `HuntingRefreshExcelConfigData` and `RewardExcelConfigData`, the tables the slice is written from.
 - [Reputation](https://genshin-impact.fandom.com/wiki/Reputation), Genshin Impact Wiki: the nations' Reputation and its sources. Its page did not answer when this was built, so only the proposal's own wording stands for the discount's rounding.

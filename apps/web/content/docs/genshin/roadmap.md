@@ -157,12 +157,12 @@ Items whose input does not exist yet, each naming what it waits on, as the `gens
 
 Only the acts that are physically the user's wait here; every other call is made and built. The clips owed are the next section.
 
-- **Approve the visual-suite images** the screen passes wrote, each untracked until approved with `test:visual -u`. Each is a screen's current build, not its target:
-  - `packages/genshin-interface/src/components/CharacterMenu/Index.win32.png`
-  - `packages/genshin-interface/src/components/InventoryScreen/Index.win32.png` and `Index-materials.win32.png`
-  - `packages/genshin-world/src/components/Character/Screen/Index.win32.png`
-  - `packages/genshin-world/src/components/Inventory/Screen/Index.win32.png`
-  - `packages/genshin-world/src/components/Menu/Exit/Index.win32.png`, `Menu/Paimon/Index.win32.png` and `Menu/Settings/Index.win32.png`
+- **Approve the visual-suite images** the screen passes wrote, each untracked until approved with `test:visual -u`. Each is a screen's current build, not its target, and is the `Index.win32.png` in its component's folder:
+  - `packages/genshin-interface/src/components/CharacterMenu`
+  - `packages/genshin-interface/src/components/InventoryScreen`, with `Index-materials.win32.png` beside it
+  - `packages/genshin-world/src/components/Character/Screen`
+  - `packages/genshin-world/src/components/Inventory/Screen`
+  - `packages/genshin-world/src/components/Menu/Exit`, `Menu/Paimon` and `Menu/Settings`
 - **The artifact weights checked against the wiki.** [Artifact enhancement](/docs/genshin/artifact-enhancement)'s main, minor and starting-count weights are recalled, not read from the wiki, which this build could not reach; each is a constant marked provisional there until its page is read.
 - **An eye on the provisional looks** the passes cannot score yet: the prompt list's pill end and fill, the HUD's minimap disc, the drops' and residents' stand-in tints.
 - **The Oculi of Fontaine, Natlan and Nod-Krai against the wiki's 271 each.** The official map gives 225, 249 and 197, and [spawned places](/docs/genshin/spawned-places) reports those shortfalls rather than filling them. Whether the map or the wiki is short is the game's to show, so a count in game settles it.

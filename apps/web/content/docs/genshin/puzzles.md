@@ -5,7 +5,7 @@ description: The official Teyvat Interactive Map's puzzle marks fitted into each
 
 # Puzzles
 
-The servers' puzzle mechanisms are not in the client's data, so the official map's public points stand in for their places, as the [spawned places](/docs/genshin/spawned-places) page describes. This page is the first half of the [puzzles](/docs/proposals/genshin/puzzles) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. Nothing is placed in the world, drawn, struck or solved yet.
+The client's data holds none of the servers' puzzle mechanisms either, so their places are taken from the official map's public points, the source the [spawned places](/docs/genshin/spawned-places) page names. This page is the first half of the [puzzles](/docs/proposals/genshin/puzzles) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. Nothing is placed in the world, drawn, struck or solved yet.
 
 ## How it works
 
@@ -32,7 +32,7 @@ flowchart TD
 
 ## The writer
 
-`pnpm -C scripts genshin:assets puzzles` reads the points and the fit, and writes one slice per region in `packages/genshin-world/src/generated/puzzles/`, each a compact list of places with its id (the map's point id), its kind and its position in the game's coordinates. It writes only its own slices, and the report counts each region's places and what it left out.
+`pnpm -C scripts genshin:assets puzzles` writes a slice for each region into `packages/genshin-world/src/generated/puzzles/` from the points and the fit, in the chests' format: a compact list of places, each by its map point id, kind and position in game coordinates. It touches no other slice, and its report gives each region's count of places and of those left out.
 
 - **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share.
 - **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out.
@@ -61,7 +61,7 @@ An `ElementalMonument` holds its element, its own elemental state, whether it is
 | `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's provisional lit time                                   |
 | `packages/genshin-world/src/generated/puzzles/`                             | One slice per region, imported on demand once the world places them         |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`       | Each kind's labels on the official map                                      |
-| `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes each region's slice from the points and the fit                      |
+| `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes the puzzle places of every region                                    |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`               | Carries a kind's labelled points into their regions, shared with chests     |
 | `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`             | `genshin:assets puzzles`                                                    |
 
@@ -69,4 +69,3 @@ An `ElementalMonument` holds its element, its own elemental state, whether it is
 
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the writer reads as references.
 - [Elemental Monument](https://genshin-impact.fandom.com/wiki/Elemental_Monument), Genshin Impact Wiki: monuments lit by their element, reactions included, some for good and some for a time.
-- [Genshin Impact: How to Light Up the Elemental Monuments in Minacious Isle](https://gamerant.com/genshin-impact-light-elemental-monuments-minacious-isle/), GameRant: a monument lit by its matching element, and a puzzle whose monuments are lit in a set order.

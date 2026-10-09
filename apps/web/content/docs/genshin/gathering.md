@@ -5,7 +5,7 @@ description: The plants and specialties the official map marks, placed by the fi
 
 # Gathering
 
-The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. Ores, which are struck until they break, mining outcrops and investigation spots are not built yet and stay in the proposal.
+The plants and specialties of the open world are the gathering points the [proposal](/docs/proposals/genshin/gathering) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the first build of that proposal, covering the points of the two categories that are picked, Local Specialties and Inventory / Materials. Ores, which are struck until they break, mining outcrops and investigation spots are left to the proposal.
 
 ## How it works
 
@@ -27,7 +27,7 @@ flowchart TD
 
 ## The read
 
-`pnpm -C scripts genshin:assets gathering` writes the slices. It reads three tables from the game text dump, the gather table and the material table in `ExcelBinOutput/` and the English text map, and the official map's label tree and fitted points from the references folder. The gather table, which the dump lacked, is fetched from the community's AnimeGameData repository into the dump and never committed.
+The slices are written by `pnpm -C scripts genshin:assets gathering`. It reads three tables from the game text dump, the gather table and the material table in `ExcelBinOutput/` and the English text map, and the official map's label tree and fitted points from the references folder. The gather table, which the dump lacked, is fetched from the community's AnimeGameData repository into the dump and never committed.
 
 - **A row is picked off the ground.** A gather row counts when it sits on the ground and saves its pick. The rows that save nothing belong to other pages, such as fishing, animals and events, and are not points here.
 - **An item is named as its label.** The item's English name is matched to the label of the same name the official map files under Local Specialties or Inventory / Materials. Ores are left out until they are struck, and Special Items, which holds the Oculi, is left to the statues' page.

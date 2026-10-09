@@ -74,7 +74,7 @@ flowchart TD
 
 ### Gadgets
 
-- **The gadgets are the widget config, one entry per widget by its item id.** `BinOutput/Widget/ConfigWidget.json` names each widget's type, which is its kind, with its cooldowns in seconds, its cooldown group and whether it is equipable on `Z`. The widget's item row is in `MaterialExcelConfigData.json` under the same id, and the spawned gadget it makes is in `GadgetExcelConfigData.json`, whose path name, such as `SceneObj_Toys_SeekerTreasureBox_LY`, says what it finds. Its useable rule is in `WidgetUseableExcelConfigData.json`. Read by [gadgets](/docs/genshin/gadgets).
+- **The gadgets are the widget config, one entry per widget by its item id.** `BinOutput/Widget/ConfigWidget.json` names each widget's type, which is its kind, with its cooldowns in seconds, its cooldown group and whether it is equipable on `Z`. The widget's item row is in `MaterialExcelConfigData.json` under the same id, and the spawned gadget it makes is in `GadgetExcelConfigData.json`, whose path name says what it finds, the treasure seeker's naming its treasure box. Its useable rule is in the widget useable table beside them. Read by [gadgets](/docs/genshin/gadgets).
 
 ### Crafting
 

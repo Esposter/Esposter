@@ -12,10 +12,10 @@ import { explorationCommand } from "#src/services/genshinAssets/commands/explora
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fishingCommand } from "#src/services/genshinAssets/commands/fishingCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
+import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
-import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";

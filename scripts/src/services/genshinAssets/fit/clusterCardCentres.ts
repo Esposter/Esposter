@@ -45,7 +45,7 @@ export const clusterCardCentres = (points: readonly Vector[], count: number, see
       );
       const centre: Vector = [sum[0] / members.length, sum[1] / members.length, sum[2] / members.length];
       const distances = members.map((member) => Math.sqrt(computeSquaredDistance(member, centre)));
-      return [{ x: centre[0], y: centre[1], z: centre[2], radius: getPercentile(distances, CLUSTER_REACH_FRACTION) }];
+      return [{ radius: getPercentile(distances, CLUSTER_REACH_FRACTION), x: centre[0], y: centre[1], z: centre[2] }];
     })
     .toSorted((firstCluster, secondCluster) => firstCluster.y - secondCluster.y);
 };

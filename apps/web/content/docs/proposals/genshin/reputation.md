@@ -6,7 +6,7 @@ model: claude-haiku-5-5
 
 # Reputation
 
-Each nation keeps a Reputation, raised by work done for its people. Mondstadt's levels, the reward each level, request and bounty pays, the unlocks a level opens, and the three-a-week claim limit across nations are built as data and rules: see the [Reputation](/docs/genshin/reputation) page. What remains is what puts them in the world, and the later nations.
+Each nation keeps a Reputation, raised by work done for its people. The [Reputation](/docs/genshin/reputation) page builds Mondstadt's as data and rules, the three-a-week claim limit across nations among them. What remains is what puts them in the world, and the later nations.
 
 ## Decisions
 
