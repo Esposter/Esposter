@@ -138,8 +138,13 @@ const quickSelect = (rarity: number) => {
   const rarityIds = cells.value.filter((cell) => cell.isDestroyable && cell.rarity === rarity).map(({ id }) => id);
   chosenIds.value = [...new Set([...chosenIds.value, ...rarityIds])];
 };
+// The destruction the chosen entries make, undefined where the bag cannot take what they return whole
+// The dialog holds its OK off then, under the game's bag-full line
+const destruction = computed(() => destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names));
+const isDestroyFull = computed(() => chosenIds.value.length > 0 && destruction.value === undefined);
 const confirmDestroy = () => {
-  emit("destroy", destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names));
+  if (!destruction.value) return;
+  emit("destroy", destruction.value);
   isConfirming.value = false;
   isDestroying.value = false;
   chosenIds.value = [];
@@ -171,6 +176,8 @@ const currencies = computed(() =>
       :destroy-cannot-label="gameText[GameTextKey.InventoryDestroyCannot]"
       :destroy-confirm-button-label="gameText[GameTextKey.InventoryDestroyConfirmButton]"
       :destroy-confirm-list-label="gameText[GameTextKey.InventoryDestroyConfirmList]"
+      :destroy-full-label="gameText[GameTextKey.BagFull]"
+      :is-destroy-full="isDestroyFull || undefined"
       :destroy-confirm-title="gameText[GameTextKey.InventoryDestroyConfirmTitle]"
       :destroy-confirm-warning-label="gameText[GameTextKey.InventoryDestroyConfirmWarning]"
       :destroy-label="gameText[GameTextKey.InventoryDestroy]"

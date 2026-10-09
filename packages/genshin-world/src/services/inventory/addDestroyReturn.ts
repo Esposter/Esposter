@@ -8,14 +8,16 @@ import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The destruction after one material a destroy returned is taken in: a wallet currency into the wallet, any other
-// Material into the bag through its add path, which leaves what the bag has no room for where it lies
+// Material into the bag through its add path. Undefined where the bag cannot take every one of it, which refuses the destroy
 export const addDestroyReturn = (
   { inventory, wallet }: InventoryDestruction,
   { count, id }: ItemCount,
   names: Readonly<Record<string, string>>,
-): InventoryDestruction => {
-  if (!WALLET_ITEM_IDS.includes(id))
-    return { inventory: addInventoryItem(inventory, getItemDefinition(id, names), count).inventory, wallet };
+): InventoryDestruction | undefined => {
+  if (!WALLET_ITEM_IDS.includes(id)) {
+    const addition = addInventoryItem(inventory, getItemDefinition(id, names), count);
+    return addition.overflow > 0 ? undefined : { inventory: addition.inventory, wallet };
+  }
   const currency = getWalletCurrency(id);
   if (currency === undefined) throw new InvalidOperationError(Operation.Update, addDestroyReturn.name, String(id));
   return { inventory, wallet: { ...wallet, [currency]: wallet[currency] + count } };

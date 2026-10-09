@@ -11,6 +11,7 @@ import { describe, expect, test } from "vitest";
 
 const ORE_ID = 104_011;
 const MORA_ID = 202;
+const ORE_STACK_LIMIT = 99_999;
 
 const createWeapon = (id: number, rarity: number, destroyRule: DestroyRule): InventoryItem => ({
   definition: {
@@ -84,5 +85,20 @@ describe(destroyInventoryItems, () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Delete, name: getDestroyableItem, 1]`,
     );
+  });
+
+  test("refuses the destruction, leaving nothing destroyed, when a full ore stack cannot take the returned ore", () => {
+    expect.hasAssertions();
+
+    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
+    const fullOreStack: InventoryItem = {
+      definition: getItemDefinition(ORE_ID, englishNameText),
+      id: 1,
+      quantity: ORE_STACK_LIMIT,
+    };
+    const inventory = { items: [weapon, fullOreStack], nextId: 2 };
+
+    expect(destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText)).toBeUndefined();
+    expect(inventory.items).toStrictEqual([weapon, fullOreStack]);
   });
 });

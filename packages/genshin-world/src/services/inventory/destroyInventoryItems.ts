@@ -7,17 +7,18 @@ import { getDestroyableItem } from "#src/services/inventory/getDestroyableItem";
 import { getDestroyReturns } from "#src/services/inventory/getDestroyReturns";
 
 // The bag and the wallet after every chosen entry is destroyed: each entry must be one the bag may destroy, or the whole
-// Destruction is refused, and what the destroyed entries return is taken into the wallet or the bag
+// Destruction is refused, and what the destroyed entries return is taken into the wallet or the bag. Undefined where the
+// Bag cannot take every returned material whole, which refuses the destruction as a whole, nothing destroyed
 export const destroyInventoryItems = (
   { items, nextId }: Inventory,
   wallet: Wallet,
   ids: number[],
   names: Readonly<Record<string, string>>,
-): InventoryDestruction => {
+): InventoryDestruction | undefined => {
   const destroyedItems = ids.map((id) => getDestroyableItem(items, id));
   const remainingInventory: Inventory = { items: items.filter((item) => !destroyedItems.includes(item)), nextId };
-  return getDestroyReturns(destroyedItems).reduce(
-    (destruction, itemCount) => addDestroyReturn(destruction, itemCount, names),
+  return getDestroyReturns(destroyedItems).reduce<InventoryDestruction | undefined>(
+    (destruction, itemCount) => destruction && addDestroyReturn(destruction, itemCount, names),
     { inventory: remainingInventory, wallet },
   );
 };

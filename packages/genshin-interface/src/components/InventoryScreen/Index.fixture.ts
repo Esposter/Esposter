@@ -19,6 +19,7 @@ export const props = {
   destroyConfirmListLabel: "The following items will be destroyed:",
   destroyConfirmTitle: "Destroy Items",
   destroyConfirmWarningLabel: "The item(s) will be destroyed. This action cannot be undone.",
+  destroyFullLabel: "No space left in Inventory. Please free up some space and try again.",
   destroyLabel: "Destroy",
   destroyNames: [],
   destroyRecoveredLabel: "Recovered:",
