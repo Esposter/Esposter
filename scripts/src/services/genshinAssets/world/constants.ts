@@ -17,16 +17,18 @@ export const CAPITAL_VIEW_METRES = 512;
 export const ARCHITECTURE_VIEW_METRES = 600;
 // The file a derived world block is written beside its exports, which every reader of the world reads back
 export const WORLD_JSON_NAME = "world.json";
-// The community's asset index (the one published per version up to 2.6), which names every asset by its path and so
-// Turns a placement's 64-bit path hash back into the prefab's name. Read by the derivation alone
-export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "tmp", "asset-index", "gi-2.6.0.json");
-// The prefab paths this derivation names by hashing (`buildDerivedPathNames`), beside the community's index
-export const DERIVED_ASSET_PATH_INDEX_PATH: string = join(
-  PARITY_DIRECTORY,
-  "tmp",
-  "asset-index",
-  "gi-7.1.0-derived.json",
+// The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file for
+// 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's name.
+// Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`)
+export const ASSET_PATH_INDEX_URL =
+  "https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/master/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json";
+// The index is about 92 MB, so its fetch is bounded by minutes rather than the requests' seconds
+export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total(
+  "milliseconds",
 );
+export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-2.6.0.json");
+// The prefab paths this derivation names by hashing (`buildDerivedPathNames`), beside the community's index
+export const DERIVED_ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "asset-index", "gi-7.1.0-derived.json");
 // A prefab's stem starts with one of the open world's name roots, each the folder its prefabs sit under in the game's tree
 export const PREFAB_ROOT_MAP: Record<string, string> = {
   Area: "ART/Stages/Area",
