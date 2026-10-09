@@ -6,6 +6,7 @@ import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncesto
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
+  EXPRESS_TRAILER,
   MAIN_BRANCH,
   QUEUE_BRANCH,
   RELAND_FAILED_MARKER,
@@ -26,7 +27,6 @@ import { pushQueueRewrite } from "#src/services/coderabbit/collect/pushQueueRewr
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
-import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readHeldCommits } from "#src/services/coderabbit/collect/readHeldCommits";
 import { readReviewedFilePaths } from "#src/services/coderabbit/collect/readReviewedFilePaths";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
@@ -53,6 +53,8 @@ const getRetryWaitMs = (attempts: number): number =>
 // `ai/review-fixes` holds — is no pick: picked onto a queue that holds it, it would come back as the commit that was
 // Parked. It is let go instead, its held branch deleted so it is owed again, and the paths that parked it — the express
 // Lane, the sync, the port — try it again under their own caps; one they park again comes back here, its try counted.
+// A claim the lane parks again after its let-go is no longer the lane's: its copy without the claim takes its place in
+// The queue (`relandHeldCommit`), so a window carries it rather than the cap being spent on a lane it failed twice.
 // Any other is picked onto the queue's head, a conflict going to the sync's resolver (`relandHeldCommit`), one session
 // Per run at most, so the windows' own work never queues behind a backlog of them, and a run that stops on one wakes the
 // Next for the commits behind it. A re-land that lands is pushed onto the queue under the lease its rewrites use, its held
@@ -97,11 +99,11 @@ export const relandHeldCommits = async ({
       );
       wake(ATTEMPT_RETRY_DELAY_SECONDS);
     }
+    const body = runGit(["log", "-1", "--format=%B", sha], cwd);
     if (
       !isSeen ||
       attempts >= SESSION_ATTEMPT_CAP ||
-      getTrailerValues(runGit(["log", "-1", "--format=%B", sha], cwd), RELANDED_TRAILER).length >=
-        SESSION_ATTEMPT_CAP ||
+      getTrailerValues(body, RELANDED_TRAILER).length >= SESSION_ATTEMPT_CAP ||
       readReviewedFilePaths(mainSha, `${sha}^..${sha}`, cwd).length > REVIEW_FILE_CAP
     )
       continue;
@@ -116,9 +118,11 @@ export const relandHeldCommits = async ({
       continue;
     }
 
+    const isQueueCarried = checkIsAncestor(sha, queueSha, cwd);
+    // A carried commit's tries are its let-gos, since it is never picked: a claim with one has failed the lane since
+    const isRerouted = isQueueCarried && attempts > 0 && getTrailerValues(body, EXPRESS_TRAILER).length > 0;
     const isStillCarried =
-      checkIsAncestor(sha, queueSha, cwd) ||
-      (reviewFixesSha !== undefined && checkIsAncestor(sha, reviewFixesSha, cwd));
+      !isRerouted && (isQueueCarried || (reviewFixesSha !== undefined && checkIsAncestor(sha, reviewFixesSha, cwd)));
     if (isDryRun) {
       console.info(
         isStillCarried
@@ -142,10 +146,15 @@ export const relandHeldCommits = async ({
     }
 
     // oxlint-disable-next-line no-await-in-loop -- each re-land is picked onto the queue the one before it pushed
-    const { failure, isSessionRun } = await relandHeldCommit({ branch, cwd, queueSha, sha });
+    const { failure, isSessionRun, relandedSha } = await relandHeldCommit({
+      branch,
+      cwd,
+      isInPlace: isRerouted,
+      queueSha,
+      sha,
+    });
     if (failure === undefined) {
-      const relandedSha = readHeadSha(cwd);
-      const isCarried = relandedSha === queueSha;
+      const isCarried = relandedSha === undefined;
       const pushedSha = isCarried ? queueSha : pushQueueRewrite({ cwd, isDryRun, queueSha, viewerLogin });
       // The queue's history was rewritten under the run: that push fires a run of its own, which picks the commit again
       if (pushedSha === undefined) return { retriggerDelaySeconds };

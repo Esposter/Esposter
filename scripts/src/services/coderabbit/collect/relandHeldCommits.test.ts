@@ -5,6 +5,7 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   DEVELOP_BRANCH,
+  EXPRESS_TRAILER,
   MAIN_BRANCH,
   QUEUE_BRANCH,
   RELAND_FAILED_MARKER,
@@ -241,4 +242,42 @@ describe(relandHeldCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       expect(runSession).not.toHaveBeenCalled();
     },
   );
+
+  // A claim the lane parks again after its let-go has failed the express route twice, so it takes the window route
+  // Rather than spend the cap on the lane: its copy without the claim takes its place in the queue, and what followed
+  // It is replayed onto the copy
+  test("re-lands a claim the lane parked again after its let-go without its claim, in its place in the queue", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, `origin/${MAIN_BRANCH}`);
+    commitFile(TEST_FILENAME, "");
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    const heldSha = readSha("HEAD");
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, " "));
+    const heldBranch = getHeldBranch(heldSha);
+    publish(heldBranch, heldSha);
+    const comments = answerGh(heldSha, heldBranch);
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    publish(heldBranch, heldSha);
+    vi.setSystemTime(firstWaitMs);
+    const reroutedRun = await relandHeldCommits({ ...relandInput, cwd: getCwd() });
+    const reroutedSha = readSha(`origin/${QUEUE_BRANCH}`);
+
+    expect(reroutedRun).toStrictEqual({ retriggerDelaySeconds: undefined });
+    expect(readSha(`${reroutedSha}^{tree}`)).toBe(readSha(`${queueSha}^{tree}`));
+    expect(runGit(["log", "--format=%B", `${mainSha}..${reroutedSha}`], getCwd())).toBe(
+      `${TEST_FILENAME}\n\n(cherry picked from commit ${queueSha})\n\n${TEST_FILENAME}\n\n${RELANDED_TRAILER}: ${heldSha}\n\n`,
+    );
+    expect(readHeldBranches()).toBe("");
+    expect(comments.map(({ body }) => body)).toStrictEqual([
+      getSeenComment(heldSha, mainSha),
+      `${getMarker(RELAND_MARKER, heldSha, [mainSha])}\nLet go at \`${MAIN_BRANCH}\` ${mainSha}, since \`${QUEUE_BRANCH}\` or \`${REVIEW_FIXES_BRANCH}\` still carries it: the paths that parked it try it again under their own caps.`,
+      `${getMarker(RELAND_FAILED_MARKER, heldSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP}: let go of ${heldSha} at ${MAIN_BRANCH} ${mainSha}, for the paths that parked it to try again`,
+    ]);
+    expect(runSession).not.toHaveBeenCalled();
+  });
 });
