@@ -136,3 +136,15 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.Turkish]: "tr",
   [GameLanguage.Vietnamese]: "vi",
 };
+// The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them, at its default
+// Branch. Its directory listings give each file's size, which is what decides whether a file held is kept
+export const ANIME_GAME_DATA_URL = "https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/master";
+export const ANIME_GAME_DATA_CONTENTS_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/contents";
+// The tables a reader names, which the dump's `ExcelBinOutput/` may lack
+export const DUMP_TABLE_NAMES: readonly string[] = [
+  "DocumentExcelConfigData",
+  "DocumentLocalizationFormatExcelConfigData",
+  "LocalizationExcelConfigData",
+];
+// How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
+export const DUMP_FETCH_BATCH_SIZE = 8;

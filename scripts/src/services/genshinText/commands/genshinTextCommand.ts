@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { decodeCommand } from "#src/services/genshinText/commands/decodeCommand";
+import { fetchCommand } from "#src/services/genshinText/commands/fetchCommand";
 import { findCommand } from "#src/services/genshinText/commands/findCommand";
 import { namesCommand } from "#src/services/genshinText/commands/namesCommand";
 import { questsCommand } from "#src/services/genshinText/commands/questsCommand";
@@ -16,6 +17,7 @@ export const genshinTextCommand: CommandDef = defineCommand({
   },
   subCommands: {
     decode: decodeCommand,
+    fetch: fetchCommand,
     find: findCommand,
     names: namesCommand,
     quests: questsCommand,
