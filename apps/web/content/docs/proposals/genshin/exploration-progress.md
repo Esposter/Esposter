@@ -1,7 +1,13 @@
 ---
 title: Exploration progress
-description: Proposal — each area's exploration progress as the game shows it on the map. Galesong Hill, where Windrise stands, is built with its count and percentage, its statue's waypoint the one doing done so far. Chests, camps, Oculi and puzzles join as their pages build, each kind's weight is measured off a recording of the percentage stepping, and each nation's share past its thresholds raises its Reputation once Reputation is kept.
+description: Proposal — each area's exploration progress as the game shows it on the map. Galesong Hill, where Windrise stands, is built with its count and percentage, its statue's waypoint the one doing done so far. Mondstadt's share past its thresholds paying its Reputation is next, then chests, camps, Oculi and puzzles as their pages build, each kind's weight re-measured off a recording of the percentage stepping.
 model: claude-haiku-5-5
+touches:
+  [
+    "packages/genshin-world/src/services/exploration/**",
+    "packages/genshin-world/src/composables/useWorldMap.ts",
+    "packages/genshin-world/src/components/World/Session/**",
+  ]
 ---
 
 # Exploration progress
@@ -18,7 +24,8 @@ The game's map shows, for every area, how much of it a player has explored as a 
 - **The area panel is the area's label.** The count and the percentage sit under each filled area's name on the map, as built.
 - **The percentage is rounded down.** Once the measured weights fit the totals, an area reads 100 only with all its weight done, so a near-complete area never shows as complete. Until then the table's weights overshoot, so an area can read 100 early and pass it, as the [as-built page](/docs/genshin/exploration-progress) records.
 - **Counted once.** A doing counts once, kept with the player's progress, so a chest that never comes back and a waypoint unlocked once each add their weight a single time.
-- **A nation's thresholds raise its Reputation.** A nation's exploration reaching each of `ReputationExploreExcelConfigData`'s thresholds gives its Reputation reward once ([reputation](/docs/proposals/genshin/reputation)).
+- **A nation's thresholds raise its Reputation.** A nation's exploration reaching each of `ReputationExploreExcelConfigData`'s thresholds gives its Reputation reward once ([reputation](/docs/proposals/genshin/reputation)). Reputation is kept in the save now, so this is built before the doings below.
+- **A nation's percentage is read off its areas the way the tables weigh them.** `ReputationCityExcelConfigData` names the areas each nation's exploration counts (`exploreAreaVec`; Mondstadt's are areas 1 to 4, the four level-one areas the slice holds), and `ExploreAreaTotalExpExcelConfigData` gives each area a `reputationRatio`. Liyue's six ratios sum to one, so a nation's percentage is its areas' percentages weighted by their ratios, rounded down. Every Mondstadt ratio reads 0 at this revision, so a nation whose ratios are all 0 takes its areas' done weight over their summed totals, rounded down, as an area's own percentage is.
 
 ## How it works
 
@@ -37,15 +44,19 @@ flowchart LR
 
 **This adds, in order:**
 
-1. **Each kind's weight, measured.** A recording of the map's stepping settles the scale the percentage takes and each kind's weight, with whether a gathered ingredient counts. Until it lands the table's weights are used, provisional.
-2. **Chests and camps done.** Each is done once opened or cleared, kept with the player's progress, as the [chests](/docs/proposals/genshin/chests) and [puzzles](/docs/proposals/genshin/puzzles) pages build them.
+1. **Mondstadt's Reputation thresholds, paid as a statue is unlocked.**
+   - `packages/genshin-world/src/services/exploration/computeNationExplorationPercentage.ts`: takes the nation's `ExplorationArea`s and the unlocked landmarks, sums each area's done weight (`computeExploredDoingIds`) and total, and returns the percentage by the rule under Decisions (Mondstadt's all-zero ratios: done over total, rounded down). Its test, `computeNationExplorationPercentage.test.ts` beside it, asserts two areas of totals 100 and 300 with 40 done read 10, and that nothing unlocked reads 0.
+   - `packages/genshin-world/src/composables/useWorldMap.ts`: `activateLandmark` reads the percentage before and after the unlock, passes both to `computeReputationExploresReached` with `readMondstadtReputation()`'s `explores`, and pays each reached threshold: its `reward.exp` through `addReputationExp` with the slice's `levels`, and its `reward.items` (Mora, item 202) into the wallet through `setWallet`, as `payFirstUnlockReward` pays Primogems. The composable takes a `reputation` ref and a `setReputation` callback beside `wallet` and `setWallet`.
+   - `packages/genshin-world/src/components/World/Session/Index.vue`: holds the reputation in a `shallowRef` from `savedState.reputation`, passes it to `useWorldMap`, and saves the ref rather than the saved value.
+   - Data: the generated `exploration/mondstadt.json` and `reputation/mondstadt.json` slices already hold every number; nothing is regenerated.
+2. **Chests and camps done.** Waits on the join of a placed chest and camp to the game's own scene records, which the scene group export the other machine is making carries; the [chests](/docs/proposals/genshin/chests) page records the join. Each is then done once opened or cleared, kept with the player's progress.
 3. **Oculi and puzzles done.** The Oculi offered and the puzzles solved join the count once [offerings](/docs/proposals/genshin/offering-systems) and the puzzles record them.
-4. **The Reputation thresholds**, once Reputation is kept.
+4. **Each kind's weight, re-measured.** The table's weight of ten stays in use; the owed `exploration-steps.mkv` re-measures the scale and each kind's weight, with whether a gathered ingredient counts, and gates nothing above.
 
 ## Data and measures
 
 - **Read from the game's tables (built for Mondstadt):** `ExploreAreaTotalExpExcelConfigData`'s totals and `WorldAreaExploreEventConfigData`'s events for the four level-one areas.
-- **Read from the game's tables (waiting):** `ReputationExploreExcelConfigData`'s thresholds, whose rows name each nation by its city and the progress of its three levels, once Reputation is kept.
+- **Read from the game's tables (built into the Reputation slice):** `ReputationExploreExcelConfigData`'s thresholds, whose rows name each nation by its city and the progress of its three levels.
 - **Measured:** each kind's weight, off a recording of the English PC client's map before and after one statue, one chest, one camp, one puzzle solved, one Oculus offered and one gathered ingredient in Galesong Hill, the step in its percentage times its total. The clip is listed as owed on the [roadmap](/docs/genshin/roadmap).
 
 ## Key files

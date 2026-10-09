@@ -2,7 +2,7 @@
 title: Wildlife
 description: Proposal — the open world's animals as the game runs them. Birds and beasts flee within their escape radius and drop meat or fowl when struck, boars charge, Sumeru's fight back with health bars, crystalflies, butterflies, lizards and crabs are picked up as materials and vanish in smoke, cats and dogs simply live there, and each kind's numbers and weathers are the game's own environment animal rows. Mondstadt's fleeing birds and beasts are built, their drops and the rest still to come.
 model: claude-haiku-5-5
-needs: [game-exports]
+touches: ["packages/genshin-world/src/services/wildlife/**", "packages/genshin-world/src/models/wildlife/**"]
 ---
 
 # Wildlife
@@ -15,7 +15,7 @@ The game's world is lived in by animals: birds that scatter, boars that charge, 
 - **Each kind's numbers are the game's, where a table holds them.** `EnvAnimalGatherExcelConfigData` gives the material sources their escape radius and time, how long they live, the weathers they hide in (rain, thunderstorms and snow for some) and the items they give. `CaptureExcelConfigData` gives what each beast drops when caught, and the monster table its kind, which the enemies' run already reads.
 - **Birds and beasts are the archive's animals, and no table gives their flight.** The environment table holds the critters, fish and gadgets. The birds and beasts are monsters filed under the archive's aviary and animal groups, and no row of the table gives their escape radius or time. Until a recording times them, they stand on the closest values the table does hold, the gadget rows' radius of four metres and time of one second, marked provisional.
 - **They flee on the enemies' step.** A startled animal runs from the player once within its escape radius, as a stepped state beside the enemies' own, and most come into being only when the player is near. Boars charge and can hurt a player in their way; Sumeru's beasts fight back with health bars and draw the player into combat; Chenyu Vale's flee and vanish when struck.
-- **Struck down by a hit, as combat deals it.** A bird or beast falls to the hit [combat](/docs/genshin/combat) prices, one hit for most. A hit on wildlife triggers a weapon's passive but never an artifact set's, as the wiki notes. The capture table's drops are a single item in every row, and its name is not yet in the game's text the dump holds, so what a bird gives waits on that name.
+- **Struck down by a hit, as combat deals it.** A bird or beast falls to the hit [combat](/docs/genshin/combat) prices, one hit for most. A hit on wildlife triggers a weapon's passive but never an artifact set's, as the wiki notes. The capture table's rows name drop ids (`21330001` and on) whose drop tables the community dump does not carry (`DropTreeExcelConfigData` and its kin return 404 on AnimeGameData), so what a bird or beast gives is the wiki's Wildlife page: a White Pigeon one Fowl (item 100064), a Squirrel one Raw Meat (100061), a Crimson Fox two Raw Meat. Both items are already in `data/items/materials.json` with their names, so they show as any material does.
 - **They come back on the game's refresh**, as gathering points do, by their kind's policy.
 
 ## How it works
@@ -38,10 +38,14 @@ stateDiagram-v2
 
 **Still to come, in order:**
 
-1. **Birds and beasts drop when struck.** The kit's strike has to accept an animal as a target, the capture table's drop is written, and the item's name is read from the game's text.
-2. **Material sources, picked up.**
-3. **Boars, and the wildlife that fights back.**
-4. **Pets**, and each region's own animals when its region lands.
+1. **What a struck bird or beast gives.**
+   - `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`: each `WildlifeKind` to its `DroppedItem`, as the Decisions give them.
+   - `WildlifeState` gains `Struck`, and `packages/genshin-world/src/services/wildlife/strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
+   - Tests: `strikeWildlife.test.ts` (a Crimson Fox gives two Raw Meat once, and nothing when struck again) and a case in `stepWildlife.test.ts` (a struck animal in reach does not flee).
+2. **The strike reaching the animals.** The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so `components/World/Character/Index.vue`'s strike loop tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component draws the list it is given and skips a struck one.
+3. **Material sources, picked up.**
+4. **Boars, and the wildlife that fights back.**
+5. **Pets**, and each region's own animals when its region lands.
 
 ## Data and measures
 
