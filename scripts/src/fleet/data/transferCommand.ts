@@ -20,11 +20,16 @@ export const createTransferCommand = (direction: TransferDirection, description:
       },
       into: {
         default: "",
-        description: "A subfolder of the peer's parity directory the copy lands in, such as game",
+        description:
+          "A subfolder of the peer's parity directory, such as game: where a push lands, and what a pull copies from",
         type: "string",
       },
       peer: { description: "The peer's name in ~/.esposter/peers.json", required: true, type: "positional" },
-      source: { default: "", description: "A local folder to copy instead of the parity directory", type: "string" },
+      source: {
+        default: "",
+        description: "A local folder in place of the parity directory: what a push copies from, and where a pull lands",
+        type: "string",
+      },
     },
     meta: { description, name: direction.toLowerCase() },
     run: async ({ args }) =>
