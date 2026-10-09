@@ -2,16 +2,19 @@ import { computeGroundLayerColours } from "#src/services/genshinAssets/fit/fitGr
 import { describe, expect, test } from "vitest";
 
 describe(computeGroundLayerColours, () => {
-  test("averages each layer's samples by area and leaves out the samples no layer holds", () => {
+  test("classes each sample to its nearest tone in Lab and averages each class by weight", () => {
     expect.hasAssertions();
 
     expect(
-      computeGroundLayerColours([
-        { colour: [0, 0, 0], layer: "Grass", part: "", weight: 1 },
-        { colour: [255, 255, 255], layer: "Grass", part: "", weight: 3 },
-        { colour: [100, 100, 100], layer: "Rock", part: "", weight: 2 },
-        { colour: [50, 50, 50], part: "", weight: 5 },
-      ]),
-    ).toStrictEqual({ Grass: "#bfbfbf", Rock: "#646464" });
+      computeGroundLayerColours(
+        [
+          { colour: [10, 10, 10], part: "", weight: 1 },
+          { colour: [30, 30, 30], part: "", weight: 3 },
+          { colour: [240, 240, 240], part: "", weight: 2 },
+          { colour: [0, 0, 0], part: "", weight: 0 },
+        ],
+        { Dark: "#000000", Light: "#ffffff" },
+      ),
+    ).toStrictEqual({ Dark: "#191919", Light: "#f0f0f0" });
   });
 });
