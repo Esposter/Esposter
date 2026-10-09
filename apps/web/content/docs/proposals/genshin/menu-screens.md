@@ -57,7 +57,7 @@ flowchart TD
    - **The check.** `pnpm -C scripts genshin:parity compare menu-time` writes its row, and the comparison is queued for the user's eyes under the roadmap's Awaiting the user.
 2. **Settings' body**: the Graphics Quality row's choices and the store its value is kept in, the Audio tab, and the rows' colours over the blurred world the page has no copy of.
 3. **The quit prompt's scale, from a public clip.** `asw7VW5QM1g` on YouTube, 46 seconds at 1920 by 1080 (2026), logs out of the English PC client through the menu. It is clipped with `genshin:parity clip ... --from 0 --to 46 --name logout`, and the first still holding the prompt whole replaces the `exit-prompt` reference's `wikiTitle` and `placement` with its `capture` and `seconds`, so `Menu/Exit` is scaled to the whole frame. `menu-quit-prompt.mkv` re-measures it later.
-4. **Paimon beside the menu** waits on her official model pack being hosted with the others (the user, who uploads the packs); the profile card's signature, namecard, birthday and UID each join as the system behind it lands, its rank and World Level being built.
+4. **Paimon beside the menu** waits on her official model pack among the developer's extracted packs (the user, who downloads it), read as every character's is ([characters](/docs/genshin/characters)); the profile card's signature, namecard, birthday and UID each join as the system behind it lands, its rank and World Level being built.
 
 ## What this does not propose
 
