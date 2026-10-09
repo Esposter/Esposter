@@ -3,6 +3,7 @@ export enum InternalCooldownTag {
   ChargedAttack = "ChargedAttack",
   ElementalBurst = "ElementalBurst",
   ElementalSkill = "ElementalSkill",
+  LisaElectroDamage = "LisaElectroDamage",
   MonaHydroDamage = "MonaHydroDamage",
   NormalAttack = "NormalAttack",
 }
