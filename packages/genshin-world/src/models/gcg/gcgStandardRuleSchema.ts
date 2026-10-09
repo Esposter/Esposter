@@ -6,9 +6,7 @@ import { z } from "zod";
 // The standard rule's slice as the dump's rule and reaction tables wrote it, each reaction's element pair checked to be
 // Two of the world's elements
 export const gcgStandardRuleSchema = z.object({
-  drawCount: z.number().int().nonnegative(),
-  handCardLimit: z.number().int().positive(),
-  reactions: z.array(
-    z.object({ elements: z.tuple([z.enum(Element), z.enum(Element)]), id: z.number().int().positive() }),
-  ),
+  drawCount: z.int().nonnegative(),
+  handCardLimit: z.int().positive(),
+  reactions: z.array(z.object({ elements: z.tuple([z.enum(Element), z.enum(Element)]), id: z.int().positive() })),
 }) satisfies z.ZodType<GcgRule>;

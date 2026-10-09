@@ -11,7 +11,7 @@ const UP = new Vector3(0, 1, 0);
 // A tree as two geometries, one per material: its wood, every segment a tapered open cylinder merged into one mesh,
 // And its leaves, every card in one mesh, so a tree is two draws and a forest of one species is two instanced draws
 export const createTreeGeometry = (treeOptions: TreeOptions): TreeGeometry => {
-  const { branchSegments, clusterCenters } = computeTreeSkeleton(treeOptions);
+  const branchSegments = computeTreeSkeleton(treeOptions);
   const direction = new Vector3();
   const rotation = new Quaternion();
   const segmentGeometries = branchSegments.map(({ end, endRadius, start, startRadius }) => {
@@ -24,7 +24,7 @@ export const createTreeGeometry = (treeOptions: TreeOptions): TreeGeometry => {
   });
   const branchGeometry = mergeGeometryParts(segmentGeometries);
 
-  const { indices, normals, positions, uvs } = computeLeafCards(clusterCenters, treeOptions);
+  const { indices, normals, positions, uvs } = computeLeafCards(treeOptions.clusters, treeOptions);
   const leafGeometry = new BufferGeometry();
   leafGeometry.setAttribute("position", new BufferAttribute(positions, 3));
   leafGeometry.setAttribute("normal", new BufferAttribute(normals, 3));

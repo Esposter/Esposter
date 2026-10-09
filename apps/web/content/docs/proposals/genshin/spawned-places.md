@@ -32,7 +32,7 @@ flowchart TD
 **This adds, as each consuming page lands:**
 
 1. **Oculi**, for [statues of The Seven](/docs/proposals/genshin/statues-of-the-seven), at each fitted place.
-2. **Gathering points, and the camps** the map marks, for [gathering](/docs/proposals/genshin/gathering) and [enemies](/docs/genshin/enemies).
+2. **The camps** the map marks, for [enemies](/docs/genshin/enemies). The gathering points are placed by the [gathering](/docs/genshin/gathering) page.
 
 ## Data and measures
 

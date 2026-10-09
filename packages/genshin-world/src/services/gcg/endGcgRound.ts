@@ -3,8 +3,8 @@ import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
+import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 

@@ -10,11 +10,11 @@ export const getGcgReactionKind = (
   firstElement: Element,
   secondElement: Element,
 ): GcgReactionKind | undefined => {
-  if (!rule.reactions.some(({ elements }) => isSamePair(elements, firstElement, secondElement))) return undefined;
+  if (!rule.reactions.some(({ elements }) => checkIsSamePair(elements, firstElement, secondElement))) return undefined;
   return GcgReactionPairs.find(([pairFirst, pairSecond]) =>
-    isSamePair([pairFirst, pairSecond], firstElement, secondElement),
+    checkIsSamePair([pairFirst, pairSecond], firstElement, secondElement),
   )?.[2];
 };
 
-const isSamePair = (pair: [Element, Element], firstElement: Element, secondElement: Element): boolean =>
+const checkIsSamePair = (pair: [Element, Element], firstElement: Element, secondElement: Element): boolean =>
   (pair[0] === firstElement && pair[1] === secondElement) || (pair[0] === secondElement && pair[1] === firstElement);

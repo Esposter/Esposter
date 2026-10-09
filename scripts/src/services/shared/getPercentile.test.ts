@@ -1,4 +1,4 @@
-import { getPercentile } from "#src/services/voiceMatch/getPercentile";
+import { getPercentile } from "#src/services/shared/getPercentile";
 import { describe, expect, test } from "vitest";
 
 describe(getPercentile, () => {

@@ -11,7 +11,7 @@ import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/Inte
 // Every point of the kinds the label map names, carried into the game's coordinates by the fit's transform and kept by
 // Region, each id under the given prefix. A point on a layer under the ground is left out for now, and so is one in an
 // Area no region is mapped to, each counted so the report says what was not placed. The other labels are none of its business
-export const placeMapPoints = <Kind extends string>(
+export const placeMapPoints = <Kind>(
   points: readonly InteractiveMapPoint[],
   transform: SimilarityTransform,
   labelIdKindMap: ReadonlyMap<number, Kind>,

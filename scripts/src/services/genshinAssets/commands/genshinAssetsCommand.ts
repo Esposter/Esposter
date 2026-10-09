@@ -10,6 +10,7 @@ import { explorationCommand } from "#src/services/genshinAssets/commands/explora
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
+import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
@@ -33,6 +34,7 @@ import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand"
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
+import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
 import { defineCommand } from "citty";
 
@@ -69,10 +71,12 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     chests: chestsCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
+    gathering: gatheringCommand,
     gcg: gcgCommand,
     gadgets: gadgetsCommand,
     shops: shopsCommand,
     reputation: reputationCommand,
+    wildlife: wildlifeCommand,
     expeditions: expeditionsCommand,
   },
 });

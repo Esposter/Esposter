@@ -2,5 +2,5 @@
 export const shuffleGcgCards = (cardIds: number[], random: () => number): number[] =>
   cardIds
     .map((cardId) => ({ cardId, key: random() }))
-    .toSorted((first, second) => first.key - second.key)
+    .toSorted((firstCard, secondCard) => firstCard.key - secondCard.key)
     .map(({ cardId }) => cardId);
