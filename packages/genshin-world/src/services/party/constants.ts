@@ -1,5 +1,10 @@
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { InputAction } from "genshin-engine";
 
+// The team the world starts deployed with, the Traveler alone as a new player's, whose talent multipliers the world's
+// Gate reads before it opens. The Traveler's kit is also the one a character with none of its own fights with, so its
+// Multipliers are loaded from the start whatever the team becomes
+export const STARTING_TEAM_CHARACTER_IDS: readonly number[] = [TRAVELER_CHARACTER_ID];
 // The most characters a team holds
 export const PARTY_TEAM_SIZE = 4;
 // The seconds after a switch before the next is allowed

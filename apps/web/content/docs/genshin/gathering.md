@@ -67,7 +67,7 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 | `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                             |
 | `packages/genshin-world/src/composables/useGatheringPoints.ts`                   | Mondstadt's points and items, read as the world opens            |
 | `packages/genshin-world/src/composables/useWorldPickups.ts`                      | Each ore's broken share, and the pieces a broken ore drops       |
-| `packages/genshin-world/src/components/World/Character/Index.vue`                | The character's landed hits, fed to the ores beside the enemies  |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits, fed to the ores beside the enemies  |
 | `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops   |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag            |
 | `packages/genshin-world/src/generated/gathering/`                                | The per-region slices and the items table                        |

@@ -9,11 +9,11 @@ import { getEnergyGain } from "#src/services/combat/energy/getEnergyGain";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // An enemy's drop of energy, written into each standing member of the deployed team: the drop's count of what each one
 // Gains from it, by its element, its energy recharge and whether it is on the field, up to what its burst costs. A
-// Fallen member gains none, as it has lost its energy
+// Fallen member gains none, as it has lost its energy, and nor does one whose combatant is not built yet, its talent
+// Multipliers still in flight
 export const gainPartyEnergy = (
   party: Party,
   { count, energyDropKind }: EnergyDrop,
@@ -25,7 +25,7 @@ export const gainPartyEnergy = (
   for (const characterId of characterIds) {
     if (checkIsCharacterDown(party, characterId)) continue;
     const combatant = characterIdCombatantMap.get(characterId);
-    if (!combatant) throw new InvalidOperationError(Operation.Read, gainPartyEnergy.name, `character ${characterId}`);
+    if (!combatant) continue;
     const recipient: EnergyRecipient = {
       element: combatant.element,
       energyRecharge: combatant.attributes.attributeTotalMap[Attribute.EnergyRecharge],

@@ -119,20 +119,21 @@ Every speed, height and threshold is a body type's, since how far a character sp
 
 ## Key files
 
-| File                                                                            | Its role                                                                                                         |
-| :------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/locomotion/createCharacterController.ts`           | the body: contact, state, stamina, motion and collision, a step at a time                                        |
-| `packages/genshin-engine/src/locomotion/computeLocomotionState.ts`              | the states' gates, a pure function                                                                               |
-| `packages/genshin-engine/src/locomotion/createStamina.ts`                       | the pool: what each state costs, and when it refills                                                             |
-| `packages/genshin-engine/src/locomotion/constants.ts`                           | the pool's numbers and the body's own thresholds                                                                 |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`               | each landmark's octree, the capsule's push and the sphere's cast                                                 |
-| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`                 | the steps, and the share of a step a frame has come into                                                         |
-| `packages/genshin-world/src/components/World/Character/Index.vue`               | the wiring: steps, the kit's presses, aim and strikes, the drawn body's blend, the follow camera, a jump's place |
-| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`    | the body's capsule, drawn where no character's model is                                                          |
-| `packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts` | each body type's numbers                                                                                         |
-| `packages/genshin-world/src/services/world/locomotion/constants.ts`             | the provisional numbers every unmeasured type moves by                                                           |
-| `packages/genshin-world/src/components/World/Landmarks/Index.vue`               | gives the collider the landmarks as they arrive                                                                  |
-| `scripts/src/services/genshinAssets/locomotion/readLocomotionClips.ts`          | a body type's clips exported and read for their root motion                                                      |
+| File                                                                            | Its role                                                                                        |
+| :------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/locomotion/createCharacterController.ts`           | the body: contact, state, stamina, motion and collision, a step at a time                       |
+| `packages/genshin-engine/src/locomotion/computeLocomotionState.ts`              | the states' gates, a pure function                                                              |
+| `packages/genshin-engine/src/locomotion/createStamina.ts`                       | the pool: what each state costs, and when it refills                                            |
+| `packages/genshin-engine/src/locomotion/constants.ts`                           | the pool's numbers and the body's own thresholds                                                |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`               | each landmark's octree, the capsule's push and the sphere's cast                                |
+| `packages/genshin-engine/src/simulation/createFixedStepLoop.ts`                 | the steps, and the share of a step a frame has come into                                        |
+| `packages/genshin-world/src/components/World/Character/Index.vue`               | the wiring: steps, the kit's presses, the drawn body's blend, the follow camera, a jump's place |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                      | the kit's step: the body turned to its target, and its strikes                                  |
+| `packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue`    | the body's capsule, drawn where no character's model is                                         |
+| `packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts` | each body type's numbers                                                                        |
+| `packages/genshin-world/src/services/world/locomotion/constants.ts`             | the provisional numbers every unmeasured type moves by                                          |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue`               | gives the collider the landmarks as they arrive                                                 |
+| `scripts/src/services/genshinAssets/locomotion/readLocomotionClips.ts`          | a body type's clips exported and read for their root motion                                     |
 
 ## Notes
 
