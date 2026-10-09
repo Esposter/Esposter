@@ -35,9 +35,6 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
-// A family of scattered cards is read on its envelope too (`measureEnvelope`), each card cut to its size in metres as
-// The export's leaves measure (Oak.reference's record): the envelope's window spans one card
-export const ENVELOPE_CARD_METRES = 5.9;
 // The square of a block a family's pixels are split into two halves by, as a chequerboard, so each half spreads over the
 // Whole surface: the two halves read against each other are the floor a statistic matched in distribution is gated at
 export const SPLIT_BLOCK_PIXELS = 32;

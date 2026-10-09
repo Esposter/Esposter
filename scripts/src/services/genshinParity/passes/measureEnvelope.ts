@@ -7,11 +7,10 @@ import { WitnessTargetName as TargetName } from "#src/models/genshinParity/share
 import { compareFamilyEnvelope } from "#src/services/genshinParity/passes/compareFamilyEnvelope";
 import { computeEnvelopeRadius } from "#src/services/genshinParity/passes/computeEnvelopeRadius";
 import { computeFamilyEnvelope } from "#src/services/genshinParity/passes/computeFamilyEnvelope";
-import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
+import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
-import { getPercentile } from "#src/services/shared/getPercentile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WindrisePartFamily } from "genshin-world";
 
@@ -28,10 +27,10 @@ const toTargets = ({ targets }: WitnessTargetsRead): Targets => ({
   part: targets.part ?? new Float32Array(),
 });
 // The Oak's shape read on its envelope, a family of scattered cards: the exports' and ours at the reference's camera
-// Each closed at one card's projected size, against a gate read off the exports themselves. The exports' cards are
-// Split in two halves (each card whole in one of them, `WitnessView.leafHalf`), and the gate is how far those two halves
-// Stand apart on their envelopes, so ours passes once it stands no further from the exports than the exports' own
-// Halves stand from each other. The per-card readings stay with the pass as diagnostics
+// Each closed at the cards' spacing (`computeEnvelopeRadius`), against a gate read off the exports themselves. The
+// Exports' cards are split in two halves (each card whole in one of them, `WitnessView.leafHalf`), and the gate is how
+// Far those two halves stand apart on their envelopes, so ours passes once it stands no further from the exports than
+// The exports' own halves stand from each other. The per-card readings stay with the pass as diagnostics
 export const measureEnvelope = async (
   referenceId: string,
   exportsRead: WitnessTargetsRead,
@@ -43,12 +42,6 @@ export const measureEnvelope = async (
   if (family === -1) return [];
   const { height, width } = exportsRead;
   const exportsTargets = toTargets(exportsRead);
-  const familyDepths: number[] = [];
-  for (let pixel = 0; pixel < width * height; pixel++) {
-    const depth = exportsTargets.depth[pixel * 4] ?? 0;
-    if (readTargetFamily(exportsTargets.part, pixel) === family && depth > 0) familyDepths.push(depth);
-  }
-  const radius = computeEnvelopeRadius(height, camera.fov, getPercentile(familyDepths, 0.5));
   const halves: Targets[] = [];
   for (const leafHalf of [0, 1] as const) {
     // oxlint-disable-next-line no-await-in-loop -- one half is drawn after the other on one page
@@ -59,6 +52,8 @@ export const measureEnvelope = async (
   const [firstHalf, secondHalf] = halves;
   if (!firstHalf || !secondHalf)
     throw new InvalidOperationError(Operation.Read, referenceId, "has no halves of its cards");
+  const maskOf = ({ part }: Targets) => readFamilyMask(part, family, width * height);
+  const radius = computeEnvelopeRadius(maskOf(exportsTargets), [maskOf(firstHalf), maskOf(secondHalf)], width, height);
   const envelopeOf = (targets: Targets) => computeFamilyEnvelope(targets, family, width, height, radius);
   const floor = compareFamilyEnvelope(envelopeOf(firstHalf), envelopeOf(secondHalf), width, height);
   const ours = compareFamilyEnvelope(envelopeOf(exportsTargets), envelopeOf(toTargets(oursRead)), width, height);

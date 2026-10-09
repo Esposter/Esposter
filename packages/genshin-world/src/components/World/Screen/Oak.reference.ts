@@ -54,6 +54,13 @@ export const oakTopic: ReferenceTopic = {
       result:
         "The game's leaf texture is 81% cut at its `_Cutoff` of 0.5, but the witness draws its cards whole and every target draws ours whole too. Cut on both sides the oak reads 2.07 pixels over an outline 8.7 times longer, with 163,000 pixels apart against 73,000, a depth of 0.196 and a normal of 57.1 degrees, and the Ground's outline 3.80 pixels: leaf against leaf, the readings are the leaves' scatter. `_Cutoff` stands at 0.5 on nearly every exported stone material too, the login's and the paving's among them, so the clip is keyed on the foliage shader, never on the property",
     },
+    {
+      method:
+        "The envelope's closing radius swept from 1 to 100 pixels on the exports' two halves and on ours, with the targets drawn from the front alone and then with each source's sides, the exports' leaf cards from both and a face from behind reading its geometry's own normal; the halves' closed masks' holes read at each radius against the whole's",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The radius from one card's 5.9 m measured the radius: from the front alone the floor's outline ran from 4.8 to 14.0 pixels across the sweep and ours from 5 to 54. Drawn from both sides the floor's outline holds within 4.3 to 7.5 pixels, its depth and normal falling as a windowed mean's scatter does, and ours misses all three at every radius past the cards' spacing. The leaf mesh holds no back face for any card, so the game draws its cards from both sides; with `normalWorld`'s flip on a back face the halves read 75 to 80 degrees apart. The radius is now the cards' spacing, the least at which every hole either closed half leaves is one the whole leaves too: 11 pixels, 1.1 m at the crown's median depth (29 from the front alone). There the floor reads 5.43 pixels, 0.101 and 17.4 degrees and ours 13.7, 0.141 and 26.5, and the per-card Oak 2.25 pixels, 0.169 and 32.1 degrees, from 2.21, 0.195 and 39.9",
+    },
   ],
   openQuestions: [
     "Its colour per part, the bark and the leaves each read from their own mesh's textures (`windrise/surfaces.json`), reads 3.29 ΔE against 2.30, from 3.82 with the family in one colour, so the gate still fails. Its surface structure reads 0.5499 share against 0.0324, failing, and its structure before this change was not read",
