@@ -1,4 +1,5 @@
 import type { ConversationEvent } from "@/models/agentConsole/ConversationEvent";
+import type { DiffComment } from "@/models/agentConsole/DiffComment";
 import type { FileEdit } from "@/models/agentConsole/FileEdit";
 import type { LatestEventMap } from "@/models/agentConsole/LatestEventMap";
 import type { StreamDraft } from "@/models/agentConsole/StreamDraft";
@@ -10,6 +11,8 @@ import type { PermissionRequestEvent } from "agent-console-server/contracts";
 // However long the session has run
 export interface SessionView {
   conversationEvents: ConversationEvent[];
+  // The comments drafted on the session's diffs and not yet sent, under the key of the line each is on
+  diffCommentMap: Map<string, DiffComment>;
   // The ids already folded in: a replay after a reconnect overlaps what the page holds
   eventIds: Set<string>;
   // What each edit tool call changes, under its tool use id; a call that failed changed nothing and is dropped
