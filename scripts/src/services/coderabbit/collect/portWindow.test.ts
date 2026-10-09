@@ -106,15 +106,15 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha("HEAD")).toBe(developSha);
   });
 
-  // A window re-cut after the bot kept skipping it is cut to less than the bot's own cap, and the fixes still ride whole
-  // Over it: they are measured against the bot's cap, so the window is the fixes alone
-  test("holds at the cap it is given and undoes the pick, the fixes riding past it whole", () => {
+  // A window re-cut after the bot kept skipping it is cut to less than the bot's own cap, and the pick that passes it
+  // Is undone
+  test("holds a queue commit past the cap it is given and undoes the pick", () => {
     expect.hasAssertions();
 
     const developSha = readSha("HEAD");
-    const fixSha = commitFiles([filePath, nestedPath], "");
+    const fixSha = commitFile(filePath, "");
     switchTo(developSha);
-    const heldSha = commitFile(`${nestedPath}.ts`, "");
+    const heldSha = commitFile(nestedPath, "");
     const port = portWindow({
       baseSha: developSha,
       cwd: getCwd(),
@@ -124,8 +124,22 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: heldSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha, queueShas: [] });
-    expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath} ${nestedPath}\n`);
+    expect(port).toStrictEqual({ fileCount: 1, fixCount: 1, heldSha, queueShas: [] });
+    expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
+  });
+
+  // The fixes alone past the cap threw on every run, and nothing ever shrank them: they are cut at a commit boundary
+  // Like the queue, so the window is the fixes that fit and the rest lead the next one
+  test("cuts the fixes at the cap and holds the first that would pass it, porting no queue commit", () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    const fixShas = [commitFile(filePath, ""), commitFile(nestedPath, "")];
+    const queueSha = commitFile(`${nestedPath}.ts`, "");
+    const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fileCap: 1, fixShas, queueSha });
+
+    expect(port).toStrictEqual({ fileCount: 1, fixCount: 1, heldSha: takeOne(fixShas, 1), queueShas: [] });
+    expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
   });
 
   // A queue rebased onto the fixes carries them as ancestors: measured against the tree the fixes built, it owes
@@ -167,23 +181,63 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 2, heldSha: undefined, queueShas: [] });
   });
 
-  test("fails when the fixes alone overflow the cap", () => {
+  // A re-cut halves the cap after the bot kept skipping a window, and a fix the plan's own cap holds is still one a
+  // Review can read: it goes out alone over the smaller cap rather than parked, its finding with it
+  test("carries a first fix alone past a re-cut's smaller cap", () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    const fixSha = commitFiles([filePath, nestedPath], "");
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: 1,
+      fixShas: [fixSha],
+      queueSha: developSha,
+    });
+
+    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas: [] });
+  });
+
+  // A fix no window can take is held first, which the opener parks rather than failing the run
+  test("holds a first fix alone over the cap and ports nothing", () => {
     expect.hasAssertions();
 
     const developSha = readSha("HEAD");
     const fixSha = commitFiles(overflowPaths, "");
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [fixSha],
+      queueSha: developSha,
+    });
 
-    expect(() =>
-      portWindow({
-        baseSha: developSha,
-        cwd: getCwd(),
-        developSha,
-        fileCap: REVIEW_FILE_CAP,
-        fixShas: [fixSha],
-        queueSha: developSha,
-      }),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the fixes alone overflow the cap of 150 files from the window's base]`,
-    );
+    expect(port).toStrictEqual({ fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
+    expect(readSha("HEAD")).toBe(developSha);
+  });
+
+  // A fix built on one that was parked no longer applies to develop: held like a conflicting queue commit, where it
+  // Used to fail every run
+  test("holds a fix that conflicts with develop", () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    commitFile(filePath, "");
+    const fixSha = commitFile(filePath, " ");
+    switchTo(developSha);
+    const port = portWindow({
+      baseSha: developSha,
+      cwd: getCwd(),
+      developSha,
+      fileCap: REVIEW_FILE_CAP,
+      fixShas: [fixSha],
+      queueSha: developSha,
+    });
+
+    expect(port).toStrictEqual({ fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
+    expect(readSha("HEAD")).toBe(developSha);
   });
 });

@@ -18,13 +18,14 @@ import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readFixedPullRequests } from "#src/services/coderabbit/collect/readFixedPullRequests";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { replyPullRequestAnswers } from "#src/services/coderabbit/collect/replyPullRequestAnswers";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // One window cut from the top of the stack and opened over it. The fixes and the queue are synced onto `develop`, the
 // Port builds the window measured from the base the bot reviews it against (the top window's head, or `main` when none
@@ -83,8 +84,9 @@ export const openNextWindow = async ({
   );
   const isReady = port.fixCount > 0 || pendingCommitCount + port.queueShas.length > 0;
   if (!isReady) {
-    // A held first commit is the residual case, since the sync parks what its caps exhaust: one the port still cannot
-    // Take is parked too, out of the owed set, and the run wakes a minute later to cut what follows it
+    // A held first commit is a fix no window can take — alone over the cap, or conflicting once a fix before it was
+    // Parked — or the residual queue commit, since the sync parks what its caps exhaust: either is parked too, out of
+    // The owed set, and the run wakes a minute later to cut what follows it
     if (port.queueShas.length === 0 && port.heldSha) {
       if (isDryRun)
         return {
@@ -99,7 +101,7 @@ export const openNextWindow = async ({
         isWindowOpened: false,
         outcome: {
           kind: CycleOutcomeKind.Idle,
-          reason: `parked ${port.heldSha}, which no window could carry — the queue is cut again without it`,
+          reason: `parked ${port.heldSha}, which no window could carry — the window is cut again without it`,
           retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
         },
       };
@@ -185,7 +187,12 @@ export const openNextWindow = async ({
   });
   if (outcome.kind === CycleOutcomeKind.Opened) {
     const answeredCommits = readAnsweredCommits([`${developSha}..${targetSha}`], cwd);
-    for (const pullRequest of drainedPullRequests)
+    // A window carrying fixes answers the reviews they were drained from, however many windows the cap cut them over
+    const answeredPullRequests =
+      port.fixCount === 0
+        ? drainedPullRequests
+        : [...new Set([...drainedPullRequests, ...readFixedPullRequests(takeOne(fixShas), cwd)])];
+    for (const pullRequest of answeredPullRequests)
       replyPullRequestAnswers({ commits: answeredCommits, isDryRun, pullRequest, viewerLogin });
   }
   return { isWindowOpened: outcome.kind === CycleOutcomeKind.Opened, outcome };
