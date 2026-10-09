@@ -8,15 +8,14 @@ import {
   CACHE_WARNING_MS,
   CLOCK_TICK_MS,
   RESERVE_SECTION_ID,
-  USAGE_RESERVE_PERCENTAGE,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
   WAYPOINTS_QUESTION,
 } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
-import { formatResetsAt } from "./resin/formatResetsAt";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
+import { getReserveSummary } from "./resin/getReserveSummary";
 import { getReserveWindow } from "./resin/getReserveWindow";
 import { reserveText } from "./resin/reserveText";
 import { parseWaypoints } from "./waypoints/parseWaypoints";
@@ -125,8 +124,8 @@ export const registerLifecycle = (on: On): void => {
   });
 
   // While the veil is on, the model is told to write placeholders too, so a reply never holds a value to hide. While a
-  // Usage reserve holds and the resin mod is on, the model is told to wind down until the window resets, which it may
-  // Have done since the last measurement
+  // Usage reserve holds and the resin mod is on, the model is told what the reserve's tier asks until the window resets,
+  // Which it may have done since the last measurement
   on("prompt.compose", async ($, e, next) => {
     const result = await next(e);
     const { resin, veil } = await read($, enabledModsAtom);
@@ -173,18 +172,19 @@ export const registerLifecycle = (on: On): void => {
     return result;
   });
 
-  // The reserve is read off each measurement: it starts at the first window past the line and lifts at the measurement
-  // A window's reset raises, which finds none. The toast names the window once, as the reserve starts
+  // The reserve is read off each measurement: it starts at the first window past a tier's line and lifts at the
+  // Measurement a window's reset raises, which finds none. The toast names the window once, as the reserve starts, and
+  // Again as its maintenance tier is raised to the wind-down
   on("session.measure", async ($, e, next) => {
     const reserveWindow = getReserveWindow(e.rateLimits);
     const previousReserveWindow = await read($, reserveWindowAtom);
     await update($, reserveWindowAtom, () => reserveWindow ?? InitialState.reserveWindow);
-    if (reserveWindow && !previousReserveWindow.name && (await read($, enabledModsAtom)).resin) {
-      const { name, resetsAt } = reserveWindow;
-      $.ui.toast(
-        `Usage reserve: the ${name} usage window has passed ${USAGE_RESERVE_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}.`,
-      );
-    }
+    if (
+      reserveWindow &&
+      (!previousReserveWindow.name || (reserveWindow.isWindDown && !previousReserveWindow.isWindDown)) &&
+      (await read($, enabledModsAtom)).resin
+    )
+      $.ui.toast(`${getReserveSummary(reserveWindow)}.`);
 
     return next(e);
   });

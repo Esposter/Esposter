@@ -11,6 +11,6 @@ export const InitialState: PluginState["genshin-mods"] = {
   lastPrompt: "",
   lookupStreak: 0,
   now: 0,
-  reserveWindow: { name: "", resetsAt: "" },
+  reserveWindow: { isWindDown: false, name: "", percentage: 0, resetsAt: "" },
   waypoints: [],
 };

@@ -22,10 +22,12 @@ export interface EnabledMods {
   waypoints: boolean;
 }
 
-// The rate-limit window past the usage reserve's line, named as its section spells it, and when it resets; `""` in both
-// Fields is the absent reserve
+// The rate-limit window past a usage line, named as its section spells it, the line it has passed, whether that line is
+// The wind-down rather than the maintenance tier, and when it resets; `""` in the name is the absent reserve
 export interface ReserveWindow {
+  isWindDown: boolean;
   name: string;
+  percentage: number;
   resetsAt: string;
 }
 
