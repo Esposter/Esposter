@@ -2,6 +2,7 @@
 title: Gathering
 description: Proposal — the ores struck until they break, each region's mining outcrops of Magical Crystal Chunks, drawn each day from Adventure Rank 30 beside the ley line places, and the investigation spots that give artifacts, ingredients, ores or Mora. The plants and specialties are built as gathering points, all but five the world's types do not name yet, and the mining outcrops' rank, respawn and the investigation cap are built as rules.
 model: claude-haiku-5-5
+waiting: "the outcrops' and investigation spots' places, which the spawned places proposal gives once the scene group export lands (the other machine)"
 touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]
 ---
 
