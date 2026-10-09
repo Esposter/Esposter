@@ -13,6 +13,6 @@ export interface TreeOptions {
   // Main branches spreading from the top of the trunk; each forks in two
   mainBranchCount: number;
   seed: number;
-  // The trunk's radius at each height, from its foot up, so its last point is its top
-  trunk: readonly TreeTrunkPoint[];
+  // The trunk's radius at each height, from its foot up, so its last point is its top. Two at least, one segment
+  trunk: readonly [TreeTrunkPoint, TreeTrunkPoint, ...TreeTrunkPoint[]];
 }

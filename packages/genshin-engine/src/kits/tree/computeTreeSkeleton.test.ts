@@ -1,9 +1,11 @@
+import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
+
 import { computeTreeSkeleton } from "#src/kits/tree/computeTreeSkeleton";
 import { Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(computeTreeSkeleton, () => {
-  const treeOptions = {
+  const treeOptions: Pick<TreeOptions, "branchLength" | "mainBranchCount" | "seed" | "trunk"> = {
     branchLength: 1,
     mainBranchCount: 1,
     seed: 0,
