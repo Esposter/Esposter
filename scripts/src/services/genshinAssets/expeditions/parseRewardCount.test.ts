@@ -1,3 +1,4 @@
+import { InvalidOperationError } from "@esposter/shared";
 import { parseRewardCount } from "#src/services/genshinAssets/expeditions/parseRewardCount";
 import { describe, expect, test } from "vitest";
 
@@ -17,5 +18,10 @@ describe(parseRewardCount, () => {
     expect(() => parseRewardCount("5;4")).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: reward count, 5;4]`,
     );
+  });
+
+  test.each(["", "4;", ";5", "4;5;6"])("should refuse %j, its parts not one or two numbers", (count) => {
+    expect.hasAssertions();
+    expect(() => parseRewardCount(count)).toThrowError(InvalidOperationError);
   });
 });
