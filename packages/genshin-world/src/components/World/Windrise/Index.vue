@@ -283,7 +283,9 @@ const postPipeline = usePostPipeline(
 const isTerrainSettled = ref(false);
 whenever(
   () => isTerrainSettled.value && isRegionDataSettled.value,
-  () => {
+  async () => {
+    // The scene's pipelines, outlines included, compile before the world shows, so no first sight of one stalls a frame
+    await postPipeline.value?.compileAsync();
     emit("ready");
   },
   { once: true },
