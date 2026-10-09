@@ -44,7 +44,7 @@ flowchart LR
 | `scripts/src/services/genshinAssets/profile/getNamecardIconName.ts`        | The namecard convention and the characters with none                                         |
 | `packages/genshin-world/src/services/profile/ProfileTextLoaderMap.ts`      | The generated loader of each character's chunk, imported on demand                           |
 | `packages/genshin-world/src/services/profile/readCharacterProfile.ts`      | Reads a character's profile and its Friendship Level                                         |
-| `packages/genshin-world/src/services/profile/isProfileStoryUnlocked.ts`    | The unlock rule                                                                              |
+| `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.ts` | The unlock rule                                                                              |
 | `packages/genshin-world/src/services/profile/toCharacterProfileEntries.ts` | Turns the stories and voice-overs into the panel's entries, locked ones with the unlock line |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`        | The wrapper that loads the profile for the screen's character                                |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`         | Opens the Profile tab for the chosen character                                               |
