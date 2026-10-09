@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Distruggi",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "Selezione {0}/{1}",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "I seguenti oggetti saranno distrutti:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Otterai:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Gli oggetti saranno distrutti. Quest'azione non è annullabile.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "OK",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Distruggi oggetti",

@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Hancurkan",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "Telah memilih {0}/{1}",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Item berikut akan terhancurkan:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Mengembalikan:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Item yang dihancurkan tidak dapat diperoleh kembali.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "OK",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Menghancurkan Objek",

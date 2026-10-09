@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "ทำลาย",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "เลือก {0} / {1}",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "ทำลายไอเทมต่อไปนี้:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "ไอเทมที่ได้รับคืน:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "ไอเทมที่ทำลายแล้วจะไม่สามารถกู้คืนได้",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "ยืนยัน",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "ทำลายไอเทม",
