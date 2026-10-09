@@ -51,18 +51,18 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 
 ## Key files
 
-| File                                                               | Role                                                                                             |
-| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| File                                                               | Role                                                                                                             |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region's axes, the ground and mapped areas, shared with the other map points |
-| `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                                           |
-| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                      |
-| `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder                                                                                 |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                          |
-| `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                 |
-| `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                 |
-| `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                              |
-| `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                         |
-| `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                                            |
+| `scripts/src/services/genshinAssets/chests/writeChestPlaces.ts`    | Writes each region's slice from the points and the fit                                                           |
+| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                                      |
+| `scripts/src/services/genshinAssets/chests/constants.ts`           | The slice folder                                                                                                 |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                                          |
+| `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                                 |
+| `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                                 |
+| `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
+| `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                                         |
+| `packages/genshin-world/src/generated/chests/`                     | One slice per region, imported on demand by the world                                                            |
 
 ## Sources
 
