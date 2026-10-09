@@ -49,7 +49,7 @@ flowchart TD
 
 ## Data and measures
 
-- **Read from the wiki:** each tier's Primogem and Mora ranges (built), and the drop pools: the weapons each tier rolls, the artifact sets, and the Character EXP materials by star. The pools are not yet encoded.
+- **Read from the wiki:** each tier's Primogem and Mora ranges (built), and the drop pools: the weapons, artifact sets and Character EXP materials by star, encoded as provisional pools for the weapons and materials. The artifact pieces wait on an artifact drop model.
 - **Not on the wiki:** Luxurious's Mora.
 - **Read from the game's tables:** `ChestLevelSetConfigData`'s chest levels by zone (above). `GadgetExcelConfigData` names 270 gadgets of the `Chest` type, the chest templates such as `70210001`.
 - **The join is not made.** A placed chest has the map's point id and no game id, while the achievements' `TRIGGER_OPEN_WORLD_CHEST` lists its chests as `;`-joined template ids, with a second list of what appear to be region group ids, and the exploration doings name their chests by their own numbers. Joining a placed chest to its template and group needs the game's scene data, which the AnimeGameData dump carries per scene and is reachable from the build's network. Until that join exists no opened chest moves an achievement or an area's exploration, and a script that makes it is the next data step.
