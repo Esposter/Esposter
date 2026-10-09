@@ -18,6 +18,8 @@ export const COMBAT_TALENT_ORDER = [
 ];
 // The level every combat talent starts at, before any upgrade raises it
 export const TALENT_START_LEVEL = 1;
+// Where the characters' packs sit in their container, each file under its character's id and its pack's hash
+export const CHARACTER_PACK_BLOB_PATH = "genshin/characters";
 // A pack's own files, named alike in every pack: its model, uploaded under this name, and the terms bundled with it.
 // The model's textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";

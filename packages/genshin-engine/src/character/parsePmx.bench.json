@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/character/parsePmx.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 1.325408399999998,
+              "name": "structuredClone of the parsed model",
+              "p99": 2.3559938099999957,
+              "rme": 23.347133094470873,
+              "sampleCount": 10
+            },
+            {
+              "mean": 5.385246,
+              "name": "parsePmx",
+              "p99": 8.624535720000004,
+              "rme": 28.447322369437455,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "parsePmx > 100000 vertices"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 6.629333499999996,
+              "name": "structuredClone of the parsed model",
+              "p99": 8.23523200000008,
+              "rme": 12.29537722061035,
+              "sampleCount": 10
+            },
+            {
+              "mean": 17.886741699999988,
+              "name": "parsePmx",
+              "p99": 19.270802530000008,
+              "rme": 3.1238760374059424,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "parsePmx > 500000 vertices"
+        }
+      ]
+    }
+  ]
+}

@@ -35,6 +35,7 @@ import mondstadtWildlife from "#src/generated/wildlife/mondstadt.json";
 import { wildlifePlaceSchema } from "#src/models/wildlife/WildlifePlace";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { getCharacterPackHash } from "#src/services/character/getCharacterPackHash";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
@@ -101,8 +102,8 @@ interface Props {
   // What the character is drawn on, which the screen's controller moves in the world's own coordinates, so it is placed
   // Among everything in the world
   characterBody?: Object3D;
-  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served or its
-  // Model fails to load
+  // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served, the
+  // Lock names none of the character's, or its model fails to load
   characterId: number;
   // How the character on the field moves, whose body's capsule is drawn where no pack is served
   characterLocomotion?: Locomotion;
@@ -445,7 +446,7 @@ onUnmounted(() => {
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <CharacterModel
-        v-if="characterPackBaseUrl && failedCharacterId !== characterId"
+        v-if="characterPackBaseUrl && getCharacterPackHash(characterId) && failedCharacterId !== characterId"
         :key="characterId"
         :character-id
         :character-pack-base-url

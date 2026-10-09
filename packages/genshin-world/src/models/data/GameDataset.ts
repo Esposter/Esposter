@@ -8,6 +8,8 @@ export enum GameDataset {
   ArchiveText = "archiveText",
   BookBody = "bookBody",
   Catalogue = "catalogue",
+  // Each character's pack by its id, whose record lists the pack's files and is the hash its files are stored under
+  CharacterPacks = "characterPacks",
   Chests = "chests",
   Commissions = "commissions",
   Cooking = "cooking",
