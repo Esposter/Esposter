@@ -17,7 +17,7 @@ flowchart TD
   L -->|"no"| UG["Left out: the layers under the ground are not placed yet"]
   L -->|"yes"| A{"In a mapped region's area?"}
   A -->|"no"| UM["Left out: no region holds it"]
-  A -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes, to the centimetre"]
+  A -->|"yes"| T["Fit's transform into the game's axes,<br/>then placeMapPoints into its region's axes"]
   T --> S["One slice per region in genshin-world's generated chests folder"]
 ```
 
