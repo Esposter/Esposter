@@ -36,6 +36,7 @@ describe(strikeEnemy, () => {
   });
 
   const createCombatant = (element?: Element): Combatant => ({
+    ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.Attack, value: ATTACK }]),
     characterId: CHARACTER_ID,
     element,
@@ -61,6 +62,7 @@ describe(strikeEnemy, () => {
         talentMultiplier,
       });
     const createCriticalCombatant = (elementalResonances: Combatant["elementalResonances"]): Combatant => ({
+      ascension: 0,
       attributes: computeCharacterAttributes([
         { attribute: Attribute.Attack, value: ATTACK },
         { attribute: Attribute.CriticalDamage, value: CRITICAL_DAMAGE },

@@ -38,12 +38,16 @@ export const strikeEnemy = (enemy: Enemy, kitHit: KitHit, combatant: Combatant, 
     combatant.elementalResonances.includes(Element.Cryo) &&
     (elementalState.auras.has(AuraType.Freeze) || elementalState.auras.has(AuraType.Cryo));
   const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
-  const element = gauge === undefined ? undefined : (kitHit.element ?? combatant.element);
-  if (gauge !== undefined && element !== undefined && internalCooldownTag !== undefined) {
-    const cooldownKey = `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`;
-    const internalCooldown = enemy.internalCooldownMap.get(cooldownKey) ?? { hitIndex: 0, startSeconds: -Infinity };
-    enemy.internalCooldownMap.set(cooldownKey, internalCooldown);
-    const share = applyInternalCooldown(internalCooldown, DEFAULT_INTERNAL_COOLDOWN_GROUP, elementalState.seconds);
+  const element = kitHit.element ?? (gauge === undefined ? undefined : combatant.element);
+  if (gauge !== undefined && gauge > 0 && element !== undefined) {
+    // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown
+    let share = 1;
+    if (internalCooldownTag !== undefined) {
+      const cooldownKey = `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`;
+      const internalCooldown = enemy.internalCooldownMap.get(cooldownKey) ?? { hitIndex: 0, startSeconds: -Infinity };
+      enemy.internalCooldownMap.set(cooldownKey, internalCooldown);
+      share = applyInternalCooldown(internalCooldown, DEFAULT_INTERNAL_COOLDOWN_GROUP, elementalState.seconds);
+    }
     reactions.push(...applyElement(elementalState, element, gauge * share));
   }
 

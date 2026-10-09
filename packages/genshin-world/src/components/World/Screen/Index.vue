@@ -83,6 +83,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
+import { CharacterIdKitMap } from "#src/services/kit/CharacterIdKitMap";
 import { TRAVELER_KIT } from "#src/services/kit/characters/travelerKit";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -248,9 +249,10 @@ const characterIdCombatantMap = computed(() => {
         getCharacterAttributeLines(character, statTables.value),
         elementalResonances,
       ),
+      ascension: character.ascension,
       characterId: character.id,
       elementalResonances,
-      kit: TRAVELER_KIT,
+      kit: CharacterIdKitMap[character.id] ?? TRAVELER_KIT,
       level: character.level,
     });
   return combatantMap;

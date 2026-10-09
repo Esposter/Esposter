@@ -1,6 +1,6 @@
 ---
 title: Character kits
-description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, a kit's action turns to its target by the wiki's score, a hit can deal its own element, and a party member can be healed. Per-character modules beyond the Traveler's are still proposed.
+description: Genshin's character kits as built — every playable character's skill sets read from the game's tables into genshin-world, each with its skill's cooldown and charges and its burst's cooldown, energy cost and element, per element form. The Traveler's kit reads its multipliers from the game's proud skill table and sits in its own character module, and Diluc's kit is built the same way, with its burst's infusion. A kit's action turns to its target by the wiki's score, a hit can deal its own element, a buff bonus its pricing, and a party member can be healed. Per-character modules beyond these are still proposed.
 ---
 
 # Character kits
@@ -47,31 +47,64 @@ Its multipliers are read from the Anemo form's proud skill groups, 731 for the a
 
 A hit can name its own element, which strikes the enemy as that element whatever the character's own is. The Traveler's hits name none, so they deal the element of the Traveler's form, which is none until a statue gives one.
 
+## Character modules
+
+Each character with a module has one file under `services/kit/characters/`, exporting its kit shaped like `TRAVELER_KIT`. `CharacterIdKitMap` keys them by avatar id, and a character with none fights with the Traveler's kit.
+
+- **Diluc** (`DILUC_KIT`, avatar 10000016): four strikes, a charged attack, a collision and two plunges, Searing Onslaught's first press, and Dawn's slashing hit. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion and the A4 passive are built, as the shared effects below.
+
 ## Shared effects
 
-- **Damage** is a hit: its talent multiplier, its gauge of an element, and the element it names when it is not its character's own.
+Each effect is on the party, in a list the character component holds, so a switch leaves it running, and a drown or a jump clears it. Each one is ticked each step.
+
+- **Damage** is a hit: its talent multiplier, its gauge of an element, and the element it names when it is not its character's own. A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through it.
+- **Infusion** makes the character's normal attacks, charged attack and plunges deal its element at the gauge the hit gives it, 1U for a strike and 0U for a collision. It is refreshed by a second one of its kind on the same character, not stacked.
+- **Buff** adds a stat bonus to the character's pricing for its seconds: a flat ATK adds to its attack and any other bonus to its attribute total. It is refreshed the same way.
 - **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
 - **Energy** is the party's `gainPartyEnergy`, which an enemy's drop already calls.
-- **Summons and statuses** are not built. No combat state holds one yet, so the first module that needs one builds it.
+- **Fields and summons** are not built. Dawn's damage-over-time and explosion and Mirror Reflection of Doom wait on them.
+
+## Decisions
+
+- **A kit's action carries its start.** A kit action may name an `onStart` that adds its effects, given the body and the character's combatant, so a module writes what its burst or skill sets going without the framework knowing which.
+- **A character's ascension phase is on its combatant.** A passive reads `combatant.ascension` against the phase its table names, so the Diluc A4 gate is `ascension >= 4`.
+- **Searing Onslaught's presses share one action.** The first press is the kit's skill. The second and third presses, and the four-second window that holds them, are not built, so the skill is one press at its cooldown.
+- **Dawn's slash is the burst's only hit.** Its damage-over-time and explosion land later from a moving box, which a summon would hold; they wait on the summons above.
+- **The charged attack's timing is provisional.** gcsim does not model it and the wiki's talent page gives no frames, so its slashes land at half a second and a second, and it ends at a second and a fifth. Its damage is the wiki's cyclic 68.8% and final 124.7%, and its poise the wiki's 60 and 120.
+- **Its stamina is one cost.** The wiki's charged attack drains 40 stamina a second for up to 5 seconds. The kit charges 40 once, since a drain is not built.
+- **Boxes are circles.** An area holds a fan or a circle, so a box is priced as the circle to its farthest corner, provisional until areas hold boxes.
+- **Poise is the wiki's where gcsim gives none.** gcsim sets no poise on Diluc's skill, burst or collision; the wiki's advanced properties give 120, 100 and 35.
+- **A collision infused at 0U still deals the element.** A hit's element no longer needs a gauge, so the collision's Pyro damage lands with no aura, as the wiki's table gives it.
+- **Diluc's A1 and the phase-0 passive are not built.** gcsim models no combat effect for either.
 
 ## Key files
 
-| File                                                                 | Role                                                                                  |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/character/SkillDepot.ts`          | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element |
-| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`   | A playable character's skill sets by its id                                           |
-| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`  | Every playable character's skill sets, from the dump's tables                         |
-| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`           | One skill set, from its depot row and the skill rows                                  |
-| `scripts/src/services/genshinAssets/stats/toTalentMultiplierMap.ts`  | Each named talent group's levels, parameters and labels                               |
-| `packages/genshin-world/src/generated/stats/characterSkillKits.json` | The written table the app loads on demand                                             |
-| `packages/genshin-world/src/generated/stats/talentMultipliers.json`  | The talent multipliers per level, loaded statically                                   |
-| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`     | A talent's parameter at a level, by its index                                         |
-| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`      | The targeting score an action turns the body to                                       |
-| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`  | `TRAVELER_KIT`, the Traveler's Anemo kit                                              |
-| `packages/genshin-world/src/services/kit/constants.ts`               | The targeting weights and the kit's shared timing constants                           |
-| `packages/genshin-world/src/services/party/healPartyMember.ts`       | Heals a standing member up to all its HP                                              |
+| File                                                                    | Role                                                                                   |
+| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/character/SkillDepot.ts`             | A skill set: its skill's cooldown and charges, its burst's cooldown, cost and element  |
+| `packages/genshin-world/src/models/character/CharacterSkillKit.ts`      | A playable character's skill sets by its id                                            |
+| `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`     | Every playable character's skill sets, from the dump's tables                          |
+| `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`              | One skill set, from its depot row and the skill rows                                   |
+| `scripts/src/services/genshinAssets/stats/toTalentMultiplierMap.ts`     | Each named talent group's levels, parameters and labels                                |
+| `packages/genshin-world/src/generated/stats/characterSkillKits.json`    | The written table the app loads on demand                                              |
+| `packages/genshin-world/src/generated/stats/talentMultipliers.json`     | The talent multipliers per level, loaded statically                                    |
+| `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`        | A talent's parameter at a level, by its index                                          |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`         | The targeting score an action turns the body to                                        |
+| `packages/genshin-world/src/services/kit/characters/travelerKit.ts`     | `TRAVELER_KIT`, the Traveler's Anemo kit                                               |
+| `packages/genshin-world/src/services/kit/characters/dilucKit.ts`        | `DILUC_KIT`, Diluc's kit with Dawn's infusion and A4                                   |
+| `packages/genshin-world/src/services/kit/CharacterIdKitMap.ts`          | Each built character's kit by avatar id, read by the roster                            |
+| `packages/genshin-world/src/services/kit/effects/addKitEffect.ts`       | Adds an effect, refreshing one of its kind on the same character                       |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts`     | Runs the effects' seconds down and drops those that run out                            |
+| `packages/genshin-world/src/services/kit/effects/getInfusedElement.ts`  | The element a character's normal attacks, charged attack and plunges are infused with  |
+| `packages/genshin-world/src/services/kit/effects/infuseKitHits.ts`      | Infuses a step's landed hits from the kit's normal attacks, charged attack and plunges |
+| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts` | The combatant with its buffs added to the pricing                                      |
+| `packages/genshin-world/src/services/kit/constants.ts`                  | The targeting weights and the kit's shared timing constants                            |
+| `packages/genshin-world/src/services/party/healPartyMember.ts`          | Heals a standing member up to all its HP                                               |
 
 ## Sources
 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/traveler/common), MIT: the Traveler's anemo attack, skill and burst frames, and the plunges' poise in its pyro plunge file.
+- [Tempered Sword](https://genshin-impact.fandom.com/wiki/Tempered_Sword), Genshin Impact Wiki: Diluc's advanced properties (gauge, internal cooldown, poise, blunt) and the charged attack's and plunges' values.
+- [Searing Onslaught](https://genshin-impact.fandom.com/wiki/Searing_Onslaught), [Dawn](https://genshin-impact.fandom.com/wiki/Dawn) and [Elemental Gauge Theory: Character Data](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Character_Data), Genshin Impact Wiki: the skill's and burst's gauges and poise, and the infused collision's 0U.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diluc), MIT: Diluc's strikes', skill's, burst's and plunges' hitmarks, cancel frames and areas, and the burst's infusion and A4.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the avatar, skill depot and skill tables the table is read from, and the proud skill table the multipliers are read from.
