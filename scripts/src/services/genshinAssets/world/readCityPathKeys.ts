@@ -14,12 +14,14 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The keys of the path hashes a capital's city blob's placements carry, each once, read from the blob and index that
-// `extract` exported beside the region's exports. Undefined where the region has no city area or no exported blob
+// `extract` exported beside the region's exports. Undefined where the region has no city area or no exported blob. A
+// Region never extracted is skipped before its city code is resolved, since that may need the city-area file
 export const readCityPathKeys = async (component: DerivedAssetComponent): Promise<string[] | undefined> => {
+  const { world } = getComponentDirectory(component);
+  if (!existsSync(join(world, AssetType.MiHoYoBinData))) return undefined;
   const code = await readCapitalCityCode(component);
   if (!code) return undefined;
   const streamName = getCityStreamName(code);
-  const { world } = getComponentDirectory(component);
   const blobPath = join(world, AssetType.MiHoYoBinData, `${getStreamBlobName(streamName)}.dat`);
   const indexPath = join(world, AssetType.MonoBehaviour, `${streamName}${STREAM_INDEX_SUFFIX}.dat`);
   if (!existsSync(blobPath) || !existsSync(indexPath)) return undefined;
