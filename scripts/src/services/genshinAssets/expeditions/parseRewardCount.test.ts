@@ -1,5 +1,5 @@
-import { InvalidOperationError } from "@esposter/shared";
 import { parseRewardCount } from "#src/services/genshinAssets/expeditions/parseRewardCount";
+import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseRewardCount, () => {
@@ -22,6 +22,6 @@ describe(parseRewardCount, () => {
 
   test.each(["", "4;", ";5", "4;5;6"])("should refuse %j, its parts not one or two numbers", (count) => {
     expect.hasAssertions();
-    expect(() => parseRewardCount(count)).toThrowError(InvalidOperationError);
+    expect(() => parseRewardCount(count)).toThrow(InvalidOperationError);
   });
 });
