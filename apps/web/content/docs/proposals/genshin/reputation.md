@@ -12,7 +12,7 @@ Each nation keeps a Reputation, raised by work done for its people. Mondstadt's 
 
 - **Requests run as world quests.** From level 2, requests are taken from the nation's keeper and run as world quests: deliver the items asked for, or clear the camp named. Each pays its Reputation EXP and Mora, and the three-a-week limit already counts them across nations.
 - **Bounties are hunted with Elemental Sight.** From level 2 (level 1 in Natlan), the keeper offers bounties. The player goes to the place named, finds the target's trail with [Elemental Sight](/docs/proposals/genshin/elemental-sight), defeats it and claims the bounty back with the keeper. The target is spawned when the bounty is taken.
-- **Exploration and quests feed it.** Each nation's exploration progress, its chests, puzzles and statue offerings, raises its Reputation at the thresholds `ReputationExploreExcelConfigData` sets, and its Reputation quests give theirs once.
+- **Exploration and quests feed it.** Each nation's exploration progress, its chests, puzzles and statue offerings, raises its Reputation at the thresholds `ReputationExploreExcelConfigData` sets, and its Reputation quests give theirs once. A nation's exploration percentage is the done weight of its areas over their total, rounded down, as an area's own percentage is; a threshold pays once, when the percentage passes it.
 - **A discount is the shop's own.** The rule is built. The shops apply it to a named shop's prices once they have a screen, and each discount's shops are the ones its function's text names, joined to the shops' ids then.
 - **Natlan's tribes and supply notices.** Natlan keeps a Reputation per tribe, and its supply notices take donated items, three a week shared between tribes, each 160 to its tribe and a Sanctifying Unction, as the wiki gives them.
 
@@ -35,13 +35,13 @@ flowchart TD
 1. **Mondstadt's keeper**, placed in region data, offering its requests from level 2.
 2. **Requests**, as world quests the quest reader carries.
 3. **Bounties**, once Elemental Sight draws a trail and the target spawns.
-4. **Exploration's thresholds**, once exploration progress is counted for the nation.
+4. **Exploration's thresholds**, once a nation's exploration percentage is counted. The thresholds are read and the reached rule is built; the count is not.
 5. **The discount at the shops**, once the shops page has a screen.
 6. **Each later nation**, and Natlan's tribes and supply notices, as their regions are built.
 
 ## Data and measures
 
-- **Read from the game's tables, still to read:** `ReputationQuestExcelConfigData`, the Reputation quests with their rewards, once the quest reader carries them, and `ReputationExploreExcelConfigData`, the thresholds, once exploration is counted.
+- **Read from the game's tables, still to read:** `ReputationQuestExcelConfigData`, the Reputation quests with their rewards, once the quest reader carries them. Its rows name a quest by `parentQuestId` and a reward, but not the quest that pays, so the binding is the quest reader's to settle.
 - **Read from the wiki:** which shops each discount covers, as the ids of the shops its function's text names.
 
 ## Key files
