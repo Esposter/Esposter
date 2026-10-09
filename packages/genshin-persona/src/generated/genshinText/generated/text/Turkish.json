@@ -320,7 +320,13 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Rehber",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Gezgin",
   "UI_TRAININGGUIDE_TITLE": "Eğitim Rehberi",
+  "UI_WORLDLEVEL_ADJUST_CD_HINT": "{0} saat {1} dakika sonra yeniden ayarlanabilir.",
+  "UI_WORLDLEVEL_ADJUST_DOWN_TIPS": "Onayladıktan sonra Dünya Seviyen 1 seviye düşer.\n·Açık dünyadaki düşmanların seviyesi düşer.\n·Ley Hattı Çiçeklerinden ve düşmanlardan kazanılan ödüller azalır.\nÖnümüzdeki 24 saat boyunca Dünya Seviyeni yeniden ayarlayamazsın.",
+  "UI_WORLDLEVEL_ADJUST_TITLE": "Dünya Seviyesini Değiştir",
+  "UI_WORLDLEVEL_ADJUST_UP_TIPS": "Onaylandıktan sonra, Dünya Seviyen orijinal haline döndürülür.\n·Açık dünyadaki düşmanların seviyesi orijinal Dünya Seviyene uyması için artar\n·Ley Hattı Çiçekleri ve düşmanlardan kazanılan ödüller Dünya Seviyene uyması için artar\nÖnümüzdeki 24 saat boyunca Dünya Seviyeni yeniden ayarlayamazsın.",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Dünya Seviyesini Düşür",
   "UI_WORLDLEVEL_TITLE": "Dünya Seviyesi",
+  "UI_WORLDLEVEL_UP_BUTTON": "Dünya Seviyesini Geri Döndür",
   "VIDEO_RETREAT": "Geri",
   "tips_enter_game": "Hoş geldin %s!"
 }

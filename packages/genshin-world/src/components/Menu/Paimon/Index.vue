@@ -4,6 +4,7 @@ import type { GameText } from "genshin-text";
 
 import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuWorldLevelTips from "#src/components/Menu/WorldLevelTips/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { PAIMON_MENU_CONTENTS, PAIMON_MENU_LINKS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
@@ -24,7 +25,9 @@ interface Props {
   // Whether the World Level can be lowered or restored now, and whether it is lowered; the button is drawn only when it can
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // When the World Level last changed, for the cooldown its panel shows
   worldLevel: number;
+  worldLevelChangedAt?: Temporal.Instant;
 }
 
 const {
@@ -35,9 +38,12 @@ const {
   isWorldLevelAdjustable,
   isWorldLevelLowered,
   worldLevel,
+  worldLevelChangedAt,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
 const backButton = useTemplateRef("backButton");
+// The World Level panel is open while its button is hovered or focused
+const isWorldLevelTipsOpen = ref(false);
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
@@ -100,9 +106,25 @@ onMounted(() => {
     <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
     <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
     <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }} {{ worldLevel }}</p>
-    <button v-if="isWorldLevelAdjustable" class="world-level-adjust" type="button" @click="emit('toggleWorldLevel')">
+    <button
+      v-if="isWorldLevelAdjustable"
+      class="world-level-adjust"
+      type="button"
+      @blur="isWorldLevelTipsOpen = false"
+      @click="emit('toggleWorldLevel')"
+      @focus="isWorldLevelTipsOpen = true"
+      @pointerenter="isWorldLevelTipsOpen = true"
+      @pointerleave="isWorldLevelTipsOpen = false"
+    >
       {{ gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevert : GameTextKey.WorldLevelLower] }}
     </button>
+    <MenuWorldLevelTips
+      v-if="isWorldLevelAdjustable && isWorldLevelTipsOpen"
+      class="world-level-tips"
+      :game-text
+      :is-world-level-lowered
+      :world-level-changed-at
+    />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
     <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
     <div class="contents">
@@ -308,6 +330,12 @@ onMounted(() => {
 
 .birthday {
   top: calc(var(--unit) * 286);
+}
+
+/* The panel opens below the button, in the same reference pixels as the card */
+.world-level-tips {
+  top: calc(var(--unit) * 276);
+  left: calc(var(--unit) * 420);
 }
 
 /* Provisional: the button's place beside the World Level waits on the English PC client's menu measured at 1080 high */

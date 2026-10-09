@@ -19,6 +19,7 @@ interface Props {
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
   worldLevel: number;
+  worldLevelChangedAt?: Temporal.Instant;
 }
 
 // Each built screen, by its kind, as its host draws it with what it needs and closes it by setting the world back
@@ -40,6 +41,7 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
     :is-world-level-adjustable
     :is-world-level-lowered
     :world-level
+    :world-level-changed-at
     @close="screenKind = ScreenKind.World"
     @open="(titledScreenKind) => (screenKind = titledScreenKind)"
     @quit="emit('quit')"

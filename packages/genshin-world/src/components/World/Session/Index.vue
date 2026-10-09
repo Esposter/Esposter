@@ -533,6 +533,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
       :world-level
+      :world-level-changed-at="worldLevelAdjustment.changedAt"
       @quit="emit('quit')"
       @toggle-world-level="toggleWorldLevel()"
     >
