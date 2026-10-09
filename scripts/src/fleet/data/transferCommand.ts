@@ -1,6 +1,5 @@
-import type { SubCommandsDef } from "citty";
-
 import type { TransferDirection } from "#src/models/fleet/data/TransferDirection";
+import type { SubCommandsDef } from "citty";
 
 import { DATA_FOLDERS, FAILURE_EXIT_CODE } from "#src/services/fleet/data/constants";
 import { getParityDirectory } from "#src/services/fleet/data/getParityDirectory";

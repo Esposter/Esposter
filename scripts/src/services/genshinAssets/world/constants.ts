@@ -33,7 +33,8 @@ export const PREFAB_ROOT_MAP: Record<string, string> = {
   Indoor: "ART/Stages/Indoor",
   Level: "ART/Stages/Level",
 };
-export const PREFAB_STEM_REGEX = /^(?:Area|Indoor|Level)_/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const PREFAB_STEM_REGEX: RegExp = /^(?:Area|Indoor|Level)_/u;
 // A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is known by
 export const CITY_AREA_PREFIX = "Area_";
 export const CITY_AREA_SUFFIX = "_City";
