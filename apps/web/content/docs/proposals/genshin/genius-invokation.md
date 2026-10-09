@@ -18,11 +18,11 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Scope and order
 
-**Today:** the rules engine stands on the standard rule, and the tutorial deck, decks 3 and 4, and the tutorial quest's decks 7, 30111 and 30112, each have their characters, skills and action cards built, decks 2, 11005 and 11002 too, and every duel the early opponents play is played to its end by the engine's tests. The duel board opens from a resident's talk and plays the one seated duel, game 12, against deck 1 with deck 3 standing in for the player's deck; the [as-built page](/docs/genshin/genius-invokation) records the calls. The world holds only quests' talks, so no fresh save reaches that resident's talk yet.
+**Today:** the rules engine stands on the standard rule, and the tutorial deck, decks 3 and 4, and the tutorial quest's decks 7, 30111 and 30112, each have their characters, skills and action cards built, decks 2, 11005 and 11002 too, and every duel the early opponents play is played to its end by the engine's tests. The duel board opens from a resident's talk, and no duel is seated yet: the two challengers whose decks are built, Marjorie and Ellin, have no resident row in the regions' data. The [as-built page](/docs/genshin/genius-invokation) records the calls. The world's screen holds only the quests' talks, and the standing-talk source waits on the talks system's split.
 
 **This adds, in order:**
 
-1. **Resident talks in the world.** A resident's talk is held only when a quest in progress carries it, and the world carries two quests, of which only Bird's Eye View has talks, none of them a resident's. Writing each resident's talk into the world is what makes a seated duel reachable from a fresh save.
+1. **Seating the challengers.** Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated game's standing talk is written from the dialogue its NPC's talk config names: the NPC's greeting line, then the duel reply `191219274`. A line with no English text is skipped, and where an NPC has no English challenge line its talk's first line stands in. The world's screen then passes the merged talk sources in place of its quest-only talk map. **Hook:** in `components/World/Screen/Index.vue`, the `talkMap` computed becomes `mergeTalks(questTalks, getStandingTalks(residents, standingTalkMap))`, once the talks system's split lands.
 2. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them.
 3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
@@ -34,10 +34,10 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Key files
 
-| File                                                             | Role after the change                                                                                 |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`   | Begins a resident's talk from the world, whose talks are the quests' until the residents' are written |
-| `scripts/src/services/genshinAssets/residents/writeResidents.ts` | Writes each resident's talk id, not yet the talk's own lines                                          |
+| File                                                             | Role after the change                                                              |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`   | Begins a resident's talk, its talks the quests' until the merged list is passed in |
+| `scripts/src/services/genshinAssets/residents/writeResidents.ts` | Writes each resident's talk id, not yet the talk's own lines                       |
 
 ## Sources
 
