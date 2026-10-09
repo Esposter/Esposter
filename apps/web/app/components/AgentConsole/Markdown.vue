@@ -9,6 +9,8 @@ interface Props {
 }
 
 const { source } = defineProps<Props>();
+const agentConsolePaneStore = useAgentConsolePaneStore();
+const { openPage } = agentConsolePaneStore;
 // A code block stays its own block, so it copies on its own; everything else the agent writes is rendered as markdown
 // And never trusted, sanitized like any other markdown the app shows
 const blocks = computed(() =>
@@ -21,7 +23,24 @@ const blocks = computed(() =>
 </script>
 
 <template>
-  <div class="markdown" flex flex-col gap-2 min-w-0>
+  <!-- A link to a page of this app opens in the side pane, unless a modifier asks for a tab of its own -->
+  <div
+    class="markdown"
+    flex
+    flex-col
+    gap-2
+    min-w-0
+    @click="
+      (event: MouseEvent) => {
+        const link = event.target instanceof Element ? event.target.closest('a') : null;
+        if (!link || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const url = new URL(link.href);
+        if (url.origin !== window.location.origin) return;
+        event.preventDefault();
+        openPage(`${url.pathname}${url.search}`);
+      }
+    "
+  >
     <template v-for="(block, index) of blocks" :key="index">
       <!-- eslint-disable-next-line vue/no-v-html -- sanitized above -->
       <div v-if="typeof block === 'string'" v-html="block" />

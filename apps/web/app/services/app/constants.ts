@@ -34,3 +34,6 @@ export const PAGES_COMMAND_GROUP = "Pages";
 export const PLACES_COMMAND_GROUP = "Places";
 export const STYLE_COMMAND_GROUP = "Style";
 export const THEME_COMMAND_GROUP = "Theme";
+
+// The query flag that asks a page to render as an embed: no app chrome, as the agent console's side pane opens it
+export const EMBED_QUERY_KEY = "embed";
