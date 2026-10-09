@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when the collector has moved develop or rewritten ai/queue, when a CodeRabbit finding is being fixed in the session, when a collector run is red, or when the collector is switched off. Esposter's review queue — the session's side of the review collector: one permanent branch ai/queue, committed by pathspec, caught up from the fork point, pushed plain and synced onto what it pushed by pnpm ai:queue:push — its replay in a throwaway detached worktree once the remote has moved past the branch — never with a bare force-with-lease; an optional Express trailer, the Answers / Drains trailers, and the collector run by hand only with its workflow disabled.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when the collector has moved develop or rewritten ai/queue, when a CodeRabbit finding is being fixed in the session, when the collector opens an issue or a collector run is red, or when the collector is switched off. Esposter's review queue — the session's side of the review collector: one permanent branch ai/queue, committed by pathspec, caught up from the fork point, pushed plain and synced onto what it pushed by pnpm ai:queue:push — its replay in a throwaway detached worktree once the remote has moved past the branch — never with a bare force-with-lease; an optional Express trailer, the Answers / Drains trailers, and the collector run by hand only with its workflow disabled.
 ---
 
 # Review Queue
@@ -33,11 +33,11 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 3. **The push is plain.** A push refused as non-fast-forward or fetch-first is the collector's rewrite landing since the replay: the script retries it on its own, fetching and replaying again, up to a fixed number of attempts (`MAX_PUSH_ATTEMPTS`); a person reruns it only after it gives up with that refusal. **Never a bare `--force-with-lease`** — its lease is whatever the last fetch brought, so a local branch built on the rewrite's predecessor overwrites the rewrite with nothing reporting it; the only lease the session may push with names a sha it read and rebuilt on itself. A queue push spends nothing, so the standing rule that a push is asked for every time is `develop`'s — which the session never pushes.
 4. **Keep working.** The collector fires on the push and does the rest; its replies name the pushed sha.
 
-**Commit in any shape; an `Express:` trailer is optional.** The collector repackages a commit no window can carry itself, and its express lane sends any commit carrying the trailer `Express: <why nothing in it needs a reviewer>` straight to `main`, out of queue order and unverified — a red it leaves is the repairer's, and a later commit that builds on it carries it into the window. A session that knows a commit is a sweep's moves, a format pass or a regenerated `generated/` folder may write the trailer (`git commit --trailer "Express: …"`) and skip the collector's session; one that does not is asked for nothing. The lane is `apps/web/content/docs/infra/review-collector/express-lane.md`.
+**Commit in any shape; an `Express:` trailer is optional.** The collector repackages a commit no window can carry itself, and parks one it still cannot past its attempts, and its express lane sends any commit carrying the trailer `Express: <why nothing in it needs a reviewer>` straight to `main`, out of queue order and unverified — a red it leaves is the repairer's, and a later commit that builds on it carries it into the window. A session that knows a commit is a sweep's moves, a format pass or a regenerated `generated/` folder may write the trailer (`git commit --trailer "Express: …"`) and skip the collector's session; one that does not is asked for nothing. The lane is `apps/web/content/docs/infra/review-collector/express-lane.md`.
 
 ## Answering a finding in-session
 
-A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). A red run naming a held commit or `ai/review-fixes`, and an issue listing a window's deferred findings, are the session's to answer (`references/held-commits.md`).
+A fix the session makes itself is a commit carrying `Answers: <comment id>` (or `Drains: <review id>` for a body-only finding), so the collector neither re-fixes nor replies early (`references/answering-findings.md`). An issue the collector opens — commits parked on `ai/held/*`, or a window's deferred findings — is the session's to answer like any other, and so is a red collector run (`references/held-commits.md`).
 
 ## After a release merges
 
@@ -47,6 +47,6 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 
 - `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict.
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
-- `references/held-commits.md` — when a collector run fails red naming a held commit or `ai/review-fixes`, or an issue lists a window's deferred findings.
+- `references/held-commits.md` — when the collector opens an issue for parked commits or deferred findings, or a collector run is red.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.
 - `references/running-by-hand.md` — when the collector's workflow is off and the cycle is run from a checkout.
