@@ -1,6 +1,6 @@
 ---
 title: Resin
-description: A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session wind down once a limit window nears its end.
+description: A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, then wind down before it runs dry.
 ---
 
 # Resin
@@ -30,38 +30,41 @@ Each is a button, or with the band focused a key: `w`, `c` and `h`.
 
 ## Usage reserve
 
-A plan's usage windows are spent by the session and its agents, and a compute run that is still owed needs some of the window left to start. So when the five-hour or the weekly window passes nine-tenths used (`USAGE_RESERVE_PERCENTAGE` in `constants.ts`), the mod puts a usage reserve into the session and keeps it there until that window resets.
+A plan's usage windows are spent by the session and its agents, and a compute run that is still owed needs some of a window left to start. So each limit window has two lines, a maintenance line and a wind-down line, and the mod reads the five-hour and the weekly window against them. The lines are the constants `FIVE_HOUR_MAINTENANCE_PERCENTAGE`, `FIVE_HOUR_WIND_DOWN_PERCENTAGE` and `WEEKLY_WIND_DOWN_PERCENTAGE` in `constants.ts`, and the map that holds each window's lines is `RateLimitKindUsageWindowMap.ts`. The weekly window has no maintenance line, since running it dry locks everything out for days. The mod keeps a usage reserve in the session from the first line a window passes until that window resets.
 
 ```mermaid
 flowchart TD
-  M["Engine measurement<br/>reads the five-hour and weekly windows"] --> P{"A window past the line<br/>with a reset time?"}
-  P -->|yes, five-hour before weekly| Q{"Reserve already on?"}
+  M["Engine measurement<br/>reads the five-hour and weekly windows"] --> P{"A window past a line<br/>with a reset time?"}
+  P -->|yes, a wind-down names it over a maintenance| Q{"Reserve already on?"}
   Q -->|no| ON["Reserve starts"]
   ON --> T["Toast names the window and its reset, once"]
-  ON --> S["System section, held still while the reserve lasts"]
-  Q -->|yes| HOLD["Reserve holds, no second toast"]
+  ON --> S["System section for its tier, held still while the tier lasts"]
+  Q -->|yes, same tier| HOLD["Reserve holds, no second toast"]
+  Q -->|yes, maintenance raised to wind-down| UP["Section switches to wind-down<br/>and the toast names it again"]
   P -->|no, reserve on| OFF["Reserve lifts<br/>the section stops being sent"]
   P -->|no, reserve off| NONE["Nothing shown"]
 ```
 
-- **What starts it** — each measurement the engine pushes reads the limit windows. The first window at or past the line, five-hour before weekly, starts the reserve, and a toast names it with its reset time in local time, once. Nothing is shown when the reserve ends.
-- **What the session is told** — one system section naming the window and its reset time, then an instruction: start no new agent or workflow that writes code or designs, have each running one commit what builds and end on a handoff spec, commit and push the work in hand, write every open item down so it can be resumed cold, and clean up idle servers, shells and monitors. The text holds still while the reserve lasts, so it does not break the prompt cache. It is sent only while the resin mod is on.
+- **What starts it** — each measurement the engine pushes reads the limit windows. A wind-down names the reserve over a maintenance tier, and when both windows are at the same tier the five-hour one is named. A toast names it with its reset time in local time, once as it starts and again as its maintenance tier rises to wind-down. Nothing is shown when the reserve ends.
+- **What the session is told** — one system section naming the window, the line it has passed and its reset time, then the instruction of its tier: the maintenance tier spends the rest of the window on cleanup agents, the wind-down stops new work and has each running agent commit and hand off. The throughput skill's "The usage reserve" section spells out both. The text holds still while its tier lasts, so it does not break the prompt cache; a rise to wind-down changes it once. It is sent only while the resin mod is on.
 - **What lifts it** — the window's reset drops its reading under the line, and the next measurement clears the reserve, so the section simply stops being sent. No button or command does this.
 
 The steps a session follows under a reserve are the repository's own, in the [throughput](https://github.com/Esposter/Esposter/blob/main/.agents/skills/throughput/SKILL.md) skill's "The usage reserve" section.
 
 ## Key files
 
-| File                                                              | Role                                                                    |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/resin/getResinFigures.ts`     | Usage and the clock into the row's figures and warnings                 |
-| `packages/genshin-mods/src/services/resin/getCacheRemainingMs.ts` | The time left on the cache                                              |
-| `packages/genshin-mods/src/services/resin/getReserveWindow.ts`    | The limit window past the reserve's line, with its reset time           |
-| `packages/genshin-mods/src/services/resin/reserveText.ts`         | The reserve's system section                                            |
-| `packages/genshin-mods/src/services/resin/formatResetsAt.ts`      | The reset time in local time, for the toast and the section             |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`         | The minute clock, the warning toast, the renewal, the reserve's reading |
-| `packages/genshin-mods/src/services/band/registerBand.ts`         | The row and the warm, compact and handoff actions                       |
-| `packages/genshin-mods/src/services/constants.ts`                 | The cache's lifetime, the thresholds and the warm and handoff questions |
+| File                                                                      | Role                                                                    |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/resin/getResinFigures.ts`             | Usage and the clock into the row's figures and warnings                 |
+| `packages/genshin-mods/src/services/resin/getCacheRemainingMs.ts`         | The time left on the cache                                              |
+| `packages/genshin-mods/src/services/resin/RateLimitKindUsageWindowMap.ts` | The limit windows the reserve is read off, each with its lines          |
+| `packages/genshin-mods/src/services/resin/getReserveWindow.ts`            | The window whose tier names the reserve, with its reset time            |
+| `packages/genshin-mods/src/services/resin/getReserveSummary.ts`           | The sentence the reserve's section and its toast open with              |
+| `packages/genshin-mods/src/services/resin/reserveText.ts`                 | The reserve's system section                                            |
+| `packages/genshin-mods/src/services/resin/formatResetsAt.ts`              | The reset time in local time, for the toast and the section             |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`                 | The minute clock, the warning toast, the renewal, the reserve's reading |
+| `packages/genshin-mods/src/services/band/registerBand.ts`                 | The row and the warm, compact and handoff actions                       |
+| `packages/genshin-mods/src/services/constants.ts`                         | The cache's lifetime, the thresholds and the warm and handoff questions |
 
 ## Notes
 
