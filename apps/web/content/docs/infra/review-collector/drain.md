@@ -1,6 +1,6 @@
 ---
 title: Drain
-description: The one step of the collection cycle where Claude runs — which findings of a merged window count as open, how each is fixed or rejected onto ai/review-fixes with no GitHub credential in hand (a fix may go to a foreground haiku subagent), and how a drain that fails past its attempts holds the stack rather than releasing over its findings.
+description: The one step of the collection cycle where Claude runs — which findings of a merged window count as open, how each is fixed or rejected onto ai/review-fixes with no GitHub credential in hand (a fix may go to a foreground haiku subagent), and how a drain that fails past its attempts defers what is left — a reply on each finding and one issue — so the walk goes on.
 ---
 
 # Drain
@@ -10,7 +10,7 @@ The drain answers every finding of a merged window's review, at every severity, 
 ```mermaid
 flowchart TD
   O[Open set: threads the bot spoke last on<br/>plus the newest body's own buckets] --> Q{Attempt cap reached}
-  Q -->|yes| P[Held notice, run fails red —<br/>the stack waits for a person]
+  Q -->|yes| P[One issue listing them, a Deferred reply on each<br/>— the drain completes, the walk goes on]
   Q -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
   B --> C[Claude: each finding in turn]
   C -->|fixes it itself, or rejects it| R{Non-zero exit stating<br/>Claude Code's own limit}
@@ -18,7 +18,7 @@ flowchart TD
   S --> J[Claude reads its diff and judges it<br/>before the next finding] --> R
   R -->|yes| M[Limit marker with the reset instant<br/>— no attempt counted, the pass ends]
   R -->|no| E{Exited clean<br/>with a clean tree}
-  E -->|no| F[Failed-attempt marker, run fails]
+  E -->|no| F[Failed-attempt marker, run ends idle<br/>— retried a minute later]
   E -->|yes| V[Post the rejections] --> PU[Push ai/review-fixes with a lease]
   PU --> U{Every finding fixed<br/>or rejected}
   U -->|no| F
@@ -26,7 +26,7 @@ flowchart TD
 
 ## What is open
 
-An inline finding is open when its thread is unresolved, the bot spoke last on it, and no `Answers: <comment id>` trailer names it on a commit `develop` already carries or on one `ai/review-fixes` or `ai/queue` still owes `develop` by patch id — a fixes branch keeps its head after a window carries it, and a queue not yet rebased keeps its ported commits, so a range would read both as unported. The commits `develop` carries count because the reply is best-effort: a thread whose reply never landed still reads as the bot's, and the commit is the answer. A thread the bot has answered again after the collector's reply is open again.
+An inline finding is open when its thread is unresolved, the bot spoke last on it, and no `Answers: <comment id>` trailer names it on a commit `develop` already carries or on one `ai/review-fixes` or `ai/queue` still owes `develop` by patch id — a fixes branch keeps its head after a window carries it, and a queue not yet rebased keeps its ported commits, so a range would read both as unported. The commits `develop` carries count because the reply is best-effort: a thread whose reply never landed still reads as the bot's, and the commit is the answer. **A thread the collector has answered stays answered when the bot replies to that answer** — its acknowledgement, or an analysis chain arguing a rejection — and is open again only when the bot's newest comment asks for a change it can be held to, a suggestion block or a committable suggestion, which is a new finding in the same thread. So the collector replies once per finding: one comment it rejected was rejected twice, because the bot answered the first rejection with an analysis chain that the drain then read as open. That rule — any bot comment after the collector's reply reopens the thread — fell to the user's goal of a pipeline that replies to everything and finishes with nobody watching.
 
 Body-only findings — every bucket the review body heads `<Name> comments (N)`: nitpicks, outside-diff-range comments, and the minor comments a long review moves out of its inline threads, none of which has a thread — are open when the newest review states a non-zero count for any bucket, whatever its name, no `Drains: <review id>` trailer names it on the unported commits or the commits `develop` carries above `main`, and no verdict comment carries its marker. The two halves are one memory: a trailer is only read off the commits above `main`, so it is lost the moment its commit reaches `main`, while a marker outlives every rebase. A review stating none never spins up a Claude session. The buckets are read by the shape of their heading rather than from a list of names, because the set is not fixed: a list of two missed a review whose findings were all in a `Minor comments` bucket, which read as zero and was never drained.
 
@@ -50,7 +50,7 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 ## When it cannot
 
-**A drain that cannot close its findings holds the stack, not retried forever and never ported past.** Each failed drain of a review leaves a hidden marker in a pull request comment; past the attempt cap the collector posts a held notice once and every run fails red, porting nothing. The walk stops at the held window, so nothing above it merges, and no window opens, until its findings are answered. Porting past it is the one thing it may not do: the window it cut would open the next pull request, that window merges once its own review completes and a session starts, and the findings would ship unread with no drain left to read them — the window that just merged is the only review a drain reads. The failed run is red, so someone sees it, and three things clear it: a commit on `ai/queue` answering the findings (`Answers:` / `Drains:`), the threads resolved, or a change to the collector's services, since every marker names their tree as its basis ([the runner's counts](/docs/infra/review-collector/runner)) and a collector changed since drains the review again. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, hold visibly.
+**A drain that cannot close its findings defers them, and the walk goes on.** Each failed drain of a review leaves a hidden marker in a pull request comment, the cause on the line under it, and the run ends idle with the minute's retrigger. Past the attempt cap the drain answers what is still open instead of trying again: it opens one issue for the window — keyed on the window's head, since every reply the bot posts in a thread is a review of its own — listing each open finding's link and the newest failure's cause, labelled for an agent to pick up (`.agents/triage-labels.md`); then it replies `Deferred after <n> attempts — <cause>` on every open thread and posts a deferred verdict for an open body review. Those replies are the answers the open-set predicate reads, so the drain is complete and the walk moves on to the next window. The issue goes first and a failure to open it is thrown, so a run that could not open it leaves every finding open for the next run; the replies are best-effort, and one that did not land is deferred again. A deferred finding is answered later the way a session answers any finding, by a commit on `ai/queue` carrying `Answers:` or `Drains:` (`.agents/skills/review-queue/references/answering-findings.md`), and a change to the collector's services before the cap is reached hands the drain a fresh turn, since every marker names their tree as its basis ([the runner's counts](/docs/infra/review-collector/runner)). This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, and hand the residue to the tracker rather than to a red run. **Overturned: "porting past it is the one thing it may not do."** A held drain stopped the walk and failed every run red until a person answered the findings, so one session that could not finish held every window above it; the findings a window ships past are each still answered — fixed later from the issue, or rejected with a reason — and the user's goal of a collector that completes on its own with nobody monitoring it overturned the hold.
 
 **A session that never started is not a failed attempt.** Claude Code refusing to run because the account hit a limit — the session one or the weekly one, the sentence names either — exits non-zero like a session that tried, and counting it would spend the attempt cap on an outage. Read as failures, a weekly limit would hold a review's drain until its cap, and every window above it would wait with its findings unread. The launcher reads the sentence Claude Code prints on its way out — off its own lines, never the model's narration, and never trusting the result frame, which states `success` for a refusal — with the reset as a time of day or, for the weekly limit, a date and a time, and throws: whichever role was refused, the pass ends there and a marker on the merged window carries the instant the limit lifts.
 
@@ -61,7 +61,9 @@ Once Claude exits, the script — the only process with a credential — posts a
 | File                                                               | Role                                                                              |
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | `scripts/src/services/coderabbit/collect/runDrainStep.ts`          | the open set it reads, and what stops it — nothing open, dry run, a failed launch |
-| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | the hold, the branch, the install, the session, the verdicts, the push            |
+| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | the cap, the branch, the install, the session, the verdicts, the push             |
+| `scripts/src/services/coderabbit/collect/deferFindings.ts`         | past the cap, the issue and a deferred reply on every finding still open          |
+| `scripts/src/services/coderabbit/collect/getOpenFindings.ts`       | the open set — the bot spoke last, and asks again where the collector answered    |
 | `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`        | what Claude is told, in the order it is told                                      |
 | `scripts/src/services/coderabbit/collect/constants.ts`             | the drain prompt's denials, beside which the haiku clause is written              |
 | `scripts/src/services/coderabbit/collect/readFindingSeverities.ts` | the score each finding is ordered by                                              |
