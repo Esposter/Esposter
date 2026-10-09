@@ -58,6 +58,8 @@ export const WINDRISE_GROUND_LAYER_TONES: Record<string, string> = {
 };
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
+// The colour a material tints that albedo by, linear, which the witness multiplies its texture by
+export const MAIN_COLOUR_PROPERTY = "_Color";
 // The float a cut-out material clips its albedo's alpha at, which the game's foliage shader reads
 export const CUTOFF_PROPERTY = "_Cutoff";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
@@ -261,6 +263,9 @@ export const STATUE_FIT_SAMPLE_COUNT = 20_000;
 export const STATUE_SCORE_SAMPLE_COUNT = 2000;
 export const STATUE_FIT_DISTANCE_METRES = 0.03;
 export const STATUE_DECIMALS = 3;
+// A statue's colour at each of its stacks' vertices is the mean of the colours its piece's export textures paint at the
+// Six of the piece's fitted points nearest it, its export material's tint included
+export const STATUE_COLOUR_NEAREST_COUNT = 6;
 // Every piece of the statue samples and splits from this seed, so the same export always fits the same way
 export const STATUE_FIT_SEED = 12345;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer

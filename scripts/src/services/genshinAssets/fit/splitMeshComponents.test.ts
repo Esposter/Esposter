@@ -24,12 +24,6 @@ describe(splitMeshComponents, () => {
           [5, 6, 7],
         ],
       ),
-    ).toStrictEqual([
-      [
-        [0, 1, 2],
-        [3, 4, 2],
-      ],
-      [[5, 6, 7]],
-    ]);
+    ).toStrictEqual([[0, 1], [2]]);
   });
 });
