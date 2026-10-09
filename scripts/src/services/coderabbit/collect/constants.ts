@@ -48,6 +48,9 @@ export const PENDING_BUCKET = "pending";
 export const PASS_BUCKET = "pass";
 
 export const COMPLETED_DESCRIPTION = "Review completed";
+// The bot declining a second, incremental pass over commits its one full review did not read. It is a refusal to
+// Review again, not a verdict: the full review stands when it covers the head (`getGateDecision`)
+export const INCREMENTAL_SKIPPED_DESCRIPTION = "Review skipped: incremental reviews are disabled";
 
 export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // Frozen: a lockfile a commit left stale fails here as CI would fail it, and nothing tracked is rewritten

@@ -12,9 +12,11 @@ interface Props {
   selectedChoiceId: string;
   // The speaker's name over the line, none for a narration
   speakerName: string;
+  // The speaker's role under the name, "" for none
+  speakerRole: string;
 }
 
-const { choices, line, revealedLength, selectedChoiceId, speakerName } = defineProps<Props>();
+const { choices, line, revealedLength, selectedChoiceId, speakerName, speakerRole } = defineProps<Props>();
 const emit = defineEmits<{ advance: []; choose: [id: string] }>();
 // The line split where it is written out to, by character so a pair of code units is never cut
 const lineParts = computed(() => {
@@ -29,10 +31,11 @@ const lineParts = computed(() => {
 <template>
   <!-- The game's dialogue over the world: a click anywhere goes on, the speaker's name over the line at the foot of the
        Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
-       choices; the band's gradient, the selected reply's look and the speaker's role line wait on recordings still owed -->
+       choices; the selected reply's look and the speaker's role line wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
+      <p v-if="speakerRole" class="role">{{ speakerRole }}</p>
       <p class="line">
         <span aria-hidden="true">{{ lineParts.revealed }}</span>
         <span class="unrevealed" aria-hidden="true">{{ lineParts.unrevealed }}</span>
@@ -70,8 +73,7 @@ const lineParts = computed(() => {
   box-sizing: border-box;
   flex-direction: column;
   align-items: center;
-  padding-top: calc(var(--unit) * 96);
-  background: linear-gradient(transparent, rgb(0 0 0 / 0.6));
+  padding-top: calc(var(--unit) * 42);
 }
 
 /* The name's gold is the brightest saturated pixel of its letters in the English client's recording */
@@ -83,14 +85,28 @@ const lineParts = computed(() => {
   line-height: 1;
 }
 
+/* The role under the name in the recording's smaller gold; its slot is the line's offset between a speaker with one and
+   one without, so the line keeps its place either way */
+.role {
+  margin: 0;
+  color: #ffc700;
+  font-size: calc(var(--unit) * 13);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 16.5);
+}
+
 .line {
   max-width: calc(var(--unit) * 1200);
-  margin: calc(var(--unit) * 20) 0 0;
+  margin: calc(var(--unit) * 13.5) 0 0;
   color: #fff;
-  font-size: calc(var(--unit) * 32);
+  font-size: calc(var(--unit) * 26);
   font-weight: 600;
-  line-height: calc(var(--unit) * 44);
+  letter-spacing: calc(var(--unit) * 2.3);
+  line-height: calc(var(--unit) * 32);
   text-align: center;
+  /* The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice: softened
+     to the recording's blur, which scores best of those tried */
+  filter: blur(calc(var(--unit) * 1.5));
 }
 
 .unrevealed {
@@ -127,11 +143,13 @@ const lineParts = computed(() => {
   width: 100%;
   min-height: calc(var(--unit) * 45);
   align-items: center;
-  gap: calc(var(--unit) * 12);
-  padding: 0 calc(var(--unit) * 18);
+  gap: calc(var(--unit) * 7.5);
+  padding: 0 calc(var(--unit) * 10.5);
+  letter-spacing: calc(var(--unit) * 0.5);
   border: none;
   border-radius: calc(var(--unit) * 23);
-  background: rgb(0 0 0 / 0.6);
+  /* A pill is a fifth black over the scene, the darkness that scored best against the recording */
+  background: rgb(0 0 0 / 0.22);
   color: #fff;
   cursor: inherit;
   font: inherit;
@@ -150,8 +168,8 @@ const lineParts = computed(() => {
 
 /* The mark's place, its glyph to come from the trace of the game's own */
 .icon {
-  width: calc(var(--unit) * 27);
-  height: calc(var(--unit) * 27);
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 30);
   flex: none;
 }
 </style>

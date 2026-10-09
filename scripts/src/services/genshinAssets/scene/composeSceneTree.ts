@@ -4,7 +4,7 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { SceneTreeFlag } from "#src/models/genshinAssets/scene/SceneTreeFlag";
 import { composeWorldMatrices } from "#src/services/genshinAssets/shared/composeWorldMatrices";
-import { ROOT_PARENT_ID } from "#src/services/genshinAssets/shared/constants";
+import { ORIGIN_TOLERANCE_METRES, ROOT_PARENT_ID } from "#src/services/genshinAssets/shared/constants";
 import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { getOrCreate } from "@esposter/shared";
@@ -12,7 +12,7 @@ import { Quaternion, Vector3 } from "three";
 
 // A scene's hierarchy as the dumps hold it, from every root and every object whose father no dump holds, each node
 // Flagged with what its arrangement turns on: an empty anchor a script spawns into, a lost father or lost children, a
-// Root at the origin, and a mesh laid out under several of these tops
+// Top whose whole subtree collapses onto the origin, and a mesh laid out under several of these tops
 export const composeSceneTree = (
   objects: readonly SceneObject[],
   gameObjectDrawingMap: ReadonlyMap<string, SceneDrawing>,
@@ -23,6 +23,17 @@ export const composeSceneTree = (
   const parentKeyChildrenMap = groupSceneChildren(objects);
   const keyWorldMatrixMap = composeWorldMatrices(objects);
   const meshTopsMap = new Map<string, Set<string>>();
+  // A node and all its descendants stand at the origin: a placement that never resolved, where a root authored in world
+  // Space keeps its children off the origin
+  const checkIsSubtreeAtOrigin = (node: SceneTreeNode): boolean => {
+    const position = keyWorldMatrixMap
+      .get(toObjectKey(node.object.file, node.object.transformId))
+      ?.elements.slice(12, 15);
+    return (
+      (position ?? [0, 0, 0]).every((value) => Math.abs(value) <= ORIGIN_TOLERANCE_METRES) &&
+      node.children.every(checkIsSubtreeAtOrigin)
+    );
+  };
   const toNode = (object: SceneObject, top: SceneObject, visitedKeys: ReadonlySet<string>): SceneTreeNode => {
     const key = toObjectKey(object.file, object.transformId);
     const mesh = gameObjectDrawingMap.get(toObjectKey(object.file, object.gameObjectId))?.mesh ?? "";
@@ -36,15 +47,12 @@ export const composeSceneTree = (
     if (object.childIds.length === 0 && !mesh && object.components.length === 0) flags.push(SceneTreeFlag.EmptyAnchor);
     if (children.length < object.childIds.length) flags.push(SceneTreeFlag.LostChildren);
     if (!isRoot && !checkHasFather(object)) flags.push(SceneTreeFlag.LostFather);
-    if (
-      isRoot &&
-      object.position.every((value) => value === 0) &&
-      new Quaternion(...object.rotation).equals(new Quaternion())
-    )
-      flags.push(SceneTreeFlag.RootAtOrigin);
     const worldScale = new Vector3();
     keyWorldMatrixMap.get(key)?.decompose(new Vector3(), new Quaternion(), worldScale);
-    return { children, flags, mesh, object, worldScale: worldScale.toArray() };
+    const node: SceneTreeNode = { children, flags, mesh, object, worldScale: worldScale.toArray() };
+    const isTop = isRoot || !checkHasFather(object);
+    if (isTop && checkIsSubtreeAtOrigin(node)) flags.push(SceneTreeFlag.TopAtOrigin);
+    return node;
   };
   const tops = objects
     .filter((object) => object.parentId === ROOT_PARENT_ID || !checkHasFather(object))

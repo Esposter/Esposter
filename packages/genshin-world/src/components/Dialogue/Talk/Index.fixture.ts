@@ -15,6 +15,7 @@ const TALK: Talk = {
       id: "ah-finally",
       kind: TalkLineKind.Spoken,
       nextLineIds: ["is-something-wrong", "sorry-already-ate"],
+      speakerRoleTextId: "waitress-good-hunter",
       speakerTextId: "sara",
       textId: "ah-finally",
       voiceId: "",
@@ -37,6 +38,7 @@ const TALK: Talk = {
       id: "knights-of-favonius",
       kind: TalkLineKind.Spoken,
       nextLineIds: [],
+      speakerRoleTextId: "waitress-good-hunter",
       speakerTextId: "sara",
       textId: "knights-of-favonius",
       voiceId: "",
@@ -45,6 +47,7 @@ const TALK: Talk = {
       id: "so-it-is-jean",
       kind: TalkLineKind.Spoken,
       nextLineIds: [],
+      speakerRoleTextId: "",
       speakerTextId: "paimon",
       textId: "so-it-is-jean",
       voiceId: "",
@@ -62,6 +65,7 @@ const TEXT_MAP: Record<string, string> = {
   sara: "Sara",
   "so-it-is-jean": "Oh, so it's Jean you were really hoping to see.",
   "sorry-already-ate": "Sorry, I already ate.",
+  "waitress-good-hunter": "Waitress, Good Hunter",
 };
 
 export const props = {

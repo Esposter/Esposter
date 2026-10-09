@@ -541,14 +541,14 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ce6f08c0725709fb3c9a037483aca8a934306e15 over the window's room without an Express trailer (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left ac5fcce835f2017ec2706c0392acb605ecb8be6f over the window's room without an Express trailer (attempt 1 of 3 on 30e00c79f6d80fba63a7669701f892f6b3cb1a45)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments?per_page=100",
             "--paginate",
             "--slurp",
           ],
@@ -556,10 +556,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments",
             "-f",
-            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
-      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left ce6f08c0725709fb3c9a037483aca8a934306e15 over the window's room without an Express trailer. See the collector run.",
+            "body=<!-- review-collector reshape-failed commit:30e00c79f6d80fba63a7669701f892f6b3cb1a45 against:collectorSha -->
+      Attempt 1 of 3 to reshape 30e00c79f6d80fba63a7669701f892f6b3cb1a45 failed — the session left ac5fcce835f2017ec2706c0392acb605ecb8be6f over the window's room without an Express trailer. See the collector run.",
           ],
         ],
       ]
@@ -591,14 +591,14 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies 30e00c79f6d80fba63a7669701f892f6b3cb1a45 was replayed from (attempt 1 of 3 on 30e00c79f6d80fba63a7669701f892f6b3cb1a45)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments?per_page=100",
             "--paginate",
             "--slurp",
           ],
@@ -606,10 +606,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments",
             "-f",
-            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
-      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left a part naming the copies 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 was replayed from. See the collector run.",
+            "body=<!-- review-collector reshape-failed commit:30e00c79f6d80fba63a7669701f892f6b3cb1a45 against:collectorSha -->
+      Attempt 1 of 3 to reshape 30e00c79f6d80fba63a7669701f892f6b3cb1a45 failed — the session left a part naming the copies 30e00c79f6d80fba63a7669701f892f6b3cb1a45 was replayed from. See the collector run.",
           ],
         ],
       ]
@@ -633,14 +633,14 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
 
     await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5)]`,
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on 30e00c79f6d80fba63a7669701f892f6b3cb1a45)]`,
     );
     expect(runGh.mock.calls).toMatchInlineSnapshot(`
       [
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments?per_page=100",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments?per_page=100",
             "--paginate",
             "--slurp",
           ],
@@ -648,10 +648,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         [
           [
             "api",
-            "repos/{owner}/{repo}/commits/53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5/comments",
+            "repos/{owner}/{repo}/commits/30e00c79f6d80fba63a7669701f892f6b3cb1a45/comments",
             "-f",
-            "body=<!-- review-collector reshape-failed commit:53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 against:collectorSha -->
-      Attempt 1 of 3 to reshape 53a34b50fab3524f0cd536a0bce4eaa4dfa21cb5 failed — the session left an operation in progress. See the collector run.",
+            "body=<!-- review-collector reshape-failed commit:30e00c79f6d80fba63a7669701f892f6b3cb1a45 against:collectorSha -->
+      Attempt 1 of 3 to reshape 30e00c79f6d80fba63a7669701f892f6b3cb1a45 failed — the session left an operation in progress. See the collector run.",
           ],
         ],
       ]

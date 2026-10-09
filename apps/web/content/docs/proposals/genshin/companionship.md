@@ -31,7 +31,7 @@ flowchart LR
 
 1. **The Profile tab's stories and voice-overs**, opened by level, once the character screen draws the tab. `FetterStoryExcelConfigData` is not in the dump yet and is fetched from the community's dump when this is built.
 2. **The namecard at 10**, with a profile to show it.
-3. **The commissions and random events' EXP**, each once its own page is built. Commissions wait on the [commissions](/docs/proposals/genshin/commissions) page, and random events have no page yet.
+3. **The commissions and random events' EXP.** The commissions' claim returns its Companionship EXP item, and routing it to the [friendship grant](/docs/genshin/companionship) is the claim caller's, built in the [commissions](/docs/proposals/genshin/commissions) proposal's routing step. Random events have no page yet.
 
 ## Data and measures
 

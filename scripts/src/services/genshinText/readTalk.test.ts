@@ -28,7 +28,15 @@ describe(readTalk, () => {
           nextLineIds: ["101"],
           textId: "0",
         },
-        { id: "101", kind: TalkLineKind.Spoken, nextLineIds: [], speakerTextId: "0", textId: "0", voiceId: "" },
+        {
+          id: "101",
+          kind: TalkLineKind.Spoken,
+          nextLineIds: [],
+          speakerRoleTextId: "",
+          speakerTextId: "0",
+          textId: "0",
+          voiceId: "",
+        },
       ],
       startLineId: "100",
     });

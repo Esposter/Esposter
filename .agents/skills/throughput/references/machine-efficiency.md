@@ -2,22 +2,19 @@
 
 Read when a wave starts, when an agent is about to check, build, search or scan, and when the CPU is pinned while the GPU idles.
 
-A wave of agents multiplies every habit by the number of agents. A typecheck each agent runs before each commit is the same check run a dozen times over a tree that changes under all of them. So a check every agent needs runs once for all of them, every search reads only what git tracks, and every long run goes to whichever of the cores, the GPU or the video engine does it cheapest.
+A wave of agents multiplies every habit by the number of agents. A typecheck each agent runs before each commit is the same check run a dozen times over a tree that changes under all of them. So every search reads only what git tracks, every long run goes to whichever of the cores, the GPU or the video engine does it cheapest, and each check runs once, by the agent that needs it.
 
-## Checks run once, for every agent
+## Every improvement ships, measured, and trims what it replaced
 
-- **Typecheck: one watcher per package, read by every agent.** When a wave starts, the main session starts one watcher in each package the wave edits. It runs hidden from the package folder: `pnpm exec tsc --noEmit --watch --preserveWatchOutput > ~/Esposter/checks/<package>.log 2>&1`, or `vue-tsc` in a package with `.vue` files. The workspace's `typescript` is the tsgo-backed fork, so an incremental pass takes seconds. The main session stops the watchers when the wave ends.
-  - **An agent never runs its own typecheck.** It reads the latest pass that started after its last edit, which is done once it ends on `Found N errors. Watching for file changes.`:
+- **An efficiency gain found in any work is built then**, as its own unit, never noted for later: a check run twice, a process held by nothing, a server per lane that one could serve, a mechanism a simpler one now covers.
+- **It is measured before and after, on this machine.** Memory of the process tree, time to ready and CPU seconds, as medians over a few runs. The numbers decide it: a mechanism that saves nothing measurable is removed, however sensible it sounded.
+- **What it replaced goes in the same change.** The old script, flag, port, rule or prose line is deleted, not left beside the new one, so the machine never runs both and the reader never wonders which holds.
+- **The architecture is a docs page with its diagram.** How the local lanes, servers, browsers and checks fit together, with a magnitude for what each one saves, is `apps/web/content/docs/architecture/machine-efficiency.md`. This page keeps only the rules an agent follows.
 
-    ```sh
-    awk '/Starting (incremental )?compilation/{pass=""} {pass=pass $0 "\n"} END{printf "%s", pass}' ~/Esposter/checks/<package>.log
-    ```
+## Checks run once, before the commit
 
-  - It fixes the errors in its own files; one in another agent's half-written file is theirs. A package with no log is checked by hand, once.
-  - **A keeper holds them alive.** Watchers die (a native crash, a killed parent), and an agent that restarts one by hand doubles it. So the main session starts `.agents/skills/throughput/scripts/keep-watchers.ps1` once, hidden, with the packages the wave edits. It restarts any watcher it finds dead, its build info deleted first, and logs each restart to `~/Esposter/checks/keeper.log`. Agents never start, restart or stop a watcher.
-  - **A watcher costs memory** — half a gigabyte for a small package, two for `scripts` — so watchers run only for the packages a wave is editing. The main session stops a package's watcher and **deletes its log** when the package goes quiet or the memory gate is near, since a stale log reads as a clean pass. A watcher that died leaves a log whose last write stops moving, and it is restarted or its log deleted.
-  - The checks folder holds the watchers' logs only; an agent's own scratch output goes in its scratchpad.
-  - **TS6307 on a new file is a stale build-info file**, not a missing include: "File … is not listed within the file list of project" while the file sits under an included glob. Delete the package's git-ignored `tsconfig.tsbuildinfo` and restart its watcher.
+- **An agent typechecks each package it edited once, before its commit.** It runs that package's own incremental check, `pnpm exec tsc --noEmit` (or `pnpm exec vue-tsc --noEmit` in a package with `.vue` files), at below-normal priority after the memory gate. A pass takes a few seconds and peaks under about two gigabytes, so a one-off check beats a standing watcher unless it runs more than about 750 times an hour, the break-even measured for `scripts`. An agent never checks `apps/web`, whose typecheck is CI's.
+- **It fixes the errors in its own files.** One in another agent's half-written file is that agent's to fix.
 - **Lint: the touched files only.** Run `vp lint --disable-nested-config <files>` and `pnpm exec eslint <files>` from the package, never the package's whole `pnpm lint`.
 - **Tests: the touched tests only.** Run `pnpm exec vitest run <paths>`.
 - **Build: only to regenerate a barrel.** After an agent adds, renames or deletes a module file, it runs `pnpm exec tsdown --no-clean`, never `pnpm build`; otherwise it does not build at all. The parity page and every sibling's typecheck read a package's source through its `source` export condition and the generated barrel, and the user's `nuxt dev` rebuilds every package itself.
@@ -46,7 +43,6 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 
 - **The GPU is already the one doing the work.** Headless Edge gets the machine's own AMD RDNA 3 adapter by default, and the launch flags tried (`--use-angle=d3d11`, `--ignore-gpu-blocklist`, `--enable-unsafe-webgpu`) change nothing that matters: the last adds three features, and a launch forced onto SwiftShader gets no adapter at all. A bench's frame is set by the main thread instead: in a 475-mesh scene about nine of its twelve milliseconds a frame are main-thread work, so a low GPU share is that scene's draw loop, not a missing flag.
 - **The page lane runs several scenes at once.** Its runner serves every item's page from its one parity server in its own worktree (port 3002), as `.agents/skills/genshin-parity/references/compute-queue.md` sets out.
-- **One dev server and one browser serve every agent.** The shared checkout's parity page is served once on port 3011, and one shared Edge (`genshin:parity browser start`) takes every command as a context of its own, so a wave's commands share one server and one browser rather than each starting their own. Measured with three `film` commands at once, one server and one shared Edge peaked near 6 GB of private memory and ran about three cores on average, against near 8 GB and about five cores with three servers and three Edges, and the commands' processes fell from about 75 to about 45. The shared Edge stays up between commands, which the next wave's commands join at once.
 - **A GPU idle while the queue holds items is a lane waiting on a miss.** A miss is a call only the main session makes, so it settles the misses before anything else: each holds the GPU.
 
 ## Tokens are a resource too

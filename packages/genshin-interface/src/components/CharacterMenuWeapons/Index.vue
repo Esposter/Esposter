@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ASCENSION_PHASE_COUNT } from "#src/services/constants";
+
 interface Props {
   // The weapon's ascension phase, from none to the last one
   ascension: number;
@@ -16,7 +18,6 @@ interface Props {
   subStatValue: string;
 }
 
-const ASCENSION_PHASE_COUNT = 6;
 const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue } = defineProps<Props>();
 </script>
 

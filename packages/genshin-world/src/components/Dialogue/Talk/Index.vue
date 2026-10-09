@@ -96,6 +96,7 @@ useEventListener("keydown", (event) => {
           ? (textMap[talkLine.speakerTextId] ?? '')
           : gameText[GameTextKey.Traveler]
       "
+      :speaker-role="talkLine?.kind === TalkLineKind.Spoken ? (textMap[talkLine.speakerRoleTextId] ?? '') : ''"
       @advance="setProgress(advanceTalk(talk, progress))"
       @choose="(choiceLineId) => choose(choiceLineId)"
     />

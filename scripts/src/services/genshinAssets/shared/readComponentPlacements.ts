@@ -1,6 +1,7 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
+import { dropUnplacedSpawns } from "#src/services/genshinAssets/scene/dropUnplacedSpawns";
 import { composeAssetPlacements } from "#src/services/genshinAssets/shared/composeAssetPlacements";
 import { copySpawns } from "#src/services/genshinAssets/shared/copySpawns";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
@@ -15,7 +16,8 @@ import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorld
 // Scene's blocks, and only some of those arrangements are the component's. Other roots can be named in their place, to
 // Try another arrangement. Copied, every spawn's copies are laid out too, as the scene draws them while they scroll;
 // Otherwise each prefab stands once, as its own data is fitted. A part of the open world's prefabs stand wherever the
-// World sets them down, and are its roots beside the ones its map names
+// World sets them down, and are its roots beside the ones its map names. A root no placement reaches, a prefab a script
+// Spawns at run time, is dropped rather than drawn at the origin
 export const readComponentPlacements = async (
   component: DerivedAssetComponent,
   { isCopied = false, roots }: { isCopied?: boolean; roots?: readonly string[] } = {},
@@ -28,6 +30,6 @@ export const readComponentPlacements = async (
   const rootNames =
     roots ?? [...DerivedAssetComponentMap[component].roots, ...getWorldRoots(world)].map(({ name }) => name);
   const spawned = isCopied ? copySpawns(objects, DerivedAssetComponentMap[component].spawns ?? []) : objects;
-  const laidOut = placeWorldPrefabs(spawned, worldPlacements);
+  const laidOut = dropUnplacedSpawns(placeWorldPrefabs(spawned, worldPlacements), gameObjectDrawingMap);
   return composeAssetPlacements(laidOut, gameObjectDrawingMap).filter(({ root }) => rootNames.includes(root));
 };

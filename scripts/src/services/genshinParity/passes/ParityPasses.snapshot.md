@@ -40,13 +40,21 @@ the change that moved it, as a bench's report is committed.
 | Motion | door lift path | 0.0080 | 0.0200 | m | yes |
 | Motion | door lift pace | 0.0001 | 0.0100 | share | yes |
 | Surface | login-door-session Door colour | 0.3250 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Door structure | 0.0560 | 0.0892 | share | yes |
+| Surface | login-door-session Door structure | 0.2768 | 0.0194 | share | no |
 | Surface | login-door-session Bridges colour | 1.0674 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Bridges structure | 0.0491 | 0.0331 | share | no |
+| Surface | login-door-session Bridges structure | 1.0000 | 0.3359 | share | no |
 | Surface | login-door-session Towers colour | 0.1170 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Towers structure | 0.1012 | 0.0257 | share | no |
+| Surface | login-door-session Towers structure | 0.4704 | 0.0202 | share | no |
 | Surface | login-door-session Walkway colour | 0.1288 | 2.3000 | ΔE | yes |
-| Surface | login-door-session Walkway structure | 0.0826 | 0.0172 | share | no |
+| Surface | login-door-session Walkway structure | 0.5846 | 0.0272 | share | no |
+| Surface | windrise-statue-day Statue colour | 2.9636 | 2.3000 | ΔE | no |
+| Surface | windrise-statue-day Statue structure | 0.7027 | 0.0701 | share | no |
+| Surface | windrise-statue-day Oak colour | 3.2945 | 2.3000 | ΔE | no |
+| Surface | windrise-statue-day Oak structure | 0.9906 | 0.0431 | share | no |
+| Surface | windrise-statue-day Paving colour | 0.5324 | 2.3000 | ΔE | yes |
+| Surface | windrise-statue-day Paving structure | 1.0000 | 0.2183 | share | no |
+| Surface | windrise-statue-day Ground colour | 13.4170 | 2.3000 | ΔE | no |
+| Surface | windrise-statue-day Ground structure | 1.0000 | 0.0430 | share | no |
 
 ## windrise
 

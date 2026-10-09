@@ -42,6 +42,7 @@ export const statueTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Our statue's shape is two radial profiles fitted from its meshes (the stone and the figure, `windrise/statue.json`, a radius at each of 16 angles per tenth of a metre), which read an outline of 10.8 pixels against 1, a depth of 0.020 against 0.01 and a normal of 46 degrees against 10: a lathe read 12.7, 0.022 and 37, and 32 angles read 10.9, 0.019 and 49. The stone's base is not round and the figure is a robed body with arms, and the stand's base and its level-three mesh carry most of the normal error. Still the kits': the oak's height and shape, and which of the statue's levels the recordings show",
+    "Our statue's shape is radial profiles fitted from its meshes (one run of sections per export part, `windrise/statue.json`, a radius at each of 16 angles per tenth of a metre; the outline is unchanged by the split), which read an outline of 10.8 pixels against 1, a depth of 0.020 against 0.01 and a normal of 46 degrees against 10: a lathe read 12.7, 0.022 and 37, and 32 angles read 10.9, 0.019 and 49. The stone's base is not round and the figure is a robed body with arms, and the stand's base and its level-three mesh carry most of the normal error. Still the kits': the oak's height and shape, and which of the statue's levels the recordings show",
+    "Its colour per part (each export mesh's material in its own colour, `windrise/surfaces.json`) reads 2.96 ΔE against 2.30, from 9.17 with the stone and the figure in one colour, so the gate still fails. Its surface structure reads 0.649 share against 0.0553, failing, and its structure before this change was not read",
   ],
 };

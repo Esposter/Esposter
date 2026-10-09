@@ -1,6 +1,21 @@
+import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { GameTextKey } from "genshin-text";
 
+// The game's order of the five artifact slots, and of the three combat talents, which the tabs list them in
+export const ARTIFACT_SLOT_ORDER = [
+  ArtifactSlot.FlowerOfLife,
+  ArtifactSlot.PlumeOfDeath,
+  ArtifactSlot.SandsOfEon,
+  ArtifactSlot.GobletOfEonothem,
+  ArtifactSlot.CircletOfLogos,
+];
+export const COMBAT_TALENT_ORDER = [
+  CombatTalent.NormalAttack,
+  CombatTalent.ElementalSkill,
+  CombatTalent.ElementalBurst,
+];
 // The level every combat talent starts at, before any upgrade raises it
 export const TALENT_START_LEVEL = 1;
 // A pack's own files, named alike in every pack: its model, uploaded under this name, and the terms bundled with it.

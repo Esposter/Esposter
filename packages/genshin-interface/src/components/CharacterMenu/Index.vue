@@ -21,7 +21,7 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
 <template>
   <!-- The character screen's frame: the characters across the top with one chosen, its name at the top left, the tabs
        down the left with the open one lit, and the open tab's panel down the right -->
-  <div class="character-menu">
+  <div class="character-menu" :data-tab="tab">
     <div class="head" />
     <ul class="characters">
       <li v-for="{ id, name } of characters" :key="id">
@@ -46,12 +46,35 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
 /* Measured off the English PC client's character screen at 21:9 (references/character-attributes-session.png, 154.4
    seconds), in units: a pixel of that frame at 1440 high is 0.75 units. The portraits sit 96 units apart from their
    centre at 643, the tabs' rows on a 69-unit pitch from 154, the panel's left edge at 2057 and its right margin at 195.
-   The background is Geo's element tint, sampled there, and each element has its own, so it stays provisional */
+   Each tab's backdrop is sampled from its own reference frame as four stops over the frame's height: the median of six
+   bands across the frame's full width, less the head band and the foot (y 124 to 1260 of the 3440 by 1440 frame), since
+   the panels and the tab column are text over the scene rather than fills of their own. Profile has no reference frame,
+   so it keeps Geo's provisional tint */
 .character-menu {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at 50% 55%, rgb(175 149 68), rgb(106 82 36));
   color: #fff;
+}
+
+.character-menu[data-tab="Artifacts"] {
+  background: linear-gradient(rgb(120 98 40) 0%, rgb(125 107 43) 33%, rgb(157 135 60) 67%, rgb(176 155 74) 100%);
+}
+
+.character-menu[data-tab="Attributes"] {
+  background: linear-gradient(rgb(116 86 38) 0%, rgb(128 102 47) 33%, rgb(174 152 75) 67%, rgb(153 130 63) 100%);
+}
+
+.character-menu[data-tab="Constellation"] {
+  background: linear-gradient(rgb(51 32 27) 0%, rgb(59 40 28) 33%, rgb(73 55 30) 67%, rgb(89 70 33) 100%);
+}
+
+.character-menu[data-tab="Talents"] {
+  background: linear-gradient(rgb(118 96 40) 0%, rgb(118 97 40) 33%, rgb(157 135 61) 67%, rgb(176 154 75) 100%);
+}
+
+.character-menu[data-tab="Weapons"] {
+  background: linear-gradient(rgb(126 103 42) 0%, rgb(126 97 43) 33%, rgb(168 145 68) 67%, rgb(168 145 69) 100%);
 }
 
 /* Provisional: the band across the top, a darker strip over the scene with the name and the portraits on it */

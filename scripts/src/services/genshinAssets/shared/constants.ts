@@ -41,6 +41,8 @@ export const TERRAIN_TILE_SIZE = 1024;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
+// How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
+export const GROUND_RADIUS = 1000;
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
@@ -229,8 +231,8 @@ export const TOWER_RADIUS_TOLERANCE = 0.03;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
 // The Statue of The Seven is fitted in a tenth of a metre's bands, a band merged into the one below while its radii hold
-// Within 2% of it at every angle, its radii read at `STATUE_ANGLE_COUNT` angles, its figure's mesh (`Lite`) apart from
-// The stone every other level of it is drawn on
+// Within 2% of it at every angle, its radii read at `STATUE_ANGLE_COUNT` angles, each of its meshes (its figure, its base
+// And its levels) fitted as a part of its own
 export const STATUE_BAND_HEIGHT = 0.1;
 export const STATUE_RADIUS_TOLERANCE = 0.02;
 export const STATUE_ANGLE_COUNT = 16;
@@ -289,6 +291,9 @@ export const HULL_CELL_SIZE = 1;
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;
 // The path ID a root's parent is written as
 export const ROOT_PARENT_ID = "0";
+// How far a world position may stand from the origin and still count as at it, in metres: a placement a float off zero is
+// Collapsed there all the same
+export const ORIGIN_TOLERANCE_METRES = 0.001;
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does

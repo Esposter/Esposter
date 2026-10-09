@@ -1,12 +1,11 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
 import type { ComponentDirectory } from "#src/models/genshinAssets/shared/ComponentDirectory";
 import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions";
-import type { GroundPoint } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
-import { TERRAIN_TILE_SIZE, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
@@ -25,19 +24,13 @@ import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTile
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
-import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
+import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
-import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// A region's own data as its file holds it: the landmarks its capital is among
-interface RegionData {
-  landmarks: { id: string; position: GroundPoint }[];
-}
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
 // View and its architecture radius cover and its city's own StreamGen blob, all read by path hash, the placements
 // Those select (every one in view, and each architecture placement within the radius), each prefab of them rooted at
@@ -52,15 +45,9 @@ export const deriveCapitalWorld = async (
 ): Promise<{ lines: string[]; world: WorldOptions }> => {
   const capital = RegionCapitalMap[component];
   if (!capital) throw new InvalidOperationError(Operation.Read, component, "has no capital in the region capital map");
-  const regionData = parseMachineJson<RegionData>(
-    await readFile(join(WORLD_DATA_DIRECTORY, "regions", `${component}.json`), "utf8"),
-  );
-  const landmark = regionData.landmarks.find(({ id }) => id === capital.landmarkId);
-  if (!landmark) throw new InvalidOperationError(Operation.Read, component, `has no landmark ${capital.landmarkId}`);
   const windriseWorld = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world;
   if (!windriseWorld) throw new InvalidOperationError(Operation.Read, component, "has no origin to stand round");
-  const origin = await readWorldOrigin(component);
-  const place = toCapitalWorldPlace(landmark.position, origin);
+  const place = await readCapitalWorldPlace(component);
   const lines: string[] = [];
   // Each covered tile's blob and index, then the capital's own city blob and index, by the names their path hash and
   // Index name give. The city blob holds the props and buildings the tiles do not

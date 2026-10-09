@@ -48,6 +48,9 @@ flowchart TD
   ST -->|pass, Review rate limited| RL[Stop the walk — ask at the stated deadline]
   ST -->|missing or anything else| X2[Fail — a person looks]
   ST -->|pass, Review completed| PB{A session starts}
+  ST -->|pass, incremental pass declined| SK{The full review read the head}
+  SK -->|no, commits landed after it| X2
+  SK -->|yes| PB{A session starts}
   PB -->|no, the account's limit| X3[Mark the instant it lifts, exit — the window stays open]
   PB -->|started, exited non-zero| X4[Exit, retried a minute later — the window stays open]
   PB -->|yes| FC{main conflicts with the bottom window}
@@ -58,7 +61,7 @@ flowchart TD
   RT --> DL[Delete a merged window's branch, never develop] --> DR[Drain its findings, one session] --> S
 ```
 
-- **The status is the whole answer.** With one review per window, a completed check at the head is that review, and its flip to completed arrives as a status event of its own. A missing check or a state the gate does not recognise fails the run rather than guessing. Each window's check is read on its own, since each has its own head.
+- **The status is the whole answer.** With one review per window, a completed check at the head is that review, and its flip to completed arrives as a status event of its own. A check the bot marked `Review skipped: incremental reviews are disabled` is the bot declining a second pass, not a verdict: it proceeds when the bot's latest review names the head, and fails when commits landed after that review. A missing check or any other state the gate does not recognise fails the run rather than guessing. Each window's check is read on its own, since each has its own head.
 - **A rate limit asks again.** `Review rate limited` means the bot ran nothing; the ask is posted once the deadline the bot stated has passed, for each window that stated one, and the [runner's retrigger](/docs/infra/review-collector/runner) sleeps out the soonest deadline still ahead.
 - **A completed review waits its turn.** A window whose review completed above one still running is merged by a later run, once the window below it has merged. The walk takes the bottom window only, so a merge is never made over a window below it.
 - **Retarget, then delete.** Merging the bottom window is followed by retargeting the next one to `main`, and only then deleting the merged window's branch: deleting a branch that is a pull request's base closes that pull request. The merged window's findings are drained before the walk moves on, one drain session per merged window, in stack order. A drain held past its attempts stops the walk there, so nothing above it merges until its findings are answered. A retarget that fails is logged and its branch kept, and the drain still runs: the window above is then stranded on the merged head, and the next run retargets it to `main` and deletes that branch before it reads the stack.

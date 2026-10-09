@@ -62,6 +62,7 @@ import { getLoginCameraFov } from "#src/services/login/scene/getLoginCameraFov";
 import { LoginOcclusionRadiusMap } from "#src/services/login/scene/LoginOcclusionRadiusMap";
 import { LoginShadowBiasMap } from "#src/services/login/scene/LoginShadowBiasMap";
 import { LoginShadowIntensityMap } from "#src/services/login/scene/LoginShadowIntensityMap";
+import { LoginShadowRadiusMap } from "#src/services/login/scene/LoginShadowRadiusMap";
 import { LoginSkyStateMap } from "#src/services/login/scene/LoginSkyStateMap";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { computeLoginTowerAtlas } from "#src/services/login/tower/computeLoginTowerAtlas";
@@ -192,6 +193,7 @@ watchImmediate(
     applyStoneLight(stoneLight[newTimeOfDay], loginStoneLight, light);
     light.shadow.bias = LoginShadowBiasMap[newTimeOfDay];
     light.shadow.intensity = LoginShadowIntensityMap[newTimeOfDay];
+    light.shadow.radius = LoginShadowRadiusMap[newTimeOfDay];
     // Each hour's sky draws its own share of each band's clouds
     for (const [band, cover] of Object.entries(LoginCloudCoverMap[newTimeOfDay])) {
       const coverUniform = loginClouds.covers[band];

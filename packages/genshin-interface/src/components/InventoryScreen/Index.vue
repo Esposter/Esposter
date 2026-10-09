@@ -335,38 +335,40 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   transform: translateY(-50%);
 }
 
+/* The figures are the game's cap height, 30 units, and the top-up plus overhangs the pill's end */
 .currencies {
   position: absolute;
   top: calc(var(--unit) * 1002);
   left: calc(var(--unit) * 140);
   display: flex;
   gap: calc(var(--unit) * 43);
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 30);
   font-weight: 600;
 }
 
 .currency {
   display: flex;
   align-items: center;
-  gap: calc(var(--unit) * 10);
+  gap: calc(var(--unit) * 12);
   height: calc(var(--unit) * 35);
-  padding: 0 calc(var(--unit) * 13);
+  padding: 0 calc(var(--unit) * 14);
   border-radius: calc(var(--unit) * 18);
   background: rgb(38 42 56 / 0.5);
 }
 
 /* Provisional: the Primogem and Mora marks and the top-up plus, until the glyph pass traces them from the game's own icons */
 .currency-icon {
-  width: calc(var(--unit) * 24);
-  height: calc(var(--unit) * 24);
+  width: calc(var(--unit) * 26);
+  height: calc(var(--unit) * 26);
   border-radius: 50%;
   background: #d8e4f0;
 }
 
 .top-up {
-  width: calc(var(--unit) * 26);
-  height: calc(var(--unit) * 26);
-  margin-left: calc(var(--unit) * 4);
+  width: calc(var(--unit) * 31);
+  height: calc(var(--unit) * 31);
+  margin-left: calc(var(--unit) * 1);
+  margin-right: calc(var(--unit) * -14);
   border-radius: 50%;
   background: #ece3d8;
 }

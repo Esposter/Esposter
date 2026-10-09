@@ -43,9 +43,9 @@ import {
   GRASS_BLADE_WIDTH,
   MIDDLE_GRASS_RING,
   NEAR_GRASS_RING,
+  PAVING_COLOR,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
-  STONE_COLOR,
   SUN_DISTANCE,
   SUN_TILT,
   UNDERWATER_FOG_COLOR,
@@ -163,7 +163,7 @@ const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
 // The paving stones round the statue, cut from the stone the statue is made of
 const pavingGeometry = createWindrisePavingGeometry();
-const pavingMaterial = createToonMaterial({ color: STONE_COLOR, lightUniforms, rampTexture });
+const pavingMaterial = createToonMaterial({ color: PAVING_COLOR, lightUniforms, rampTexture });
 
 const windUniforms = createWindUniforms();
 windUniforms.direction.value.copy(WIND_DIRECTION);

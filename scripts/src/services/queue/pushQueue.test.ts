@@ -163,6 +163,27 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runSession).not.toHaveBeenCalled();
   });
 
+  test("makes the push again when the remote moved during the replay, replaying onto the new tip", async () => {
+    expect.hasAssertions();
+
+    setupConflict(["a", "c"]);
+    runSession.mockImplementationOnce(({ cwd }) => {
+      // Another session's push lands on the remote while this replay is open, after this push fetched the remote
+      const remoteTip = readSha(remoteQueueRef);
+      const landed = runGit(["commit-tree", `${remoteTip}^{tree}`, "-p", remoteTip, "-m", "landed"], cwd).trim();
+      runGit(["push", "--quiet", "origin", `${landed}:refs/heads/${QUEUE_BRANCH}`], getCwd());
+      return settlePick(cwd, "a", "a\nb");
+    });
+    runSession.mockImplementation(({ cwd }) => settlePick(cwd, "a", "a\nb"));
+
+    await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
+    expect(runSession).toHaveBeenCalledTimes(2);
+    expect(readRemoteSubjects().slice(0, 3)).toStrictEqual(["a c", "landed", "a"]);
+    expect(runGit(["show", `${remoteQueueRef}:a`], getCwd())).toBe("a\nb");
+    expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
+    expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
+  });
+
   test("settles a replayed commit that conflicts through one session, then pushes it", async () => {
     expect.hasAssertions();
 

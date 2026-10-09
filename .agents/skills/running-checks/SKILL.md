@@ -55,8 +55,9 @@ The push's run is found by its commit: `gh run list --commit <sha> --workflow CI
 origin/ai/queue` after the push, then `gh run watch <id> --exit-status` in the background. Never by `--branch`
 with `--workflow`: GitHub's per-workflow branch filter holds none of `ai/queue`'s runs after 2026-09-24, so it
 answers with weeks-old runs as the newest, while the repository-wide branch filter and the commit filter stay
-current. CI cancels a branch's run in progress when a newer push lands (`concurrency` in `CI.yaml`), so a
-`cancelled` run is no verdict: watch the run of the branch's head then, which builds on the session's commit too.
+current. On `ai/queue` a run in progress is never cancelled (`concurrency` in `CI.yaml`): it finishes, and of the
+runs waiting behind it only the newest is kept. So the push's own run may be skipped while it waits, never cut short.
+A skipped run is no verdict: watch the next run that starts, which builds on the session's commit too.
 
 ## A check CI owns, run locally
 

@@ -5,6 +5,7 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
+import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
@@ -53,15 +54,20 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
   if (!existsSync(referencePath))
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
+  const region = reference.region ?? { height, width, x: 0, y: 0 };
+  // A backdrop is the reference with its region filled from its surroundings, so the game's interface is not drawn
+  // Behind ours; a reference with no border to fill from keeps the reference itself
+  const backdropPath = reference.isBackdrop
+    ? ((await getCleanPlatePath(referenceId, referencePath, region, { height, width })) ?? referencePath)
+    : undefined;
   const [shotPath = ""] = await shootScreen({
-    backdropPath: reference.isBackdrop ? referencePath : undefined,
+    backdropPath,
     height,
     props: reference.props,
     screen: reference.screen,
     width,
     witness,
   });
-  const region = reference.region ?? { height, width, x: 0, y: 0 };
   const extract = { height: region.height, left: region.x, top: region.y, width: region.width };
   const referenceRegion = await sharp(referencePath).removeAlpha().extract(extract).png().toBuffer();
   const shotRegion = await sharp(shotPath)

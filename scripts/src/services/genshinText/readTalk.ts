@@ -39,6 +39,7 @@ export const readTalk = (
             id: String(id),
             kind: TalkLineKind.Spoken,
             nextLineIds,
+            speakerRoleTextId: "",
             speakerTextId: npcNameTextIdMap.get(talkRole?.id ?? "") ?? "",
             textId,
             voiceId: talkAudioName,
