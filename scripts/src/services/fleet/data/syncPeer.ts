@@ -7,7 +7,7 @@ import { formatTransferSummary } from "#src/services/fleet/data/formatTransferSu
 import { getChangedDirectories } from "#src/services/fleet/data/getChangedDirectories";
 import { getManifest } from "#src/services/fleet/data/getManifest";
 import { getTransferCommands } from "#src/services/fleet/data/getTransferCommands";
-import { readEntryFiles } from "#src/services/fleet/data/readEntryFiles";
+import { readDirectory } from "#src/services/fleet/data/readDirectory";
 import { readRemoteListings } from "#src/services/fleet/data/readRemoteListings";
 import { readRemoteManifest } from "#src/services/fleet/data/readRemoteManifest";
 import { selectChangedFiles } from "#src/services/fleet/data/selectChangedFiles";
@@ -38,7 +38,7 @@ export const syncPeer = async (
   let bytes = 0;
   if (directories.length > 0)
     for await (const listing of readRemoteListings(peer, remoteDirectory, directories)) {
-      const localFiles = await readEntryFiles(join(localDirectory, listing.directory));
+      const localFiles = (await readDirectory(join(localDirectory, listing.directory))).files;
       const changedFiles: FileEntry[] = isPull
         ? selectChangedFiles(listing.files, localFiles)
         : selectChangedFiles(localFiles, listing.files);

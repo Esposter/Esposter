@@ -1,13 +1,28 @@
 import type { DirectoryContents } from "#src/models/fleet/data/DirectoryContents";
+import type { FileEntry } from "#src/models/fleet/data/FileEntry";
 import type { Dirent } from "node:fs";
 
 import { checkIsDirectory } from "#src/services/fleet/data/checkIsDirectory";
 import { checkIsNotFound } from "#src/services/fleet/data/checkIsNotFound";
-import { STAT_CONCURRENCY } from "#src/services/fleet/data/constants";
-import { toFileEntry } from "#src/services/fleet/data/toFileEntry";
+import { MILLISECONDS_PER_SECOND, STAT_CONCURRENCY } from "#src/services/fleet/data/constants";
 import { getResultAsync } from "@esposter/shared";
-import { opendir } from "node:fs/promises";
+import { opendir, stat } from "node:fs/promises";
 import { join } from "node:path";
+
+// A file another process removed between its listing and its stat is skipped, as the parity folder is written while
+// It is read; any other failure still reaches the caller. Its mtime is truncated to the second, as tar writes it, so a
+// File's copy reads the same mtime as its source
+const toFileEntry = async (absoluteDirectory: string, entry: Dirent): Promise<FileEntry | undefined> => {
+  const absolutePath = join(absoluteDirectory, entry.name);
+  return (await getResultAsync(() => stat(absolutePath))).match(
+    ({ mtimeMs, size }) => ({ mtime: Math.floor(mtimeMs / MILLISECONDS_PER_SECOND), name: entry.name, size }),
+    (error) => {
+      if (!checkIsNotFound(error)) throw error;
+      console.info(`skipped ${absolutePath}: it was removed while it was listed`);
+      return undefined;
+    },
+  );
+};
 
 // A directory's direct files with size and mtime, and its child directories' names. Entries stream in and their stats run
 // In batches of STAT_CONCURRENCY, so a directory of any size never holds more than one batch of promises. A missing
@@ -26,9 +41,7 @@ export const readDirectory = async (absoluteDirectory: string): Promise<Director
   if (directory === undefined) return contents;
   let batch: Dirent[] = [];
   const flush = async (): Promise<void> => {
-    const entries = await Promise.all(
-      batch.map((entry) => toFileEntry(join(absoluteDirectory, entry.name), entry.name)),
-    );
+    const entries = await Promise.all(batch.map((entry) => toFileEntry(absoluteDirectory, entry)));
     for (const entry of entries) if (entry !== undefined) contents.files.push(entry);
     batch = [];
   };

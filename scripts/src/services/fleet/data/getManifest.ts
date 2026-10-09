@@ -2,10 +2,8 @@ import type { ChildDigest } from "#src/models/fleet/data/ChildDigest";
 import type { Manifest } from "#src/models/fleet/data/Manifest";
 
 import { checkIsDirectory } from "#src/services/fleet/data/checkIsDirectory";
-import { checkIsFile } from "#src/services/fleet/data/checkIsFile";
 import { getDirectoryDigest } from "#src/services/fleet/data/getDirectoryDigest";
 import { readDirectory } from "#src/services/fleet/data/readDirectory";
-import { readEntryFiles } from "#src/services/fleet/data/readEntryFiles";
 import { join, posix } from "node:path";
 
 // Digests a directory and every directory under it, recording each in the manifest and returning its own digest
@@ -22,19 +20,14 @@ const digestDirectory = async (parityDirectory: string, directory: string, manif
   return digest;
 };
 
-// The digest of every entry that exists: a folder's tree, or a single file's digest of its one file, so two machines
-// Compare their roots and list only the entries whose digests differ
+// The digest of every directory under the folders that exist, so two machines compare their roots and list only the
+// Directories whose digests differ
 export const getManifest = async (parityDirectory: string, folders: string[]): Promise<Manifest> => {
   const manifest: Manifest = {};
-  for (const folder of folders) {
-    const absolutePath = join(parityDirectory, folder);
-    if (checkIsDirectory(absolutePath))
+  for (const folder of folders)
+    if (checkIsDirectory(join(parityDirectory, folder)))
       // oxlint-disable-next-line no-await-in-loop -- Folders are digested one after another, as the walk is
       await digestDirectory(parityDirectory, folder, manifest);
-    else if (checkIsFile(absolutePath))
-      // oxlint-disable-next-line no-await-in-loop -- Entries are digested one after another, as the walk is
-      manifest[folder] = getDirectoryDigest(await readEntryFiles(absolutePath), []);
-  }
 
   return manifest;
 };

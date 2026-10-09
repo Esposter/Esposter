@@ -4,9 +4,6 @@ import { join } from "node:path";
 
 // The folders a copy takes by default; frames and tmp are never copied, since frames are rebuilt where they are used
 export const DATA_FOLDERS: readonly string[] = ["extracted", "text", "references", "captures", "city-areas", "plans"];
-// The single files at the install root every copy takes beside its folders: the game reads its version from this config
-// Beside its executable, so a copy without it cannot read its version
-export const DATA_FILES: readonly string[] = ["config.ini"];
 export const EXCLUDED_FOLDERS: readonly string[] = ["frames", "tmp"];
 // The stats in flight at once, so a directory of any size holds one bounded batch of promises
 export const STAT_CONCURRENCY = 64;
