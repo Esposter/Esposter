@@ -24,7 +24,7 @@ flowchart TD
   PAY -->|"yes"| RUN["Started: materials and Mora taken, points counted, the party's talents applied"]
   RUN --> U["Units run one after another, each its seconds, less a talent's share"]
   U --> C{"Done by now, and room in the bag?"}
-  C -->|"yes"| IN["Result drawn by weight, extra copy at a talent's chance<br/>Adventure EXP to the rank"]
+  C -->|"yes"| IN["Result drawn by weight, extra copy at a talent's chance<br/>Adventure EXP returned"]
   C -->|"no"| WQ["Waits in the queue"]
 ```
 
@@ -42,7 +42,7 @@ flowchart TD
 - **Open.** Recipes open as the [crafting](/docs/genshin/crafting) page sets out. Using a diagram takes it from the bag and records the recipe as learned.
 - **Queues by rank.** One queue opens at first, a second at rank five, a third at ten and a fourth at fifteen, as the forge update table holds them. Splitting one recipe across queues forges it in parallel: each queue holds one order, of up to the recipe's queue size.
 - **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Original Resin is paid from the wallet as [crafting](/docs/genshin/crafting) pays it, so the Mystic's ten are never taken from the bag. Its units then run one after another, each taking its seconds. Finished units go to the bag as [cooking](/docs/genshin/cooking) describes, and a unit the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
-- **Results.** A unit's result is drawn by the weight each of its recipe's results holds. A recipe with one result always yields it. Adventure EXP is a virtual item, so it is returned to the Adventure Rank rather than put in the bag.
+- **Results.** A unit's result is drawn by the weight each of its recipe's results holds. A recipe with one result always yields it. Adventure EXP is a virtual item, so the collection returns it rather than putting it in the bag.
 - **Real time, at any blacksmith.** A queue is kept with when its order began and the seconds each unit takes, so it finishes while the page is closed, and the forge is one state: what is forged is collected at any blacksmith.
 - **A daily cap.** An order's forge points count toward the game day's 400,000 when it is started, Normal, Fine and Mystic together. An order that would pass the cap is refused until the game day turns at four in the morning in the game's time zone, and the day's points restart with it. A weapon counts none.
 - **Forging talents.** The characters in the party give the blacksmith their talents, for the forge type each names. Venti's and Bennett's apply to the enhancement ores, Diluc's, Zhongli's and Ganyu's to the claymore, polearm and bow:
