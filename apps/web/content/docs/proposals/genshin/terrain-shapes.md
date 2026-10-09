@@ -17,6 +17,7 @@ This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, worker
 - **What a heightfield cannot hold is a placed object.** Overhangs, arches, stone pillars, sea stacks, caves and the floating rocks of Liyue and Inazuma are objects the game places, so they stand where their StreamGen records set them in the region's layout pass and are rebuilt in object passes, never forced into the heights.
 - **The same heights serve collision.** The worker keeps each tile's heights for the `collision` module's height query, which [exploring](/docs/proposals/genshin/exploring) adds, so the camera and later the character stand on the surface that is drawn.
 - **The fit's data follows reach.** A region's fitted parameters load with its region data, so the ground's data grows with what is in reach, never with the continent.
+- **The first slice's calls.** Plateaus come first, placed greedily: each round takes the disc, of 96, 48 or 24 metres' radius on a centre every half radius, whose mean residual takes the most squared error off, its falloff a quarter of its radius; a disc counts only where every sample is fitted ground, and the fit stops at 16 plateaus or when the next takes under 1% of what is left. The residual's noise takes the scale among 8 to 256 metres whose own correlation length is nearest the residual's, and the amplitude that makes its root-mean-square over the same grid the residual's, with three octaves and a fixed seed. Cliffs and ridges wait, since their direction is a fit of its own.
 
 ## How it works
 
@@ -35,23 +36,25 @@ flowchart TD
 
 ## Scope
 
-**Today:** the terrain's tiles are generated from a region's height function and painted by its layers' rules, in vertex colours ([ground paint](/docs/genshin/ground-paint)). Windrise's is Gaussian hills fitted to the game's own terrain tiles, painted as a temperate meadow by provisional bands and colours. The layers the composition sums (hills, cliff, ridge and plateau features, and the residual's noise) are built as [terrain shape height](/docs/genshin/terrain-shape-height); no region has fitted features or a residual yet.
+**Today:** the terrain's tiles are generated from a region's height function and painted by its layers' rules, in vertex colours ([ground paint](/docs/genshin/ground-paint)). Windrise's is Gaussian hills fitted to the game's own terrain tiles, painted as a temperate meadow by provisional bands and colours. The layers the composition sums (hills, cliff, ridge and plateau features, and the residual's noise) are built as [terrain shape height](/docs/genshin/terrain-shape-height); the fit now places each region's plateaus and residual noise, and the Windrise run that writes them is queued.
 
 **This adds:**
 
-1. **The fit for any set of tiles**, its features and its residual's noise, first for the rest of Windrise's tile, then for each region as its page ships.
+1. **The sharp features the fit does not place yet**: cliffs, ridges and coastlines, each found where the residual after the plateaus is largest, and the gate each region is held to once its features are run. The plateaus, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
 2. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
 3. **The heights kept for collision**, when exploring's camera asks for them.
 4. **Each area's outline** in the [world map](/docs/genshin/world-map)'s catalogue, read from the game's own area data where the inventory finds it and otherwise drawn round the tiles its placements stand on, in place of Galesong Hill's provisional one.
 
 ## Key files
 
-| File                                                         | Role after the change                                                 |
-| :----------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`  | Each region's hills, built; its features and residual still to fit    |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts` | The first rung of the fit, its error deciding whether features follow |
-| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`  | The tile generator, which samples the fitted features and noise       |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`   | The worker, which reads a region's fitted data in place of its code   |
+| File                                                           | Role after the change                                                             |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`    | Each region's hills, plateaus and residual, built; cliffs and ridges still to fit |
+| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.ts` | The plateaus placed greedily where the residual after the hills is largest        |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts` | The residual's noise, its scale and amplitude matched to its statistics           |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`   | The first rung of the fit, its error deciding whether features follow             |
+| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`    | The tile generator, which samples the fitted features and noise                   |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`     | The worker, which reads a region's fitted data in place of its code               |
 
 New files:
 
