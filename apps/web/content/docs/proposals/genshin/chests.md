@@ -40,7 +40,7 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Common chests in Windrise's area, opened and rewarded in full.** The Primogems and Mora are built for the Common, Exquisite and Precious kinds. What is left is the drops, and the area: the places name no catalogue area, which needs the region outlines the exploration progress reads, so the Windrise's chests cannot yet be told from the rest of Mondstadt's.
+1. **Common chests in Windrise's area, opened with their wallet share and their drops.** The Primogems and Mora are built for the Common, Exquisite and Precious kinds. What is left is the drops, and the area: the places name no catalogue area, which needs the region outlines the exploration progress reads, so the Windrise's chests cannot yet be told from the rest of Mondstadt's.
 2. **The other rewards and tiers.** Adventure EXP and Sigils, which the wallet does not hold yet; Luxurious and Remarkable, once their Mora and blueprints are settled.
 3. **The locks by camps.** Waits on the reach a camp locks a chest within, measured.
 4. **Digging and seals**, once a recording settles what a dug or freed place holds and which seal each sealed place wears.
