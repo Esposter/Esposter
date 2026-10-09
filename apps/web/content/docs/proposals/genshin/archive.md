@@ -30,14 +30,14 @@ flowchart LR
 **This adds, in order:**
 
 1. **Wildlife's Living Beings**, once an animal is struck and its kills count.
-2. **Books**, once a book can be read.
-3. **Tutorials' opening**, once a tip is shown.
-4. **Geography's viewpoints**, at their places.
-5. **Artifact sets**, once the bag keeps each artifact's set, so that all five pieces can be counted.
+2. **Tutorials' opening**, once a tip is shown.
+3. **Geography's viewpoints**, at their places.
+4. **Artifact sets**, once the bag keeps each artifact's set, so that all five pieces can be counted.
 
 ## Data and measures
 
 - **Each viewpoint's place:** from the scene points where it is one, or the spawned places' fit where it is not.
+- **Books placed in the world:** the reader and the unlock are built, but no world drop is a volume's material yet, so a volume is picked up only once the world places the books (the pick up is `pickUpWorldDrop`'s branch in the as-built page).
 
 ## Key files
 

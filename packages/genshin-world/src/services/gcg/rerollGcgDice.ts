@@ -3,6 +3,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
+import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { rollGcgDice } from "#src/services/gcg/rollGcgDice";
 import { takeOne } from "@esposter/shared";
 
@@ -27,6 +28,7 @@ export const rerollGcgDice = (
   if (duel.sides.every((rolledSide) => rolledSide.hasRolled)) {
     duel.phase = GcgPhase.Action;
     duel.actingSideIndex = duel.firstSideIndex;
+    runGcgActionPhase(duel);
   }
   return GcgActionResult.Done;
 };

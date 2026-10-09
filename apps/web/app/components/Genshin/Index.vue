@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { GameOpening } from "genshin-world";
@@ -14,6 +16,8 @@ const progress = computed(() => (Number(isLoaded.value) + Number(isReady.value))
 const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
 const gameText = await useGameText();
+// The player's save, which the world starts from once it is loaded, and the lease the page holds for it
+const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs, takeBack } = await useGenshinSave();
 </script>
 
 <template>
@@ -22,12 +26,30 @@ const gameText = await useGameText();
       <LazyGenshinWorld
         v-if="isDoorOpened"
         :game-text="gameText.text"
-        :is-paused="isOpeningShown || undefined"
+        :is-paused="isOpeningShown || isReplaced || undefined"
         :language="gameText.language"
+        :save="initialSave"
+        :server-clock-offset-ms="serverClockOffsetMs"
+        @grant="onWorldGrant"
         @load="isLoaded = true"
         @ready="isReady = true"
+        @save="onWorldSave"
       />
     </ClientOnly>
+    <!-- The replacing session holds the save now, so this page stops saving and pauses the world, and a take back starts the lease again -->
+    <UiDialog
+      :model-value="isReplaced"
+      :placement="UiDialogPlacement.Middle"
+      title="Logged in elsewhere"
+      w="[min(32rem,90vw)]"
+    >
+      <div p-3 flex flex-col gap-3>
+        <p>This game was started in another session, which now holds your save.</p>
+        <footer flex justify-end>
+          <UiButton :variant="UiButtonVariant.Accent" @click="takeBack">Take back</UiButton>
+        </footer>
+      </div>
+    </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
         :game-text="gameText.text"

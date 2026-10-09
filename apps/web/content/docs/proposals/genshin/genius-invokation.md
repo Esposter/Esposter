@@ -1,6 +1,6 @@
 ---
 title: Genius Invokation TCG
-description: Proposal — the card game against its residents, past its rules engine, which is built: each card's effect is a module over the engine's shared effects, the duel is played on a screen at a resident's table, and invitationals, tavern challengers, the Card Shop and the Player Level follow.
+description: Proposal — the card game against its residents, past its rules engine and the tutorial deck, which are built: the duel is played on a screen at a resident's table, each further card is a module over the engine's shared effects, and invitationals, tavern challengers, the Card Shop and the Player Level follow.
 model: claude-opus-5-5
 ---
 
@@ -10,7 +10,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Decisions
 
-- **Each card's effect is a module.** The game keeps its cards' behaviour in configs under `BinOutput/GCG`, which are written as each card's module over the engine's shared effects, from the card's own description where the configs are not read, as a character's kit is. A skill that names a shared effect, such as `Effect_Damage_<element>_<n>`, needs no module of its own; a character's own `Char_Skill_<id>` script is one.
+- **Each card's effect is a module.** The game keeps its cards' behaviour in configs under `BinOutput/GCG`, which are written as each card's module over the engine's shared effects, from the card's own description where the configs are not read, as a character's kit is. A skill that names a shared effect, such as `Effect_Damage_<element>_<n>`, needs no module of its own; a character's own `Char_Skill_<id>` script is one. The tutorial deck's modules are built, as the [as-built page](/docs/genshin/genius-invokation) records.
 - **Every card is the game's own row.** Characters, skills, costs and cards come from the `GCGCharExcelConfigData`, `GCGSkillExcelConfigData`, `GCGCostExcelConfigData` and `GCGCardExcelConfigData` tables, and names and descriptions are the game's by text id. The standard rule and the reactions are already read from the rule and reaction tables.
 - **Duels are against the game's opponents.** The residents the game seats for an Invitational and the tavern's challengers play the decks `GCGDeckExcelConfigData` gives them. Winning earns their cards and Lucky Coins, the Card Shop sells cards for Lucky Coins, and the player's Player Level grows by duels, as the game earns each.
 - **Opened at Adventure Rank 32 with its tutorial quest**, as the wiki gives it.
@@ -18,14 +18,13 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 ## Scope and order
 
-**Today:** the rules engine stands on the standard rule, with its calls on its [as-built page](/docs/genshin/genius-invokation). No card has a module and no screen opens a duel, so nothing can be played.
+**Today:** the rules engine stands on the standard rule, and the tutorial deck's three characters and fifteen action cards each have a module, with its calls on its [as-built page](/docs/genshin/genius-invokation). No screen opens a duel, so the tutorial duel is played only by the engine's tests.
 
 **This adds, in order:**
 
-1. **The tutorial's starting characters and their cards**, each character's skills and each action card in the tutorial's decks given the module the engine needs to play it.
-2. **The duel screen**, opened from a resident's talk.
-3. **Every card's module**, in the order the game's opponents use them.
-4. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
+1. **The duel screen**, opened from a resident's talk, with the card names and descriptions read by their text ids.
+2. **Every opponent deck's cards**, each given the module the engine needs to play it, in the order the game's opponents use them.
+3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
 ## Data and measures
 

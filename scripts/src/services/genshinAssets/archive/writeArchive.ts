@@ -1,4 +1,4 @@
-import type { ArchiveEntry } from "genshin-world";
+import type { ArchiveBook, ArchiveEntry } from "genshin-world";
 
 import { ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap } from "#src/services/genshinAssets/archive/constants";
 import { getNamedCandidates } from "#src/services/genshinAssets/archive/getNamedCandidates";
@@ -10,11 +10,19 @@ import { readMaterialCandidates } from "#src/services/genshinAssets/archive/read
 import { readTravelLogCandidates } from "#src/services/genshinAssets/archive/readTravelLogCandidates";
 import { readTutorialCandidates } from "#src/services/genshinAssets/archive/readTutorialCandidates";
 import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveEntries";
+import { writeBookBodies } from "#src/services/genshinAssets/archive/writeBookBodies";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { archiveEntrySchema, ArchiveSection, travelLogEntrySchema } from "genshin-world";
+import { archiveBookSchema, archiveEntrySchema, ArchiveSection, travelLogEntrySchema } from "genshin-world";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
+// Each section's entries checked against the world's schema for it, which keeps the fields its own entries carry
+const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): unknown[] => {
+  if (section === ArchiveSection.Books) return archiveBookSchema.array().parse(entries);
+  if (section === ArchiveSection.TravelLog) return travelLogEntrySchema.array().parse(entries);
+  return archiveEntrySchema.array().parse(entries);
+};
 
 // Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked against
 // The world's own schema, written as one slice per section into the world's generated folder. Returns a note of each
@@ -22,8 +30,11 @@ import { join } from "node:path";
 export const writeArchive = (): string[] => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const { artifactSets, weapons } = readEquipmentCandidates();
+  const books: ArchiveBook[] = getNamedCandidates(readBookCandidates(), englishTextMap).map(
+    ({ bodyId, id, materialId, nameTextMapHash }) => ({ bodyId, id, materialId, nameTextId: String(nameTextMapHash) }),
+  );
   const sectionEntriesMap: Record<ArchiveSection, ArchiveEntry[]> = {
-    [ArchiveSection.Books]: toArchiveEntries(readBookCandidates(), englishTextMap),
+    [ArchiveSection.Books]: books,
     [ArchiveSection.Equipment]: [
       ...toArchiveEntries(weapons, englishTextMap),
       ...toArchiveEntries(artifactSets, englishTextMap),
@@ -37,11 +48,10 @@ export const writeArchive = (): string[] => {
     [ArchiveSection.Tutorials]: toArchiveEntries(readTutorialCandidates(), englishTextMap),
   };
   mkdirSync(ARCHIVE_GENERATED_DIRECTORY, { recursive: true });
-  return Object.values(ArchiveSection).map((section) => {
-    const entries = (section === ArchiveSection.TravelLog ? travelLogEntrySchema : archiveEntrySchema)
-      .array()
-      .parse(sectionEntriesMap[section]);
+  const notes = Object.values(ArchiveSection).map((section) => {
+    const entries = parseSectionEntries(section, sectionEntriesMap[section]);
     writeFileSync(join(ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap[section]), JSON.stringify(entries));
     return `${section}: ${entries.length} entries`;
   });
+  return [...notes, ...writeBookBodies(books.map(({ bodyId }) => bodyId))];
 };

@@ -1,17 +1,18 @@
 ---
 title: Genius Invokation TCG
-description: The card game's rules engine, built and tested but on no screen yet: the standard duel rule read from the dump, a duel's dice and round, skills paid in dice and energy, switching, tuning, the reactions and the outcome. No card has its module yet, so no duel is played.
+description: The card game's rules engine and the tutorial deck's three characters and fifteen cards, built and tested but on no screen yet: a duel's dice and round, skills and cards paid in dice and energy, the phases' hooks, the reactions and the outcome. A scripted duel of two copies of the tutorial deck is played to its end, but no duel screen opens one yet.
 ---
 
 # Genius Invokation TCG
 
-The card game is a rules engine of its own in `genshin-world`: a duel is a plain state over two sides, advanced by the actions a duel answers, and it shares only the elements with the world. This page is what is built of [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation). Nothing plays a card yet: no card has its module and no screen opens a duel, so the engine is driven by its tests and by whatever a later module or screen calls.
+The card game is a rules engine of its own in `genshin-world`: a duel is a plain state over two sides, advanced by the actions a duel answers, and it shares only the elements with the world. This page is what is built of [Genius Invokation TCG](/docs/proposals/genshin/genius-invokation). The tutorial deck's characters, their skills and their fifteen action cards each have a module, and a duel plays them through the engine's public functions. No screen opens a duel yet, so the engine is driven by its tests and by whatever a later screen calls.
 
 ## Decisions
 
 - **Duels against residents run the untimed standard rule.** The rule table's second rule is the one with no clocks, since a duel against a resident has no round to run out. Its reactions and hand limit are the matchmaking rule's, which it is listed beside. `genshin:assets gcg` writes its draw, hand limit and reactions as one slice the world imports on demand.
 - **The reactions are the table's element pairs, and their effects are the wiki's.** The rule lists its reactions by pair, and the table gives each pair's id. The bonuses, the shields, the spread, the piercing and the forced switch come from the wiki's rules page, since the skill rows that name them carry their values in declared-value sets this build does not read.
 - **Elements apply, and Anemo and Geo do not.** Cryo, Hydro, Pyro, Electro and Dendro damage sets its aura. Anemo and Geo damage reacts with an aura and sets none, and Physical and Piercing damage reacts with nothing. A reaction consumes the aura it reacts with, and its element does not apply.
+- **The reactions leave their cards on the attacker's side.** Burning summons Burning Flame, which deals one Pyro at each end phase, spends a usage, and stacks to two usages. Bloom leaves Dendro Core onstage, which adds two to the next Pyro or Electro damage its side's skills deal, for one usage. Quicken leaves Catalyzing Field onstage, which adds one to the next Dendro or Electro damage, for two usages. The numbers are the game's own card descriptions, read through the text map, so Dendro Core's bonus is two, where the brief that asked for it said one. A second reaction of the same kind joins the card already there, up to the card's most usages, rather than a second copy.
 - **A reaction's bonus joins its instance.** Melt, Vaporize and Overloaded add two. Superconduct, Electro-Charged, Frozen, Crystallize, Burning, Bloom and Quicken add one. Swirl adds none.
 - **Frozen and shields.** A Frozen target takes two more from a Pyro or Physical hit, and that hit removes the status, which otherwise lasts to the round's end. A shield takes damage before HP, and piercing skips it. Crystallize grants the attacker's active character one point, at most two.
 - **Piercing and spread.** Superconduct and Electro-Charged pierce the other opposing characters for one. A Swirl spreads one of its aura's elements to each of them as damage only: it sets no aura and reacts with none. The wiki does not say whether a spread applies or reacts, so this is a settled call, and a recording of a duel can overturn it ([Recordings owed](/docs/genshin/roadmap)).
@@ -23,8 +24,19 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 - **The round's end.** The side that declares first goes first next round, and the first round goes to the first side. Frozen lapses at the end phase, each side draws the rule's two cards, from the first side on, and a draw past the hand's limit is discarded.
 - **Energy.** A normal attack and an elemental skill gain the skill row's energy, one, and a burst pays the energy its cost names. A skill that a character cannot pay for is refused, and the dice it would have paid stay in the dice.
 - **A duel concedes after its fifteenth round.** Once that round's end phase closes, both sides concede with no winner, as the wiki gives the limit.
+- **The data is the dump's, read by its plain fields.** `genshin:assets gcg` writes the standard rule and the tutorial deck's slice (`generated/gcg/tutorialDeck.json`) from the dump's `GCGDeckExcelConfigData`, `GCGCharExcelConfigData`, `GCGSkillExcelConfigData`, `GCGCardExcelConfigData` and `GCGCostExcelConfigData`. Each row's obfuscated keys are unread; the plain fields carry everything a duel reads, and each cost type must be named by the cost table or the write refuses.
+- **The tutorial deck is deck 1.** Its characters are 1301, 1303 and 1203, and its thirty card copies are fifteen distinct action cards. The slice also holds the four cards those characters' skills create, which a duel needs as cards of their own: Pyro Infusion, Inspiration Field, Reflection and Illusory Bubble.
+- **A skill is its effect's name.** `Effect_Damage_<Name>_<n>` deals `n` damage of the element the name spells, `Physic` is Physical and `Fire`, `Water`, `Ice`, `Electric`, `Wind`, `Rock` and `Grass` are the seven elements. A character's own script is `Char_Skill_<id>`, and each one is a module under `services/gcg/cards`. A card's own script is named by the card, and its module is keyed by the card's id.
+- **The damage numbers of a character's script come from its wiki skill page.** The description's damage is a placeholder the game fills from the skill's configuration, which the dump's tables do not hold. Each module cites the wiki's value for its skill, and no test checks a damage against a description, since the description carries no number to check.
+- **A card module's hooks are the card's behaviour, each optional.** Equipment is equipped to a character, a support takes a support zone's place, and an event is gone once played. A zone card's usages and rounds are the module's own, and a card with a limit is taken off the field once it runs out. A skill's damage passes every field card's additive bonus first, then every doubling, so Illusory Bubble doubles after Inspiration Field's bonus.
+- **Phases run hooks.** The roll-phase hooks run once a side's dice are rolled, the action-phase hooks when the action phase opens, and the end-phase hooks in the end phase before the draws. An end-phase hook may return damage, which the phase deals, so a summon's end-phase damage is dealt by the phase rather than by the summon.
+- **Guaranteed dice are set at the roll.** Crimson Witch of Flames and Jade Chamber set their two starting dice when the dice are rolled, and a reroll may still throw them.
+- **Playing a card is a fast action.** A card passes no turn. Flowing Flame's Searing Onslaught is used at once when it is equipped, without its cost.
+- **The field holds what the cards say, up to their limits.** A dice cap of sixteen, four supports, and one equipment of each kind a character holds, as the game gives them. Timmie's Pigeon is gained at each end phase, the one round trigger the card's text does not name.
+- **Mona's Illusory Torrent is recorded when it applies.** The passive makes the first switch away from Mona in a round a fast action, and the switch records the passive as used for the round.
+- **The slice carries no text.** The duel screen reads each card's name and description by its text id through the game-text package, which this unit leaves to the screen.
 
-Not built, and why: Burning, Bloom and Quicken apply their bonuses but not the statuses they create, since those statuses are read by the cards that carry them. Charged and plunging attacks are markers that cards read, so the engine deals them no damage yet. The dice cap and the summons and support zones wait on the card modules that fill them. Playing an action card is a card's module, not the engine's.
+Charged and plunging attacks are markers no tutorial skill uses, so the engine deals them no damage. The opposing decks' further cards and characters are the proposal's, not this page's.
 
 ## How it works
 
@@ -58,28 +70,59 @@ flowchart TD
   REACT --> DEFEAT
 ```
 
+## The tutorial deck
+
+```mermaid
+flowchart LR
+  CARD["A card in hand is played"] --> FIT{"Its kind takes the card?"}
+  FIT -->|"equipment"| EQUIP["Equipped to the target"]
+  FIT -->|"support"| SUPPORT["In the support zone"]
+  FIT -->|"event"| GONE["Played and gone"]
+  EQUIP --> PAY["Costs paid, reduced by the field first"]
+  SUPPORT --> PAY
+  GONE --> PAY
+  PAY --> RUN["The card's module plays: its effect, then any skill it has used at once"]
+```
+
+A skill follows the same path with its own costs, then its effect: a shared damage, dealt with the field's bonuses, then the character's script's own after-effects, such as Dawn's Pyro Infusion or Fantastic Voyage's Inspiration Field.
+
 ## Key files
 
-| File                                                             | Role                                                                          |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gcg/writeGcgStandardRule.ts` | Writes the standard rule's slice from the dump's rule and reaction tables     |
-| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`    | The rule row, with each listed reaction joined to its element pair            |
-| `packages/genshin-world/src/generated/gcg/standardRule.json`     | The written slice, imported on demand                                         |
-| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts` | Imports the slice and checks it against its schema                            |
-| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`       | Opens a duel between two decks                                                |
-| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`      | A side's preparation, and the first roll once both have prepared              |
-| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`       | A side's one reroll, and the action phase once both have rolled               |
-| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`         | A skill paid in dice and energy, then the turn passes                         |
-| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`      | A hit's Frozen, reaction, shield and piercing, and its defeats                |
-| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`  | The round's end, and the end phase once both sides declare                    |
-| `packages/genshin-world/src/services/gcg/endGcgRound.ts`         | The end phase: Frozen lapses, the draws, and the next round or the concession |
-| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`  | A switch for one die of any face, as a combat action                          |
-| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`          | Tuning a die by a discarded card, as a fast action                            |
-| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts` | The free replacement a defeated active owes                                   |
-| `packages/genshin-world/src/services/gcg/payGcgCost.ts`          | The dice a cost takes from the dice chosen, Omni standing in                  |
-| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`  | The reaction an element pair makes under a rule                               |
+| File                                                                           | Role                                                                                          |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gcg/writeGcgStandardRule.ts`               | Writes the standard rule's slice from the dump's rule and reaction tables                     |
+| `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`                  | The rule row, with each listed reaction joined to its element pair                            |
+| `packages/genshin-world/src/generated/gcg/standardRule.json`                   | The written slice, imported on demand                                                         |
+| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`               | Imports the slice and checks it against its schema                                            |
+| `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                     | Opens a duel between two decks                                                                |
+| `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`                    | A side's preparation, and the first roll once both have prepared                              |
+| `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                     | A side's one reroll, and the action phase once both have rolled                               |
+| `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                       | A skill paid in dice and energy, then the turn passes                                         |
+| `scripts/src/services/genshinAssets/gcg/writeGcgTutorialDeck.ts`               | Writes the tutorial deck's slice from the dump's deck, character, skill, card and cost tables |
+| `scripts/src/services/genshinAssets/gcg/toGcgTutorialDeck.ts`                  | The slice's rows, each cost and each card's kind from the dump's plain fields                 |
+| `packages/genshin-world/src/generated/gcg/tutorialDeck.json`                   | The written tutorial deck slice, imported on demand                                           |
+| `packages/genshin-world/src/services/gcg/readGcgTutorialDeck.ts`               | Imports the slice and checks it against its schema                                            |
+| `packages/genshin-world/src/services/gcg/playGcgCard.ts`                       | A card played from a hand: placed by its kind, paid, then its module plays                    |
+| `packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`                    | A skill's effect run for its active character, then its field's on-use hooks                  |
+| `packages/genshin-world/src/services/gcg/dealGcgSkillDamage.ts`                | A skill's damage with the field's bonuses and doublings, then dealt                           |
+| `packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`                 | A skill's or card's costs, reduced by the field, paid from the dice chosen                    |
+| `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`                   | The roll-phase hooks of each side's field                                                     |
+| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                 | The action-phase hooks, then the spent cards taken off                                        |
+| `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`                    | The end-phase hooks, the rounds aged, then the spent cards taken off                          |
+| `packages/genshin-world/src/services/gcg/cards/gcgCardIdModuleMap.ts`          | Every card's module by its id                                                                 |
+| `packages/genshin-world/src/services/gcg/cards/gcgEffectNameSkillModuleMap.ts` | Every character's script by its effect name                                                   |
+| `packages/genshin-world/src/services/gcg/cards/`                               | One module per card and per character script, each from its text and its wiki page            |
+| `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`                    | A hit's Frozen, reaction, shield and piercing, and its defeats                                |
+| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                | The round's end, and the end phase once both sides declare                                    |
+| `packages/genshin-world/src/services/gcg/endGcgRound.ts`                       | The end phase: Frozen lapses, the draws, and the next round or the concession                 |
+| `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`                | A switch for one die of any face, as a combat action                                          |
+| `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                        | Tuning a die by a discarded card, as a fast action                                            |
+| `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`               | The free replacement a defeated active owes                                                   |
+| `packages/genshin-world/src/services/gcg/payGcgCost.ts`                        | The dice a cost takes from the dice chosen, Omni standing in                                  |
+| `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                | The reaction an element pair makes under a rule                                               |
 
 ## Sources
 
 - [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit.
-- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.
+- [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from, and the deck, character, skill, card and cost tables the tutorial deck is written from.
+- The Genshin Impact Wiki's character card skill pages, such as [Dawn (Character Card Skill)](<https://genshin-impact.fandom.com/wiki/Dawn_(Character_Card_Skill)>), for each character script's damage and its after-effect.

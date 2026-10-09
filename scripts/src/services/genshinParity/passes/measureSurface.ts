@@ -4,13 +4,16 @@ import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
-import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
 import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
+import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
 import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
+import { openSurfaceStatisticsPage } from "#src/services/genshinParity/shared/openSurfaceStatisticsPage";
+import { withFinalizerAsync } from "@esposter/shared";
+import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
 // A family's structure at each scale, finest first, to three places
@@ -68,27 +71,41 @@ export const measureSurface = (component: DerivedAssetComponent): Promise<Parity
     // The gate is the sampling floor: the exports' family split into two halves of blocks, each measured against the
     // Other, the least a surface of the same distribution can read off a finite patch of it. A family held within one
     // Half has no floor to read, so it has no gate
-    const measured = albedo.comparisons.map((comparison) => {
-      const evenMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 0);
-      const oddMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 1);
-      return {
-        colour: comparison.colour,
-        family: comparison.family,
-        gate:
-          evenMask.includes(1) && oddMask.includes(1)
-            ? computeStatisticalStructure(exportsLightness, exportsLightness, evenMask, oddMask, width, height)
-            : undefined,
-        scales: comparison.scales,
-        structure: computeStatisticalStructure(
-          exportsLightness,
-          oursLightness,
-          computeFamilyMask(exportsPart, oursPart, comparison.family, width),
-          computeFamilyMask(exportsPart, oursPart, comparison.family, width),
-          width,
-          height,
+    // The statistics are reduced on the parity page's GPU, which the page is opened for once per surface
+    const surfaceStatistics = await openSurfaceStatisticsPage();
+    const measured = await withFinalizerAsync(
+      () =>
+        Promise.all(
+          albedo.comparisons.map(async (comparison) => {
+            const statisticsOf = (values: Float32Array, mask: Uint8Array) =>
+              surfaceStatistics.computeStatistics(values, mask, width, height, SURFACE_DETAIL_BAND_SIGMAS);
+            const evenMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 0);
+            const oddMask = computeFamilyMask(exportsPart, exportsPart, comparison.family, width, 1);
+            const familyMask = computeFamilyMask(exportsPart, oursPart, comparison.family, width);
+            const readGate = async () => {
+              if (!evenMask.includes(1) || !oddMask.includes(1)) return undefined;
+              const [gateReference, gateShot] = await Promise.all([
+                statisticsOf(exportsLightness, evenMask),
+                statisticsOf(exportsLightness, oddMask),
+              ]);
+              return computeStructureError(gateReference, gateShot);
+            };
+            const [gate, structureReference, structureShot] = await Promise.all([
+              readGate(),
+              statisticsOf(exportsLightness, familyMask),
+              statisticsOf(oursLightness, familyMask),
+            ]);
+            return {
+              colour: comparison.colour,
+              family: comparison.family,
+              gate,
+              scales: comparison.scales,
+              structure: computeStructureError(structureReference, structureShot),
+            };
+          }),
         ),
-      };
-    });
+      () => surfaceStatistics.close(),
+    );
     return {
       notes: [
         `${referenceId} exports | ours | lightness apart: ${diffPath}`,

@@ -1,27 +1,20 @@
 ---
 title: Save Data
-description: Proposal — what is left of the Genshin world's save: the client's hydration and autosave, the guest's upload on sign-in, the replaced signal to the old session, the remaining systems' slices, and the Clicker and Dungeons opt-in to the shared lease. The save blob, its lease and its bounds are built.
+description: Proposal — what is left of the Genshin world's save: the remaining systems' slices, the Clicker and Dungeons opt-in to the shared If-Match, and the lease's move onto the shared blob-state procedures. The save blob, its lease, the client's hydration, autosave, guest merge and replaced signal are built.
 model: claude-haiku-5-5
 ---
 
 # Save Data
 
-The save blob, the session lease and the slice schemas are built as [save data](/docs/genshin/save-data) describes. What is left is everything that moves the world's state into and out of that save, and the signal that tells the game it was taken elsewhere.
+The save blob, its lease, the client's hydration and autosave, the guest's merge on sign-in and the replaced signal are built as [save data](/docs/genshin/save-data) describes. What is left is the slices of the systems the world holds but the save does not yet, and the shared blob-state path the lease was meant to move onto.
 
 ## Decisions
 
-- **Hydrate, then autosave.** The world loads its systems from the save the start returns, and derives what the save does not hold. A deliberate change, a grant or a purchase, is saved at once, as Clicker splits its immediate save from its autosave. Everything else is saved on a periodic autosave, and `visibilitychange` to hidden flushes it.
-- **The client keeps the server's clock offset.** Each start and save answers with the server's now, and the client takes the offset from the first of them. Original Resin's regeneration, daily resets and respawn timers are read against that offset, never the client's own clock.
-- **A replaced session hears it at once and on its next write.** The start emits a "replaced" event to the old session through the in-process real-time layer, which is the one [the real-time architecture](/docs/architecture/azure-services) gives a per-user signal written by one server process. A rejected write is the fallback. Either way the old session stops autosaving, pauses the world, and shows "logged in elsewhere" with a way to take the session back, which starts a new lease and reloads the save.
-- **A guest's save is uploaded on sign-in.** Signed out, the save lives in localStorage under the same schema through `useSave`'s unauthenticated path. On sign-in it is uploaded when the account has none. When the account has one, a pure merge takes both: grow-only sets that pay nothing (the unlocked) by union, monotonic counters and levels by maximum, and everything else the account's copy. A set whose entries paid into the wallet or the bag (the opened chests, the collected items) is everything else: it goes with the wallet and the bag in the account's copy, since a union would keep a guest's opened chest while the account's wallet drops what it paid, and the chest could never pay again. Clicker and Dungeons gain the same merge in their own commits, each over its own fields.
-- **The world's rules stay pure.** Each reward and grant is a function of the save and the time, so moving it to the server is a call to the same function there. That move is made when a shared or competitive feature needs the server to grant, and until then the client is authoritative and the server validates shape and bounds only.
-- **Each remaining system adds its slice in the change that wires it.** The bag and wallet's items, the Adventure Rank and EXP, the achievements' counters, the waypoints' unlocks beyond the landmarks, reputation and companionship where they hold state, and the wish counters. The bag's slice needs the game's item categories and the wish's needs its banner kinds at the save's entry, and those enums live in `genshin-interface`, which the server does not import yet. Those two wait on a subpath export of their own, which is a small change of the same shape as `genshin-world/save`.
-- **Clicker and Dungeons opt in to the lease and the ETag as separate commits**, so their save procedures gain the lease and the conditional write with their tests kept green.
+- **Each remaining system adds its slice in the change that wires it.** The bag, Adventure Rank, the achievements, the wish counters, reputation and companionship each take a slice beside their model, composed into the save with a default in `EMPTY_GENSHIN_SAVE` and a merge rule in `mergeGenshinSave`. A set whose entries paid into the wallet or the bag (the opened chests, the collected items) merges as the account's copy with the wallet and the bag, never by union, since a union would keep a guest's opened chest while the account's wallet drops what it paid, and the chest could never pay again. The bag's and the wish's types live in `genshin-interface`, which the server does not import, so each gets a `genshin-interface/save` subpath export of the same shape as `genshin-world/save`.
+- **Clicker and Dungeons opt in to If-Match, not the lease.** Their saves are one document with no session, so the conditional write is the only guard they need.
 
 ## Left to build
 
-- The client: a composable that hydrates the world's slices from the start's save, autosaves and flushes on hidden, and takes the server's clock offset.
-- The replaced signal and the "logged in elsewhere" state with its take-back, on the in-process real-time layer and the rejected write.
-- The guest's localStorage save under the save schema, its upload on sign-in and the pure merge.
-- The slices of the bag, the wallet's items, the Adventure Rank, the achievements, the wish counters, reputation and companionship, each with its enum's subpath export where it needs one.
-- The Clicker and Dungeons opt-in, one commit each.
+- The slices of the bag, Adventure Rank, the achievements, the wish counters, reputation and companionship, and the `genshin-interface/save` subpath those two wait on.
+- The lease and If-Match moved into the shared blob-state procedures (`createSaveBlobStateProcedure`, `createReadBlobStateProcedure`) as an opt-in, so Genshin's start and save use the shared path. The read procedure returns the model directly, so If-Match needs the blob's ETag returned beside it, which changes the clicker and dungeons read contracts and their clients.
+- The Clicker and Dungeons If-Match opt-in, one commit each.

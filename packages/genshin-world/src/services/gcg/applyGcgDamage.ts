@@ -1,7 +1,9 @@
+import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
+import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
@@ -9,9 +11,19 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
+import { burningFlame } from "#src/services/gcg/cards/burningFlame";
+import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
+import { dendroCore } from "#src/services/gcg/cards/dendroCore";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import {
   GCG_AURA_ELEMENTS,
+  GCG_BURNING_FLAME_ID,
+  GCG_BURNING_FLAME_MAX_USAGES,
+  GCG_CATALYZING_FIELD_ID,
+  GCG_CATALYZING_FIELD_MAX_USAGES,
   GCG_CRYSTALLIZE_SHIELD,
+  GCG_DENDRO_CORE_ID,
+  GCG_DENDRO_CORE_MAX_USAGES,
   GCG_FROZEN_BONUS,
   GCG_PIERCING_DAMAGE,
   GCG_SHIELD_LIMIT,
@@ -20,16 +32,19 @@ import {
 } from "#src/services/gcg/constants";
 import { findGcgNextCharacterIndex } from "#src/services/gcg/findGcgNextCharacterIndex";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
+import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
+import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
 import { takeOne } from "@esposter/shared";
 
 // One damage a skill deals to the opposing active character, from the side at sourceSideIndex. An element applies its aura
 // Or reacts with the aura there, a reaction's damage and effects settle with it, and a defeated character is cleared, with
 // A side that has none standing losing the duel, and a side whose active fell with one standing owing a replacement
 export const applyGcgDamage = (duel: GcgDuel, sourceSideIndex: number, damage: GcgDamage, rule: GcgRule): void => {
-  const targetSide = takeOne(duel.sides, 1 - sourceSideIndex);
-  const hit = targetSide.characters.at(targetSide.activeIndex);
-  if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, damage, rule);
+  const targetSideIndex = 1 - sourceSideIndex;
+  const hit = takeOne(duel.sides, targetSideIndex).characters.at(takeOne(duel.sides, targetSideIndex).activeIndex);
+  if (hit) hitGcgCharacter(duel, sourceSideIndex, hit, reduceGcgReceivedDamage(duel, targetSideIndex, damage), rule);
   settleGcgDefeats(duel);
+  for (const side of duel.sides) pruneGcgZoneCards(side);
 };
 
 const hitGcgCharacter = (
@@ -72,7 +87,8 @@ const applyGcgElementalDamage = (
 };
 
 // The effects a reaction leaves after its hit: the piercing and the spread it sends to the other opposing characters, the
-// Shield its user's active character gains, and the forced switch of an Overloaded active character
+// Shield its user's active character gains, the forced switch of an Overloaded active character, and the card a Burning,
+// Bloom or Quicken leaves on its user's side
 const applyGcgReactionEffects = (
   duel: GcgDuel,
   sourceSideIndex: number,
@@ -88,6 +104,12 @@ const applyGcgReactionEffects = (
   else if (reaction === GcgReactionKind.Swirl)
     for (const other of otherTargets)
       hurtGcgCharacter(other, GCG_SPREAD_DAMAGE + takeGcgFrozenBonus(other, aura), false);
+  else if (reaction === GcgReactionKind.Burning)
+    addGcgReactionCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame, GCG_BURNING_FLAME_MAX_USAGES);
+  else if (reaction === GcgReactionKind.Bloom)
+    addGcgReactionCard(sourceSide.onstages, GCG_DENDRO_CORE_ID, dendroCore, GCG_DENDRO_CORE_MAX_USAGES);
+  else if (reaction === GcgReactionKind.Quicken)
+    addGcgReactionCard(sourceSide.onstages, GCG_CATALYZING_FIELD_ID, catalyzingField, GCG_CATALYZING_FIELD_MAX_USAGES);
   else if (reaction === GcgReactionKind.Crystallize) {
     const user = sourceSide.characters.at(sourceSide.activeIndex);
     if (user) user.shield = Math.min(GCG_SHIELD_LIMIT, user.shield + GCG_CRYSTALLIZE_SHIELD);
@@ -95,6 +117,19 @@ const applyGcgReactionEffects = (
     const nextIndex = findGcgNextCharacterIndex(targetSide, targetSide.activeIndex);
     if (nextIndex !== undefined) targetSide.activeIndex = nextIndex;
   }
+};
+
+// A reaction's card joins the field it is left on, or, when the field holds one already, gains the usages it starts with up
+// To the most it holds
+const addGcgReactionCard = (
+  zoneCards: GcgZoneCard[],
+  cardId: number,
+  module: GcgCardModule,
+  maxUsages: number,
+): void => {
+  const zoneCard = zoneCards.find((candidate) => candidate.cardId === cardId);
+  if (zoneCard) zoneCard.usages = Math.min(maxUsages, zoneCard.usages + (module.initialUsages ?? 0));
+  else zoneCards.push(createGcgZoneCard(cardId, module));
 };
 
 // A Frozen character takes more from a Pyro or Physical hit, which removes its Frozen status. Nothing else breaks it

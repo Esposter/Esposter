@@ -9,6 +9,9 @@ import { dirname, join } from "node:path";
 export const GAME_TEXT_DIRECTORY: string = process.env.GENSHIN_TEXT_DIRECTORY ?? join(PARITY_DIRECTORY, "text");
 export const TEXT_MAP_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "TextMap");
 export const EXCEL_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "ExcelBinOutput");
+// The readable texts the game's books and letters are read from, one folder a language named by its code, fetched into the
+// Dump from the AnimeGameData repository's `Readable/` like the tables, never committed
+export const READABLE_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, "Readable");
 export const MANUAL_TEXT_MAP_PATH: string = join(EXCEL_DIRECTORY, "ManualTextMapConfigData.json");
 export const FETTERS_PATH: string = join(EXCEL_DIRECTORY, "FettersExcelConfigData.json");
 // The quest, dialog and character tables a quest's steps and talks are read from, and the binary output holding each

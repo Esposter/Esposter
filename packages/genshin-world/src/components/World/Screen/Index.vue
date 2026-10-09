@@ -3,9 +3,9 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { ArchiveEntry } from "#src/models/archive/ArchiveEntry";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { ArchiveSectionEntriesMap } from "#src/models/archive/ArchiveSectionEntriesMap";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
@@ -18,6 +18,9 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
@@ -32,6 +35,7 @@ import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
+import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
@@ -62,8 +66,10 @@ import { readAchievements } from "#src/services/achievement/readAchievements";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { ArchiveTextLoaderMap } from "#src/services/archive/ArchiveTextLoaderMap";
+import { BookBodyLoaderMap } from "#src/services/archive/BookBodyLoaderMap";
 import { ARCHIVE_UNLOCK_QUEST_ID } from "#src/services/archive/constants";
 import { countArchiveDefeat } from "#src/services/archive/countArchiveDefeat";
+import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { openArchiveEntries } from "#src/services/archive/openArchiveEntries";
 import { openArchiveEntry } from "#src/services/archive/openArchiveEntry";
 import { openTravelLogEntries } from "#src/services/archive/openTravelLogEntries";
@@ -85,8 +91,9 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { CharacterIdCreateKitMap } from "#src/services/kit/CharacterIdCreateKitMap";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { createCharacterKit } from "#src/services/kit/createCharacterKit";
+import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -242,32 +249,38 @@ const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // Character's chunk on demand, and the characters whose chunks have arrived. Each kit is built from them once its
 // Character's chunk arrives, and nothing is priced until then
 const talentMultipliers = shallowRef<TalentMultiplierMap>();
-const talentMultiplierCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
+const loadedCharacterIds = shallowRef<number[]>([]);
 const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
 watchImmediate(deployedCharacterIds, (characterIds) => {
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readTalentMultipliers(characterIds)).match(
+  // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
+  getResultAsync(() => readTalentMultipliers([...new Set([TRAVELER_CHARACTER_ID, ...characterIds])])).match(
     (newTalentMultipliers) => {
       talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
-      talentMultiplierCharacterIds.value = new Set([...talentMultiplierCharacterIds.value, ...characterIds]);
+      loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, TRAVELER_CHARACTER_ID, ...characterIds])];
     },
     (error) => {
       console.error(error);
     },
   );
 });
-const travelerKit = computed(() => (talentMultipliers.value ? createTravelerKit(talentMultipliers.value) : undefined));
+const characterIdKitMap = computed(() => {
+  const kitMap = new Map<number, Kit>();
+  if (!talentMultipliers.value) return kitMap;
+  for (const characterId of loadedCharacterIds.value)
+    kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
+  return kitMap;
+});
 // How the character on the field moves, its body type's, once the roster has arrived
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
-// Each character's combat once the roster has arrived, priced by its own kit where its module is built and by the
-// Traveler's otherwise. A character with a module has no combat until its multipliers arrive. The character on the
-// Field's combat and its party member are what the HUD's health and skills read
+// Each character's combat once the roster has arrived and its kit is built from its loaded multipliers, a character whose
+// Chunk has not arrived having none yet. The character on the field's combat and its party member are what the HUD's
+// Health and skills read
 const characterIdCombatantMap = computed(() => {
   const combatantMap = new Map<number, Combatant>();
-  const talentMultiplierMap = talentMultipliers.value;
-  if (!statTables.value || !talentMultiplierMap || !travelerKit.value) return combatantMap;
+  if (!statTables.value) return combatantMap;
   // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
   const { characterDataMap } = statTables.value;
   const elementalResonances = getElementalResonances(
@@ -277,19 +290,19 @@ const characterIdCombatantMap = computed(() => {
     }),
   );
   for (const character of characters.value) {
-    const createKit = CharacterIdCreateKitMap[character.id];
-    if (createKit && !talentMultiplierCharacterIds.value.has(character.id)) continue;
-    combatantMap.set(character.id, {
-      ascension: character.ascension,
-      attributes: computeCharacterAttributes(
-        getCharacterAttributeLines(character, statTables.value),
+    const kit = characterIdKitMap.value.get(character.id);
+    if (kit)
+      combatantMap.set(character.id, {
+        ascension: character.ascension,
+        attributes: computeCharacterAttributes(
+          getCharacterAttributeLines(character, statTables.value),
+          elementalResonances,
+        ),
+        characterId: character.id,
         elementalResonances,
-      ),
-      characterId: character.id,
-      elementalResonances,
-      kit: createKit?.(talentMultiplierMap) ?? travelerKit.value,
-      level: character.level,
-    });
+        kit,
+        level: character.level,
+      });
   }
   return combatantMap;
 });
@@ -359,10 +372,29 @@ const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgres
 // The Archive's entries by section and their names, read once the quest it opens after is done, as the game opens it.
 // Its progress starts empty, and the bag's items open their entries as it takes them in
 const archiveData = shallowRef<{
-  sectionEntriesMap: Record<ArchiveSection, ArchiveEntry[]>;
+  sectionEntriesMap: ArchiveSectionEntriesMap;
   textMap: Readonly<Record<string, string>>;
 }>();
 const archiveProgressMap = shallowRef<ArchiveProgress>(new Map());
+// The volume the Archive is reading, its title and its text in the reader's language
+const bookReading = shallowRef<{ body: string; title: string }>();
+// A volume the Archive's Books section opens has its text loaded with its own chunk, in the reader's language
+const readBook = (bookId: number) => {
+  if (!archiveData.value) return;
+  const { sectionEntriesMap, textMap } = archiveData.value;
+  const book = sectionEntriesMap[ArchiveSection.Books].find(({ id }) => id === bookId);
+  const loadBody = book ? BookBodyLoaderMap.get(book.bodyId) : undefined;
+  if (!book || !loadBody) return;
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(async () => (await loadBody())[language]).match(
+    (body) => {
+      bookReading.value = { body, title: textMap[book.nameTextId] || "" };
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
+};
 // The defeats of each Living Being, counted under its entry for the Archive to show
 const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
 // The main quests done, by id. The Archive opens once the quest it opens after is among them
@@ -452,6 +484,9 @@ const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, sp
 // The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
 // The character's kit strikes and an enemy's strike lands from
 const enemyMap = new Map<string, Enemy>();
+// The effects on the deployed team, the shields and taunts an enemy's strike is taken by, which the character on the field
+// Steps and the enemies read
+const kitEffects: KitEffect[] = [];
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -642,6 +677,13 @@ const bagFullHint = ref("");
 // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
 // Ground as a smaller drop
 const pickUpWorldDrop = (worldDrop: WorldDrop) => {
+  // A volume is taken straight into the Archive, which opens its entry, and never into the bag
+  const books = archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
+  if (books.some(({ materialId }) => materialId === worldDrop.itemId)) {
+    archiveProgressMap.value = openArchiveBook(archiveProgressMap.value, books, worldDrop.itemId);
+    worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
+    return;
+  }
   const pickUp = pickUpDroppedItem(worldDrop, inventory.value, wallet.value, gameText);
   setInventory(pickUp.inventory);
   setWallet(pickUp.wallet);
@@ -704,11 +746,17 @@ const respawnParty = () => {
   const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
   if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
 };
-// An enemy's strike lands on the character on the field, and a team it fells respawns
-const strikeParty = (enemy: Enemy) => {
+// An enemy's strike lands on the taunt it struck, or on the character on the field through her shield, and a team it
+// Fells respawns
+const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
   const combatant = activeCombatant.value;
   if (!combatant) return;
-  strikePartyMember(party, enemy, combatant);
+  if (taunt) {
+    damageKitTaunt(taunt, computeEnemyStrikeDamage(enemy, combatant));
+    return;
+  }
+
+  strikePartyMember(party, enemy, combatant, kitEffects);
   respawnParty();
 };
 // Where the camera stands in world metres, which its host reads to know where a player is
@@ -815,6 +863,7 @@ defineExpose({ jumpTo, readCameraPosition });
           ref="character"
           :body="characterBody"
           :character-id-combatant-map
+          :effects="kitEffects"
           :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
@@ -839,6 +888,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
+        :effects="kitEffects"
         :elemental-sight
         :enemy-map
         :held-minutes
@@ -853,7 +903,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :world-level
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
-        @strike="(enemy) => strikeParty(enemy)"
+        @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>
     <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text :origin />
@@ -916,13 +966,22 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <template v-if="archiveData" #[ScreenKind.Archive]>
+        <BookReaderScreen
+          v-if="bookReading"
+          :body="bookReading.body"
+          :game-text
+          :title="bookReading.title"
+          @close="bookReading = undefined"
+        />
         <ArchiveScreen
+          v-else
           :game-text
           :kills-map="archiveKillsMap"
           :progress-map="archiveProgressMap"
           :section-entries-map="archiveData.sectionEntriesMap"
           :text-map="archiveData.textMap"
           @close="screenKind = ScreenKind.World"
+          @read-book="(entryId) => readBook(entryId)"
         />
       </template>
       <template #[ScreenKind.Quests]>

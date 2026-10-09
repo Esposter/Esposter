@@ -17,6 +17,12 @@ const createSideState = (dice: (Element | GcgDieFace)[]): GcgSideState => ({
   hasPrepared: true,
   hasRolled: true,
   isReplacementPending: false,
+  cards: [],
+  onstages: [],
+  summons: [],
+  supports: [],
+  usedCardIds: [],
+  usedSkillIds: [],
 });
 
 describe(payGcgCost, () => {

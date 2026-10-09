@@ -45,6 +45,7 @@ import {
   STAMINA_MAX,
 } from "genshin-engine";
 import { PerspectiveCamera, Vector3 } from "three";
+import { onUnmounted } from "vue";
 
 interface Props {
   // What the character is drawn on, which the scene places in the floating origin's group: it is stood at the body's
@@ -54,6 +55,9 @@ interface Props {
   characterIdCombatantMap: Map<number, Combatant>;
   // The enemies in the world by their spawn key, which the kit on the field strikes and aims at
   enemyMap: Map<string, Enemy>;
+  // The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
+  // Drown or a jump
+  effects: KitEffect[];
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
@@ -73,6 +77,7 @@ interface Props {
 const {
   body,
   characterIdCombatantMap,
+  effects,
   enemyMap,
   inputState,
   isHeld,
@@ -102,9 +107,6 @@ const characterController = createCharacterController({
 let followCamera: FollowCamera | undefined;
 // The kit of the character on the field, which starts over when a switch brings another on
 let kitState = createKitState();
-// The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
-// Drown or a jump
-const effects: KitEffect[] = [];
 let kitCharacterId: number | undefined;
 // The strikes a step lands, emptied once each has struck the enemies in its area
 const landedHits: KitHit[] = [];
@@ -227,6 +229,10 @@ onBeforeRender(({ delta }) => {
   pivot.y += FOLLOW_CAMERA_PIVOT_HEIGHT;
   followCamera?.follow(pivot, origin, delta);
 }, CAMERA_FRAME_PRIORITY);
+// The effects are the screen's, and they stop with the character that steps them, so none outlives its unmount
+onUnmounted(() => {
+  effects.length = 0;
+});
 // A click on the canvas takes the pointer, which the look reads while it is locked
 useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
 const placedPosition = new Vector3();

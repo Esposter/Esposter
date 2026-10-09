@@ -42,10 +42,12 @@ interface Props {
   gameText: GameText;
   landmarks: Landmark[];
   // The wallet, whose Original Resin the top bar counts as it regenerates to the moment the map opens
+  // The server's clock minus this machine's, which the Original Resin's regeneration is read against
+  serverClockOffsetMs?: number;
   wallet: Wallet;
 }
 
-const { camera, explorationAreas, gameText, landmarks, wallet } = defineProps<Props>();
+const { camera, explorationAreas, gameText, landmarks, serverClockOffsetMs = 0, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
@@ -142,7 +144,12 @@ const areaLabels = computed(() =>
 const areaProgresses = computed(() =>
   areaLabels.value.flatMap(({ id, name, progress }) => (progress ? [{ id, name, progress }] : [])),
 );
-const originalResin = computed(() => regenerateOriginalResin(wallet, Temporal.Now.instant())[Currency.OriginalResin]);
+const originalResin = computed(
+  () =>
+    regenerateOriginalResin(wallet, Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }))[
+      Currency.OriginalResin
+    ],
+);
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
   closeButton.value?.focus();

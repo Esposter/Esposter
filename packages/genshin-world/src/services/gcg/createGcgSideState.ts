@@ -11,13 +11,16 @@ export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSide
   const drawPile = shuffleGcgCards(deck.cardIds, random);
   return {
     activeIndex: 0,
+    cards: deck.cards,
     characters: deck.characters.map((character) => ({
       aura: GcgAura.None,
       character,
       energy: 0,
+      equipments: [],
       hp: character.hp,
       isFrozen: false,
       shield: 0,
+      statuses: [],
     })),
     dice: [],
     drawPile: drawPile.slice(GCG_STARTING_HAND_COUNT),
@@ -26,5 +29,10 @@ export const createGcgSideState = (deck: GcgDeck, random: () => number): GcgSide
     hasPrepared: false,
     hasRolled: false,
     isReplacementPending: false,
+    onstages: [],
+    summons: [],
+    supports: [],
+    usedCardIds: [],
+    usedSkillIds: [],
   };
 };

@@ -1,25 +1,15 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { Party } from "#src/models/party/Party";
 
-import { Attribute } from "#src/models/character/Attribute";
-import { getDamage } from "#src/services/combat/damage/getDamage";
-import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
-import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
+import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 
-// An enemy's strike on a party member: its ATK as physical damage through the member's defence and physical resistance,
-// Taken from the member as the share of its Max HP the damage is
-export const strikePartyMember = (party: Party, enemy: Enemy, combatant: Combatant): void => {
-  const { attributeTotalMap, defense, maxHealth } = combatant.attributes;
-  const { attack } = computeEnemyStats(getEnemyKind(enemy.enemyKindId), enemy.level);
-  const damage = getDamage({
-    attackerLevel: enemy.level,
-    defense,
-    resistance: attributeTotalMap[Attribute.PhysicalResistance],
-    stat: attack,
-    talentMultiplier: ENEMY_STRIKE_TALENT_MULTIPLIER,
-  });
-  damagePartyMember(party, combatant.characterId, damage / maxHealth);
+// An enemy's strike on a party member: its damage is first taken by the member's shield, and what the shield does not
+// Absorb is taken from the member as the share of its Max HP it is
+export const strikePartyMember = (party: Party, enemy: Enemy, combatant: Combatant, effects: KitEffect[]): void => {
+  const overflow = absorbKitShield(effects, combatant, computeEnemyStrikeDamage(enemy, combatant));
+  damagePartyMember(party, combatant.characterId, overflow / combatant.attributes.maxHealth);
 };

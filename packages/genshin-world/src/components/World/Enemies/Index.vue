@@ -2,6 +2,8 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture, Scene } from "three";
@@ -29,6 +31,7 @@ import { EnemyStateColorMap } from "#src/services/enemy/EnemyStateColorMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
+import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
@@ -48,6 +51,8 @@ import {
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
+  // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
+  effects: KitEffect[];
   // Whether a screen over the world holds it, as the game's menus pause its enemies
   isHeld?: true;
   lightUniforms: LightUniforms;
@@ -61,10 +66,13 @@ interface Props {
   worldLevel: number;
 }
 
-const { enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
+const { effects, enemyMap, isHeld, lightUniforms, rampTexture, regionDataMap, sightScene, target, worldLevel } =
   defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
-const emit = defineEmits<{ defeat: [enemy: Enemy, enemyDrops: EnemyDrops]; strike: [enemy: Enemy] }>();
+const emit = defineEmits<{
+  defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
+  strike: [enemy: Enemy, taunt: KitTaunt | undefined];
+}>();
 const { onBeforeRender } = useLoop();
 const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARATOR}${memberId}`;
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
@@ -107,8 +115,9 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   for (const enemy of enemyMap.values()) {
     advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, elementalReactions);
     elementalReactions.length = 0;
-    const enemyEvent = stepEnemy(enemy, target, ENEMY_STEP_SECONDS);
-    if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy);
+    const taunt = selectEnemyTaunt(enemy, effects);
+    const enemyEvent = stepEnemy(enemy, taunt ? taunt.body.position : target, ENEMY_STEP_SECONDS);
+    if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
     else if (enemyEvent === EnemyEvent.Defeated) {
       isAnyDefeated = true;
       spawnKeyDefeatedAtMap.set(getSpawnKey(enemy.campId, enemy.id), Temporal.Now.zonedDateTimeISO());

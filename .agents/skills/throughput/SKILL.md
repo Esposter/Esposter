@@ -37,4 +37,4 @@ The plan's usage is spent by the session and its agents, while a compute-queue r
 ## Deep Dives
 
 - `references/machine-efficiency.md` — when a wave starts, when an agent is about to check, build, search or scan, and when the CPU is pinned while the GPU idles.
-- `references/cross-machine.md` — when a second machine (the Mac) works the backlog: what goes to which, how both checkouts sync, how game data crosses the LAN, and its utilization reports.
+- `references/fleet.md` — when more than one machine works the backlog: profiles, the pulled queue, claims as refs, fleet load, sync, and game data over the LAN.

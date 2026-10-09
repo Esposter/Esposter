@@ -37,7 +37,10 @@ export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d
 // Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
 // Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
-export const PARITY_PAGE_URL: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3011"}/parity/?screen=`;
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
+export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3011"}/parity/`;
+// The page a screen is shot on, by its query
+export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
 // The name a backdrop is served to the parity page under, which the page is told in its query
 export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Where a witness's files are served to the page: its layout, which the page is told of, and its meshes and textures

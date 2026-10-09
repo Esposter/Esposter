@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GameLanguage, GameText } from "genshin-text";
+import type { GenshinSave } from "genshin-world/save";
 
 import { GENSHIN_CHARACTER_PACK_PATH, GENSHIN_REGION_DATA_BASE_URL } from "#shared/services/genshin/constants";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
@@ -16,10 +17,13 @@ interface Props {
   isPaused?: true;
   // The reader's game language, whose names the world loads
   language: GameLanguage;
+  // The player's save the world starts from, and the server's clock minus this machine's, which its timers are read by
+  save: GenshinSave;
+  serverClockOffsetMs: number;
 }
 
-const { gameText, isPaused, language } = defineProps<Props>();
-const emit = defineEmits<{ load: []; ready: [] }>();
+const { gameText, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
+const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URL its server
 // Serves region data at, where its storage keeps the characters' packs, and whether the tuning panel shows; quitting
@@ -39,7 +43,11 @@ onMounted(() => {
     :language
     :quality-tier="GENSHIN_QUALITY_TIER"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
+    :save
+    :server-clock-offset-ms="serverClockOffsetMs"
+    @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"
     @ready="emit('ready')"
+    @save="(newSave) => emit('save', newSave)"
   />
 </template>

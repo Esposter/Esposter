@@ -6,10 +6,12 @@ import type { GroundPoint } from "genshin-engine";
 
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
+import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 
 // The effects on the team run on by a step, written in place: each effect's seconds run down, each field's schedule runs
 // On, and those that have run out are dropped from the list. A field's tick reads the character on the field and its
-// Body, and an effect a tick adds starts at its full seconds. It returns the hits the summons land this step
+// Body, and an effect a tick adds starts at its full seconds. It returns the hits the summons land and the taunts that
+// Explode this step
 export const stepKitEffects = (
   effects: KitEffect[],
   stepSeconds: number,
@@ -19,7 +21,11 @@ export const stepKitEffects = (
   for (const effect of effects) effect.secondsRemaining -= stepSeconds;
   for (const effect of effects)
     if (effect.kind === "field") stepKitField(effect, stepSeconds, body, { activeCombatant, effects, party });
-  const strikes = effects.flatMap((effect) => (effect.kind === "summon" ? stepKitSummon(effect, stepSeconds) : []));
+  const strikes = effects.flatMap((effect) => {
+    if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds);
+    if (effect.kind === "taunt") return stepKitTaunt(effect);
+    return [];
+  });
   const remainingEffects = effects.filter(({ secondsRemaining }) => secondsRemaining > 0);
   effects.splice(0, effects.length, ...remainingEffects);
   return strikes;
