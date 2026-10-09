@@ -9,6 +9,7 @@ import {
 import { toGcgStandardRule } from "#src/services/genshinAssets/gcg/toGcgStandardRule";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { gcgStandardRuleSchema } from "genshin-world";
 import { mkdirSync, writeFileSync } from "node:fs";
 
 // The standard duel rule, read from the dump's rule and reaction tables and written as one small slice in the world's
@@ -25,5 +26,8 @@ export const writeGcgStandardRule = (): void => {
     );
   const reactionRows = readExcelTable<ExcelGcgElementReactionRow>("GCGElementReactionExcelConfigData");
   mkdirSync(GCG_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(GCG_STANDARD_RULE_PATH, `${JSON.stringify(toGcgStandardRule(ruleRow, reactionRows), undefined, 2)}\n`);
+  writeFileSync(
+    GCG_STANDARD_RULE_PATH,
+    `${JSON.stringify(gcgStandardRuleSchema.parse(toGcgStandardRule(ruleRow, reactionRows)), undefined, 2)}\n`,
+  );
 };
