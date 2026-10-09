@@ -19,7 +19,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { Quest } from "#src/models/quest/Quest";
@@ -484,8 +484,11 @@ const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, sp
 // The character's kit strikes and an enemy's strike lands from
 const enemyMap = new Map<string, Enemy>();
 // The effects on the deployed team, the shields and taunts an enemy's strike is taken by, which the character on the field
-// Steps and the enemies read
-const kitEffects: KitEffect[] = [];
+// Steps and the enemies read, and which the character clears on a drown or a jump
+const kitEffectState: KitEffectState = { effects: [] };
+const clearKitEffects = () => {
+  kitEffectState.effects = [];
+};
 // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
 // Which numbers the next ones
 const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -762,7 +765,7 @@ const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
     return;
   }
 
-  strikePartyMember(party, enemy, combatant, kitEffects);
+  strikePartyMember(party, enemy, combatant, kitEffectState);
   respawnParty();
 };
 // Where the camera stands in world metres, which its host reads to know where a player is
@@ -869,7 +872,7 @@ defineExpose({ jumpTo, readCameraPosition });
           ref="character"
           :body="characterBody"
           :character-id-combatant-map
-          :effects="kitEffects"
+          :kit-effect-state
           :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
@@ -878,6 +881,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :locomotion
           :origin
           :party
+          @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
         />
         <WorldFreeCamera
@@ -894,7 +898,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-base-url
         :create-terrain-worker
-        :effects="kitEffects"
+        :kit-effect-state
         :elemental-sight
         :enemy-map
         :held-minutes

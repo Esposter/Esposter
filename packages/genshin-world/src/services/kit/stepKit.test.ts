@@ -50,7 +50,11 @@ describe(stepKit, () => {
         stamina,
         STEP_SECONDS,
         landedHits,
-        { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant: TRAVELER_COMBATANT, effects: [] },
+        {
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant: TRAVELER_COMBATANT,
+          kitEffectState: { effects: [] },
+        },
       );
     };
     return { kitState, landedHits, partyMember, stamina, step };

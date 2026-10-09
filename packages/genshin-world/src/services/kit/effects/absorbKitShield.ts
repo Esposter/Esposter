@@ -7,7 +7,7 @@ import { absorbShieldDamage } from "#src/services/combat/shield/absorbShieldDama
 
 // Takes a character's shield to the damage it is dealt, through the combat shield's absorption, written in place. One
 // Spent is dropped by the next step. It returns the damage the shield did not absorb, which is all of it with none up
-export const absorbKitShield = (effects: KitEffect[], combatant: Combatant, damage: number): number => {
+export const absorbKitShield = (effects: readonly KitEffect[], combatant: Combatant, damage: number): number => {
   const shield = effects.find(
     (effect): effect is KitShield => effect.kind === "shield" && effect.characterId === combatant.characterId,
   );

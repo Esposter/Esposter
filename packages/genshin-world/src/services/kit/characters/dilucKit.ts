@@ -125,7 +125,7 @@ const createDawnPhoenix = (
   talentMultiplierMap: TalentMultiplierMap,
 ): KitSummon => {
   const { facing, height, position } = body;
-  const tickHits = Array.from({ length: DAWN_TICK_COUNT }, (_, index) =>
+  const tickHits = Array.from({ length: DAWN_TICK_COUNT }, (_value, index) =>
     createDawnPhoenixHit(
       DAWN_TICK_HIT_AREA,
       DILUC_BURST_HITMARK_SECONDS + DAWN_TICK_INTERVAL_SECONDS * (index + 1),
@@ -165,8 +165,6 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   burstCooldownSeconds: 12,
   burstEnergyCost: 40,
   chargedAttack: {
-    // Measured: the table's stamina a second for the charge, 40, drained while the charge plays, as the wiki gives it
-    staminaPerSecond: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
     hits: [
       {
         hitArea: CHARGED_CYCLIC_HIT_AREA,
@@ -186,6 +184,8 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     seconds: 1.2,
+    // Measured: the table's stamina a second for the charge, 40, drained while the charge plays, as the wiki gives it
+    staminaPerSecond: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
     targetingArea: SWORD_TARGETING_AREA,
   },
   // The charge needs no stamina to start and spends none at once, since its stamina is drained as it plays
@@ -206,24 +206,24 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
-    onStart: ({ body, combatant, effects }) => {
+    onStart: ({ body, combatant, kitEffectState }) => {
       const hasA4 = combatant.ascension >= 4;
       const secondsRemaining = DILUC_INFUSION_SECONDS + (hasA4 ? DILUC_A4_EXTRA_INFUSION_SECONDS : 0);
-      addKitEffect(effects, {
+      addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Pyro,
         kind: "infusion",
         secondsRemaining,
       });
       if (hasA4)
-        addKitEffect(effects, {
+        addKitEffect(kitEffectState, {
           amount: DILUC_A4_PYRO_DAMAGE_BONUS,
           attribute: Attribute.PyroDamageBonus,
           characterId: combatant.characterId,
           kind: "buff",
           secondsRemaining,
         });
-      addKitEffect(effects, createDawnPhoenix(body, combatant, talentMultiplierMap));
+      addKitEffect(kitEffectState, createDawnPhoenix(body, combatant, talentMultiplierMap));
     },
     seconds: 140 / 60,
     targetingArea: SKILL_TARGETING_AREA,

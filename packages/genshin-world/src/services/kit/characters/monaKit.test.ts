@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
@@ -50,13 +50,13 @@ describe("mona kit", () => {
     const combatant = createMonaCombatant();
     const party = createParty([MONA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
-    const effects: KitEffect[] = [];
-    MONA_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, effects });
+    const kitEffectState: KitEffectState = { effects: [] };
+    MONA_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
 
     // A single step past the explosion at 329 frames lands every hit of the summon, and the summon then ends
-    const strikes = stepKitEffects(effects, 6, { activeCombatant: combatant, body, party });
+    const strikes = stepKitEffects(kitEffectState, 6, { activeCombatant: combatant, body, party });
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.32, 0.32, 0.32, 0.32, 1.328]);
-    expect(effects).toStrictEqual([]);
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("its Stellaris Phantasm gives each enemy in its bubble an Omen of 4 seconds and 42% DMG taken", () => {
@@ -94,23 +94,23 @@ describe("mona kit", () => {
     };
     const sprintFor = (ascension: number) => {
       const combatant = { ...createMonaCombatant(), ascension };
-      const effects: KitEffect[] = [];
-      const context: KitStepContext = { body, combatant, effects };
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context: KitStepContext = { body, combatant, kitEffectState };
       const kitState = createKitState();
       const partyMember = createPartyMember();
       const stamina = createStamina(STAMINA_MAX);
       // 2.17 seconds of sprint at the fixed step, past the first 2 seconds
       for (let step = 0; step < 130; step++)
         stepKit(kitState, MONA_KIT, sprint, partyMember, stamina, 1 / 60, [], context);
-      return { combatant, effects };
+      return { combatant, kitEffectState };
     };
 
-    expect(sprintFor(0).effects).toStrictEqual([]);
-    const { combatant, effects } = sprintFor(1);
-    expect(effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
+    expect(sprintFor(0).kitEffectState.effects).toStrictEqual([]);
+    const { combatant, kitEffectState } = sprintFor(1);
+    expect(kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
 
     // The phantom's explosion lands once its 2 seconds run out, at 0.5 of the explosion's multiplier of 1.328
-    const strikes = stepKitEffects(effects, 2, {
+    const strikes = stepKitEffects(kitEffectState, 2, {
       activeCombatant: combatant,
       body: body.position,
       party: createParty([MONA_CHARACTER_ID]),

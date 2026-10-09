@@ -136,8 +136,8 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Arrows are a summon's hits, landing from where Amber cast it
   elementalBurst: {
     hits: [],
-    onStart: ({ body, combatant, effects }) =>
-      addKitEffect(effects, {
+    onStart: ({ body, combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant: getFieryRainCombatant(combatant),
         elapsedSeconds: 0,
@@ -152,7 +152,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Gauge of its own, the bunny's explosion carries the 2U of Pyro
   elementalSkill: {
     hits: [],
-    onStart: ({ body, combatant, effects }) => {
+    onStart: ({ body, combatant, kitEffectState }) => {
       const explosion: KitHit = {
         element: Element.Pyro,
         gauge: 2,
@@ -173,7 +173,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         kind: "taunt",
         secondsRemaining: (BUNNY_LANDING_FRAMES + BUNNY_SECONDS) / 60,
       };
-      addKitEffect(effects, taunt);
+      addKitEffect(kitEffectState, taunt);
     },
     seconds: SKILL_SECONDS,
     targetingArea: SKILL_TARGETING_AREA,

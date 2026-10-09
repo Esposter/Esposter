@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -46,13 +46,13 @@ describe("kaeya kit", () => {
     const combatant = createKaeyaCombatant();
     const party = createParty([KAEYA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
-    const effects: KitEffect[] = [];
-    KAEYA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, effects });
+    const kitEffectState: KitEffectState = { effects: [] };
+    KAEYA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
 
-    const icicles = stepKitEffects(effects, 9, { activeCombatant: combatant, body, party });
+    const icicles = stepKitEffects(kitEffectState, 9, { activeCombatant: combatant, body, party });
     expect(icicles).toHaveLength(13);
     expect(icicles.every(({ hit }) => hit.talentMultiplier === 0.776 && hit.element === "Ice")).toBe(true);
-    expect(effects).toStrictEqual([]);
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("ascension 1 heals Kaeya by 15% of his ATK for each enemy Frostgnaw strikes, and gives none before it", () => {

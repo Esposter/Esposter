@@ -2,7 +2,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -49,7 +49,7 @@ import {
   STAMINA_MAX,
 } from "genshin-engine";
 import { PerspectiveCamera, Vector3 } from "three";
-import { onUnmounted } from "vue";
+import { onBeforeUnmount } from "vue";
 
 interface Props {
   // What the character is drawn on, which the scene places in the floating origin's group: it is stood at the body's
@@ -57,9 +57,6 @@ interface Props {
   body: Object3D;
   // Each character of the deployed team's combat, by its id, which the kit on the field is priced and struck by
   characterIdCombatantMap: Map<number, Combatant>;
-  // The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
-  // Drown or a jump
-  effects: KitEffect[];
   // The enemies in the world by their spawn key, which the kit on the field strikes and aims at
   enemyMap: Map<string, Enemy>;
   // The frame's input, which the world screen reads once a frame before the body moves
@@ -69,6 +66,9 @@ interface Props {
   // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round the
   // Body, which neither steps nor moves
   isOrbiting?: true;
+  // The effects on the deployed team, which outlive a switch as the field's buffs and infusions do, and are cleared on a
+  // Drown or a jump, which the screen answers by clearing them
+  kitEffectState: KitEffectState;
   landmarkCollider: LandmarkCollider;
   // How the character the body carries moves, its body type's, which a party switch changes
   locomotion: Locomotion;
@@ -81,18 +81,18 @@ interface Props {
 const {
   body,
   characterIdCombatantMap,
-  effects,
   enemyMap,
   inputState,
   isHeld,
   isOrbiting,
+  kitEffectState,
   landmarkCollider,
   locomotion,
   origin,
   party,
 } = defineProps<Props>();
 // The party went down through a drown, which the world screen answers with the respawn
-const emit = defineEmits<{ drown: [] }>();
+const emit = defineEmits<{ clearKitEffects: []; drown: [] }>();
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating
@@ -138,7 +138,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   stepPartyCooldowns(party, FIXED_STEP_SECONDS);
   if (phase.state === LocomotionState.Drown && previousState !== LocomotionState.Drown) {
     drownParty(party);
-    effects.length = 0;
+    emit("clearKitEffects");
     emit("drown");
   }
 
@@ -160,12 +160,12 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     locomotionState: phase.state,
   };
   const kitBody: KitBody = { facing: characterController.facing, height, position };
-  const summonStrikes = stepKitEffects(effects, FIXED_STEP_SECONDS, {
+  const summonStrikes = stepKitEffects(kitEffectState, FIXED_STEP_SECONDS, {
     activeCombatant: combatant,
     body: kitBody.position,
     party,
   });
-  const infusion = getKitInfusion(effects, characterId);
+  const infusion = getKitInfusion(kitEffectState.effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
     kitState,
@@ -175,27 +175,25 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     characterController.stamina,
     FIXED_STEP_SECONDS,
     landedHits,
-    { body: kitBody, combatant, effects },
+    { body: kitBody, combatant, kitEffectState },
   );
   if (infusion !== undefined) infuseKitHits(combatant.kit, infusion, landedHits, landedStart);
-  if (action) {
-    // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
-    // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
-    if (action.isAimed && inputState.heldActions.has(InputAction.Aim)) {
-      characterController.face(followCamera?.yaw ?? 0);
+  // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
+  // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
+  if (action?.isAimed && inputState.heldActions.has(InputAction.Aim)) {
+    characterController.face(followCamera?.yaw ?? 0);
+    kitBody.facing = characterController.facing;
+  } else if (action) {
+    const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
+    if (target) {
+      const dx = target.position.x - position.x;
+      const dz = target.position.z - position.z;
+      characterController.face(Math.atan2(-dx, -dz));
       kitBody.facing = characterController.facing;
-    } else {
-      const target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
-      if (target) {
-        const dx = target.position.x - position.x;
-        const dz = target.position.z - position.z;
-        characterController.face(Math.atan2(-dx, -dz));
-        kitBody.facing = characterController.facing;
-      }
     }
   }
 
-  action?.onStart?.({ body: kitBody, combatant, effects });
+  action?.onStart?.({ body: kitBody, combatant, kitEffectState });
   // The summons' hits land from their own bodies, priced by the combatants that cast them, and the step's own hits from
   // The turned body and the character on the field
   const strikes: KitStrike[] = [
@@ -204,7 +202,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   ];
   landedHits.length = 0;
   for (const { body: strikeBody, combatant: strikeCombatant, hit } of strikes) {
-    const pricedCombatant = getBuffedCombatant(strikeCombatant, effects);
+    const pricedCombatant = getBuffedCombatant(strikeCombatant, kitEffectState.effects);
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
     for (const enemy of enemyMap.values()) {
@@ -217,7 +215,14 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
       healKitStriker(party, pricedCombatant, hit);
       if (!isPartyHealed)
-        isPartyHealed = healKitParty(party, characterIdCombatantMap, effects, pricedCombatant, hit, kitRandom);
+        isPartyHealed = healKitParty(
+          party,
+          characterIdCombatantMap,
+          kitEffectState.effects,
+          pricedCombatant,
+          hit,
+          kitRandom,
+        );
     }
   }
 });
@@ -249,8 +254,8 @@ onBeforeRender(({ delta }) => {
   followCamera?.follow(pivot, origin, delta);
 }, CAMERA_FRAME_PRIORITY);
 // The effects are the screen's, and they stop with the character that steps them, so none outlives its unmount
-onUnmounted(() => {
-  effects.length = 0;
+onBeforeUnmount(() => {
+  emit("clearKitEffects");
 });
 // A click on the canvas takes the pointer, which the look reads while it is locked
 useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
@@ -261,7 +266,7 @@ defineExpose({
   place: ({ point, yaw }: WorldJumpPose) => {
     characterController.place(placedPosition.set(point.x, getWorldHeight(point.x, point.z), point.z), yaw);
     kitState = createKitState();
-    effects.length = 0;
+    emit("clearKitEffects");
     followCamera?.reset(yaw);
   },
   stamina: characterController.stamina,

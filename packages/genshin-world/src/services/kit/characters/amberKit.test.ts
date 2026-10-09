@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -43,14 +43,14 @@ describe("amber kit", () => {
     const combatant = createAmberCombatant();
     const party = createParty([AMBER_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
-    const effects: KitEffect[] = [];
-    AMBER_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, effects });
+    const kitEffectState: KitEffectState = { effects: [] };
+    AMBER_KIT.elementalSkill.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
 
     // Landing and the eight seconds after it leave the bunny standing until its timer runs out
-    expect(stepKitEffects(effects, 8, { activeCombatant: combatant, body, party })).toStrictEqual([]);
-    const explosions = stepKitEffects(effects, 1, { activeCombatant: combatant, body, party });
+    expect(stepKitEffects(kitEffectState, 8, { activeCombatant: combatant, body, party })).toStrictEqual([]);
+    const explosions = stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
     expect(explosions.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.232]);
-    expect(effects).toStrictEqual([]);
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("its Fiery Rain lands its eighteen arrows by the last wave, and nothing after", () => {
@@ -58,12 +58,12 @@ describe("amber kit", () => {
     const combatant = createAmberCombatant();
     const party = createParty([AMBER_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
-    const effects: KitEffect[] = [];
-    AMBER_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, effects });
+    const kitEffectState: KitEffectState = { effects: [] };
+    AMBER_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
 
-    const arrows = stepKitEffects(effects, 4, { activeCombatant: combatant, body, party });
+    const arrows = stepKitEffects(kitEffectState, 4, { activeCombatant: combatant, body, party });
     expect(arrows).toHaveLength(18);
     expect(arrows.every(({ hit }) => hit.talentMultiplier === 0.2808)).toBe(true);
-    expect(effects).toStrictEqual([]);
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 });

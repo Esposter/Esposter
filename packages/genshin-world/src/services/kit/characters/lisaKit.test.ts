@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -49,13 +49,13 @@ describe("lisa kit", () => {
     const combatant = createLisaCombatant();
     const party = createParty([LISA_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
-    const effects: KitEffect[] = [];
-    LISA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, effects });
+    const kitEffectState: KitEffectState = { effects: [] };
+    LISA_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
 
-    const discharges = stepKitEffects(effects, 17, { activeCombatant: combatant, body, party });
+    const discharges = stepKitEffects(kitEffectState, 17, { activeCombatant: combatant, body, party });
     expect(discharges).toHaveLength(30);
     expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
-    expect(effects).toStrictEqual([]);
+    expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("stacks Conductive on each enemy its press strikes, up to three", () => {

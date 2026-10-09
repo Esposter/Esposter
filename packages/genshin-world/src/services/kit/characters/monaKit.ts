@@ -194,8 +194,8 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Is cast where Mona stands, and its hits are the summon's
   elementalSkill: {
     hits: [],
-    onStart: ({ body, combatant, effects }) =>
-      addKitEffect(effects, {
+    onStart: ({ body, combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
         elapsedSeconds: 0,
@@ -266,10 +266,10 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       67 / 60,
     ),
   ],
-  onSprint: ({ body, combatant, effects }: KitStepContext, kitState: KitState): void => {
+  onSprint: ({ body, combatant, kitEffectState }: KitStepContext, kitState: KitState): void => {
     if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
     kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
-    addKitEffect(effects, {
+    addKitEffect(kitEffectState, {
       body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
       combatant,
       elapsedSeconds: 0,

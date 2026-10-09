@@ -32,9 +32,9 @@ const PRESS_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2
 // Measured: gcsim v2.47.2 (MIT) lisa/skill.go, the hold's strike on each enemy within 10 metres, a circle of radius 0.2 on
 // Each one, so it reaches 10.2 metres round the body
 const HOLD_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 10.2 });
-// Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3, and
-// gcsim gives the stacks no duration. Lisa's charged attacks apply one too from her A1 (lisa/asc.go). The hold consumes
-// The stacks. The wiki's hold holds for 1.9 seconds to charge in full, which the hold's minimum is taken from
+// Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3,
+// And the stacks have no duration in gcsim. Lisa's charged attacks apply one too from her A1 (lisa/asc.go), and the hold
+// Consumes the stacks. The wiki's hold takes 1.9 seconds to charge in full, which the hold's minimum is taken from
 const CONDUCTIVE_STATUS_ID = "conductive";
 const CONDUCTIVE_STACK: EnemyStatus = {
   damageTakenBonus: 0,
@@ -96,9 +96,9 @@ const createDischarges = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
 // Lisa's kit at talent level 1: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and hold,
 // And Lightning Rose. Its multipliers are read from its proud skill groups. A4's effect is not built
 // Violet Arc's hold: a strike on each enemy within 10 metres, whose multiplier and poise are set by the enemy's Conductive
-// Stacks, from none to three, and which consumes them. Its 2U of Electro and the wiki's stacked poise, 150 to 300. Measured:
-// gcsim v2.47.2 (MIT) lisa/skill.go, the hold's strike at 117 frames and its animation of 143 frames, and the wiki's
-// Violet Arc page for the multipliers at group indices 0 to 3, 320% to 487%, and the poise
+// Stacks, from none to three, and which consumes them. Its 2U of Electro and the wiki's stacked poise, 150 to 300.
+// Measured: gcsim v2.47.2 (MIT) lisa/skill.go, the hold's strike at 117 frames and its animation of 143 frames. The
+// Wiki's Violet Arc page gives the multipliers at group indices 0 to 3, 320% to 487%, and the poise
 const createVioletArcHold = (talentMultiplierMap: TalentMultiplierMap): KitAction => {
   const talentMultipliers = [0, 1, 2, 3].map((index) =>
     getTalentMultiplier(talentMultiplierMap, LISA_SKILL_GROUP_ID, TALENT_START_LEVEL, index),
@@ -146,8 +146,8 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Damage, as the wiki gives it 0U and poise alone, and the rose's discharges are a summon's hits, landing from her body
   elementalBurst: {
     hits: [{ hitArea: LIGHTNING_ROSE_HIT_AREA, hitmarkSeconds: 56 / 60, poiseDamage: 10, talentMultiplier: 0 }],
-    onStart: ({ body, combatant, effects }) =>
-      addKitEffect(effects, {
+    onStart: ({ body, combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
         elapsedSeconds: 0,
