@@ -14,6 +14,11 @@ The Profile tab and the book reader already fetch their records from the publish
 - **The talents screen reads one character's labels** from the published `talentLabels` index, as the combat reads its multipliers, so it fetches one record and not the collection.
 - **Synchronous reads become awaited reads.** The Windrise wildlife layer is a static import. It becomes a value loaded at mount and handed down, so no screen waits on a module it did not need.
 - **The develop deployment reads the dev account.** The owner admitted `https://esposter-develop.up.railway.app` on `devstesposter001`'s Blob CORS (2026-10-09), beside `http://localhost:3000` and with its methods, so a develop World mount reads its records from the dev account rather than from production's.
+- **A base ground keeps its residual's fade and clearings.** The Windrise base reads through the engine's terrain residual, which carries the fade and its clearings, so the world's height draws the residual the fit wrote, and the published base equals the committed file.
+- **A base ground's features are plateaus.** The ground fits draw plateau features only, so the schema takes the plateau schema rather than the engine's union of the three kinds.
+- **A record keyed by an id refuses duplicates.** Plant names and wildlife place ids are unique in the records, so their arrays take `createUniqueArraySchema`. A residual's clearings repeat in the record, so theirs stay a plain array.
+- **A statue section is the engine's `StatueSection`.** Its centre, height and radii are not a lathe section's, so no lathe schema is reused.
+- **A surface part's palette is not read.** The surfaces' parts carry a palette no reader uses, and its schema drops it.
 
 ## Datasets
 
