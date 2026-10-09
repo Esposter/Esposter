@@ -1,3 +1,7 @@
+import type {
+  MemberPermissionOverride,
+  MemberPermissionOverrideEntry,
+} from "#shared/models/db/role/MemberPermissionOverride";
 import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
@@ -6,12 +10,12 @@ import { inRoom } from "#server/services/db/inRoom";
 import { roleEventEmitter } from "#server/services/role/events/roleEventEmitter";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertCanGrantPermissions } from "#server/services/room/rbac/assertCanGrantPermissions";
-import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { assertCanManageMemberRole } from "#server/services/room/rbac/assertCanManageMemberRole";
+import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
-import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
 import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { readRoleWithAuthority } from "#server/services/room/rbac/readRoleWithAuthority";
+import { setMemberPermissionOverride } from "#server/services/room/rbac/setMemberPermissionOverride";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -24,18 +28,19 @@ import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { deleteMemberPermissionOverrideInputSchema } from "#shared/models/db/role/DeleteMemberPermissionOverrideInput";
 import { deleteRoleInputSchema } from "#shared/models/db/role/DeleteRoleInput";
+import { readMemberPermissionOverridesInputSchema } from "#shared/models/db/role/ReadMemberPermissionOverridesInput";
 import { readMemberRolesInputSchema } from "#shared/models/db/role/ReadMemberRolesInput";
 import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermissionsInput";
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
-import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
+import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { getPermissions } from "@esposter/db";
 import {
   DatabaseEntityType,
-  RoomPermission,
   roomMemberPermissionsInMessage,
+  RoomPermission,
   roomRolesInMessage,
   usersToRoomRolesInMessage,
   UserToRoomRoleInMessageRelations,
@@ -113,6 +118,10 @@ export const roleRouter = router({
     await ctx.db
       .delete(roomMemberPermissionsInMessage)
       .where(and(eq(roomMemberPermissionsInMessage.roomId, roomId), eq(roomMemberPermissionsInMessage.userId, userId)));
+    roleEventEmitter.emit("updateMemberPermissionOverride", [
+      { allow: 0n, deny: 0n, roomId, userId },
+      getDevice(ctx.getSessionPayload),
+    ]);
   }),
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
@@ -147,7 +156,22 @@ export const roleRouter = router({
   onCreateRole: getRoomEventSubscription(roleEventEmitter, "createRole", ({ roomId }) => roomId),
   onDeleteRole: getRoomEventSubscription(roleEventEmitter, "deleteRole", ({ roomId }) => roomId),
   onRevokeRole: getRoomEventSubscription(roleEventEmitter, "revokeRole", ({ roomId }) => roomId),
+  onUpdateMemberPermissionOverride: getRoomEventSubscription(
+    roleEventEmitter,
+    "updateMemberPermissionOverride",
+    ({ roomId }) => roomId,
+  ),
   onUpdateRole: getRoomEventSubscription(roleEventEmitter, "updateRole", ({ roomId }) => roomId),
+  // Visible to the room as readMemberRoles is: a role assignment is already public to every member, and an override
+  // Is the same kind of fact about the same member
+  readMemberPermissionOverrides: getMemberProcedure(readMemberPermissionOverridesInputSchema, "roomId").query<
+    MemberPermissionOverrideEntry[]
+  >(({ ctx, input: { roomId } }) =>
+    ctx.db.query.roomMemberPermissionsInMessage.findMany({
+      columns: { allow: true, deny: true, userId: true },
+      where: { roomId: { eq: roomId } },
+    }),
+  ),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<
     UserToRoomRoleInMessageWithRelations[]
   >(({ ctx, input: { roomId, userIds } }) =>
@@ -240,13 +264,17 @@ export const roleRouter = router({
     RoomPermission.ManageRoles,
     upsertMemberPermissionOverrideInputSchema,
     "roomId",
-  ).mutation<void>(async ({ ctx, input: { allow, deny, inherit, roomId, userId } }) => {
+  ).mutation<MemberPermissionOverride>(async ({ ctx, input: { allow, deny, inherit, roomId, userId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
     // A bit set in both would be a state nothing designed, and the Administrator bit is answered from the roles
     // Alone, so neither may be written as an override
     const overriddenPermissions = allow | deny;
     if (allow & deny || overriddenPermissions & RoomPermission.Administrator)
-      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.UserToRoom, JSON.stringify({ allow, deny }));
+      throw getInvalidOperationError(
+        Operation.Update,
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify({ allow: allow.toString(), deny: deny.toString() }),
+      );
 
     const [{ isOwner }] = await Promise.all([
       getRoomMemberAuthority(ctx.db, actorUserId, roomId),
@@ -262,6 +290,11 @@ export const roleRouter = router({
     ]);
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, allow, isOwner);
-    await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
+    const override = await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
+    roleEventEmitter.emit("updateMemberPermissionOverride", [
+      { ...override, roomId, userId },
+      getDevice(ctx.getSessionPayload),
+    ]);
+    return override;
   }),
 });

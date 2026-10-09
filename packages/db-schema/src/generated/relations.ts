@@ -11,6 +11,7 @@ import { invitesInMessageRelation } from "#src/relations/message/invitesInMessag
 import { roomCategoriesInMessageRelation } from "#src/relations/message/roomCategoriesInMessageRelation";
 import { roomEmojisInMessageRelation } from "#src/relations/message/roomEmojisInMessageRelation";
 import { roomFiltersInMessageRelation } from "#src/relations/message/roomFiltersInMessageRelation";
+import { roomMemberPermissionsInMessageRelation } from "#src/relations/message/roomMemberPermissionsInMessageRelation";
 import { roomRolesInMessageRelation } from "#src/relations/message/roomRolesInMessageRelation";
 import { roomsInMessageRelation } from "#src/relations/message/roomsInMessageRelation";
 import { scheduledMessageJobsInMessageRelation } from "#src/relations/message/scheduledMessageJobsInMessageRelation";
@@ -60,6 +61,7 @@ export const relations = {
   ...roomCategoriesInMessageRelation,
   ...roomEmojisInMessageRelation,
   ...roomFiltersInMessageRelation,
+  ...roomMemberPermissionsInMessageRelation,
   ...roomRolesInMessageRelation,
   ...roomsInMessageRelation,
   ...scheduledMessageJobsInMessageRelation,
