@@ -126,6 +126,32 @@ const patchOozCopies = (oozDirectory: string): void => {
   writeFileSync(path, patched);
 };
 
+const replaceCounted = (source: string, search: string, replacement: string, expected: number): string => {
+  const occurrences = source.split(search).length - 1;
+  if (occurrences !== expected)
+    throw new InvalidOperationError(
+      Operation.Update,
+      "kraken.cpp",
+      `has ${occurrences} of ${JSON.stringify(search)} where ${expected} were expected at this commit`,
+    );
+  return source.replaceAll(search, replacement);
+};
+
+// The Leviathan decoder keeps each match's offset as a size_t, so its copy source, dst + offset, wraps for every backward match.
+// That overflow is undefined: the optimizer may move a copy's load above the store of the copy before it, reading a stale byte.
+// Windows' build never reads one, so the offset is signed.
+const patchOozSignedOffsets = (oozDirectory: string): void => {
+  const path = join(oozDirectory, "kraken.cpp");
+  const source = readFileSync(path, "utf8");
+  const patched = replaceCounted(
+    replaceCounted(source, "size_t last_offset", "ptrdiff_t last_offset", 12),
+    "  size_t offset = -8;\n",
+    "  ptrdiff_t offset = -8;\n",
+    1,
+  );
+  writeFileSync(path, patched);
+};
+
 const buildCmakeLibrary = (source: string, build: string, options: string[], output: string): string => {
   run("cmake", ["-S", source, "-B", build, "-DCMAKE_BUILD_TYPE=Release", ...options]);
   run("cmake", ["--build", build, "--config", "Release", "-j", String(availableParallelism())]);
@@ -257,6 +283,7 @@ export const buildAnimeStudio = async (directory: string, skipParity = false): P
   );
   retargetProjects(animeStudio);
   patchOozCopies(join(animeStudio, "AnimeStudio.Ooz"));
+  patchOozSignedOffsets(join(animeStudio, "AnimeStudio.Ooz"));
 
   const oozLibrary = buildCmakeLibrary(
     join(animeStudio, "AnimeStudio.Ooz"),
