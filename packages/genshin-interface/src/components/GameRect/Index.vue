@@ -1,27 +1,33 @@
 <script setup lang="ts">
+import type { CanvasRect } from "#src/models/CanvasRect";
 import type { FittedInterfaceRect } from "#src/models/FittedInterfaceRect";
 
-import { GameRectKey } from "#src/services/GameRectKey";
+import { GAME_CANVAS_RECT } from "#src/services/constants";
 import { toCanvasRect } from "#src/services/toCanvasRect";
 import { toCanvasRectStyle } from "#src/services/toCanvasRectStyle";
-import { computed, inject, provide } from "vue";
+import { computed } from "vue";
 
 interface Props {
+  // The rect of the `GameRect` this piece is drawn in, which the game hangs it under; the canvas's when it is none
+  parent?: CanvasRect;
   // The piece's RectTransform as the screen's fit wrote it
   rect: FittedInterfaceRect;
 }
 
-const { rect } = defineProps<Props>();
-// A piece of the game's interface tree, placed by its RectTransform: inside the nearest `GameRect` it is drawn in, as
-// The game hangs it under its parent, or on the canvas when it is drawn in none, so a screen's markup nests as the
-// Game's tree does and a parent's place reaches everything in it
-// oxlint-disable-next-line no-restricted-globals -- a piece's place is its parent piece's, whatever lies between
-const isOnCanvas = !inject(GameRectKey, false);
-// oxlint-disable-next-line no-restricted-globals -- every piece under this one is placed inside it
-provide(GameRectKey, true);
-const style = computed(() => ({ ...toCanvasRectStyle(toCanvasRect(rect), isOnCanvas), scale: rect.scale?.join(" ") }));
+const { parent = GAME_CANVAS_RECT, rect } = defineProps<Props>();
+const canvasRect = computed(() => toCanvasRect(rect));
+// A piece of the game's interface tree, placed by its RectTransform inside its parent's box, or on the canvas when its
+// Parent is the canvas's own rect, so a screen's markup nests as the game's tree does. A nested piece takes its parent's
+// Resolved rect through the default slot
+const style = computed(() => ({
+  ...toCanvasRectStyle(canvasRect.value, parent === GAME_CANVAS_RECT),
+  scale: rect.scale?.join(" "),
+}));
+defineSlots<{ default: (props: { rect: CanvasRect }) => unknown }>();
 </script>
 
 <template>
-  <div :style><slot /></div>
+  <div :style>
+    <slot :rect="canvasRect" />
+  </div>
 </template>

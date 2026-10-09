@@ -113,28 +113,37 @@ watch(
   <GameScreen class="login-interface">
     <!-- The page as the game's tree under `LoginMainPage` nests it: each piece a `GameRect` placed by its
          RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
-    <GameRect :rect="interfaceRects.GrpLogin">
+    <GameRect #default="{ rect: loginRect }" :rect="interfaceRects.GrpLogin">
       <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
       <div ref="page" class="page">
-        <GameRect :rect="interfaceRects['GrpLogin/BgBtn']">
+        <GameRect #default="{ rect: backgroundRect }" :parent="loginRect" :rect="interfaceRects['GrpLogin/BgBtn']">
           <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its
                Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's
                Edge -->
           <GameRect
             class="white-screen"
+            :parent="backgroundRect"
             :rect="interfaceRects['GrpLogin/BgBtn/ImgWhiteScreen  ']"
             :data-clip-target="LoginInterfaceClipTarget.WhiteScreen"
           />
         </GameRect>
         <LoadingSpinner v-if="isSpinnerShown" class="spinner" :label="gameText[GameTextKey.Loading]" />
-        <GameRect :rect="interfaceRects['GrpLogin/Center']" :data-clip-target="LoginInterfaceClipTarget.Center">
+        <GameRect
+          #default="{ rect: centerRect }"
+          :parent="loginRect"
+          :rect="interfaceRects['GrpLogin/Center']"
+          :data-clip-target="LoginInterfaceClipTarget.Center"
+        >
           <GameRect
+            #default="{ rect: switchServerRect }"
+            :parent="centerRect"
             :rect="interfaceRects['GrpLogin/Center/SwitchServer']"
             :data-clip-target="LoginInterfaceClipTarget.Server"
           >
             <!-- The door's prompt, a prefab the page loads at run time into this container -->
             <GameRect
               v-if="isAtDoor && !isDoorWaiting"
+              :parent="switchServerRect"
               :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnPressStart']"
             >
               <PromptBand class="prompt">{{ gameText[GameTextKey.LoginBegin] }}</PromptBand>
@@ -142,6 +151,7 @@ watch(
             <GameRect
               v-if="stage === LoginStage.Title"
               class="server"
+              :parent="switchServerRect"
               :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnSwitchServer']"
             >
               <ServerBar :name="LOGIN_SERVER_NAME" />
@@ -150,6 +160,7 @@ watch(
           <!-- The title is the game's start button, and stays through its fade out after the click -->
           <GameRect
             v-if="isStartShown"
+            :parent="centerRect"
             :rect="interfaceRects['GrpLogin/Center/BtnStart']"
             :data-clip-target="LoginInterfaceClipTarget.Start"
           >
@@ -162,6 +173,7 @@ watch(
                Stage -->
           <GameRect
             v-if="client === GameClient.Mainland"
+            :parent="centerRect"
             :rect="interfaceRects['GrpLogin/Center/BtnCADPA']"
             :data-clip-target="LoginInterfaceClipTarget.RatingBadge"
           >
@@ -184,28 +196,34 @@ watch(
              The loading row, the account and the build string, and both button columns -->
         <GameRect
           v-if="isFooterShown"
+          #default="{ rect: bottomRect }"
+          :parent="loginRect"
           :rect="interfaceRects['GrpLogin/Bottom']"
           :data-clip-target="LoginInterfaceClipTarget.Bottom"
         >
           <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
-          <GameRect :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount']">
+          <GameRect
+            #default="{ rect: currentAccountRect }"
+            :parent="bottomRect"
+            :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount']"
+          >
             <p v-if="stage === LoginStage.Title" class="user">
               <!-- The space after the label is its own, since the template drops one between two lines -->
               <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
               <span class="user-name">{{ playerName }}</span>
             </p>
-            <GameRect :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount/TxtVersion']">
+            <GameRect :parent="currentAccountRect" :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount/TxtVersion']">
               <p class="version">
                 {{ GameClientVersionTextMap[client] }}
               </p>
             </GameRect>
           </GameRect>
-          <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/RightButtons']">
+          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects['GrpLogin/Bottom/RightButtons']">
             <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: isAtDoor }]">
               <RoundButton :icon :label="gameText[InterfaceIconGameTextKeyMap[icon]]" />
             </div>
           </GameRect>
-          <GameRect class="column" :rect="interfaceRects['GrpLogin/Bottom/LeftButtons']">
+          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects['GrpLogin/Bottom/LeftButtons']">
             <div class="slot">
               <RoundButton
                 :icon="InterfaceIcon.Power"

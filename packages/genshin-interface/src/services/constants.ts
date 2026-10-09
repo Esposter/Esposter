@@ -1,3 +1,5 @@
+import type { CanvasRect } from "#src/models/CanvasRect";
+
 // The stars a weapon's ascension phases show, from none to the last one
 export const ASCENSION_PHASE_COUNT = 6;
 // The game's own face first, for a reader who has it installed, since it is a commercial face nothing may ship; then
@@ -17,6 +19,14 @@ export const GAME_CANVAS_UNIT = "min(100cqh / 900, 100cqw / 1600)";
 // By a fixed step rather than by all the spare width. A piece anchored to a side rides on the canvas's side, not
 // The screen's
 export const GAME_CANVAS_INSET = "min(var(--unit) * 71, (100cqw - var(--unit) * 1920) / 2)";
+// The canvas as a rect of its own, the full screen's: a piece whose parent rect is this one is laid on the canvas
+export const GAME_CANVAS_RECT: CanvasRect = {
+  anchorMax: [1, 1],
+  anchorMin: [0, 0],
+  pivot: [0, 0],
+  position: [0, 0],
+  size: [0, 0],
+};
 // The white the game's opening is drawn on, a step under full white: the PC client's screens read 253 on the user's own
 // Recording and on a 2023 one alike, where a phone's and an older build's read 255
 export const GAME_WHITE = "#fdfdfd";
