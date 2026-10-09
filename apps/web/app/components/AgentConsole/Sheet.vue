@@ -55,6 +55,7 @@ const height = computed({
 const panes = useTemplateRef("panes");
 const { width: panesWidth } = useElementSize(panes);
 const paneMaxWidth = computed(() => {
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("8px"), Number() would be NaN
   const gap = panes.value ? Number.parseFloat(window.getComputedStyle(panes.value).columnGap) : 0;
   return Math.max(AGENT_CONSOLE_PANE_MIN_WIDTH, panesWidth.value - gap - AGENT_CONSOLE_PANE_MIN_WIDTH);
 });
