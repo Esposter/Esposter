@@ -11,8 +11,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Diluc's proud skill groups, read at its talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -135,26 +135,25 @@ const createDawnPhoenix = (
   );
   const explosionSeconds = DILUC_BURST_HITMARK_SECONDS + DAWN_EXPLOSION_SECONDS;
   return {
-    body: {
-      facing,
-      height,
-      position: {
-        x: position.x - Math.sin(facing) * DAWN_SPAWN_METRES,
-        z: position.z - Math.cos(facing) * DAWN_SPAWN_METRES,
+    ...createKitSummon(
+      {
+        facing,
+        height,
+        position: {
+          x: position.x - Math.sin(facing) * DAWN_SPAWN_METRES,
+          z: position.z - Math.cos(facing) * DAWN_SPAWN_METRES,
+        },
       },
-    },
-    combatant,
-    elapsedSeconds: 0,
-    hits: [
-      ...tickHits,
-      createDawnPhoenixHit(
-        DAWN_EXPLOSION_HIT_AREA,
-        explosionSeconds,
-        getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
-      ),
-    ],
-    kind: "summon",
-    secondsRemaining: explosionSeconds + SUMMON_LINGER_SECONDS,
+      combatant,
+      [
+        ...tickHits,
+        createDawnPhoenixHit(
+          DAWN_EXPLOSION_HIT_AREA,
+          explosionSeconds,
+          getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
+        ),
+      ],
+    ),
     travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: DILUC_BURST_HITMARK_SECONDS },
   };
 };

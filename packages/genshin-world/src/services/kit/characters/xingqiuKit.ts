@@ -17,6 +17,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -189,13 +190,13 @@ const standRainSwords = (
   if (rainSwords !== undefined && rainSwords.secondsRemaining >= seconds) return;
   if (rainSwords === undefined)
     addKitEffect(kitEffectState, {
-      body: { facing, height, position: { x: position.x, z: position.z } },
-      combatant,
-      elapsedSeconds: 0,
-      hits: createRainSwordsTicks(firstTickSeconds, seconds),
+      ...createKitSummon(
+        { facing, height, position },
+        combatant,
+        createRainSwordsTicks(firstTickSeconds, seconds),
+        seconds,
+      ),
       isFollowing: true,
-      kind: "summon",
-      secondsRemaining: seconds,
     });
   else
     kitEffectState.effects = kitEffectState.effects.map((effect): KitEffect =>
@@ -302,14 +303,15 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         ? HENCE_CALL_THEM_MY_OWN_VERSES_WAVE_SIZES
         : SWORD_RAIN_WAVE_SIZES;
     const swordCount = takeOne(waveSizes, waves.length % waveSizes.length);
-    addKitEffect(kitEffectState, {
-      body: { facing, height, position: { x: position.x, z: position.z } },
-      combatant,
-      elapsedSeconds: 0,
-      hits: Array.from({ length: swordCount }, () => swordHit),
-      kind: "summon",
-      secondsRemaining: Math.max(raincutter.secondsRemaining, swordHit.hitmarkSeconds + 0.1),
-    });
+    addKitEffect(
+      kitEffectState,
+      createKitSummon(
+        { facing, height, position },
+        combatant,
+        Array.from({ length: swordCount }, () => swordHit),
+        Math.max(raincutter.secondsRemaining, swordHit.hitmarkSeconds + 0.1),
+      ),
+    );
     if (swordCount < HENCE_CALL_THEM_MY_OWN_VERSES_SWORD_COUNT) return;
     addKitEffect(kitEffectState, {
       centre: { x: position.x, z: position.z },
@@ -364,13 +366,8 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
             ? RAINBOW_UPON_THE_AZURE_SKY_SECONDS
             : 0);
         const raincutter: KitSummon = {
-          body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: [],
-          kind: "summon",
+          ...createKitSummon(body, combatant, [], seconds + RAINCUTTER_EXTRA_FRAMES / 60),
           onNormalAttackStart: (context) => castSwordRain(raincutter, context),
-          secondsRemaining: seconds + RAINCUTTER_EXTRA_FRAMES / 60,
         };
         addKitEffect(kitEffectState, raincutter);
         standRainSwords(kitEffectState, body, combatant, seconds, RAIN_SWORDS_BURST_FIRST_TICK_FRAMES / 60);
@@ -387,15 +384,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           combatant.constellationCount >= EVILSOOTHER_CONSTELLATION &&
           kitEffectState.effects.some((effect) => checkIsRaincutter(effect, combatant.characterId));
         const hits = isEvilsoothed ? evilsootherRainscreenHits : rainscreenHits;
-        addKitEffect(kitEffectState, {
-          body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits,
-          kind: "summon",
-          // The hits land a tenth of a second inside its seconds, so the step that lands the last still has it
-          secondsRemaining: Math.max(...hits.map(({ hitmarkSeconds }) => hitmarkSeconds)) + 0.1,
-        });
+        addKitEffect(kitEffectState, createKitSummon(body, combatant, hits));
         standRainSwords(kitEffectState, body, combatant, rainSwordsSeconds, RAIN_SWORDS_SKILL_FIRST_TICK_FRAMES / 60);
       },
       seconds: SKILL_FRAMES / 60,

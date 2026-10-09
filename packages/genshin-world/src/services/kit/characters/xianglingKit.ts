@@ -15,6 +15,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Xiangling's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the third
@@ -210,15 +211,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       })),
       onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
         if (index < XIANGLING_STRIKES.length - 1 || combatant.constellationCount < OIL_MEETS_FIRE_CONSTELLATION) return;
-        addKitEffect(kitEffectState, {
-          body: { facing, height, position: { x: position.x, z: position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: [IMPLODE_HIT],
-          kind: "summon",
-          // The summon lives a tenth of a second past its hit, so the step that lands it still has it
-          secondsRemaining: IMPLODE_HIT.hitmarkSeconds + 0.1,
-        });
+        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, [IMPLODE_HIT]));
       },
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -299,13 +292,13 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         const isSlowbake = combatant.constellationCount >= SLOWBAKE_CONSTELLATION;
         const seconds = isSlowbake ? SLOWBAKE_DURATION_MULTIPLIER * pyronadoSeconds : pyronadoSeconds;
         addKitEffect(kitEffectState, {
-          body: { facing, height, position: { x: position.x, z: position.z } },
-          combatant,
-          elapsedSeconds: 0,
-          hits: isSlowbake ? slowbakePyronadoTicks : pyronadoTicks,
+          ...createKitSummon(
+            { facing, height, position },
+            combatant,
+            isSlowbake ? slowbakePyronadoTicks : pyronadoTicks,
+            PYRONADO_START_FRAMES / 60 + seconds,
+          ),
           isFollowing: true,
-          kind: "summon",
-          secondsRemaining: PYRONADO_START_FRAMES / 60 + seconds,
         });
         if (combatant.constellationCount < CONDENSED_PYRONADO_CONSTELLATION) return;
         addKitEffect(kitEffectState, {
@@ -344,14 +337,15 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           x: position.x - Math.sin(facing) * GUOBA_OFFSET,
           z: position.z - Math.cos(facing) * GUOBA_OFFSET,
         };
-        addKitEffect(kitEffectState, {
-          body: { facing, height, position: guobaPosition },
-          combatant,
-          elapsedSeconds: 0,
-          hits: combatant.ascension >= CROSSFIRE_ASCENSION ? crossfireGuobaBreaths : guobaBreaths,
-          kind: "summon",
-          secondsRemaining: GUOBA_FRAMES / 60,
-        });
+        addKitEffect(
+          kitEffectState,
+          createKitSummon(
+            { facing, height, position: guobaPosition },
+            combatant,
+            combatant.ascension >= CROSSFIRE_ASCENSION ? crossfireGuobaBreaths : guobaBreaths,
+            GUOBA_FRAMES / 60,
+          ),
+        );
         if (combatant.ascension < BEWARE_ITS_SUPER_HOT_ASCENSION) return;
         addKitEffect(kitEffectState, createChiliPepper(combatant, { x: guobaPosition.x, z: guobaPosition.z }));
       },
