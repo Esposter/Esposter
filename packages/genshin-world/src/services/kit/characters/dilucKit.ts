@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -153,8 +154,7 @@ const createDawnPhoenix = (
       ),
     ],
     kind: "summon",
-    // The phoenix lives a tenth of a second past its explosion, so the step that lands it still has it on the field
-    secondsRemaining: explosionSeconds + 0.1,
+    secondsRemaining: explosionSeconds + SUMMON_LINGER_SECONDS,
     travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: DILUC_BURST_HITMARK_SECONDS },
   };
 };

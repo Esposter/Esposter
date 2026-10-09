@@ -10,6 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -143,7 +144,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         elapsedSeconds: 0,
         hits: createFieryRainHits(talentMultiplierMap, combatant.ascension),
         kind: "summon",
-        secondsRemaining: Math.max(...FIERY_RAIN_HITMARK_FRAMES) / 60,
+        secondsRemaining: Math.max(...FIERY_RAIN_HITMARK_FRAMES) / 60 + SUMMON_LINGER_SECONDS,
       }),
     seconds: BURST_SECONDS,
     targetingArea: SKILL_TARGETING_AREA,

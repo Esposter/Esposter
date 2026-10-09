@@ -33,3 +33,6 @@ export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
 // The seed of the stream the kit's own rolls read, such as Breastplate's heal. No combat stream is seeded yet, so the
 // Strikes' CRIT Rate roll still reads Math.random
 export const KIT_RANDOM_SEED = 1;
+// A summon lives this many seconds past its last hitmark, so the step that lands its last hit still has it on the field
+// However its clock and its seconds left round
+export const SUMMON_LINGER_SECONDS = 0.1;
