@@ -48,9 +48,12 @@ export const CI_FAILURE_CONCLUSION = "failure";
 export const CI_SUCCESS_CONCLUSION = "success";
 
 export const CI_COMPLETED_STATUS = "completed";
-// How many of a workflow's newest runs are read for the queue's newest verdict (`readQueueCheck`). Every branch's runs
-// Share the list, and each bump's branch reruns its own on every move of `main`, so the queue's are a small share of it
-// And a hundred reach back a couple of hours
+// The fields every read of a workflow run asks `gh run list` for (`MainCheck`)
+export const CHECK_RUN_FIELDS =
+  "conclusion,createdAt,databaseId,headBranch,headSha,status,updatedAt,url,workflowDatabaseId";
+// How many of one branch's newest runs of a workflow are read for its newest verdict (`readQueueCheck`). The branch
+// Narrows the list on GitHub's side, and the only runs passed over are the pending ones a newer push superseded, which
+// Come a handful at a time
 export const QUEUE_CHECK_RUN_LIST_LIMIT = 100;
 // How much of each failing job's log the repairer is handed: the summary a check prints sits at its end, and a
 // Job's whole log is every test it ran

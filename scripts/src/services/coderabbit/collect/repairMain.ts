@@ -4,110 +4,44 @@ import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
 import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { assertCycleBudget } from "#src/services/coderabbit/collect/assertCycleBudget";
-import { checkIsTransitGap } from "#src/services/coderabbit/collect/checkIsTransitGap";
 import {
-  CI_FAILURE_CONCLUSION,
-  EXPRESS_TRAILER,
   MAIN_BRANCH,
-  QUEUE_BRANCH,
   REPAIR_ATTEMPT_TIMEOUT_MS,
-  REPAIR_EXHAUSTED_MARKER,
-  REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_TIMEOUT_MS,
   REPAIR_SESSION_TIMEOUT_MS,
-  REPAIR_SIGNATURE_SPAN_MS,
   REPAIRS_TRAILER,
-  RETRIGGER_BUFFER_MS,
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
-import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
-import { getFailureSignature } from "#src/services/coderabbit/collect/getFailureSignature";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
-import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
-import { openCollectorIssue } from "#src/services/coderabbit/collect/openCollectorIssue";
-import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFailedLog } from "#src/services/coderabbit/collect/readFailedLog";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { readRedMainCheck } from "#src/services/coderabbit/collect/readRedMainCheck";
-import { readRunJobs } from "#src/services/coderabbit/collect/readRunJobs";
-import { readSignatureAttempts } from "#src/services/coderabbit/collect/readSignatureAttempts";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { repairMechanically } from "#src/services/coderabbit/collect/repairMechanically";
 import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
+import { settleRedChecks } from "#src/services/coderabbit/collect/settleRedChecks";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { takeOne } from "@esposter/shared";
 
 // A red `main` is the collector's: the release merges on the review alone, so what CI held — a lint rule a bump
 // Enabled, a size snapshot a build moved, a claimed commit the express lane cut unverified — lands on `main`
 // Unread and stays until something answers it. The drain's session is pointed at CI's own verdict on the head and
-// Commits the repair, which the repair step verifies with every check and pushes as a cut of its own — unless the
-// Queue already passes a job `main` failed, a transit gap its windows heal, which spends nothing here
-// (`checkIsTransitGap`). Bounded per failure signature (`getFailureSignature`): the same jobs of the same workflow are
-// The same red on whichever head carries them, so a window merged over a red head starts no fresh count, and every
-// Attempt at it — failed or pushed — is one marker on the head it was made at, counted across the repository's newest
-// Commit comments within a span (`REPAIR_SIGNATURE_SPAN_MS`) and against this collector's own source. Past the cap the
-// Signature gets one issue and the repairer stops on it, and nothing else waits: the walk ran before it. The count
-// Drops under the cap as its oldest attempts age out of the span, with no event to say so, so the run wakes itself
-// Then. Each part of an attempt runs on a clock of its own — the install and the regenerators, the session, each
-// Verify — so one part running long never cuts another short, and a clock that runs out is a failed attempt like any
-// Other.
-export const repairMain = async ({
-  collectorSha,
-  cwd,
-  isDryRun,
-  mainSha,
-  viewerLogin,
-}: RepairInput): Promise<RepairResult> => {
-  const check = readRedMainCheck(mainSha, cwd);
-  if (!check) return {};
+// Commits the repair, which the repair step verifies with every check and pushes as a cut of its own — for the first
+// Red the queue does not heal and whose signature is under its cap, every red workflow judged on its own
+// (`settleRedChecks`). The walk ran before it, so nothing else waits on it. Each part of an attempt runs on a clock of
+// Its own — the install and the regenerators, the session, each verify — so one part running long never cuts another
+// Short, and a clock that runs out is a failed attempt like any other.
+export const repairMain = async (repairInput: RepairInput): Promise<RepairResult> => {
+  const { collectorSha, cwd, isDryRun, mainSha } = repairInput;
+  const red = settleRedChecks(repairInput);
+  if (red.check === undefined) return { retriggerDelaySeconds: red.retriggerDelaySeconds };
 
-  const { jobs, workflowName } = readRunJobs(check.databaseId);
-  // The jobs CI skipped behind a failed one are no part of the red, since they name no red of their own
-  const failedJobNames = jobs.filter(({ conclusion }) => conclusion === CI_FAILURE_CONCLUSION).map(({ name }) => name);
-  if (checkIsTransitGap({ check, failedJobNames, isDryRun, mainSha, viewerLogin })) return {};
-
-  const signature = getFailureSignature(workflowName, failedJobNames);
-  const { attemptedAtMs, attempts, recordAttempt, recordFailure } = getAttempts({
-    collectorSha,
-    comments: readSignatureAttempts(),
-    key: signature,
-    marker: REPAIR_FAILED_MARKER,
-    post: (body) => {
-      postCommitComment(mainSha, body);
-    },
-    viewerLogin,
-  });
-  if (attempts >= SESSION_ATTEMPT_CAP) {
-    console.info(`${MAIN_BRANCH} is red on ${signature.text} past ${attempts} repairs — its issue carries it`);
-    const spanHours = Temporal.Duration.from({ milliseconds: REPAIR_SIGNATURE_SPAN_MS }).total("hours");
-    openCollectorIssue({
-      body: [
-        `\`${MAIN_BRANCH}\` is red on ${check.url}, failing ${signature.text}.`,
-        "",
-        `The repairer has made ${attempts} attempts at this failure signature within ${spanHours} hours, so it repairs this signature no further. Its attempts resume once the oldest of them ages out of that span, or once the collector's own source changes. Nothing waits on it: windows go on merging and opening.`,
-        "",
-        `To finish: commit a repair on \`${QUEUE_BRANCH}\` that turns these jobs green, carrying the \`${EXPRESS_TRAILER}\` trailer so the express lane cuts it to \`${MAIN_BRANCH}\` unread, and close this issue once \`${MAIN_BRANCH}\` is green.`,
-      ].join("\n"),
-      isDryRun,
-      marker: getMarker(REPAIR_EXHAUSTED_MARKER, signature, [collectorSha]),
-      title: `Red ${MAIN_BRANCH} past its repairs: ${signature.text}`,
-      viewerLogin,
-    });
-    return {
-      retriggerDelaySeconds: getRetriggerDelaySeconds(
-        takeOne(attemptedAtMs, attempts - SESSION_ATTEMPT_CAP) +
-          REPAIR_SIGNATURE_SPAN_MS +
-          RETRIGGER_BUFFER_MS -
-          Date.now(),
-      ),
-    };
-  }
-
+  const {
+    attempts: { attempts, recordAttempt, recordFailure },
+    check,
+  } = red;
   console.info(
     `${MAIN_BRANCH} is red on ${check.url} — repairing it (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
   );
