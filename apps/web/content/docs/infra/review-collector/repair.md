@@ -15,13 +15,13 @@ What they do not touch is what genuinely has to be read — which substitution a
 flowchart TD
   E[The walk and the openings done] --> R[Read the newest CI and CodeQL runs for main's head<br/>or, until they conclude, for the reviewed head it merged]
   R -->|green, or not concluded| L[Nothing to repair]
-  R -->|each red workflow in turn| V{The queue's newest verdict, or develop's,<br/>read main's head}
-  V -->|no, the queue's tip carries the head<br/>and its run is still going| H[Held — wake once a queue run's span<br/>from push to verdict has passed again] --> N
-  V -->|yes, or the tip's run concluded,<br/>or nothing queued carries the head| Q{Any job main failed passes<br/>on that verdict}
+  R -->|each red workflow in turn| QV{The queue's newest verdict, or develop's,<br/>read main's head}
+  QV -->|no, the queue's tip carries the head<br/>and its run is still going| H[Held — wake once a queue run's span<br/>from push to verdict has passed again] --> N
+  QV -->|yes, or the tip's run concluded,<br/>or nothing queued carries the head| Q{Any job main failed passes<br/>on that verdict}
   Q -->|yes| TG[A transit gap the windows heal —<br/>recorded on the head, no session, no attempt] --> N
   Q -->|no| S{Its failure signature's attempts<br/>within the span, under the cap}
   S -->|no| P[One issue for the signature —<br/>the repairer stops on it] --> N{Another red workflow}
-  N -->|yes| V
+  N -->|yes| QV
   N -->|no| L
   S -->|yes| G[Run the repo's own regenerators over the head,<br/>inside their own clock]
   G -->|nothing moved| C
@@ -63,7 +63,7 @@ The queue's verdict is its own branch's runs, listed by the branch, so no other 
 
 A verdict counts only over a commit that carries `main`'s red head. The newest concluded run on the queue can predate a commit that has since reached both the queue and `main` — an express cut lands on `main` in the pass its own push fires, while the queue's run over it is still going — and pass the job that commit broke. So the verdict's commit must descend from one of the shas the head has (`readMainHeadIdentities`): its own; the parent carrying its exact tree, the reviewed head a release merged, which the queue was rewritten onto when that window was cut; or an original its message names, since the express lane cuts a copy and the queue keeps the original. When it does not, and the branch's tip does, the verdict is the run over the tip, read by its commit (`readCommitCheck`) so a branch filter lagging behind it cannot hide it. While that run is still going the red is held: no session, no attempt, no marker. A head the tip does not carry either — a bump or a repair `main` took directly — waits on no queued run until a fold brings it in, so it is judged on the newest verdict as before; and a tip run that ended with no verdict leaves nothing coming, so the newest stands then too.
 
-A held red has nothing to fire the pass that judges it — no event reports a queue run concluding — so the run wakes itself once the newest verdict's own span from push to verdict has passed again, plus the retrigger's buffer; a run still going then is held again with the same wake. **Overturned: a held red left for the next push or review event**, which a quiet queue may not send for hours; the user's goal of a collector that finishes on its own overturned it. **Decided: a wake on a clock, not a `workflow_run` trigger on the queue's CI.** A trigger's filter reads only the event and the repository's settings, and whether a red is held is the collector's own state, so the trigger could not be narrowed to a held red: it would run a cycle on every queue CI run, and it reads `main`'s copy of the triggers, a release behind ([runner](/docs/infra/review-collector/runner)).
+A held red has nothing to fire the pass that judges it — no event reports a queue run concluding — so the run wakes itself once the newest verdict's own span from push to verdict has passed again, plus the retrigger's buffer; a run still going then is held again with the same wake. **Overturned: a held red left for the next push or review event**, which a quiet queue may not send for hours; the user's goal overturned it — the collector running unattended, woken by its own clock for every verdict it waits on. **Decided: a wake on a clock, not a `workflow_run` trigger on the queue's CI.** A trigger's filter reads only the event and the repository's settings, and whether a red is held is the collector's own state, so the trigger could not be narrowed to a held red: it would run a cycle on every queue CI run, and it reads `main`'s copy of the triggers, a release behind ([runner](/docs/infra/review-collector/runner)).
 
 **Decided: one job the queue passes holds the repair, not only all of them.** A red with one job the queue passes and another it fails cannot be repaired either, because the verify fails on the first whatever the session does with the second, so its attempts would run out on a red the windows are about to shrink, and the issue would name a signature that no longer exists once they have. Holding it costs nothing — `main` is red on the healed job until the windows land, whatever the repairer does — and the job red on both is repaired once it is the only red left.
 
@@ -113,7 +113,7 @@ A repair is a cut of its own, alone: no claimed commit is picked on top of it, b
 | File                                                                | Role                                                            |
 | :------------------------------------------------------------------ | :-------------------------------------------------------------- |
 | `scripts/src/services/coderabbit/collect/runRepairStep.ts`          | the pass's last step — the repair verified as a cut and pushed  |
-| `scripts/src/services/coderabbit/collect/repairMain.ts`             | CI's verdict, the signature's count, the two repairs, the proof |
+| `scripts/src/services/coderabbit/collect/repairMain.ts`             | the repair of the red left — regenerators, session, proof       |
 | `scripts/src/services/coderabbit/collect/repairMechanically.ts`     | the regenerators, the verify, the commit or the restore         |
 | `scripts/src/services/coderabbit/collect/checkIsGreen.ts`           | the check suite, run on a clock of its own                      |
 | `scripts/src/services/coderabbit/collect/readRedMainChecks.ts`      | every red run on `main`'s head, CI's and CodeQL's               |
@@ -122,7 +122,7 @@ A repair is a cut of its own, alone: no claimed commit is picked on top of it, b
 | `scripts/src/services/coderabbit/collect/getFailedLogExcerpt.ts`    | the tail of every failing job, one section per job              |
 | `scripts/src/services/coderabbit/collect/readRunJobs.ts`            | the red run's workflow and each job's verdict, read off the run |
 | `scripts/src/services/coderabbit/collect/settleTransitGap.ts`       | the queue's verdict on the jobs `main` failed, recorded on it   |
-| `scripts/src/services/coderabbit/collect/readQueueCheck.ts`         | the queue's newest concluded run of the red's workflow          |
+| `scripts/src/services/coderabbit/collect/readQueueCheck.ts`         | the red workflow's newest verdict on the queue or `develop`     |
 | `scripts/src/services/coderabbit/collect/readCarryingCheck.ts`      | that verdict over `main`'s head, or none while its run goes     |
 | `scripts/src/services/coderabbit/collect/readMainHeadIdentities.ts` | every sha a branch may carry `main`'s head under                |
 | `scripts/src/services/coderabbit/collect/readSignatureAttempts.ts`  | the repository's newest commit comments, within the span        |
