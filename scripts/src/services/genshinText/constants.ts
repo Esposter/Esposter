@@ -1,6 +1,7 @@
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage } from "genshin-text";
+import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
 // The game's text kept outside the repository like every other reference and never shipped: `ExcelBinOutput/` as the
@@ -69,8 +70,7 @@ export const GameLanguageCodeMap: Record<GameLanguage, string> = {
 export const VOICE_LINE_FETTER_TYPE = 1;
 export const GENSHIN_TEXT_SOURCE_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-text", "src");
 export const GENSHIN_TEXT_GENERATED_DIRECTORY: string = join(GENSHIN_TEXT_SOURCE_DIRECTORY, "generated");
-// Where the world's quests are written, one file a quest, and their words, one chunk a language; and the names its stat
-// Tables cite, one chunk a language, and the card game's names and descriptions, one chunk a language too
+// The generated folder the card game's text is written into, one chunk a language, until its words are published
 export const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
   REPOSITORY_ROOT,
   "packages",
@@ -78,10 +78,17 @@ export const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
   "src",
   "generated",
 );
-export const QUESTS_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "quests");
-export const QUEST_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "questText");
-export const NAME_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "nameText");
 export const GCG_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "gcgText");
+// The datasets of words, which hold no `nameTextId` to read and so are never walked for one
+export const TEXT_GAME_DATASETS: readonly string[] = [
+  GameDataset.AchievementText,
+  GameDataset.ArchiveText,
+  GameDataset.GcgText,
+  GameDataset.NameText,
+  GameDataset.QuestText,
+];
+// How many published records a read of the names fetches at once: all of them together overrun the fetch's own timeout
+export const PUBLISHED_READ_BATCH_SIZE = 8;
 const PERSONA_GENERATED_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-persona", "src", "generated");
 export const CHARACTER_LINES_DIRECTORY: string = join(PERSONA_GENERATED_DIRECTORY, "characterLines");
 // The persona is installed alone by a stranger's `npm ci` and so takes no workspace package; it gets a copy of the

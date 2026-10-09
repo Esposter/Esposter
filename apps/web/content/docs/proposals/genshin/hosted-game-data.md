@@ -50,6 +50,7 @@ The dataset list is what the builders publish, in the order each one depends on 
 
 ## Open decisions
 
+- **The card game's words are behind their decks.** The committed deck slices name 176 texts, and the lock's `gcgText` records hold 102, written before decks 11002, 11005, 30111 and 30112 were built. The card game reads the 102 until `genshin:text gcg` publishes its chunks from the slices, which its builder does once it is run for real.
 - **The npm package needs a host.** Consumers outside Esposter must serve the objects the lock names and pass `gameDataBaseUrl`. The README says so.
 - **World mount latency is measured, not assumed.** Mount waits on the account's round trips instead of same-origin chunks. The phase ends with a timing before and after; a preconnect, or merging the stats tables into one object, follows only if mount got slower.
 
