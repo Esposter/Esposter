@@ -8,17 +8,20 @@ const SCAN_COMMANDS: ReadonlySet<string> = new Set(["du", "find", "grep", "ls"])
 // A shell command passed as one argument (`bash -c "…"`) is read again on its own, to this depth at most
 const MAX_NESTING_DEPTH = 3;
 
-const SEGMENT_SEPARATOR_REGEX = /&&|\|\||[;|&\n()`]/u;
+// A segment runs up to a separator outside quotes, so a quoted argument such as a `bash -c` command stays whole
+const SEGMENT_REGEX = /(?:"[^"]*"|'[^']*'|[^\n"&'();`|])+/gu;
+// A command substitution runs even inside double quotes, so its body is read again on its own
+const SUBSTITUTION_REGEX = /\$\((?<dollar>[^()]*)\)|`(?<backtick>[^`]*)`/gu;
 const SHELL_FLAG_REGEX = /^-[a-zA-Z]*c$|^eval$/u;
 const TOKEN_REGEX = /"(?<double>[^"]*)"|'(?<single>[^']*)'|(?<bare>\S+)/gu;
 const PATH_SEPARATOR_REGEX = /[/\\]/u;
 
-// Backslashes become slashes, a drive letter becomes its `/c` folder, and a trailing slash goes, so "C:\", "/c/" and
-// "C:/" all name "/c"
+// Backslashes become slashes, a drive letter becomes its `/c` folder, and a trailing glob and slash go, so "C:\", "/c/",
+// "C:/" and "/c/*" all name "/c": a folder's glob expands to its entries, whose scan reads the whole folder
 const normalizePath = (token: string) => {
   const slashed = token.replaceAll("\\", "/");
   const path = /^[A-Za-z]:/u.test(slashed) ? `/${slashed.charAt(0).toLowerCase()}${slashed.slice(2)}` : slashed;
-  return path.replace(/(?<=.)\/+$/u, "");
+  return path.replace(/(?<=\/)\*$/u, "").replace(/(?<=.)\/+$/u, "");
 };
 
 const isRoot = (token: string) => ROOT_REGEX.test(normalizePath(token));
@@ -29,8 +32,25 @@ const isRecursiveFlag = (token: string) => /^-[a-zA-Z]*[rR]/u.test(token) || tok
 // The ls flag recurses on the capital R alone, since its lowercase r sorts in reverse
 const isUpperRecursiveFlag = (token: string) => /^-[a-zA-Z]*R/u.test(token);
 
-// A flag that gives grep its pattern, so every positional argument is a path
-const isPatternFlag = (token: string) => /^-[a-zA-Z]*[ef]$/u.test(token) || token === "--regexp" || token === "--file";
+// A flag that gives grep its pattern as the next argument, or as the rest of the same one
+const SEPARATE_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef]$|^--(?:regexp|file)$/u;
+const ATTACHED_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef].|^--(?:regexp|file)=/u;
+
+// Grep's search paths: a pattern flag's operand is its pattern and never a path, and with no pattern flag the first
+// Positional argument is the pattern
+const getGrepPaths = (args: string[]): string[] => {
+  const positionals: string[] = [];
+  let hasPatternFlag = false;
+  let isPatternOperand = false;
+  for (const arg of args)
+    if (isPatternOperand) isPatternOperand = false;
+    else if (SEPARATE_PATTERN_FLAG_REGEX.test(arg)) {
+      hasPatternFlag = true;
+      isPatternOperand = true;
+    } else if (ATTACHED_PATTERN_FLAG_REGEX.test(arg)) hasPatternFlag = true;
+    else if (!arg.startsWith("-")) positionals.push(arg);
+  return hasPatternFlag ? positionals : positionals.slice(1);
+};
 
 // The scan's name when its arguments start it from a root, undefined when they do not
 const getScanRefusal = (name: string, args: string[]): string | undefined => {
@@ -38,9 +58,7 @@ const getScanRefusal = (name: string, args: string[]): string | undefined => {
   if (name === "ls")
     return args.some((arg) => isUpperRecursiveFlag(arg)) && args.some((arg) => isRoot(arg)) ? name : undefined;
   if (!args.some((arg) => isRecursiveFlag(arg))) return undefined;
-  const positionals = args.filter((arg) => !arg.startsWith("-"));
-  const paths = args.some((arg) => isPatternFlag(arg)) ? positionals : positionals.slice(1);
-  return paths.some((path) => isRoot(path)) ? name : undefined;
+  return getGrepPaths(args).some((path) => isRoot(path)) ? name : undefined;
 };
 
 // A quoted argument keeps its inner spaces, so a shell command passed as one argument is read again on its own
@@ -51,7 +69,12 @@ const tokenize = (segment: string) =>
   );
 
 const getCommandRefusal = (command: string, depth: number): string | undefined => {
-  for (const segment of command.split(SEGMENT_SEPARATOR_REGEX)) {
+  if (depth < MAX_NESTING_DEPTH)
+    for (const match of command.matchAll(SUBSTITUTION_REGEX)) {
+      const nested = getCommandRefusal(match.groups?.dollar ?? match.groups?.backtick ?? "", depth + 1);
+      if (nested !== undefined) return nested;
+    }
+  for (const segment of command.match(SEGMENT_REGEX) ?? []) {
     const tokens = tokenize(segment);
     for (const [index, token] of tokens.entries()) {
       const name = token.split(PATH_SEPARATOR_REGEX).pop() ?? "";

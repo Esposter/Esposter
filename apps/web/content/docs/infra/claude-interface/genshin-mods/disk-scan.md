@@ -9,13 +9,13 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). A scan from a
 
 ## How it works
 
-Every Bash command is read before it runs. The command is split at its separators (`&&`, `||`, `;`, `|`, `&`, a newline and parentheses), and in each part, every `find`, `du`, `grep` and `ls` is read with its arguments after it:
+Every Bash command is read before it runs. The command is split at its separators (`&&`, `||`, `;`, `|`, `&`, a newline and parentheses) outside quotes, so a quoted argument stays whole, and in each part, every `find`, `du`, `grep` and `ls` is read with its arguments after it:
 
 - `find`, `du`: refused when any argument is a root.
 - `ls`: refused when it has the capital `-R` and any argument is a root (a lowercase `-r` is only a reverse sort).
-- `grep`: refused when it recurses (`-r`, `-R`, `--recursive`, in any flag group) and a path argument is a root. With `-e` or `-f` every positional argument is a path; otherwise the first is the pattern.
+- `grep`: refused when it recurses (`-r`, `-R`, `--recursive`, in any flag group) and a path argument is a root. The operand of `-e`, `-f`, `--regexp` or `--file`, attached or separate, is a pattern and never a path; with such a flag every other positional argument is a path, and otherwise the first is the pattern.
 
-A root is `/`, a drive's folder such as `/c` or `C:\`, `/Users`, `/home`, a user's home folder (`/Users/<name>`, `/c/Users/<name>`, `C:\Users\<name>`, `/home/<name>`), or the home folder by name (`~`, `$HOME`, `${HOME}`, `$USERPROFILE`). Windows spellings and a trailing slash read as the same root. A command passed as one quoted argument to a shell (`bash -c "find / …"`) is read again on its own, to three levels.
+A root is `/`, a drive's folder such as `/c` or `C:\`, `/Users`, `/home`, a user's home folder (`/Users/<name>`, `/c/Users/<name>`, `C:\Users\<name>`, `/home/<name>`), or the home folder by name (`~`, `$HOME`, `${HOME}`, `$USERPROFILE`). Windows spellings, a trailing slash and a trailing glob (`/*`, which the shell expands to the root's entries) read as the same root. A command passed as one quoted argument to a shell (`bash -c "find / …"`), and the body of a command substitution (`$(…)` or backticks, which run even inside double quotes), are read again on their own, to three levels.
 
 A refused command is denied with a message that names the known homes, so the next attempt goes where the file is:
 
@@ -33,7 +33,7 @@ flowchart TD
   Split --> Scan{A find, du, grep or ls with a root among its paths}
   Scan -->|no| Run[The command runs]
   Scan -->|yes| Deny[Denied, naming the known homes]
-  Split --> Nested{A quoted shell command}
+  Split --> Nested{A quoted shell command or a command substitution}
   Nested -->|read again on its own| Scan
 ```
 
