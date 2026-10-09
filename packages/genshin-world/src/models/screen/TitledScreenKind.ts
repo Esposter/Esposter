@@ -1,8 +1,8 @@
+import type { NpcScreenKind } from "#src/models/screen/NpcScreenKind";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 
-// A screen with a title of its own: every screen but the world, the Paimon menu and a talk, which name none, and the
-// Screens an NPC opens (the forge, the duel board), whose header is their own component's rather than a menu entry's
+// A screen with a title of its own: every screen but the world, the Paimon menu, a talk and the screens an NPC opens
 export type TitledScreenKind = Exclude<
   ScreenKind,
-  ScreenKind.Dialogue | ScreenKind.Forge | ScreenKind.GcgDuel | ScreenKind.PaimonMenu | ScreenKind.World
+  NpcScreenKind | ScreenKind.Dialogue | ScreenKind.PaimonMenu | ScreenKind.World
 >;

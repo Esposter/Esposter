@@ -34,9 +34,15 @@ This page builds on the [wish](/docs/genshin/wish), whose pull, rates, guarantee
 
 **This adds, in order:**
 
+```text
+scripts/src/services/genshinAssets/wish/parseWishPage.ts
+packages/genshin-world/src/generated/wishSchedule/eventBanners.json
+packages/genshin-world/src/services/wish/getOpenEventBanners.ts
+```
+
 1. **The event banners and Character Event Wish-2, from the wiki's schedule.**
-   - **The reader.** A new `scripts/src/services/genshinAssets/wish/parseWishPage.ts` turns one banner page's wikitext into `{ kind, startTime, endTime, fiveStarNames, fourStarNames }`, and `writeWishSchedule.ts` beside it lists `Category:Wish` through the wiki API (`list=categorymembers&cmtitle=Category:Wish&cmlimit=500`) with the persona's `readWikiJson` (`genshin-persona/src/services/readWikiJson.ts`, as `fetchReferences` imports the persona's readers), reads each event banner's page with `readWikiPageText`, joins its names to ids and writes `packages/genshin-world/src/generated/wishSchedule/eventBanners.json`. A `wish-schedule` subcommand of `genshin:assets` runs it. `parseWishPage.test.ts` asserts the `Epitome Invocation/2026-09-23` page's opening (cut to its template and Summary) reads as a weapon event from 2026-09-23 11:00:00 to 2026-10-13 17:59:59 at GMT+8, featuring Beyond the Chrysalis and Hymn of the Maelstrom over five four-stars.
-   - **The banners.** A new `packages/genshin-world/src/services/wish/getOpenEventBanners.ts` takes the schedule and the server's time and returns the event banners whose window holds it, built as `createBanners` builds its two, and `Banner` gains its `id`, the wiki page's title, so two character event banners alongside are keyed apart as Wish and Wish-2. `getOpenEventBanners.test.ts` asserts a time inside a window returns its banners, two character banners alongside each other both, and a time between windows none. The world screen offers them beside the beginners' and the standard banners.
+   - **The reader.** A new `parseWishPage.ts` turns one banner page's wikitext into `{ kind, startTime, endTime, fiveStarNames, fourStarNames }`, and `writeWishSchedule.ts` beside it lists `Category:Wish` through the wiki API (`list=categorymembers&cmtitle=Category:Wish&cmlimit=500`) with the persona's `readWikiJson` (`genshin-persona/src/services/readWikiJson.ts`, as `fetchReferences` imports the persona's readers), reads each event banner's page with `readWikiPageText`, joins its names to ids and writes `eventBanners.json`. A `wish-schedule` subcommand of `genshin:assets` runs it. `parseWishPage.test.ts` asserts the `Epitome Invocation/2026-09-23` page's opening (cut to its template and Summary) reads as a weapon event from 2026-09-23 11:00:00 to 2026-10-13 17:59:59 at GMT+8, featuring Beyond the Chrysalis and Hymn of the Maelstrom over five four-stars.
+   - **The banners.** A new `getOpenEventBanners.ts` takes the schedule and the server's time and returns the event banners whose window holds it, built as `createBanners` builds its two, and `Banner` gains its `id`, the wiki page's title, so two character event banners alongside are keyed apart as Wish and Wish-2. `getOpenEventBanners.test.ts` asserts a time inside a window returns its banners, two character banners alongside each other both, and a time between windows none. The world screen offers them beside the beginners' and the standard banners.
 2. **Charting a course** on the weapon wish, now that the open weapon event banner names its two promotional weapons.
 3. **The history.**
 

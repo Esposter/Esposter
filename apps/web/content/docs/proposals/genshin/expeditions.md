@@ -30,10 +30,16 @@ The sending, the return, the claim, the recall and the limit by rank are built, 
 
 **This adds, in order:**
 
+```text
+packages/
+├── genshin-interface/src/components/ExpeditionScreen/
+└── genshin-world/src/components/Expedition/Screen/Index.vue
+```
+
 1. **The expedition screen, built now from the public clip.**
    - Take the clip with `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=fxIjhlV3vUA --from 0 --to 107 --name expedition-screen`, then `pnpm -C scripts genshin:parity frames` over it, reading the frames to pick the ones that show the place list with a place's durations and the character list. Write each with `pnpm -C scripts genshin:parity frame <capture> --at <second> --name expedition-screen` into `references/expedition-screen/`, beside the SOURCE.txt it writes.
-   - Build `ExpeditionScreen` in `packages/genshin-interface/src/components/ExpeditionScreen/` (`Index.vue` and `Index.fixture.ts`) inside `GameScreen` on those frames, props in and events out: each open place with its durations, the characters free to go, and each expedition away with its time left; it emits a send, a claim and a recall. Its words are the game's by text id, added to `GameTextKey` with `pnpm -C scripts genshin:text find` and `write`.
-   - Its world wrapper `packages/genshin-world/src/components/Expedition/Screen/Index.vue`, with its own `Index.fixture.ts`, calls `sendExpedition`, `claimExpedition` and `recallExpedition` over Mondstadt's slice, and `ScreenKind` gains `Expedition`.
+   - Build `ExpeditionScreen` in `ExpeditionScreen/` (`Index.vue` and `Index.fixture.ts`) inside `GameScreen` on those frames, props in and events out: each open place with its durations, the characters free to go, and each expedition away with its time left; it emits a send, a claim and a recall. Its words are the game's by text id, added to `GameTextKey` with `pnpm -C scripts genshin:text find` and `write`.
+   - Its world wrapper `Index.vue`, with its own `Index.fixture.ts`, calls `sendExpedition`, `claimExpedition` and `recallExpedition` over Mondstadt's slice, and `ScreenKind` gains `Expedition`.
    - The proof: a `ParityReferenceMap` entry naming the chosen frame for `ExpeditionScreen`, which `ParityReferenceMap.test.ts` requires of every fixture, and a `compare` run whose comparison goes under the roadmap's Awaiting the user.
 2. **Katheryne's talk**, once the residents' join places her in Mondstadt's region data; it opens the screen.
 3. **Each other nation's places**, as their statues join the region data, with the reward items of each named in the game text.

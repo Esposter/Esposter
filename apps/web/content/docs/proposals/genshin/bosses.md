@@ -37,7 +37,13 @@ stateDiagram-v2
 
 **This still adds, in order:**
 
-1. **A normal boss's claim draw.** Add `packages/genshin-world/src/services/bosses/drawNormalBossReward.ts`: for a World Level, the boss's own drop's item id and a random source, the claim's Mora and drop as `ItemCount[]`, read from two lists in `services/bosses/constants.ts`, one row per World Level from the Basic Drops tab of `Template:World_Boss_Rewards` (read through the persona's `readWikiPageText`). `NORMAL_BOSS_MORA` holds 3,450 at World Levels 0 and 1, then 3,650, 3,850, 4,125, 4,450, 4,725, 5,200 and 6,000 to World Level 8. `NORMAL_BOSS_UNIQUE_DROPS` holds each level's guaranteed count and its chance of one more: 1 and 61.85% at World Levels 0 and 1, then 1 and 70.37%, 1 and 87.41%, 2 and 4.45%, 2 and 21.49%, 2 and 38.52%, and 2 and 55.56% at World Levels 7 and 8. World Level 9's row is read from the same tab. Test: `packages/genshin-world/src/services/bosses/drawNormalBossReward.test.ts`, asserting that World Level 0 with a random of 0.9 gives 3,450 Mora and one drop and with 0.1 two, and that World Level 4 with 0.9 gives two.
+```text
+packages/genshin-world/src/services/bosses/
+├── drawNormalBossReward.ts
+└── drawNormalBossReward.test.ts
+```
+
+1. **A normal boss's claim draw.** Add `drawNormalBossReward.ts`: for a World Level, the boss's own drop's item id and a random source, the claim's Mora and drop as `ItemCount[]`, read from two lists in `services/bosses/constants.ts`, one row per World Level from the Basic Drops tab of `Template:World_Boss_Rewards` (read through the persona's `readWikiPageText`). `NORMAL_BOSS_MORA` holds 3,450 at World Levels 0 and 1, then 3,650, 3,850, 4,125, 4,450, 4,725, 5,200 and 6,000 to World Level 8. `NORMAL_BOSS_UNIQUE_DROPS` holds each level's guaranteed count and its chance of one more: 1 and 61.85% at World Levels 0 and 1, then 1 and 70.37%, 1 and 87.41%, 2 and 4.45%, 2 and 21.49%, 2 and 38.52%, and 2 and 55.56% at World Levels 7 and 8. World Level 9's row is read from the same tab. Test: `drawNormalBossReward.test.ts`, asserting that World Level 0 with a random of 0.9 gives 3,450 Mora and one drop and with 0.1 two, and that World Level 4 with 0.9 gives two.
 2. **The Trounce Blossom and its claim**, with the respawn wired to the defeat map, for the first normal boss in Mondstadt, the Anemo Hypostasis: its place the official map's one point under its label, carried by the [spawned places](/docs/genshin/spawned-places) fit, its kind from the monster table, its blossom on defeat claimed through Original Resin's `claimBlossom` with `drawNormalBossReward` as its draw.
 3. **The first boss's own moves**, then each boss's as its region is built.
 4. **Weekly bosses**, in their trounce domains, with the once-a-week gate for each boss.

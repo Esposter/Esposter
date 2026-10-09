@@ -43,8 +43,12 @@ flowchart LR
 
 **This adds, in order:**
 
+```text
+packages/genshin-world/src/services/character/getConstellationActivationRefusal.ts
+```
+
 1. **The Constellation tab's activation, and the wish's Stella Fortuna handed over.** The tab is drawn already, so this is its press and its supply.
-   - **The rules.** A new `packages/genshin-world/src/services/character/getConstellationActivationRefusal.ts` returns a `ConstellationActivationRefusal` (`models/character/ConstellationActivationRefusal.ts`: `AllActive`, `NoStellaFortuna`) or `undefined`, and `activateConstellation` throws on that refusal rather than checking for itself. A new `addStellaFortuna.ts` beside it takes the characters and a wish's `stellaFortunaCountMap` and returns the characters with each count added to its own. `getConstellationActivationRefusal.test.ts` asserts both refusals and none, and `addStellaFortuna.test.ts` that only the characters the map names gain, by their counts.
+   - **The rules.** A new `getConstellationActivationRefusal.ts` returns a `ConstellationActivationRefusal` (`models/character/ConstellationActivationRefusal.ts`: `AllActive`, `NoStellaFortuna`) or `undefined`, and `activateConstellation` throws on that refusal rather than checking for itself. A new `addStellaFortuna.ts` beside it takes the characters and a wish's `stellaFortunaCountMap` and returns the characters with each count added to its own. `getConstellationActivationRefusal.test.ts` asserts both refusals and none, and `addStellaFortuna.test.ts` that only the characters the map names gain, by their counts.
    - **The supply.** `Wish/Screen` applies `addStellaFortuna` where it appends the new characters, so `v-model:characters` carries both.
    - **The tab.** `World/Session` loads `readConstellationTables()`, which nothing calls yet, and hands `CharacterScreen` the chosen character's set. `CharacterMenuConstellation` (`packages/genshin-interface/src/components/CharacterMenuConstellation/Index.vue`) gains `isActivateDisabled` and emits `activate` from an Activate button under the rings, its label the `GameTextKey` that `genshin:text find "^Activate$"` returns. `Character/Screen` disables it on a refusal and on `activate` emits the character `activateConstellation` returns through `v-model:characters`, wired in `World/Session` as `WishScreen`'s is. The button's place is provisional, queued for the user's eyes against `character-constellation`.
 2. **Each constellation's effect**, written in its character's kit module as each module is built on the [character kits](/docs/proposals/genshin/character-kits) page, the unit the other machine holds.

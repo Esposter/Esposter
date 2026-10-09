@@ -7,10 +7,6 @@ import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries";
 import { describe, expect, test } from "vitest";
 
-const NOW = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds;
-const RECENT = Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 55 }).toString();
-const OLD = Temporal.Instant.fromEpochMilliseconds(NOW - STALE_MILLISECONDS - 1).toString();
-const PROFILE: MachineProfile = { areas: ["genshin"], capabilities: ["game-install"], id: "pc" };
 const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   area: "genshin",
   id: "first",
@@ -21,20 +17,24 @@ const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   waiting: "",
   ...overrides,
 });
-const createClaim = (renewedAt: string, miss?: string): ClaimedRef => ({
-  message: {
-    claimedAt: RECENT,
-    entry: "",
-    load: "",
-    machine: "other",
-    renewedAt,
-    worker: "9c01",
-    ...(miss === undefined ? {} : { miss }),
-  },
-  sha: "a".repeat(40),
-});
-
 describe(selectTakeableEntries, () => {
+  const NOW = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds;
+  const RECENT = Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 55 }).toString();
+  const OLD = Temporal.Instant.fromEpochMilliseconds(NOW - STALE_MILLISECONDS - 1).toString();
+  const PROFILE: MachineProfile = { areas: ["genshin"], capabilities: ["game-install"], id: "pc" };
+  const createClaim = (renewedAt: string, miss?: string): ClaimedRef => ({
+    message: {
+      claimedAt: RECENT,
+      entry: "",
+      load: "",
+      machine: "other",
+      renewedAt,
+      worker: "9c01",
+      ...(miss === undefined ? {} : { miss }),
+    },
+    sha: "a".repeat(40),
+  });
+
   test("lists the entries the machine meets the needs of and lends the area, in order", () => {
     expect.hasAssertions();
 

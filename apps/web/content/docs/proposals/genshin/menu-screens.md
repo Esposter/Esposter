@@ -50,7 +50,7 @@ flowchart TD
 **Still open, in order:**
 
 1. **Time, built now from the public clip.**
-   - **The rule.** A new `packages/genshin-world/src/services/menu/getTimeTargetMinutes.ts` takes the clock's minute and the advance the dial asks for, clamps the advance to `TIME_MINIMUM_ADVANCE_MINUTES` (30) and `TIME_MAXIMUM_ADVANCE_MINUTES` (2880), both added to `services/menu/constants.ts`, and returns the target's minute of the day modulo the engine's `MINUTES_PER_DAY`. `getTimeTargetMinutes.test.ts` beside it asserts an advance of 10 lands 30 on, one of 3000 lands 2880 on, and an advance past midnight wraps.
+   - **The rule.** A new `getTimeTargetMinutes.ts` takes the clock's minute and the advance the dial asks for, clamps the advance to `TIME_MINIMUM_ADVANCE_MINUTES` (30) and `TIME_MAXIMUM_ADVANCE_MINUTES` (2880), both added to `services/menu/constants.ts`, and returns the target's minute of the day modulo the engine's `MINUTES_PER_DAY`. `getTimeTargetMinutes.test.ts` beside it asserts an advance of 10 lands 30 on, one of 3000 lands 2880 on, and an advance past midnight wraps.
    - **The reference.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=a4_J84iMqR0 --from 0 --to 60 --name time`, then `pnpm -C scripts genshin:parity frames yt-a4_J84iMqR0-time.mp4 2` for its contact sheet. The builder picks the first still showing the dial at rest with nothing hovered and names it in `ParityReferenceMap` as `"menu-time": { capture: "yt-a4_J84iMqR0-time.mp4", screen: "MenuTime", seconds: <second> }`.
    - **The screen.** `components/Menu/Time/Index.vue` with `Index.fixture.ts` draws the dial, the hour it points at and the Confirm button, laid out in the reference's own pixels as `Menu/Paimon` is, with its words as `GameTextKey`s found by `pnpm -C scripts genshin:text find "<regex>"` and written with `genshin:text write`. A pointer dragged round the dial adds its turns to the advance, and Confirm emits `confirm` with `getTimeTargetMinutes`'s result.
    - **The wiring.** `World/Windrise` adds `gameClock` to its `defineExpose`, and `World/Session` fills `#[ScreenKind.Time]` with `MenuTime`, setting `windrise.value.gameClock.minutes` on `confirm` and closing back to the world.
@@ -78,6 +78,7 @@ flowchart TD
 New files:
 
 ```text
+packages/genshin-world/src/services/menu/getTimeTargetMinutes.ts
 packages/genshin-world/src/components/Menu/Paimon/Index.fixture.ts
 packages/genshin-world/src/components/Menu/Paimon/Index.reference.ts
 packages/genshin-world/src/components/Menu/Time/Index.vue

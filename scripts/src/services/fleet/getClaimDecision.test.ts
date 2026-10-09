@@ -5,16 +5,16 @@ import { STALE_MILLISECONDS } from "#src/services/fleet/constants";
 import { getClaimDecision } from "#src/services/fleet/getClaimDecision";
 import { describe, expect, test } from "vitest";
 
-const NOW = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds;
-const RECENT = Temporal.Instant.fromEpochMilliseconds(NOW).subtract({ minutes: 5 }).toString();
-const OLD = Temporal.Instant.fromEpochMilliseconds(NOW - STALE_MILLISECONDS - 1).toString();
-const HOLDER = { machine: "pc", worker: "7f3a" };
-const createClaim = (holder: typeof HOLDER, renewedAt: string): ClaimedRef => ({
-  message: { claimedAt: RECENT, entry: "first", load: "", machine: holder.machine, renewedAt, worker: holder.worker },
-  sha: "a".repeat(40),
-});
-
 describe(getClaimDecision, () => {
+  const NOW = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds;
+  const RECENT = Temporal.Instant.fromEpochMilliseconds(NOW).subtract({ minutes: 5 }).toString();
+  const OLD = Temporal.Instant.fromEpochMilliseconds(NOW - STALE_MILLISECONDS - 1).toString();
+  const HOLDER = { machine: "pc", worker: "7f3a" };
+  const createClaim = (holder: typeof HOLDER, renewedAt: string): ClaimedRef => ({
+    message: { claimedAt: RECENT, entry: "first", load: "", machine: holder.machine, renewedAt, worker: holder.worker },
+    sha: "a".repeat(40),
+  });
+
   test("takes an entry no claim holds", () => {
     expect.hasAssertions();
 

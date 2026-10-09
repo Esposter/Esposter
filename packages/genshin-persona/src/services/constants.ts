@@ -1,4 +1,5 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
+import type { VoiceDeviceLadder } from "#src/models/VoiceDeviceLadder";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
@@ -129,8 +130,8 @@ export const VOICE_MODEL_DTYPE: Record<string, string> = {
 };
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";
-// The vocoder runs on DirectML, where WebGPU's vocoder returns near-silence; DirectML rejects a slice in the language
-// Model, which stays on WebGPU
+// Windows' vocoder runs on DirectML, where WebGPU's vocoder returns near-silence; DirectML rejects a slice in the
+// Language model, which stays on WebGPU
 export const VOICE_VOCODER_GPU_DEVICE = "dml";
 // The speech encoder runs on the CPU on every rung, since the WebGPU provider rejects its graph
 const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): Record<string, string> => ({
@@ -140,17 +141,39 @@ const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): 
   model: languageModelDevice,
   speech_encoder: VOICE_CPU_DEVICE,
 });
-// Fastest first, and verified by the sound rather than the load: this machine's WebGPU provider returns a constant
-// Near-silence from the full-precision vocoder and throws nothing, so the vocoder moves to DirectML. A rung is named for
-// What runs on the GPU
-export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
+// The CPU alone, which every platform's transformers.js build offers, so a platform with no ladder of its own runs on it
+const VOICE_CPU_RUNG: VoiceDeviceRung = {
+  devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE),
+  name: VOICE_CPU_DEVICE,
+};
+export const VOICE_CPU_DEVICE_LADDER: VoiceDeviceLadder = [VOICE_CPU_RUNG];
+// Windows, fastest first: the vocoder moves to DirectML, which the runtime ships there under the name `dml`
+const WINDOWS_VOICE_DEVICE_LADDER: VoiceDeviceLadder = [
   {
     devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_VOCODER_GPU_DEVICE),
     name: `${VOICE_GPU_DEVICE}-language-model-${VOICE_VOCODER_GPU_DEVICE}-vocoder`,
   },
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
-  { devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE), name: VOICE_CPU_DEVICE },
+  VOICE_CPU_RUNG,
 ];
+// On macOS and Linux, fastest first: the runtime offers `webgpu` on both, so the vocoder runs there too. The sound check
+// Moves down a vocoder that returns near-silence, as it does on Windows
+const GPU_VOICE_DEVICE_LADDER: VoiceDeviceLadder = [
+  {
+    devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE),
+    name: `${VOICE_GPU_DEVICE}-language-model-${VOICE_GPU_DEVICE}-vocoder`,
+  },
+  { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
+  VOICE_CPU_RUNG,
+];
+// Each platform's rungs, fastest first, naming only devices that platform's transformers.js build offers. A rung is
+// Verified by the sound rather than the load: this Windows machine's WebGPU provider returns a constant near-silence
+// From the full-precision vocoder and throws nothing, so the vocoder moves to DirectML there
+export const PLATFORM_VOICE_DEVICE_LADDER_MAP: Partial<Record<NodeJS.Platform, VoiceDeviceLadder>> = {
+  darwin: GPU_VOICE_DEVICE_LADDER,
+  linux: GPU_VOICE_DEVICE_LADDER,
+  win32: WINDOWS_VOICE_DEVICE_LADDER,
+};
 // The runtime names the provider that raised a failure by its source path, in either separator. A failure the GPU
 // Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
 // Is deterministic, so a failure it raises is the line's and would recur on every rung

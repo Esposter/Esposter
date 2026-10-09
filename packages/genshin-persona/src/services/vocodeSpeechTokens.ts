@@ -22,5 +22,5 @@ export const vocodeSpeechTokens = async (
     speaker_features: speaker.speaker_features,
     speech_tokens: new Tensor("int64", BigInt64Array.from(speechTokens), [1, speechTokens.length]),
   });
-  return Float32Array.from(waveform.data);
+  return Float32Array.from(waveform.data, Number);
 };

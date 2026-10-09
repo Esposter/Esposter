@@ -29,19 +29,13 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the plants and specialties, as [gathering](/docs/genshin/gathering) records, but for the four cooking ingredients and one specialty its notes name as left out; the mining outcrops' rank, respawn and standing, as [mining outcrops](/docs/genshin/mining-outcrops) records; and the investigation cap, as [investigation](/docs/genshin/investigation) records.
+**Built:** the plants and specialties, as [gathering](/docs/genshin/gathering) records, but for the four cooking ingredients and one specialty its notes name as left out; the mining outcrops' rank, respawn and standing, as [mining outcrops](/docs/genshin/mining-outcrops) records; the investigation cap, as [investigation](/docs/genshin/investigation) records; and the ores' rules, as [gathering](/docs/genshin/gathering) records.
 
 **This adds, in order:**
 
-1. **The ores' rules.**
-   - `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`: each ore's item id to its `{ blunt, melee }` poise requirement from the Decisions: Iron Chunk 101001, White Iron Chunk 101002 and Starsilver 101006 at 29 and 200; Crystal Chunk 101003, Magical Crystal Chunk 101004, Amethyst Lump 101008, Condessence Crystal 101009, Trishiraite 101224, Clearwater Jade 101241, Noctilucous Jade 100028 and Cor Lapis 100058 at 286 and 2000 (the dump's `MaterialExcelConfigData` ids, matched by name through `genshin:text find`).
-   - `packages/genshin-world/src/services/gathering/strikeOre.ts`: an ore's broken share after one hit, `{ isBlunt, isMelee, poiseDamage }` against its requirement; `rollOreDropCount.ts`: one, plus one for each of two draws under 0.1.
-   - `GatheringRespawn` gains `OneDay` and `ThreeDays`, with `ORE_ONE_DAY_RESPAWN_DURATION` and `ORE_THREE_DAYS_RESPAWN_DURATION` in `services/gathering/constants.ts`, and `computeGatheringRespawn` adds them as it adds `SPECIALTY_RESPAWN_DURATION`.
-   - Tests beside each: seven blunt hits of 4.2 break an Iron Chunk and six do not; a melee hit and a blunt hit add their own shares; a catalyst's hit adds nothing; the drop count reads 1 at draws of 0.5 and 3 at draws of 0.05; each new respawn lands its duration after the break.
-   - No data is written, and nothing in the world calls them yet.
-2. **The ores in the world.** Mondstadt's ore points written into its existing gathering slice by `writeGatheringPlaces`, the official map's Ores label (11) with each ore's respawn, the other regions' through the static-data host the pending design picks; then a struck ore's share kept beside the points, the hit fed from the character's strike loop in `components/World/Character/Index.vue` beside `strikeEnemy`, and the pieces dropped as an enemy's drops are.
-3. **Mining outcrops' places and draw**, drawn each day from Adventure Rank 30, once the ley line places are placed.
-4. **Investigation spots**, their places and rewards, with the daily cap's store counting them.
+1. **The ores in the world.** Mondstadt's ore points written into its existing gathering slice by `writeGatheringPlaces`, the official map's Ores label (11) with each ore's respawn, the other regions' through the static-data host the pending design picks; then a struck ore's share kept beside the points, the hit fed from the character's strike loop in `components/World/Character/Index.vue` beside `strikeEnemy`, and the pieces dropped as an enemy's drops are.
+2. **Mining outcrops' places and draw**, drawn each day from Adventure Rank 30, once the ley line places are placed.
+3. **Investigation spots**, their places and rewards, with the daily cap's store counting them.
 
 ## Data and measures
 

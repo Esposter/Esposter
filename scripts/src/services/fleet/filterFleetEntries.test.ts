@@ -14,13 +14,13 @@ const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   waiting: "",
   ...overrides,
 });
-const ENTRIES = [
-  createEntry({ id: "page-item", lane: "page" }),
-  createEntry({ id: "cpu-item" }),
-  createEntry({ id: "unit", kind: FleetEntryKind.Unit, lane: "" }),
-];
-
 describe(filterFleetEntries, () => {
+  const ENTRIES = [
+    createEntry({ id: "page-item", lane: "page" }),
+    createEntry({ id: "cpu-item" }),
+    createEntry({ id: "unit", kind: FleetEntryKind.Unit, lane: "" }),
+  ];
+
   test("keeps every entry when no lane or kind is named", () => {
     expect.hasAssertions();
 

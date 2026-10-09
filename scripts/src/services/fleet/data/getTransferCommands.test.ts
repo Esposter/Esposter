@@ -5,16 +5,16 @@ import { getTransferCommands } from "#src/services/fleet/data/getTransferCommand
 import { toRemotePath } from "#src/services/fleet/data/toRemotePath";
 import { describe, expect, test } from "vitest";
 
-const PEER: Peer = {
-  host: "192.168.0.2",
-  identityFile: "/keys/fleet",
-  parityDirectory: "~/data",
-  repository: "/repo",
-  user: "me",
-};
-const LOCAL_DIRECTORY = "/local";
-
 describe(getTransferCommands, () => {
+  const PEER: Peer = {
+    host: "192.168.0.2",
+    identityFile: "/keys/fleet",
+    parityDirectory: "~/data",
+    repository: "/repo",
+    user: "me",
+  };
+  const LOCAL_DIRECTORY = "/local";
+
   test("a pull archives on the peer over ssh and unpacks here", () => {
     expect.hasAssertions();
 

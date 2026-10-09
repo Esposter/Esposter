@@ -22,6 +22,8 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
+  // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
+  getChargedAttackStaminaMultiplier?: (context: KitStepContext) => number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands
   getPassiveBonuses?: (combatant: Combatant) => { amount: number; attribute: Attribute }[];
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it

@@ -16,7 +16,6 @@ import {
   MIN_SPEECH_TOKEN_CEILING,
   VOICE_CHUNK_TOKENS,
   VOICE_DECODER_SILENCE_TOKEN_COUNT,
-  VOICE_DEVICE_LADDER,
   VOICE_MODEL_ARCHITECTURE,
   VOICE_MODEL_DTYPE,
   VOICE_MODEL_ID,
@@ -25,6 +24,7 @@ import {
 } from "#src/services/constants";
 import { createChunkSplicer } from "#src/services/createChunkSplicer";
 import { deleteSupersededModels } from "#src/services/deleteSupersededModels";
+import { getVoiceDeviceLadder } from "#src/services/getVoiceDeviceLadder";
 import { vocodeSpeechTokens } from "#src/services/vocodeSpeechTokens";
 
 // Thrown into the generation when its line is dropped, so the language model stops at its next token
@@ -65,11 +65,12 @@ export const createVoiceSynthesizer = async (
     onFallback?.(`${rung.name} did not load the engine: ${String(outcome?.reason)}`);
     return load(nextRung, rungsBelowNext);
   };
+  const deviceLadder = getVoiceDeviceLadder();
   const startIndex = Math.max(
-    VOICE_DEVICE_LADDER.findIndex((rung) => rung.name === rungName),
+    deviceLadder.findIndex((rung) => rung.name === rungName),
     0,
   );
-  const [startRung = VOICE_DEVICE_LADDER[0], ...lowerRungs] = VOICE_DEVICE_LADDER.slice(startIndex);
+  const [startRung = deviceLadder[0], ...lowerRungs] = deviceLadder.slice(startIndex);
   let loaded = await load(startRung, lowerRungs);
   const processor = await AutoProcessor.from_pretrained(VOICE_MODEL_ID);
   // One rung down, or false from the bottom rung
@@ -208,7 +209,7 @@ export const createVoiceSynthesizer = async (
 
     // The generation's own waveform is the whole sentence, so its last chunk is what is left past the seam
     const result = await takeChunk(
-      outcome?.status === "fulfilled" ? Float32Array.from(outcome.value.data) : new Float32Array(0),
+      outcome?.status === "fulfilled" ? Float32Array.from(outcome.value.data, Number) : new Float32Array(0),
       true,
       1,
     );
@@ -242,7 +243,7 @@ export const createVoiceSynthesizer = async (
           return undefined;
         }
 
-        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data) };
+        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data, Number) };
         if (checkIsSpeech(clip)) return clip;
         // oxlint-disable-next-line no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent
         if (!(await stepDown("synthesized silence"))) return undefined;

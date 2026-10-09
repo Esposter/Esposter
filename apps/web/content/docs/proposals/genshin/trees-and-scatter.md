@@ -44,7 +44,7 @@ flowchart TD
 
 **This adds:**
 
-1. **Windrise's placed plants, as stand-ins, next.** A new `scripts/src/services/genshinAssets/world/checkIsPlantName.ts` tells a plant's name as the Decisions set out, and its test, `checkIsPlantName.test.ts`, keeps `Stages_Unique_CyTree01_Lod1` and a bush and drops `Eff_` effects, `Item_Drop_Plant` drops and `Area_MdProps_Flowerpot02`. A new `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`, a `plants` fit in `DerivedAssetFitMap`, parses every placement of the two streams `DerivedAssetComponentMap` names for Windrise (`parseStreamingPlacements`, as `readWorldPlacements` reads them, but every prefab rather than the listed ones), keeps the plants within `GROUND_RADIUS` of the oak's foot, and writes `packages/genshin-world/src/data/windrise/plants.json`: each plant prefab's name and its places through `toRegionPlace` with their scale. `World/Landmark/Tree` draws them as the Decisions' stand-ins, and the layout pass (`genshin:parity passes windrise --pass Layout`) is queued as their measure.
+1. **Windrise's placed plants, as stand-ins, next.** A new `checkIsPlantName.ts` tells a plant's name as the Decisions set out, and its test, `checkIsPlantName.test.ts`, keeps `Stages_Unique_CyTree01_Lod1` and a bush and drops `Eff_` effects, `Item_Drop_Plant` drops and `Area_MdProps_Flowerpot02`. A new `fitWindrisePlants.ts`, a `plants` fit in `DerivedAssetFitMap`, parses every placement of the two streams `DerivedAssetComponentMap` names for Windrise (`parseStreamingPlacements`, as `readWorldPlacements` reads them, but every prefab rather than the listed ones), keeps the plants within `GROUND_RADIUS` of the oak's foot, and writes `plants.json`: each plant prefab's name and its places through `toRegionPlace` with their scale. `World/Landmark/Tree` draws them as the Decisions' stand-ins, and the layout pass (`genshin:parity passes windrise --pass Layout`) is queued as their measure.
 2. **Every placed plant's species**, from the layout pass, each fitted to its export, the oak first.
 3. **Instancing and GPU culling** per species and detail level.
 4. **The trail**, with the character controller.
@@ -65,6 +65,9 @@ flowchart TD
 New files:
 
 ```text
+scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts
+scripts/src/services/genshinAssets/world/checkIsPlantName.ts
+packages/genshin-world/src/data/windrise/plants.json
 packages/genshin-engine/src/culling/        ← the per-instance compute pass and its indirect draw
 ```
 

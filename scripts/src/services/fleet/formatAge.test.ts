@@ -1,9 +1,9 @@
 import { formatAge } from "#src/services/fleet/formatAge";
 import { describe, expect, test } from "vitest";
 
-const MINUTE = 60_000;
-
 describe(formatAge, () => {
+  const MINUTE = 60_000;
+
   test("reads an age under an hour in minutes", () => {
     expect.hasAssertions();
 

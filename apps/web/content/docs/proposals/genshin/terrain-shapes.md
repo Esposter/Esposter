@@ -46,7 +46,7 @@ flowchart TD
 
 **This adds:**
 
-1. **The cliffs, fitted next.** A new `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts` places them on the grid `fitTerrainPlateaus` leaves, as the Decisions set out, returning the cliffs and the residual they leave. `fitRegionGround` runs it after the plateaus and before `fitTerrainResidual`, writes the cliffs into `features` beside the plateaus, and reports their count. Its test, `fitTerrainCliffs.test.ts`, draws one 48 metre cliff 10 metres high with `getCliffHeight` on a grid and reads back one cliff within 22.5 degrees of its heading and a metre of its height, and a flat grid back with none. The region runs queued on the roadmap write it.
+1. **The cliffs, fitted next.** A new `fitTerrainCliffs.ts` places them on the grid `fitTerrainPlateaus` leaves, as the Decisions set out, returning the cliffs and the residual they leave. `fitRegionGround` runs it after the plateaus and before `fitTerrainResidual`, writes the cliffs into `features` beside the plateaus, and reports their count. Its test, `fitTerrainCliffs.test.ts`, draws one 48 metre cliff 10 metres high with `getCliffHeight` on a grid and reads back one cliff within 22.5 degrees of its heading and a metre of its height, and a flat grid back with none. The region runs queued on the roadmap write it.
 2. **Then ridges and coastlines**: ridges as the Decisions set out, in `fitTerrainRidges.ts` after the cliffs, then coastlines where the residual after both is largest, and the gate each region is held to once its features are run. The plateaus, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
 3. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
 4. **The heights kept for collision**, when exploring's camera asks for them.
@@ -66,6 +66,7 @@ flowchart TD
 New files:
 
 ```text
+scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts
 packages/genshin-engine/src/terrain/   ← the features' and the residual noise's generators
 ```
 

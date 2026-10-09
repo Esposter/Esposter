@@ -11,22 +11,20 @@ import {
   MAX_SPEECH_TOKENS_PER_CHARACTER,
   MIN_SPEECH_TOKEN_CEILING,
   VOICE_CHUNK_TOKENS,
-  VOICE_DEVICE_LADDER,
   VOICE_GPU_DEVICE,
   VOICE_SAMPLE_RATE,
   VOICE_VOCODER_GPU_DEVICE,
 } from "#src/services/constants";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
+import { getVoiceDeviceLadder } from "#src/services/getVoiceDeviceLadder";
 import { describe, expect, test, vi } from "vitest";
 
-// The runtime's tensor, reduced to the two fields the plugin reads
+// The runtime's tensor, reduced to the one field the plugin reads
 class TestTensor {
-  data: ArrayLike<number> | BigInt64Array;
-  dims: number[];
+  data: BigInt64Array | Float32Array;
 
-  constructor(_type: string, data: ArrayLike<number> | BigInt64Array, dims: number[]) {
+  constructor(_type: string, data: BigInt64Array | Float32Array) {
     this.data = data;
-    this.dims = dims;
   }
 }
 
@@ -47,8 +45,9 @@ const collect = async (stream: AsyncGenerator<PcmClip>) => {
 
 describe(createVoiceSynthesizer, () => {
   const modelsDirectory = "modelsDirectory";
+  const deviceLadder = getVoiceDeviceLadder();
   const text = "text";
-  const tensor: VoiceTensor = { data: new Float32Array(), dims: [] };
+  const tensor: VoiceTensor = { data: new Float32Array() };
   const speaker: SpeakerTensors = {
     audio_features: tensor,
     audio_tokens: tensor,
@@ -68,19 +67,19 @@ describe(createVoiceSynthesizer, () => {
       generate: vi.fn<VoiceModel["generate"]>(() =>
         waveform instanceof Error
           ? Promise.reject(waveform)
-          : Promise.resolve({ data: waveform ?? new Float32Array(), dims: [] }),
+          : Promise.resolve({ data: waveform ?? new Float32Array() }),
       ),
       sessions: {
         conditional_decoder: {
           run: vi.fn<VoiceModel["sessions"]["conditional_decoder"]["run"]>(() =>
-            Promise.resolve({ waveform: { data: new Float32Array(), dims: [] } }),
+            Promise.resolve({ waveform: { data: new Float32Array() } }),
           ),
         },
       },
     }));
     const from_pretrained = vi.fn<(modelId: string, options: VoiceModelOptions) => Promise<VoiceModel>>(
       (_modelId, { device }) => {
-        const rungIndex = VOICE_DEVICE_LADDER.findIndex((rung) => rung.devices === device);
+        const rungIndex = deviceLadder.findIndex((rung) => rung.devices === device);
         const model = models[rungIndex];
         return rungWaveforms[rungIndex] && model
           ? Promise.resolve(model)
@@ -107,7 +106,7 @@ describe(createVoiceSynthesizer, () => {
       sampleRate: VOICE_SAMPLE_RATE,
       samples: speech,
     });
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
+    expect(synthesizer.device).toBe(deviceLadder[1]?.name);
     expect(models[0]?.dispose).toHaveBeenCalledTimes(1);
     expect(onFallback).toHaveBeenCalledTimes(1);
 
@@ -123,14 +122,14 @@ describe(createVoiceSynthesizer, () => {
     const { onFallback, runtime } = getRuntime([undefined, speech, speech]);
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
+    expect(synthesizer.device).toBe(deviceLadder[1]?.name);
     expect(onFallback).toHaveBeenCalledTimes(1);
   });
 
   test("starts on the rung named, walking past nothing above it", async () => {
     expect.hasAssertions();
 
-    const rungName = VOICE_DEVICE_LADDER[1]?.name ?? "";
+    const rungName = deviceLadder[1]?.name ?? "";
     const { from_pretrained, onFallback, runtime } = getRuntime([speech, speech, speech]);
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback, rungName });
 
@@ -169,7 +168,7 @@ describe(createVoiceSynthesizer, () => {
     });
     expect(GPU_PROVIDER_FAILURE_REGEX.test(String(failure))).toBe(true);
     expect(GPU_PROVIDER_FAILURE_REGEX.test(`providers\\${VOICE_VOCODER_GPU_DEVICE}\\DmlExecutionProvider`)).toBe(true);
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
+    expect(synthesizer.device).toBe(deviceLadder[1]?.name);
     expect(models[0]?.dispose).toHaveBeenCalledTimes(1);
     expect(onFallback).toHaveBeenCalledTimes(1);
   });
@@ -181,7 +180,7 @@ describe(createVoiceSynthesizer, () => {
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     await expect(synthesizer.synthesize(text, speaker)).resolves.toBeUndefined();
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[0]?.name);
+    expect(synthesizer.device).toBe(deviceLadder[0]?.name);
     expect(models[0]?.dispose).toHaveBeenCalledTimes(0);
     expect(onFallback).toHaveBeenCalledTimes(1);
   });
@@ -189,11 +188,11 @@ describe(createVoiceSynthesizer, () => {
   test("synthesizes nothing when the last rung returns silence too", async () => {
     expect.hasAssertions();
 
-    const { onFallback, runtime } = getRuntime(VOICE_DEVICE_LADDER.map(() => silence));
+    const { onFallback, runtime } = getRuntime(deviceLadder.map(() => silence));
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     await expect(synthesizer.synthesize(text, speaker)).resolves.toBeUndefined();
-    expect(onFallback).toHaveBeenCalledTimes(VOICE_DEVICE_LADDER.length);
+    expect(onFallback).toHaveBeenCalledTimes(deviceLadder.length);
   });
 
   // Each speech token is vocoded to one frame of audio, the frame alternating between speech and near-silence, so a
@@ -221,7 +220,7 @@ describe(createVoiceSynthesizer, () => {
         decodeCount >= silentFrom
           ? getQuiet(passLength * SAMPLES_PER_TOKEN)
           : concatenate([getSignal(speechLength), getQuiet(SILENCE_TOKEN_COUNT * SAMPLES_PER_TOKEN)]);
-      return Promise.resolve({ waveform: { data, dims: [] } });
+      return Promise.resolve({ waveform: { data } });
     });
     const generate = vi.fn<VoiceModel["generate"]>(async (inputs) => {
       const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
@@ -234,7 +233,7 @@ describe(createVoiceSynthesizer, () => {
         });
       }
       end();
-      return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN), dims: [] };
+      return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN) };
     });
     const model: VoiceModel = {
       dispose: vi.fn<VoiceModel["dispose"]>(() => Promise.resolve([])),
@@ -275,7 +274,7 @@ describe(createVoiceSynthesizer, () => {
     await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
       getSignal(VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN - seamSamples),
     );
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
+    expect(synthesizer.device).toBe(deviceLadder[1]?.name);
     expect(onFallback).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(`${label}, chunk 2`));
   });
 });

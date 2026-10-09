@@ -1,46 +1,18 @@
-import type { CharacterData, WeaponData } from "genshin-world";
-
-import { COOKING_RECIPES_PATH, PROCESSING_RECIPES_PATH } from "#src/services/genshinAssets/cooking/constants";
-import { CRAFTING_RECIPES_PATH } from "#src/services/genshinAssets/crafting/constants";
-import { ENEMY_KINDS_PATH } from "#src/services/genshinAssets/enemies/constants";
-import { FRIENDSHIP_PATH } from "#src/services/genshinAssets/friendship/constants";
-import { MATERIALS_PATH } from "#src/services/genshinAssets/items/constants";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { STATS_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
-import { NAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
+import { GENSHIN_WORLD_GENERATED_DIRECTORY, NAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
+import { readNameTextIds } from "#src/services/genshinText/readNameTextIds";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Every name the world cites by text id is written into the world's own chunk per language.
-// Each character's, weapon's and enemy kind's comes from `genshin:assets stats` and `genshin:assets enemies`.
-// Each dish's, processing's and crafted item's comes from `genshin:assets Cooking` and `crafting`, each material's from
-// `genshin:assets items`, and each namecard's from `genshin:assets friendship`.
+// Every name the world's data cites by text id is written into the world's own chunk per language. The ids are every
+// `nameTextId` in the data and generated folders, found by `readNameTextIds`, so a new source needs no entry here.
 // A name a language lacks takes English's and says so.
 export const writeNames = (): string[] => {
   const notes: string[] = [];
-  const datas = ["characters.json", "weapons.json"].flatMap((fileName) =>
-    parseMachineJson<(CharacterData | WeaponData)[]>(readFileSync(join(STATS_GENERATED_DIRECTORY, fileName), "utf8")),
-  );
-  const enemyKinds = parseMachineJson<{ nameTextId: string }[]>(
-    readFileSync(join(WORLD_DATA_DIRECTORY, ENEMY_KINDS_PATH), "utf8"),
-  );
-  const recipes = [CRAFTING_RECIPES_PATH, COOKING_RECIPES_PATH, PROCESSING_RECIPES_PATH].flatMap((path) =>
-    parseMachineJson<{ nameTextId: string }[]>(readFileSync(path, "utf8")),
-  );
-  const materials = parseMachineJson<{ nameTextId: string }[]>(
-    readFileSync(join(WORLD_DATA_DIRECTORY, MATERIALS_PATH), "utf8"),
-  );
-  const friendship = parseMachineJson<{ namecards: { nameTextId: number }[] }>(readFileSync(FRIENDSHIP_PATH, "utf8"));
-  const textIds = [
-    ...new Set([
-      ...[...datas, ...enemyKinds, ...recipes, ...materials].map(({ nameTextId }) => nameTextId),
-      ...friendship.namecards.map(({ nameTextId }) => String(nameTextId)),
-    ]),
-  ].toSorted();
+  const textIds = readNameTextIds([WORLD_DATA_DIRECTORY, GENSHIN_WORLD_GENERATED_DIRECTORY], NAME_TEXT_DIRECTORY);
   const englishTextMap = readTextMap(GameLanguage.English);
   // Every language is read before the last run's chunks are removed, so a text map that fails to read leaves them
   const languageNameTexts = GameLanguages.map((language) => {

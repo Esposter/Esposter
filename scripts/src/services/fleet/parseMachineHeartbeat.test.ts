@@ -1,16 +1,16 @@
 import { parseMachineHeartbeat } from "#src/services/fleet/parseMachineHeartbeat";
 import { describe, expect, test } from "vitest";
 
-const HEARTBEAT = {
-  at: Temporal.Instant.fromEpochMilliseconds(0).toString(),
-  cpu: 12,
-  freeMemory: 20.5,
-  gpu: 3,
-  machine: "pc",
-  platform: "win32",
-};
-
 describe(parseMachineHeartbeat, () => {
+  const HEARTBEAT = {
+    at: Temporal.Instant.fromEpochMilliseconds(0).toString(),
+    cpu: 12,
+    freeMemory: 20.5,
+    gpu: 3,
+    machine: "pc",
+    platform: "win32",
+  };
+
   test("reads a heartbeat with its gpu reading and platform", () => {
     expect.hasAssertions();
 

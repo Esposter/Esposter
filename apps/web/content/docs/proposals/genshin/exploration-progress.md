@@ -44,8 +44,12 @@ flowchart LR
 
 **This adds, in order:**
 
+```text
+packages/genshin-world/src/services/exploration/computeNationExplorationPercentage.ts
+```
+
 1. **Mondstadt's Reputation thresholds, paid as a statue is unlocked.**
-   - `packages/genshin-world/src/services/exploration/computeNationExplorationPercentage.ts`: takes the nation's `ExplorationArea`s and the unlocked landmarks, sums each area's done weight (`computeExploredDoingIds`) and total, and returns the percentage by the rule under Decisions (Mondstadt's all-zero ratios: done over total, rounded down). Its test, `computeNationExplorationPercentage.test.ts` beside it, asserts two areas of totals 100 and 300 with 40 done read 10, and that nothing unlocked reads 0.
+   - `computeNationExplorationPercentage.ts`: takes the nation's `ExplorationArea`s and the unlocked landmarks, sums each area's done weight (`computeExploredDoingIds`) and total, and returns the percentage by the rule under Decisions (Mondstadt's all-zero ratios: done over total, rounded down). Its test, `computeNationExplorationPercentage.test.ts` beside it, asserts two areas of totals 100 and 300 with 40 done read 10, and that nothing unlocked reads 0.
    - `packages/genshin-world/src/composables/useWorldMap.ts`: `activateLandmark` reads the percentage before and after the unlock, passes both to `computeReputationExploresReached` with `readMondstadtReputation()`'s `explores`, and pays each reached threshold: its `reward.exp` through `addReputationExp` with the slice's `levels`, and its `reward.items` (Mora, item 202) into the wallet through `setWallet`, as `payFirstUnlockReward` pays Primogems. The composable takes a `reputation` ref and a `setReputation` callback beside `wallet` and `setWallet`.
    - `packages/genshin-world/src/components/World/Session/Index.vue`: holds the reputation in a `shallowRef` from `savedState.reputation`, passes it to `useWorldMap`, and saves the ref rather than the saved value.
    - Data: the generated `exploration/mondstadt.json` and `reputation/mondstadt.json` slices already hold every number; nothing is regenerated.

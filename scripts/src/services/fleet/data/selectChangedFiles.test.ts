@@ -1,9 +1,9 @@
 import { selectChangedFiles } from "#src/services/fleet/data/selectChangedFiles";
 import { describe, expect, test } from "vitest";
 
-const SAME = { mtime: 1, name: "same.png", size: 2 };
-
 describe(selectChangedFiles, () => {
+  const SAME = { mtime: 1, name: "same.png", size: 2 };
+
   test("selects the source's files the target lacks, or holds at another size or mtime", () => {
     expect.hasAssertions();
 

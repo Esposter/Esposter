@@ -1,9 +1,9 @@
 import { parseMachineProfile } from "#src/services/fleet/parseMachineProfile";
 import { describe, expect, test } from "vitest";
 
-const PROFILE = { areas: ["genshin"], capabilities: ["windows"], id: "macbook" };
-
 describe(parseMachineProfile, () => {
+  const PROFILE = { areas: ["genshin"], capabilities: ["windows"], id: "macbook" };
+
   test("reads a complete profile", () => {
     expect.hasAssertions();
 

@@ -20,8 +20,14 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 ## Scope and order
 
 1. **The namecards the finished categories pay, as a rule.** No source is owed: `packages/genshin-world/src/generated/achievements/categories.json` holds each category's `namecardItemId`.
-   - `packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts`: given the categories, the achievements and the progress map, the `namecardItemId` of every category with a non-zero one that `checkIsAchievementCategoryComplete` finds finished, in the categories' order.
+
+   ```text
+   packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts
+   ```
+
+   - `computeAchievementNamecardItemIds.ts`: given the categories, the achievements and the progress map, the `namecardItemId` of every category with a non-zero one that `checkIsAchievementCategoryComplete` finds finished, in the categories' order.
    - The proof: `computeAchievementNamecardItemIds.test.ts` beside it, on two categories of two achievements each, lists the namecard of the one with both finished, none for the one with one finished, and none for a finished category whose `namecardItemId` is zero.
+
 2. **Exploring's triggers**, each as its page's rule gains a caller in the world.
 3. **Each server-fired achievement**, with the page that builds its subject.
 

@@ -41,9 +41,15 @@ flowchart TD
 
 **This adds, in order:**
 
+```text
+packages/
+├── genshin-interface/src/components/ReputationScreen/Index.vue
+└── genshin-world/src/components/Reputation/Screen/Index.vue
+```
+
 1. **The Reputation screen, built now from the public clip.**
    - Frames: `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=1SqmdXbIhLs --from 0 --to 257 --name reputation-guide` (City Reputation Guide, 257 seconds), then `pnpm -C scripts genshin:parity frames <the path clip prints> 1` for one frame a second; the builder reads the frames and takes, with `pnpm -C scripts genshin:parity frame yt-1SqmdXbIhLs-reputation-guide.mp4 --at <second> --name reputation-screen`, the clearest of the level and rewards page and of each source's tab into `references/reputation-screen/`, each with its `SOURCE.txt`.
-   - Code: `ScreenKind.Reputation` in `packages/genshin-world/src/models/screen/ScreenKind.ts`, with its title in `ScreenKindGameTextKeyMap`; `packages/genshin-interface/src/components/ReputationScreen/Index.vue` and `Index.fixture.ts` laid out on those frames inside `GameScreen`, as `InventoryScreen` is; and its world wrapper `packages/genshin-world/src/components/Reputation/Screen/Index.vue` with `Index.fixture.ts`, fed `readMondstadtReputation()`'s levels and a `ReputationProgress`.
+   - Code: `ScreenKind.Reputation` in `packages/genshin-world/src/models/screen/ScreenKind.ts`, with its title in `ScreenKindGameTextKeyMap`; `Index.vue` and `Index.fixture.ts` laid out on those frames inside `GameScreen`, as `InventoryScreen` is; and its world wrapper `Index.vue` with `Index.fixture.ts`, fed `readMondstadtReputation()`'s levels and a `ReputationProgress`.
    - Words: every label by `GameTextKey`, each found with `pnpm -C scripts genshin:text find` and written with `genshin:text write`.
    - Proof: the fixture renders on the parity page; the comparison against the frames is queued for the user's eyes under the roadmap's Awaiting the user, and nothing scores it yet.
 2. **Mondstadt's keeper**, placed in region data, opening the screen and offering its requests from level 2. Waits on Hertha's place, which the other machine's scene group export gives.
