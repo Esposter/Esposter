@@ -160,8 +160,8 @@ const createShockEffect = (characterId: number, { x, z }: GroundPoint): KitField
 // With the screen's. Its multipliers are read from her proud skill groups
 export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   // The wiki's Sparkling Scatter gives each strike's gem 1U of Geo under the Normal Attack internal cooldown, 45 poise and
-  // Blunt. The gems land from a summon cast where Ningguang stands as the strike starts, which also gives her a Star Jade
-  // Up to 3, a strike's hit landing nothing back into the kit
+  // Blunt. The gems land from a summon cast where Ningguang stands as the strike starts, and the first of them to strike
+  // An enemy gives her a Star Jade up to 3, as gcsim's one guarded callback over both gems does
   const normalAttacks = NINGGUANG_STRIKES.map(({ frames, hitmarkFrames }): KitAction => {
     const gem: KitHit = {
       element: Element.Geo,
@@ -177,7 +177,22 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     return {
       hits: [],
       onStart: ({ body, combatant, kitEffectState }) => {
-        const strikeGem = combatant.constellationCount >= PIERCING_FRAGMENTS_CONSTELLATION ? piercingFragmentsGem : gem;
+        let isStarJadeGiven = false;
+        const strikeGem: KitHit = {
+          ...(combatant.constellationCount >= PIERCING_FRAGMENTS_CONSTELLATION ? piercingFragmentsGem : gem),
+          onStrike: (strikeContext) => {
+            if (isStarJadeGiven) return;
+            isStarJadeGiven = true;
+            const starJadeCount = strikeContext.kitEffectState.effects.filter((effect) =>
+              checkIsStarJade(effect, strikeContext.combatant.characterId),
+            ).length;
+            if (starJadeCount < STAR_JADE_MAX_COUNT)
+              addKitEffect(
+                strikeContext.kitEffectState,
+                createStarJade(strikeContext.combatant.characterId, strikeContext.body.position),
+              );
+          },
+        };
         addKitEffect(
           kitEffectState,
           createKitSummon(
@@ -186,11 +201,6 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
             Array.from({ length: STRIKE_GEM_COUNT }, () => strikeGem),
           ),
         );
-        const starJadeCount = kitEffectState.effects.filter((effect) =>
-          checkIsStarJade(effect, combatant.characterId),
-        ).length;
-        if (starJadeCount < STAR_JADE_MAX_COUNT)
-          addKitEffect(kitEffectState, createStarJade(combatant.characterId, body.position));
       },
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,

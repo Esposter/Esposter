@@ -6,6 +6,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBubbleSpec } from "#src/models/kit/KitBubbleSpec";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 // One hit of a kit's action: its gauge of its element if it has one, the element it deals when that is not its
 // Character's own, the cylinder it reaches, when its hitmark falls in the action's seconds, its internal cooldown tag,
@@ -31,6 +32,9 @@ export interface KitHit {
   hitmarkSeconds: number;
   internalCooldownTag?: InternalCooldownTag;
   isBlunt?: true;
+  // Run for each enemy the hit strikes, given the body it lands from, its striker and the team's effects, if the hit gives
+  // Its striker something back as it lands
+  onStrike?: (context: KitStepContext) => void;
   poiseDamage: number;
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;

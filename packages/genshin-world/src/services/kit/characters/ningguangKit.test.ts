@@ -39,6 +39,11 @@ const stepEffects = (
     stepKitEffects(kitEffectState, FIXED_STEP_SECONDS, context),
   ).flat();
 
+// Strikes an enemy with each strike, as the world does for an enemy within its area
+const landStrikes = (strikes: KitStrike[], kitEffectState: KitEffectState): void => {
+  for (const { body, combatant, hit } of strikes) hit.onStrike?.({ body, combatant, kitEffectState });
+};
+
 describe(createNingguangKit, () => {
   const body = { x: 0, z: 0 };
   const kitBody = { facing: 0, height: 0, position: body };
@@ -48,10 +53,12 @@ describe(createNingguangKit, () => {
     const combatant = createNingguangCombatant(0, 0);
     const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    // The multipliers of the hits an action's start casts, as they land over the 3 seconds after it
+    // The multipliers of the hits an action's start casts, as they land on an enemy over the 3 seconds after it
     const landStartedHits = (action: KitAction): number[] => {
       action.onStart?.({ body: kitBody, combatant, kitEffectState });
-      return stepEffects(kitEffectState, 3, context).map(({ hit }) => hit.talentMultiplier);
+      const strikes = stepEffects(kitEffectState, 3, context);
+      landStrikes(strikes, kitEffectState);
+      return strikes.map(({ hit }) => hit.talentMultiplier);
     };
     const multipliers = [
       ...landStartedHits(takeOne(NINGGUANG_KIT.normalAttacks)),
@@ -83,13 +90,31 @@ describe(createNingguangKit, () => {
     };
     for (let index = 0; index < 4; index++) {
       takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
-      stepEffects(kitEffectState, 1, context);
+      landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
     }
     const firedCount = fireStarJades();
     takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
+    landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
     stepEffects(kitEffectState, 1, { ...context, activeCombatant: travelerCombatant });
 
     expect([firedCount, fireStarJades()]).toStrictEqual([3, 0]);
+  });
+
+  test("a strike gives one Star Jade as its two gems strike, and none as they strike nothing", () => {
+    expect.hasAssertions();
+    const combatant = createNingguangCombatant(1, 0);
+    const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const start = { body: kitBody, combatant, kitEffectState };
+    takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
+    const missedStrikes = stepEffects(kitEffectState, 1, context);
+    const missedMultiplier = NINGGUANG_KIT.getChargedAttackStaminaMultiplier?.(start);
+    takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
+    landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
+    NINGGUANG_KIT.chargedAttack.onStart?.(start);
+
+    expect([missedStrikes.length, missedMultiplier]).toStrictEqual([2, 1]);
+    expect(stepEffects(kitEffectState, 2, context)).toHaveLength(1 + 1);
   });
 
   test.each([
@@ -99,10 +124,13 @@ describe(createNingguangKit, () => {
     "at Ascension %i, a charged attack holding a Star Jade spends %i times its stamina, and all of it holding none",
     (ascension, multiplier) => {
       expect.hasAssertions();
+      const combatant = createNingguangCombatant(ascension, 0);
+      const context = { activeCombatant: combatant, body, party: createParty([NINGGUANG_CHARACTER_ID]) };
       const kitEffectState: KitEffectState = { effects: [] };
-      const start = { body: kitBody, combatant: createNingguangCombatant(ascension, 0), kitEffectState };
+      const start = { body: kitBody, combatant, kitEffectState };
       const emptyMultiplier = NINGGUANG_KIT.getChargedAttackStaminaMultiplier?.(start);
       takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
+      landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
 
       expect(NINGGUANG_KIT.getChargedAttackStaminaMultiplier?.(start)).toBe(multiplier);
       expect(emptyMultiplier).toBe(1);
@@ -159,7 +187,7 @@ describe(createNingguangKit, () => {
     NINGGUANG_KIT.elementalBurst.onStart?.(start);
     stepEffects(kitEffectState, 3, context);
     takeOne(NINGGUANG_KIT.normalAttacks).onStart?.(start);
-    stepEffects(kitEffectState, 1, context);
+    landStrikes(stepEffects(kitEffectState, 1, context), kitEffectState);
     NINGGUANG_KIT.chargedAttack.onStart?.(start);
     const chargedAttackStrikes = stepEffects(kitEffectState, 2, context);
 
