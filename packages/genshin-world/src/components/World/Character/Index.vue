@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -15,6 +16,7 @@ import water from "#src/data/windrise/water.json";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
+import { readOreHits } from "#src/services/gathering/readOreHits";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createKitState } from "#src/services/kit/createKitState";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
@@ -103,7 +105,7 @@ const {
   random,
 } = defineProps<Props>();
 // The party went down through a drown, which the world screen answers with the respawn
-const emit = defineEmits<{ clearKitEffects: []; drown: [] }>();
+const emit = defineEmits<{ clearKitEffects: []; drown: []; strikeOre: [body: KitBody, hit: OreHit] }>();
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating
@@ -194,6 +196,9 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     landedHits,
     { body: kitBody, combatant, kitEffectState },
   );
+  // The ores are struck by the hits as the kit gives them, before an infusion copies them
+  const landedOreHits =
+    landedHits.length > landedStart ? readOreHits(combatant.kit, characterId, landedHits.slice(landedStart)) : [];
   if (infusion !== undefined) infuseKitHits(combatant.kit, infusion, landedHits, landedStart);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
@@ -212,6 +217,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
 
   action?.onStart?.({ body: kitBody, combatant, kitEffectState });
   if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState });
+  for (const oreHit of landedOreHits) emit("strikeOre", kitBody, oreHit);
   // The summons' hits land from their own bodies, priced by the combatants that cast them, and the step's own hits from
   // The turned body and the character on the field
   const strikes: KitStrike[] = [

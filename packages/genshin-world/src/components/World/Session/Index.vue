@@ -198,19 +198,26 @@ const { achievementData } = useWorldAchievements({
   wallet,
 });
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
-const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop, placeWorldDrops, worldDrops } =
-  useWorldPickups({
-    archive: { archiveData, archiveProgressMap },
-    events,
-    gameText,
-    getWorldNow,
-    inventory,
-    nameText,
-    serverClockOffsetMs,
-    setInventory,
-    setWallet,
-    wallet,
-  });
+const {
+  bagFullHint,
+  pickUpGatheringPlace,
+  pickUpInteractables,
+  pickUpWorldDrop,
+  placeWorldDrops,
+  strikeGatheringOres,
+  worldDrops,
+} = useWorldPickups({
+  archive: { archiveData, archiveProgressMap },
+  events,
+  gameText,
+  getWorldNow,
+  inventory,
+  nameText,
+  serverClockOffsetMs,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   characterIdCombatantMap,
@@ -423,6 +430,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :random="worldRandom"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
+          @strike-ore="(body, hit) => strikeGatheringOres(body, hit, worldRandom)"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
