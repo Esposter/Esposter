@@ -5,7 +5,7 @@ description: The game's expeditions as pure state. A character but the Traveler 
 
 # Expeditions
 
-The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places come from the game's expedition table in a generated slice, imported on demand, and the limit by rank from a small data file. This page is what is built of [expeditions](/docs/proposals/genshin/expeditions). Katheryne's talk that opens the screen, the other nations' places and the expedition bonus and talents are not built, so no player can send a character from the game yet.
+The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](/docs/proposals/genshin/expeditions). Katheryne's talk that opens the screen, the other nations' places and the expedition bonus and talents are not built, so no player can send a character from the game yet.
 
 ## How it works
 

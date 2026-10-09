@@ -52,7 +52,7 @@ flowchart LR
 | `packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts` | The levels the active raises add to each combat talent                                |
 | `packages/genshin-world/src/services/character/readConstellationTables.ts`         | The table, fetched by its key from the hosted game data and checked against its shape |
 | `packages/genshin-world/src/services/wish/makeWishes.ts`                           | Counts a duplicate's Stella Fortuna to its character and a five-star's Masterless one |
-| `packages/genshin-world/src/generated/stats/characterConstellationKits.json`       | The written table                                                                     |
+| `packages/genshin-world/src/generated/stats/characterConstellationKits.json`       | The committed table, which no code imports                                            |
 | `scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`        | Each playable character's sets with their constellations, from the dump               |
 | `scripts/src/services/genshinAssets/stats/toConstellationRaise.ts`                 | The talent a constellation's action raises, checked against its description           |
 | `scripts/src/services/genshinAssets/stats/readTalentActions.ts`                    | Every talent config's actions in the dump, by the name a talent row gives             |

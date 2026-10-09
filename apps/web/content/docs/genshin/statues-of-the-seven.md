@@ -35,7 +35,7 @@ flowchart TD
 | :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets/statues/buildStatueLevels.ts`          | Builds Mondstadt's levels, each reward joined from the reward table, for publishing |
 | `scripts/src/services/genshinAssets/statues/toStatueLevelRow.ts`           | One level's row: the Oculi it takes, its items and its stamina share                |
-| `packages/genshin-world/src/generated/statueLevels/mondstadt.json`         | The written slice, imported on demand                                               |
+| `packages/genshin-world/src/generated/statueLevels/mondstadt.json`         | The committed slice, which no code imports                                          |
 | `packages/genshin-world/src/services/statue/readMondstadtStatueLevels.ts`  | Loads Mondstadt's levels, failing on a row the schema rejects                       |
 | `packages/genshin-world/src/services/offering/offerItems.ts`               | Offers Oculi and reaches each level they cover, the rule offerings share            |
 | `packages/genshin-world/src/services/statue/computeMaximumStamina.ts`      | The maximum: the start, raised by the reached levels, at most 240                   |
