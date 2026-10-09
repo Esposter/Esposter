@@ -8,7 +8,7 @@ import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion
 // From, so it is shot and scored at that frame's scale
 export type ParityReference = ParityReferenceBase &
   (
-    | { capture: string; crop?: ParityRegion; seconds: number; wikiTitle?: never }
+    | { capture: string; crop?: ParityRegion; placement?: never; seconds: number; wikiTitle?: never }
     | { capture?: never; crop?: never; placement?: ParityPlacement; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
