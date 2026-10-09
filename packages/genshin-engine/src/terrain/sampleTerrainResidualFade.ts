@@ -3,9 +3,9 @@ import type { TerrainResidualFade } from "#src/models/terrain/TerrainResidualFad
 import { MathUtils } from "three";
 
 // The share of the residual a fade draws at a point: blended bilinearly from the four nodes round it, faded in across
-// Its clearing's falloff, and none outside the grid, where nothing was fitted
+// Each clearing's falloff, and none outside the grid, where nothing was fitted
 export const sampleTerrainResidualFade = (
-  { cellSize, clearing, origin, size, weights }: TerrainResidualFade,
+  { cellSize, clearings, origin, size, weights }: TerrainResidualFade,
   x: number,
   z: number,
 ): number => {
@@ -20,10 +20,10 @@ export const sampleTerrainResidualFade = (
   const far = Math.min(near + 1, sizeZ - 1);
   const across = column - left;
   const along = row - near;
-  const weight =
+  let weight =
     ((weights[near * sizeX + left] ?? 0) * (1 - across) + (weights[near * sizeX + right] ?? 0) * across) * (1 - along) +
     ((weights[far * sizeX + left] ?? 0) * (1 - across) + (weights[far * sizeX + right] ?? 0) * across) * along;
-  if (!clearing) return weight;
-  const { falloff, radius, x: centreX, z: centreZ } = clearing;
-  return weight * MathUtils.smoothstep(Math.hypot(x - centreX, z - centreZ), radius, radius + falloff);
+  for (const { falloff, radius, x: centreX, z: centreZ } of clearings)
+    weight *= MathUtils.smoothstep(Math.hypot(x - centreX, z - centreZ), radius, radius + falloff);
+  return weight;
 };

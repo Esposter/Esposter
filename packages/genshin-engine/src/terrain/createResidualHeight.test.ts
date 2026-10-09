@@ -7,13 +7,13 @@ describe(createResidualHeight, () => {
   const getHeight = createResidualHeight(residual);
   const getFadedHeight = createResidualHeight({
     ...residual,
-    fade: { cellSize: 8, origin: [1, 1], size: [2, 2], weights: [0, 1, 0, 1] },
+    fade: { cellSize: 8, clearings: [], origin: [1, 1], size: [2, 2], weights: [0, 1, 0, 1] },
   });
   const getClearedHeight = createResidualHeight({
     ...residual,
     fade: {
       cellSize: 16,
-      clearing: { falloff: 4, radius: 2, x: 4, z: 4 },
+      clearings: [{ falloff: 4, radius: 2, x: 4, z: 4 }],
       origin: [0, 0],
       size: [2, 2],
       weights: [1, 1, 1, 1],

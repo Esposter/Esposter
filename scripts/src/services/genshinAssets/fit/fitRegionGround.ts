@@ -11,6 +11,7 @@ import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPl
 import { fitTerrainResidual } from "#src/services/genshinAssets/fit/fitTerrainResidual";
 import { fitTerrainResidualFade } from "#src/services/genshinAssets/fit/fitTerrainResidualFade";
 import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerrainResidualGrid";
+import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGroundFootprints";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
@@ -52,11 +53,12 @@ interface Catalogue {
 // `<region>/base-ground.json`. Returns that path after the report, which holds the composed ground's error with and
 // Without the residual
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<string[]> => {
-  const [getGameHeight, [originX, originY, originZ], catalogueJson] = await Promise.all([
+  const [getGameHeight, origin, catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFile(join(WORLD_DATA_DIRECTORY, "catalogue.json"), "utf8"),
   ]);
+  const [originX, originY, originZ] = origin;
   const { regions } = parseMachineJson<Catalogue>(catalogueJson);
   const outlines = (regions.find(({ id }) => id === region)?.areas ?? []).flatMap(({ outline }) =>
     outline.length > 0 ? [outline] : [],
@@ -86,9 +88,15 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   const computeMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
     mapTerrainResidualGrid(heightGrid, (x, z, height) => height - getGroundHeight(x, z));
   const { features, remainder } = fitTerrainPlateaus(computeMisses(createGaussianHillsHeight(hills)));
+  const footprints = await readGroundFootprints(centre, GROUND_RADIUS, GROUND_BAR_RADIUS, origin);
   const fade = {
     ...fitTerrainResidualFade(remainder, GROUND_FADE_CELL_SIZE, GROUND_RESIDUAL_GATE_METRES),
-    clearing: { falloff: GROUND_FADE_CELL_SIZE, radius: GROUND_BAR_RADIUS, x: centre.x, z: centre.z },
+    clearings: [{ radius: GROUND_BAR_RADIUS, ...centre }, ...footprints].map(({ radius, x, z }) => ({
+      falloff: GROUND_FADE_CELL_SIZE,
+      radius,
+      x,
+      z,
+    })),
   };
   const getFadeWeight = (x: number, z: number): number => sampleTerrainResidualFade(fade, x, z);
   const residual = { ...fitTerrainResidual(remainder, getFadeWeight), fade };
@@ -128,6 +136,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     `ground: ${features.length} plateaus, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
     `ground: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
     `ground: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over the fitted extent and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
+    `ground: places cleared of the residual, ${footprints.map(({ id, radius, source, x, z }) => `${id} ${radius} metres from ${source}, its residual ${roundFitted(getGroundHeight(x, z) - getFeaturedHeight(x, z))} metres`).join(", ")}`,
     `ground: the residual's power by octave against the faded leftover's, as the change over its scale, ${octaveScales.map((scale) => `${roundFitted(computeLagDifference(drawnResidual, scale))} against ${roundFitted(computeLagDifference(fadedRemainder, scale))} metres at ${scale}`).join(", ")}`,
     path,
   ];

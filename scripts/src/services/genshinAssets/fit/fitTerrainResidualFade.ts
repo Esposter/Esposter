@@ -1,5 +1,6 @@
 import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainResidualGrid";
 import type { TerrainResidualFade } from "genshin-engine";
+import type { Except } from "type-fest";
 
 import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -8,12 +9,12 @@ import { MathUtils } from "three";
 // Where a residual is drawn: on nodes a cell apart, centred on the grid's middle and covering all of it, each weighing
 // Smoothstep from the gate to twice the gate of the root-mean-square of the grid's values in its cell, so the residual
 // Fades out where the ground above it already holds. A cell with no value weighs one, and the weights are then averaged
-// Once over each node's three by three, so the fade's edges are soft
+// Once over each node's three by three, so the fade's edges are soft. The places it is cleared from are the caller's
 export const fitTerrainResidualFade = (
   { originX, originZ, size, step, values }: TerrainResidualGrid,
   cellSize: number,
   gate: number,
-): TerrainResidualFade => {
+): Except<TerrainResidualFade, "clearings"> => {
   const halfExtent = ((size - 1) * step) / 2;
   const reach = Math.ceil(halfExtent / cellSize);
   const nodes = 2 * reach + 1;
