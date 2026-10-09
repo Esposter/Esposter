@@ -75,7 +75,7 @@ Exports and recordings move over SSH on the local network, authenticated and enc
 
 ## Game data over the LAN
 
-A machine's first route to the game data is the game itself: download it from HoYoverse's official CDN, then run the `genshin:assets` extraction locally. That works on any machine, on or off the LAN. `pnpm ai:fleet:data` is the faster route between machines whose owners allow SSH, because it copies the extracted files instead of re-extracting them.
+A machine's first route to the game data is the game itself: download it from HoYoverse's official CDN, then run the `genshin:assets` extraction locally. That works on any machine, on or off the LAN. A hand-copied install must also carry the install root's `config.ini` beside `GenshinImpact_Data`, since the extraction reads the game version from its `game_version=` line. `pnpm ai:fleet:data` is the faster route between machines whose owners allow SSH, because it copies the extracted files instead of re-extracting them.
 
 - **One-time setup on the peer:** the command always connects to the peer, whether it pulls from it or pushes to it, so the peer enables Remote Login (on a Mac, System Settings, General, Sharing, Remote Login). Then on the machine running the command run `ssh-keygen -t ed25519 -f ~/.ssh/<name>` for a dedicated key, and append its public key to the peer's `~/.ssh/authorized_keys`. The receiving machine, where the files land, is the peer for a push and the machine running the command for a pull.
 - **The peer row** goes in `~/.esposter/peers.json`: `host`, `user`, `identityFile` (the dedicated key, never the commit-signing key), `repository` (the peer's checkout) and `parityDirectory` (its `~/Esposter/genshin-parity`).
