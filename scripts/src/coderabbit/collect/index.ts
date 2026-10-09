@@ -20,6 +20,7 @@ import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRe
 import { postSessionLimited } from "#src/services/coderabbit/collect/postSessionLimited";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readOutageRetryDelaySeconds } from "#src/services/coderabbit/collect/readOutageRetryDelaySeconds";
 import { readWindowPullRequests } from "#src/services/coderabbit/collect/readWindowPullRequests";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeErrorAnnotation } from "#src/services/coderabbit/collect/writeErrorAnnotation";
@@ -96,10 +97,11 @@ await runMain(
       }
 
       // A counted attempt that failed, a session that never started or that the run's budget cannot hold, or GitHub
-      // Answering a server error, ends the run idle and wakes the next one rather than red: the retry is owed and
-      // Automatic, and red is kept for what only a person can restart (docs: Infra/review-collector). The session that
-      // Never started is the one path every step launching one takes — sync, reshape, fold, drain, repair, the merge
-      // Probe and any later step — so none of them branches on it: nobody made an attempt, and the launch waits out the
+      // Answering a server error or a rate limit, ends the run idle and wakes the next one rather than red: the retry
+      // Is owed and automatic, and red is kept for what only a person can restart (docs: Infra/review-collector). A rate
+      // Limit is waited out for as long as GitHub states (`readOutageRetryDelaySeconds`). The session that never
+      // Started is the one path every step launching one takes — sync, reshape, fold, drain, repair, the merge probe
+      // And any later step — so none of them branches on it: nobody made an attempt, and the launch waits out the
       // Outage's delay. A session past the budget waits a minute, for the next run's fresh budget. A limit Claude Code
       // Hit is marked on the newest release with the instant it lifts, which every run reads to hold the merge and the
       // Port until then, and the run wakes the cycle at that instant: the sessions that push the queue draw on the same
@@ -116,8 +118,15 @@ await runMain(
               retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
             };
           else if (error instanceof SessionLimitedError) {
-            const newestWindow = getNewestWindowPullRequest(readWindowPullRequests(WindowPullRequestListState.All));
-            if (newestWindow && !isDryRun) postSessionLimited(newestWindow.number, error.limitResetAtMs);
+            // The mark is a write to GitHub, and an outage refusing it leaves the run as idle as the limit does: the
+            // Next run meets the limit again and marks it then
+            getResult(() => {
+              const newestWindow = getNewestWindowPullRequest(readWindowPullRequests(WindowPullRequestListState.All));
+              if (newestWindow && !isDryRun) postSessionLimited(newestWindow.number, error.limitResetAtMs);
+            }).match(noop, (markError) => {
+              if (!GITHUB_OUTAGE_REGEX.test(markError.message)) throw markError;
+              console.error(markError);
+            });
             return {
               kind: CycleOutcomeKind.Idle,
               reason: error.message,
@@ -133,7 +142,7 @@ await runMain(
             return {
               kind: CycleOutcomeKind.Idle,
               reason: error.message,
-              retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
+              retriggerDelaySeconds: readOutageRetryDelaySeconds(error.message),
             };
           writeErrorAnnotation(error);
           throw error;

@@ -2,7 +2,7 @@ import { FIELD_SEPARATOR, GITHUB_OUTAGE_REGEX, RECORD_SEPARATOR } from "#src/ser
 import { describe, expect, test, vi } from "vitest";
 
 describe("constants", () => {
-  // The pattern is a claim about two tools' wording, so each row is a message the tool really prints
+  // The pattern is a claim about the tools' wording, so each row is a message the tool really prints
   test.each([
     {
       isOutage: true,
@@ -10,12 +10,41 @@ describe("constants", () => {
         "gh: No server is currently available to service your request. Sorry about that. Please try resubmitting your request and contact us if the problem persists. (HTTP 503)",
     },
     { isOutage: true, message: "HTTP 502: Bad Gateway (https://api.github.com/graphql)" },
+    // `readCheckStatus` throws `gh pr checks`'s line wrapped in its own error
+    {
+      isOutage: true,
+      message: "Invalid operation: Read, name: coderabbit, HTTP 502: Bad Gateway (https://api.github.com/graphql)",
+    },
     {
       isOutage: true,
       message: "fatal: unable to access 'https://github.com/Esposter/Esposter/': The requested URL returned error: 500",
     },
+    {
+      isOutage: true,
+      message:
+        "gh: You have exceeded a secondary rate limit. Please wait a few minutes before you try again. (HTTP 403)",
+    },
+    {
+      isOutage: true,
+      message:
+        "HTTP 403: You have exceeded a secondary rate limit. Please wait a few minutes before you try again. (https://api.github.com/graphql)",
+    },
+    { isOutage: true, message: "GraphQL: API rate limit already exceeded for user ID 1." },
+    { isOutage: true, message: "API rate limit exceeded for installation ID 1." },
+    {
+      isOutage: true,
+      message:
+        "failed to set variable 'EXAMPLE': HTTP 429: 429 Too Many Requests (https://api.github.com/repos/Esposter/Esposter/environments/sandbox/variables)",
+    },
+    { isOutage: true, message: "gh: HTTP 429" },
+    {
+      isOutage: true,
+      message: "fatal: unable to access 'https://github.com/Esposter/Esposter/': The requested URL returned error: 429",
+    },
     { isOutage: false, message: "gh: Not Found (HTTP 404)" },
+    { isOutage: false, message: "gh: Resource not accessible by integration (HTTP 403)" },
     { isOutage: false, message: "error: could not apply 0000000... fix: retry on HTTP 503" },
+    { isOutage: false, message: "error: could not apply 0000000... fix: API rate limit exceeded for gh" },
     {
       isOutage: false,
       message: "fatal: unable to access 'https://github.com/': The requested URL returned error: 403",
