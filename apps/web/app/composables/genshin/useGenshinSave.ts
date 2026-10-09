@@ -121,7 +121,7 @@ export const useGenshinSave = async () => {
     // A session another sign-in replaced hears it through the real-time layer, the replacing session's id reaching every
     // Subscriber of the user. One that does not hear it is refused by its next save instead
     useOnlineSubscribable(
-      () => session.value?.user.id,
+      () => session.value.data?.user.id,
       (userId) => {
         if (!userId) return undefined;
         const sessionReplacedUnsubscribable = $trpc.genshin.onSessionReplaced.subscribe(undefined, {

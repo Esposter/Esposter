@@ -30,7 +30,7 @@ const { initialSave, isReplaced, onWorldGrant, onWorldSave, serverClockOffsetMs,
         :language="gameText.language"
         :save="initialSave"
         :server-clock-offset-ms
-        @grant="(grant) => onWorldGrant(grant)"
+        @grant="onWorldGrant()"
         @load="isLoaded = true"
         @ready="isReady = true"
         @save="(save) => onWorldSave(save)"

@@ -28,7 +28,7 @@ const roleItems = computed(() =>
 );
 // A member is listed while an override holds them, and while they are the one being added, which has no row yet
 const memberIds = computed(() => {
-  const overriddenMemberIds = [...(memberPermissionOverrideMap.value?.keys() ?? [])];
+  const overriddenMemberIds = [...memberPermissionOverrideMap.keys()];
   return selectedMemberId.value && !overriddenMemberIds.includes(selectedMemberId.value)
     ? [...overriddenMemberIds, selectedMemberId.value]
     : overriddenMemberIds;
