@@ -83,6 +83,17 @@ describe(computeBuildKey, () => {
     writeRepositoryFile("packages/b/src/index.ts", "export const b = 1;\n");
   });
 
+  test("changing a workspace dependency's declarations changes the dependent's key", () => {
+    expect.hasAssertions();
+
+    writeRepositoryFile("packages/b/types/global.d.ts", "declare const b: number;\n");
+    const before = getKey();
+    writeRepositoryFile("packages/b/types/global.d.ts", "declare const b: string;\n");
+
+    expect(getKey()).not.toBe(before);
+    rmSync(join(repositoryRoot, "packages/b/types"), { force: true, recursive: true });
+  });
+
   test("a transitive version change in the lockfile changes the key while the importer is unchanged", () => {
     expect.hasAssertions();
 
