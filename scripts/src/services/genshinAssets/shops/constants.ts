@@ -19,5 +19,5 @@ export const SHOP_REFRESH_BY_TABLE_TYPE: Partial<Record<string, ShopRefresh>> = 
   SHOP_REFRESH_MONTHLY: ShopRefresh.Monthly,
   SHOP_REFRESH_NONE: ShopRefresh.None,
 };
-// The offset the game's own shop times carry, UTC+8, appended to each one as it is written
+// The offset the game's own shop times carry, UTC+8, appended to each one as it is built
 export const GAME_TIME_OFFSET = "+08:00";

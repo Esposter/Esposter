@@ -1,4 +1,4 @@
-// The nation whose places are written: Mondstadt's, the first region's, the rest joining as their statues are placed
+// The nation whose places are published: Mondstadt's, the first region's, the rest joining as their statues are placed
 export const MONDSTADT_CITY_ID = 1;
 // The scene whose points a place's statue is named by, the overworld's, which every statue condition names
 export const EXPEDITION_SCENE_ID = 3;
