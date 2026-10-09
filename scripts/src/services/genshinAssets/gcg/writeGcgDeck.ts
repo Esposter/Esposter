@@ -7,9 +7,10 @@ import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSki
 import { GCG_GENERATED_DIRECTORY } from "#src/services/genshinAssets/gcg/constants";
 import { toGcgDeck } from "#src/services/genshinAssets/gcg/toGcgDeck";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { gcgDeckSchema } from "genshin-world";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 // One deck's slice, read from the dump's deck, character, skill, card and cost tables, checked against its schema and
@@ -29,5 +30,5 @@ export const writeGcgDeck = (deckId: number, createdCardIds: number[]): void => 
     ),
   );
   mkdirSync(GCG_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(join(GCG_GENERATED_DIRECTORY, `deck${deckId}.json`), `${JSON.stringify(deckSlice, undefined, 2)}\n`);
+  writeJsonFile(join(GCG_GENERATED_DIRECTORY, `deck${deckId}.json`), deckSlice);
 };

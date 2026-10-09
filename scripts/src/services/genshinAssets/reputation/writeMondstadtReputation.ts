@@ -13,8 +13,9 @@ import { toReputationReward } from "#src/services/genshinAssets/reputation/toRep
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
 // The reward a row names, read from the reward table, an unlisted one being an error since a level, request or bounty
 // Without its reward would pay silently wrong
@@ -88,8 +89,5 @@ export const writeMondstadtReputation = (): void => {
       ),
     }));
   mkdirSync(REPUTATION_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(
-    MONDSTADT_REPUTATION_PATH,
-    `${JSON.stringify({ bounties, explores, levels, requests }, undefined, 2)}\n`,
-  );
+  writeJsonFile(MONDSTADT_REPUTATION_PATH, { bounties, explores, levels, requests });
 };

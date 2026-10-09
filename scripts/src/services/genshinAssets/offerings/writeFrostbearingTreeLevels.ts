@@ -8,8 +8,9 @@ import {
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
 // The Frostbearing Tree's levels, each row's reward joined from the reward table, written as one slice in the World's
 // Generated folder. An unlisted reward is an error, since a level without its reward would level silently wrong
@@ -29,5 +30,5 @@ export const writeFrostbearingTreeLevels = (): void => {
       return toOfferingLevelRow(levelRow, reward);
     });
   mkdirSync(OFFERING_LEVELS_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(FROSTBEARING_TREE_LEVELS_PATH, `${JSON.stringify(levels, undefined, 2)}\n`);
+  writeJsonFile(FROSTBEARING_TREE_LEVELS_PATH, levels);
 };

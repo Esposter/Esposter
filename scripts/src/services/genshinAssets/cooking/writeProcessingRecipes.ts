@@ -7,7 +7,8 @@ import {
 } from "#src/services/genshinAssets/cooking/constants";
 import { toProcessingRecipe } from "#src/services/genshinAssets/cooking/toProcessingRecipe";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The processings from the game's compound table, the ingredients into one result over time, written as one slice in the
 // World's generated folder, by id
@@ -19,5 +20,5 @@ export const writeProcessingRecipes = (): void => {
     })
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);
   mkdirSync(COOKING_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(PROCESSING_RECIPES_PATH, `${JSON.stringify(recipes, undefined, 2)}\n`);
+  writeJsonFile(PROCESSING_RECIPES_PATH, recipes);
 };

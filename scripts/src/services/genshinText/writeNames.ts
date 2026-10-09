@@ -3,8 +3,9 @@ import { GENSHIN_WORLD_GENERATED_DIRECTORY, NAME_TEXT_DIRECTORY } from "#src/ser
 import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
 import { readNameTextIds } from "#src/services/genshinText/readNameTextIds";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 // Every name the world's data cites by text id is written into the world's own chunk per language. The ids are every
@@ -29,7 +30,7 @@ export const writeNames = (): string[] => {
   rmSync(NAME_TEXT_DIRECTORY, { force: true, recursive: true });
   mkdirSync(NAME_TEXT_DIRECTORY, { recursive: true });
   for (const [language, nameText] of languageNameTexts)
-    writeFileSync(join(NAME_TEXT_DIRECTORY, `${language}.json`), `${JSON.stringify(nameText, undefined, 2)}\n`);
+    writeJsonFile(join(NAME_TEXT_DIRECTORY, `${language}.json`), nameText);
 
   notes.push(`${textIds.length} names written in ${GameLanguages.length} languages`);
   return notes;

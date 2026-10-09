@@ -7,7 +7,8 @@ import { toFriendshipLevels } from "#src/services/genshinAssets/friendship/toFri
 import { toFriendshipNamecards } from "#src/services/genshinAssets/friendship/toFriendshipNamecards";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The friendship slice from the dump, the levels from its AvatarFettersLevel table and the namecards from its
 // FetterCharacterCard table, written as one file in the World's generated folder
@@ -19,5 +20,5 @@ export const writeFriendship = (): void => {
     readExcelTable<MaterialRow>("MaterialExcelConfigData"),
   );
   mkdirSync(FRIENDSHIP_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(FRIENDSHIP_PATH, `${JSON.stringify({ levels, namecards }, undefined, 2)}\n`);
+  writeJsonFile(FRIENDSHIP_PATH, { levels, namecards });
 };

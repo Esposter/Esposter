@@ -53,7 +53,7 @@ The plugin reads a character's reference through one function: the card's where 
 
 ## Formatting and lint
 
-A generated `.ts` is source and is formatted as source — the generator emits the formatter's own shape so that `pnpm format` leaves it alone, and a generator whose output the formatter rewrites is fixed at the generator. A generated `.json` holding numeric arrays is on the formatter's ignore list, since one number per line would turn a few hundred records into hundreds of thousands of lines for nothing a reader gains.
+A generated `.ts` is source and is formatted as source — the generator emits the formatter's own shape so that `pnpm format` leaves it alone, and a generator whose output the formatter rewrites is fixed at the generator. A generated `.json` holding numeric arrays is on the formatter's ignore list, since one number per line would turn a few hundred records into hundreds of thousands of lines for nothing a reader gains. A script's JSON is written by `writeJsonFile` in `scripts/src/services/shared/`, which formats it with the formatter's own binary under the root config, so a re-run with unchanged data leaves the tree clean.
 
 ## Review
 

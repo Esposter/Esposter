@@ -8,10 +8,10 @@ import {
   STATUE_LEVELS_GENERATED_DIRECTORY,
 } from "#src/services/genshinAssets/statues/constants";
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
-const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 // Mondstadt's Statue of The Seven levels, each row's reward joined from the reward table, written as one slice in the
 // World's generated folder. An unlisted reward is an error, since a level without its reward would level silently wrong
 export const writeStatueLevels = (): void => {
@@ -30,5 +30,5 @@ export const writeStatueLevels = (): void => {
       return toStatueLevelRow(levelRow, reward);
     });
   mkdirSync(STATUE_LEVELS_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(MONDSTADT_STATUE_LEVELS_PATH, toJson(levels));
+  writeJsonFile(MONDSTADT_STATUE_LEVELS_PATH, levels);
 };

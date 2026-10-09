@@ -8,10 +8,10 @@ import {
 import { ExploreAreaCatalogueIdMap } from "#src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap";
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
-const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 // Mondstadt's exploration areas, each with its total and the doings its progress counts, written as one slice in the
 // World's generated folder. An area the table gives no total is an error, since its progress would have no share
 export const writeMondstadtExplorationAreas = (): void => {
@@ -37,5 +37,5 @@ export const writeMondstadtExplorationAreas = (): void => {
     };
   });
   mkdirSync(EXPLORATION_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(MONDSTADT_EXPLORATION_PATH, toJson(areas));
+  writeJsonFile(MONDSTADT_EXPLORATION_PATH, areas);
 };

@@ -11,7 +11,8 @@ import {
 import { toCraftingRecipe } from "#src/services/genshinAssets/crafting/toCraftingRecipe";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The bench's recipes from the game's combine table, each with the instruction items that open it, written as one
 // Slice in the world's generated folder. A row the bench does not craft is left out
@@ -26,5 +27,5 @@ export const writeCraftingRecipes = (): void => {
     })
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);
   mkdirSync(CRAFTING_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(CRAFTING_RECIPES_PATH, `${JSON.stringify(recipes, undefined, 2)}\n`);
+  writeJsonFile(CRAFTING_RECIPES_PATH, recipes);
 };

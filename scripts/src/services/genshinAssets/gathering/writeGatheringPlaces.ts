@@ -6,7 +6,8 @@ import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFitt
 import { readInteractiveMapLabels } from "#src/services/genshinAssets/points/readInteractiveMapLabels";
 import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { mkdir, writeFile } from "node:fs/promises";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdir } from "node:fs/promises";
 
 // Each region's gathering points written as one slice in the world's generated folder, each point the official map marks
 // Of a gathering item and placed by the fit, with the items they give as one table beside them. A point's kind is its
@@ -21,6 +22,6 @@ export const writeGatheringPlaces = async (): Promise<string> => {
   const placement = placeMapPoints(points, transform, labelItemIdMap, "gathering", origin);
   await mkdir(GATHERING_GENERATED_DIRECTORY, { recursive: true });
   const report = await writeMapPointSlices(GATHERING_GENERATED_DIRECTORY, placement, "gathering points");
-  await writeFile(GATHERING_ITEMS_PATH, `${JSON.stringify(items, undefined, 2)}\n`);
+  writeJsonFile(GATHERING_ITEMS_PATH, items);
   return `${report}\n${items.length} gathering items written`;
 };

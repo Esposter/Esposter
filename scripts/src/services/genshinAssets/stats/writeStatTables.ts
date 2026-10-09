@@ -15,12 +15,12 @@ import { getCharacterTalentKits } from "#src/services/genshinAssets/stats/getCha
 import { getWeaponDatas } from "#src/services/genshinAssets/stats/getWeaponDatas";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toGrowCurves } from "#src/services/genshinAssets/stats/toGrowCurves";
-import { toJson } from "#src/services/genshinAssets/stats/toJson";
 import { toTalentTables } from "#src/services/genshinAssets/stats/toTalentTables";
 import { toTalentUpgradeMap } from "#src/services/genshinAssets/stats/toTalentUpgradeMap";
 import { toWeaponLevelRequiredExps } from "#src/services/genshinAssets/stats/toWeaponLevelRequiredExps";
 import { writeTalentTables } from "#src/services/genshinAssets/stats/writeTalentTables";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 // The roster, each character's skill sets, the weapons and the artifacts' tables, read from the dump's game tables into
@@ -64,7 +64,7 @@ export const writeStatTables = (): string[] => {
   rmSync(STATS_GENERATED_DIRECTORY, { force: true, recursive: true });
   mkdirSync(STATS_GENERATED_DIRECTORY, { recursive: true });
   for (const [fileName, table] of Object.entries(tableMap))
-    writeFileSync(join(STATS_GENERATED_DIRECTORY, fileName), toJson(table));
+    writeJsonFile(join(STATS_GENERATED_DIRECTORY, fileName), table);
   writeTalentTables(talentTables);
   return [...new Set(notes)];
 };

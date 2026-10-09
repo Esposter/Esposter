@@ -5,7 +5,8 @@ import { CITY_AREA_FILE_PATH } from "#src/services/genshinAssets/world/constants
 import { extractCityAreas } from "#src/services/genshinAssets/world/extractCityAreas";
 import { readCityAreaCandidates } from "#src/services/genshinAssets/world/readCityAreaCandidates";
 import { readCityAreaFile } from "#src/services/genshinAssets/world/readCityAreaFile";
-import { mkdir, writeFile } from "node:fs/promises";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 
 // Every city area's extent for the installed game, read from the install once per game version and kept beside the
@@ -21,6 +22,6 @@ export const buildCityAreas = async (): Promise<CityAreaFile> => {
     gameVersion,
   };
   await mkdir(dirname(CITY_AREA_FILE_PATH), { recursive: true });
-  await writeFile(CITY_AREA_FILE_PATH, `${JSON.stringify(file, null, 2)}\n`);
+  writeJsonFile(CITY_AREA_FILE_PATH, file);
   return file;
 };

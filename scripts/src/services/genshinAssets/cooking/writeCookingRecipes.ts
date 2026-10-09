@@ -13,7 +13,8 @@ import { toCookingRecipe } from "#src/services/genshinAssets/cooking/toCookingRe
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/constants";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The dishes from the game's cook recipe table, each with its specialties and the instruction items that teach it, written
 // As one slice in the world's generated folder, by id
@@ -26,5 +27,5 @@ export const writeCookingRecipes = (): void => {
     .map((row) => toCookingRecipe(row, { bonusRows, materialMap, unlockItemIds: unlockItemIdMap.get(row.id) ?? [] }))
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);
   mkdirSync(COOKING_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(COOKING_RECIPES_PATH, `${JSON.stringify(recipes, undefined, 2)}\n`);
+  writeJsonFile(COOKING_RECIPES_PATH, recipes);
 };
