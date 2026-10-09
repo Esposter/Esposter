@@ -207,7 +207,6 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     seconds: 50 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
-  // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes
   getPassiveBonuses,
   highPlunge: {
     hits: [
@@ -267,6 +266,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       67 / 60,
     ),
   ],
+  // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes
   onSprint: ({ body, combatant, kitEffectState }: KitStepContext, kitState: KitState): void => {
     if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
     kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
