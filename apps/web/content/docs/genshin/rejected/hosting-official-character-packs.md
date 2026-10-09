@@ -9,8 +9,8 @@ The first way to get a character's model to the world was to host it. A publishe
 
 **Why not:** every pack's terms forbid it. The terms bundled with each of the thirteen official releases say 「请勿二次配布」, "do not redistribute", ten of them in full and three as the short form 「请勿二配」, and the six whose terms are a readme add 「以及拆取部件以用于改造其他模型」, "nor take parts to modify other models". A public container serving the packs to every visitor is redistribution whatever the hash, the cache header or the credit shown beside the model, and a fan release's terms bind as the game's own files would. Nothing was uploaded and the lock never named a pack, so the publisher, its upload, its lock dataset, the verify that asked for each file and the prune that kept each folder were deleted with nothing left to remove.
 
-A pack now reaches the world only from a copy its reader holds: the release a player downloaded themselves, which their own browser reads and keeps, and under `nuxt dev` the developer's own extracted packs, which the development server serves from disk and no build includes ([characters](/docs/genshin/characters)).
+So the app holds no pack at all: each copy is one a player or a developer already has, kept in a player's browser or on a developer's disk, as [characters](/docs/genshin/characters) sets out.
 
 ## Sources
 
-- The terms bundled with each official model, read from each of the thirteen releases' own terms file: "使用规则.txt" in seven of them, "readme【一定要看】.txt" in the other six.
+- Each of the thirteen releases' own terms file, "使用规则.txt" in seven of them and "readme【一定要看】.txt" in the other six.
