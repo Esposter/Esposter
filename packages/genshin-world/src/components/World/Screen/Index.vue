@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
-import type { StatTables } from "#src/models/character/StatTables";
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Talk } from "#src/models/dialogue/Talk";
-import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { HudFrame } from "#src/models/hud/HudFrame";
-import type { HudMember } from "#src/models/hud/HudMember";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -48,36 +39,21 @@ import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
+import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
 import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createCharacter } from "#src/services/character/createCharacter";
-import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
-import { readStatTables } from "#src/services/character/readStatTables";
-import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
-import { createCharacterKit } from "#src/services/kit/createCharacterKit";
-import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
-import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
-import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
-import { getElementalResonances } from "#src/services/party/getElementalResonances";
-import { getPartyMember } from "#src/services/party/getPartyMember";
-import { reviveParty } from "#src/services/party/reviveParty";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -87,16 +63,14 @@ import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useRafFn, watchImmediate } from "@vueuse/core";
+import { useEventListener, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
-  createSeededRandom,
   FOLLOW_CAMERA_PIVOT_HEIGHT,
   GENSHIN_TONE_MAPPING,
   InputAction,
@@ -160,22 +134,6 @@ const input = createInput(window);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
-// The game's stat tables, read as the world starts rather than with the package, which the opening downloads, and the
-// Player's characters made from them and their party: the Traveler alone, as a new player's, on the field. Until the
-// Tables arrive nobody walks the field and the character screen opens as a placeholder, and tables that fail to arrive
-// Are logged and leave it so
-const statTables = shallowRef<StatTables>();
-const characters = shallowRef<Character[]>([]);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(readStatTables).match(
-  (newStatTables) => {
-    statTables.value = newStatTables;
-    characters.value = [createCharacter(TRAVELER_CHARACTER_ID, newStatTables.characterDataMap)];
-  },
-  (error) => {
-    console.error(error);
-  },
-);
 // The names the stat tables cite, in the reader's language, which the banners are named with once they arrive
 const nameText = shallowRef<Readonly<Record<string, string>>>();
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -187,88 +145,6 @@ getResultAsync(() => NameTextLoaderMap[language]()).match(
     console.error(error);
   },
 );
-const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
-// The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
-// Character's chunk on demand, and the characters whose chunks have arrived. Each kit is built from them once its
-// Character's chunk arrives, and nothing is priced until then
-const talentMultipliers = shallowRef<TalentMultiplierMap>();
-const loadedCharacterIds = shallowRef<number[]>([]);
-const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
-watchImmediate(deployedCharacterIds, (characterIds) => {
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
-  getResultAsync(() => readTalentMultipliers([...new Set([TRAVELER_CHARACTER_ID, ...characterIds])])).match(
-    (newTalentMultipliers) => {
-      talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
-      loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, TRAVELER_CHARACTER_ID, ...characterIds])];
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-});
-const characterIdKitMap = computed(() => {
-  const kitMap = new Map<number, Kit>();
-  if (!talentMultipliers.value) return kitMap;
-  for (const characterId of loadedCharacterIds.value)
-    kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
-  return kitMap;
-});
-// How the character on the field moves, its body type's, once the roster has arrived
-const locomotion = computed(() =>
-  statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
-);
-// Each character's combat once the roster has arrived and its kit is built from its loaded multipliers, a character whose
-// Chunk has not arrived having none yet. The character on the field's combat and its party member are what the HUD's
-// Health and skills read
-const characterIdCombatantMap = computed(() => {
-  const combatantMap = new Map<number, Combatant>();
-  if (!statTables.value) return combatantMap;
-  // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
-  const { characterDataMap } = statTables.value;
-  const elementalResonances = getElementalResonances(
-    (party.teams[party.deployedTeamIndex]?.characterIds ?? []).flatMap((characterId) => {
-      const element = characterDataMap.get(characterId)?.element;
-      return element ? [element] : [];
-    }),
-  );
-  for (const character of characters.value) {
-    const kit = characterIdKitMap.value.get(character.id);
-    if (kit)
-      combatantMap.set(character.id, {
-        ascension: character.ascension,
-        attributes: computeCharacterAttributes(
-          getCharacterAttributeLines(character, statTables.value),
-          elementalResonances,
-        ),
-        characterId: character.id,
-        constellationCount: character.constellationCount,
-        elementalResonances,
-        kit,
-        level: character.level,
-      });
-  }
-  return combatantMap;
-});
-const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
-const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
-// The field member's figures the HUD's health and skill buttons show, none until the character on the field is known
-const hudMember = computed<HudMember | undefined>(() => {
-  const combatant = activeCombatant.value;
-  if (!combatant) return undefined;
-  const partyMember = activePartyMember.value;
-  return {
-    burstCooldown: partyMember.burstCooldownSeconds,
-    burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
-    energy: partyMember.energy,
-    energyCost: combatant.kit.burstEnergyCost,
-    health: partyMember.healthShare * combatant.attributes.maxHealth,
-    level: combatant.level,
-    maxHealth: combatant.attributes.maxHealth,
-    skillCooldown: partyMember.skillCooldownSeconds,
-    skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
-  };
-});
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
 // Names are the game's own in the reader's language, so the definitions are read from the game's tables as it loads
 const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, (itemId) => getItemDefinition(itemId, gameText));
@@ -344,17 +220,6 @@ const landmarkCollider = createLandmarkCollider();
 const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
-// The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
-// The character's kit strikes and an enemy's strike lands from
-const enemyMap = new Map<string, Enemy>();
-// The effects on the deployed team, the shields and taunts an enemy's strike is taken by, which the character on the field
-// Steps and the enemies read, and which the character clears on a drown or a jump
-const kitEffectState: KitEffectState = { effects: [] };
-const clearKitEffects = () => {
-  kitEffectState.effects = [];
-};
-// The world's one seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
-const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
@@ -380,6 +245,29 @@ const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop,
     setWallet,
     wallet,
   });
+// The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
+const {
+  characterIdCombatantMap,
+  characters,
+  clearKitEffects,
+  defeatEnemy,
+  enemyMap,
+  hudMember,
+  kitEffectState,
+  locomotion,
+  party,
+  respawnParty,
+  statTables,
+  strikeParty,
+  worldRandom,
+} = useWorldCombat({
+  events,
+  onPartyRevived: () => {
+    const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
+    if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
+  },
+  placeWorldDrops,
+});
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The talks a resident begins and the talk the world runs, held by id, with the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap } = useWorldTalks({
@@ -456,13 +344,6 @@ const endTalk = () => {
   if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
   screenKind.value = ScreenKind.World;
 };
-// A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
-// The quests in progress count
-const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
-  placeWorldDrops(enemy, enemyDrops);
-  events.emit("defeatEnemy", enemy);
-  events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
-};
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
@@ -493,27 +374,6 @@ useRafFn(() => {
 const jumpPose = shallowRef<WorldJumpPose>();
 const jumpTo = (pose: WorldJumpPose) => {
   jumpPose.value = pose;
-};
-// A team that has all fallen revives at the share the game brings it back with, and is jumped to the unlocked landmark
-// Nearest the body, or left where it fell when none is unlocked
-const respawnParty = () => {
-  if (!checkIsPartyDown(party)) return;
-  reviveParty(party);
-  const nearestLandmark = findNearestLandmark(unlockedLandmarks.value, characterBody.position);
-  if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
-};
-// An enemy's strike lands on the taunt it struck, or on the character on the field through the team's shields, and a team
-// It fells respawns
-const strikeParty = (enemy: Enemy, taunt?: KitTaunt) => {
-  const combatant = activeCombatant.value;
-  if (!combatant) return;
-  if (taunt) {
-    damageKitTaunt(taunt, computeEnemyStrikeDamage(enemy, combatant));
-    return;
-  }
-
-  strikePartyMember(party, enemy, combatant, kitEffectState);
-  respawnParty();
 };
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {
