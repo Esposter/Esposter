@@ -34,7 +34,7 @@ export const DILUC_CHARACTER_ID = 10_000_016;
 export const BENNETT_CHARACTER_ID = 10_000_032;
 export const MONA_CHARACTER_ID = 10_000_041;
 export const AMBER_CHARACTER_ID = 10_000_021;
-export const KAEYA_CHARACTER_ID = 10_000_025;
+export const KAEYA_CHARACTER_ID = 10_000_015;
 export const LISA_CHARACTER_ID = 10_000_006;
 export const NOELLE_CHARACTER_ID = 10_000_034;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
