@@ -27,6 +27,7 @@ describe(computeCraftableCount, () => {
   const materialDefinition = createDefinition(MATERIAL_ID);
   const crystalCoreDefinition = createDefinition(CRYSTAL_CORE_ID);
   const recipe: CraftingRecipe = {
+    combineType: 1,
     id: 11_002,
     kind: CraftingRecipeKind.Tier,
     materials: [

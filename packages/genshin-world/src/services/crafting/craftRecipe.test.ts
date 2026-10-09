@@ -33,6 +33,7 @@ describe(craftRecipe, () => {
   const resultDefinition = createDefinition(RESULT_ID);
   const condensedResinDefinition = createDefinition(CONDENSED_RESIN_ID, CONDENSED_RESIN_STACK_LIMIT);
   const tierRecipe: CraftingRecipe = {
+    combineType: 1,
     id: 11_002,
     kind: CraftingRecipeKind.Tier,
     materials: [{ count: 3, id: MATERIAL_ID }],
@@ -44,6 +45,7 @@ describe(craftRecipe, () => {
     unlockItemIds: [],
   };
   const condensedResinRecipe: CraftingRecipe = {
+    combineType: 6,
     id: 22_007,
     kind: CraftingRecipeKind.CondensedResin,
     materials: [

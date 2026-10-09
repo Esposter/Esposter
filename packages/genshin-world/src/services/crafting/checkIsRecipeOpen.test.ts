@@ -9,6 +9,7 @@ describe(checkIsRecipeOpen, () => {
   const INSTRUCTION_ITEM_ID = 221_007;
   const RECIPE_ID = 22_007;
   const tierRecipe: CraftingRecipe = {
+    combineType: 1,
     id: 11_002,
     kind: CraftingRecipeKind.Tier,
     materials: [{ count: 3, id: 112_003 }],
@@ -21,6 +22,7 @@ describe(checkIsRecipeOpen, () => {
   };
   const instructionRecipe: CraftingRecipe = {
     ...tierRecipe,
+    combineType: 6,
     id: RECIPE_ID,
     kind: CraftingRecipeKind.CondensedResin,
     unlockItemIds: [INSTRUCTION_ITEM_ID],

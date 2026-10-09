@@ -8,6 +8,7 @@ import { z } from "zod";
 // Rank it needs, and the item and count it makes. The instruction items that open it are listed, none where it is open
 // From the start
 export interface CraftingRecipe {
+  combineType: number;
   id: number;
   kind: CraftingRecipeKind;
   materials: ItemCount[];
@@ -20,6 +21,7 @@ export interface CraftingRecipe {
 }
 
 export const craftingRecipeSchema = z.object({
+  combineType: z.int().positive(),
   id: z.int().positive(),
   kind: z.enum(CraftingRecipeKind),
   materials: z.array(itemCountSchema).min(1),

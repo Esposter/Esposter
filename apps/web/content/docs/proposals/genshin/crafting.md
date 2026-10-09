@@ -49,19 +49,14 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, and the instructions that open them, as the [crafting](/docs/genshin/crafting) page records.
+**Built:** the recipes of the tiers, potions, baits and Condensed Resin, their rules, the instructions that open them, and the characters' crafting talents' doubles and refunds, as the [crafting](/docs/genshin/crafting) page records.
 
 **Still to build, in order:**
 
-1. **The crafting talents' doubles and refunds.**
-   - `CraftingRecipe` (`packages/genshin-world/src/models/crafting/CraftingRecipe.ts`) gains `combineType: number`, written by `toCraftingRecipe` from the row's `combineType`; `pnpm -C scripts genshin:assets crafting` rewrites the existing `generated/crafting/recipes.json`, which gains the field and nothing else.
-   - `packages/genshin-world/src/models/crafting/CraftingTalent.ts` (`{ chance, combineTypes, effect }`) and `CraftingTalentEffect.ts` (`DoubleProduct`, `Refund`, `RegionalTalentMaterial`); `packages/genshin-world/src/services/crafting/CharacterIdCraftingTalentMap.ts` with the thirteen talents of the Decisions.
-   - `packages/genshin-world/src/services/crafting/rollCraftingTalent.ts`: the items a talent adds to `count` crafts of a recipe by `avatarId`, drawn with `random`; `RegionalTalentMaterial` adds nothing until step 4.
-   - Tests: `rollCraftingTalent.test.ts` (Sucrose crafting a combine type 1 recipe twice with draws 0.05 and 0.5 gets one more result; Xingqiu's refund gives one of the first material back; a combine type the talent does not name, or an avatar with no talent, gets nothing) and a `toCraftingRecipe.test.ts` case for the field.
-2. **The bench's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=qQILsaJKlsI --name crafting-table --from 0 --to 105` (Crafting Table, 105 seconds), then `genshin:parity frames <the path clip prints> 1`, of which the builder keeps the clearest frame of the recipe list by tab, the count and the craft with `genshin:parity frame yt-qQILsaJKlsI-crafting-table.mp4 --at <second> --name crafting-screen`. Then `ScreenKind.Crafting`, `packages/genshin-interface/src/components/CraftingScreen/` and its world wrapper `packages/genshin-world/src/components/Crafting/Screen/`, each with its fixture, each result named from the names chunk its recipe's `nameTextId` cites, the crafter chosen on it and `rollCraftingTalent`'s items added to the bag. Its comparison is queued for the user's eyes; until the bench stands it is reached through its fixture.
-3. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
-4. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
-5. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
+1. **The bench's screen, built now from the public clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=qQILsaJKlsI --name crafting-table --from 0 --to 105` (Crafting Table, 105 seconds), then `genshin:parity frames <the path clip prints> 1`, of which the builder keeps the clearest frame of the recipe list by tab, the count and the craft with `genshin:parity frame yt-qQILsaJKlsI-crafting-table.mp4 --at <second> --name crafting-screen`. Then `ScreenKind.Crafting`, `packages/genshin-interface/src/components/CraftingScreen/` and its world wrapper `packages/genshin-world/src/components/Crafting/Screen/`, each with its fixture, each result named from the names chunk its recipe's `nameTextId` cites, the crafter chosen on it and `rollCraftingTalent`'s items added to the bag. Its comparison is queued for the user's eyes; until the bench stands it is reached through its fixture.
+2. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page.
+3. **Yae Miko's and Prune's regional material.** Each region's three talent book series are read from the wiki's Character Talent Material page through the persona's reader and typed as a map of each series' base item id by region; the extra is drawn from the crafted book's region's other two series at the base material's rarity.
+4. **Gadgets**, their instructions read from the wiki's gadget pages, as the Decisions settle.
 
 ## Data and measures
 

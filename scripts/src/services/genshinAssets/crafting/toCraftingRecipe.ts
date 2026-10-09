@@ -55,6 +55,7 @@ export const toCraftingRecipe = (
   if (!resultMaterial)
     throw new InvalidOperationError(Operation.Read, String(row.combineId), "makes an item the material table lacks");
   return {
+    combineType: row.combineType,
     id: row.combineId,
     kind,
     materials,
