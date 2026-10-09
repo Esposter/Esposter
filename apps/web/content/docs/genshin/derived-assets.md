@@ -28,7 +28,7 @@ flowchart TD
 
 ## The pipeline
 
-`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (`GENSHIN_ANIMESTUDIO_CLI`, by default under `~/Downloads/AnimeStudio`) over the installed game's blocks, with the game closed. Each step reads what the one before it wrote:
+`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (`GENSHIN_ANIMESTUDIO_CLI`, by default under `~/Downloads/AnimeStudio`) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`), so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
 
 ```mermaid
 flowchart LR
