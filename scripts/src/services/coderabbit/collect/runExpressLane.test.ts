@@ -1,4 +1,6 @@
+import type { CommitCommentsPage } from "#src/models/coderabbit/collect/CommitCommentsPage";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
+import type { RepositoryView } from "#src/models/coderabbit/shared/RepositoryView";
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import {
@@ -10,6 +12,7 @@ import {
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { readCommitPatch } from "#src/services/coderabbit/collect/readCommitPatch";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { runGit } from "#src/services/shared/runGit";
@@ -28,16 +31,32 @@ describe(runExpressLane, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const viewerLogin = "viewerLogin";
   const collectorSha = "collectorSha";
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
-  // The claimed commit's own comments as GitHub keeps them, so a run reads back the attempts an earlier one posted,
-  // And no issue open before a park opens one
+  // Every commit's comments as GitHub keeps them, so a run reads back the attempts an earlier one posted on whichever
+  // Sha the claim had, and no issue open before a park opens one
   const answerGh = (comments: GitHubEntry[]): void => {
-    runGh.mockImplementation(([command, , flag, field = ""]) => {
+    runGh.mockImplementation(([command, path, flag, field = ""]) => {
       if (command === "issue") return "[]";
+      else if (command === "repo") return JSON.stringify({ name: "", owner: { login: "" } } satisfies RepositoryView);
+      else if (path === "graphql")
+        return JSON.stringify({
+          data: {
+            repository: {
+              commitComments: {
+                nodes: comments.map(({ body, id, updated_at, user }) => ({
+                  author: user,
+                  body,
+                  createdAt: updated_at,
+                  databaseId: id,
+                })),
+              },
+            },
+          },
+        } satisfies CommitCommentsPage);
       else if (flag === "-f") {
         comments.push({
           body: field.slice("body=".length),
           id: comments.length,
-          updated_at: "",
+          updated_at: new Date(0).toISOString(),
           user: { login: viewerLogin },
         });
         return "";
@@ -74,7 +93,7 @@ describe(runExpressLane, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(mainSha);
     const movedMainSha = publish(MAIN_BRANCH, commitFile(nestedPath, ""));
     const movedLane = runExpressLane({ ...input, mainSha: movedMainSha });
-    const marker = getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha]);
+    const marker = getMarker(EXPRESS_FAILED_MARKER, readCommitPatch(claimedSha, getCwd()), [collectorSha]);
 
     expect([firstLane, repeatedLane, movedLane]).toStrictEqual([
       { heldShas: [claimedSha] },
@@ -87,15 +106,39 @@ describe(runExpressLane, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
+  // Every rewrite of the queue replays the claim under a new sha, so a count kept by sha would start again with each
+  test("counts a claimed commit's attempts across the shas the queue's rewrites give it", () => {
+    expect.hasAssertions();
+
+    const { claimedSha, input, mainSha } = setupUnappliedClaim();
+    const comments: GitHubEntry[] = [];
+    answerGh(comments);
+    runExpressLane(input);
+    switchTo(`${claimedSha}^`);
+    runGit(["cherry-pick", "-x", claimedSha], getCwd());
+    const rewrittenSha = readSha("HEAD");
+    switchTo(mainSha);
+    const movedMainSha = publish(MAIN_BRANCH, commitFile(nestedPath, ""));
+    const rewrittenLane = runExpressLane({ ...input, mainSha: movedMainSha, queueSha: rewrittenSha });
+    const marker = getMarker(EXPRESS_FAILED_MARKER, readCommitPatch(claimedSha, getCwd()), [collectorSha]);
+
+    expect(rewrittenSha).not.toBe(claimedSha);
+    expect(rewrittenLane).toStrictEqual({ heldShas: [rewrittenSha] });
+    expect(comments.map(({ body }) => body)).toStrictEqual([
+      `${marker}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to cut onto ${MAIN_BRANCH} at ${mainSha} failed. See the collector run.`,
+      `${marker}\nAttempt 2 of ${SESSION_ATTEMPT_CAP} to cut onto ${MAIN_BRANCH} at ${movedMainSha} failed. See the collector run.`,
+    ]);
+  });
+
   // Parked, the commit is owed nowhere, so the lane holds nothing on it and the next run never meets it again
   test("parks a claimed commit past the attempt cap and moves on without it", () => {
     expect.hasAssertions();
 
     const { claimedSha, input, mainSha } = setupUnappliedClaim();
     const comments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      body: getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha]),
+      body: getMarker(EXPRESS_FAILED_MARKER, readCommitPatch(claimedSha, getCwd()), [collectorSha]),
       id,
-      updated_at: "",
+      updated_at: new Date(0).toISOString(),
       user: { login: viewerLogin },
     }));
     answerGh(comments);
