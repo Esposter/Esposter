@@ -8,16 +8,26 @@ import {
 } from "#src/services/buildCache/constants";
 import { pruneBuildCache } from "#src/services/buildCache/pruneBuildCache";
 import { readPackageName } from "#src/services/buildCache/readPackageName";
+import { readWorkspaceDependencyDirectories } from "#src/services/buildCache/readWorkspaceDependencyDirectories";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, renameSync, rmSync, utimesSync } from "node:fs";
 import { join } from "node:path";
 
-// Builds one workspace package through the cache: a hit restores its `dist`, a miss builds it in a slot and stores it
-export const buildPackageCached = (packageDirectory: string): BuildCacheOutcome => {
+// Builds one workspace package through the cache, after bringing up to date every workspace package it links, so a
+// Fresh worktree's leaf package builds its whole chain: a hit restores its `dist`, a miss builds it in a slot and stores it
+export const buildPackageCached = (packageDirectory: string, visiting = new Set<string>()): BuildCacheOutcome => {
+  if (visiting.has(packageDirectory))
+    throw new InvalidOperationError(Operation.Create, packageDirectory, "its workspace dependencies form a cycle");
+
+  const nextVisiting = new Set([...visiting, packageDirectory]);
+  for (const dependencyDirectory of readWorkspaceDependencyDirectories(packageDirectory))
+    buildPackageCached(dependencyDirectory, nextVisiting);
+
+  const name = readPackageName(packageDirectory);
   const key = computeBuildKey(packageDirectory);
-  const packageCacheDirectory = join(BUILD_CACHE_DIRECTORY, readPackageName(packageDirectory));
+  const packageCacheDirectory = join(BUILD_CACHE_DIRECTORY, name);
   const keyDirectory = join(packageCacheDirectory, key);
   const outputDirectory = join(packageDirectory, BUILD_OUTPUT_DIRECTORY);
 
@@ -43,6 +53,7 @@ export const buildPackageCached = (packageDirectory: string): BuildCacheOutcome 
     if (isRestored) {
       rmSync(outputDirectory, { force: true, recursive: true });
       renameSync(stagingDirectory, outputDirectory);
+      console.info(`${name}: ${BuildCacheOutcome.Hit}`);
       return BuildCacheOutcome.Hit;
     }
     rmSync(stagingDirectory, { force: true, recursive: true });
@@ -65,5 +76,6 @@ export const buildPackageCached = (packageDirectory: string): BuildCacheOutcome 
   if (existsSync(keyDirectory)) rmSync(temporaryDirectory, { force: true, recursive: true });
   else renameSync(temporaryDirectory, keyDirectory);
   pruneBuildCache(packageCacheDirectory);
+  console.info(`${name}: ${BuildCacheOutcome.Miss}`);
   return BuildCacheOutcome.Miss;
 };
