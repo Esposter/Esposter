@@ -69,11 +69,13 @@ A line is spoken whole: generation ends at the model's end-of-sequence token, un
 
 Where each component runs is a **device ladder**, fastest rung first, and the rung is chosen by the sound rather than by the load, because a provider can load a graph and run it wrong without a word: this machine's WebGPU provider returns a constant near-silence from the vocoder and throws nothing. Every synthesis is checked for a loudest frame loud enough to hear and a quietest frame the speech floor below it — a sentence has pauses, noise has none — and one that fails moves the engine one rung down, releases the one it left, and runs again. A load that rejects moves it the same way, and so does a synthesis the GPU provider fails, since a device lost under load fails every synthesis after it; a failure any other provider raises is the line's, because the CPU provider is deterministic and would raise it on every rung, so that line is dropped and the rung kept. The speech encoder runs on the CPU on every rung, since it runs once per character and the WebGPU provider rejects its graph.
 
-| Rung                    | Language model | Vocoder |
-| :---------------------- | :------------- | :------ |
-| `webgpu`                | GPU            | GPU     |
-| `webgpu-language-model` | GPU            | CPU     |
-| `cpu`                   | CPU            | CPU     |
+| Rung                                | Language model | Vocoder        |
+| :---------------------------------- | :------------- | :------------- |
+| `webgpu-language-model-dml-vocoder` | GPU (WebGPU)   | GPU (DirectML) |
+| `webgpu-language-model`             | GPU (WebGPU)   | CPU            |
+| `cpu`                               | CPU            | CPU            |
+
+The top rung's vocoder runs on DirectML, which the ONNX runtime ships on Windows under the device name `dml`: WebGPU's vocoder returns the near-silence above, and DirectML's does not. DirectML cannot take the language model, which fails a slice in its graph on the first line, so that stays on WebGPU. Against the all-CPU rung over five lines from short to long, the synthesizing process used about 85% less CPU time, and each line's wall time is the same or lower, about half on the long lines. The sound passes the same silence test, and the audio is not sample-identical to the CPU rung's, since the language model samples its tokens.
 
 The rung the engine speaks on is the status line's second word and the `voice` verb's report, and every move down is a line in `voice.log`. It is also **kept**: the rung a synthesizer has spoken on is written to the state directory, and the next synthesizer starts there rather than walking the rungs above it again — a load and a silent synthesis at every warm otherwise. A demotion rewrites the file, so it only ever moves down on its own; the `voice` verb clears it and stops any running synthesizer before its proof, so a driver that has since started vocoding is found by setting the voice up again and by nothing on a reply's path.
 
@@ -184,4 +186,4 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 - A piece that starts inside a fenced block an earlier piece opened reads a line of that code opening on `>` as spoken: the tool flushes at line breaks, so the fence's opening sits in a piece the stateless hook never saw. Rare in a reply, and the cost is one line read aloud.
 - A line can sound cut off at a comma: the word before it stops short instead of trailing into the pause. That is the engine's prosody, not a lost piece of text. The hook sends the line whole, a clip of a line with a comma runs about as long as its two halves read apart, and the token ceiling is several times what a line uses. It comes from the smallest checkpoint with 4-bit weights and a one-step vocoder, so it goes away only with a different engine.
 - The idle timeout and the hook's timeout are the two constants a person might tune; the plugin declares both and nothing else about the server is configurable, because the `voice` verb is where the choices are made.
-- The WebGPU provider is the one route from Node to this machine's AMD card under Windows: no CUDA toolchain reaches it, and DirectML rejects the speech encoder's attention op and a slice in the language model.
+- The GPU reaches this machine's AMD card through two providers under Windows: WebGPU runs the language model, and DirectML the vocoder. No CUDA toolchain reaches it, and DirectML rejects the speech encoder's attention op and a slice in the language model, so both stay where they are.

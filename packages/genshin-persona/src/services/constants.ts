@@ -129,6 +129,9 @@ export const VOICE_MODEL_DTYPE: Record<string, string> = {
 };
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";
+// The vocoder runs on DirectML, where WebGPU's vocoder returns near-silence; DirectML rejects a slice in the language
+// Model, which stays on WebGPU
+export const VOICE_VOCODER_GPU_DEVICE = "dml";
 // The speech encoder runs on the CPU on every rung, since the WebGPU provider rejects its graph
 const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): Record<string, string> => ({
   conditional_decoder: vocoderDevice,
@@ -138,9 +141,13 @@ const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): 
   speech_encoder: VOICE_CPU_DEVICE,
 });
 // Fastest first, and verified by the sound rather than the load: this machine's WebGPU provider returns a constant
-// Near-silence from the full-precision vocoder and throws nothing. A rung is named for what runs on the GPU
+// Near-silence from the full-precision vocoder and throws nothing, so the vocoder moves to DirectML. A rung is named for
+// What runs on the GPU
 export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
-  { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE), name: VOICE_GPU_DEVICE },
+  {
+    devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_VOCODER_GPU_DEVICE),
+    name: `${VOICE_GPU_DEVICE}-language-model-${VOICE_VOCODER_GPU_DEVICE}-vocoder`,
+  },
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
   { devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE), name: VOICE_CPU_DEVICE },
 ];
@@ -148,7 +155,10 @@ export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
 // Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
 // Is deterministic, so a failure it raises is the line's and would recur on every rung
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(String.raw`providers[\\/]${VOICE_GPU_DEVICE}`, "u");
+export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(
+  String.raw`providers[\\/](?:${VOICE_GPU_DEVICE}|${VOICE_VOCODER_GPU_DEVICE})`,
+  "u",
+);
 // A loudest frame at least this loud, since a vocoder run wrong lands tens of decibels under the engine's level, and
 // A quietest frame the speech floor below it, since a sentence has pauses where noise has none
 export const MIN_SPEECH_PEAK_DB = -40;

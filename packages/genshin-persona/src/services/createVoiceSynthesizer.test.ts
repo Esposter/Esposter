@@ -11,6 +11,7 @@ import {
   VOICE_DEVICE_LADDER,
   VOICE_GPU_DEVICE,
   VOICE_SAMPLE_RATE,
+  VOICE_VOCODER_GPU_DEVICE,
 } from "#src/services/constants";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { describe, expect, test, vi } from "vitest";
@@ -138,6 +139,7 @@ describe(createVoiceSynthesizer, () => {
       samples: speech,
     });
     expect(GPU_PROVIDER_FAILURE_REGEX.test(String(failure))).toBe(true);
+    expect(GPU_PROVIDER_FAILURE_REGEX.test(`providers\\${VOICE_VOCODER_GPU_DEVICE}\\DmlExecutionProvider`)).toBe(true);
     expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
     expect(models[0]?.dispose).toHaveBeenCalledTimes(1);
     expect(onFallback).toHaveBeenCalledTimes(1);
