@@ -19,6 +19,12 @@ describe(countWeeklyBossClaims, () => {
     expect(countWeeklyBossClaims(claimedAts, now)).toBe(2);
   });
 
+  test("counts a claim at now, never one made after it", () => {
+    expect.hasAssertions();
+
+    expect(countWeeklyBossClaims([now, now.add({ minutes: 1 })], now)).toBe(1);
+  });
+
   test("counts none when no claim was made this week, a claim from last week not among them", () => {
     expect.hasAssertions();
 

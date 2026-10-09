@@ -23,7 +23,7 @@ flowchart TD
 - **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence.
 - **A claimed boss is back five seconds later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that many seconds after it.
 - **The week resets on Monday at the daily reset's hour.** `computeWeeklyResetTime` finds the most recent Monday at 04:00 at or before the moment read, in that moment's own time zone, sharing `DAILY_RESET_TIME` with the enemies' reset so the hour is kept in one place. A moment before that week's reset belongs to the week before.
-- **A claim at the reset counts toward the new week.** `countWeeklyBossClaims` counts a claim made at or after the reset, so the claim at exactly 04:00 Monday is this week's first.
+- **A claim at the reset counts toward the new week.** `countWeeklyBossClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted.
 - **One count across every weekly boss.** `countWeeklyBossClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for.
 
 ## Scope and order
