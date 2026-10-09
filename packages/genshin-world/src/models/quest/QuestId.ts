@@ -2,8 +2,8 @@
 // Each one's steps and talks and the words they show, so carrying a quest is a line here and a run of it. The prologue
 // Begins the game, so its first quests come first, in the order the Archon quests run
 export enum QuestId {
-  WanderersTrail = "351",
   BirdsEyeView = "352",
+  WanderersTrail = "351",
 }
 
 export const QuestIds: readonly QuestId[] = Object.values(QuestId);

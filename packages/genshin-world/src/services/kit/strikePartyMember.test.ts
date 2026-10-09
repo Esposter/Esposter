@@ -2,12 +2,12 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";

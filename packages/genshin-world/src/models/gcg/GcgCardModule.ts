@@ -22,10 +22,10 @@ export interface GcgCardModule {
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onSkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard) => void;
   play?: (context: GcgEffectContext, targetIndex: number | undefined) => void;
-  skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
   reduceCost?: (
     context: GcgEffectContext,
     subject: GcgCostSubject,
     zoneCard: GcgZoneCard,
   ) => GcgCostReduction | undefined;
+  skillOnPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => GcgSkill | undefined;
 }

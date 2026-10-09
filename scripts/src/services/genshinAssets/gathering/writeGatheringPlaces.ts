@@ -1,5 +1,5 @@
-import { GATHERING_GENERATED_DIRECTORY, GATHERING_ITEMS_PATH } from "#src/services/genshinAssets/gathering/constants";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { GATHERING_GENERATED_DIRECTORY, GATHERING_ITEMS_PATH } from "#src/services/genshinAssets/gathering/constants";
 import { readGatheringItems } from "#src/services/genshinAssets/gathering/readGatheringItems";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";

@@ -93,7 +93,7 @@ describe(useDirectMessageStore, () => {
   });
 
   // The invite is the reader's own message in the friend's direct message, which is created where it does not
-  // exist; the reader stays where they are, so the send never navigates
+  // Exist; the reader stays where they are, so the send never navigates
   test("inviteFriend sends the link as the reader's message in a new direct message", async () => {
     expect.hasAssertions();
 

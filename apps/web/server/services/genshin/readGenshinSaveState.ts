@@ -18,7 +18,7 @@ export interface GenshinSaveState {
 const parseEnvelope = (json: Buffer | undefined): GenshinSaveEnvelope | undefined => {
   if (!json) return undefined;
   // Parsed as plain JSON, because the save holds its instants as ISO strings a date revival would turn into Dates
-  // eslint-disable-next-line no-restricted-properties -- the save keeps its instants as ISO strings, which a date revival would turn into Dates
+
   const parsedJson = getResult(() => JSON.parse(json.toString()))
     .orTee(console.error)
     .unwrapOr(undefined);

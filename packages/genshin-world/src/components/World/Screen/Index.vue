@@ -274,11 +274,11 @@ const characterIdCombatantMap = computed(() => {
   );
   for (const character of characters.value)
     combatantMap.set(character.id, {
+      ascension: character.ascension,
       attributes: computeCharacterAttributes(
         getCharacterAttributeLines(character, statTables.value),
         elementalResonances,
       ),
-      ascension: character.ascension,
       characterId: character.id,
       elementalResonances,
       kit: CharacterIdKitMap[character.id] ?? travelerKit.value,

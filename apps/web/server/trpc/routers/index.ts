@@ -10,10 +10,10 @@ import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { emailRouter } from "#server/trpc/routers/email";
-import { genshinRouter } from "#server/trpc/routers/genshin";
 import { flowchartRouter } from "#server/trpc/routers/flowchart";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
+import { genshinRouter } from "#server/trpc/routers/genshin";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { likeRouter } from "#server/trpc/routers/like";
 import { messageRouter } from "#server/trpc/routers/message";
@@ -50,9 +50,9 @@ const baseTrpcRouter = router({
   dungeons: dungeonsRouter,
   email: emailRouter,
   flowchart: flowchartRouter,
-  genshin: genshinRouter,
   friend: friendRouter,
   friendRequest: friendRequestRouter,
+  genshin: genshinRouter,
   invite: inviteRouter,
   like: likeRouter,
   message: messageRouter,

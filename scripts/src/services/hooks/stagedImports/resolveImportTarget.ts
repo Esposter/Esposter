@@ -10,7 +10,7 @@ const PROBE_SUFFIXES = ["", ".ts", ".mts", ".vue", ".json", "/index.ts", "/index
 // Specifier (`#src/*` and `#src/*.vue` both match `#src/Foo.vue`), and Node takes the most specific: the longest
 // Prefix, then the longest pattern. So does this, or a `.vue` import resolves through `#src/*` to `Foo.vue.ts`
 const getAliasPath = (specifier: string, packageDirectory: string, aliases: Readonly<Record<string, unknown>>) => {
-  let best: { path: string; patternLength: number; prefixLength: number } | undefined;
+  let best: undefined | { path: string; patternLength: number; prefixLength: number };
   for (const [pattern, target] of Object.entries(aliases)) {
     if (typeof target !== "string") continue;
     const starIndex = pattern.indexOf("*");
@@ -39,7 +39,7 @@ const getAliasPath = (specifier: string, packageDirectory: string, aliases: Read
 };
 
 // The repository paths an import names, or undefined when it names nothing inside the repository: a bare package
-// specifier, or a relative path that climbs out of it
+// Specifier, or a relative path that climbs out of it
 export const resolveImportTarget = (
   specifier: string,
   importingPath: string,

@@ -62,7 +62,7 @@ describe(reactToEvents, () => {
       }
     }
     vi.stubGlobal("Notification", Notification);
-    vi.stubGlobal("window", { Notification, document: { hidden: true } });
+    vi.stubGlobal("window", { document: { hidden: true }, Notification });
     onTestFinished(() => {
       vi.unstubAllGlobals();
     });

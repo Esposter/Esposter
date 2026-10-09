@@ -16,7 +16,7 @@ export const readGpuPercentage = async (): Promise<number | undefined> => {
     case "win32":
       return (
         await getResultAsync(() =>
-          runMachineCommand("typeperf", ["\\GPU Engine(*engtype_3D)\\Utilization Percentage", "-sc", "1"]),
+          runMachineCommand("typeperf", [String.raw`\GPU Engine(*engtype_3D)\Utilization Percentage`, "-sc", "1"]),
         )
       ).match(parseTypeperf, (error) => {
         console.error(error);

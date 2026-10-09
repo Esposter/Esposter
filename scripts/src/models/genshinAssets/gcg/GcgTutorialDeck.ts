@@ -19,14 +19,6 @@ export interface GcgTutorialCharacter {
   weapon: string;
 }
 
-export interface GcgTutorialSkill {
-  costs: GcgCost[];
-  effect: string;
-  energyGain: number;
-  id: number;
-  kind: GcgSkillKind;
-}
-
 // The tutorial deck's slice: its cards in order, its characters in order, and the cards the tutorial's own characters
 // Create on the field, which a duel needs as cards of their own
 export interface GcgTutorialDeck {
@@ -34,4 +26,12 @@ export interface GcgTutorialDeck {
   cards: GcgTutorialCard[];
   characterIds: number[];
   characters: GcgTutorialCharacter[];
+}
+
+export interface GcgTutorialSkill {
+  costs: GcgCost[];
+  effect: string;
+  energyGain: number;
+  id: number;
+  kind: GcgSkillKind;
 }

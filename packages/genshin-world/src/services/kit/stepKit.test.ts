@@ -3,8 +3,8 @@ import type { KitInput } from "#src/models/kit/KitInput";
 
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createKitState } from "#src/services/kit/createKitState";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";

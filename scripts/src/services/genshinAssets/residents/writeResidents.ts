@@ -1,7 +1,6 @@
 import type { InteractiveMapFitFile } from "#src/models/genshinAssets/points/InteractiveMapFitFile";
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { GroundPoint } from "genshin-engine";
-
 import type { Resident } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";

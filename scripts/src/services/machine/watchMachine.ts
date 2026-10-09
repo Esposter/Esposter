@@ -1,8 +1,7 @@
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
+import type { MachineState } from "#src/models/machine/MachineState";
 
-import { MachineState } from "#src/models/machine/MachineState";
-import { SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
-import { LAUNCHD_PROCESS_ID } from "#src/services/machine/constants";
+import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
 import { getCpuTotals } from "#src/services/machine/getCpuTotals";

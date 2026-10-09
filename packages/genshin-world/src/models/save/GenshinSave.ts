@@ -1,6 +1,6 @@
-import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
-import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
+import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
+import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { MAX_GENSHIN_SAVE_LENGTH } from "#src/services/save/constants";
 import { z } from "zod";
 

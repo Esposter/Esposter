@@ -9,7 +9,7 @@ export const findNearestLandmarkAreaId = (
   landmarks: readonly { areaId: string; position: GroundPoint }[],
   position: GroundPoint,
 ): string => {
-  let nearest: { areaId: string; distance: number } | undefined;
+  let nearest: undefined | { areaId: string; distance: number };
   for (const landmark of landmarks) {
     const distance = Math.hypot(landmark.position.x - position.x, landmark.position.z - position.z);
     if (!nearest || distance < nearest.distance) nearest = { areaId: landmark.areaId, distance };

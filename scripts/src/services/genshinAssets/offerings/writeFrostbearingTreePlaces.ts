@@ -1,8 +1,8 @@
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import {
   FROSTBEARING_TREE_LABEL_ID,
   FROSTBEARING_TREE_PLACES_GENERATED_DIRECTORY,
 } from "#src/services/genshinAssets/offerings/constants";
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
