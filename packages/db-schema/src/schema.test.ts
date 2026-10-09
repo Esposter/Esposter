@@ -68,6 +68,7 @@ describe("schema", () => {
       roomEmojis_name_charset_check: "message"."roomEmojis"."name" ~ '^[a-z0-9_]+$'
       roomFilters_words_size_check: cardinality("message"."roomFilters"."words") <= 1000
       roomFilters_action_timeoutDurationMs_check: ("message"."roomFilters"."action" = 'Timeout' AND "message"."roomFilters"."timeoutDurationMs" IS NOT NULL AND "message"."roomFilters"."timeoutDurationMs" > 0) OR ("message"."roomFilters"."action" <> 'Timeout' AND "message"."roomFilters"."timeoutDurationMs" IS NULL)
+      roomMemberPermissions_allow_deny_disjoint_check: ("message"."roomMemberPermissions"."allow" & "message"."roomMemberPermissions"."deny") = 0
       roomRoles_color_length_check: LENGTH("message"."roomRoles"."color") <= 9
       roomRoles_name_length_check: LENGTH(TRIM("message"."roomRoles"."name")) BETWEEN 1 AND 100
       roomRoles_position_check: "message"."roomRoles"."position" >= 0
