@@ -3,7 +3,19 @@ title: Chests
 description: Proposal — the open world's chests, whose places are built and whose Common, Exquisite and Precious openings now pay their Primogems and Mora; still to build are the drops that pour out, the Adventure EXP and Sigils, the Luxurious and Remarkable rewards, the chests the camps and puzzles lock, the buried and sealed ones dug or freed, and the join that lets an opened chest count toward the achievements and the exploration progress.
 model: claude-haiku-5-5
 needs: [game-exports]
-touches: ["packages/genshin-world/src/services/chest/**"]
+touches:
+  [
+    "packages/genshin-world/src/services/chest/**",
+    "packages/genshin-world/src/models/chest/**",
+    "packages/genshin-world/src/composables/useWorldChests.ts",
+    "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/components/World/Interactables/**",
+    "packages/genshin-world/src/services/interaction/constants.ts",
+    "packages/genshin-world/src/models/save/**",
+    "packages/genshin-world/src/services/save/**",
+    "packages/genshin-text/src/**",
+    "packages/genshin-persona/src/generated/**",
+  ]
 ---
 
 # Chests
@@ -19,6 +31,8 @@ Chests are the open world's main reward for exploring it, and the most of what a
 - **A dug or freed place's tier is unsettled.** The map gives a buried or a sealed place no tier, and no tiered chest stands within reach of one to read it off. What a dug or freed place holds is settled by a recording of one, and until then a dug or freed place is left unrewarded, a provisional call.
 - **Luxurious and Remarkable are unrewarded for now.** The wiki gives a Luxurious chest its Primogems and Adventure EXP but leaves its Mora unstated, and a Remarkable chest outside Tsurumi Island gives 5 Primogems and blueprints, Tsurumi's only its blueprints. Both wait until their rewards are settled, and until then they stay unopened.
 - **The reward ranges are the wiki's, not banded by Adventure Rank.** The wiki's chest reward table lists one range per tier, so no Adventure Rank band is read from it. The chest levels by zone (1, 6, 11, 16, 21 and 26) are read from the game's tables, and the Primogems of the high zone-level areas differ from the default. Which areas those are needs the region outlines, so a chest's band waits on them.
+- **A chest's row is named by its kind.** The game's text holds each kind's name under several ids, none of them a chest gadget's own name in the gadget table, so a row is named by the first numeric id `genshin:text find` prints for the kind's English name: 219297138 for "Common Chest", 104751454 for "Exquisite Chest" and 3752292187 for "Precious Chest", as `GameTextKey.CommonChest`, `ExquisiteChest` and `PreciousChest`. The user's eyes check the words against the game's own prompt.
+- **A chest stands in as a box until it is measured.** The world draws it as a toon box on its ground point, as the drops and residents stand in as spheres and capsules, its size and colour provisional until a recording's chest is matched.
 - **A chest opens once.** Opened chests never come back, kept with the player's progress, and each counts once toward its area's exploration progress and its region's chest achievements.
 
 ## How it works
@@ -42,12 +56,12 @@ flowchart TD
 
 **This adds, in order:**
 
-1. **Common chests in Windrise's area, opened with their wallet share and their drops.** The Primogems and Mora are built for the Common, Exquisite and Precious kinds. What is left is the drops, and the area: the places name no catalogue area, which needs the region outlines the exploration progress reads, so the Windrise's chests cannot yet be told from the rest of Mondstadt's.
+1. **Mondstadt's chests in the world, opened on F.** The Primogems and Mora are built for the Common, Exquisite and Precious kinds, and Windrise's own area waits on the region outlines the exploration progress reads, since the places name no catalogue area. Add `packages/genshin-world/src/services/chest/readMondstadtChestPlaces.ts`, a dynamic import of the existing `generated/chests/mondstadt.json` parsed with a `chestPlaceSchema` added beside `ChestPlace`, as `services/gathering/readMondstadtGatheringPlaces.ts` reads its slice, and `services/chest/computeChestInteractables.ts`, which gives each unopened chest of a kind `ChestKindRewardMap` rewards as an `InteractionKind.Open` row on the ground under its point, named by its kind's key above. `packages/genshin-world/src/composables/useWorldChests.ts` loads the places as `useGatheringPoints` loads its own and holds the opened ids, and `components/World/Session/Index.vue` adds its rows to `interactables` and, on F at one, runs `openChest` with the world's seeded random, sets the wallet and hands the drops to `placeWorldDrops` at the chest's point. `components/World/Interactables/Index.vue` draws the `Open` rows as box stand-ins (`CHEST_STAND_IN_SIZE`, `CHEST_STAND_IN_COLOR` and a `CHEST_STAND_IN_CAPACITY` above the region slice's count, in `services/interaction/constants.ts`). The opened ids are a save slice: `openedChests` in `GenshinSave` (`models/chest/OpenedChestSave.ts`, at most `MAX_OPENED_CHEST_COUNT` in `services/save/constants.ts`), read and written by `readGenshinSave` and `toGenshinSave`, and kept as the account's copy by `mergeGenshinSave`, with the wallet and the bag, never unioned, as the [save data](/docs/proposals/genshin/save-data) proposal's paid-set rule says. The three keys are added to `GameTextKey` and written with `pnpm -C scripts genshin:text write`. Tests: `packages/genshin-world/src/services/chest/computeChestInteractables.test.ts`, asserting that an unopened Common chest is offered and an opened one, a Luxurious one and a Buried one are not; and a case in `services/save/mergeGenshinSave.test.ts` that the account's opened chests are kept over the guest's.
 2. **The other rewards and tiers.** Adventure EXP and Sigils, which the wallet does not hold yet; Luxurious and Remarkable, once their Mora and blueprints are settled.
 3. **The locks by camps.** Waits on the reach a camp locks a chest within, measured.
 4. **Digging and seals**, once a recording settles what a dug or freed place holds and which seal each sealed place wears.
 5. **Locks by puzzles**, once the puzzles stand.
-6. **The join to the achievements and the exploration progress.** An opened chest moves the 66 chest achievements and its area's doings only once it is joined to the game's own chest records (below).
+6. **The join to the achievements and the exploration progress.** An opened chest moves the 66 chest achievements and its area's doings only once it is joined to the game's own chest records (below), which the scene group export the other machine is making carries with each chest's gadget id and group. The area each chest counts toward is read from the same export, or from the region outlines the exploration progress reads.
 
 ## Data and measures
 
