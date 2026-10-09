@@ -6,13 +6,19 @@ import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldDat
 import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { EnemyDropFamilyDropTableMap, ForgeRecipeKind, readForgeRecipes, WALLET_ITEM_IDS } from "genshin-world";
+import {
+  EnemyDropFamilyDropTableMap,
+  ForgeRecipeKind,
+  readCraftingRecipes,
+  readForgeRecipes,
+  WALLET_ITEM_IDS,
+} from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The items every drop family's table names, every expedition's reward preview gives and every forge recipe takes or
-// Yields, each read from the game's Material table with its name's text id, which `genshin:text names` writes into the
-// Name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure
+// The items every drop family's table names, every expedition's reward preview gives, and every forge and crafting recipe
+// Takes or yields, each read from the game's Material table with its name's text id, which `genshin:text names` writes
+// Into the name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure
 // EXP is taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon
 // Table. An item the table lacks is an error. Returns the file's path
 export const writeItems = async (): Promise<string> => {
@@ -26,6 +32,7 @@ export const writeItems = async (): Promise<string> => {
       .filter(({ kind }) => kind !== ForgeRecipeKind.Weapon)
       .flatMap(({ results }) => results.map(({ itemId }) => itemId)),
   ];
+  const craftingRecipes = await readCraftingRecipes();
   const materialRows = parseMachineJson<MaterialRow[]>(
     await readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
   );
@@ -34,6 +41,8 @@ export const writeItems = async (): Promise<string> => {
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
       ...expeditionItemIds,
       ...forgeItemIds,
+      ...craftingRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),
+      ...craftingRecipes.map(({ resultItemId }) => resultItemId),
     ]),
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))

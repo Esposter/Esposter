@@ -1,5 +1,13 @@
 [
   {
+    "id": 100002,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "4094258556",
+    "rank": 90000,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
     "id": 100012,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "1330975132",
@@ -24,6 +32,94 @@
     "stackLimit": 9999
   },
   {
+    "id": 100016,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "4131305812",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100017,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1739030740",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100020,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "4200020428",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100026,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1050026324",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100032,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1247603844",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100051,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1864852572",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100052,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3227888900",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100053,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2387249548",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100054,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2189505020",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100057,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2071890124",
+    "rank": 311,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100058,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2764520484",
+    "rank": 312,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
     "id": 100061,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "2492759196",
@@ -44,6 +140,38 @@
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "1695194124",
     "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100072,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "557278548",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100081,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3670165708",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100083,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1872908716",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 100085,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2435040556",
+    "rank": 320,
     "rarity": 0,
     "stackLimit": 9999
   },
@@ -240,6 +368,118 @@
     "stackLimit": 1000
   },
   {
+    "id": 101202,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3896942756",
+    "rank": 313,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101204,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "354894236",
+    "rank": 313,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101216,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2960336068",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101219,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "691451364",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101230,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "457891068",
+    "rank": 90000,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101231,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1070567836",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101234,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "225224916",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101243,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1334780260",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101244,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "767225220",
+    "rank": 90000,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101245,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1984022796",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101250,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "19028052",
+    "rank": 316,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101251,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3599966252",
+    "rank": 320,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101264,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3318899836",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 101265,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3263853588",
+    "rank": 321,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
     "id": 104011,
     "materialType": "MATERIAL_WEAPON_EXP_STONE",
     "nameTextId": "2429162676",
@@ -264,6 +504,982 @@
     "stackLimit": 99999
   },
   {
+    "id": 104111,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2483375500",
+    "rank": 12102,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104112,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3100999036",
+    "rank": 12102,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104113,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3381793068",
+    "rank": 12102,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104114,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2914840836",
+    "rank": 12102,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104121,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "805672020",
+    "rank": 12103,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104122,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3993365836",
+    "rank": 12103,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104123,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1384565844",
+    "rank": 12103,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104124,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1417433532",
+    "rank": 12103,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104131,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "959468588",
+    "rank": 12104,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104132,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2728980868",
+    "rank": 12104,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104133,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "972163476",
+    "rank": 12104,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104134,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2238447652",
+    "rank": 12104,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104141,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1830354268",
+    "rank": 12105,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104142,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "146485284",
+    "rank": 12105,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104143,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2323057092",
+    "rank": 12105,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104144,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2377786500",
+    "rank": 12105,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104151,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3707624868",
+    "rank": 12106,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104152,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2146024524",
+    "rank": 12106,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104153,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4211103924",
+    "rank": 12106,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104154,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "995014132",
+    "rank": 12106,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104161,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3090648092",
+    "rank": 12107,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104162,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2226067636",
+    "rank": 12107,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104163,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "498228604",
+    "rank": 12107,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104164,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1494672620",
+    "rank": 12107,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104171,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1612218532",
+    "rank": 12108,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104172,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "401353956",
+    "rank": 12108,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104173,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "131508644",
+    "rank": 12108,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104174,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2186134900",
+    "rank": 12108,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104301,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2262213924",
+    "rank": 13101,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104302,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3020008756",
+    "rank": 13101,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104303,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2212011068",
+    "rank": 13101,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104304,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3958752644",
+    "rank": 13102,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104305,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2693927380",
+    "rank": 13102,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104306,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3735432580",
+    "rank": 13102,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104307,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3272646100",
+    "rank": 13103,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104308,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3218582564",
+    "rank": 13103,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104309,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3202196684",
+    "rank": 13103,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104310,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2565711028",
+    "rank": 13104,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104311,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3275055188",
+    "rank": 13104,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104312,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1927399596",
+    "rank": 13104,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104313,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "206988300",
+    "rank": 13105,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104314,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2071392676",
+    "rank": 13105,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104315,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "620969188",
+    "rank": 13105,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104316,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3835242828",
+    "rank": 13106,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104317,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "266512684",
+    "rank": 13106,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104318,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2661153132",
+    "rank": 13106,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104320,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2569352204",
+    "rank": 13107,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104321,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4164589940",
+    "rank": 13107,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104322,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2381438068",
+    "rank": 13107,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104323,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2962100404",
+    "rank": 13108,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104324,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4156724420",
+    "rank": 13108,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104325,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2852490284",
+    "rank": 13108,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104326,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2661351860",
+    "rank": 13109,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104327,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2811001012",
+    "rank": 13109,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104328,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3803357620",
+    "rank": 13109,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104329,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1901318324",
+    "rank": 13110,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104330,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "886643892",
+    "rank": 13110,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104331,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1067169868",
+    "rank": 13110,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104332,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "965705772",
+    "rank": 13111,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104333,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "778262828",
+    "rank": 13111,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104334,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3292554300",
+    "rank": 13111,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104335,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3345547756",
+    "rank": 13112,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104336,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1803874476",
+    "rank": 13112,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104337,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1186858260",
+    "rank": 13112,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104338,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2877204556",
+    "rank": 13113,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104339,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "389729692",
+    "rank": 13113,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104340,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1441285348",
+    "rank": 13113,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104341,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1406380412",
+    "rank": 13114,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104342,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4100324540",
+    "rank": 13114,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104343,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "413472228",
+    "rank": 13114,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104344,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3505049628",
+    "rank": 13115,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104345,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "261642348",
+    "rank": 13115,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104346,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "278224940",
+    "rank": 13115,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104347,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "181933276",
+    "rank": 13116,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104348,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "279513292",
+    "rank": 13116,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104349,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2186573124",
+    "rank": 13116,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104350,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "522559596",
+    "rank": 13117,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104351,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2720738460",
+    "rank": 13117,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104352,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3127398652",
+    "rank": 13117,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104353,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1330781244",
+    "rank": 13118,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104354,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "621148196",
+    "rank": 13118,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104355,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2706579636",
+    "rank": 13118,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104356,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "202626148",
+    "rank": 13119,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104357,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "422893684",
+    "rank": 13119,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104358,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2359489772",
+    "rank": 13119,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104359,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "858397804",
+    "rank": 13120,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104360,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2041586732",
+    "rank": 13120,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104361,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4272439404",
+    "rank": 13120,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104362,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "487677276",
+    "rank": 13121,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104363,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2138688524",
+    "rank": 13121,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 104364,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4116870180",
+    "rank": 13121,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 110001,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "3380007948",
+    "rank": 322,
+    "rarity": 0,
+    "stackLimit": 9999
+  },
+  {
+    "id": 111006,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "3724334516",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111007,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "2229775724",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111008,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "3459558604",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111009,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "2979638412",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111010,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "4067166436",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111011,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "2029834548",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111012,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "4224025044",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111013,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "1171044524",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111014,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "2818269692",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111015,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "3787448780",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111016,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "3609930844",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111017,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "466349548",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111018,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "1175914556",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111019,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "192593116",
+    "rank": 900000,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111023,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "46026204",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111024,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "1563957564",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111025,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "1973010916",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111026,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "2647260364",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111028,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "4162247044",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111029,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "1094502524",
+    "rank": 121099,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111030,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "1988777388",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111031,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "1204076724",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111032,
+    "materialType": "MATERIAL_FOOD",
+    "nameTextId": "1812511980",
+    "rank": 121099,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111033,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "2812466636",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111034,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "2999895308",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111035,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "1523053012",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 111036,
+    "materialType": "MATERIAL_FISH_BAIT",
+    "nameTextId": "796743100",
+    "rank": 340,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 112002,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1442515996",
+    "rank": 10601,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112003,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2293592500",
+    "rank": 10601,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112004,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3865019532",
+    "rank": 10601,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
     "id": 112005,
     "materialType": "MATERIAL_AVATAR_MATERIAL",
     "nameTextId": "461826100",
@@ -286,5 +1502,1765 @@
     "rank": 10602,
     "rarity": 3,
     "stackLimit": 9999
+  },
+  {
+    "id": 112008,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1838236988",
+    "rank": 10603,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112009,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2199915924",
+    "rank": 10603,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112010,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4256206044",
+    "rank": 10603,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112011,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "85549564",
+    "rank": 10604,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112012,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2287170668",
+    "rank": 10604,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112013,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "744013132",
+    "rank": 10604,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112014,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1874818508",
+    "rank": 10105,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112015,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "98885076",
+    "rank": 10105,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112016,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "258444604",
+    "rank": 10105,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112017,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "352394668",
+    "rank": 10120,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112018,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3743954164",
+    "rank": 10120,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112019,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "341144756",
+    "rank": 10120,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112020,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "711289316",
+    "rank": 10107,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112021,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3564785012",
+    "rank": 10107,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112022,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "814255356",
+    "rank": 10107,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112023,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3438616924",
+    "rank": 10108,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112024,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3502516708",
+    "rank": 10108,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112025,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3313714244",
+    "rank": 10108,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112026,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2471441908",
+    "rank": 10109,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112027,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "132455476",
+    "rank": 10109,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112028,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3503579340",
+    "rank": 10109,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112029,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1979428308",
+    "rank": 10110,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112030,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "451970076",
+    "rank": 10110,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112031,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4188816748",
+    "rank": 10110,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112032,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3337386220",
+    "rank": 10611,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112033,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2914740468",
+    "rank": 10611,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112034,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "966140404",
+    "rank": 10611,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112035,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2331729956",
+    "rank": 10612,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112036,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1153211884",
+    "rank": 10612,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112037,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2209040604",
+    "rank": 10612,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112038,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3308824804",
+    "rank": 10613,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112039,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3355821404",
+    "rank": 10613,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112040,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2460818828",
+    "rank": 10613,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112041,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1908773164",
+    "rank": 10114,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112042,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3545037916",
+    "rank": 10114,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112043,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "15453324",
+    "rank": 10114,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112044,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3548930220",
+    "rank": 10615,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112045,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "832899108",
+    "rank": 10615,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112046,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3514696868",
+    "rank": 10615,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112047,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3388706148",
+    "rank": 10116,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112048,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3527434436",
+    "rank": 10116,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112049,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "758595748",
+    "rank": 10116,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112050,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3559934020",
+    "rank": 10117,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112051,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "277364116",
+    "rank": 10117,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112052,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3975731532",
+    "rank": 10117,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112053,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2130054380",
+    "rank": 10618,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112054,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4256517428",
+    "rank": 10618,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112055,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3049633276",
+    "rank": 10618,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112056,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1491573772",
+    "rank": 10119,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112057,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2393704732",
+    "rank": 10119,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112058,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4240144404",
+    "rank": 10119,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112059,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2849798340",
+    "rank": 10621,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112060,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "884677724",
+    "rank": 10621,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112061,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "358330556",
+    "rank": 10621,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112062,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3338415476",
+    "rank": 10122,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112063,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3667475916",
+    "rank": 10122,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112064,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3245213916",
+    "rank": 10122,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112065,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2216845460",
+    "rank": 10623,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112066,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2568989060",
+    "rank": 10623,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112067,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "82539884",
+    "rank": 10623,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112068,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3624263084",
+    "rank": 10124,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112069,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2462831988",
+    "rank": 10124,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112070,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1238837468",
+    "rank": 10124,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112071,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1323846940",
+    "rank": 10125,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112072,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "707744044",
+    "rank": 10125,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112073,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3862610052",
+    "rank": 10125,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112074,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1287058468",
+    "rank": 10126,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112075,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2424696020",
+    "rank": 10126,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112076,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2728536556",
+    "rank": 10126,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112077,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1643560060",
+    "rank": 10127,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112078,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3189804116",
+    "rank": 10127,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112079,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1166015508",
+    "rank": 10127,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112080,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1313088596",
+    "rank": 10628,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112081,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1145135556",
+    "rank": 10628,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112082,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1028727868",
+    "rank": 10628,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112083,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3384758508",
+    "rank": 10629,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112084,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3204144588",
+    "rank": 10629,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112085,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "292782396",
+    "rank": 10629,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112086,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2692224052",
+    "rank": 10130,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112087,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1247906972",
+    "rank": 10130,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112088,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3089317300",
+    "rank": 10130,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112089,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "898921804",
+    "rank": 10131,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112090,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2190513620",
+    "rank": 10131,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112091,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3328017644",
+    "rank": 10131,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112092,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1504575660",
+    "rank": 10132,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112093,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3044187156",
+    "rank": 10132,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112094,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "651341044",
+    "rank": 10132,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112095,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3306086700",
+    "rank": 10133,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112096,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3086826876",
+    "rank": 10133,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112097,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1023806836",
+    "rank": 10133,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112098,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3712957772",
+    "rank": 10134,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112099,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3816991196",
+    "rank": 10134,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112100,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1973476644",
+    "rank": 10134,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112101,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4078911924",
+    "rank": 10635,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112102,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "185496004",
+    "rank": 10635,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112103,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "564669668",
+    "rank": 10635,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112104,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3715939572",
+    "rank": 10636,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112105,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1137549804",
+    "rank": 10636,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112106,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3748972940",
+    "rank": 10636,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112107,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1572409540",
+    "rank": 10137,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112108,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2279091420",
+    "rank": 10137,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112109,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2951054716",
+    "rank": 10137,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112110,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3979940900",
+    "rank": 10138,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112111,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1077445044",
+    "rank": 10138,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112112,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3895329908",
+    "rank": 10138,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112113,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2284574124",
+    "rank": 10139,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112114,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1849680204",
+    "rank": 10139,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112115,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4147918164",
+    "rank": 10139,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112116,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4040589396",
+    "rank": 10140,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112117,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4085562388",
+    "rank": 10140,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112118,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "412110212",
+    "rank": 10140,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112119,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2543970572",
+    "rank": 10141,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112120,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4275338284",
+    "rank": 10141,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112121,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1735696396",
+    "rank": 10141,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112122,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "734968212",
+    "rank": 10637,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112123,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "346646596",
+    "rank": 10637,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112124,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2699365748",
+    "rank": 10637,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112125,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2677476436",
+    "rank": 10638,
+    "rarity": 1,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112126,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2678637692",
+    "rank": 10638,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112127,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3215359052",
+    "rank": 10638,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112128,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "308302172",
+    "rank": 10142,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112129,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3671591324",
+    "rank": 10142,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112130,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1681799460",
+    "rank": 10142,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112131,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1265293380",
+    "rank": 10143,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112132,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "245059892",
+    "rank": 10143,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112133,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4272679172",
+    "rank": 10143,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112134,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1834118236",
+    "rank": 10144,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112135,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "142119212",
+    "rank": 10144,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112136,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4100463732",
+    "rank": 10144,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112137,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4265916604",
+    "rank": 10145,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112138,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3026687420",
+    "rank": 10145,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112139,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "930460124",
+    "rank": 10145,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112140,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2105079108",
+    "rank": 10146,
+    "rarity": 2,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112141,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "315547764",
+    "rank": 10146,
+    "rarity": 3,
+    "stackLimit": 9999
+  },
+  {
+    "id": 112142,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "485287092",
+    "rank": 10146,
+    "rarity": 4,
+    "stackLimit": 9999
+  },
+  {
+    "id": 114001,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2567593300",
+    "rank": 15101,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114002,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "964863092",
+    "rank": 15101,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114003,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1852199188",
+    "rank": 15101,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114004,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2734083348",
+    "rank": 15101,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114005,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1988951092",
+    "rank": 15102,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114006,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3946196332",
+    "rank": 15102,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114007,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3293824324",
+    "rank": 15102,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114008,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1910457772",
+    "rank": 15102,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114009,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1746118108",
+    "rank": 15103,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114010,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2310635004",
+    "rank": 15103,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114011,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3908879748",
+    "rank": 15103,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114012,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4141994412",
+    "rank": 15103,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114013,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2979991860",
+    "rank": 15104,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114014,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3800788188",
+    "rank": 15104,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114015,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2356214164",
+    "rank": 15104,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114016,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1100805188",
+    "rank": 15104,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114017,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3020828124",
+    "rank": 15105,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114018,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3484430476",
+    "rank": 15105,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114019,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2143222900",
+    "rank": 15105,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114020,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1879352724",
+    "rank": 15105,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114021,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "387168756",
+    "rank": 15106,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114022,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1391788468",
+    "rank": 15106,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114023,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "145783836",
+    "rank": 15106,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114024,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2698983820",
+    "rank": 15106,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114025,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "871205356",
+    "rank": 15107,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114026,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1256537300",
+    "rank": 15107,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114027,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1039175732",
+    "rank": 15107,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114028,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1552631892",
+    "rank": 15107,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114029,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "148841796",
+    "rank": 15108,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114030,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2954572052",
+    "rank": 15108,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114031,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "831056940",
+    "rank": 15108,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114032,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "449374556",
+    "rank": 15108,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114033,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2900857116",
+    "rank": 15109,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114034,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3536790828",
+    "rank": 15109,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114035,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3486742804",
+    "rank": 15109,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114036,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1747026276",
+    "rank": 15109,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114037,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1730762228",
+    "rank": 15110,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114038,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3230177356",
+    "rank": 15110,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114039,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3177630836",
+    "rank": 15110,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114040,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2877776164",
+    "rank": 15110,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114041,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3952229572",
+    "rank": 15111,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114042,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3957623860",
+    "rank": 15111,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114043,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "100334748",
+    "rank": 15111,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114044,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1198986644",
+    "rank": 15111,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114045,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3558261068",
+    "rank": 15112,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114046,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3735544220",
+    "rank": 15112,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114047,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1697960396",
+    "rank": 15112,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114048,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3000057868",
+    "rank": 15112,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114049,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2445333860",
+    "rank": 15113,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114050,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "991486452",
+    "rank": 15113,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114051,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2572043756",
+    "rank": 15113,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114052,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "362996932",
+    "rank": 15113,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114053,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "454524084",
+    "rank": 15114,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114054,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2142067084",
+    "rank": 15114,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114055,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2470518252",
+    "rank": 15114,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114056,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "4236139636",
+    "rank": 15114,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114057,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3855262020",
+    "rank": 15115,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114058,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "702605524",
+    "rank": 15115,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114059,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "493758764",
+    "rank": 15115,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114060,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1188621748",
+    "rank": 15115,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114061,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2738390100",
+    "rank": 15116,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114062,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2544946612",
+    "rank": 15116,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114063,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2321773836",
+    "rank": 15116,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114064,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "189627884",
+    "rank": 15116,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114065,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2495009204",
+    "rank": 15117,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114066,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "980700500",
+    "rank": 15117,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114067,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2790177972",
+    "rank": 15117,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114068,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2420203540",
+    "rank": 15117,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114069,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1136126140",
+    "rank": 15118,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114070,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2996994204",
+    "rank": 15118,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114071,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "947182932",
+    "rank": 15118,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114072,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1522195764",
+    "rank": 15118,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114073,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "703320196",
+    "rank": 15119,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114074,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "273104372",
+    "rank": 15119,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114075,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2820434068",
+    "rank": 15119,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114076,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2535750932",
+    "rank": 15119,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114077,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "3692231796",
+    "rank": 15120,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114078,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1085384828",
+    "rank": 15120,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114079,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "978157580",
+    "rank": 15120,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114080,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "74515676",
+    "rank": 15120,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114081,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "1666158596",
+    "rank": 15121,
+    "rarity": 2,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114082,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2689801476",
+    "rank": 15121,
+    "rarity": 3,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114083,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "498528420",
+    "rank": 15121,
+    "rarity": 4,
+    "stackLimit": 2000
+  },
+  {
+    "id": 114084,
+    "materialType": "MATERIAL_AVATAR_MATERIAL",
+    "nameTextId": "2066411964",
+    "rank": 15121,
+    "rarity": 5,
+    "stackLimit": 2000
+  },
+  {
+    "id": 220007,
+    "materialType": "MATERIAL_CONSUME",
+    "nameTextId": "3928328228",
+    "rank": 300101,
+    "rarity": 4,
+    "stackLimit": 5
   }
 ]
