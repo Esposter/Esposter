@@ -216,7 +216,6 @@ Clips nothing published shows, which the user records: each 30 seconds or less, 
 - [ ] `world-dialogue.mkv` — talking to a resident through a line with replies to choose.
 - [ ] `dialogue-reveal.mkv` — three lines of one talk at 60 frames a second, each from its first frame to the last, the scene held still: the line written out a character at a time, or shown whole if the game does not write it.
 - [ ] `dialogue-auto-skip.mkv` — a talk with auto-play switched on through three lines, then Skip pressed, with the Auto and Skip buttons in view, their look and their keys shown.
-- [ ] `dialogue-backdrop.png` — a resident's scene at the moment before a talk's band appears, with no dialogue on screen, at 1080 high, for the parity backdrop.
 - [ ] `world-camp.mkv` — walking up to a Hilichurl camp until it wakes, then backing away until it returns home.
 - [ ] `world-attacks.mkv` — the Traveler's normal attack string, a charged attack, a low and a high plunge, then E and then Q, each on a Hilichurl, 60 frames a second.
 - [ ] `menu-paimon.mkv` — the Paimon menu opened and closed.

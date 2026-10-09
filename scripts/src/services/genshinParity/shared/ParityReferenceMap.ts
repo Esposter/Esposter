@@ -106,9 +106,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Court of Fontaine.png",
   },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
-  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. The reference frame
-  // Is drawn behind the screen as its own backdrop until captures/dialogue-backdrop.png lands, so the band's gradient
-  // Darkens the game's own pixels twice where it is translucent; that bias sits under the band's cells and is named
+  // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. Each is drawn over the
+  // Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
   "dialogue-choices-line": {
     capture: "yt-nWBqOXWZuFg.mp4",
     isBackdrop: true,
