@@ -76,7 +76,7 @@ export const computeGroundLayerField = (
   return {
     cellSize,
     layers: Object.fromEntries(
-      [...layerIndexMap].map(([layer, layerIndex]) => [
+      Array.from(layerIndexMap, ([layer, layerIndex]) => [
         layer,
         Array.from({ length: nodeCount }, (_share, node) => roundFitted(shares[node * layerCount + layerIndex] ?? 0)),
       ]),
