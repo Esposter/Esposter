@@ -22,14 +22,23 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   // Compile sets its render target and MRT, which fails to build some of the scene's shaders, so the renderer's is used
   override async compileAsync(renderer: Renderer): Promise<void> {
     await renderer.compileAsync(this.scene, this.camera);
-    const heldMeshes: [Mesh, Material][] = [];
-    this.scene.traverse((object) => {
-      if (object instanceof Mesh && !Array.isArray(object.material) && checkIsOutlined(object.material))
-        heldMeshes.push([object, object.material]);
-    });
     const outlineMaterial = this.#getSharedOutlineMaterial();
+    // A multi-material mesh is outlined group by group, so only its toon groups are held in the outline material
+    const heldMeshes: [Mesh, Material | Material[], Material | Material[]][] = [];
+    this.scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return;
+      const material: Material | Material[] = object.material;
+      if (Array.isArray(material)) {
+        if (material.some(checkIsOutlined))
+          heldMeshes.push([
+            object,
+            material,
+            material.map((groupMaterial) => (checkIsOutlined(groupMaterial) ? outlineMaterial : groupMaterial)),
+          ]);
+      } else if (checkIsOutlined(material)) heldMeshes.push([object, material, outlineMaterial]);
+    });
     this.#isCompiling = true;
-    for (const [mesh] of heldMeshes) mesh.material = outlineMaterial;
+    for (const [mesh, , heldMaterial] of heldMeshes) mesh.material = heldMaterial;
     try {
       await renderer.compileAsync(this.scene, this.camera);
     } finally {
