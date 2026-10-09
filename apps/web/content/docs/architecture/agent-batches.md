@@ -5,7 +5,7 @@ description: How a large body of settled work is built at once — the main sess
 
 # Agent batches
 
-A batch is how the repository builds many units of work at once, such as a whole area's proposals. The main session does the thinking: it splits the work into units, settles their design calls, writes one brief every agent reads, and reads every report. The agents do the writing, all at the same time, in the one shared checkout. Checks run once for the whole batch, never per agent, and anything that takes a long run waits in a queue for a runner instead of holding an agent.
+A batch is how the repository builds many units of work at once, such as a whole area's proposals. The main session does the thinking: it splits the work into units, settles their design calls, writes one brief every agent reads, and reads every report. The agents do the writing, all at the same time, in the one shared checkout. Each agent typechecks only the packages it edited, once before its commit; the full checks run once for the whole batch, by one fixer after every report is in, and anything that takes a long run waits in a queue for a runner instead of holding an agent.
 
 ## The flow
 
