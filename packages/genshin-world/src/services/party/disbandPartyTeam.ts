@@ -10,7 +10,7 @@ export const disbandPartyTeam = (party: Party, teamIndex: number): PartyTeamResu
   if (!party.teams[teamIndex])
     throw new InvalidOperationError(Operation.Delete, disbandPartyTeam.name, `no team ${teamIndex}`);
   else if (teamIndex < DEFAULT_PARTY_TEAM_COUNT || teamIndex === party.deployedTeamIndex) return PartyTeamResult.Kept;
-  party.teams.splice(teamIndex, 1);
+  party.teams = party.teams.toSpliced(teamIndex, 1);
   if (teamIndex < party.deployedTeamIndex) party.deployedTeamIndex -= 1;
   return PartyTeamResult.Done;
 };

@@ -44,7 +44,7 @@ export const measureFrameSoftness = async (framePath: string): Promise<number> =
   if (sigmas.length === 0)
     throw new InvalidOperationError(Operation.Read, framePath, "no interface edge to measure the capture's blur from");
   const sharpest = sigmas
-    .toSorted((first, second) => first - second)
+    .toSorted((firstSigma, secondSigma) => firstSigma - secondSigma)
     .slice(0, Math.ceil(sigmas.length * SHARPEST_SHARE));
   const middle = Math.floor(sharpest.length / 2);
   return sharpest.length % 2 === 0
