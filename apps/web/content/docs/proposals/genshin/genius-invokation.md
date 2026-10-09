@@ -23,9 +23,8 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 **This adds, in order:**
 
 1. **Resident talks in the world.** A resident's talk is held only when a quest in progress carries it, and the world carries two quests, of which only Bird's Eye View has talks, none of them a resident's. Writing each resident's talk into the world is what makes a seated duel reachable from a fresh save.
-2. **The game's own player deck for game 12.** The game names deck 2 for the player, which is not built; deck 3 stands in until it is, and the stand-in is recorded as provisional on the as-built page.
-3. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them.
-4. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
+2. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them.
+3. **Invitationals, tavern challengers, the Card Shop and the Player Level.**
 
 ## Data and measures
 
