@@ -15,12 +15,14 @@ import { getResultAsync } from "@esposter/shared";
 // Lands at. A landmark is unlocked by resonating with it, and each is paid once
 export const useWorldMap = ({
   events,
+  gainWorldAdventureExp,
   regionDataBaseUrl,
   setWallet,
   unlockedLandmarkIds: savedUnlockedLandmarkIds,
   wallet,
 }: {
   events: WorldEvents;
+  gainWorldAdventureExp: (amount: number) => void;
   regionDataBaseUrl: string;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
@@ -34,8 +36,8 @@ export const useWorldMap = ({
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
   const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
 
-  // The Primogems a statue pays on its first unlock, from the open world's transport points by its scene point. Only a
-  // Locked landmark is offered to resonate with, so each is paid once
+  // The Primogems and Adventure EXP a statue pays on its first unlock, from the open world's transport points by its scene
+  // Point. Only a locked landmark is offered to resonate with, so each is paid once
   const payFirstUnlockReward = (landmarkId: string) => {
     const pointId = LandmarkIdStatuePointIdMap[landmarkId];
     if (pointId === undefined) return;
@@ -43,8 +45,9 @@ export const useWorldMap = ({
     getResultAsync(readOpenWorldTransPointRewards).match(
       (rewards) => {
         const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
-        if (reward)
-          setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems });
+        if (!reward) return;
+        setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + reward.primogems });
+        gainWorldAdventureExp(reward.adventureExp);
       },
       (error) => {
         console.error(error);

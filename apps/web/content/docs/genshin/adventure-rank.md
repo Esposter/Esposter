@@ -5,7 +5,7 @@ description: Genshin's Adventure Rank as built — the rank to 60 on the game's 
 
 # Adventure Rank
 
-The player's rank on the game's table, the World Level that follows it, and the enemies raised by that World Level. Adventure EXP accrues toward rank 60's total even while an ascension quest holds the rank lower, the rank catches up the moment that quest is done, and EXP past rank 60 is paid in Mora. The rank, its EXP and the World Level are pure services in `genshin-world`, read off the game's tables that `genshin:assets rank` writes from the dump. No source adds Adventure EXP or completes a main quest yet, so every player stands at rank 1 and World Level 0 until one does.
+The player's rank on the game's table, the World Level that follows it, and the enemies raised by that World Level. Adventure EXP accrues toward rank 60's total even while an ascension quest holds the rank lower, the rank catches up the moment that quest is done, and EXP past rank 60 is paid in Mora. The rank, its EXP and the World Level are pure services in `genshin-world`, read off the game's tables that `genshin:assets rank` writes from the dump. The session holds the EXP live from the save: a statue's first unlock adds its transport point's Adventure EXP, and the other sources add theirs as their pages land. Until a main quest is completed, the World Level stays at 0.
 
 ## How it works
 
@@ -57,7 +57,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 ## Notes
 
 - Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
-- The world holds the player's Adventure EXP at 0 and no quest done, since no source counts either yet, so its World Level stands at 0. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The card's lowering waits on its tooltip's words in the game text.
+- `useWorldAdventureRank` holds the player's Adventure EXP live, started from the save and read back through the save sync, so a gain moves the rank, the World Level and the bar at once. A gain past rank 60 is paid in Mora. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The card's lowering waits on its tooltip's words in the game text.
 - The rank's rewards are not read yet. Katheryne, who hands them out, is not yet placed in Mondstadt's region data.
 
 ## Key files
@@ -69,6 +69,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/data/adventureRank/locks.json`                          | each World Level's rank cap, unlock rank and main quest          |
 | `packages/genshin-world/src/data/adventureRank/worldLevels.json`                    | each World Level's monster level                                 |
 | `packages/genshin-world/src/services/adventureRank/constants.ts`                    | the tables, and the constants the rules read                     |
+| `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                   | the live EXP, its standing and the gain a source adds            |
 | `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts` | the rank, its cap and the World Level from EXP and quests        |
 | `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`             | the EXP gain, its cap and the Mora past rank 60                  |
 | `packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`     | the lowering and its 24 hour cooldown                            |
