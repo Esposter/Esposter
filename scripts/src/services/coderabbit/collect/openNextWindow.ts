@@ -165,14 +165,16 @@ export const openNextWindow = async ({
         viewerLogin,
       });
   // The fold is the one step the port never measured: on a window stacked above another, the `main` it brings is in the
-  // Bot's count, so a cut over the cap is held until the stack below moves and the next run measures it again
+  // Bot's count, so a cut over the cap the port cut it under is held until the stack below moves and the next run
+  // Measures it again. A first fix alone past a re-cut's smaller cap was cut under the plan's, and over `main` the
+  // Smaller one would hold it with no window below to merge
   const foldedFileCount = readWindowFileCount(baseSha, cwd, targetSha);
-  if (!isDevelopCarryingWindow && foldedFileCount > fileCap)
+  if (!isDevelopCarryingWindow && foldedFileCount > port.fileCap)
     return {
       isWindowOpened: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
-        reason: `the cut with ${MAIN_BRANCH} folded in is ${foldedFileCount} files, over the cap of ${fileCap} — held until the window below merges`,
+        reason: `the cut with ${MAIN_BRANCH} folded in is ${foldedFileCount} files, over the cap of ${port.fileCap} — held until the window below merges`,
       },
     };
 

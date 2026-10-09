@@ -108,7 +108,7 @@ const getCommitCommentPosts = (sha: string) =>
   runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
 
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+  const { commitFile, commitFiles, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
@@ -779,6 +779,32 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reason: getOpenedReason(recutWindow.number + 1),
       retriggerDelaySeconds: undefined,
       targetSha: firstSha,
+    });
+  });
+
+  // A re-cut's smaller cap holds the queue, but a first fix alone is cut under the plan's: the opener measures the fold
+  // Against the cap the port cut the window under, so over an empty stack, with no window below to merge, it opens
+  test("opens a first fix alone past a re-cut's smaller cap over an empty stack", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, developSha);
+    publish(REVIEW_FIXES_BRANCH, commitFiles([TEST_FILENAME, `${TEST_FILENAME}.ts`], ""));
+    const recutWindow = getWindowPullRequest(WindowPullRequestState.Closed, pullRequest + 1);
+    answerGh([recutWindow]);
+    const answer = runGh.getMockImplementation();
+    runGh.mockImplementation((args) =>
+      args[1]?.startsWith(`repos/{owner}/{repo}/issues/${recutWindow.number}/comments`)
+        ? JSON.stringify([[getMarked(`<!-- ${WINDOW_RECUT_MARKER} cap:1 -->`)]])
+        : (answer?.(args) ?? ""),
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: getOpenedReason(recutWindow.number + 1),
+      retriggerDelaySeconds: undefined,
+      targetSha: readSha(`origin/${DEVELOP_BRANCH}`),
     });
   });
 

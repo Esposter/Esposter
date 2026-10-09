@@ -37,7 +37,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: takeOne(queueShas, 1),
     });
 
-    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas });
+    expect(port).toStrictEqual({ fileCap: REVIEW_FILE_CAP, fileCount: 2, fixCount: 1, heldSha: undefined, queueShas });
     expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(
       `${nestedPath}\n${nestedPath}\n${filePath}\n`,
     );
@@ -60,7 +60,13 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [queueSha] });
+    expect(port).toStrictEqual({
+      fileCap: REVIEW_FILE_CAP,
+      fileCount: 1,
+      fixCount: 0,
+      heldSha: undefined,
+      queueShas: [queueSha],
+    });
   });
 
   // The deadlock this breaks: a claimed commit red on its own, its fix the unclaimed commit after it — the lane
@@ -81,7 +87,13 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [claimedSha, queueSha] });
+    expect(port).toStrictEqual({
+      fileCap: REVIEW_FILE_CAP,
+      fileCount: 1,
+      fixCount: 0,
+      heldSha: undefined,
+      queueShas: [claimedSha, queueSha],
+    });
   });
 
   test("holds the first queue commit that conflicts with develop", () => {
@@ -102,7 +114,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha, queueShas: [] });
+    expect(port).toStrictEqual({ fileCap: REVIEW_FILE_CAP, fileCount: 1, fixCount: 0, heldSha, queueShas: [] });
     expect(readSha("HEAD")).toBe(developSha);
   });
 
@@ -124,7 +136,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: heldSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 1, heldSha, queueShas: [] });
+    expect(port).toStrictEqual({ fileCap: 1, fileCount: 1, fixCount: 1, heldSha, queueShas: [] });
     expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
   });
 
@@ -138,7 +150,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = commitFile(`${nestedPath}.ts`, "");
     const port = portWindow({ baseSha: developSha, cwd: getCwd(), developSha, fileCap: 1, fixShas, queueSha });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 1, heldSha: takeOne(fixShas, 1), queueShas: [] });
+    expect(port).toStrictEqual({ fileCap: 1, fileCount: 1, fixCount: 1, heldSha: takeOne(fixShas, 1), queueShas: [] });
     expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
   });
 
@@ -159,7 +171,13 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas: [queueSha] });
+    expect(port).toStrictEqual({
+      fileCap: REVIEW_FILE_CAP,
+      fileCount: 2,
+      fixCount: 1,
+      heldSha: undefined,
+      queueShas: [queueSha],
+    });
   });
 
   test("skips a queue commit whose change the fixes already made", () => {
@@ -178,11 +196,18 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 1, fixCount: 2, heldSha: undefined, queueShas: [] });
+    expect(port).toStrictEqual({
+      fileCap: REVIEW_FILE_CAP,
+      fileCount: 1,
+      fixCount: 2,
+      heldSha: undefined,
+      queueShas: [],
+    });
   });
 
   // A re-cut halves the cap after the bot kept skipping a window, and a fix the plan's own cap holds is still one a
-  // Review can read: it goes out alone over the smaller cap rather than parked, its finding with it
+  // Review can read: it goes out alone over the smaller cap rather than parked, its finding with it, and the window is
+  // Reported as cut under the plan's cap, which the opener measures its fold against
   test("carries a first fix alone past a re-cut's smaller cap", () => {
     expect.hasAssertions();
 
@@ -197,7 +222,13 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: developSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 2, fixCount: 1, heldSha: undefined, queueShas: [] });
+    expect(port).toStrictEqual({
+      fileCap: REVIEW_FILE_CAP,
+      fileCount: 2,
+      fixCount: 1,
+      heldSha: undefined,
+      queueShas: [],
+    });
   });
 
   // A fix no window can take is held first, which the opener parks rather than failing the run
@@ -215,7 +246,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: developSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
+    expect(port).toStrictEqual({ fileCap: REVIEW_FILE_CAP, fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
     expect(readSha("HEAD")).toBe(developSha);
   });
 
@@ -237,7 +268,7 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       queueSha: developSha,
     });
 
-    expect(port).toStrictEqual({ fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
+    expect(port).toStrictEqual({ fileCap: REVIEW_FILE_CAP, fileCount: 0, fixCount: 0, heldSha: fixSha, queueShas: [] });
     expect(readSha("HEAD")).toBe(developSha);
   });
 });
