@@ -14,6 +14,7 @@ import {
   NOELLE_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
   VENTI_CHARACTER_ID,
+  XIANGLING_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createAyakaKit } from "#src/services/kit/characters/ayakaKit";
@@ -27,6 +28,7 @@ import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
+import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
 // Character with none falls back to the Traveler's kit, as the roster does
@@ -43,4 +45,5 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [NOELLE_CHARACTER_ID]: createNoelleKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
+  [XIANGLING_CHARACTER_ID]: createXianglingKit,
 };
