@@ -5,7 +5,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
-// is the earlier of the two, since a finished achievement stays finished
+// Is the earlier of the two, since a finished achievement stays finished
 const mergeAchievementProgress = (
   account: AchievementProgressSave[string],
   guest: AchievementProgressSave[string],

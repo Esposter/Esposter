@@ -9,7 +9,7 @@ import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
 const ACHIEVEMENT_ID = "5";
-const FINISHED_AT = "2026-10-09T01:00:00Z";
+const FINISHED_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
 const ADVENTURE_EXP = 1200;
 const CHARACTER_ID = "6";
 const COMPANIONSHIP_EXP = 300;
