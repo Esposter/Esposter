@@ -529,8 +529,8 @@ describe(createResourceProcedures, () => {
     expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
   });
 
-  // The mock resolves with an empty body where the live `BlobClient.download()` rejects, so the rejection a
-  // Swept snapshot raises is injected here
+  // The snapshot's blob is still in the mock, so the rejection a swept snapshot raises from the live
+  // `BlobClient.download()` is injected here
   test("fails read published content with a swept snapshot", async () => {
     expect.hasAssertions();
 

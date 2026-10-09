@@ -22,7 +22,7 @@ flowchart TD
 
 ## The writer and the reader
 
-- **`writeJsonBlob(containerClient, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length.
+- **`writeJsonBlob(containerClient, blobName, serializedJson)`** compresses the document and uploads it with `Content-Encoding: zstd` and `Content-Type: application/json`, then returns the stored length. It is `compressJson` and `uploadCompressedJson` composed, and the two halves are exported for a caller that stores one frame in more than one account, or writes an object create-only with its own cache header.
 - **`readJsonBlob(containerClient, blobName)`** downloads and decompresses the blob, and reads a 404 as undefined, meaning nothing has been saved yet. Every other failure surfaces rather than passing for an empty document.
 - **A browser reading through a SAS needs neither.** Blob Storage serves a blob's stored `Content-Encoding` on every read, and the network stack decodes it before `fetch` returns the body. A large resource's read therefore still receives the JSON bytes that it hashes, parses and keeps as its delta baseline ([large documents](/docs/architecture/large-documents)).
 
@@ -33,6 +33,8 @@ The staged upload of a large save stays gzip. The browser's `CompressionStream` 
 **zstd, because both readers can decode it.** The [compression standard](/docs/architecture/compression) picks zstd wherever the repo chooses the bytes. Here the browser is a counterparty, and zstd is in its codec set: every current engine decodes `Content-Encoding: zstd` natively, and the repo targets current engines only. So there is no gzip fallback and no browser-side decoder to ship.
 
 **The window is pinned at 8 MB.** RFC 9659 forbids an HTTP zstd encoder from producing a frame that needs a window larger than 8 MB. The writer therefore sets `ZSTD_c_windowLog` to `MAX_CONTENT_ENCODING_WINDOW_LOG` explicitly. This is part of the stored format, not a tunable. No dictionary is used, because a browser decoding a `Content-Encoding` has none.
+
+**The level belongs to the caller.** A document rewritten on every save takes `JSON_BLOB_COMPRESSION_LEVEL`, level 1. An object written once and read many times takes `DEFAULT_COMPRESSION_LEVEL`, level 12, which is denser at a cost paid once: the game-data publisher is that caller, and its objects are immutable under their hash. Both levels keep the same window.
 
 **Level 1, `JSON_BLOB_COMPRESSION_LEVEL`.** A JSON blob is rewritten on every save, so its level is chosen for speed. That makes it a different decision from `DEFAULT_COMPRESSION_LEVEL`, the level the version store spends once per retained version. On Sheet-shaped rows, the fastest level also produced the smallest frame of the levels tried. The committed `packages/db/src/services/azure/container/writeJsonBlob.bench.md` records the speed side of that comparison.
 
@@ -59,6 +61,8 @@ A save gains one compression, and every server read gains one decompression. Nei
 | File                                                                 | Role                                                                    |
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `packages/db/src/services/azure/container/writeJsonBlob.ts`          | async compress and upload with `Content-Encoding: zstd`                 |
+| `packages/db/src/services/azure/container/compressJson.ts`           | the one frame, at the level the caller names                            |
+| `packages/db/src/services/azure/container/uploadCompressedJson.ts`   | a frame uploaded, with a cache header and create-only conditions        |
 | `packages/db/src/services/azure/container/readJsonBlob.ts`           | download and async decompress, a 404 read as undefined                  |
 | `packages/db/src/services/azure/container/decompressJsonBlob.ts`     | the zstd decode both readers share, a body read off a download included |
 | `packages/db/src/services/azure/container/constants.ts`              | `JSON_BLOB_COMPRESSION_LEVEL` and the RFC 9659 window                   |

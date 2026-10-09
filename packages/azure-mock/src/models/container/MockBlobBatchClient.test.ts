@@ -1,5 +1,6 @@
 import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
+import { MockContainerClient } from "#src/models/container/MockContainerClient";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { afterEach, describe, expect, test } from "vitest";
@@ -96,5 +97,53 @@ describe(MockBlobBatchClient, () => {
 
     expect(response.subResponsesSucceededCount).toBe(2);
     expect(MockContainerDatabase.get(containerName)?.size).toBe(0);
+  });
+
+  // A conditional delete names the instant it was last listed at. A blob written after it has changed since, so it is
+  // Kept and reported as a failed sub-response, which is what a sweep reads as the blob having been rewritten
+  test("keeps a blob modified after ifUnmodifiedSince as a failed sub-response", async () => {
+    expect.hasAssertions();
+
+    await new MockContainerClient("", containerName).getBlockBlobClient(blobName).upload(Buffer.from(""), 0);
+    const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
+    const response = await client.deleteBlobs(
+      [`${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`],
+      new AnonymousCredential(),
+      { conditions: { ifUnmodifiedSince: new Date(0) } },
+    );
+
+    expect(response.subResponses.map(({ status }) => status)).toStrictEqual([412]);
+    expect(response.subResponsesFailedCount).toBe(1);
+    expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(true);
+  });
+
+  test("deletes a blob not modified after ifUnmodifiedSince", async () => {
+    expect.hasAssertions();
+
+    await new MockContainerClient("", containerName).getBlockBlobClient(blobName).upload(Buffer.from(""), 0);
+    const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
+    const response = await client.deleteBlobs(
+      [`${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`],
+      new AnonymousCredential(),
+      { conditions: { ifUnmodifiedSince: new Date(8_640_000_000_000_000) } },
+    );
+
+    expect(response.subResponses.map(({ status }) => status)).toStrictEqual([202]);
+    expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(false);
+  });
+
+  // A condition the mock does not reproduce would be dropped without a trace, so the call refuses it outright
+  test("refuses a condition other than ifUnmodifiedSince", async () => {
+    expect.hasAssertions();
+
+    const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
+
+    await expect(
+      client.deleteBlobs([`${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`], new AnonymousCredential(), {
+        conditions: { ifMatch: '"etag"' },
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[NotImplementedError: deleteBlobs with ifMatch is not implemented in the mock]`,
+    );
   });
 });
