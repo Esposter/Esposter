@@ -11,7 +11,7 @@ A reply is heard, in the voice of the character speaking it, from an engine that
 
 1. **The spoken channel.** The output style confines the character to spoken lines — one blockquote each, one or two short sentences, in the first person, with no markup, code or number inside it. An ask of the assistant opens with one spoken line, answers plainly and may close with the card's sign-off; an ask of the character — a joke, a hello, an opinion — is answered wholly in spoken lines, as many as the ask deserves. Nothing else is written as a blockquote, and no reply repeats the card's greeting, which the welcome has already shown.
 2. **The MessageDisplay hook** receives every piece of a reply as it is displayed — whole lines, since the tool flushes at a line break — reads the two gates, takes the blockquote lines out of its piece, and hands the piece to the synthesizer over a local socket as one JSON line: the session's character, the line their voice is cloned from, the dub, the lines, where the piece sits in the reply and the volume. **Every piece is sent, spoken or not**, because the tool runs a message's hooks concurrently and a closing line can reach the synthesizer before its opening one; the synthesizer orders a message's pieces by their index, and can do so only because it can tell a piece that has not arrived from one that was never spoken. The hook waits for nothing but the socket: a synthesizer that is not running costs a spawn and a node start to its bind, and the load is the synthesizer's own. The plugin's hooks module runs it on the engine's MessageDisplay event once the dub file is there and the mute file is not, because the event costs about a node start of display latency per piece, which the voice pays and not every plugin user; a session with no voice pays a file check ([Persona plugin](/docs/infra/claude-interface/persona-plugin)).
-3. **The resident synthesizer** — one process per machine, spawned detached by whichever hook finds no server listening — holds the loaded engine. It binds the socket before the engine loads, so a second hook finds the address taken rather than loading a second engine, and a request arriving during the load waits for it. Per request it fetches the character's reference clip on first use and encodes it once per process, then reads the lines in order — each synthesized whole, checked for speech, given the volume as a gain and handed to one player process spawned for the reading, while the line after it is already being generated. It keeps **one turn pending**: a message's pieces run by their index, the next message once the one before it ran its final piece, and a piece whose predecessor has not arrived is held for the hook's own timeout, past which the message moves on. A reply that lands while another is being read drops what of the older one is still waiting and stops the reading under way at the line it has reached — and a turn replaced once stays replaced, so a piece of it carried by a hook that was held up and landed after is answered rather than read out over the newer reply. A request with no turn — a warm, the `voice` verb's proof — queues behind what waits. Idle for half an hour, it exits and frees the GPU.
+3. **The resident synthesizer** — one process per machine, spawned detached by whichever hook finds no server listening — holds the loaded engine. It binds the socket before the engine loads, so a second hook finds the address taken rather than loading a second engine, and a request arriving during the load waits for it. Per request it fetches the character's reference clip on first use and encodes it once per process, then reads the lines in order — each streamed as its speech tokens are made: every few dozen tokens the tokens so far are vocoded, each chunk's new audio checked for speech, given the volume as a gain and handed to one player process spawned for the reading, while the generation runs on. It keeps **one turn pending**: a message's pieces run by their index, the next message once the one before it ran its final piece, and a piece whose predecessor has not arrived is held for the hook's own timeout, past which the message moves on. A reply that lands while another is being read drops what of the older one is still waiting and stops the reading under way at the line it has reached — and a turn replaced once stays replaced, so a piece of it carried by a hook that was held up and landed after is answered rather than read out over the newer reply. A request with no turn — a warm, the `voice` verb's proof — queues behind what waits. Idle for half an hour, it exits and frees the GPU.
 4. **The SessionStart hook** hands the synthesizer a warm request for the session's character, so the load, the reference's encoding and the first-synthesis cost are paid while the person reads the card, not on the first reply. The warm synthesizes one short word and keeps nothing: every spoken line is written for its ask, so no clip made ahead would be asked for again. The hook waits for no more than the synthesizer's bind, since its stdout is the model's context.
 5. **The gates** are the dub file the `voice` verb writes — a machine that never ran it has no engine, and every hook returns at once — and whether the session would hear anything at all: `mute` is a flag file, and a `volume` of zero counts as the same silence. Both are checked before a piece is sent **and** before the session start wakes the engine, because every cost of a spoken line is paid before the gain is applied.
 
@@ -32,8 +32,8 @@ sequenceDiagram
     Server->>Server: the piece held until every piece before it ran
     Server->>Player: spawn, its start paid under the first line's synthesis
     loop each line of the piece, generated while the one before it plays
-        Server->>Server: synthesize the line
-        Server->>Server: not speech, or the GPU provider failed — one rung down the device ladder, again, the rung kept on file
+        Server->>Server: vocode the speech tokens made so far, a chunk at a time, the new audio past the seam
+        Server->>Server: not speech, or the GPU provider failed — one rung down the device ladder, the rest of the line dropped
         Server->>Server: apply the gain
         Server->>Player: a WAV's path on stdin, one line back once played, the file deleted
     end
@@ -54,7 +54,7 @@ flowchart LR
     Rule{"A blockquote line?"}
     Spoken["Utterance channel — the character's line,<br/>to the hook as its line break lands"]
     Plain["Data channel — the answer, plain,<br/>to the screen"]
-    Synthesized["Synthesized whole — one line's wait,<br/>the next line generated while it plays"]
+    Synthesized["Streamed — first sound one chunk<br/>after the line's speech tokens begin"]
 
     Reply --> Rule
     Rule -- yes --> Spoken --> Synthesized
@@ -65,7 +65,7 @@ flowchart LR
 
 Chatterbox Nano through the ONNX runtime — the smallest of the family, English only, a zero-shot cloner like the rest, with its vocoder distilled to one step where the larger checkpoints take ten. Its ONNX export is a community conversion that ships one variant per component (half-precision embeddings; 4-bit weights for the rest, over half-precision activations in the language model and the speech encoder and full-precision ones in the vocoder), so the plugin's dtype map names what exists rather than what was chosen. The engine was chosen by the [reference selection](/docs/infra/claude-interface/reference-selection)'s likeness on a few characters against the Turbo checkpoint before it: it costs a few hundredths of the likeness and reads several times faster, which on this machine is the difference between a line read slower than real time and one read faster.
 
-A line is spoken whole: generation ends at the model's end-of-sequence token, under a ceiling in proportion to the line's text with a floor for the shortest — a few tokens a character, above what English reads at. A fixed ceiling cuts a long sentence mid-word, and no ceiling lets a line the model finds no end for — a reference too short to anchor an ending on — run for minutes, hold every reply behind it, and hand the vocoder a sequence it rejects.
+A line is generated to the model's end-of-sequence token, under a ceiling in proportion to the line's text with a floor for the shortest — a few tokens a character, above what English reads at. A fixed ceiling cuts a long sentence mid-word, and no ceiling lets a line the model finds no end for — a reference too short to anchor an ending on — run for minutes, hold every reply behind it, and hand the vocoder a sequence it rejects.
 
 Where each component runs is a **device ladder**, fastest rung first, and the rung is chosen by the sound rather than by the load, because a provider can load a graph and run it wrong without a word: this machine's WebGPU provider returns a constant near-silence from the vocoder and throws nothing. Every synthesis is checked for a loudest frame loud enough to hear and a quietest frame the speech floor below it — a sentence has pauses, noise has none — and one that fails moves the engine one rung down, releases the one it left, and runs again. A load that rejects moves it the same way, and so does a synthesis the GPU provider fails, since a device lost under load fails every synthesis after it; a failure any other provider raises is the line's, because the CPU provider is deterministic and would raise it on every rung, so that line is dropped and the rung kept. The speech encoder runs on the CPU on every rung, since it runs once per character and the WebGPU provider rejects its graph.
 
@@ -80,6 +80,28 @@ The top rung's vocoder runs on DirectML, which the ONNX runtime ships on Windows
 The rung the engine speaks on is the status line's second word and the `voice` verb's report, and every move down is a line in `voice.log`. It is also **kept**: the rung a synthesizer has spoken on is written to the state directory, and the next synthesizer starts there rather than walking the rungs above it again — a load and a silent synthesis at every warm otherwise. A demotion rewrites the file, so it only ever moves down on its own; the `voice` verb clears it and stops any running synthesizer before its proof, so a driver that has since started vocoding is found by setting the voice up again and by nothing on a reply's path.
 
 The ladder's order and the serial reading are both measured: the language model on the bottom rung is slower by a factor, and two lines synthesized at once take longer than one after the other because the vocoder's threads take every core. The numbers themselves live in the committed bench beside the reference selection, `scripts/src/voiceMatch/synthesizer.bench.md`, which is where a session reads them rather than timing a sentence again; it measures the host, so it is switched off once committed and flipped on when the engine, its variants or the ladder change. On this laptop, whose GPU is the processor's own, a line reads faster than real time on the middle rung, so a reading never pauses once it starts; the vocoder still runs over the reference's tokens on every line, which is why the reference is trimmed to a few seconds and a spoken line is a sentence or two.
+
+## Streaming a line
+
+A line's first sound is one chunk after its speech tokens begin, not its whole synthesis. The language model streams one token a step to a streamer; every 13 tokens (`VOICE_CHUNK_TOKENS`, about 0.51 s of speech at the engine's 25 speech tokens a second) the tokens so far are vocoded in full, and the new audio past the last chunk's seam is yielded. The generation's own final pass is the last chunk, since it vocodes the whole line anyway.
+
+Decisions, each in the code it names:
+
+- **The seam.** Each pass repeats every sample already emitted, so `createChunkSplicer` keeps the count emitted, holds back the last 10 ms of each non-final pass, and fades it into the head of the next pass over the same samples. Only the new audio is emitted, and the seam does not click.
+- **The decoder's padding.** The decoder pads each pass with three silence tokens. A non-final pass ends its speech at the share of its waveform the speech tokens take, so the padding is never played mid-line.
+- **The speech check** reads the chunk's own samples, not the seam, which carries the previous chunk's audio. A tail shorter than one analysis frame is not checked.
+- **A chunk that is not speech** plays what already passed, drops the rest of that line, moves the ladder down once, and logs one line naming the reply, the line and the chunk. A line is never synthesized again mid-reply, since its opening would be heard twice. Starting the next line is unchanged.
+- **Cancelling.** A reply superseded between chunks stops the generation at its next token, since the streamer throws once the line is dropped.
+
+Measured on this laptop, the same three sentences in one run, means of three iterations:
+
+| Sentence | Whole line (ms) | First sound (ms) |
+| :------- | --------------: | ---------------: |
+| short    |           1,912 |            1,229 |
+| medium   |           2,789 |            1,271 |
+| long     |           3,028 |            1,273 |
+
+The first sound is nearly flat across sentence lengths, since it is the first chunk's tokens and the vocode of them, not the whole sentence. The first chunk's audio measures 0.51 s on all three sentences. The bench's `first sound` tasks are the instrument, and the flag that switches the bench on is off.
 
 ## Setting it up
 
@@ -138,7 +160,7 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 
 - **The server cannot load** — no runtime, a corrupt weight, a provider that rejects the graph: it writes the reason to `voice.log` and exits. Every hook then finds no server, spawns one, watches it die, and stays silent.
 - **A synthesis fails** mid-request: a failure the GPU provider raises moves the engine one rung down, like silence, and the line is read there; any other is the line's, so that request is dropped, the reason logged, and the server keeps serving on the rung it is on.
-- **A synthesis is not speech** — a provider ran the graph wrong: the engine moves one rung down, the move is logged, the rung on file follows once the engine has spoken there, and the line is synthesized again. Only the bottom rung failing drops the request.
+- **A chunk is not speech** — a provider ran the graph wrong: the engine moves one rung down, the move is logged naming the reply, the line and the chunk, and the rest of that line is dropped. The chunks already played stay, and the next line starts on the lower rung. The GPU provider's failure does the same. A line is never synthesized again mid-reply, since its opening would be heard twice. A chunk's own audio shorter than one analysis frame is the sentence's tail and is not checked.
 - **The player does not play** — not installed, refusing the file, exiting part way: the reason is logged, and the request still answers `ok`, since the line was synthesized. One player process serves a reading, spawned before its first synthesis, because a PowerShell start costs seconds and a player spawned per line would pay it in silence before every one.
 - **A hook connects while the server is still starting**: the handler is attached before anything after the bind yields to the event loop, so the request is taken the moment the hook lands and read once the engine has loaded.
 - **A piece never arrives** — its hook killed at the tool's timeout, or failed before it could send: the synthesizer holds the pieces after it for that same timeout and reads on from the earliest of them.
@@ -148,38 +170,39 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 ## What it does not do
 
 - **Read another language.** The engine is English-only, so the dub picks whose voice reads a reply and not what language it reads: `ja` clones the Japanese actor, and the actor reads English. A line with no Latin letter in it, or with a letter of any other script in it, is not sent: the first the tokenizer returns as the near-silence the device ladder takes for a broken provider, and the second the model reads from unknown tokens it finds no end for. Gated per line, so one such line inside an English reply is skipped rather than walking the ladder down. Reading a reply in the language it is written in is the [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal.
-- **Stream inside a line.** A line is synthesized whole and vocoded once, so its first sample arrives after its last token; the streaming is between lines. Doing it inside a line instead is stage 2 of the [seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) proposal.
 - **Serve the app.** It is a personal machine's process for a personal plugin; nothing in the estate knows it exists.
 - **Ship any audio.** The reference clips are fetched from the wiki to this machine and cached under the state directory, never committed, for the reason the [per-character voices](/docs/infra/claude-interface/per-character-voices) page gives.
 
 ## Key files
 
-| File                                                              | Role                                                                                                                          |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-persona/mod/register.ts`                        | The MessageDisplay event, gated on the dub and mute files, handed to the speak script unchanged                               |
-| `packages/genshin-persona/scripts/speak.ts`                       | The MessageDisplay hook: the gates, the piece's spoken lines and its place in the reply, handed over and left                 |
-| `packages/genshin-persona/src/services/deliverVoiceRequest.ts`    | A request handed to the synthesizer and left with it, the server spawned first when nothing listens                           |
-| `packages/genshin-persona/src/services/deliverWarmRequest.ts`     | The warm request the SessionStart hook hands over, once a voice is set up and would be heard                                  |
-| `packages/genshin-persona/src/services/getWarmRequest.ts`         | What a warm synthesizes: one short word, nothing kept                                                                         |
-| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer: the socket, the load, the turn queue, the idle exit                                                 |
-| `packages/genshin-persona/src/services/reachVoiceServer.ts`       | A connection to a running synthesizer, else one spawned and asked again until it binds                                        |
-| `packages/genshin-persona/src/services/sendVoiceRequest.ts`       | A request answered — the `voice` verb's, which reports the status and the device                                              |
-| `packages/genshin-persona/src/services/createReplyQueue.ts`       | One turn's pieces in the order written, a missing one held for, a newer turn replacing what waits, the running one told       |
-| `packages/genshin-persona/src/services/checkHasWeights.ts`        | Whether the cache holds every declared variant's graph, read before the verb's foreground load                                |
-| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | The engine on the first rung that loads, moved down by a synthesis that is not speech or that the GPU provider fails          |
-| `packages/genshin-persona/src/services/deleteSupersededModels.ts` | Every checkpoint the model id no longer names, removed where the one in use lands                                             |
-| `packages/genshin-persona/src/services/checkIsSpeech.ts`          | What a synthesis has to sound like to count as spoken                                                                         |
-| `packages/genshin-persona/src/services/readVoiceDevice.ts`        | The rung the last synthesizer spoke on, where the next starts                                                                 |
-| `packages/genshin-persona/src/services/readReferenceClip.ts`      | The character's clip, fetched from the wiki on first use and cached                                                           |
-| `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                                                    |
-| `packages/genshin-persona/runtime/package.json`                   | The one package the engine needs, moved by Renovate like any other                                                            |
-| `packages/genshin-persona/src/services/getSpokenLines.ts`         | The blockquote lines in a piece of a reply, the markup stripped, the unreadable dropped                                       |
-| `packages/genshin-persona/src/services/checkIsReadable.ts`        | What the engine can read: a Latin letter in it, and no letter of another script                                               |
-| `packages/genshin-persona/src/services/checkIsSilent.ts`          | Muted, or a volume of zero — no reply sent and no engine woken                                                                |
-| `packages/genshin-persona/output-styles/in-character.md`          | The spoken channel's one rule, and how much of a reply the ask makes it: a blockquote line is a spoken line, and nothing else |
-| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | The desktop's stock player, one process per reading, fed a temp WAV path per clip and answering each                          |
-| `packages/genshin-persona/src/services/constants.ts`              | The state directory's voice half, the engine's variants, the device ladder, the budgets and timeouts                          |
-| `scripts/src/voiceMatch/synthesizer.bench.ts`                     | The synthesizer timed per sentence shape on this host, through the runner's runtime; off once committed                       |
+| File                                                              | Role                                                                                                                                        |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-persona/mod/register.ts`                        | The MessageDisplay event, gated on the dub and mute files, handed to the speak script unchanged                                             |
+| `packages/genshin-persona/scripts/speak.ts`                       | The MessageDisplay hook: the gates, the piece's spoken lines and its place in the reply, handed over and left                               |
+| `packages/genshin-persona/src/services/deliverVoiceRequest.ts`    | A request handed to the synthesizer and left with it, the server spawned first when nothing listens                                         |
+| `packages/genshin-persona/src/services/deliverWarmRequest.ts`     | The warm request the SessionStart hook hands over, once a voice is set up and would be heard                                                |
+| `packages/genshin-persona/src/services/getWarmRequest.ts`         | What a warm synthesizes: one short word, nothing kept                                                                                       |
+| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer: the socket, the load, the turn queue, the idle exit                                                               |
+| `packages/genshin-persona/src/services/reachVoiceServer.ts`       | A connection to a running synthesizer, else one spawned and asked again until it binds                                                      |
+| `packages/genshin-persona/src/services/sendVoiceRequest.ts`       | A request answered — the `voice` verb's, which reports the status and the device                                                            |
+| `packages/genshin-persona/src/services/createReplyQueue.ts`       | One turn's pieces in the order written, a missing one held for, a newer turn replacing what waits, the running one told                     |
+| `packages/genshin-persona/src/services/checkHasWeights.ts`        | Whether the cache holds every declared variant's graph, read before the verb's foreground load                                              |
+| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | The engine on the first rung that loads, moved down by a chunk that is not speech or that the GPU provider fails, and the streamed sentence |
+| `packages/genshin-persona/src/services/createChunkSplicer.ts`     | Each pass's waveform reduced to its new audio: the seam held back and crossfaded, the count emitted kept                                    |
+| `packages/genshin-persona/src/services/vocodeSpeechTokens.ts`     | The decoder run over the speech tokens made so far, framed as the generation frames its own final pass                                      |
+| `packages/genshin-persona/src/services/deleteSupersededModels.ts` | Every checkpoint the model id no longer names, removed where the one in use lands                                                           |
+| `packages/genshin-persona/src/services/checkIsSpeech.ts`          | What a synthesis has to sound like to count as spoken                                                                                       |
+| `packages/genshin-persona/src/services/readVoiceDevice.ts`        | The rung the last synthesizer spoke on, where the next starts                                                                               |
+| `packages/genshin-persona/src/services/readReferenceClip.ts`      | The character's clip, fetched from the wiki on first use and cached                                                                         |
+| `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                                                                  |
+| `packages/genshin-persona/runtime/package.json`                   | The one package the engine needs, moved by Renovate like any other                                                                          |
+| `packages/genshin-persona/src/services/getSpokenLines.ts`         | The blockquote lines in a piece of a reply, the markup stripped, the unreadable dropped                                                     |
+| `packages/genshin-persona/src/services/checkIsReadable.ts`        | What the engine can read: a Latin letter in it, and no letter of another script                                                             |
+| `packages/genshin-persona/src/services/checkIsSilent.ts`          | Muted, or a volume of zero — no reply sent and no engine woken                                                                              |
+| `packages/genshin-persona/output-styles/in-character.md`          | The spoken channel's one rule, and how much of a reply the ask makes it: a blockquote line is a spoken line, and nothing else               |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | The desktop's stock player, one process per reading, fed a temp WAV path per clip and answering each                                        |
+| `packages/genshin-persona/src/services/constants.ts`              | The state directory's voice half, the engine's variants, the device ladder, the budgets and timeouts                                        |
+| `scripts/src/voiceMatch/synthesizer.bench.ts`                     | The synthesizer timed per sentence shape on this host, through the runner's runtime; off once committed                                     |
 
 ## Notes
 
