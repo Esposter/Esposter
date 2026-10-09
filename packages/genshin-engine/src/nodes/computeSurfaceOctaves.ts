@@ -46,7 +46,7 @@ const solveOctaveEnergies = (responses: number[][], targets: number[]): number[]
     for (const [octave, octaveResponses] of responses.entries()) {
       const demand = targets.reduce((sum, target, row) => sum + (octaveResponses[row] ?? 0) * (target > 0 ? 1 : 0), 0);
       const supply = modelled.reduce((sum, value, row) => sum + (octaveResponses[row] ?? 0) * value, 0);
-      energies[octave] = (energies[octave] ?? 0) * (supply > 0 ? demand / supply : 1);
+      energies[octave] = demand === 0 ? 0 : (energies[octave] ?? 0) * (supply > 0 ? demand / supply : 1);
     }
   }
   return energies;

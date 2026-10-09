@@ -4,8 +4,8 @@ import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
-import { startForge } from "#src/services/forging/startForge";
 import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/services/forging/constants";
+import { startForge } from "#src/services/forging/startForge";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { ItemCategory } from "genshin-interface";

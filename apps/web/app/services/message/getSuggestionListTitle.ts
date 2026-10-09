@@ -1,8 +1,5 @@
 import type { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 
-import { SuggestionTriggerTitleMap } from "@/services/message/SuggestionTriggerTitleMap";
-
-export const getSuggestionListTitle = (trigger: SuggestionTrigger, query: string) => {
-  const title = SuggestionTriggerTitleMap[trigger];
-  return query ? `${title} MATCHING ${trigger}${query}` : title;
-};
+// Each popover passes its own title, since two popovers can share a trigger character
+export const getSuggestionListTitle = (title: string, trigger: SuggestionTrigger, query: string) =>
+  query ? `${title} MATCHING ${trigger}${query}` : title;

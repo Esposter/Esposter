@@ -4,26 +4,28 @@ import type { ContainerClient } from "@azure/storage-blob";
 import { genshinSaveEnvelopeSchema } from "#server/models/genshin/GenshinSaveEnvelope";
 import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { checkIsNotFound, readJsonBlob } from "@esposter/db";
-import { getResult, getResultAsync } from "@esposter/shared";
+import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { z } from "zod";
 
 // The blob's envelope and its ETag. The ETag is read first, so a write that lands between the two reads makes the
 // Next save a conflict, which the session treats as its lease being lost rather than merging anything
 export interface GenshinSaveState {
-  envelope: GenshinSaveEnvelope | undefined;
-  etag: string | undefined;
+  envelope?: GenshinSaveEnvelope;
+  etag?: string;
 }
 
-// A save that no longer parses reads as none, so the game starts a new player's save over it, the reset the
-// Latest-shape-only standard calls for
-const parseEnvelope = (json: Buffer | undefined): GenshinSaveEnvelope | undefined => {
+// A save that no longer parses is never read as none, since a start would then write a new player's save over the
+// Player's progress. A save the server holds is backfilled to the latest shape instead, so one that does not parse is
+// Refused until it is
+const parseEnvelope = (blobName: string, json: Buffer | undefined): GenshinSaveEnvelope | undefined => {
   if (!json) return undefined;
-  // Parsed as plain JSON, because the save holds its instants as ISO strings a date revival would turn into Dates
-  // eslint-disable-next-line no-restricted-properties -- the save keeps its instants as ISO strings, which a date revival would turn into Dates
-  const parsedJson = getResult(() => JSON.parse(json.toString()))
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  const parsedJson = getResult(() =>
+    // oxlint-disable-next-line no-restricted-properties -- the save holds its instants as ISO strings a date revival would turn into Dates
+    JSON.parse(json.toString()),
+  ).unwrapOr(undefined);
   const result = genshinSaveEnvelopeSchema.safeParse(parsedJson);
-  return result.success ? result.data : undefined;
+  if (!result.success) throw new InvalidOperationError(Operation.Read, blobName, z.prettifyError(result.error));
+  return result.data;
 };
 
 export const readGenshinSaveState = async (
@@ -39,5 +41,5 @@ export const readGenshinSaveState = async (
     },
   );
   const json = await readJsonBlob(containerClient, blobName);
-  return { envelope: parseEnvelope(json), etag };
+  return { envelope: parseEnvelope(blobName, json), etag };
 };

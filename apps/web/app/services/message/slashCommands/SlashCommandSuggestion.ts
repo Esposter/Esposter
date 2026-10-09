@@ -13,7 +13,7 @@ import { getResultAsync, getSynchronizedFunction, noop, normalizeString } from "
 import { PluginKey } from "@tiptap/pm/state";
 
 export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
-  char: SuggestionTrigger.SlashCommand,
+  char: SuggestionTrigger.Slash,
   command: getSynchronizedFunction(({ editor, props: slashCommand, range }) =>
     getResultAsync(async () => {
       const { doc } = editor.state;

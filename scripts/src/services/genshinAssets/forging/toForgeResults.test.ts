@@ -31,7 +31,7 @@ describe(toForgeResults, () => {
   test("should yield a row's fixed result as its only result", () => {
     expect.hasAssertions();
 
-    expect(toForgeResults(createRow({ resultItemId: ORE_ID, resultItemCount: 1 }), randomRows)).toStrictEqual([
+    expect(toForgeResults(createRow({ resultItemCount: 1, resultItemId: ORE_ID }), randomRows)).toStrictEqual([
       { count: 1, itemId: ORE_ID, weight: 1 },
     ]);
   });

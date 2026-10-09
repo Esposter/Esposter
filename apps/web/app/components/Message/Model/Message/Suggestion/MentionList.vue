@@ -30,7 +30,7 @@ defineExpose({ onKeyDown });
     w-100
     :is-visible="items.length > 0"
     :selected-index
-    :title="getSuggestionListTitle(SuggestionTrigger.Mention, query)"
+    :title="getSuggestionListTitle('MEMBERS', SuggestionTrigger.Mention, query)"
   >
     <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
     <div

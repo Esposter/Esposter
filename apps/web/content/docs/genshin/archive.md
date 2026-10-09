@@ -50,7 +50,7 @@ A defeated enemy opens its Living Beings entry and counts one more kill under it
 
 ## The unlock
 
-The Archive opens once its quest is done, the Archon Quest Unexpected Power, main quest 353 in the dump. The Paimon menu's Archive entry is enabled only once that quest's completion is known to the world, so its slices and names are read the first time it unlocks, not with the world. A main quest finished on the [quests](/docs/genshin/quests) page is what completes it, so the entry opens once the quest page finishes that quest.
+The Archive opens once its quest is done, the Archon Quest Unexpected Power, main quest 353 in the dump. The Paimon menu's Archive entry is enabled only once that quest's completion is known to the world, so its slices and names are read the first time it unlocks, not with the world. A main quest finished on the [quests](/docs/genshin/quests) page is what would complete it, but the world carries only quests 351 and 352, so the Archive stays locked until quest 353 is carried.
 
 ## The screen
 

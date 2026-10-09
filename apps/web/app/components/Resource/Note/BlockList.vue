@@ -21,7 +21,7 @@ defineExpose({ onKeyDown });
     max-w-120
     :is-visible="items.length > 0"
     :selected-index
-    :title="getSuggestionListTitle(SuggestionTrigger.NoteBlock, query)"
+    :title="getSuggestionListTitle('BLOCKS', SuggestionTrigger.Slash, query)"
   >
     <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -- focus stays in the editor, which walks the options -->
     <div

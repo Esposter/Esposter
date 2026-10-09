@@ -1,15 +1,18 @@
+import type { ExcelForgeRandomRow } from "#src/models/genshinAssets/forging/ExcelForgeRandomRow";
 import type { ExcelForgeRow } from "#src/models/genshinAssets/forging/ExcelForgeRow";
-import type { ForgeRecipe, ForgeResult } from "genshin-world";
+import type { ForgeRecipe } from "genshin-world";
 
 import { ForgeTypeRecipeKindMap } from "#src/services/genshinAssets/forging/constants";
+import { toForgeResults } from "#src/services/genshinAssets/forging/toForgeResults";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One forge recipe from its forge row, its results and the diagrams that open it, or undefined for a row the blacksmith does
-// Not forge. A recipe hidden until a diagram opens it must name one, or the world would never offer it
+// One forge recipe from its forge row, the diagrams that open it and the random tables its results may draw from, or
+// Undefined for a row the blacksmith does not forge, whose results are never read. A recipe hidden until a diagram opens
+// It must name one, or the world would never offer it
 export const toForgeRecipe = (
   row: ExcelForgeRow,
   unlockItemIds: number[],
-  results: ForgeResult[],
+  randomRows: ExcelForgeRandomRow[],
 ): ForgeRecipe | undefined => {
   const kind = ForgeTypeRecipeKindMap[row.forgeType];
   if (kind === undefined) return undefined;
@@ -26,7 +29,7 @@ export const toForgeRecipe = (
     mora: row.scoinCost,
     playerLevel: row.playerLevel,
     queueSize: row.queueNum,
-    results,
+    results: toForgeResults(row, randomRows),
     seconds: row.forgeTime,
     unlockItemIds,
   };

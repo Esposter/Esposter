@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: Proposal — what the bag still lacks: using food on the party and destroying equipment from the bag's screen, with the party's health and the game's destroy mode.
+description: Proposal — what the bag still lacks: using food on its own target and destroying equipment from the bag's screen, with the party's health and the game's destroy mode.
 model: claude-opus-5-5
 ---
 
@@ -10,7 +10,7 @@ This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet,
 
 ## Decisions
 
-- **Food heals the party's members.** Using a food takes one from the bag and heals each party member by the food's own amount, never past full. It waits on the heal each food gives, which is the game's own figure and not yet read into the bag's data.
+- **Food heals its own target.** Using a food takes one from the bag and applies its own effect to the target it names, the selected character for most recovery dishes and the whole party for some, never past full health. It waits on each food's heal and target, which are the game's own figures and not yet read into the bag's data.
 - **Destroying from the screen.** The bag's destroy mode picks one entry at a time, and the destroy rule it uses is built: a weapon or an artifact of up to four stars.
 
 ## Scope and order
@@ -19,7 +19,7 @@ This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet,
 
 **This adds, in order:**
 
-1. **Using food**, on the party's members, with the party's health.
+1. **Using food**, on each food's own target, with the party's health.
 2. **The destroy mode** on the bag's screen, with the rule the bag already holds.
 
 ## What this does not propose

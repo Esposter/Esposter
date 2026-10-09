@@ -13,7 +13,7 @@ export const classifyPlacementRegion = (
   regionMapPoints: readonly RegionMapPoint[],
   maxDistance: number,
 ): string | undefined => {
-  let nearest: { distance: number; region: string } | undefined;
+  let nearest: undefined | { distance: number; region: string };
   for (const { position: mapPosition, region } of regionMapPoints) {
     const distance = Math.hypot(mapPosition.x - position.x, mapPosition.z - position.z);
     if (!nearest || distance < nearest.distance) nearest = { distance, region };

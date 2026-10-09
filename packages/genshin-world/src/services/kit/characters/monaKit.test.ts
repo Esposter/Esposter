@@ -3,11 +3,14 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { MONA_CHARACTER_ID } from "#src/services/character/constants";
-import { MONA_KIT } from "#src/services/kit/characters/monaKit";
+import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const MONA_KIT = createMonaKit(await readTalentMultipliers([MONA_CHARACTER_ID]));
 
 const createMonaCombatant = (): Combatant => ({
   ascension: 0,

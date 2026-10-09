@@ -47,7 +47,9 @@ export const joinResidents = (
       nameTextId,
       talkId: String(talkId),
     };
-    join.regions.set(region, [...(join.regions.get(region) ?? []), resident]);
+    const regionResidents = join.regions.get(region);
+    if (regionResidents) regionResidents.push(resident);
+    else join.regions.set(region, [resident]);
   }
   return join;
 };

@@ -2,9 +2,9 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
-import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { WILDLIFE_PLACES_GENERATED_DIRECTORY } from "#src/services/genshinAssets/wildlife/constants";
 import { WildlifeKindLabelIdMap } from "#src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap";
+import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { WildlifeKind } from "genshin-world";
 
 // Each region's animals of the kinds the map marks as fleeing birds and beasts written as one slice in the world's

@@ -1,8 +1,8 @@
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 
-import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { QuestKind } from "#src/models/quest/QuestKind";
+import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 
 // The Archon quests start one after another from the prologue's first: the first one not yet finished starts once the
 // Ones before it are done, and nothing else starts here, since the other kinds start from the talks that offer them

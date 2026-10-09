@@ -1,8 +1,7 @@
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
+import type { MachineState } from "#src/models/machine/MachineState";
 
-import { MachineState } from "#src/models/machine/MachineState";
-import { SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
-import { LAUNCHD_PROCESS_ID } from "#src/services/machine/constants";
+import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
 import { getCpuTotals } from "#src/services/machine/getCpuTotals";
@@ -39,6 +38,8 @@ export const watchMachine = async (): Promise<void> => {
     const processes = await readProcesses();
     const adopterProcessId = process.platform === "darwin" ? LAUNCHD_PROCESS_ID : undefined;
     sweepOrphans(selectOrphans(processes, adopterProcessId));
+    // A sample with no memory reading has no state to classify, so the watcher waits for the next one
+    if (freeGigabytes === undefined) continue;
 
     const state = getMachineState(cpuAveragePercentage, cpuAverages.length, freeGigabytes);
     minutesInState = state === lastState ? minutesInState + 1 : 0;

@@ -1,3 +1,4 @@
+import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
@@ -84,7 +85,7 @@ const DILUC_A4_PYRO_DAMAGE_BONUS = 0.2;
 // First press and Dawn. Its multipliers are read from its proud skill groups and match the wiki's to two decimal places.
 // The Searing Onslaught's three presses share one action here, and Dawn's damage-over-time and explosion wait on the
 // Summons that land later hits, so the burst's own slash is all that is built of it
-export const DILUC_KIT: Kit = {
+export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 12,
   burstEnergyCost: 40,
   chargedAttack: {
@@ -95,7 +96,7 @@ export const DILUC_KIT: Kit = {
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         isBlunt: true,
         poiseDamage: 60,
-        talentMultiplier: getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),
       },
       {
         hitArea: CHARGED_FINAL_HIT_AREA,
@@ -103,7 +104,7 @@ export const DILUC_KIT: Kit = {
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         isBlunt: true,
         poiseDamage: 120,
-        talentMultiplier: getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
       },
     ],
     seconds: 1.2,
@@ -123,7 +124,7 @@ export const DILUC_KIT: Kit = {
         isBlunt: true,
         // The wiki's Dawn advanced properties: the slashing damage's 100 poise and 2U of Pyro under an Elemental Burst ICD
         poiseDamage: 100,
-        talentMultiplier: getTalentMultiplier(DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
     onStart: ({ combatant, effects }) => {
@@ -159,7 +160,7 @@ export const DILUC_KIT: Kit = {
         hitmarkSeconds: 24 / 60,
         isBlunt: true,
         poiseDamage: 120,
-        talentMultiplier: getTalentMultiplier(DILUC_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
     seconds: 32 / 60,
@@ -172,7 +173,7 @@ export const DILUC_KIT: Kit = {
         hitmarkSeconds: 40 / 60,
         isBlunt: true,
         poiseDamage: 200,
-        talentMultiplier: getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),
       },
     ],
     seconds: 81 / 60,
@@ -185,7 +186,7 @@ export const DILUC_KIT: Kit = {
         hitmarkSeconds: 36 / 60,
         isBlunt: true,
         poiseDamage: 150,
-        talentMultiplier: getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
+        talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
       },
     ],
     seconds: 78 / 60,
@@ -195,28 +196,28 @@ export const DILUC_KIT: Kit = {
     createNormalAttack(
       CLAYMORE_FAN_HIT_AREA,
       108.1,
-      getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
+      getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 0),
       24 / 60,
       32 / 60,
     ),
     createNormalAttack(
       SECOND_STRIKE_HIT_AREA,
       105.57,
-      getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
+      getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 1),
       39 / 60,
       46 / 60,
     ),
     createNormalAttack(
       CLAYMORE_FAN_HIT_AREA,
       119.03,
-      getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
+      getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 2),
       26 / 60,
       34 / 60,
     ),
     createNormalAttack(
       FOURTH_STRIKE_HIT_AREA,
       161.46,
-      getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
+      getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 3),
       49 / 60,
       99 / 60,
     ),
@@ -227,7 +228,7 @@ export const DILUC_KIT: Kit = {
     hitArea: PLUNGE_COLLISION_HIT_AREA,
     hitmarkSeconds: 0,
     poiseDamage: 35,
-    talentMultiplier: getTalentMultiplier(DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
+    talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
   },
   skillCooldownSeconds: 10,
-};
+});

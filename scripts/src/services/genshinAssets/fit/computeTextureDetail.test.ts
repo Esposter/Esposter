@@ -3,7 +3,7 @@ import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
 import { computeSurfaceOctaves, SURFACE_DETAIL_METRES_PER_TEXEL } from "genshin-engine";
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const SIZE = 128;
 const FULL_MASK = new Uint8Array(SIZE * SIZE).fill(1);
@@ -18,7 +18,7 @@ const createTexture = (luminance: (x: number, y: number) => number): Texture => 
 // The luminance of a texture whose texels are a sum of waves, each octave one cosine at its frequency in the world
 const createWaveLuminance =
   (octaves: { amplitude: number; frequency: number; phase: number }[]) =>
-  (x: number, y: number): number => {
+  (x: number, _y: number): number => {
     const worldX = x * SURFACE_DETAIL_METRES_PER_TEXEL;
     const variation = octaves.reduce(
       (sum, { amplitude, frequency, phase }) => sum + amplitude * Math.cos(2 * Math.PI * frequency * worldX + phase),
@@ -29,30 +29,36 @@ const createWaveLuminance =
 const toLuminance = (texture: Texture): Float32Array => Float32Array.from(texture.data, (byte) => byte / 128);
 
 describe(computeTextureDetail, () => {
-  it("reads no detail off a flat texture", () => {
+  test("reads no detail off a flat texture", () => {
     expect.hasAssertions();
     expect(computeTextureDetail(createTexture(() => 128))).toStrictEqual({ bands: [0, 0, 0, 0], variance: 0 });
   });
 });
 
 describe(averageSurfaceDetails, () => {
-  it("averages each band and the variance over the details it is given", () => {
+  test("averages each band and the variance over the details it is given, each weighted by its area", () => {
     expect.hasAssertions();
     expect(
       averageSurfaceDetails([
-        { bands: [1, 2], variance: 4 },
-        { bands: [3, 0], variance: 0 },
+        { detail: { bands: [1, 2], variance: 4 }, weight: 3 },
+        { detail: { bands: [5, 6], variance: 0 }, weight: 1 },
       ]),
-    ).toStrictEqual({ bands: [2, 1], variance: 2 });
+    ).toStrictEqual({ bands: [2, 3], variance: 3 });
   });
-  it("gives no detail for no surface", () => {
+
+  test("gives no detail for no surface", () => {
     expect.hasAssertions();
     expect(averageSurfaceDetails([])).toBeUndefined();
+  });
+
+  test("gives no detail for surfaces sampled over no area", () => {
+    expect.hasAssertions();
+    expect(averageSurfaceDetails([{ detail: { bands: [1], variance: 1 }, weight: 0 }])).toBeUndefined();
   });
 });
 
 describe("detail closure", () => {
-  it("reproduces an export's band energies within the gate from octaves fitted to it", () => {
+  test("reproduces an export's band energies within the gate from octaves fitted to it", () => {
     expect.hasAssertions();
     const exported = createTexture(
       createWaveLuminance([
@@ -63,7 +69,9 @@ describe("detail closure", () => {
     const detail = computeTextureDetail(exported);
     if (!detail) throw new Error("the export holds detail");
     const ours = createTexture(
-      createWaveLuminance(computeSurfaceOctaves(detail).map((octave) => ({ ...octave, phase: 0.7 }))),
+      createWaveLuminance(
+        computeSurfaceOctaves(detail).map(({ amplitude, frequency }) => ({ amplitude, frequency, phase: 0.7 })),
+      ),
     );
     expect(
       computeStatisticalStructure(toLuminance(exported), toLuminance(ours), FULL_MASK, FULL_MASK, SIZE, SIZE),

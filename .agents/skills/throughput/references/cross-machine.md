@@ -19,6 +19,7 @@ The Windows PC's main session is the **coordinator**. A MacBook joins as a Remot
   - the compute queue's page lane, whose references live there.
 
   This holds until the Mac has the game's blocks of its own.
+
 - **One unit, one machine.** The coordinator names each unit it sends, and never sends both machines units that edit the same file. A hot shared file, the world screen's `Index.vue` above all, belongs to one machine at a time.
 
 ## Sync

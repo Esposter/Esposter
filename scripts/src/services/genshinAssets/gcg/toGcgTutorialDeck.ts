@@ -9,11 +9,10 @@ import type {
   GcgTutorialDeck,
   GcgTutorialSkill,
 } from "#src/models/genshinAssets/gcg/GcgTutorialDeck";
+import type { Element, GcgCost } from "genshin-world";
 
 import { GcgCostTableElementMap } from "#src/services/genshinAssets/gcg/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import type { Element, GcgCost } from "genshin-world";
-
 import { GcgCardKind, GcgCostKind, GcgSkillKind } from "genshin-world";
 
 // The tutorial deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct
@@ -116,7 +115,7 @@ const CardTypeKindMap = new Map<string, GcgCardKind>([
 ]);
 
 // The card type the dump names, which a modify card's tags refine into the kind of equipment it is
-const toCardKind = ({ cardType, tagList, id }: ExcelGcgCardRow): GcgCardKind => {
+const toCardKind = ({ cardType, id, tagList }: ExcelGcgCardRow): GcgCardKind => {
   const equipmentKind =
     cardType === "GCG_CARD_MODIFY" ? EquipmentTagKindMap.find(([tag]) => tagList.includes(tag))?.[1] : undefined;
   const kind = equipmentKind ?? CardTypeKindMap.get(cardType);

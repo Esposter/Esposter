@@ -1,10 +1,10 @@
 import type { TalentTables } from "#src/models/genshinAssets/stats/TalentTables";
 
-import { getTalentMultiplierLoaderMapSource } from "#src/services/genshinAssets/stats/getTalentMultiplierLoaderMapSource";
 import {
   TALENT_LABEL_GENERATED_DIRECTORY,
   TALENT_MULTIPLIER_GENERATED_DIRECTORY,
 } from "#src/services/genshinAssets/stats/constants";
+import { getTalentMultiplierLoaderMapSource } from "#src/services/genshinAssets/stats/getTalentMultiplierLoaderMapSource";
 import { toJson } from "#src/services/genshinAssets/stats/toJson";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

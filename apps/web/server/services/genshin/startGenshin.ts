@@ -1,14 +1,13 @@
 import type { GenshinSave } from "genshin-world/save";
 
-import { startGenshinSession } from "#server/services/genshin/startGenshinSession";
-import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
+import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
+import { startGenshinSession } from "#server/services/genshin/startGenshinSession";
+import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
 import { AzureContainer } from "@esposter/db-schema";
-import { writeJsonBlob } from "@esposter/db";
 
 export interface StartGenshinResult {
-  etag: string | undefined;
+  etag?: string;
   save: GenshinSave;
   serverNow: string;
   sessionId: string;
@@ -20,10 +19,10 @@ export const startGenshin = async (userId: string): Promise<StartGenshinResult> 
   const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
   const { envelope, etag } = await readGenshinSaveState(containerClient, userId);
   const startedEnvelope = startGenshinSession(envelope, crypto.randomUUID());
-  const written = await writeJsonBlob(
+  const written = await writeGenshinSaveEnvelope(
     containerClient,
-    getSaveBlobName(userId),
-    JSON.stringify(startedEnvelope),
+    userId,
+    startedEnvelope,
     etag ? { ifMatch: etag } : { ifNoneMatch: "*" },
   );
   return {

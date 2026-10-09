@@ -85,7 +85,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
-import { CharacterIdKitMap } from "#src/services/kit/CharacterIdKitMap";
+import { CharacterIdCreateKitMap } from "#src/services/kit/CharacterIdCreateKitMap";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
@@ -239,14 +239,17 @@ getResultAsync(() => QuestTextLoaderMap[language]()).match(
 );
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
-// Character's chunk on demand. The Traveler's kit is built from them once they arrive, and nothing is priced until then
+// Character's chunk on demand, and the characters whose chunks have arrived. Each kit is built from them once its
+// Character's chunk arrives, and nothing is priced until then
 const talentMultipliers = shallowRef<TalentMultiplierMap>();
+const talentMultiplierCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
 const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
 watchImmediate(deployedCharacterIds, (characterIds) => {
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readTalentMultipliers(characterIds)).match(
     (newTalentMultipliers) => {
       talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
+      talentMultiplierCharacterIds.value = new Set([...talentMultiplierCharacterIds.value, ...characterIds]);
     },
     (error) => {
       console.error(error);
@@ -258,12 +261,13 @@ const travelerKit = computed(() => (talentMultipliers.value ? createTravelerKit(
 const locomotion = computed(() =>
   statTables.value ? getCharacterLocomotion(getActiveCharacterId(party), statTables.value.characterDataMap) : undefined,
 );
-// Each character's combat once the roster has arrived, priced by the Traveler's kit for every character until the kits
-// Run reads each one's own. The character on the field's combat and its party member are what the HUD's health and
-// Skills read
+// Each character's combat once the roster has arrived, priced by its own kit where its module is built and by the
+// Traveler's otherwise. A character with a module has no combat until its multipliers arrive. The character on the
+// Field's combat and its party member are what the HUD's health and skills read
 const characterIdCombatantMap = computed(() => {
   const combatantMap = new Map<number, Combatant>();
-  if (!statTables.value || !travelerKit.value) return combatantMap;
+  const talentMultiplierMap = talentMultipliers.value;
+  if (!statTables.value || !talentMultiplierMap || !travelerKit.value) return combatantMap;
   // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
   const { characterDataMap } = statTables.value;
   const elementalResonances = getElementalResonances(
@@ -272,18 +276,21 @@ const characterIdCombatantMap = computed(() => {
       return element ? [element] : [];
     }),
   );
-  for (const character of characters.value)
+  for (const character of characters.value) {
+    const createKit = CharacterIdCreateKitMap[character.id];
+    if (createKit && !talentMultiplierCharacterIds.value.has(character.id)) continue;
     combatantMap.set(character.id, {
+      ascension: character.ascension,
       attributes: computeCharacterAttributes(
         getCharacterAttributeLines(character, statTables.value),
         elementalResonances,
       ),
-      ascension: character.ascension,
       characterId: character.id,
       elementalResonances,
-      kit: CharacterIdKitMap[character.id] ?? travelerKit.value,
+      kit: createKit?.(talentMultiplierMap) ?? travelerKit.value,
       level: character.level,
     });
+  }
   return combatantMap;
 });
 const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
@@ -973,7 +980,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :talk
       :text-map="questTextMap"
-      @end="endTalk"
+      @end="endTalk()"
     />
     <div
       class="teleport-fade"

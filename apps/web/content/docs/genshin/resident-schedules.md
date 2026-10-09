@@ -60,7 +60,7 @@ The records give one place for most residents, so most have a day spot and no ni
 | `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`     | A quest target resident's shown spot, for the navigation marker                   |
 | `scripts/src/services/genshinAssets/residents/writeResidents.ts`           | `genshin:assets residents`, joining the birth records to names, talks and regions |
 | `scripts/src/services/genshinAssets/residents/joinResidents.ts`            | The join: one resident per NPC per region, and what was left out                  |
-| `packages/genshin-world/src/data/regions/mondstadt.json`                   | Mondstadt's residents, written by the generator beside its landmarks              |
+| `packages/genshin-world/src/data/regions/<region>.json`                    | Each fitted region's residents, written by the generator beside its landmarks     |
 
 ## Sources
 

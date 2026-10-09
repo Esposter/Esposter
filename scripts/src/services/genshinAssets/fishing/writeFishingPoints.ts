@@ -1,11 +1,11 @@
 import type { FishingPointPlace } from "genshin-world";
 
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import {
   FISHING_POINT_KIND,
   FISHING_POINT_LABEL_ID,
   FISHING_POINTS_PATH,
 } from "#src/services/genshinAssets/fishing/constants";
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";

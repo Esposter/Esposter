@@ -19,7 +19,7 @@ const roomName = useRoomName(inviteRoomId);
   <StyledDialog v-if="room" v-model="isOpen" :title="`Invite friends to ${roomName}`" w="[min(31.25rem,90vw)]">
     <div flex flex-col gap-3 ui-body>
       <h3 ui-heading>Send an invite to a friend</h3>
-      <MessageModelRoomInviteFriendList :room />
+      <MessageModelRoomInviteFriendList :key="room.id" :room />
       <h3 ui-heading>Or send a room invite link to a friend</h3>
       <MessageModelRoomInviteManager :key="room.id" :room />
     </div>

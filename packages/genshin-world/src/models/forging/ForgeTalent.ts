@@ -2,8 +2,8 @@
 // Each unit, or a unit's seconds reduced
 export enum ForgeTalentKind {
   ExtraResult = "ExtraResult",
-  RefundOre = "RefundOre",
   ReduceTime = "ReduceTime",
+  RefundOre = "RefundOre",
 }
 
 // A forging talent: the kind of its effect, the forge type of the recipes it applies to, and the ratio the effect takes

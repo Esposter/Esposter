@@ -20,7 +20,7 @@ export const readStagedImporters = (committedPaths: ReadonlySet<string>): Staged
   if (importerPaths.length === 0) return [];
 
   const packageDirectories = new Map(importerPaths.map((path) => [path, findPackageDirectory(path, committedPaths)]));
-  const packageJsonPaths = Array.from(new Set(packageDirectories.values()))
+  const packageJsonPaths = [...new Set(packageDirectories.values())]
     .map((directory) => (directory === "" ? PACKAGE_JSON_FILENAME : posix.join(directory, PACKAGE_JSON_FILENAME)))
     .filter((path) => committedPaths.has(path));
   const blobs = readIndexBlobs([...importerPaths, ...packageJsonPaths]);

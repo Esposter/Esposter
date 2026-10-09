@@ -1,10 +1,14 @@
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Element } from "#src/models/Element";
-import { DILUC_KIT } from "#src/services/kit/characters/dilucKit";
+import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
+import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const DILUC_KIT = createDilucKit(await readTalentMultipliers([DILUC_CHARACTER_ID]));
 
 describe(infuseKitHits, () => {
   test("infuses a normal attack and a collision at their gauges, and leaves a skill's hit as it was", () => {

@@ -7,15 +7,17 @@ import { readInteractiveMapPoints } from "#src/services/genshinAssets/points/rea
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 
-// The official map's points with the transform the fit solved over them. The fit must have run, since it writes the transform
+// The official map's points with the transform the fit solved over them and the regions it fitted. The fit must have run,
+// Since it writes the transform
 export const readFittedMapPoints = async (): Promise<{
   points: InteractiveMapPoint[];
+  regions: InteractiveMapFitFile["regions"];
   transform: SimilarityTransform;
 }> => {
   const [points, fitContent] = await Promise.all([
     readInteractiveMapPoints(),
     readFile(INTERACTIVE_MAP_FIT_PATH, "utf8"),
   ]);
-  const { transform } = parseMachineJson<InteractiveMapFitFile>(fitContent);
-  return { points, transform };
+  const { regions, transform } = parseMachineJson<InteractiveMapFitFile>(fitContent);
+  return { points, regions, transform };
 };

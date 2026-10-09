@@ -1,11 +1,8 @@
-import type { InteractiveMapFitFile } from "#src/models/genshinAssets/points/InteractiveMapFitFile";
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { GroundPoint } from "genshin-engine";
-
 import type { Resident } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { INTERACTIVE_MAP_FIT_PATH } from "#src/services/genshinAssets/points/constants";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import { REGION_DATA_DIRECTORY, RESIDENT_REGION_MAX_DISTANCE } from "#src/services/genshinAssets/residents/constants";
@@ -33,14 +30,11 @@ type RegionDataFile = Record<string, unknown> & {
 // Official map fitted to the scene. A region the fit matched no statue or waypoint in is left out, since its places
 // Cannot be trusted. The report counts each region's residents, the ones with a night spot and what was left out
 export const writeResidents = async (): Promise<string> => {
-  const [origin, { points, transform }, fitContent] = await Promise.all([
+  const [origin, { points, regions, transform }] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFittedMapPoints(),
-    readFile(INTERACTIVE_MAP_FIT_PATH, "utf8"),
   ]);
-  const fittedRegions = parseMachineJson<InteractiveMapFitFile>(fitContent).regions.filter(
-    ({ residual }) => residual !== undefined,
-  );
+  const fittedRegions = regions.filter(({ residual }) => residual !== undefined);
   const regionFiles = await Promise.all(
     fittedRegions.map(async ({ region }) => {
       const path = join(REGION_DATA_DIRECTORY, `${region}.json`);

@@ -17,7 +17,7 @@ describe(openTravelLogEntries, () => {
     const progress: ArchiveProgress = new Map([[ArchiveSection.TravelLog, new Set([20])]]);
 
     expect(openTravelLogEntries(progress, entries, new Set([351]))).toStrictEqual(
-      new Map([[ArchiveSection.TravelLog, new Set([20, 10])]]),
+      new Map([[ArchiveSection.TravelLog, new Set([10, 20])]]),
     );
   });
 

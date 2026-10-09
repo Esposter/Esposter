@@ -81,7 +81,8 @@ The invite router, `server/trpc/routers/invite.ts`, holds every procedure over t
 ## Decisions
 
 - **The friends list filters the loaded friends on the client** with `searchItems`, as the direct message friend picker does, rather than a server search: the friends are already in memory, and `useAutoSearch` is for queries that leave the client.
-- **Membership is read when the dialog opens**, through `readMembersByIds`, so a friend who joins while the dialog stays open still reads Invite until it is reopened.
+- **Membership is read when the dialog opens**, through `readMembersByIds`, so a friend who joins while the dialog stays open still reads Invite until it is reopened. The list is keyed by its room, so the dialog retargeted at another room reads that room's members, and a reader with no friends sends no read at all.
+- **Invite rechecks the link when it is clicked.** A link that expired or ran out of uses while the dialog stayed open is replaced first, at the default expiry and the same use limit, so a friend is never sent a link that cannot join.
 - **Recency is the newest direct message a friend is in**, read from the direct message list's own order; a friend with none keeps the friends list's order behind every one who has one.
 
 ## Surfaces

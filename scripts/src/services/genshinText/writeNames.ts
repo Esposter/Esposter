@@ -14,7 +14,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Every name the world cites by text id: each character's, each weapon's and each enemy kind's, as `genshin:assets stats`
-// and `genshin:assets enemies` last wrote them, and each dish's, processing's and crafted item's, as `genshin:assets
+// And `genshin:assets enemies` last wrote them, and each dish's, processing's and crafted item's, as `genshin:assets
 // Cooking` and `crafting` last wrote them, into the world's own chunk per language. A name a language lacks takes
 // English's and says so
 export const writeNames = (): string[] => {

@@ -1,9 +1,9 @@
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { OCULI_PLACES_GENERATED_DIRECTORY } from "#src/services/genshinAssets/oculi/constants";
 import { OculusKindLabelIdMap } from "#src/services/genshinAssets/oculi/OculusKindLabelIdMap";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { OculusKind } from "genshin-world";
 

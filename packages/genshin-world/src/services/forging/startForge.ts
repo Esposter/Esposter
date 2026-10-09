@@ -4,8 +4,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { Currency } from "#src/models/inventory/Currency";
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { Currency } from "#src/models/inventory/Currency";
 import { checkIsForgeDailyCapReached } from "#src/services/forging/checkIsForgeDailyCapReached";
 import { checkIsForgeRecipeOpen } from "#src/services/forging/checkIsForgeRecipeOpen";
 import { checkIsForgeRecipeRefusedInRealm } from "#src/services/forging/checkIsForgeRecipeRefusedInRealm";

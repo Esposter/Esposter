@@ -26,12 +26,11 @@ describe(toForgeRecipe, () => {
     scoinCost: 5,
     ...overrides,
   });
-  const fixedResults = [{ count: 1, itemId: 104_011, weight: 1 }];
 
   test("should write an enhancement ore with its forge type, forge points, seconds, Mora and queue size", () => {
     expect.hasAssertions();
 
-    expect(toForgeRecipe(createRow({}), [], fixedResults)).toStrictEqual({
+    expect(toForgeRecipe(createRow({}), [], [])).toStrictEqual({
       forgePoint: 400,
       forgeType: ENHANCEMENT_FORGE_TYPE,
       id: 11_001,
@@ -40,7 +39,7 @@ describe(toForgeRecipe, () => {
       mora: 5,
       playerLevel: 2,
       queueSize: 40,
-      results: fixedResults,
+      results: [{ count: 1, itemId: 104_011, weight: 1 }],
       seconds: 3,
       unlockItemIds: [],
     });
@@ -63,7 +62,7 @@ describe(toForgeRecipe, () => {
       scoinCost: 500,
     });
 
-    expect(toForgeRecipe(weaponRow, [221_003], [{ count: 1, itemId: 11_406, weight: 1 }])).toStrictEqual({
+    expect(toForgeRecipe(weaponRow, [221_003], [])).toStrictEqual({
       forgePoint: 0,
       forgeType: WEAPON_FORGE_TYPE,
       id: 13_001,
@@ -84,14 +83,22 @@ describe(toForgeRecipe, () => {
   test("should leave out the gadgets' widgets", () => {
     expect.hasAssertions();
 
-    expect(toForgeRecipe(createRow({ forgeType: WIDGET_FORGE_TYPE }), [], fixedResults)).toBeUndefined();
+    expect(toForgeRecipe(createRow({ forgeType: WIDGET_FORGE_TYPE }), [], [])).toBeUndefined();
+  });
+
+  test("should leave out an unforged row drawing from a drop id with no random table, rather than reading its results", () => {
+    expect.hasAssertions();
+
+    expect(
+      toForgeRecipe(createRow({ forgeType: WIDGET_FORGE_TYPE, mainRandomDropId: 1, resultItemId: 0 }), [], []),
+    ).toBeUndefined();
   });
 
   test("should refuse a recipe hidden with no diagram to open it", () => {
     expect.hasAssertions();
 
     expect(() =>
-      toForgeRecipe(createRow({ forgeType: WEAPON_FORGE_TYPE, isDefaultShow: false }), [], fixedResults),
+      toForgeRecipe(createRow({ forgeType: WEAPON_FORGE_TYPE, isDefaultShow: false }), [], []),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 11001, is hidden with no diagram to open it]`,
     );

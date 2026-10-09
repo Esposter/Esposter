@@ -1,8 +1,8 @@
 import type { SurfaceDetail } from "#src/models/nodes/SurfaceDetail";
 import type { Node } from "three/webgpu";
 
-import { SURFACE_DETAIL_RENDER_GAIN } from "#src/nodes/constants";
 import { computeSurfaceOctaves } from "#src/nodes/computeSurfaceOctaves";
+import { SURFACE_DETAIL_RENDER_GAIN } from "#src/nodes/constants";
 import { float, mx_noise_float, positionWorld, vec3 } from "three/tsl";
 
 // A surface's procedural detail as a multiplier of its colour about one: each octave a noise at its frequency in world

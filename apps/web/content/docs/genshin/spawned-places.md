@@ -48,7 +48,7 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 
 ## The Oculi
 
-`pnpm -C scripts genshin:assets oculi` writes each Oculus the official map marks on the ground into its region's slice, as a compact list of places, each with its id (the map's point id), its kind and its position in the game's coordinates. Its kind is the map's own label, one of eight, named as the map labels them: Anemoculus, Geoculus, Electroculus, Dendroculus, Hydroculus, Pyroculus, Lunoculus and Cryoculus. Each region's area and kind are set in the region map, which the fit's report reads too, so the writer and the checks count the same points.
+`pnpm -C scripts genshin:assets oculi` writes each Oculus the official map marks on the ground into its region's slice, as a compact list of places, each with its id (the map's point id), its kind and its position in the game's coordinates. Its kind is the map's own label, one of eight, named as the map labels them: Anemoculus, Geoculus, Electroculus, Dendroculus, Hydroculus, Pyroculus, Lunoculus and Cryoculus. Each region's area and kind are set in the region map, which the fit's report reads too, and the writer keeps only its points on the ground (below).
 
 - **Ground only.** Oculi on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out. Fontaine holds the only ones, which is why its ground count sits below the fit's count of its Oculi.
 - **Not landmarks.** A place is acted on by the statues' rules, so it lives in its own model rather than in `LandmarkKind`, and no kit draws it.

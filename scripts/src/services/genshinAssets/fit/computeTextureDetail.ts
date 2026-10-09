@@ -35,13 +35,19 @@ export const computeTextureDetail = (texture: Texture): SurfaceDetail | undefine
   const [variance, ...bands] = computeDetailStatistics(values, mask, texture.info.width, texture.info.height);
   return variance === undefined ? undefined : { bands, variance };
 };
-// The mean of several surfaces' details, each counting for the same, undefined when none is given
-export const averageSurfaceDetails = (details: readonly SurfaceDetail[]): SurfaceDetail | undefined => {
+// The mean of several surfaces' details, each weighted by the area it was sampled over, undefined when none is given or
+// None was sampled over any area
+export const averageSurfaceDetails = (
+  details: readonly { detail: SurfaceDetail; weight: number }[],
+): SurfaceDetail | undefined => {
   const [first] = details;
-  if (!first) return undefined;
-  const count = details.length;
+  const totalWeight = details.reduce((sum, { weight }) => sum + weight, 0);
+  if (!first || totalWeight <= 0) return undefined;
   return {
-    bands: first.bands.map((_band, index) => details.reduce((sum, { bands }) => sum + (bands[index] ?? 0), 0) / count),
-    variance: details.reduce((sum, { variance }) => sum + variance, 0) / count,
+    bands: first.detail.bands.map(
+      (_band, index) =>
+        details.reduce((sum, { detail: { bands }, weight }) => sum + (bands[index] ?? 0) * weight, 0) / totalWeight,
+    ),
+    variance: details.reduce((sum, { detail: { variance }, weight }) => sum + variance * weight, 0) / totalWeight,
   };
 };
