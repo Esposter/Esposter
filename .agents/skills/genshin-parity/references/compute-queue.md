@@ -9,14 +9,18 @@ A build writes the script; the run waits in the queue. A queue item is work whos
 One line under the roadmap's **Compute queue** (`apps/web/content/docs/genshin/roadmap.md`), carrying everything a runner needs and nothing it must decide:
 
 - its lane, `[page]` or `[cpu]` (see **The lanes** on this page), first;
+- its id in braces, a short kebab slug of what it does, which is the entry's name in the fleet's claims (`pnpm ai:fleet:hold <id>`);
+- its needs after `needs`, the capabilities a machine must hold to take it: `game-install` when the item reads the installed game (an extraction does), `game-exports` when it reads `~/Esposter/genshin-parity` exports, `parity-page` for every `[page]` item. An item with no needs is taken by any machine;
 - the exact command, from the repo root, with every argument;
 - what it reads, paths outside the repo named (`~/Esposter/genshin-parity/...`);
-- what it writes;
+- what it writes: its touch set, which no live claim on another entry may overlap;
 - the measure that says it worked, with its bar.
+
+The line is the item's whole record in the queue: `- [ ] `[cpu]` {id} needs <capabilities> — **Title.** …`. A machine takes an item only when its profile meets the needs, its area is lent and no live claim holds it or its paths (`pnpm ai:fleet:next`, the `throughput` skill's `references/fleet.md`).
 
 An item missing any of these is not queued: the gap is a call, and calls are the main session's. Items stand in the recreation passes' order, so the queue reads top to bottom. An item waits on the earlier passes **its measure reads**, not on every earlier pass: a sun solved on the exports' shadow edges reads the shape and the camera, so it runs while the surface is still red, and a light pass that scores our stone's colour does not. Releasing an item past a red pass is the main session's call, made by naming what its measure reads.
 
-**The queue holds only what can be digested.** Every item in it can run now, or once an item above it has run. An item whose input does not exist yet sits under the queue's own **Waiting** heading and names its blocker: a recording on the Recordings owed list, or a fix in progress. No runner takes one, and it moves up when its input lands. A missed item keeps its miss on its line, and no runner retakes it until the main session's call changes that line. A queue that only grows is a queue nothing can finish.
+**The queue holds only what can be digested.** Every item in it can run now, or once an item above it has run. An item whose input does not exist yet sits under the queue's own **Waiting** heading and names its blocker: a recording on the Recordings owed list, or a fix in progress. No runner takes one, and it moves up when its input lands. A missed item keeps its claim, its miss written into the claim, and no runner retakes it: a missed claim is never taken over as stale, so the main session's call alone changes that item. A queue that only grows is a queue nothing can finish.
 
 ## The lanes
 
@@ -43,11 +47,11 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 
 ## Running one
 
-1. **Claim it.** Take the top unclaimed item of your lane, append ` — running` to its line, and commit that one line straight away, so no other runner takes it.
-2. **Check the memory first.** If free physical memory is under about 4 GB (read off `Get-CimInstance Win32_OperatingSystem`, in kilobytes), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
+1. **Claim it.** Start `pnpm ai:fleet:hold <id>` in the background for the top item of your lane that `pnpm ai:fleet:next` hands you. The claim is a ref on origin, not a commit on `ai/queue`, and the hold renews it every ten minutes until the release below.
+2. **Check the memory first.** If free physical memory is under an eighth of the machine's RAM, about 4 GB here (read off `Get-CimInstance Win32_OperatingSystem`, in kilobytes), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
-4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output.
-5. **If the measure misses,** commit nothing and change no parameter. Put the number on the item's line in place of ` — running`, and report it. A miss is a call for the main session, never a second run with a guessed value.
+4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item's line from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output. Then `pnpm ai:fleet:release <id>` deletes the claim, and the hold ends.
+5. **If the measure misses,** commit nothing and change no parameter. Run `pnpm ai:fleet:release <id> --miss "<number>"` with the number, which keeps the claim as the miss, and report it. A miss is a call for the main session, never a second run with a guessed value.
 6. **Start the next runnable item of the lane** whenever the memory gate leaves room, beside the ones still running, until none is left. Then report and end.
 
 ## Keeping it busy
