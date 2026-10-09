@@ -1,5 +1,5 @@
 import { computeStatisticalStructure } from "#src/services/genshinParity/passes/computeStatisticalStructure";
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const WIDTH = 160;
 const HEIGHT = 160;
@@ -21,14 +21,15 @@ const shiftTexture = (texture: Float32Array, shift: number): Float32Array =>
   });
 
 describe(computeStatisticalStructure, () => {
-  it("scores near zero for the same detail moved across the surface", () => {
+  test("scores near zero for the same detail moved across the surface", () => {
     expect.hasAssertions();
     const texture = createTexture();
     expect(
       computeStatisticalStructure(texture, shiftTexture(texture, 3), FULL_MASK, FULL_MASK, WIDTH, HEIGHT),
     ).toBeLessThan(0.05);
   });
-  it("scores high for a flat surface against a textured one", () => {
+
+  test("scores high for a flat surface against a textured one", () => {
     expect.hasAssertions();
     const texture = createTexture();
     const flat = new Float32Array(WIDTH * HEIGHT).fill(0.5);

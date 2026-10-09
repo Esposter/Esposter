@@ -6,7 +6,7 @@ import { computeBlossomClaimResin } from "#src/services/originalResin/computeBlo
 import { CONDENSED_RESIN_CLAIM_COUNT } from "#src/services/originalResin/constants";
 
 // The ways a claim at a blossom can be paid: one claim at its price, and at a ley line or a domain two claims at twice
-// the price, or a Condensed Resin for its three rewards
+// The price, or a Condensed Resin for its three rewards
 export const computeBlossomClaimOffers = (kind: BlossomKind, weeklyBossClaimsMade: number): BlossomClaimOffer[] => {
   const resin = computeBlossomClaimResin(kind, weeklyBossClaimsMade);
   const singleOffer: BlossomClaimOffer = { claimCount: 1, condensedResinCount: 0, resin };

@@ -5,8 +5,8 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
-import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
+import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
