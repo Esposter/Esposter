@@ -20,3 +20,12 @@ export const WORLD_JSON_NAME = "world.json";
 // The community's asset index (the one published per version up to 2.6), which names every asset by its path and so
 // Turns a placement's 64-bit path hash back into the prefab's name. Read by the derivation alone
 export const ASSET_PATH_INDEX_PATH: string = join(PARITY_DIRECTORY, "tmp", "asset-index", "gi-2.6.0.json");
+// A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is known by
+export const CITY_AREA_PREFIX = "Area_";
+export const CITY_AREA_SUFFIX = "_City";
+// Every city area's extent, kept for one game version beside the exports and outside the repository
+export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
+export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
+// The free physical memory an AnimeStudio run waits for, in bytes, and how long it waits between readings, in milliseconds
+export const MIN_FREE_MEMORY_BYTES: number = 4 * 1024 ** 3;
+export const MEMORY_WAIT_MILLISECONDS: number = 30_000;
