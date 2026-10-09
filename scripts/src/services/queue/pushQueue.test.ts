@@ -199,6 +199,7 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(options).toStrictEqual({
       model: SessionRoleModelMap[SessionRole.Carry],
       prompt: getCarryPrompt(local, ["a"]),
+      signal: expect.any(AbortSignal),
     });
     expect(readRemoteSubjects().slice(0, 2)).toStrictEqual(["a c", "a"]);
     expect(runGit(["show", `${remoteQueueRef}:a`], getCwd())).toBe("a\nb");
