@@ -11,9 +11,10 @@ while :; do
   for slot in $(seq 1 "$slotCount"); do
     slotPath="$slotDirectory/$slot"
     if mkdir "$slotPath" 2>/dev/null; then
-      # Renamed into place, so a reader never sees half a pid
-      echo "$$" > "$slotPath/pid.$$" && mv "$slotPath/pid.$$" "$slotPath/pid"
       trap 'rm -rf "$slotPath"' EXIT INT TERM
+      # Renamed into place, so a reader never sees half a pid. A slot whose holder was never written is freed a minute on,
+      # So the command never starts in one
+      echo "$$" > "$slotPath/pid.$$" && mv "$slotPath/pid.$$" "$slotPath/pid" || exit 1
       "$@"
       exit $?
     fi
