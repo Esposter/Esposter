@@ -48,4 +48,10 @@ describe(getMachineState, () => {
 
     expect(getMachineState(0, 3, 1.9, SMALL_MACHINE_GIGABYTES)).toBe(MachineState.Tight);
   });
+
+  test("is busy with no memory reading, whatever the CPU, since neither tight nor idle can be claimed", () => {
+    expect.hasAssertions();
+
+    expect(getMachineState(0, 3, undefined, LARGE_MACHINE_GIGABYTES)).toBe(MachineState.Busy);
+  });
 });
