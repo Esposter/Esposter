@@ -21,6 +21,8 @@ export const LocalStorageKey = {
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
   EmojiSkinTone: "emoji-skin-tone",
+  // The Genshin save a signed-out player plays, kept with the browser until a sign-in uploads or merges it into the account
+  GenshinSave: "genshin-save",
   MessageCategoryCollapsed: (categoryId: string) => `message-category-${categoryId}-collapsed`,
   MessageDisplayMode: "message-display-mode",
   MessageLeftSideBarWidth: "message-left-side-bar-width",
