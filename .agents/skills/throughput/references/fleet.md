@@ -49,9 +49,10 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session runs `pnpm ai:queue:push` after every agent report. The script replays the session commits onto origin in a throwaway worktree, pushes, and moves the checkout's branch when no dirty file conflicts.
 - **Never stash, never `git add -A`, never a bare `--force-with-lease`**, on any machine (the `review-queue` skill).
 
-## Game data crosses the local network only
+## Game data stays on the machines that hold it
 
-- **Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel.** They move over SSH on the LAN, authenticated and encrypted. Remote Login on a Mac is the user's switch, set once per machine, and a peer's public key goes in the receiver's `authorized_keys`.
-- **`pnpm ai:fleet:data pull <peer>` copies only what the local manifest lacks**, as one tar stream. Every machine that holds the data serves it, so a new machine pulls from any peer and the fan-out grows with the fleet.
-- **Each machine's `GENSHIN_PARITY_DIRECTORY` is `~/Esposter/genshin-parity`.** What is copied is `extracted`, `text`, `references`, `captures`, `city-areas` and `plans`. `frames` and `tmp` are rebuilt where they are used.
-- **A machine off the LAN never holds `game-exports`**, so it takes only the entries that need no game data.
+- **Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel.**
+- **A machine gets the game itself.** It downloads the game from HoYoverse's official CDN (an open-source Sophon downloader where no launcher runs) and runs the `genshin:assets` extraction locally. That route needs no other machine, works on or off the LAN, and spreads the extraction, the heaviest CPU load, across the fleet. The `shaders` step needs Windows' `d3dcompiler_47`, so it stays on a Windows machine.
+- **`pnpm ai:fleet:data` is the faster copy between LAN machines whose owner allows SSH.** A peer's public key goes in the receiver's `authorized_keys`, which is the owner's call per machine, never assumed. It copies only what the local manifest lacks, as one tar stream over SSH.
+- **Each machine's `GENSHIN_PARITY_DIRECTORY` is `~/Esposter/genshin-parity`.** `frames` and `tmp` are rebuilt where they are used, never copied.
+- **A machine holds `game-install` and `game-exports` only once it has them**, and takes only the entries its capabilities meet until then.
