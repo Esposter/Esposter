@@ -137,9 +137,11 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.Vietnamese]: "vi",
 };
 // The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them, at its default
-// Branch. Its directory listings give each file's size, which is what decides whether a file held is kept
-export const ANIME_GAME_DATA_URL = "https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/master";
-export const ANIME_GAME_DATA_CONTENTS_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/contents";
+// Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's size,
+// Which is what decides whether a file held is kept, and list every file, where the contents API stops at a thousand
+export const ANIME_GAME_DATA_BRANCH = "main";
+export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_BRANCH}`;
+export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
 // The tables a reader names, which the dump's `ExcelBinOutput/` may lack
 export const DUMP_TABLE_NAMES: readonly string[] = [
   "DocumentExcelConfigData",

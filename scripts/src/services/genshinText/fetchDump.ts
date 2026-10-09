@@ -1,8 +1,9 @@
-import type { ContentsEntry } from "#src/models/genshinText/ContentsEntry";
 import type { DumpFile } from "#src/models/genshinText/DumpFile";
+import type { Tree } from "#src/models/genshinText/Tree";
 
 import {
-  ANIME_GAME_DATA_CONTENTS_URL,
+  ANIME_GAME_DATA_BRANCH,
+  ANIME_GAME_DATA_TREES_URL,
   ANIME_GAME_DATA_URL,
   DUMP_FETCH_BATCH_SIZE,
   DUMP_TABLE_NAMES,
@@ -10,7 +11,7 @@ import {
   GameLanguageCodeMap,
 } from "#src/services/genshinText/constants";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
-import { chunk } from "@esposter/shared";
+import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { existsSync, statSync } from "node:fs";
@@ -18,10 +19,15 @@ import { mkdir, rename, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 // A directory of the AnimeGameData repository listed as its files, each with its path from the repository root and its
-// Size
+// Size. A tree the API cut short throws, so a listing is never silently missing files
 const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
-  const entries = await fetchJson<ContentsEntry[]>(`${ANIME_GAME_DATA_CONTENTS_URL}/${directory}?ref=master`);
-  return entries.map(({ path, size }) => ({ path, size }));
+  const { tree, truncated } = await fetchJson<Tree>(
+    `${ANIME_GAME_DATA_TREES_URL}/${ANIME_GAME_DATA_BRANCH}:${directory}`,
+  );
+  if (truncated) throw new InvalidOperationError(Operation.Read, directory, "its tree listing was truncated");
+  return tree.flatMap(({ path, size, type }) =>
+    type === "blob" && size !== undefined ? [{ path: `${directory}/${path}`, size }] : [],
+  );
 };
 
 // The dump's own files a fetch may add: the readable texts of every language's folder and the tables a reader names,
