@@ -18,6 +18,7 @@ export const getAttempts = ({ collectorSha, comments, key, marker, post, viewerL
   const attempts = attemptedAtMs.length;
   return {
     attemptedAtMs,
+    attemptMarker,
     attempts,
     recordAttempt: (note) => {
       post(`${attemptMarker}\nAttempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP}: ${note}`);

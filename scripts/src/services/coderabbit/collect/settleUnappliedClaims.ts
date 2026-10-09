@@ -8,7 +8,6 @@ import {
   SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
 import { getAttempts } from "#src/services/coderabbit/collect/getAttempts";
-import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCommitPatch } from "#src/services/coderabbit/collect/readCommitPatch";
@@ -34,21 +33,20 @@ export const settleUnappliedClaims = ({
   const task = `cut onto ${MAIN_BRANCH} at ${mainSha}`;
   const comments = readNewestCommitComments();
   const claims = shas.map((sha) => {
-    const key = readCommitPatch(sha, cwd);
-    const attemptMarker = getMarker(EXPRESS_FAILED_MARKER, key, [collectorSha]);
+    const attempts = getAttempts({
+      collectorSha,
+      comments,
+      key: readCommitPatch(sha, cwd),
+      marker: EXPRESS_FAILED_MARKER,
+      post: (body) => {
+        postCommitComment(sha, body);
+      },
+      viewerLogin,
+    });
     return {
-      ...getAttempts({
-        collectorSha,
-        comments,
-        key,
-        marker: EXPRESS_FAILED_MARKER,
-        post: (body) => {
-          postCommitComment(sha, body);
-        },
-        viewerLogin,
-      }),
+      ...attempts,
       isCountedAtHead: comments.some(
-        (comment) => checkIsMarked(comment, viewerLogin, attemptMarker) && comment.body.includes(task),
+        (comment) => checkIsMarked(comment, viewerLogin, attempts.attemptMarker) && comment.body.includes(task),
       ),
       sha,
     };
