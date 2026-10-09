@@ -17,15 +17,16 @@ const computeVolume = ({ indices, positions }: StatueSurface): number => {
 };
 
 describe(computeStatueSurface, () => {
-  test("closes its sections into a solid that faces out, the ledge between two radii included", () => {
+  test("closes its sections into a solid that faces out, lofted between their radii", () => {
     expect.hasAssertions();
 
-    // Each section's square of radius r has an area of 2r squared, so the stack is 2 * 1 + 2 * 4 cubic metres
+    // Each section's square of radius r has an area of 2r squared, and the radius lofts linearly from 1 at the first
+    // Section's middle to 2 at the second's, so the stack is 2 * 1 * 0.5 + 14 / 3 + 2 * 4 * 0.5 cubic metres
     const { indices, positions } = computeStatueSurface([
       { height: 1, radii: [1, 1, 1, 1] },
       { height: 1, radii: [2, 2, 2, 2] },
     ]);
 
-    expect(computeVolume({ indices, positions })).toBeCloseTo(10);
+    expect(computeVolume({ indices, positions })).toBeCloseTo(29 / 3);
   });
 });

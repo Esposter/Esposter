@@ -29,16 +29,22 @@ const writeTriangle = (indices: Uint32Array, offset: number, first: number, seco
   return offset + 3;
 };
 
-// A stack of sections as one closed surface, the pure step a statue's kit builds its geometry from: each section's foot
-// And head are rings of its radii at the heights they stand at, and the surface lofts from ring to ring, so a section's
-// Head meeting the next foot at one height is a ledge where their radii differ, as a moulding is. Both caps close it on
-// Their own copies of their rings, so each stays flat where its wall rounds into it
+// A stack of sections as one closed surface, the pure step a statue's kit builds its geometry from: one ring of each
+// Section's radii at its middle height, and the surface lofts from ring to ring, the first section's radii at the foot
+// And the last's at the head, so the radius moves between two sections as one wall rather than as a ledge. Both caps
+// Close it on their own copies of their rings, so each stays flat where its wall rounds into it
 export const computeStatueSurface = (sections: readonly StatueSection[]): StatueSurface => {
   const rings: Ring[] = [];
   let height = 0;
   for (const { height: sectionHeight, radii } of sections) {
-    rings.push({ height, radii }, { height: height + sectionHeight, radii });
+    rings.push({ height: height + sectionHeight / 2, radii });
     height += sectionHeight;
+  }
+  const bottomSection = sections[0];
+  const topSection = sections.at(-1);
+  if (bottomSection && topSection) {
+    rings.unshift({ height: 0, radii: bottomSection.radii });
+    rings.push({ height, radii: topSection.radii });
   }
   const angleCount = sections[0]?.radii.length ?? 0;
   const ringCount = rings.length;
