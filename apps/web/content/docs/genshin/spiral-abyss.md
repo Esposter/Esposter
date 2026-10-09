@@ -27,7 +27,7 @@ flowchart TD
 
 ## The floors and chambers
 
-`pnpm -C scripts genshin:assets spiral-abyss` writes three slices from the game's tower tables, each imported on demand from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the five tower tables, which were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
+`pnpm -C scripts genshin:assets spiral-abyss` writes three slices from the game's tower tables, each imported on demand from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the tower tables: the four the slices are written from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
 
 - **Floors.** Every floor the tower table holds: its id and its place in the twelve, the level group that lists its three chambers, its teams and the stars its chambers must hold for the floor above. The Corridor's eight floors and each Moon Spire period's four are among them.
 - **Chambers.** Each chamber's three star conditions. A time condition is a mark on the clock's seconds left, and a monolith condition a mark on the monolith's health percent, each as the table names it.
