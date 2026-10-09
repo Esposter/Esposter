@@ -23,11 +23,11 @@ export const computeNormalField = (
   const sums = new Float64Array(cellCount * 3);
   const counts = new Uint32Array(cellCount);
   for (const { normal, position } of samples) {
-    const [ix, iy, iz] = [0, 1, 2].map((axis) =>
-      Math.min((size[axis] ?? 1) - 1, Math.floor(((position[axis] ?? 0) - (origin[axis] ?? 0)) / cellSize)),
-    );
-    const index = cellIndex(ix, iy, iz);
-    counts[index]++;
+    const cell = ([0, 1, 2] as const).map((axis) =>
+      Math.min(size[axis] - 1, Math.floor((position[axis] - origin[axis]) / cellSize)),
+    ) as Vector;
+    const index = cellIndex(cell[0], cell[1], cell[2]);
+    counts[index] = (counts[index] ?? 0) + 1;
     for (const axis of [0, 1, 2] as const) sums[index * 3 + axis] = (sums[index * 3 + axis] ?? 0) + (normal[axis] ?? 0);
   }
   const normals = new Float64Array(cellCount * 3);

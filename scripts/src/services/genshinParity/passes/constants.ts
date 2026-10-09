@@ -35,6 +35,9 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
+// A family of scattered cards is read on its envelope too (`measureEnvelope`), each card cut to its size in metres as
+// The export's leaves measure (Oak.reference's record): the envelope's window spans one card
+export const ENVELOPE_CARD_METRES = 5.9;
 // The gate a mean colour is held to, a surface's unlit or glow or the clear sky's: within the CIELab distance two colours
 // Side by side are just told apart at
 export const COLOUR_GATE = 2.3;

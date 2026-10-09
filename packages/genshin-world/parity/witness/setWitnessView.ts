@@ -1,6 +1,7 @@
 import type { WitnessView } from "#parity/models/witness/WitnessView";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
+import { applyLeafHalf } from "#parity/witness/applyLeafHalf";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { PerspectiveCamera, Vector3 } from "three";
 
@@ -15,9 +16,17 @@ const POSE_TOLERANCE = 1e-3;
 // Settle: a pose that did not hold throws rather than scoring the scene's own view
 export const setWitnessView = async (
   { families, isAlone, isClockHeld, parts }: SceneWitness,
-  { camera, families: viewFamilies, familyOffsets = {}, familyScales = {}, isAlone: isViewAlone = false }: WitnessView,
+  {
+    camera,
+    families: viewFamilies,
+    familyOffsets = {},
+    familyScales = {},
+    isAlone: isViewAlone = false,
+    leafHalf,
+  }: WitnessView,
 ): Promise<void> => {
   isClockHeld.value = true;
+  applyLeafHalf({ parts }, leafHalf);
   isAlone.value = isViewAlone;
   families.value = viewFamilies ?? parts.children.map(({ name }) => name);
   for (const group of parts.children) {
