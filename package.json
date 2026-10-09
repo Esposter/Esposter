@@ -97,7 +97,7 @@
     "typecheck:root": "tsc",
     "typecheck:workspace": "pnpm -r --parallel typecheck",
     "update:node": "pnpm -C scripts update:node",
-    "watch:packages": "pnpm --filter @esposter/configuration build && pnpm -r --filter \"./packages/*\" --filter \"!@esposter/configuration\" --parallel exec tsdown --watch"
+    "watch:packages": "pnpm --filter @esposter/configuration build && pnpm -r --filter \"./packages/*\" --filter \"!@esposter/configuration\" --parallel exec tsdown --watch --no-dts --no-attw --no-publint --no-exports"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

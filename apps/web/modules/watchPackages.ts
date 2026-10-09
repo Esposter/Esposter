@@ -15,8 +15,10 @@ const WATCHER_RESPAWN_DELAY = Temporal.Duration.from({ seconds: 1 }).total("mill
 const BUILD_START_TEXT = "Build start";
 const BUILD_COMPLETE_TEXT = "Build complete";
 const BUILD_MARKER_REGEX = new RegExp(`${BUILD_START_TEXT}|${BUILD_COMPLETE_TEXT}`, "gu");
-// The published-shape checks read what `build` packs, which a dev watcher never publishes, so `build` alone runs them
-const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-attw", "--no-publint"];
+// The published-shape checks read what `build` packs, which a dev watcher never publishes, and every reader of a
+// Sibling's types resolves its source, so `build` alone writes declarations and runs the checks. Without declarations
+// `tsdown` would rewrite each manifest's committed `inlinedDependencies`, so the watcher leaves `package.json` to `build`
+const DEV_WATCH_ARGUMENTS = ["--watch", "--no-clean", "--no-attw", "--no-publint", "--no-dts", "--no-exports"];
 const WORKSPACE_PROTOCOL = "workspace:";
 const SOURCE_PATTERNS = ["src/**/*.ts", "src/**/*.vue"];
 const logger = useLogger("watch-packages");
