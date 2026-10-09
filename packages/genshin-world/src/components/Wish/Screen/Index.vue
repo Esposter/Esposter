@@ -189,7 +189,7 @@ const wish = (count: number) => {
       :results
       :sets
       :title="gameText[GameTextKey.Wish]"
-      @buy="buyFate"
+      @buy="buyFate()"
       @close="emit('close')"
       @dismiss="results = []"
       @wish="(count) => wish(count)"
