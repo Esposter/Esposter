@@ -158,11 +158,11 @@ export const fitSurfaceColours = async <Family extends string>(
     await Promise.all(
       (Object.entries(meshRegexMap) as [Family, RegExp][]).map(async ([family, regex]) => {
         const samples = await readFamilySamples(regex);
-        if (samples.length === 0)
+        if (!samples.some(({ weight }) => weight > 0))
           throw new InvalidOperationError(
             Operation.Read,
             family,
-            "has no placed mesh or terrain tile its faces can be read from",
+            "has no placed mesh or terrain tile whose covered faces can be read",
           );
         return [family, { ...computeSurfaceTones(samples), parts: computePartSurfaces(samples) }] as const;
       }),
