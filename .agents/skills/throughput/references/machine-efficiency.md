@@ -33,7 +33,7 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
-  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU, judged by the MSYS parent on Windows, since a Git tool's Win32 parent can exit while its bash lives. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
+  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once that process itself has burnt more than half a minute of CPU. On Windows its MSYS parent decides only whether it is orphaned, since a Git tool's Win32 parent can exit while its bash lives. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
   - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
 - **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder.
 
