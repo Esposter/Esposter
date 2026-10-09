@@ -2,13 +2,14 @@ import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInp
 
 import { ReplayOutcome } from "#src/models/coderabbit/collect/ReplayOutcome";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
-import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
 import {
   DEVELOP_BRANCH,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
   SYNC_PUSH_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
+import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
+import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkippingStops";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -20,11 +21,18 @@ import { runGit } from "#src/services/shared/runGit";
 // The rewrite's compare-and-swap, retried rather than redone: the lease names the sha the run read, and a session
 // Push in between fast-forwards that sha by a commit or two — carried onto the rewrite by the same replay and
 // Pushed under the lease the push moved to. Giving up instead would hand the next run the same conflict, and its
-// Resolver the same minutes, to lose to the next session push. What does give up — the queue's history rewritten
-// Under the run, a carried commit that conflicts with the rewrite, or a session pushing faster than the cap —
-// Leaves the rewrite unpushed for the next run to replay onto what the queue then carries.
-const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): string | undefined => {
-  let leaseSha = expectedSha;
+// Resolver the same minutes, to lose to the next session push. A carried commit that conflicts with the rewrite is
+// Parked on its held branch and skipped, with any later one that no longer applies without it, so the rest still
+// Rides the push and the sync's work is never thrown away for one commit. What does give up — the queue's history
+// Rewritten under the run, or a session pushing faster than the cap — leaves the rewrite unpushed for the next run to
+// Replay onto what the queue then carries.
+const pushRewrite = ({
+  cwd,
+  isDryRun,
+  queueSha,
+  viewerLogin,
+}: Pick<SyncQueueInput, "cwd" | "isDryRun" | "queueSha" | "viewerLogin">): string | undefined => {
+  let leaseSha = queueSha;
   for (let attempt = 0; attempt < SYNC_PUSH_ATTEMPT_CAP; attempt++) {
     const syncedSha = readHeadSha(cwd);
     if (pushBranch({ branch: QUEUE_BRANCH, cwd, expectedSha: leaseSha, isDryRun, isRewrite: true, sha: syncedSha }))
@@ -35,13 +43,19 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
       console.info(`sync: ${QUEUE_BRANCH} was rewritten under the run — unpushed`);
       return undefined;
     }
-    const carriedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${leaseSha}..${movedSha}`], cwd));
-    if (!checkIsPicked(carriedShas, cwd)) {
-      runGit(["cherry-pick", "--abort"], cwd);
-      console.info(`sync: ${QUEUE_BRANCH} moved under the rewrite and a commit it gained conflicts with it — unpushed`);
-      return undefined;
-    }
-    console.info(`sync: ${QUEUE_BRANCH} moved under the rewrite — carried the ${carriedShas.length} commits it gained`);
+    const gainedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${leaseSha}..${movedSha}`], cwd));
+    const parkedShas = pickSkippingStops(gainedShas, cwd);
+    console.info(
+      `sync: ${QUEUE_BRANCH} moved under the rewrite — carried ${gainedShas.length - parkedShas.length} of the ${gainedShas.length} commits it gained`,
+    );
+    if (parkedShas.length > 0)
+      parkCommits({
+        cause: `it was pushed to \`${QUEUE_BRANCH}\` while the collector rewrote it, and conflicts with the rewrite`,
+        cwd,
+        isDryRun,
+        shas: parkedShas,
+        viewerLogin,
+      });
     leaseSha = movedSha;
   }
   return undefined;
@@ -54,8 +68,9 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 // Once, by the drain's own session, and a commit past either step's attempt cap is parked rather than left in the
 // Port's way. The working session's `git pull --rebase` afterwards replays only what it committed since
 // (`review-queue` skill). Returns the sha the port reads — the rewritten head, or the one read when nothing was
-// Rewritten — or nothing when the queue moved under the run: the push that moved it fires a run of its own, and a
-// Port read off the stale head would hold on a conflict the next run resolves.
+// Rewritten — or nothing when the queue's history was rewritten under the run, or it kept moving past the push's
+// Attempts: the push that moved it fires a run of its own, and a port read off the stale head would hold on a conflict
+// The next run resolves.
 export const syncQueue = async ({
   baseSha,
   collectorSha,
@@ -88,5 +103,5 @@ export const syncQueue = async ({
 
   const isReshaped = await reshapeQueue({ baseSha, collectorSha, cwd, fileCap, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
-  else return pushRewrite(cwd, queueSha, isDryRun);
+  else return pushRewrite({ cwd, isDryRun, queueSha, viewerLogin });
 };

@@ -57,7 +57,7 @@ flowchart TD
   BW -->|skipped past the last ask's wait| RC[Re-cut it and every window above,<br/>its replacement at half the cap] --> SY
   BW -->|complete| MG[Merge it, retarget the next to main, delete its branch,<br/>drain its findings — past the cap, defer them to an issue] --> BW
   BW -->|no window open| SY
-  SY[Rewrite ai/queue onto develop or the fixes,<br/>parking a commit past its attempts on ai/held/*] --> OB{A slot free in the rolling hour,<br/>stacking allowed, something owed}
+  SY[Rewrite ai/queue onto develop or the fixes,<br/>parking a commit it cannot carry on ai/held/*] --> OB{A slot free in the rolling hour,<br/>stacking allowed, something owed}
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
   OB -->|no| MR{main red on CI}
   MR -->|yes, its signature under the cap| RG[Regenerators, else Claude repairs<br/>inside the deadline — push, exit]

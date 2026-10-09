@@ -12,6 +12,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
+import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkippingStops";
 import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
 import { readExcludedGlobs } from "#src/services/coderabbit/collect/readExcludedGlobs";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -21,7 +22,6 @@ import { readReviewedFilePaths } from "#src/services/coderabbit/collect/readRevi
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { readWindowFilePaths } from "#src/services/coderabbit/collect/readWindowFilePaths";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { skipStops } from "#src/services/coderabbit/collect/skipStops";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
@@ -84,13 +84,8 @@ export const reshapeQueue = async ({
     console.info(`reshape: ${sha} failed ${attempts} times — parked, and what followed it replayed without it`);
     // A later commit that no longer applies without the parked one goes with it, in the same issue; nothing is
     // Pushed until this returns, so a commit skipped here is on its held branch before the queue drops it
-    const parkedShas = [sha];
     runGit(["switch", "--detach", `${sha}^`], cwd);
-    if (!checkIsPicked(restShas, cwd))
-      skipStops(cwd, restShas.length, (stoppedSha) => {
-        parkedShas.push(stoppedSha);
-        return true;
-      });
+    const parkedShas = [sha, ...pickSkippingStops(restShas, cwd)];
     parkCommits({
       cause: `its reshaping under the window's room failed ${attempts} times`,
       cwd,
