@@ -19,7 +19,8 @@ export const summarizeStallState = (
   const firstTime = frames[0]?.time ?? 0;
   for (const [index, frame] of frames.entries()) {
     const previousProgramCount = frames[index - 1]?.programs;
-    if (index === 0 || frame.programs === null || frame.programs === previousProgramCount) continue;
+    // A count falling is programs released, not a pipeline's first draw
+    if (index === 0 || frame.programs === null || frame.programs <= (previousProgramCount ?? 0)) continue;
     growthAt.push({ atMs: Math.round(frame.time - firstTime), programs: frame.programs });
   }
 
