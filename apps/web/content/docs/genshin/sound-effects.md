@@ -16,7 +16,7 @@ flowchart TD
   D --> M["Each scored against the window by its octave bands' levels"]
   W -->|"genshin:assets sounds"| M
   M --> S["The best set of each size, with its residual"]
-  S -->|"fit: fitSoundEffect"| L["login/sounds.json: three noises a band every 25 ms"]
+  S -->|"fit: fitSoundEffect"| L["The login/sounds record: three noises a band every 25 ms"]
   L -->|"computeSoundEffectSamples"| N["Our noise in two channels"]
   N --> A["Web Audio, a measured delay after the click"]
   N -->|"genshin:parity passes --pass Audio"| G["Both channels against the game's own sounds"]

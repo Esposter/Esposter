@@ -9,7 +9,7 @@ While a player is in the world, the game keeps a heads-up display over it. The w
 
 ## Decisions
 
-- **The HUD's rects are the game's own tree.** The HUD's page is the `InLevelMainPage` GameObject in `00/04803507.blk`, found through its party button's Animator `TeamBtn_MP`, which no other block holds. Its tree holds the minimap, Paimon's button, the stamina meter, the party and the skill buttons, and `fitHud` writes its rects to `data/hud/interfaceRects.json` as the login's are fitted ([interface layout](/docs/genshin/interface-layout)).
+- **The HUD's rects are the game's own tree.** The HUD's page is the `InLevelMainPage` GameObject in `00/04803507.blk`, found through its party button's Animator `TeamBtn_MP`, which no other block holds. Its tree holds the minimap, Paimon's button, the stamina meter, the party and the skill buttons, and `fitHud` publishes its rects as the `hud/interfaceRects` record as the login's are fitted ([interface layout](/docs/genshin/interface-layout)).
 - **The screen reads its rects from the hosted game data.** The world reads the published `hud/interfaceRects` record as it opens (`readHudInterfaceRects`) and hands it to `Hud/Screen` as its `interfaceRects` prop, as the HUD's fixture reads it through the mirror. The record holds every piece of the fitted tree, and its schema keeps only the nine the screen places a piece by, each named by `HudInterfaceRectName` with its path in the tree as its value. A refit reaches the screen once its record is published.
 
 ## How it works
