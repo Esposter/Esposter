@@ -509,7 +509,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @strike="(enemy) => strikeParty(enemy)"
       />
     </TresCanvas>
-    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text />
+    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text :origin />
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
