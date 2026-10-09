@@ -29,15 +29,16 @@ It lives in the comparison and not the component because a component blurred to 
 
 What each pass's tools stand on, and the runner that checks them in order.
 
-| Unknown                              | Tool                                                                                                                                                                    |
-| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A render that settles in one frame   | the witness: SMAA, its clock held, one frame                                                                                                                            |
-| Which layer a score's loss is in     | `scoreLayers`: every `compare` of a scene, each family's colour, tone and FLIP against the reference in the report's layers table; `compare --witness` over the exports |
-| A scene's frame cost, and what it is | `genshin:parity bench`: frame time, draw calls, objects by kind                                                                                                         |
-| One region across frames, or ours    | `zoom --with`: the region of each image stacked                                                                                                                         |
-| A point read off an image            | `zoom --grid`: lines every so many pixels, labelled                                                                                                                     |
-| Which pass is red, and its measure   | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md`                                                                      |
-| Every reference's score in one run   | `compare --all`: a missing input prints `not measured`, a throw prints `failed`, and the run goes on keeping both rows; a named `compare` still fails                   |
+| Unknown                                                   | Tool                                                                                                                                                                                  |
+| :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A render that settles in one frame                        | the witness: SMAA, its clock held, one frame                                                                                                                                          |
+| Which layer a score's loss is in                          | `scoreLayers`: every `compare` of a scene, each family's colour, tone and FLIP against the reference in the report's layers table; `compare --witness` over the exports               |
+| A scene's frame stalls, and how many programs it compiles | `genshin:parity stalls <screen> [--size WxH] [--scale n]`: the cold orbit, a second orbit and a 20 s walk, with worst frame, frames over 50 and 250 ms, and programs before and after |
+| A scene's frame cost, and what it is                      | `genshin:parity bench`: frame time, draw calls, objects by kind                                                                                                                       |
+| One region across frames, or ours                         | `zoom --with`: the region of each image stacked                                                                                                                                       |
+| A point read off an image                                 | `zoom --grid`: lines every so many pixels, labelled                                                                                                                                   |
+| Which pass is red, and its measure                        | `genshin:parity passes`: each pass's measure against its gate in order, `ParityPasses.snapshot.md`                                                                                    |
+| Every reference's score in one run                        | `compare --all`: a missing input prints `not measured`, a throw prints `failed`, and the run goes on keeping both rows; a named `compare` still fails                                 |
 
 ### Inventory
 
