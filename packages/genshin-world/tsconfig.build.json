@@ -1,10 +1,4 @@
 {
   "extends": ["./tsconfig.json", "../configuration/tsconfig.build.base.json"],
-  "compilerOptions": {
-    "paths": {
-      "#src/generated/gameDataLock.json": ["./src/generated/gameDataLock.json"],
-      "#src/generated/*": ["./build/generatedJson.d.ts"]
-    }
-  },
   "include": ["../configuration/types/*.d.ts", "src/**/*.ts", "src/**/*.vue"]
 }

@@ -1,7 +1,7 @@
 name: 🏗️ Build Packages
 # Reusable workflow called by 🏗️ CI and 🏎️ Bench: builds every library once and publishes the `package-builds`
-# artifact to the caller's run. Why the build runs under vp's traced cache is
-# `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`.
+# artifact to the caller's run, and fills the hosted game data's mirror the coverage shards restore. Why the build
+# runs under vp's traced cache is `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`.
 on:
   workflow_call:
 
@@ -48,6 +48,21 @@ jobs:
       # readable, rather than as a missing barrel in `typecheck`
       - name: 🔍 Verify the build is complete
         uses: ./.github/actions/verify-package-builds
+      # The coverage shards only restore the hosted game data's mirror, under the lock's hash. A lock no cache holds yet
+      # is filled here, every object and index entry it names, and the cache action saves it under that key as this job
+      # ends, before any shard starts. The fill runs on the built `@esposter/shared`, so it follows the build
+      - name: ♻️ Look up the game data mirror
+        id: game-data-mirror
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/genshin-world/node_modules/.cache/game-data
+          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
+          lookup-only: true
+
+      - name: 📥 Fill the game data mirror
+        if: steps.game-data-mirror.outputs.cache-hit != 'true'
+        working-directory: packages/genshin-world
+        run: pnpm game-data:mirror
       # `*/dist` is the build output and the generated barrels (gitignored) sit beside the sources; libraries only,
       # so their common ancestor `packages` is where the artifact unpacks
       - name: 📤 Upload package builds

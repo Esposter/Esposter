@@ -72,6 +72,7 @@
     "build": "tsdown",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "game-data:mirror": "node scripts/gameData/mirror/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "parity": "vite --config parity/vite.config.ts",
