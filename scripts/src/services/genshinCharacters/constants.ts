@@ -3,8 +3,15 @@ import type { CharacterPackImageSignature } from "#src/models/genshinCharacters/
 import { CharacterPackContentType } from "#src/models/genshinCharacters/CharacterPackContentType";
 
 // What a pack's terms file is found by in its name, the earliest preferred where several match: the Japanese terms, the
-// Readme they are often bundled in, the Chinese instructions and terms, and an English name
-export const CHARACTER_TERMS_FILE_NAMES: readonly string[] = ["利用規約", "readme", "使用说明", "规约", "terms"];
+// Readme they are often bundled in, the Chinese instructions, terms and rules, and an English name
+export const CHARACTER_TERMS_FILE_NAMES: readonly string[] = [
+  "利用規約",
+  "readme",
+  "使用说明",
+  "规约",
+  "规则",
+  "terms",
+];
 // What a Shift-JIS reading of Chinese text turns up and Japanese terms never hold: the half-width katakana a GBK lead
 // Byte reads as, and the private-use letters its highest lead bytes map to
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
