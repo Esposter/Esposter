@@ -20,9 +20,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { MapCamera } from "#src/models/map/MapCamera";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestEvent } from "#src/models/quest/QuestEvent";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
@@ -55,8 +52,8 @@ import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useJumpLandmarks } from "#src/composables/useJumpLandmarks";
 import { useWorldSave } from "#src/composables/useWorldSave";
+import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
-import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
@@ -109,12 +106,6 @@ import { getElementalResonances } from "#src/services/party/getElementalResonanc
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
-import { advanceQuest } from "#src/services/quest/advanceQuest";
-import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
-import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
-import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
-import { readQuests } from "#src/services/quest/readQuests";
-import { startQuests } from "#src/services/quest/startQuests";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -228,27 +219,6 @@ getResultAsync(() => NameTextLoaderMap[language]()).match(
     console.error(error);
   },
 );
-// The carried quests, read as the world starts with their words in the reader's language, and the Archon quests started
-// From the prologue's first. A quest that fails to read is logged and leaves the quest screen empty
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(readQuests).match(
-  (newQuests) => {
-    quests.value = newQuests;
-    questProgressMap.value = startQuests(newQuests, questProgressMap.value);
-  },
-  (error) => {
-    console.error(error);
-  },
-);
-// oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => QuestTextLoaderMap[language]()).match(
-  (newQuestTextMap) => {
-    questTextMap.value = newQuestTextMap;
-  },
-  (error) => {
-    console.error(error);
-  },
-);
 const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
 // The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
 // Character's chunk on demand, and the characters whose chunks have arrived. Each kit is built from them once its
@@ -343,33 +313,21 @@ const { inventory, setInventory, setWallet, wallet, wishPityMap } = useWorldSave
 });
 // The player's characters' copies, which no save holds yet
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(new Map());
-// The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
-// One stays in the progress map at its last step, so the quests in progress are those started and not yet finished
-const quests = shallowRef<Quest[]>([]);
-const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(savedState.quests);
-const questsInProgress = computed(() =>
-  quests.value.filter((quest) => {
-    const progress = questProgressMap.value.get(quest.id);
-    return progress !== undefined && !checkIsQuestFinished(quest, progress);
-  }),
-);
+// The carried quests, read as the world starts with their words in the reader's language, and how far each has come
+const {
+  finishedMainQuestIds,
+  questProgressMap,
+  questsInProgress,
+  questTargetId,
+  questTextMap,
+  trackedQuestId,
+  trackerQuest,
+} = useWorldQuests({ events, language, savedQuestProgressMap: savedState.quests });
 // The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
 // Completes a main quest yet, so the EXP is the saved one and the quests are none
 const adventureRankStanding = computeAdventureRankStanding(savedState.adventureExp, new Set<string>());
 const worldLevel = adventureRankStanding.worldLevel;
 const adventureExpProgress = computeAdventureRankProgress(savedState.adventureExp, adventureRankStanding.rank);
-const questTextMap = shallowRef<Readonly<Record<string, string>>>({});
-const trackedQuestId = ref("");
-// The quest on the HUD's tracker, the one navigated to or with none the first in progress, which V navigates to, and the
-// Navigated one's objective, which its beam rises over
-const trackerQuest = computed(
-  () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
-);
-const questTargetId = computed(() => {
-  if (!trackedQuestId.value || !trackerQuest.value) return "";
-  const { id, steps } = trackerQuest.value;
-  return steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0]?.targetId ?? "";
-});
 // The achievements, their categories and their words in the reader's language, read the first time the Achievements
 // Screen opens rather than with the world. The quests a player finishes move the achievements whatever screen is open,
 // Which reads their table on its own
@@ -416,15 +374,6 @@ const readBook = (bookId: number) => {
 };
 // The defeats of each Living Being, counted under its entry for the Archive to show
 const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
-// The main quests done, by id. The Archive opens once the quest it opens after is among them
-const finishedMainQuestIds = computed(
-  () =>
-    new Set(
-      quests.value
-        .filter((quest) => checkIsQuestFinished(quest, questProgressMap.value.get(quest.id)))
-        .map(({ id }) => Number(id)),
-    ),
-);
 const isArchiveUnlocked = computed(() => finishedMainQuestIds.value.has(ARCHIVE_UNLOCK_QUEST_ID));
 watch(isArchiveUnlocked, (newIsArchiveUnlocked) => {
   if (!newIsArchiveUnlocked || archiveData.value) return;
@@ -651,22 +600,6 @@ const payFirstUnlockReward = (landmarkId: string) => {
     },
   );
 };
-// A doing the world records is handed to every quest in progress, each advanced by it. The steps and quests it finishes
-// Reach the achievements
-const doQuestEvent = (questEvent: QuestEvent) => {
-  const nextProgressMap = new Map(questProgressMap.value);
-  const achievementEvents: AchievementEvent[] = [];
-  for (const quest of questsInProgress.value) {
-    const progress = nextProgressMap.get(quest.id);
-    if (!progress) continue;
-    const nextProgress = advanceQuest(quest, progress, questEvent);
-    nextProgressMap.set(quest.id, nextProgress);
-    achievementEvents.push(...getFinishedQuestEvents(quest, progress, nextProgress));
-  }
-  questProgressMap.value = startQuests(quests.value, nextProgressMap);
-  advanceAchievementsWith(achievementEvents);
-  if (achievementEvents.some(({ kind }) => kind === AchievementEventKind.ParentQuestFinished)) openTravelLog();
-};
 // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when
 // First needed, since the Archive's own screen may not have been opened
 const openTravelLog = () => {
@@ -680,9 +613,17 @@ const openTravelLog = () => {
     },
   );
 };
+events.on("parentQuestFinish", openTravelLog);
+events.on("achievementEvents", advanceAchievementsWith);
+// A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
+const activateLandmark = (landmarkId: string) => {
+  unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
+  payFirstUnlockReward(landmarkId);
+  events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
+};
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
 const endTalk = () => {
-  if (talk.value) doQuestEvent({ kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
+  if (talk.value) events.emit("questEvent", { kind: QuestObjectiveKind.TalkTo, targetId: talk.value.id });
   screenKind.value = ScreenKind.World;
 };
 // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
@@ -694,7 +635,7 @@ const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
   const { archiveEntryId } = getEnemyKind(enemy.enemyKindId);
   archiveProgressMap.value = openArchiveEntry(archiveProgressMap.value, ArchiveSection.LivingBeings, archiveEntryId);
   archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
-  doQuestEvent({ kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
+  events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
 };
 // The Archive opens the entries of what the bag takes in
 events.on("bagChange", (nextInventory) => {
@@ -716,7 +657,7 @@ const pickUpWorldDrop = (worldDrop: WorldDrop) => {
   setInventory(pickUp.inventory);
   setWallet(pickUp.wallet);
   bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
-  doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
+  events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
   worldDrops.value =
     pickUp.overflow > 0
       ? worldDrops.value.map((drop) => (drop === worldDrop ? { ...drop, count: pickUp.overflow } : drop))
@@ -731,7 +672,7 @@ const pickUpGatheringPlace = (placeId: string) => {
   const addition = addInventoryItem(inventory.value, toItemDefinition(item, gameText), 1);
   setInventory(addition.inventory);
   bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
-  doQuestEvent({ kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
+  events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
   if (addition.overflow === 0)
     gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
 };
@@ -862,9 +803,7 @@ defineExpose({ jumpTo, readCameraPosition });
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate) {
-              unlockedLandmarkIds = new Set([...unlockedLandmarkIds, interactable.id]);
-              payFirstUnlockReward(interactable.id);
-              doQuestEvent({ kind: QuestObjectiveKind.Interact, targetId: interactable.id });
+              activateLandmark(interactable.id);
             } else if (interactable?.kind === InteractionKind.Talk) {
               talk = talkMap.get(interactable.id);
               talkDuelGameId = getTalkDuelGameId(interactable.id);
