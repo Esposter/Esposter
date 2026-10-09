@@ -3,8 +3,9 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { DerivedDatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { ID_SEPARATOR, RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
@@ -51,7 +52,10 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const currentDirectMessage = computed(() =>
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
+  const dataStore = useDataStore();
+  const { createMessage } = dataStore;
   const { executeMutation: executeCreateDirectMessageMutation } = useMutation();
+  const { checkIsPending: checkIsInviteFriendPending, executeMutation: executeInviteFriendMutation } = useMutation();
   const { executeMutation: executeDeleteDirectMessageParticipantMutation } = useMutation();
   const { executeMutation: executeHideDirectMessageMutation } = useMutation();
   const { executeMutation: executeLeaveDirectMessageMutation } = useMutation();
@@ -63,6 +67,24 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
         const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
         if (!existingDirectMessage) storeCreateDirectMessage(room, true);
         await navigateTo(RoutePath.Messages(room.id));
+      },
+    });
+  };
+  // The invite a friend is sent: the direct message is created where none exists, and the reader stays on the
+  // screen they are on, so unlike createDirectMessage this does not navigate. The message is the reader's own
+  const inviteFriend = async (friendId: PublicUser["id"], inviteLink: string) => {
+    await executeInviteFriendMutation(() => $trpc.room.directMessage.createDirectMessage.mutate([friendId]), {
+      key: friendId,
+      onSuccess: async (room) => {
+        const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
+        if (!existingDirectMessage) storeCreateDirectMessage(room, true);
+        await createMessage({
+          files: [],
+          message: inviteLink,
+          replyRowKey: "",
+          roomId: room.id,
+          type: MessageType.Message,
+        });
       },
     });
   };
@@ -140,6 +162,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   };
 
   return {
+    checkIsInviteFriendPending,
     createDirectMessage,
     currentDirectMessage,
     currentDirectMessageId,
@@ -147,6 +170,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     directMessages,
     getDirectMessageParticipants,
     hideDirectMessage,
+    inviteFriend,
     leaveDirectMessage,
     storeCreateDirectMessageParticipant,
     storeDeleteDirectMessage,
