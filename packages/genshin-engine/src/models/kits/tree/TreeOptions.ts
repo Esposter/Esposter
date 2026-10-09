@@ -1,5 +1,6 @@
 import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeNormalField } from "#src/models/kits/tree/TreeNormalField";
+import type { TreeRoot } from "#src/models/kits/tree/TreeRoot";
 import type { TreeTrunkPoint } from "#src/models/kits/tree/TreeTrunkPoint";
 
 export interface TreeOptions {
@@ -16,6 +17,8 @@ export interface TreeOptions {
   mainBranchCount: number;
   // The leaves' normals as a field over the crown, where each card vertex takes its normal from; without one, from its cluster's centre
   normalField?: TreeNormalField;
+  // The surface roots spreading over the ground from the trunk's foot, each swept as a tube along its spline
+  roots: readonly TreeRoot[];
   seed: number;
   // The trunk's radius at each height, from its foot up, so its last point is its top. Two at least, one segment
   trunk: readonly [TreeTrunkPoint, TreeTrunkPoint, ...TreeTrunkPoint[]];
