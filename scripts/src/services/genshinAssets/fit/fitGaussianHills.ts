@@ -1,11 +1,10 @@
 import type { GaussianHills } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { GAUSSIAN_REACH_WIDTHS, getGaussianHillBlend } from "genshin-engine";
 
 // How many times each width's hills are placed over what the widths above left
 const PASSES_PER_WIDTH = 6;
-// A hill reaches three of its widths, past which it adds nothing worth a sample
-const REACH_WIDTHS = 3;
 // Peaks of a width's smoothed residual stand at least this many widths apart
 const PEAK_SEPARATION_WIDTHS = 1.5;
 // Sweeps re-solving every hill of a width once all are set
@@ -71,7 +70,7 @@ export const fitGaussianHills = ({
   };
   recentre();
   const blur = (values: Float64Array, widthCells: number): Float64Array => {
-    const reachCells = Math.ceil(REACH_WIDTHS * widthCells);
+    const reachCells = Math.ceil(GAUSSIAN_REACH_WIDTHS * widthCells);
     const kernel = Array.from({ length: 2 * reachCells + 1 }, (_value, offset) =>
       Math.exp(-((offset - reachCells) ** 2) / (2 * widthCells ** 2)),
     );
@@ -91,9 +90,11 @@ export const fitGaussianHills = ({
       });
     return convolve(convolve(values, true), false);
   };
-  // A hill's height set to the weighted least-squares one over its reach against what every other hill leaves
-  const resolveHill = (hill: { column: number; height: number; row: number }, widthCells: number): void => {
-    const reachCells = Math.ceil(REACH_WIDTHS * widthCells);
+  // A hill's height set to the weighted least-squares one over its reach against what every other hill leaves, its
+  // Shape the one the ground draws it with
+  const resolveHill = (hill: { column: number; height: number; row: number }, width: number): void => {
+    const reachCells = Math.ceil((GAUSSIAN_REACH_WIDTHS * width) / step);
+    const place = { width, x: hill.column * step, z: hill.row * step };
     const cells: [number, number][] = [];
     let numerator = 0;
     let denominator = 0;
@@ -104,7 +105,7 @@ export const fitGaussianHills = ({
         column++
       ) {
         const index = row * size + column;
-        const shape = Math.exp(-((row - hill.row) ** 2 + (column - hill.column) ** 2) / (2 * widthCells ** 2));
+        const shape = getGaussianHillBlend(place, column * step, row * step);
         numerator += (weight[index] ?? 0) * shape * ((residual[index] ?? 0) + hill.height * shape);
         denominator += (weight[index] ?? 0) * shape * shape;
         cells.push([index, shape]);
@@ -141,12 +142,12 @@ export const fitGaussianHills = ({
         }
       for (const [peakRow, peakColumn] of peaks) {
         const hill = { column: peakColumn, height: 0, row: peakRow };
-        resolveHill(hill, widthCells);
+        resolveHill(hill, width);
         widthHills.push(hill);
       }
     }
     // Each hill set alone, its neighbours' heights are re-solved against it: a few sweeps of every hill of the width
-    for (let sweep = 0; sweep < BACKFIT_SWEEPS; sweep++) for (const hill of widthHills) resolveHill(hill, widthCells);
+    for (let sweep = 0; sweep < BACKFIT_SWEEPS; sweep++) for (const hill of widthHills) resolveHill(hill, width);
     for (const { column, height, row } of widthHills)
       hills.push({
         height: roundFitted(height),
