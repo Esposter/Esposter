@@ -2,7 +2,11 @@
 title: Terrain shapes
 description: Proposal — the continent's ground fitted to the game's own terrain tiles, one region at a time, by the least representation that holds its heights within the reference's noise — hills, then the sharp features hills smear, with noise only for a residual too fine to fit, matched by its statistics. The ground is painted by layers fitted to the game's own, judged against the exports, and what a heightfield cannot hold is a placed object. The terrain's tiles already stream; this is what they are generated from.
 model: claude-opus-5-5
-needs: [game-exports]
+touches:
+  [
+    "scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts",
+    "scripts/src/services/genshinAssets/fit/fitTerrainCliffs.test.ts",
+  ]
 ---
 
 # Terrain shapes
@@ -18,7 +22,8 @@ This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, worker
 - **What a heightfield cannot hold is a placed object.** Overhangs, arches, stone pillars, sea stacks, caves and the floating rocks of Liyue and Inazuma are objects the game places, so they stand where their StreamGen records set them in the region's layout pass and are rebuilt in object passes, never forced into the heights.
 - **The same heights serve collision.** The worker keeps each tile's heights for the `collision` module's height query, which [exploring](/docs/proposals/genshin/exploring) adds, so the camera and later the character stand on the surface that is drawn.
 - **The fit's data follows reach.** A region's fitted parameters load with its region data, so the ground's data grows with what is in reach, never with the continent.
-- **The first slice's calls.** Plateaus come first, placed greedily: each round takes the disc, of 96, 48 or 24 metres' radius on a centre every half radius, whose mean residual takes the most squared error off, its falloff a quarter of its radius; a disc counts only where every sample is fitted ground, and the fit stops at 16 plateaus or when the next takes under 1% of what is left. The residual's noise takes the scale among 8 to 256 metres whose own correlation length is nearest the residual's, and the amplitude that makes its root-mean-square over the same grid the residual's, with three octaves and a fixed seed. Cliffs and ridges wait, since their direction is a fit of its own.
+- **The first slice's calls.** Plateaus come first, placed greedily: each round takes the disc, of 96, 48 or 24 metres' radius on a centre every half radius, whose mean residual takes the most squared error off, its falloff a quarter of its radius; a disc counts only where every sample is fitted ground, and the fit stops at 16 plateaus or when the next takes under 1% of what is left. The residual's noise takes the scale among 8 to 256 metres whose own correlation length is nearest the residual's, and the amplitude that makes its root-mean-square over the same grid the residual's, with three octaves and a fixed seed.
+- **Cliffs and ridges are placed as the plateaus are, their direction tried rather than solved.** After the plateaus, each round tries a segment 96, 48 or 24 metres long, centred every half its length, at sixteen headings 22.5 degrees apart round the full turn, so the side its left normal raises covers both sides of every line. A cliff's band reaches half its length across the line, its falloff a quarter of that, and its height is the band's mean residual where every sample is fitted ground. The round takes the segment that takes the most squared error off and subtracts it before the next, under the plateaus' limits: 16 at most, and none taking under 1% of what is left. Ridges follow the cliffs the same way through `getRidgeHeight`, their width a quarter of their length. A heading tried at 22.5 degrees is as fine as a 24 metre segment can tell at the 6 metre grid.
 
 ## How it works
 
@@ -41,10 +46,11 @@ flowchart TD
 
 **This adds:**
 
-1. **The sharp features the fit does not place yet**: cliffs, ridges and coastlines, each found where the residual after the plateaus is largest, and the gate each region is held to once its features are run. The plateaus, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
-2. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
-3. **The heights kept for collision**, when exploring's camera asks for them.
-4. **Each area's outline** in the [world map](/docs/genshin/world-map)'s catalogue, read from the game's own area data where the inventory finds it and otherwise drawn round the tiles its placements stand on, in place of Galesong Hill's provisional one.
+1. **The cliffs, fitted next.** A new `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts` places them on the grid `fitTerrainPlateaus` leaves, as the Decisions set out, returning the cliffs and the residual they leave. `fitRegionGround` runs it after the plateaus and before `fitTerrainResidual`, writes the cliffs into `features` beside the plateaus, and reports their count. Its test, `fitTerrainCliffs.test.ts`, draws one 48 metre cliff 10 metres high with `getCliffHeight` on a grid and reads back one cliff within 22.5 degrees of its heading and a metre of its height, and a flat grid back with none. The region runs queued on the roadmap write it.
+2. **Then ridges and coastlines**: ridges as the Decisions set out, in `fitTerrainRidges.ts` after the cliffs, then coastlines where the residual after both is largest, and the gate each region is held to once its features are run. The plateaus, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
+3. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
+4. **The heights kept for collision**, when exploring's camera asks for them.
+5. **Each area's outline** in the [world map](/docs/genshin/world-map)'s catalogue, read from the game's own area data where the inventory finds it and otherwise drawn round the tiles its placements stand on, in place of Galesong Hill's provisional one.
 
 ## Key files
 
