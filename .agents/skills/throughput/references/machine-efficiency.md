@@ -30,7 +30,10 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 - **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB`) and wait while it is under about 4 GB. A machine that swaps slows every run more than one that waits.
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
-- **Sweep the orphans.** An agent that ends can leave its background processes running. The main session lists the processes whose parent is gone (a `grep`, an `ffmpeg`, a `tail -f` feeding a dead monitor) and stops them.
+- **Sweep the orphans.** An agent that ends can leave its background processes running.
+  - The machine watcher stops an orphaned `find`, `du`, `grep` or `rg` on sight, once it has burnt more than half a minute of CPU. An agent's `find /` ran for half an hour on 2026-10-09 before anyone saw it.
+  - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
+- **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` (`~/Esposter/genshin-parity`) and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder.
 
 ## Watch the machine
 

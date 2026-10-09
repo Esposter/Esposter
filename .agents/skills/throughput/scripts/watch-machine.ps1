@@ -6,7 +6,9 @@ param(
   [int]$WindowMinutes = 3,
   [double]$GateGigabytes = 4,
   [double]$RoomGigabytes = 6,
-  [int]$ReminderMinutes = 15
+  [int]$ReminderMinutes = 15,
+  [string[]]$OrphanScanNames = @("find.exe", "du.exe", "grep.exe", "rg.exe"),
+  [int]$OrphanCpuSeconds = 30
 )
 
 $cpuSamples = [System.Collections.Generic.Queue[double]]::new()
@@ -26,6 +28,17 @@ while ($true) {
     elseif ($cpuSamples.Count -ge $WindowMinutes -and $cpuAverage -lt $TargetPercentage -and $freeGigabytes -gt $RoomGigabytes) { "idle" }
     else { "busy" }
   $minutesInState = if ($state -eq $lastState) { $minutesInState + 1 } else { 0 }
+
+  # A search or size scan whose parent is gone has no reader left, so it is stopped the minute it is seen: an agent that
+  # Ended mid-scan left a `find /` running for half an hour on 2026-10-09
+  $processes = Get-CimInstance Win32_Process
+  $processIds = [System.Collections.Generic.HashSet[uint32]]::new([uint32[]]@($processes.ProcessId))
+  $orphans = $processes | Where-Object { $_.Name -in $OrphanScanNames -and -not $processIds.Contains($_.ParentProcessId) } |
+    Where-Object { (Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue).CPU -gt $OrphanCpuSeconds }
+  foreach ($orphan in $orphans) {
+    Stop-Process -Id $orphan.ProcessId -Force -ErrorAction SilentlyContinue
+    Write-Output ("swept orphan {0} {1}: {2}" -f $orphan.Name, $orphan.ProcessId, $orphan.CommandLine.Substring(0, [Math]::Min(120, $orphan.CommandLine.Length)))
+  }
 
   $figures = "CPU {0:N0}% over {1} min, GPU 3D {2:N0}%, {3:N1} GB free" -f $cpuAverage, $cpuSamples.Count, $gpu, $freeGigabytes
   if ($state -ne $lastState -or ($state -ne "busy" -and $minutesInState -gt 0 -and $minutesInState % $ReminderMinutes -eq 0)) {
