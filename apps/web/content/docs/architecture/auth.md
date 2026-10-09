@@ -31,15 +31,16 @@ flowchart LR
 
 Paths relative to `apps/web`.
 
-| File                                                | Role                               |
-| --------------------------------------------------- | ---------------------------------- |
-| `server/auth.ts`                                    | better-auth configuration          |
-| `server/api/auth/[...].ts`                          | the mounted auth handler           |
-| `app/services/auth/authClient.ts`                   | typed Vue session client           |
-| `app/middleware/auth.ts`, `app/middleware/guest.ts` | route gating                       |
-| `server/trpc/middleware/getAuthedMiddleware.ts`     | session + rate-limit middleware    |
-| `server/trpc/procedure/standardAuthedProcedure.ts`  | the standard authed chain          |
-| `server/services/auth/`                             | device id + webhook token services |
+| File                                                | Role                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `server/auth.ts`                                    | better-auth configuration                                                      |
+| `server/services/auth/authModelOptions.ts`          | each model's name and the user's added fields, shared with the adapter's tests |
+| `server/api/auth/[...].ts`                          | the mounted auth handler                                                       |
+| `app/services/auth/authClient.ts`                   | typed Vue session client                                                       |
+| `app/middleware/auth.ts`, `app/middleware/guest.ts` | route gating                                                                   |
+| `server/trpc/middleware/getAuthedMiddleware.ts`     | session + rate-limit middleware                                                |
+| `server/trpc/procedure/standardAuthedProcedure.ts`  | the standard authed chain                                                      |
+| `server/services/auth/`                             | device id + webhook token services                                             |
 
 ## Notes
 
