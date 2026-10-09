@@ -105,6 +105,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Court of Fontaine.png",
   },
+  // The crafting table's Craft screen at 1080 high from a public video (yt-qQILsaJKlsI), about 40 seconds in: Condensed
+  // Resin picked, Crafting Performed 1 and Diluc as the crafter. A video's frame, so its art is not drawn and only its
+  // Tints, words and places are scored
+  "crafting-table": { capture: "yt-qQILsaJKlsI-crafting-table.mp4", screen: "CraftingScreen", seconds: 39.5 },
   // The English PC client's dialogue at 720 high from the public recording, about 19 seconds in: Sara's line with the
   // Traveler's two replies on offer, scored apart as the speaker's name, the line and the replies. Each is drawn over the
   // Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
