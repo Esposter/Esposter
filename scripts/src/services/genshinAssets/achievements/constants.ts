@@ -29,3 +29,14 @@ export const ACHIEVEMENT_TEXT_GENERATED_DIRECTORY: string = join(
   "generated",
   "achievementText",
 );
+// The count of the achievements the table keeps, in the world's data folder beside the data its rules import whole.
+// The save's achievement slice is bounded by it, so the bound moves with the game's table
+export const ACHIEVEMENT_COUNT_PATH: string = join(
+  REPOSITORY_ROOT,
+  "packages",
+  "genshin-world",
+  "src",
+  "data",
+  "achievements",
+  "achievementCount.json",
+);

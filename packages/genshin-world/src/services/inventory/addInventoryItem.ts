@@ -2,12 +2,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryAddition } from "#src/models/inventory/InventoryAddition";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
-import {
-  ARTIFACT_START_LEVEL,
-  EQUIPMENT_CATEGORIES,
-  INVENTORY_KIND_LIMIT,
-  WEAPON_START_LEVEL,
-} from "#src/services/inventory/constants";
+import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
+import { ARTIFACT_START_LEVEL, EQUIPMENT_CATEGORIES, WEAPON_START_LEVEL } from "#src/services/inventory/constants";
 import { countCategoryPieces } from "#src/services/inventory/countCategoryPieces";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { ItemCategory } from "genshin-interface";
