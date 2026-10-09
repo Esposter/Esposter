@@ -51,6 +51,9 @@ interface Props {
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
   isHeld?: true;
+  // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round the
+  // Body, which neither steps nor moves
+  isOrbiting?: true;
   landmarkCollider: LandmarkCollider;
   // How the character the body carries moves, its body type's, which a party switch changes
   locomotion: Locomotion;
@@ -60,8 +63,18 @@ interface Props {
   party: Party;
 }
 
-const { body, characterIdCombatantMap, enemyMap, inputState, isHeld, landmarkCollider, locomotion, origin, party } =
-  defineProps<Props>();
+const {
+  body,
+  characterIdCombatantMap,
+  enemyMap,
+  inputState,
+  isHeld,
+  isOrbiting,
+  landmarkCollider,
+  locomotion,
+  origin,
+  party,
+} = defineProps<Props>();
 // The party went down through a drown, which the world screen answers with the respawn
 const emit = defineEmits<{ drown: [] }>();
 const { camera, renderer } = useTres();
@@ -158,15 +171,17 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
 const pivot = new Vector3();
 // Ahead of the floating origin's shift, whatever order it mounts in: the frame's look turns the camera once, the steps
 // Move the body, and the body is drawn and the camera follows it at its place between its last two steps, by how far
-// The frame has come into the next. A held body stays drawn where it stands
+// The frame has come into the next. A held body stays drawn where it stands, and only an orbit turns its camera
 onBeforeRender(({ delta }) => {
   const activeCamera = camera.value;
-  const isFollowing = !isHeld && activeCamera instanceof PerspectiveCamera;
+  const isFollowing = (!isHeld || isOrbiting) && activeCamera instanceof PerspectiveCamera;
   if (isFollowing) {
     followCamera ??= createFollowCamera({ camera: activeCamera, ground, landmarkCollider });
-    characterController.holdPresses(inputState);
     followCamera.look(inputState, characterController.facing);
-    fixedStepLoop.advance(delta);
+    if (!isHeld) {
+      characterController.holdPresses(inputState);
+      fixedStepLoop.advance(delta);
+    }
   }
 
   body.position.lerpVectors(

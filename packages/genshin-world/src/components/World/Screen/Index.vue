@@ -577,7 +577,8 @@ defineExpose({ jumpTo, readCameraPosition });
       <template v-else>
         <TresPerspectiveCamera :far="2000" :fov="45" :look-at="[0, 14, 0]" :position="[62, 26, 58]" />
         <!-- The character walks the world with the camera behind it, held under any screen but the world, as a menu,
-        photo mode or a talk holds it, and photo mode's camera flies free from where the follow camera left it -->
+        photo mode or a talk holds it. Photo mode's camera orbits the held character, and under the tuning panel it flies
+        free from where the orbit left it -->
         <WorldCharacter
           v-if="!witness && locomotion"
           ref="character"
@@ -586,6 +587,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :enemy-map
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
+          :is-orbiting="screenKind === ScreenKind.PhotoMode && !isTuning || undefined"
           :landmark-collider
           :locomotion
           :origin
@@ -593,7 +595,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @drown="respawnParty()"
         />
         <WorldFreeCamera
-          v-if="!witness && screenKind === ScreenKind.PhotoMode"
+          v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
           :origin
