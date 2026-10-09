@@ -250,6 +250,8 @@ export const OAK_CLUSTER_SEED = 12345;
 export const OAK_TRUNK_HEIGHTS: number[] = [0, 2, 4, 6, 8, 10, 12];
 export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;
 export const OAK_TRUNK_REACH = 8;
+// The side of a cell of the oak's leaf normal field, in metres: vertices within a few metres agree to about 18 degrees
+export const OAK_NORMAL_CELL_SIZE = 4;
 // A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
 // It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
 // And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while

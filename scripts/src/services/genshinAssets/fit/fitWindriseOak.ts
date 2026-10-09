@@ -4,6 +4,8 @@ import type { Vector } from "#src/models/shared/Vector";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { clusterCardCentres } from "#src/services/genshinAssets/fit/clusterCardCentres";
+import { computeNormalField } from "#src/services/genshinAssets/fit/computeNormalField";
+import { computeVertexNormals } from "#src/services/genshinAssets/fit/computeVertexNormals";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import {
@@ -11,6 +13,7 @@ import {
   OAK_CLUSTER_COUNT,
   OAK_CLUSTER_SEED,
   OAK_LEAF_MESH,
+  OAK_NORMAL_CELL_SIZE,
   OAK_TRUNK_HEIGHTS,
   OAK_TRUNK_REACH,
   OAK_TRUNK_SLAB_HALF_HEIGHT,
@@ -21,25 +24,34 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { getPercentile } from "#src/services/shared/getPercentile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
+import { Quaternion, Vector3 } from "three";
 
 // The bark's radius at a station is its 90th percentile, a stray sliver of bark not setting it
 const BARK_RADIUS_FRACTION = 0.9;
 
-// A mesh's faces and vertices in three's axes, placed where its placement stands it and taken round the oak's foot,
-// The origin's place in the game's axes, so every point it yields is placed as every other fit's are
+// A mesh's faces, vertices and vertex normals in three's axes, placed where its placement stands it and taken round the
+// Oak's foot, the origin's place in the game's axes, so every point it yields is placed as every other fit's are
 const readMeshInThree = async (
   path: string,
   placement: AssetPlacement,
   origin: readonly [number, number, number],
-): Promise<{ faces: [number, number, number][]; vertices: Vector[] }> => {
-  const { faces, vertices } = await readObjMesh(path);
+): Promise<{ faces: [number, number, number][]; normals: (undefined | Vector)[]; vertices: Vector[] }> => {
+  const mesh = await readObjMesh(path);
   const [originX, originY, originZ] = origin;
+  const rotation = new Quaternion(...placement.rotation);
+  const normal = new Vector3();
   return {
-    faces,
-    vertices: toWorldVertices(vertices, placement).map(([x, y, z]) =>
+    faces: mesh.faces,
+    normals: computeVertexNormals(mesh).map((vertexNormal) => {
+      if (!vertexNormal) return undefined;
+      normal.set(...vertexNormal).applyQuaternion(rotation);
+      return toRightHanded(normal.toArray());
+    }),
+    vertices: toWorldVertices(mesh.vertices, placement).map(([x, y, z]) =>
       toRightHanded([x - originX, y - originY, z - originZ]),
     ),
   };
@@ -77,6 +89,15 @@ export const fitWindriseOak = async (): Promise<string[]> => {
     return a && b && c ? [[(a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3]] : [];
   });
   const clusters = clusterCardCentres(cardCentres, OAK_CLUSTER_COUNT, OAK_CLUSTER_SEED);
+  // The leaves' normals, averaged on a grid: the game's is a smooth field over the crown, where the cards point out from
+  // Each cluster's centre instead
+  const normalField = computeNormalField(
+    leaf.vertices.flatMap((position, index) => {
+      const normal = leaf.normals[index];
+      return normal ? [{ normal, position }] : [];
+    }),
+    OAK_NORMAL_CELL_SIZE,
+  );
   const trunk = OAK_TRUNK_HEIGHTS.map((height) => {
     const radius = getPercentile(
       bark.vertices.flatMap(([x, y, z]) =>
@@ -97,6 +118,7 @@ export const fitWindriseOak = async (): Promise<string[]> => {
       y: roundFitted(y),
       z: roundFitted(z),
     })),
+    normalField,
     trunk,
   });
   return [
