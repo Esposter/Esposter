@@ -17,13 +17,14 @@ export const cityAreasCommand: SubCommandsDef[string] = defineCommand({
   run: async () => {
     const { areas, candidateCount, gameVersion } = await buildCityAreas();
     const lines = [`${candidateCount} city area candidates, ${areas.length} with placements, game ${gameVersion}`];
-    for (const region of Object.keys(RegionCapitalMap)) {
-      const place = await readCapitalWorldPlace(parseDerivedAssetComponent(region));
-      const area = selectCapitalCityArea(areas, place);
-      lines.push(
-        `${region}: ${area ? `${getCityStreamName(area.code)}, ${area.placementCount} placements` : "no city area"}`,
-      );
-    }
+    const regionLines = await Promise.all(
+      Object.keys(RegionCapitalMap).map(async (region) => {
+        const place = await readCapitalWorldPlace(parseDerivedAssetComponent(region));
+        const area = selectCapitalCityArea(areas, place);
+        return `${region}: ${area ? `${getCityStreamName(area.code)}, ${area.placementCount} placements` : "no city area"}`;
+      }),
+    );
+    lines.push(...regionLines);
     console.log(lines.join("\n"));
   },
 });

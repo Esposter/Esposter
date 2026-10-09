@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 const CHANNELS = 4;
 const OPAQUE = 255;
 const INTERFACE_COLOUR = [0, 0, 0, OPAQUE];
+const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
 
 // A frame's pixels, each its colour at its own column and row, the region's own pixels set to the interface's colour
 const getFrame = (
@@ -50,7 +51,6 @@ describe(fillRegionHarmonically, () => {
     const width = 40;
     const height = 30;
     const region = { height: 12, width: 16, x: 12, y: 9 };
-    const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
 
     expect(
       fillRegionHarmonically(getFrame(width, height, region, getGradientColour), width, height, region),

@@ -20,6 +20,6 @@ export const createStatueGeometries = (parts: readonly StatuePart[]): Record<str
   Object.fromEntries(
     Object.entries(Object.groupBy(parts, ({ part }) => part)).map(([part, runs]) => [
       part,
-      mergeGeometryParts((runs ?? []).map(createRunGeometry)),
+      mergeGeometryParts((runs ?? []).map((run) => createRunGeometry(run))),
     ]),
   );
