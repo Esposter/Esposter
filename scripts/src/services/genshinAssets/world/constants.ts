@@ -41,6 +41,6 @@ export const CITY_AREA_SUFFIX = "_City";
 // Every city area's extent, kept for one game version beside the exports and outside the repository
 export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
-// The free physical memory an AnimeStudio run waits for, in bytes, and how long it waits between readings, in milliseconds
-export const MIN_FREE_MEMORY_BYTES: number = 4 * 1024 ** 3;
+// The available memory an AnimeStudio run waits for, in gigabytes, and how long it waits between readings, in milliseconds
+export const MIN_AVAILABLE_MEMORY_GIGABYTES = 4;
 export const MEMORY_WAIT_MILLISECONDS = 30_000;
