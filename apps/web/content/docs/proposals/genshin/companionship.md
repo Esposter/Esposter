@@ -1,6 +1,6 @@
 ---
 title: Companionship
-description: Proposal — the stories, voice-overs, Serenitea Pot dialogue and namecard a Friendship Level opens, once the Profile tab and a namecard view are drawn, and the commissions and random events that give the rest of the EXP.
+description: Proposal — the voice-overs, Serenitea Pot dialogue and namecard a Friendship Level opens, once the Profile tab lists the voice-overs and a namecard view is drawn, and the commissions and random events that give the rest of the EXP.
 model: claude-opus-5-5
 ---
 
@@ -29,13 +29,13 @@ flowchart LR
 
 **This adds, in order:**
 
-1. **The Profile tab's stories and voice-overs**, opened by level, once the character screen draws the tab. `FetterStoryExcelConfigData` is not in the dump yet and is fetched from the community's dump when this is built.
+1. **The Profile tab's voice-overs**, opened by level as the stories are, once the [character profile](/docs/genshin/character-profile) lists them. Its stories are built.
 2. **The namecard at 10**, with a profile to show it.
 3. **The commissions and random events' EXP.** The commissions' claim returns its Companionship EXP item, and routing it to the [friendship grant](/docs/genshin/companionship) is the claim caller's, built in the [commissions](/docs/proposals/genshin/commissions) proposal's routing step. Random events have no page yet.
 
 ## Data and measures
 
-- **Read from the game's tables:** `FettersExcelConfigData` and `FetterStoryExcelConfigData`, with their open conditions. The levels are already read.
+- **Read from the game's tables:** `FettersExcelConfigData` for the voice-overs and `FetterStoryExcelConfigData` for the stories, with their open conditions. The levels are already read.
 - **Provisional:** each claim kind's Companionship EXP, until the Recordings owed clips show what a claim gives.
 
 ## Key files

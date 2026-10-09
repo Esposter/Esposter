@@ -14,14 +14,14 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 - **The chosen character stands in the middle**, its official model on the toon ramp, over a background that moves with its element: lightning, water bubbles, snow, ash, wind, leaves or rocks.
 - **The element's mark at the top left**, the Vision of the character's region and element as the game draws it, traced into a path of our own as the interface's glyphs are; the Traveler's is their alignment's.
 - **Details opens every attribute**, the advanced ones past the summary (Incoming Healing Bonus, CD Reduction and Shield Strength among them) and each element's RES, in the game's three groups.
-- **The other tabs show their panels.** Weapons: the weapon's base ATK, secondary attribute, rarity, level and refinement with its passive, and switching it. Artifacts: the five pieces, their main and minor affixes and the set bonuses earned. Constellation: the six constellations and those activated. Talents: the combat and passive talents and their levels. Profile: the character's details, stories and voice-overs, with the model's terms ([characters](/docs/proposals/genshin/characters)).
+- **The other tabs show their panels.** Weapons: the weapon's base ATK, secondary attribute, rarity, level and refinement with its passive, and switching it. Artifacts: the five pieces, their main and minor affixes and the set bonuses earned. Constellation: the six constellations and those activated. Talents: the combat and passive talents and their levels. Profile: its stories are built ([character profile](/docs/genshin/character-profile)), and its voice-over list and namecard view are left, with the model's terms ([characters](/docs/proposals/genshin/characters)).
 - **Levelling up and ascending.** Level Up spends Character EXP materials; Ascend, at a phase's cap, spends its materials and Mora once the Adventure Rank allows it (15, 25, 30, 35, 40 and 50). Each phase's materials come from the game's promotion table, as its attributes do.
 - **Levels 95 and 100** are reached past level 90 with Masterless Stella Fortuna, the level rising at once to the next cap, with the curves the tables already carry to level 100.
 - **The Traveler's own bonuses.** Resonating with a Statue of The Seven gives the Traveler that element, and after the Archon Quest's step the game names, a bonus per element resonated with; quests add a few points of base ATK, HP and Elemental Mastery.
 
 ## Scope
 
-**Today:** the frame, the six tabs in the game's words, the Attributes tab's level and grouped attributes, and the Traveler alone with the Dull Blade.
+**Today:** the frame, the six tabs in the game's words, the Attributes tab's level and grouped attributes, the Profile tab's stories, and the Traveler alone with the Dull Blade.
 
 **This adds, in order:**
 
@@ -30,7 +30,7 @@ This page builds on the [character screen](/docs/genshin/character-screen) as bu
 3. **Details**, then the **Weapons** and **Artifacts** tabs over the [character attributes](/docs/genshin/character-attributes)' tables.
 4. **The roster's names**, each character's name read from the world's names by its `nameTextId`, `nameText[characterData.nameTextId]`, not a key of the [game text](/docs/genshin/game-text).
 5. **Level Up and Ascend**, on the [inventory](/docs/proposals/genshin/inventory)'s materials.
-6. **Constellation, Talents and Profile**, then levels 95 and 100 and the Traveler's bonuses.
+6. **Constellation and Talents**, then the Profile tab's voice-over list and namecard view, then levels 95 and 100 and the Traveler's bonuses.
 
 ## Key files
 
