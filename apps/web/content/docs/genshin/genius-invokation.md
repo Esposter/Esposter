@@ -61,6 +61,7 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 - **The monsters' Electro is `Elec`.** A monster skill's `Effect_Damage_Elec_<n>` names Electro as the game spells it, so the damage names map takes `Elec` beside `Electric`.
 - **Dandelion Breeze heals the standing characters only**, since a defeated character takes no heal, as Signature Mix's heal does.
 - **Tubby reads a location tag the slice now writes.** Each card's slice entry carries `isLocation`, from the dump's `GCG_TAG_PLACE` tag, so the reduction is the card's own tag rather than a list kept beside it.
+- **Large Wind Spirit converts once, on the first Swirl its side makes.** Its damage is Anemo until a Swirl reaction on its side gives it the Swirled element, which its zone card keeps as its `element`, and a second Swirl leaves it as it is, as the card's text allows.
 
 Charged and plunging attacks are markers no tutorial skill uses, so the engine deals them no damage. The decks beyond those this page names are the proposal's, not this page's.
 
