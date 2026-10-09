@@ -207,10 +207,27 @@ describe(createVoiceSynthesizer, () => {
   const getSignal = (count: number) => Float32Array.from({ length: count }, (_value, index) => signalAt(index));
   const getQuiet = (count: number) => Float32Array.from({ length: count }, () => QUIET);
 
+  // The engine's generation, streaming one token a step
+  const streamTokens = async (inputs: Parameters<VoiceModel["generate"]>[0]) => {
+    const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
+    put([[0n]]);
+    for (let token = 1; token <= streamTokenCount; token += 1) {
+      put([[BigInt(token)]]);
+      // oxlint-disable-next-line no-await-in-loop -- Each token is streamed before the next is made, as the engine makes them
+      await new Promise((resolve) => {
+        setImmediate(resolve);
+      });
+    }
+    end();
+    return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN) };
+  };
+
   // The engine's generation streams one token a step, the decoder vocodes the tokens it is handed, and the decoder
   // Goes silent from its `silentFrom`-th run on, so a chunk after that is not speech
   const getStreamRuntime = (silentFrom: number) => {
     let decodeCount = 0;
+    // The order the generation settles and the model is disposed in, so a model is never disposed under its generation
+    const events: string[] = [];
     // A pass is its speech followed by the decoder's silence, the way the engine pads the tokens it is handed
     const run = vi.fn<VoiceModel["sessions"]["conditional_decoder"]["run"]>(({ speech_tokens }) => {
       decodeCount += 1;
@@ -223,20 +240,16 @@ describe(createVoiceSynthesizer, () => {
       return Promise.resolve({ waveform: { data } });
     });
     const generate = vi.fn<VoiceModel["generate"]>(async (inputs) => {
-      const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
-      put([[0n]]);
-      for (let token = 1; token <= streamTokenCount; token += 1) {
-        put([[BigInt(token)]]);
-        // oxlint-disable-next-line no-await-in-loop -- Each token is streamed before the next is made, as the engine makes them
-        await new Promise((resolve) => {
-          setImmediate(resolve);
-        });
-      }
-      end();
-      return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN) };
+      const [outcome] = await Promise.allSettled([streamTokens(inputs)]);
+      events.push("settled");
+      if (outcome?.status !== "fulfilled") throw outcome?.reason;
+      return outcome.value;
     });
     const model: VoiceModel = {
-      dispose: vi.fn<VoiceModel["dispose"]>(() => Promise.resolve([])),
+      dispose: vi.fn<VoiceModel["dispose"]>(() => {
+        events.push("disposed");
+        return Promise.resolve([]);
+      }),
       encode_speech: vi.fn<VoiceModel["encode_speech"]>(() => Promise.resolve(speaker)),
       generate,
       sessions: { conditional_decoder: { run } },
@@ -248,7 +261,7 @@ describe(createVoiceSynthesizer, () => {
       env: { cacheDir: "" },
       Tensor: TestTensor,
     };
-    return { onFallback: vi.fn<(message: string) => void>(), runtime };
+    return { events, onFallback: vi.fn<(message: string) => void>(), runtime };
   };
 
   test("emits the sentence's audio in order, each sample once, as chunks", async () => {
@@ -267,7 +280,7 @@ describe(createVoiceSynthesizer, () => {
   test("drops the rest of the sentence at a chunk that is not speech, and moves the ladder down once", async () => {
     expect.hasAssertions();
 
-    const { onFallback, runtime } = getStreamRuntime(2);
+    const { events, onFallback, runtime } = getStreamRuntime(2);
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     // The first chunk stops at its seam, which the next chunk would have faded into
@@ -276,5 +289,6 @@ describe(createVoiceSynthesizer, () => {
     );
     expect(synthesizer.device).toBe(deviceLadder[1]?.name);
     expect(onFallback).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(`${label}, chunk 2`));
+    expect(events).toStrictEqual(["settled", "disposed"]);
   });
 });
