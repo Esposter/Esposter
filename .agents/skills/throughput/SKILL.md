@@ -25,7 +25,7 @@ Time and effort are the limit, so every resource the session holds works at once
 
 ## The usage reserve
 
-The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads both windows against their lines, and puts the reserve into the session's system prompt naming the window and its reset time. The mod's page, `apps/web/content/docs/infra/claude-interface/genshin-mods/resin.md`, owns the lines' names and values, so the tiers below name only what the session does at each one. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
+The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads both windows against their lines, both windows having both tiers, and puts the reserve into the session's system prompt naming the window and its reset time. The prompt only describes the reserve, so the mod also enforces the model at launch: while a reserve holds, a workflow, a fork and any agent not on `haiku` are refused, and an agent that gets through runs on `haiku` whatever the tier. The mod's page, `apps/web/content/docs/infra/claude-interface/genshin-mods/resin.md`, owns the lines' names and values, so the tiers below name only what the session does at each one. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
 
 ### Maintenance
 
@@ -38,7 +38,7 @@ The five-hour window resets within hours, so its unused end is lost, and `haiku`
 
 ### Wind-down
 
-The weekly window stays strict because a lockout lasts days. From a window's wind-down line until it resets, the session:
+From a window's wind-down line until it resets, the session:
 
 1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
 2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
