@@ -48,7 +48,7 @@ flowchart TD
 
 - **Enduring Rock holds while a shield is up.** A live shield on the team, whoever cast it, makes a Geo team's hits deal 15% more: every element's DMG Bonus and the Physical DMG Bonus each rise by it, in the pricing `getBuffedCombatant` gives each strike. Each enemy such a hit strikes loses 20% of its Geo RES for 15 seconds, given before the hit's damage is read (`addEnduringRockStatus`), and `strikeEnemy` reads that RES through the status's `resistanceReduction`. The wiki's Moondrift clause, from Lunar-Crystallize, is not built.
 - **Sprawling Greenery follows each reaction a strike triggers.** With Dendro's resonance, a reaction gives every party member Elemental Mastery for 6 seconds: 30 after Burning, Quicken or Bloom, and 20 after Aggravate, Spread, Hyperbloom or Burgeon (`ReactionElementalMasteryMap`). `strikeEnemy` returns the reactions a strike triggered beside the energy it dropped, and `addSprawlingGreeneryBuffs` adds one buff per member for each. A buff restarts only one of its own amount, and the 30 and the 20 run side by side, since the wiki counts their durations on their own.
-- **Impetuous Winds shortens a skill, speeds the body and cuts its stamina.** A skill's cooldown is multiplied by 0.95 as it starts, after the kit's own multiplier (`startNextKitAction`), and so is the wait a skill with charges keeps for its other charges (`getImpetuousWindsSkillCooldownMultiplier`). The character on the field walks, runs, sprints and dashes 10% faster: the character step hands the controller `getImpetuousWindsLocomotion`'s speeds, read from the resonances before the controller steps. Every stamina spend, the kit's and the body's, is multiplied by 0.85 while the character on the field carries Anemo's resonance: the character component passes the controller a `getStaminaConsumptionMultiplier` read at each spend, and a charged attack is gated at that same cost.
+- **Impetuous Winds shortens a skill, speeds the body and cuts its stamina.** A skill's cooldown is multiplied by 0.95 as it starts, after the kit's own multiplier and those of the fields it is cast inside (`startNextKitAction`), and so is the wait a skill with charges keeps for its other charges (`getImpetuousWindsSkillCooldownMultiplier`). The character on the field walks, runs, sprints and dashes 10% faster: the character step hands the controller `getImpetuousWindsLocomotion`'s speeds, read from the resonances before the controller steps. Every stamina spend, the kit's and the body's, is multiplied by 0.85 while the character on the field carries Anemo's resonance: the character component passes the controller a `getStaminaConsumptionMultiplier` read at each spend, and a charged attack is gated at that same cost.
 
 ## The world screen
 
@@ -58,36 +58,37 @@ The character on the field fights through its kit, which prices every character'
 
 ## Key files
 
-| File                                                                                    | Role                                                                                      |
-| :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/party/Party.ts`                                      | The teams, the one deployed, the field, each member, the clock                            |
-| `packages/genshin-world/src/services/party/createParty.ts`                              | A party as the game starts one                                                            |
-| `packages/genshin-world/src/services/party/switchPartyMember.ts`                        | A key's switch, or the game's reason for refusing it                                      |
-| `packages/genshin-world/src/services/party/deployPartyTeam.ts`                          | A team deployed, its first member standing on the field                                   |
-| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts`                   | A team's members set, the field keeping its slot                                          |
-| `packages/genshin-world/src/services/party/damagePartyMember.ts`                        | HP taken, a fall, and the next member brought on                                          |
-| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                          | A particle's energy to each standing member of the deployed team                          |
-| `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`                       | Each member's skill and burst cooldowns, lowered each step                                |
-| `packages/genshin-world/src/services/party/addPartyTeam.ts`                             | A team added to Party Setup, named until renamed, at most fifteen                         |
-| `packages/genshin-world/src/services/party/disbandPartyTeam.ts`                         | A team disbanded, the defaults and the deployed one kept                                  |
-| `packages/genshin-world/src/services/party/renamePartyTeam.ts`                          | A team renamed, an empty name giving its own back                                         |
-| `packages/genshin-world/src/services/party/getElementalResonances.ts`                   | The resonances a full team's elements give                                                |
-| `packages/genshin-world/src/services/party/ElementalResonanceAttributeLinesMap.ts`      | The attribute lines each resonance adds to every member of the deployed team              |
-| `packages/genshin-world/src/services/party/checkIsEnduringRock.ts`                      | Enduring Rock holds: the deployed team's Geo resonance and a live shield                  |
-| `packages/genshin-world/src/services/party/addEnduringRockStatus.ts`                    | The Geo RES an enemy struck under Enduring Rock loses, given before its damage is read    |
-| `packages/genshin-world/src/services/party/ReactionElementalMasteryMap.ts`              | The Elemental Mastery each reaction gives every party member under Sprawling Greenery     |
-| `packages/genshin-world/src/services/party/addSprawlingGreeneryBuffs.ts`                | Each reaction's timed Elemental Mastery, one buff per party member for each reaction      |
-| `packages/genshin-world/src/services/party/getImpetuousWindsLocomotion.ts`              | The walking, running, sprinting and dashing speeds raised by Impetuous Winds              |
-| `packages/genshin-world/src/services/party/getImpetuousWindsSkillCooldownMultiplier.ts` | Impetuous Winds' factor on a skill's cooldown, or none without it                         |
-| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts`                 | A hit's pricing: its buffs, its passives' bonuses and Enduring Rock's DMG                 |
-| `packages/genshin-world/src/services/kit/startNextKitAction.ts`                         | A skill's cooldown as it starts: the kit's own multiplier, then Impetuous Winds'          |
-| `packages/genshin-world/src/services/party/drownParty.ts`                               | A drowning: every member's energy and a tenth of its Max HP                               |
-| `packages/genshin-world/src/services/party/reviveParty.ts`                              | A fallen team brought back at 35% of its Max HP                                           |
-| `packages/genshin-world/src/services/map/findNearestLandmark.ts`                        | The loaded statue nearest the body, where a fallen team is jumped to                      |
-| `packages/genshin-world/src/services/party/constants.ts`                                | The starting team, the team size, the cooldown, the default teams and the keys            |
-| `packages/genshin-world/src/components/World/Character/Index.vue`                       | Steps the cooldowns, a drowning, a burst on a switch, the stamina cut and the field's kit |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                              | The field's kit at the step, and a strike's resonances                                    |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                         | Keeps the characters and the party, switches on the keys, and respawns a fallen team      |
+| File                                                                                    | Role                                                                                                            |
+| :-------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/party/Party.ts`                                      | The teams, the one deployed, the field, each member, the clock                                                  |
+| `packages/genshin-world/src/services/party/createParty.ts`                              | A party as the game starts one                                                                                  |
+| `packages/genshin-world/src/services/party/switchPartyMember.ts`                        | A key's switch, or the game's reason for refusing it                                                            |
+| `packages/genshin-world/src/services/party/deployPartyTeam.ts`                          | A team deployed, its first member standing on the field                                                         |
+| `packages/genshin-world/src/services/party/setPartyTeamCharacters.ts`                   | A team's members set, the field keeping its slot                                                                |
+| `packages/genshin-world/src/services/party/damagePartyMember.ts`                        | HP taken, a fall, and the next member brought on                                                                |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                          | A particle's energy to each standing member of the deployed team                                                |
+| `packages/genshin-world/src/services/party/stepPartyCooldowns.ts`                       | Each member's skill and burst cooldowns, lowered each step                                                      |
+| `packages/genshin-world/src/services/party/addPartyTeam.ts`                             | A team added to Party Setup, named until renamed, at most fifteen                                               |
+| `packages/genshin-world/src/services/party/disbandPartyTeam.ts`                         | A team disbanded, the defaults and the deployed one kept                                                        |
+| `packages/genshin-world/src/services/party/renamePartyTeam.ts`                          | A team renamed, an empty name giving its own back                                                               |
+| `packages/genshin-world/src/services/party/getElementalResonances.ts`                   | The resonances a full team's elements give                                                                      |
+| `packages/genshin-world/src/services/party/ElementalResonanceAttributeLinesMap.ts`      | The attribute lines each resonance adds to every member of the deployed team                                    |
+| `packages/genshin-world/src/services/party/checkIsEnduringRock.ts`                      | Enduring Rock holds: the deployed team's Geo resonance and a live shield                                        |
+| `packages/genshin-world/src/services/party/addEnduringRockStatus.ts`                    | The Geo RES an enemy struck under Enduring Rock loses, given before its damage is read                          |
+| `packages/genshin-world/src/services/party/ReactionElementalMasteryMap.ts`              | The Elemental Mastery each reaction gives every party member under Sprawling Greenery                           |
+| `packages/genshin-world/src/services/party/addSprawlingGreeneryBuffs.ts`                | Each reaction's timed Elemental Mastery, one buff per party member for each reaction                            |
+| `packages/genshin-world/src/services/party/getImpetuousWindsLocomotion.ts`              | The walking, running, sprinting and dashing speeds raised by Impetuous Winds                                    |
+| `packages/genshin-world/src/services/party/getImpetuousWindsSkillCooldownMultiplier.ts` | Impetuous Winds' factor on a skill's cooldown, or none without it                                               |
+| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts`                 | A hit's pricing: its buffs, its passives' bonuses and Enduring Rock's DMG                                       |
+| `packages/genshin-world/src/services/kit/startNextKitAction.ts`                         | A skill's cooldown as it starts: the kit's own multiplier, the fields' it is cast inside, then Impetuous Winds' |
+| `packages/genshin-world/src/services/party/drownParty.ts`                               | A drowning: every member's energy and a tenth of its Max HP                                                     |
+| `packages/genshin-world/src/services/party/reviveParty.ts`                              | A fallen team brought back at 35% of its Max HP, or the share a revive gives                                    |
+| `packages/genshin-world/src/services/map/findNearestLandmark.ts`                        | The loaded statue nearest the body, where a fallen team is jumped to                                            |
+| `packages/genshin-world/src/services/party/constants.ts`                                | The starting team, the team size, the cooldown, the default teams and the keys                                  |
+| `packages/genshin-world/src/components/World/Character/Index.vue`                       | Steps the cooldowns, a drowning, a burst on a switch, the stamina cut and the field's kit                       |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                              | The field's kit at the step, its strikes landed through `strikeKitEnemies`                                      |
+| `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`                           | A strike's resonances: Enduring Rock's status and pricing, and Sprawling Greenery's buffs on its reactions      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                         | Keeps the characters and the party, switches on the keys, and respawns a fallen team                            |
 
 ## Notes
 

@@ -36,7 +36,7 @@ flowchart LR
 
 ## Not built yet
 
-- **The constellations' effects.** Each non-raising constellation is a switch its character's kit module reads, and no module exists until the [character kits](/docs/proposals/genshin/character-kits) page is built.
+- **The other characters' constellation effects, and the table's numbers.** Each non-raising constellation is a switch its character's kit module reads off the combatant's constellation count, and the modules built so far carry theirs, a constellation that answers something in combat through the [kit events](/docs/genshin/character-kits). A character with no module of its own has none until the [character kits](/docs/proposals/genshin/character-kits) page writes it, and the numbers each module uses are the wiki's and gcsim's, typed beside it, until the world hands the kits this table's `paramList`.
 - **The Traveler's element sets.** The statues pick which element's set the Traveler holds, and the sources that unlock each set are their own pages'. Until then the Traveler has no set chosen, and the table holds all of them.
 - **The Constellation tab and the store.** The character screen's tab that presses an activation, and the store that hands a wish's Stella Fortuna to its character, are not built. The wish screen does not show a draw's Stella Fortuna or Masterless one.
 
