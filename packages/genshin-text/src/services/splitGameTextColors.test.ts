@@ -18,6 +18,18 @@ describe(splitGameTextColors, () => {
     ]);
   });
 
+  test("a coloured run crosses a line", () => {
+    expect.hasAssertions();
+
+    expect(splitGameTextColors("<color=#F39000FF>1\n2</color>")).toStrictEqual([{ color: "#F39000FF", text: "1\n2" }]);
+  });
+
+  test("a tag without eight hex digits stays plain text", () => {
+    expect.hasAssertions();
+
+    expect(splitGameTextColors("<color=#123>1</color>")).toStrictEqual([{ text: "<color=#123>1</color>" }]);
+  });
+
   test("a tag at the start and the end leaves no empty run", () => {
     expect.hasAssertions();
 

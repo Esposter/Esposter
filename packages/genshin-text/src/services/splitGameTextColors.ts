@@ -1,7 +1,8 @@
 import type { GameTextSegment } from "#src/models/GameTextSegment";
 
-// The game's colour tags, `<color=#RRGGBBAA>` around the words it colours, which CSS reads as they are
-const COLOR_TAG_REGEX = /<color=(?<color>#[\dA-Fa-f]+)>(?<text>.*?)<\/color>/gu;
+// The game's colour tags, `<color=#RRGGBBAA>` around the words it colours, which CSS reads as they are; a coloured run
+// May cross a line, and a tag of any other shape stays plain text
+const COLOR_TAG_REGEX = /<color=(?<color>#[\dA-Fa-f]{8})>(?<text>.*?)<\/color>/gsu;
 
 // Splits a game string into its plain and coloured runs, dropping an empty run between two tags
 export const splitGameTextColors = (text: string): GameTextSegment[] => {
