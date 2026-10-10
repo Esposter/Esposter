@@ -68,7 +68,11 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
-  // Sumeru City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given
+  // Sumeru City's nine landmarks (ParityReferenceMap's sumeru-city-location: the harbour minaret's collar, dome and
+  // Finial and the terrace spire's base, wings and tip) name no mesh, so all nine are dropped: the extraction draws
+  // Vines, wharf boards, banners and two house trims 3.4 metres tall within 600 metres of the capital, and the houses'
+  // Meshes its layout dumps name (Area_Xm_Build_XKC_Comp_House_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.Sumeru]: {},
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
