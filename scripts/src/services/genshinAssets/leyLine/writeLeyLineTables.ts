@@ -5,10 +5,10 @@ import type { ExcelBlossomSectionOrderRow } from "#src/models/genshinAssets/leyL
 import { LEY_LINE_REGION_DIRECTORY } from "#src/services/genshinAssets/leyLine/constants";
 import { toLeyLineRegions } from "#src/services/genshinAssets/leyLine/toLeyLineRegions";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 // The ley line outcrops the world reads, one region file per city with a ley line kind, from the dump's blossom refresh,
 // Group and section order tables
 export const writeLeyLineTables = (): void => {
@@ -18,6 +18,5 @@ export const writeLeyLineTables = (): void => {
     readExcelTable<ExcelBlossomSectionOrderRow>("BlossomSectionOrderExcelConfigData"),
   );
   mkdirSync(LEY_LINE_REGION_DIRECTORY, { recursive: true });
-  for (const [cityId, region] of regions)
-    writeFileSync(join(LEY_LINE_REGION_DIRECTORY, `${cityId}.json`), toJson(region));
+  for (const [cityId, region] of regions) writeJsonFile(join(LEY_LINE_REGION_DIRECTORY, `${cityId}.json`), region);
 };

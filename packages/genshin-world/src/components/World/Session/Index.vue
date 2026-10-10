@@ -144,9 +144,19 @@ const {
   trackerQuest,
 } = useWorldQuests({ events, language, savedQuestProgressMap: savedState.quests });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
-const { adventureExp, adventureExpProgress, gainWorldAdventureExp, rank, worldLevel } = useWorldAdventureRank({
+const {
+  adventureExp,
+  adventureExpProgress,
+  gainWorldAdventureExp,
+  isWorldLevelAdjustable,
+  rank,
+  toggleWorldLevel,
+  worldLevel,
+  worldLevelAdjustment,
+} = useWorldAdventureRank({
   finishedMainQuestIds,
   savedAdventureExp: savedState.adventureExp,
+  savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
   setWallet,
   wallet,
 });
@@ -290,6 +300,7 @@ useWorldSaveSync({
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
     wishPityMap: wishPityMap.value,
+    worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
@@ -518,8 +529,11 @@ defineExpose({ jumpTo, readCameraPosition });
       :adventure-exp-progress
       :adventure-rank="rank"
       :game-text
+      :is-world-level-adjustable
+      :is-world-level-lowered="worldLevelAdjustment.isLowered"
       :world-level
       @quit="emit('quit')"
+      @toggle-world-level="toggleWorldLevel()"
     >
       <template #[ScreenKind.Map]>
         <MapOverlay

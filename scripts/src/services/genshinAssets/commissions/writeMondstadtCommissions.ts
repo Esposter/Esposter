@@ -12,9 +12,10 @@ import { toCommissionTask } from "#src/services/genshinAssets/commissions/toComm
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { COMMISSION_RANK_BAND_COUNT, COMMISSION_RANK_BAND_SIZE, commissionSliceSchema } from "genshin-world";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 
 // The level table must be the game's bands: twelve of five ranks each in order from rank one, since a claim reads its band
 // Off the rank alone and a table of other bands would pay every rank the wrong reward
@@ -79,5 +80,5 @@ export const writeMondstadtCommissions = (): void => {
     .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
   const slice = commissionSliceSchema.parse({ bonuses, rewardTiers, tasks });
   mkdirSync(COMMISSIONS_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(MONDSTADT_COMMISSIONS_PATH, `${JSON.stringify(slice, undefined, 2)}\n`);
+  writeJsonFile(MONDSTADT_COMMISSIONS_PATH, slice);
 };

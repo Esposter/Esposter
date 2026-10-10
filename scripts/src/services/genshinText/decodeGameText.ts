@@ -13,8 +13,9 @@ import {
   TextMapChunkRangeMap,
 } from "#src/services/genshinText/constants";
 import { decodeTextMap } from "#src/services/genshinText/decodeTextMap";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 // Every language's text map decoded from the installed game's own chunks, in place of the community dump's maps. The
@@ -66,10 +67,7 @@ export const decodeGameText = async (): Promise<string[]> => {
   rmSync(TEXT_MAP_DIRECTORY, { force: true, recursive: true });
   mkdirSync(TEXT_MAP_DIRECTORY, { recursive: true });
   for (const { chunk, code, directory, textMap } of decoded)
-    writeFileSync(
-      join(TEXT_MAP_DIRECTORY, `${directory}${code}_${chunk}.json`),
-      `${JSON.stringify(Object.fromEntries(textMap), undefined, 2)}\n`,
-    );
+    writeJsonFile(join(TEXT_MAP_DIRECTORY, `${directory}${code}_${chunk}.json`), Object.fromEntries(textMap));
 
   return languageCodes.map((code) => {
     const languageMaps = decoded.filter((chunk) => chunk.code === code);

@@ -3,13 +3,13 @@ import { describe, expect, test } from "vitest";
 import { WARD_WINDOW_MS } from "../constants";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 
-const CHECKOUT_ROOT = String.raw`C:\Users\jimmy\checkout`;
-const EDITED_PATH = String.raw`C:\Users\jimmy\checkout\packages\genshin-mods\src\register.ts`;
-const OWN_SESSION_ID = "own";
-const PEER_SESSION_ID = "peer";
-const NOW = WARD_WINDOW_MS * 10;
-
 describe(getCheckoutPeer, () => {
+  const CHECKOUT_ROOT = String.raw`C:\Users\jimmy\checkout`;
+  const EDITED_PATH = String.raw`C:\Users\jimmy\checkout\packages\genshin-mods\src\register.ts`;
+  const OWN_SESSION_ID = "own";
+  const PEER_SESSION_ID = "peer";
+  const NOW = WARD_WINDOW_MS * 10;
+
   test("refuses nothing with no peer session, the checkout's own edits alone", () => {
     expect.hasAssertions();
 

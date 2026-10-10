@@ -8,7 +8,8 @@ import {
 } from "#src/services/genshinAssets/gcg/constants";
 import { toGcgGames } from "#src/services/genshinAssets/gcg/toGcgGames";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The duels the world's residents play, read from the dump's game table into one small map by game id, which the world
 // Imports with its rule. Each names the deck its opponent plays and the player's, so a duel is set up by its game id alone
@@ -17,5 +18,5 @@ export const writeGcgGames = (): void => {
     ...GcgDeckIdCreatedCardIdsMap.keys(),
   ]);
   mkdirSync(GCG_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(GCG_GAMES_PATH, `${JSON.stringify(games, undefined, 2)}\n`);
+  writeJsonFile(GCG_GAMES_PATH, games);
 };

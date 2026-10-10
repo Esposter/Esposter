@@ -7,6 +7,9 @@ export interface ToonMaterialOptions {
   // The procedural detail the colour is modulated by, where the export's surface carries one
   detail?: SurfaceDetail;
   // False for ground, which the game draws no outline around
+  // The colour and detail each mesh carries (`setObjectSurface`) in place of `color` and `detail`, so every part that differs
+  // Only in its surface shares the one material
+  isObjectSurface?: boolean;
   isOutlined?: boolean;
   isVertexColors?: boolean;
   lightUniforms: LightUniforms;

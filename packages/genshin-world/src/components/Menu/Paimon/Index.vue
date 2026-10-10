@@ -21,11 +21,22 @@ interface Props {
   checkIsBuilt: (screenKind: TitledScreenKind) => boolean;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the World Level can be lowered or restored now, and whether it is lowered; the button is drawn only when it can
+  isWorldLevelAdjustable: boolean;
+  isWorldLevelLowered: boolean;
   worldLevel: number;
 }
 
-const { adventureExpProgress, adventureRank, checkIsBuilt, gameText, worldLevel } = defineProps<Props>();
-const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: [] }>();
+const {
+  adventureExpProgress,
+  adventureRank,
+  checkIsBuilt,
+  gameText,
+  isWorldLevelAdjustable,
+  isWorldLevelLowered,
+  worldLevel,
+} = defineProps<Props>();
+const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
 const backButton = useTemplateRef("backButton");
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
@@ -89,6 +100,9 @@ onMounted(() => {
     <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
     <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
     <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }} {{ worldLevel }}</p>
+    <button v-if="isWorldLevelAdjustable" class="world-level-adjust" type="button" @click="emit('toggleWorldLevel')">
+      {{ gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevert : GameTextKey.WorldLevelLower] }}
+    </button>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
     <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
     <div class="contents">
@@ -294,6 +308,21 @@ onMounted(() => {
 
 .birthday {
   top: calc(var(--unit) * 286);
+}
+
+/* Provisional: the button's place beside the World Level waits on the English PC client's menu measured at 1080 high */
+.world-level-adjust {
+  position: absolute;
+  top: calc(var(--unit) * 246);
+  left: calc(var(--unit) * 420);
+  padding: 0;
+  border: none;
+  background: none;
+  color: #e2e8ed;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(var(--unit) * 22);
+  text-decoration: underline;
 }
 
 .info-glyph {

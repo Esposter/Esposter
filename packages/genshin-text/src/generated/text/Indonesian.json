@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Panduan",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Pengembara",
   "UI_TRAININGGUIDE_TITLE": "Panduan Upgrade",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Turunkan Level Dunia",
   "UI_WORLDLEVEL_TITLE": "Level Dunia",
+  "UI_WORLDLEVEL_UP_BUTTON": "Kembali ke Level Dunia Semula",
   "VIDEO_RETREAT": "Mundur",
   "tips_enter_game": "Selamat datang, %s!"
 }

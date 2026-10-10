@@ -320,7 +320,9 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Guide",
   "UI_TEXT_QUEST_GUIDE_LABEL": "{M#Voyageur}{F#Voyageuse}",
   "UI_TRAININGGUIDE_TITLE": "Guide d'amélioration",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Baisser le Niv. du monde",
   "UI_WORLDLEVEL_TITLE": "Niv. du monde",
+  "UI_WORLDLEVEL_UP_BUTTON": "Restaurer le Niv. du monde initial",
   "VIDEO_RETREAT": "Retour",
   "tips_enter_game": "Bienvenue, %s."
 }

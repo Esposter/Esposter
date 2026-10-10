@@ -6,14 +6,14 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { openArchiveArtifactSets } from "#src/services/archive/openArchiveArtifactSets";
 import { describe, expect, test } from "vitest";
 
-const FIVE_PIECE_SET_ID = 10_001;
-const ONE_PIECE_SET_ID = 15_009;
-const NO_ENTRY_SET_ID = 15_004;
-const EQUIPMENT_ENTRY_IDS: ReadonlySet<number> = new Set([FIVE_PIECE_SET_ID, ONE_PIECE_SET_ID]);
-
 const createArtifact = (setId: number, slot: ArtifactSlot): Pick<Artifact, "setId" | "slot"> => ({ setId, slot });
 
 describe(openArchiveArtifactSets, () => {
+  const FIVE_PIECE_SET_ID = 10_001;
+  const ONE_PIECE_SET_ID = 15_009;
+  const NO_ENTRY_SET_ID = 15_004;
+  const EQUIPMENT_ENTRY_IDS: ReadonlySet<number> = new Set([FIVE_PIECE_SET_ID, ONE_PIECE_SET_ID]);
+
   const emptyProgress: ArchiveProgress = new Map();
 
   test("keeps a five-piece set locked until its fifth slot is held", () => {

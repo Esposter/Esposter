@@ -3,7 +3,15 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 // The folders a copy takes by default; frames and tmp are never copied, since frames are rebuilt where they are used
-export const DATA_FOLDERS: readonly string[] = ["extracted", "text", "references", "captures", "city-areas", "plans"];
+export const DATA_FOLDERS: readonly string[] = [
+  "extracted",
+  "text",
+  "references",
+  "captures",
+  "city-areas",
+  "plans",
+  "asset-index",
+];
 export const EXCLUDED_FOLDERS: readonly string[] = ["frames", "tmp"];
 // The stats in flight at once, so a directory of any size holds one bounded batch of promises
 export const STAT_CONCURRENCY = 64;

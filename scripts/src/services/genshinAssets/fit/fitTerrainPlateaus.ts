@@ -2,7 +2,7 @@ import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainR
 import type { PlateauFeature } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { getPlateauHeight, TerrainFeatureKind } from "genshin-engine";
+import { getPlateauBlend, TerrainFeatureKind } from "genshin-engine";
 
 // The radii a plateau is tried at, widest first: the sharp features the hills leave, in metres
 const PLATEAU_RADII = [96, 48, 24];
@@ -69,7 +69,7 @@ export const fitTerrainPlateaus = (
       if (!Number.isFinite(value)) continue;
       const column = index % size;
       const row = Math.floor(index / size);
-      values[index] = value - getPlateauHeight(best, originX + column * step, originZ + row * step);
+      values[index] = value - best.height * getPlateauBlend(best, originX + column * step, originZ + row * step);
     }
   }
   return { features, remainder: { ...grid, values } };

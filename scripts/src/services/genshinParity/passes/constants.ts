@@ -35,6 +35,10 @@ export const SHAPE_WIDTH = 1280;
 export const SHAPE_OUTLINE_GATE_PIXELS = 1;
 export const SHAPE_DEPTH_GATE = 0.01;
 export const SHAPE_NORMAL_GATE_DEGREES = 10;
+// The smallest angle between two normals a float target can tell apart, in degrees: the witness reads each normal back
+// From a float target (`FloatType`), whose spacing just under one is 2^-24, so two normals' cosine steps by that at the
+// Least; near parallel, one minus the cosine is the angle squared over two, so the least angle is sqrt(2 * 2^-24) radians
+export const SHAPE_NORMAL_RESOLUTION_DEGREES: number = (Math.sqrt(2 * 2 ** -24) * 180) / Math.PI;
 // The square of a block a family's pixels are split into two halves by, as a chequerboard, so each half spreads over the
 // Whole surface: the two halves read against each other are the floor a statistic matched in distribution is gated at
 export const SPLIT_BLOCK_PIXELS = 32;

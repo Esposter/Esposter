@@ -1,44 +1,37 @@
 <script setup lang="ts">
 import type { BuildingLandmark } from "#src/models/world/BuildingLandmark";
-import type { LightUniforms } from "genshin-engine";
-import type { DataTexture } from "three";
+import type { ToonNodeMaterial } from "genshin-engine";
 
 import { BuildingKitPartsMap } from "#src/services/world/BuildingKitPartsMap";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
-import { createToonMaterial } from "genshin-engine";
+import { setObjectSurface } from "genshin-engine";
+import { Mesh } from "three";
 
 interface Props {
   landmark: BuildingLandmark;
-  lightUniforms: LightUniforms;
-  rampTexture: DataTexture;
+  // The one material every landmark's part draws in, each in the surface its mesh carries
+  partMaterial: ToonNodeMaterial;
 }
 
-const { landmark, lightUniforms, rampTexture } = defineProps<Props>();
+const { landmark, partMaterial } = defineProps<Props>();
 const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getWorldHeight(position.x, position.z);
-// The building's region kit decides its parts, each drawn in a material of its own colour
-const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never).map(({ color, geometry }) => ({
-  geometry,
-  material: createToonMaterial({ color, lightUniforms, rampTexture }),
-}));
+// The building's region kit decides its parts, each drawn in its own colour
+const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never).map(({ color, geometry }) => {
+  const mesh = new Mesh(geometry, partMaterial);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  setObjectSurface(mesh, color);
+  return mesh;
+});
 
 onUnmounted(() => {
-  for (const { geometry, material } of buildingMeshes) {
-    geometry.dispose();
-    material.dispose();
-  }
+  for (const { geometry } of buildingMeshes) geometry.dispose();
 });
 </script>
 
 <template>
   <TresGroup :position="[position.x, groundHeight + heightOffset, position.z]" :rotation-y="rotation">
-    <TresMesh
-      v-for="({ geometry, material }, index) of buildingMeshes"
-      :key="index"
-      :geometry
-      :material
-      cast-shadow
-      receive-shadow
-    />
+    <primitive v-for="(mesh, index) of buildingMeshes" :key="index" :object="mesh" />
   </TresGroup>
 </template>

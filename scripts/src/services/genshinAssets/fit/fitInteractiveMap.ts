@@ -15,8 +15,9 @@ import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/Inte
 import { matchSimilarity } from "#src/services/genshinAssets/points/matchSimilarity";
 import { readInteractiveMapPoints } from "#src/services/genshinAssets/points/readInteractiveMapPoints";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 
 // The official map fitted to the scene: one similarity carries the map's statues and waypoints onto the scene's transport
 // Points, and each region's share of its matches and of its Oculi is reported, Mondstadt's first. A fit over its bar
@@ -56,7 +57,7 @@ export const fitInteractiveMap = async (): Promise<string> => {
   );
   const file: InteractiveMapFitFile = { regions, residual, transform: fit.transform };
   await mkdir(INTERACTIVE_MAP_DIRECTORY, { recursive: true });
-  await writeFile(INTERACTIVE_MAP_FIT_PATH, `${JSON.stringify(file, null, 2)}\n`);
+  writeJsonFile(INTERACTIVE_MAP_FIT_PATH, file);
   return [
     `${fit.pairs.length} of ${anchors.length} statues and waypoints matched, residual ${residual} game units (bar ${INTERACTIVE_MAP_FIT_BAR})`,
     ...regions.map(

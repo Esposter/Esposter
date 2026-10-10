@@ -1,10 +1,12 @@
-import type { TerrainFeature } from "#src/models/terrain/TerrainFeature";
+import type { CliffFeature } from "#src/models/terrain/CliffFeature";
+import type { PlateauFeature } from "#src/models/terrain/PlateauFeature";
+import type { RidgeFeature } from "#src/models/terrain/RidgeFeature";
 
 import { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 import { createTerrainFeaturesHeight } from "#src/terrain/createTerrainFeaturesHeight";
-import { getCliffHeight } from "#src/terrain/getCliffHeight";
-import { getPlateauHeight } from "#src/terrain/getPlateauHeight";
-import { getRidgeHeight } from "#src/terrain/getRidgeHeight";
+import { getCliffBlend } from "#src/terrain/getCliffBlend";
+import { getPlateauBlend } from "#src/terrain/getPlateauBlend";
+import { getRidgeBlend } from "#src/terrain/getRidgeBlend";
 import { describe, expect, test } from "vitest";
 
 describe(createTerrainFeaturesHeight, () => {
@@ -12,7 +14,7 @@ describe(createTerrainFeaturesHeight, () => {
     expect.hasAssertions();
 
     // Features reaching across the cell edges at multiples of the cell size, so a point reads more than one cell's list
-    const cliff: TerrainFeature = {
+    const cliff: CliffFeature = {
       endX: 120,
       endZ: 0,
       falloff: 4,
@@ -22,7 +24,7 @@ describe(createTerrainFeaturesHeight, () => {
       startZ: 0,
       width: 20,
     };
-    const plateau: TerrainFeature = {
+    const plateau: PlateauFeature = {
       falloff: 8,
       height: -3,
       kind: TerrainFeatureKind.Plateau,
@@ -30,7 +32,7 @@ describe(createTerrainFeaturesHeight, () => {
       x: 64,
       z: 64,
     };
-    const ridge: TerrainFeature = {
+    const ridge: RidgeFeature = {
       endX: 0,
       endZ: 200,
       height: 5,
@@ -44,7 +46,9 @@ describe(createTerrainFeaturesHeight, () => {
     for (let x = -100; x <= 200; x += 40)
       for (let z = -100; z <= 200; z += 40)
         expect(getHeight(x, z)).toBeCloseTo(
-          getCliffHeight(cliff, x, z) + getPlateauHeight(plateau, x, z) + getRidgeHeight(ridge, x, z),
+          cliff.height * getCliffBlend(cliff, x, z) +
+            plateau.height * getPlateauBlend(plateau, x, z) +
+            ridge.height * getRidgeBlend(ridge, x, z),
         );
   });
 });

@@ -17,13 +17,13 @@ import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readSdkText } from "#src/services/genshinText/readSdkText";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const toJson = (value: unknown): string => `${JSON.stringify(value, undefined, 2)}\n`;
 // Every string `GameTextKey` names, in every language, into `genshin-text`; the lines of every character the
 // Game-data package has none for yet, in every language, into the persona; and the persona's copy of the modules
 // It runs. A key the account kit files is read from the kit's strings, every other from the text map. A key missing
@@ -90,10 +90,9 @@ export const writeGameText = (): string[] => {
 
   let voicedCount = 0;
   for (const { characterLines, gameText, language } of languageOutputs) {
-    const gameTextJson = toJson(gameText);
-    writeFileSync(join(textDirectory, `${language}.json`), gameTextJson);
-    writeFileSync(join(copyTextDirectory, `${language}.json`), gameTextJson);
-    writeFileSync(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), toJson(characterLines));
+    writeJsonFile(join(textDirectory, `${language}.json`), gameText);
+    writeJsonFile(join(copyTextDirectory, `${language}.json`), gameText);
+    writeJsonFile(join(CHARACTER_LINES_DIRECTORY, `${language}.json`), characterLines);
     if (language === GameLanguage.English) voicedCount = Object.keys(characterLines).length;
   }
 

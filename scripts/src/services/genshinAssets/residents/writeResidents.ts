@@ -20,8 +20,9 @@ import { toResidentPlace } from "#src/services/genshinAssets/residents/toResiden
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { NPC_PATH } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { residentSchema } from "genshin-world";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A region's data as its file holds it, its landmarks the residents are filed under and every other field kept
@@ -63,21 +64,18 @@ export const writeResidents = async (): Promise<string> => {
   const residentJoin = joinResidents(placements, nameTextIdMap, talkIdMap, (region, position) =>
     findNearestLandmarkAreaId(region, landmarksMap.get(region) ?? [], position),
   );
-  const reports = await Promise.all(
-    regionFiles.map(async ({ data, path, region }) => {
-      const residents: Resident[] = residentSchema
-        .array()
-        .parse(
-          (residentJoin.regions.get(region) ?? []).map((resident) =>
-            Object.assign(resident, { duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id) }),
-          ),
-        );
-      if (JSON.stringify(residents) !== JSON.stringify(data.residents ?? []))
-        await writeFile(path, `${JSON.stringify({ ...data, residents }, undefined, 2)}\n`);
-      const withNight = residents.filter(({ night }) => night !== undefined).length;
-      return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
-    }),
-  );
+  const reports = regionFiles.map(({ data, path, region }) => {
+    const residents: Resident[] = residentSchema
+      .array()
+      .parse(
+        (residentJoin.regions.get(region) ?? []).map((resident) =>
+          Object.assign(resident, { duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id) }),
+        ),
+      );
+    if (JSON.stringify(residents) !== JSON.stringify(data.residents ?? [])) writeJsonFile(path, { ...data, residents });
+    const withNight = residents.filter(({ night }) => night !== undefined).length;
+    return `${region}: ${residents.length} placed with talks, ${residents.length - withNight} with a day spot only, ${withNight} with a night spot`;
+  });
   return [
     ...reports,
     `${residentJoin.noName} with no name, ${residentJoin.noTalk} with no talk, ${residentJoin.repeated} repeat placements of a resident already placed, and ${births.length - placements.length} of ${births.length} birth records in no fitted region`,

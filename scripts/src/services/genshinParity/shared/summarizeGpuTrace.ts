@@ -9,12 +9,16 @@ const SLOW_FRAME_MS = 50;
 // A call under this many milliseconds is counted in its frame's total but not listed, and at most this many are listed
 const LISTED_CALL_MS = 0.5;
 const LISTED_CALLS_PER_FRAME = 12;
+const LISTED_BUILDS_PER_STATE = 12;
 const MS_DECIMALS = 10;
 
 const roundMs = (ms: number): number => Math.round(ms * MS_DECIMALS) / MS_DECIMALS;
 
-// The cause a call is counted under: a pipeline compiled, a shader module compiled, a texture or a buffer made or uploaded
+// The cause a call is counted under: a pipeline compiled, a shader module compiled, a texture or a buffer made or uploaded,
+// Or, on the main thread, a node material built or a program added
 const getCategory = (name: string): string => {
+  if (name === "buildNodes") return "node builds";
+  if (name === "createProgram") return "programs";
   if (name.includes("Pipeline")) return "pipelines";
   if (name === "createShaderModule") return "shaders";
   if (name === "createBuffer" || name === "writeBuffer") return "buffers";
@@ -34,6 +38,23 @@ const describeCategories = (calls: GpuCall[]): string => {
   return Array.from(categories, ([category, { count, ms }]) => `${category} ${count} (${roundMs(ms)} ms)`).join(", ");
 };
 
+// The node materials a state built, one line a material and object, most time first, so a build the state should not
+// Have made is named by what it was built for
+const describeBuilds = (calls: GpuCall[]): string[] => {
+  const builds = new Map<string, { count: number; ms: number }>();
+  for (const call of calls) {
+    if (call.name !== "buildNodes") continue;
+    const key = `${call.label} | ${call.detail}`;
+    const total = builds.get(key) ?? { count: 0, ms: 0 };
+    builds.set(key, { count: total.count + 1, ms: total.ms + call.duration });
+  }
+
+  return [...builds]
+    .toSorted((first, second) => second[1].ms - first[1].ms)
+    .slice(0, LISTED_BUILDS_PER_STATE)
+    .map(([key, { count, ms }]) => `  built ${count}x for ${roundMs(ms)} ms: ${key}`);
+};
+
 const describeFrame = (time: number, gapMs: number, trace: GpuTrace, frameIndexOf: Map<number, number>): string[] => {
   const frameIndex = frameIndexOf.get(time) ?? -1;
   const calls = trace.calls.filter((call) => call.frame === frameIndex);
@@ -46,8 +67,8 @@ const describeFrame = (time: number, gapMs: number, trace: GpuTrace, frameIndexO
     `  ${roundMs(call.duration)} ms ${call.name} | ${call.label} | ${call.detail}`;
 
   return [
-    `frame #${frameIndex} at ${roundMs(time - (trace.times[0] ?? 0))} ms: ${roundMs(gapMs)} ms, ${calls.length} GPU calls for ${roundMs(totalMs)} ms`,
-    `  ${describeCategories(calls) || "no GPU calls"}`,
+    `frame #${frameIndex} at ${roundMs(time - (trace.times[0] ?? 0))} ms: ${roundMs(gapMs)} ms, ${calls.length} traced calls for ${roundMs(totalMs)} ms`,
+    `  ${describeCategories(calls) || "no traced calls"}`,
     ...listed.map((call) => describeCall(call)),
     ...(trace.cpu ? summarizeCpuWindow(trace.cpu, time, time + gapMs) : []),
   ];
@@ -64,7 +85,8 @@ export const summarizeGpuTrace = (trace: GpuTrace, states: TracedState[]): strin
     const lastTime = frames.at(-1)?.time ?? 0;
     const stateCalls = trace.calls.filter((call) => call.start >= firstTime && call.start <= lastTime);
     lines.push(
-      `${name}: ${stateCalls.length} GPU calls started in its frames, ${describeCategories(stateCalls) || "none"}`,
+      `${name}: ${stateCalls.length} traced calls started in its frames, ${describeCategories(stateCalls) || "none"}`,
+      ...describeBuilds(stateCalls),
     );
     const gaps = frames
       .slice(0, -1)

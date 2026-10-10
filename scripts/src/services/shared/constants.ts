@@ -23,6 +23,10 @@ const findRepositoryRoot = (directory: string): string => {
 };
 
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
+// The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,
+// And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
+export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");
+export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, "oxfmt.config.ts");
 // How long any request a script makes may take (`fetchJson`) — the npm registry and nodejs.org alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector

@@ -20,6 +20,15 @@ describe(summarizeGpuTrace, () => {
         start: 0,
       },
       { detail: "4096 B", duration: 1, frame: 1, label: "", name: "writeBuffer", start: 0 },
+      {
+        detail: "Mesh unnamed 3 vertices",
+        duration: 1,
+        frame: 1,
+        label: "MeshToonNodeMaterial",
+        name: "buildNodes",
+        start: 0,
+      },
+      { detail: "", duration: 0, frame: 1, label: "fragment", name: "createProgram", start: 0 },
     ],
     times: TIMES,
   };
@@ -29,12 +38,14 @@ describe(summarizeGpuTrace, () => {
     expect.hasAssertions();
 
     expect(summarizeGpuTrace(TRACE, STATES)).toStrictEqual([
-      "walk 20 s: 2 GPU calls started in its frames, pipelines 1 (12 ms), buffers 1 (1 ms)",
+      "walk 20 s: 4 traced calls started in its frames, pipelines 1 (12 ms), buffers 1 (1 ms), node builds 1 (1 ms), programs 1 (0 ms)",
+      "  built 1x for 1 ms: MeshToonNodeMaterial | Mesh unnamed 3 vertices",
       "walk 20 s: 1 frame(s) traced",
-      `frame #1 at ${FRAME_MS} ms: ${SLOW_FRAME_MS} ms, 2 GPU calls for ${PIPELINE_MS + 1} ms`,
-      "  pipelines 1 (12 ms), buffers 1 (1 ms)",
+      `frame #1 at ${FRAME_MS} ms: ${SLOW_FRAME_MS} ms, 4 traced calls for ${PIPELINE_MS + 2} ms`,
+      "  pipelines 1 (12 ms), buffers 1 (1 ms), node builds 1 (1 ms), programs 1 (0 ms)",
       `  ${PIPELINE_MS} ms createRenderPipeline | terrain | entry main`,
       "  1 ms writeBuffer |  | 4096 B",
+      "  1 ms buildNodes | MeshToonNodeMaterial | Mesh unnamed 3 vertices",
     ]);
   });
 });

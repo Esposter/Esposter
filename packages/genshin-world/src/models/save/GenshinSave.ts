@@ -1,5 +1,6 @@
 import { achievementProgressSaveSchema } from "#src/models/achievement/AchievementProgressSave";
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
+import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
@@ -25,6 +26,7 @@ export const genshinSaveSchema = z
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,
     wishPity: wishPityMapSaveSchema,
+    worldLevelAdjustment: worldLevelAdjustmentSaveSchema,
   })
   .refine((save) => JSON.stringify(save).length <= MAX_GENSHIN_SAVE_LENGTH, "The save is too large");
 

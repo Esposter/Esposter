@@ -13,7 +13,8 @@ import {
 import { toForgeRecipe } from "#src/services/genshinAssets/forging/toForgeRecipe";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { mkdirSync } from "node:fs";
 
 // The blacksmith's recipes from the game's forge table, each with the diagrams that open it, written as one slice in the
 // World's generated folder. A row the blacksmith does not forge is left out
@@ -27,5 +28,5 @@ export const writeForgingRecipes = (): void => {
     })
     .toSorted((firstRecipe, secondRecipe) => firstRecipe.id - secondRecipe.id);
   mkdirSync(FORGING_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(FORGING_RECIPES_PATH, `${JSON.stringify(recipes, undefined, 2)}\n`);
+  writeJsonFile(FORGING_RECIPES_PATH, recipes);
 };

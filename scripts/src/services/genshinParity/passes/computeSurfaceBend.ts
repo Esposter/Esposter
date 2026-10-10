@@ -1,5 +1,5 @@
 import { computeNormalAngle } from "#src/services/genshinParity/passes/computeNormalAngle";
-import { SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { SHAPE_NORMAL_RESOLUTION_DEGREES, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 
 // How far each family's normals bend off their geometry's, per side, over the pixels both sides draw: the mean bend of
@@ -64,12 +64,13 @@ export const computeSurfaceBend = (
   );
 };
 // The bend reading a family is gated on: ours' bend less the exports', in degrees, against the floor the exports' own
-// Two halves stand apart by. A family whose exports bend nothing and whose ours bend nothing reads zero against zero
+// Two halves stand apart by, never below what a normal's float target resolves. A family whose exports and ours both
+// Bend nothing reads its noise against that resolution, not against its halves' float noise
 export const getSurfaceBendReading = ({
   exportsAngle,
   halves: [firstHalf, secondHalf],
   oursAngle,
 }: SurfaceBend): { gate: number; value: number } => ({
-  gate: Math.abs(firstHalf - secondHalf),
+  gate: Math.max(Math.abs(firstHalf - secondHalf), SHAPE_NORMAL_RESOLUTION_DEGREES),
   value: Math.abs(oursAngle - exportsAngle),
 });

@@ -8,8 +8,9 @@ import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/music/
 import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 // A component's music exported as its playlist plays it: the playlist its map names is read from the sound banks, one
@@ -60,7 +61,7 @@ export const extractComponentPlaylist = async (component: DerivedAssetComponent)
     segments,
   };
   await mkdir(music, { recursive: true });
-  await writeFile(join(music, "playlist.json"), `${JSON.stringify(componentPlaylist, null, 2)}\n`);
+  writeJsonFile(join(music, "playlist.json"), componentPlaylist);
   const sourceIds = new Set(segments.flatMap(({ clips }) => clips.map(({ sourceId }) => sourceId)));
   await Array.fromAsync(decodeGameSounds(MUSIC_PACKAGE_PATTERN, (id) => sourceIds.has(id), music));
   return componentPlaylist;

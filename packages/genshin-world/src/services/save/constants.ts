@@ -71,6 +71,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
       },
     ]),
   ),
+  worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each
 // Collection at its cap times its longest entry. Each id is counted at its bound's length, since the game's ids are
@@ -125,4 +126,5 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
     primogemResinRefillDay: "1970-01-01",
   },
   wishPity: InitialBannerKindWishPityMap,
+  worldLevelAdjustment: { isLowered: false },
 };

@@ -27,6 +27,16 @@ describe(getClaimDecision, () => {
     expect(getClaimDecision(createClaim(HOLDER, RECENT), HOLDER, NOW)).toBe(ClaimDecision.Adopt);
   });
 
+  test("takes back its own missed claim as a fresh one, and leaves another worker's missed claim", () => {
+    expect.hasAssertions();
+
+    const missedClaim = createClaim(HOLDER, RECENT);
+    const ownMissedClaim = { ...missedClaim, message: { ...missedClaim.message, miss: "no data" } };
+
+    expect(getClaimDecision(ownMissedClaim, HOLDER, NOW)).toBe(ClaimDecision.Take);
+    expect(getClaimDecision(ownMissedClaim, { ...HOLDER, worker: "9c01" }, NOW)).toBe(ClaimDecision.Held);
+  });
+
   test("leaves a live claim another worker on the same machine holds", () => {
     expect.hasAssertions();
 

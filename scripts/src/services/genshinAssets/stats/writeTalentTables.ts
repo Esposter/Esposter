@@ -5,7 +5,7 @@ import {
   TALENT_MULTIPLIER_GENERATED_DIRECTORY,
 } from "#src/services/genshinAssets/stats/constants";
 import { getTalentMultiplierLoaderMapSource } from "#src/services/genshinAssets/stats/getTalentMultiplierLoaderMapSource";
-import { toJson } from "#src/services/genshinAssets/stats/toJson";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -17,8 +17,8 @@ export const writeTalentTables = (talentTables: readonly TalentTables[]): void =
     mkdirSync(directory, { recursive: true });
   }
   for (const { characterId, labelMap, multiplierMap } of talentTables) {
-    writeFileSync(join(TALENT_MULTIPLIER_GENERATED_DIRECTORY, `${characterId}.json`), toJson(multiplierMap));
-    writeFileSync(join(TALENT_LABEL_GENERATED_DIRECTORY, `${characterId}.json`), toJson(labelMap));
+    writeJsonFile(join(TALENT_MULTIPLIER_GENERATED_DIRECTORY, `${characterId}.json`), multiplierMap);
+    writeJsonFile(join(TALENT_LABEL_GENERATED_DIRECTORY, `${characterId}.json`), labelMap);
   }
   writeFileSync(
     join(TALENT_MULTIPLIER_GENERATED_DIRECTORY, "TalentMultiplierLoaderMap.ts"),

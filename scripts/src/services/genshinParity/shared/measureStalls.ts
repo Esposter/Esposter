@@ -12,6 +12,7 @@ import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/s
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
 import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScript";
+import { TRACE_NODES_SCRIPT } from "#src/services/genshinParity/shared/traceNodesScript";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -173,7 +174,8 @@ const startCpuProfile = async (context: BrowserContext, page: Page) => {
 
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
 // And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
-// Each GPU call the page makes is recorded too, and the slow frames are named by the calls they made
+// Each GPU call the page makes is recorded too, with each node material three builds and each program it adds once the
+// Renderer is handed over, and the slow frames are named by the calls they made
 export const measureStalls = async ({ height, scale, screen, trace, width }: StallOptions): Promise<string> => {
   const browser = await chromium.launch({
     args: ["--disable-gpu-vsync", "--disable-frame-rate-limit"],
@@ -201,6 +203,7 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
     await page.waitForFunction(() => window.__TRES__DEVTOOLS__ !== undefined, null, { timeout: HOOK_TIMEOUT_MS });
     await page.evaluate(hookRenderer);
     await page.waitForFunction(() => window.__hooked, null, { timeout: HOOK_TIMEOUT_MS });
+    if (trace) await page.evaluate(TRACE_NODES_SCRIPT);
     const cpu = trace ? await startCpuProfile(context, page) : undefined;
     const measuredStates = await measureStates(page);
     const cpuCapture = cpu ? await cpu.stop() : undefined;

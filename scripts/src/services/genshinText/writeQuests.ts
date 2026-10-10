@@ -18,10 +18,11 @@ import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
 import { QuestIds, QuestObjectiveKind, questSchema, TalkLineKind } from "genshin-world";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 // Every quest `QuestId` names, written into the world: its kind, title and description from the quest table, its shown
@@ -106,10 +107,9 @@ export const writeQuests = (): string[] => {
     mkdirSync(directory, { recursive: true });
   }
 
-  for (const quest of quests)
-    writeFileSync(join(QUESTS_DIRECTORY, `${quest.id}.json`), `${JSON.stringify(quest, undefined, 2)}\n`);
+  for (const quest of quests) writeJsonFile(join(QUESTS_DIRECTORY, `${quest.id}.json`), quest);
   for (const [language, questText] of languageQuestTexts)
-    writeFileSync(join(QUEST_TEXT_DIRECTORY, `${language}.json`), `${JSON.stringify(questText, undefined, 2)}\n`);
+    writeJsonFile(join(QUEST_TEXT_DIRECTORY, `${language}.json`), questText);
 
   notes.push(
     `${quests.length} quests, and ${textIds.size} of their words, written in ${GameLanguages.length} languages`,

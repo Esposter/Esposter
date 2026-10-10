@@ -9,8 +9,8 @@ import { useLoop, useTres } from "@tresjs/core";
 import {
   checkTerrainTileCasts,
   computeTerrainIndices,
-  createFlowerGeometry,
   createFlowerMaterial,
+  createFlowerTileGeometry,
   createTerrainMaterial,
   createTerrainSelection,
   createTerrainTileGeometry,
@@ -24,16 +24,7 @@ import {
   TERRAIN_LAYER,
   writeTerrainRingIndices,
 } from "genshin-engine";
-import {
-  BufferAttribute,
-  Frustum,
-  Group,
-  InstancedBufferAttribute,
-  InstancedMesh,
-  Matrix4,
-  Mesh,
-  Vector3,
-} from "three";
+import { BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -74,9 +65,8 @@ const terrainMaterial = createTerrainMaterial(terrainOptions, morphEye, { lightU
 const tileIndices = computeTerrainIndices(cellsPerSide);
 const index = new BufferAttribute(tileIndices, 1);
 const tileVertexCount = (cellsPerSide + 1) ** 2;
-// Every finest tile's flowers are one instanced draw of the one flower, a child of its tile's mesh, so they show, hide
-// And go with the tile
-const flowerGeometry = createFlowerGeometry();
+// Every finest tile's flowers are one instanced draw of the one flower in the one flower material, a child of its tile's
+// Mesh, so they show, hide and go with the tile
 const flowerMaterial = createFlowerMaterial({ lightUniforms, rampTexture }, windUniforms);
 // Every held tile is a mesh in this group, shown only while it is drawn, so a tile coming back into range costs a flag
 const tileGroup = new Group();
@@ -98,7 +88,7 @@ const tileStreamer = createTileStreamer<Mesh | PlantedTerrainTile>({
     if (tile instanceof Mesh) {
       tileGroup.remove(tile);
       tile.geometry.dispose();
-      for (const child of tile.children) if (child instanceof InstancedMesh) child.dispose();
+      for (const child of tile.children) if (child instanceof Mesh) child.geometry.dispose();
       return;
     }
     farTileMap.delete(tile.key);
@@ -130,11 +120,8 @@ const receiveTile = async (event: MessageEvent<PlantedTerrainTile>) => {
   mesh.receiveShadow = true;
   mesh.layers.enable(TERRAIN_LAYER);
   if (plantMatrices.length > 0) {
-    const flowerMesh = new InstancedMesh(flowerGeometry, flowerMaterial, plantMatrices.length / 16);
-    flowerMesh.instanceMatrix = new InstancedBufferAttribute(plantMatrices, 16);
-    flowerMesh.instanceColor = new InstancedBufferAttribute(plantColors, 3);
+    const flowerMesh = new Mesh(createFlowerTileGeometry(plantMatrices, plantColors), flowerMaterial);
     flowerMesh.receiveShadow = true;
-    flowerMesh.computeBoundingSphere();
     mesh.add(flowerMesh);
   }
   // Three compiles only what is visible and unparented, so the tile's pipelines build before any frame can draw it,
@@ -261,7 +248,6 @@ onUnmounted(() => {
   tileStreamer.dispose();
   for (const mesh of ringMeshMap.values()) mesh.geometry.dispose();
   terrainMaterial.dispose();
-  flowerGeometry.dispose();
   flowerMaterial.dispose();
 });
 </script>

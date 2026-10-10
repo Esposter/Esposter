@@ -15,8 +15,9 @@ import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlo
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { readdir, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
 // A screen's interface as the game lays it out, from the RectTransforms of the block holding it: the block is found
@@ -91,6 +92,6 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
   );
   const tree = composeInterfaceTree(rects, gameObjectTransformIdMap, gameObjectComponentsMap, interfaceOptions.root);
   if (!tree) throw new InvalidOperationError(Operation.Read, interfaceOptions.root, `not in ${block}`);
-  await writeFile(join(directory, "interface.json"), JSON.stringify(tree, null, 2));
+  writeJsonFile(join(directory, "interface.json"), tree);
   return tree;
 };
