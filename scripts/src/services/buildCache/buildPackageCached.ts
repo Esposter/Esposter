@@ -21,7 +21,7 @@ import { join } from "node:path";
 export const buildPackageCached = (
   packageDirectory: string,
   visiting: ReadonlySet<string> = new Set<string>(),
-  directoryOutcomeMap = new Map<string, BuildCacheOutcome>(),
+  directoryOutcomeMap: Map<string, BuildCacheOutcome> = new Map<string, BuildCacheOutcome>(),
 ): BuildCacheOutcome => {
   const finishedOutcome = directoryOutcomeMap.get(packageDirectory);
   if (finishedOutcome) return finishedOutcome;
