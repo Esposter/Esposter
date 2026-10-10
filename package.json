@@ -51,6 +51,7 @@
     "ai:machine:watch": "pnpm -C scripts ai:machine:watch",
     "ai:proposals:report": "pnpm -C scripts ai:proposals:report",
     "ai:queue:push": "pnpm -C scripts ai:queue:push",
+    "ai:resume": "pnpm -C scripts ai:resume",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",
     "ai:sweep:constant-scope": "pnpm -C scripts ai:sweep:constant-scope",
     "ai:sweep:duplicate-prose": "pnpm -C scripts ai:sweep:duplicate-prose",
