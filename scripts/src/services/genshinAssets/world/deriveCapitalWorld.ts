@@ -41,9 +41,9 @@ import { join } from "node:path";
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
 // View and its architecture radius cover and the StreamGen blob of every city area they reach, all read by path hash,
 // The placements those select (every one in view, and each architecture placement within the radius), each prefab of
-// Them rooted at the game object its name finds in the blocks that name it or, for a building, hold its prefab file
-// (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not index
-// Its own mesh or material), and the 2x2 of terrain tiles its capital stands in. Each step reads the game's own data (the asset index,
+// Them rooted at the game object its name finds in the blocks that name its mesh or, for a building, hold its prefab
+// File (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not
+// Index its own mesh), and the 2x2 of terrain tiles its capital stands in. Each step reads the game's own data (the asset index,
 // The CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's own names
 // Hash to, the dumped layouts), so a region gives only its capital's place. Returns the block with the lines that
 // Report what did not resolve
@@ -130,23 +130,25 @@ export const deriveCapitalWorld = async (
     selectCapitalPlacements(placements, streamPrefabNames, place),
   );
   const prefabNames = getPrefabNames(viewPlacements.flat(), pathNames);
-  // The blocks each prefab's game object may stand in, dumped so the game objects of its name can be found in them
+  // The blocks each prefab's game object may stand in, dumped so the game objects of its name can be found in them,
+  // Found through the meshes of its name: an animator or a material named as a prefab can lie in a block of hundreds
+  // Of thousands of layout files (Inazuma City's `00/15424869` and `00/02666572`)
   const indexedNames = new Set(prefabNames.values());
-  const prefabAssets = await readIndexedAssets(({ name }) => indexedNames.has(name));
-  const nameBlocksMap = await readPrefabBlocks(prefabAssets, cabMap);
+  const prefabMeshes = await readIndexedAssets(({ name, type }) => type === AssetType.Mesh && indexedNames.has(name));
+  const nameBlocksMap = await readPrefabBlocks(prefabMeshes, cabMap);
   const dumpedBlocks = [...new Set([...nameBlocksMap.values()].flat())];
-  const indexingBlocks = new Set(prefabAssets.map(({ block }) => block));
+  const meshBlocks = new Set(prefabMeshes.map(({ block }) => block));
   lines.push(
-    `${dumpedBlocks.length} blocks dumped for the prefabs' game objects, ${dumpedBlocks.filter((block) => !indexingBlocks.has(block)).length} of them for a building's prefab file alone`,
+    `${dumpedBlocks.length} blocks dumped for the prefabs' game objects, ${dumpedBlocks.filter((block) => !meshBlocks.has(block)).length} of them for a building's prefab file alone`,
   );
   await dumpLayouts(dumpedBlocks);
   const { objects } = await readSceneLayout(directory.layout);
   const prefabIdRootMap = new Map<number, AssetRoot>();
   const unrootedNames = new Set<string>();
   for (const [prefabId, name] of prefabNames) {
-    // A name's game object is looked for in the blocks indexing it or, for a building, holding its prefab file first,
-    // Then in every dumped block, since the index may name a prefab's mesh or material in a block its game object does
-    // Not stand in
+    // A name's game object is looked for in the blocks indexing its mesh or, for a building, holding its prefab file
+    // First, then in every dumped block, since the index may name a prefab's mesh in a block its game object does not
+    // Stand in
     const indexedRoot = resolvePrefabRoot(name, nameBlocksMap.get(name) ?? [], objects);
     const root = indexedRoot ?? resolvePrefabRoot(name, dumpedBlocks, objects);
     if (root) prefabIdRootMap.set(prefabId, root);
