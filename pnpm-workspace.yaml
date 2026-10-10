@@ -286,7 +286,7 @@ catalog:
   unocss: ^66.10.5
   unplugin-auto-import: ^21.1.0
   unplugin-vue: ^8.0.0
-  vite: ^8.3.3
+  vite: ^8.3.4
   vite-plus: ^1.1.0
   vitest: ^5.0.3
   vitest-browser-vue: ^3.1.0
@@ -322,7 +322,7 @@ overrides:
   nitro: npm:nitro-nightly@latest
   pdfjs-dist: ^6.4.299
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
-  vite: ^8.3.3
+  vite: ^8.3.4
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.
   vite-plus>@oxlint/plugins: "catalog:"
