@@ -206,7 +206,7 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
-  happy-dom: ^20.14.5
+  happy-dom: ^20.14.6
   howler: ^2.2.4
   html-element-attributes: ^3.5.0
   html-tag-names: ^2.1.0
