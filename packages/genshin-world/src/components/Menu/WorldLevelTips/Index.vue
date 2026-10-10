@@ -2,6 +2,8 @@
 import type { GameText } from "genshin-text";
 
 import { computeWorldLevelCooldown } from "#src/services/adventureRank/computeWorldLevelCooldown";
+import { WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS } from "#src/services/adventureRank/constants";
+import { useIntervalFn, useNow } from "@vueuse/core";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -22,9 +24,13 @@ const closeButton = useTemplateRef("closeButton");
 const tips = computed(() =>
   gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevertTips : GameTextKey.WorldLevelLowerTips].split("\n"),
 );
-// Read as the dialog opens and again whenever the World Level changes under it
+// Read as the dialog opens, at each look at the clock while it stays open, and whenever the World Level changes under it
+const clock = useNow({ scheduler: (callback) => useIntervalFn(callback, WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS) });
 const cooldown = computed(() =>
-  computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs })),
+  computeWorldLevelCooldown(
+    worldLevelChangedAt,
+    Temporal.Instant.fromEpochMilliseconds(clock.value.getTime() + serverClockOffsetMs),
+  ),
 );
 // The dialog sits over the menu, so focus starts inside it, on its way back
 onMounted(() => {

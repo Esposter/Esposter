@@ -50,7 +50,7 @@ The rank is the EXP's own, held at the cap of the last World Level open. So a pl
 
 From World Level 3 the player may lower it by one, and restore it by one (`toggleWorldLevelLowering`). Either change waits 24 hours after the last, so a lowering cannot be undone at once and a restore cannot be lowered again at once. The World Level played at is the unlocked one less that single step (`computeWorldLevel`).
 
-Clicking the card's info icon opens the game's World Level dialog (`Menu/WorldLevelTips`), as the published tutorials open it: its title, the tips for what the change does, and, once a change has been made, the cooldown left (`computeWorldLevelCooldown`), each read again when the World Level changes under it. Its own Back or Escape closes it and focus returns to the icon. The dialog is not measured yet: its size, place and colours wait on `world-level-dialog.mkv` in the roadmap's Recordings owed list. The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
+Clicking the card's info icon opens the game's World Level dialog (`Menu/WorldLevelTips`), as the published tutorials open it: its title, the tips for what the change does, and, once a change has been made, the cooldown left (`computeWorldLevelCooldown`), each read again when the World Level changes under it, and the cooldown at each minute while the dialog stays open. Its own Back or Escape closes it and focus returns to the icon. The dialog is not measured yet: its size, place and colours wait on `world-level-dialog.mkv` in the roadmap's Recordings owed list. The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
 
 ## Enemies at a World Level
 
