@@ -2,6 +2,7 @@ import type { StatueSection } from "#src/models/kits/statue/StatueSection";
 import type { StatueSurface } from "#src/models/kits/statue/StatueSurface";
 
 interface Ring {
+  centre: readonly number[];
   height: number;
   radii: readonly number[];
 }
@@ -11,15 +12,22 @@ const FULL_TURN = Math.PI * 2;
 const writeRingVertex = (
   positions: Float32Array,
   vertex: number,
-  { height, radii }: Ring,
+  { centre: [x = 0, z = 0], height, radii }: Ring,
   sector: number,
   angleCount: number,
 ): void => {
   const radius = radii[sector] ?? 0;
   const turn = (sector / angleCount) * FULL_TURN;
-  positions[vertex * 3] = radius * Math.cos(turn);
+  positions[vertex * 3] = x + radius * Math.cos(turn);
   positions[vertex * 3 + 1] = height;
-  positions[vertex * 3 + 2] = radius * Math.sin(turn);
+  positions[vertex * 3 + 2] = z + radius * Math.sin(turn);
+};
+
+// A cap's centre: its ring's centre at its height
+const writeRingCentre = (positions: Float32Array, vertex: number, { centre: [x = 0, z = 0], height }: Ring): void => {
+  positions[vertex * 3] = x;
+  positions[vertex * 3 + 1] = height;
+  positions[vertex * 3 + 2] = z;
 };
 
 const writeTriangle = (indices: Uint32Array, offset: number, first: number, second: number, third: number): number => {
@@ -30,21 +38,22 @@ const writeTriangle = (indices: Uint32Array, offset: number, first: number, seco
 };
 
 // A stack of sections as one closed surface, the pure step a statue's kit builds its geometry from: one ring of each
-// Section's radii at its middle height, and the surface lofts from ring to ring, the first section's radii at the foot
-// And the last's at the head, so the radius moves between two sections as one wall rather than as a ledge. Both caps
-// Close it on their own copies of their rings, so each stays flat where its wall rounds into it
+// Section's radii about its centre at its middle height, and the surface lofts from ring to ring, the first section's
+// Ring at the foot and the last's at the head, so the radius and the centre move between two sections as one wall
+// Rather than as a ledge, and a stack can bend as a leaf does. Both caps close it on their own copies of their rings,
+// Each about its ring's centre, so each stays flat where its wall rounds into it
 export const computeStatueSurface = (sections: readonly StatueSection[]): StatueSurface => {
   const rings: Ring[] = [];
   let height = 0;
-  for (const { height: sectionHeight, radii } of sections) {
-    rings.push({ height: height + sectionHeight / 2, radii });
+  for (const { centre, height: sectionHeight, radii } of sections) {
+    rings.push({ centre, height: height + sectionHeight / 2, radii });
     height += sectionHeight;
   }
   const bottomSection = sections[0];
   const topSection = sections.at(-1);
   if (bottomSection && topSection) {
-    rings.unshift({ height: 0, radii: bottomSection.radii });
-    rings.push({ height, radii: topSection.radii });
+    rings.unshift({ ...bottomSection, height: 0 });
+    rings.push({ ...topSection, height });
   }
   const angleCount = sections[0]?.radii.length ?? 0;
   const ringCount = rings.length;
@@ -57,8 +66,8 @@ export const computeStatueSurface = (sections: readonly StatueSection[]): Statue
   const bottomRing = rings[0];
   const topRing = rings.at(-1);
   if (bottomRing && topRing) {
-    positions[bottomCapCentre * 3 + 1] = bottomRing.height;
-    positions[topCapCentre * 3 + 1] = topRing.height;
+    writeRingCentre(positions, bottomCapCentre, bottomRing);
+    writeRingCentre(positions, topCapCentre, topRing);
     for (let sector = 0; sector < angleCount; sector++) {
       writeRingVertex(positions, bottomCapCentre + 1 + sector, bottomRing, sector, angleCount);
       writeRingVertex(positions, topCapCentre + 1 + sector, topRing, sector, angleCount);

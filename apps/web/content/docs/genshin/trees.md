@@ -37,21 +37,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role                                                                                         |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/TreeSpecies.ts`              | The species the game's trees are rebuilt as                                                  |
-| `packages/genshin-world/src/services/world/TreeSpeciesOptionsMap.ts`  | Each species' tree kit parameters, the great oak's first, its branches provisional           |
-| `packages/genshin-world/src/data/windrise/oak.json`                   | The great oak's leaf clusters and trunk taper, read off its export's meshes                  |
-| `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`            | The fit that clusters the leaf mesh's card centres and reads the bark's taper into that file |
-| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue` | A placed tree: its mesh, its impostor, and the cross-over between                            |
-| `packages/genshin-engine/src/vegetation/bakeImpostor.ts`              | A mesh's colour and normal baked from its side                                               |
-| `packages/genshin-engine/src/nodes/createImpostorMaterial.ts`         | The card turned to the eye and lit by its baked normal                                       |
-| `packages/genshin-engine/src/nodes/createDitherFadeNode.ts`           | Which pixels each of two cross-fading details draws                                          |
-| `packages/genshin-engine/src/nodes/createLeafShapeNode.ts`            | A leaf card's cut, shared by the crown and its bake                                          |
-| `packages/genshin-engine/src/vegetation/constants.ts`                 | The impostor's resolution and where it takes over, provisional                               |
+| File                                                                  | Role                                                                                                   |
+| :-------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/TreeSpecies.ts`              | The species the game's trees are rebuilt as                                                            |
+| `packages/genshin-world/src/services/world/TreeSpeciesOptionsMap.ts`  | Each species' tree kit parameters, the great oak's first, its branches provisional                     |
+| `packages/genshin-world/src/data/windrise/oak.json`                   | The great oak's leaf clusters and trunk taper, read off its export's meshes                            |
+| `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`            | The fit that clusters the leaf mesh's card centres and reads the bark's taper into that file           |
+| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue` | A placed tree: its mesh, its impostor, and the cross-over between                                      |
+| `packages/genshin-world/src/components/World/Plants/Index.vue`        | Windrise's placed plants, one instanced draw per prefab: the oak's impostor for trees, domes otherwise |
+| `packages/genshin-world/src/services/world/bakeTreeImpostor.ts`       | The impostor baked from a tree's bark and leaf meshes, shared by a placed tree and a plant             |
+| `packages/genshin-engine/src/vegetation/bakeImpostor.ts`              | A mesh's colour and normal baked from its side                                                         |
+| `packages/genshin-engine/src/nodes/createImpostorMaterial.ts`         | The card turned to the eye and lit by its baked normal                                                 |
+| `packages/genshin-engine/src/nodes/createDitherFadeNode.ts`           | Which pixels each of two cross-fading details draws                                                    |
+| `packages/genshin-engine/src/nodes/createLeafShapeNode.ts`            | A leaf card's cut, shared by the crown and its bake                                                    |
+| `packages/genshin-engine/src/vegetation/constants.ts`                 | The impostor's resolution and where it takes over, provisional                                         |
 
 ## Notes
 
 - **The great oak's leaf clusters are fitted to its export's leaves.** Each cluster's centre and reach are the k-means of the leaf mesh's card centres, and its trunk's radius steps down the bark's own taper, so the canopy is the export's layout rather than a species' random one. Its branches and the switch are provisional: the switch is read off a recording walking away from one of the game's trees ([trees and scatter](/docs/proposals/genshin/trees-and-scatter)), and the oak's shape is judged by the outline, depth and normal of the shape pass.
-- **A tree is still one draw per part.** Instancing a species placed many times, and culling its instances on the GPU, wait for the layout pass to place more than the oak ([trees and scatter](/docs/proposals/genshin/trees-and-scatter)).
+- **The placed plants are one instanced draw per prefab.** Windrise's plants from its streams (`data/windrise/plants.json`) stand as stand-ins in `World/Plants`: a tree prefab as the oak's impostor, the baked card shared by every place, and any other plant as a low dome of the ground's green. Each prefab is one draw, so 2,200 places cost fifteen draws. The oak's own mesh is left to its landmark. Species for the placed trees, and culling their instances on the GPU, wait for the layout pass's next rows ([trees and scatter](/docs/proposals/genshin/trees-and-scatter)).
 - **The impostor is baked from one side.** Seen from straight above, its card stands edge-on and a far tree all but vanishes; one view holds for the near-horizontal views a walk and a glide take of a far tree, and views from above are baked only if a reference from above needs them.

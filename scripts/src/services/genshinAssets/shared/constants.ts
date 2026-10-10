@@ -230,12 +230,24 @@ export const TOWER_RADIUS_TOLERANCE = 0.03;
 // A tower's mesh at one level of detail, the tower being its name without the level
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
-// The Statue of The Seven is fitted in a tenth of a metre's bands, a band merged into the one below while its radii hold
-// Within 2% of it at every angle, its radii read at `STATUE_ANGLE_COUNT` angles, each of its meshes (its figure, its base
-// And its levels) fitted as a part of its own
-export const STATUE_BAND_HEIGHT = 0.1;
-export const STATUE_RADIUS_TOLERANCE = 0.02;
-export const STATUE_ANGLE_COUNT = 16;
+// The Statue of The Seven is fitted piece by piece, each piece of its meshes as the statue kit's stacks, their sections
+// Five centimetres apart: one upright, its radii at 32 angles, or split into as many blades as `STATUE_BLADE_COUNTS`
+// Holds, each along its own length, its radii at 12 angles, a blade of fewer than `STATUE_BLADE_MIN_SAMPLES` of the
+// Piece's samples left out. A piece is read as `STATUE_FIT_SAMPLE_COUNT` points spread over its surface by area, and
+// Each candidate is scored on `STATUE_SCORE_SAMPLE_COUNT` of each surface, its distance over the three centimetres a
+// Pixel of the Windrise reference spans at the statue. Its numbers are kept to the millimetre, since a leaf's blade is
+// Under a centimetre thick
+export const STATUE_ANGLE_COUNT = 32;
+export const STATUE_SECTION_HEIGHT = 0.05;
+export const STATUE_BLADE_ANGLE_COUNT = 12;
+export const STATUE_BLADE_COUNTS: readonly number[] = [1, 2, 4, 6, 10];
+export const STATUE_BLADE_MIN_SAMPLES = 20;
+export const STATUE_FIT_SAMPLE_COUNT = 20_000;
+export const STATUE_SCORE_SAMPLE_COUNT = 2000;
+export const STATUE_FIT_DISTANCE_METRES = 0.03;
+export const STATUE_DECIMALS = 3;
+// Every piece of the statue samples and splits from this seed, so the same export always fits the same way
+export const STATUE_FIT_SEED = 12345;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer

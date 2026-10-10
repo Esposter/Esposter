@@ -17,7 +17,10 @@ import { join } from "node:path";
 
 // Builds one workspace package through the cache, after bringing up to date every workspace package it links, so a
 // Fresh worktree's leaf package builds its whole chain: a hit restores its `dist`, a miss builds it in a slot and stores it
-export const buildPackageCached = (packageDirectory: string, visiting = new Set<string>()): BuildCacheOutcome => {
+export const buildPackageCached = (
+  packageDirectory: string,
+  visiting: ReadonlySet<string> = new Set<string>(),
+): BuildCacheOutcome => {
   if (visiting.has(packageDirectory))
     throw new InvalidOperationError(Operation.Create, packageDirectory, "its workspace dependencies form a cycle");
 

@@ -87,6 +87,12 @@ export const BARK_DETAIL = getPartDetail(surfaces.Oak, OAK_BARK_PART);
 export const LEAF_DETAIL = getPartDetail(surfaces.Oak, OAK_LEAF_PART);
 export const PAVING_COLOR = surfaces.Paving.color;
 export const PAVING_DETAIL = surfaces.Paving.detail;
+// The low domes the plants other than trees stand as, in the ground's own green and detail, scaled to a tuft's height
+export const PLANT_DOME_COLOR = surfaces.Ground.color;
+export const PLANT_DOME_DETAIL = surfaces.Ground.detail;
+export const PLANT_DOME_SCALE: [number, number, number] = [0.4, 0.3, 0.4];
+// A plant prefab whose name holds this is a tree, drawn as the oak's impostor, and every other plant as a low dome
+export const TREE_PREFAB_NAME_PART = "Tree";
 export const getStatuePartColor = (part: string): string => getPartColor(surfaces.Statue, part);
 export const getStatuePartDetail = (part: string): SurfaceDetail => getPartDetail(surfaces.Statue, part);
 // The ramp every material shades through: a narrow step, a little past the grazing angle

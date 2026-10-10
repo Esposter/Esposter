@@ -1,0 +1,918 @@
+{
+  "GrpMainPage": { "anchorMax": [1, 1], "anchorMin": [0, 0], "pivot": [0.5, 0.5], "position": [0, 0], "size": [0, 0] },
+  "GrpMainPage/ScreenEffect": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/InputController": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/InputController/InputEasyTouch": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/InputController/MoveJoystick": {
+    "anchorMax": [0.34, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [0, 0],
+    "size": [-36, 340]
+  },
+  "GrpMainPage/InputController/MoveJoystick/JoystickAreaRun": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [295, 319],
+    "size": [100, 100]
+  },
+  "GrpMainPage/InputController/MoveJoystick/JoystickAreaRun/JoystickAreaSprint": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/InputController/MoveJoystick/JoystickAreaWalk": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [295, 319],
+    "size": [100, 100]
+  },
+  "GrpMainPage/InputController/MoveJoystick/RangeDebug": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/InputController/MoveJoystick/StickTail": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 1],
+    "position": [320, 360],
+    "scale": [0, 0],
+    "size": [76, 44]
+  },
+  "GrpMainPage/InputController/MoveJoystick/StickHead": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [320, 360],
+    "scale": [0, 0],
+    "size": [88, 88]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4": {
+    "anchorMax": [0.34, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [0, 0],
+    "size": [-36, 340]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/ExtendTouch": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "size": [0, 80]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [102, 102],
+    "size": [204, 204]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/ImgJoyStickBack": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [204, 204]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/GrpMarkWalk": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [0.75, 0.75],
+    "size": [204, 204]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/GrpMarkWalk/ImgMarkWalk": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 88],
+    "size": [164, 79]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/GrpMarkRun": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [204, 204]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/GrpMarkRun/ImgMarkRun": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 88],
+    "size": [164, 79]
+  },
+  "GrpMainPage/InputController/MoveJoystick_H4/GrpJoyStick/ImgJoyStickHead": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [64, 64]
+  },
+  "GrpMainPage/InputController/Temp": {
+    "anchorMax": [0.34, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [0, 0],
+    "size": [-36, 340]
+  },
+  "GrpMainPage/InputController/Temp/JoystickBack": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [204, 204]
+  },
+  "GrpMainPage/InputController/Temp/JoystickBack/JoystickMarkRun": {
+    "anchorMax": [0.5, 1],
+    "anchorMin": [0.5, 1],
+    "pivot": [0.5, 1],
+    "position": [0, 26],
+    "size": [164, 79]
+  },
+  "GrpMainPage/InputController/Temp/JoystickBack/JoystickMarkWalk": {
+    "anchorMax": [0.5, 1],
+    "anchorMin": [0.5, 1],
+    "pivot": [0.5, 1],
+    "position": [0, 26],
+    "size": [164, 79]
+  },
+  "GrpMainPage/InputController/Temp/JoystickBack/JoystickHead": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [64, 64]
+  },
+  "GrpMainPage/InputController/MonsterDebugInput": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 100]
+  },
+  "GrpMainPage/AimContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/SlotLeft": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [83, 360],
+    "size": [100, 100]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft_Custom": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [83, 360],
+    "size": [100, 100]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft_Custom/ProgressFill": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [0.84, 0.84],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft_Custom/BotNum": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft_Custom/UIEffectContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/SlotLeft/SkillLeft_Custom/Effect_Full": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/Crosshair": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [48, 48]
+  },
+  "GrpMainPage/AimContainer/Crosshair/ImgAimCross_02": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 100]
+  },
+  "GrpMainPage/AimContainer/Crosshair/ImgAimCross_01": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [12, 12]
+  },
+  "GrpMainPage/AimContainer/Crosshair/ImgAimCross_00": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [48, 48]
+  },
+  "GrpMainPage/AimContainer/Crosshair/ImgAimCross_00/Img02": {
+    "anchorMax": [1, 0.5],
+    "anchorMin": [1, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [10, 18]
+  },
+  "GrpMainPage/AimContainer/Crosshair/ImgAimCross_00/Img03": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [10, 18]
+  },
+  "GrpMainPage/AimContainer/CrosshairContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/AimContainer/GrpRegionPlay": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/ActionPanelContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [1, 0],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/ActionPanelContainer/GrpHideActionButton": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, -1000],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpActionBtn": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0.62, 0],
+    "pivot": [1, 0],
+    "position": [0, 0],
+    "size": [-89, 400]
+  },
+  "GrpMainPage/GrpActionBtn/BtnOpinion": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 50]
+  },
+  "GrpMainPage/ParticleDamageTextContainer": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 100]
+  },
+  "GrpMainPage/DungeonUIContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/DungeonUIContainer/TowerHintText": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [30, -286],
+    "size": [400, 180]
+  },
+  "GrpMainPage/CountDownTextContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/VersusBattleContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MessagePromptContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 1],
+    "position": [0, 0],
+    "size": [0, 80]
+  },
+  "GrpMainPage/BtnReturnToQuestV2": {
+    "anchorMax": [0.42, 0.5],
+    "anchorMin": [0.19, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [-1, 1],
+    "size": [0, 60]
+  },
+  "GrpMainPage/ArrowPointContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/ArrowPointContainer/Follow": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/NetworkLatency": {
+    "anchorMax": [1, 1],
+    "anchorMin": [1, 1],
+    "pivot": [0, 0.5],
+    "position": [-104, -76],
+    "size": [88, 22]
+  },
+  "GrpMainPage/NetworkLatency/TxtNL": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [11, 0],
+    "size": [-34, 0]
+  },
+  "GrpMainPage/GrpMainBtn": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 1],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 1],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpTopPanel": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0.5, 1],
+    "pivot": [1, 1],
+    "position": [0, 0],
+    "size": [-170, 80]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpLeftPanel": {
+    "anchorMax": [0.38, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpLeftPanel/BtnChat": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [52, 60],
+    "size": [64, 64]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0.62, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnTestShakeOff": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [-115.6, 0],
+    "size": [88, 88]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnTestShakeOff/CptHighlight": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnTestShakeOff/BurOutline": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [24, 24]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnTestShakeOff/ImgFlickerHint": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [3.5, 3.5],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnToggleMove": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0.62, 0],
+    "pivot": [1, 0],
+    "position": [0, 0],
+    "size": [213, 400]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnToggleMove/Walk": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [168, 36],
+    "size": [76, 76]
+  },
+  "GrpMainPage/GrpMainBtn/GrpMainToggle/GrpRightPanel/BtnToggleMove/Run": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [168, 36],
+    "size": [48, 48]
+  },
+  "GrpMainPage/TopVerticalLayout": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/TeamBtnContainer": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0.78, 0],
+    "pivot": [1, 0],
+    "position": [0, 330],
+    "size": [0, 310]
+  },
+  "GrpMainPage/InteePanel": {
+    "anchorMax": [0.81, 0.68],
+    "anchorMin": [0.58, 0.32],
+    "pivot": [0, 0.5],
+    "position": [-64, 0],
+    "size": [128, 0]
+  },
+  "GrpMainPage/GameInfo": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GameInfo/PlayerExpBar": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "size": [0, 5]
+  },
+  "GrpMainPage/GameInfo/PlayerExpBar/TxtPlayerLv": {
+    "anchorMax": [0, 0.5],
+    "anchorMin": [0, 0.5],
+    "pivot": [0, 0],
+    "position": [12, 6],
+    "scale": [0.8, 0.8],
+    "size": [160, 30]
+  },
+  "GrpMainPage/GameInfo/SPBar": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 80],
+    "size": [64, 64]
+  },
+  "GrpMainPage/GameInfo/SPBarV2": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/GameInfo/HPBarContainer": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 58],
+    "scale": [0.5, 0.5],
+    "size": [512, 20]
+  },
+  "GrpMainPage/GameInfo/HPBarCustomLevelContainer": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 58],
+    "scale": [0.5, 0.5],
+    "size": [512, 20]
+  },
+  "GrpMainPage/GameInfo/FetterUp": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 100]
+  },
+  "GrpMainPage/GameInfo/Hints": {
+    "anchorMax": [0.69, 0.75],
+    "anchorMin": [0.69, 0.75],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [100, 100]
+  },
+  "GrpMainPage/MessagePush": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0],
+    "position": [0, 108],
+    "size": [-800, 216]
+  },
+  "GrpMainPage/MessagePush/TalkDialogContainer": {
+    "anchorMax": [1, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "size": [0, 92]
+  },
+  "GrpMainPage/MessagePush/MessageContainer": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "size": [280, 124]
+  },
+  "GrpMainPage/MapInfo": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/BtnExitDungeon": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [48, -37],
+    "size": [48, 48]
+  },
+  "GrpMainPage/MapInfo/BtnClock": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [26, -6],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpButtons": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [200, 0],
+    "size": [300, 74]
+  },
+  "GrpMainPage/MapInfo/GrpLimitRegion": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpLimitRegion/ImgRadialShade": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [0, 0],
+    "size": [480, 480]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/RingFormImg": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [-100, 136],
+    "size": [180, 180]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/RingFormImg/ImgWarning": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [256, 256]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/RingFormImg/HazardousAreaHint": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpBackMap": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [-100, 136],
+    "size": [180, 180]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpBackMap/GrgMiniBackRotate": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "scale": [2, 2],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [50, -14],
+    "scale": [0.6, 0.6],
+    "size": [300, 300]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/MaskedLayer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer0": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer1": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer2": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer3": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer4": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer4/MarkSightFan": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0],
+    "position": [0, 0],
+    "scale": [1.25, 1.25],
+    "size": [133, 97]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer4/MarkSouth": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [-48, -48]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer4/MarkSouth/ImgSouth": {
+    "anchorMax": [0.5, 1],
+    "anchorMin": [0.5, 1],
+    "pivot": [0.5, 0.5],
+    "position": [0, -5],
+    "size": [28, 28]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/MarkContainer/Layer4/MarkLocalAvatar": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [50, 52]
+  },
+  "GrpMainPage/MapInfo/GrpMiniMap/GrpMap/UnusedMarkContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpFactor": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnToggleFactorInfo": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnToggleElementInfo": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnToggleRestrictionsInfo": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnClimateInfo": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnClimateInfo/Eff_UI_Erosion": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnClimateInfo/Eff_UI_Erosion/Img_Erosion_Full": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [32, 32]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/BtnClimateInfo/Eff_UI_Erosion/Img_CanvasGroupLoop_Legacy": {
+    "anchorMax": [0.5, 0.5],
+    "anchorMin": [0.5, 0.5],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [58, 58]
+  },
+  "GrpMainPage/MapInfo/GrpFactor/GrpSituationButton": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/GrpFactorContainer": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [33, -103],
+    "size": [62, 62]
+  },
+  "GrpMainPage/MapInfo/BtnToggleQuest": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0.5, 0.5],
+    "position": [49, -171],
+    "size": [44, 44]
+  },
+  "GrpMainPage/MapInfo/BtnPlayerProfile": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 1],
+    "pivot": [0, 1],
+    "position": [22, -12],
+    "size": [56, 56]
+  },
+  "GrpMainPage/ChatArea": {
+    "anchorMax": [0, 0],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0],
+    "position": [32, 48],
+    "size": [348, 0]
+  },
+  "GrpMainPage/MPPanel": {
+    "anchorMax": [0, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 0.5],
+    "position": [32, -4],
+    "size": [200, -408]
+  },
+  "GrpMainPage/MPPanel/PlayerList": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0, 1],
+    "position": [0, -30],
+    "size": [0, -60]
+  },
+  "GrpMainPage/MPPanel/PlayerList/ScrollbarVertical": {
+    "anchorMax": [1, 1],
+    "anchorMin": [1, 0],
+    "pivot": [0, 1],
+    "position": [8, 0],
+    "size": [2, 0]
+  },
+  "GrpMainPage/BubblePanelContainer": {
+    "anchorMax": [0.5, 0],
+    "anchorMin": [0.5, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/EventPrompt": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/ForeContainer": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  },
+  "GrpMainPage/Custom": {
+    "anchorMax": [1, 1],
+    "anchorMin": [0, 0],
+    "pivot": [0.5, 0.5],
+    "position": [0, 0],
+    "size": [0, 0]
+  }
+}

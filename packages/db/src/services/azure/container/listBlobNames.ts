@@ -1,26 +1,16 @@
 import type { ListBlobNamesOptions } from "#src/models/azure/container/ListBlobNamesOptions";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { listBlobItems } from "#src/services/azure/container/listBlobItems";
 
-// Always flat, never `listBlobsByHierarchy`: every prefix here names a directory without its trailing delimiter,
-// And a hierarchy listing classifies everything below such a prefix as a BlobPrefix rather than a BlobItem — so
-// It resolves to zero blobs and hands its caller a successful empty clone or teardown for a full directory.
 export const listBlobNames = async (
   containerClient: ContainerClient,
   prefix: string,
   { createdBefore }: ListBlobNamesOptions = {},
-): Promise<string[]> => {
-  const blobNames: string[] = [];
-  const pages = containerClient.listBlobsFlat({ prefix }).byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE });
-  for await (const { segment } of pages)
-    blobNames.push(
-      ...segment.blobItems
-        // `createdOn` is optional on the listing, and dropping the blobs missing it would turn a sweep into a
-        // Silent no-op that still reports success. `lastModified` is always present and never earlier, so it
-        // Only ever holds a blob back longer — never deletes one the cutoff meant to spare
-        .filter(({ properties }) => !createdBefore || (properties.createdOn ?? properties.lastModified) < createdBefore)
-        .map(({ name }) => name),
-    );
-  return blobNames;
-};
+): Promise<string[]> =>
+  // `createdOn` is optional on the listing, and dropping the blobs missing it would turn a sweep into a silent no-op
+  // That still reports success. `lastModified` is always present and never earlier, so it only ever holds a blob back
+  // Longer — never deletes one the cutoff meant to spare
+  (await listBlobItems(containerClient, prefix))
+    .filter(({ createdOn, lastModified }) => !createdBefore || (createdOn ?? lastModified) < createdBefore)
+    .map(({ name }) => name);

@@ -19,6 +19,14 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
   // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
   [DerivedAssetComponent.Fontaine]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
+  // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
+  // Its anchor is `TeamBtn_MP`, an Animator in no other block, since `GrpMainPage` is in four
+  [DerivedAssetComponent.Hud]: {
+    clipPattern: "^Ani_InLevelMainPage_",
+    interface: { anchorPattern: "^TeamBtn_MP$", root: "InLevelMainPage" },
+    roots: [],
+    screen: "HudScreen",
+  },
   [DerivedAssetComponent.Inazuma]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Liyue]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Login]: {

@@ -9,11 +9,23 @@ import { WitnessTarget, WitnessTargets } from "#parity/models/witness/WitnessTar
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { createOcclusionNode, StoneNodeMaterial } from "genshin-engine";
-import { Color, DirectionalLight, FloatType, Layers, Light, Mesh, RenderTarget, Vector2, Vector3 } from "three";
+import {
+  Color,
+  DirectionalLight,
+  DoubleSide,
+  FloatType,
+  Layers,
+  Light,
+  Mesh,
+  RenderTarget,
+  Vector2,
+  Vector3,
+} from "three";
 import {
   cameraViewMatrix,
   float,
   normalWorld,
+  normalWorldGeometry,
   pass,
   positionGeometry,
   positionView,
@@ -130,26 +142,30 @@ export const renderWitnessTargets = async (
     }
     const material = new MeshBasicNodeMaterial();
     material.toneMapped = false;
-    // The source's cut, so a card its material clips is drawn clipped in every target too, as the source draws it
+    // The source's cut and its sides, so a card its material clips is drawn clipped in every target too, and a face it
+    // Draws from behind is drawn from behind, as the source draws it
     if (mesh.material instanceof NodeMaterial) {
       material.opacityNode = mesh.material.opacityNode;
       material.alphaTest = mesh.material.alphaTest;
+      material.side = mesh.material.side;
     }
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
-    // From the view into the world as `normalWorld` takes the geometry's
+    // From the view into the world as `normalWorld` takes the geometry's. A face drawn from behind writes its geometry's
+    // Own normal, never the flip `normalWorld` gives a back face: a leaf card's normal is its crown's from either side
     const sourceNormal =
       mesh.material instanceof NodeMaterial ? (mesh.material.normalNode as Node<"vec3"> | null) : null;
+    const geometryNormal = material.side === DoubleSide ? normalWorldGeometry : normalWorld;
     const worldNormal = sourceNormal
       ? sourceNormal.transformNormalByInverseViewMatrix(cameraViewMatrix).normalize()
-      : normalWorld;
+      : geometryNormal;
     const emission =
       mesh.material instanceof StoneNodeMaterial ? (mesh.material.emissiveNode as Node<"vec3"> | null) : null;
     const targetNodeMap: Record<Exclude<WitnessTarget, WitnessTarget.Shadow>, Node<"vec4">> = {
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),
       [WitnessTarget.Emission]: vec4(emission ?? vec3(0), 1),
-      [WitnessTarget.GeometryNormal]: vec4(normalWorld.mul(0.5).add(0.5), 1),
+      [WitnessTarget.GeometryNormal]: vec4(geometryNormal.mul(0.5).add(0.5), 1),
       // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
       // Normal's negative components; read back, it is let down again
       [WitnessTarget.Normal]: vec4(worldNormal.mul(0.5).add(0.5), 1),

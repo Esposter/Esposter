@@ -59,9 +59,11 @@ export const resolveImportTarget = (
   packageDirectory: string,
   aliases: Readonly<Record<string, unknown>>,
 ): ImportTarget | undefined => {
+  // A Vite query (`?worker`, `?url`, `?raw`) names how the module is imported, not a file, so the path is probed without it
+  const specifierPath = specifier.split("?")[0] ?? specifier;
   let path: string | undefined;
-  if (specifier.startsWith(".")) path = posix.join(posix.dirname(importingPath), specifier);
-  else if (specifier.startsWith("#")) path = getAliasPath(specifier, packageDirectory, aliases);
+  if (specifierPath.startsWith(".")) path = posix.join(posix.dirname(importingPath), specifierPath);
+  else if (specifierPath.startsWith("#")) path = getAliasPath(specifierPath, packageDirectory, aliases);
   if (path === undefined || path === ".." || path.startsWith("../")) return undefined;
   return { candidates: PROBE_SUFFIXES.map((suffix) => `${path}${suffix}`), path };
 };

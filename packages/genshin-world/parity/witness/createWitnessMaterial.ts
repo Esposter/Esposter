@@ -7,6 +7,7 @@ import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
 import { LEAF_SHADER } from "#parity/witness/constants";
 import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
 import { StoneNodeMaterial } from "genshin-engine";
+import { DoubleSide } from "three";
 import { color, float, mix, normalMap, normalView, positionViewDirection, step, texture, vec3 } from "three/tsl";
 
 // One exported material drawn as the stone's shader writes it into the game's G-buffer (`miHoYo/Scene/Login Base`):
@@ -30,9 +31,12 @@ export const createWitnessMaterial = (
   const diffuse = getTexture(WitnessProperty.MainTexture);
   const tint = color(red, green, blue);
   material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
-  // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader clips them
+  // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader
+  // Clips them, and drawn from both sides: the leaf mesh holds no back face for any card and its normals are a field
+  // Over the crown at right angles to the cards, so a card culled from behind would vanish from every view behind it
   if (shader === LEAF_SHADER) {
     material.userData.isLeafCard = true;
+    material.side = DoubleSide;
     if (diffuse) {
       material.opacityNode = texture(diffuse).a;
       material.alphaTest = floats[WitnessProperty.Cutoff] ?? 0;

@@ -4,19 +4,17 @@ import type { Impostor, LightUniforms, ToonNodeMaterial, WindUniforms } from "ge
 import type { DataTexture } from "three";
 
 import { BARK_COLOR, BARK_DETAIL, LEAF_COLOR, LEAF_DETAIL } from "#src/services/windrise/constants";
+import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { TreeSpeciesOptionsMap } from "#src/services/world/TreeSpeciesOptionsMap";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import {
-  bakeImpostor,
   createDitherFadeNode,
   createImpostorMaterial,
   createLeafMaterial,
-  createLeafShapeNode,
   createToonMaterial,
   createTreeGeometry,
   IMPOSTOR_CROSSFADE_SHARE,
-  IMPOSTOR_RESOLUTION,
   IMPOSTOR_SWITCH_HEIGHTS,
 } from "genshin-engine";
 import { Group, MathUtils, Mesh, PlaneGeometry, Vector3 } from "three";
@@ -64,14 +62,7 @@ onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera || !isWebGPURenderer(renderer)) return;
   if (!impostor || !impostorMesh) {
-    impostor = bakeImpostor(
-      renderer,
-      [
-        { color: BARK_COLOR, geometry: branchGeometry },
-        { color: LEAF_COLOR, geometry: leafGeometry, opacityNode: createLeafShapeNode() },
-      ],
-      IMPOSTOR_RESOLUTION,
-    );
+    impostor = bakeTreeImpostor(renderer, branchGeometry, leafGeometry);
     const { bottom, height, width } = impostor;
     impostorMesh = new Mesh(
       new PlaneGeometry(width, height).translate(0, bottom + height / 2, 0),

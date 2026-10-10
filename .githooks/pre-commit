@@ -34,7 +34,8 @@ if [ -s "$LINT_FILE" ]; then
     tr '\n' '\0' < "$LINT_FILE" | PATH="$TOOLS_ROOT/node_modules/.bin:$PATH" xargs -0 -n 50 "$TOOLS_ROOT/node_modules/.bin/oxlint" -c "$TOOLS_ROOT/oxlint.config.ts" &
   fi
   lintPids="$lintPids $!"
-  if [ -n "$OWN_INSTALL" ]; then
+  # A narrow install (the fleet's non-app lane) never prepares the app, whose generated Nuxt config ESLint imports
+  if [ -n "$OWN_INSTALL" ] && [ -e apps/web/.nuxt/eslint.config.mjs ]; then
     while IFS= read -r file; do
       dir=$(dirname "$file")
       while [ "$dir" != . ] && ! grep -q '"lint":' "$dir/package.json" 2>/dev/null; do dir=$(dirname "$dir"); done
@@ -47,7 +48,7 @@ if [ -s "$LINT_FILE" ]; then
     done
   else
     # ESLint's config imports the workspace's own packages and the app's generated Nuxt config, which only this worktree's install holds
-    echo "pre-commit: ESLint skipped, this worktree has no install to load its config from. The push's Lint job runs it" >&2
+    echo "pre-commit: ESLint skipped, this worktree has no app install to load its config from. The push's Lint job runs it" >&2
   fi
   for pid in $lintPids; do wait "$pid" || lintFailed=1; done
 fi

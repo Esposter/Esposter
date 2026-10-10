@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-08T12:58:59.312Z
-- Commit: ee45b4328a
+- Date: 2026-10-09T08:05:06.075Z
+- Commit: 21511bd91e
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,12 +20,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------- | ------- | --------- | ------- | -------- | ------- |
-| 16 angles | 1.00×   | 0.0492    | ±10.80% | 0.0582   | 10      |
-| 32 angles | 0.88×   | 0.0558    | ±9.59%  | 0.0724   | 10      |
+| 12 angles | 1.00×   | 0.0276    | ±15.56% | 0.0398   | 10      |
+| 32 angles | 0.47×   | 0.0590    | ±14.88% | 0.0777   | 10      |
 
 ## computeStatueSurface > 64 sections
 
-| task      | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| --------- | ------- | --------- | ------ | -------- | ------- |
-| 16 angles | 1.00×   | 0.1867    | ±9.86% | 0.2465   | 10      |
-| 32 angles | 0.53×   | 0.3518    | ±5.90% | 0.3840   | 10      |
+| task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------- | ------- | --------- | ------- | -------- | ------- |
+| 12 angles | 1.00×   | 0.0998    | ±43.08% | 0.2427   | 10      |
+| 32 angles | 0.59×   | 0.1691    | ±47.07% | 0.4371   | 10      |

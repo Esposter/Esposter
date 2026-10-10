@@ -1,32 +1,16 @@
 import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob";
 
-import { JSON_BLOB_COMPRESSION_LEVEL, MAX_CONTENT_ENCODING_WINDOW_LOG } from "#src/services/azure/container/constants";
-import { promisify } from "node:util";
-import { constants, zstdCompress } from "node:zlib";
+import { compressJson } from "#src/services/azure/container/compressJson";
+import { uploadCompressedJson } from "#src/services/azure/container/uploadCompressedJson";
 
-const compress = promisify(zstdCompress);
-// The one way a JSON document is stored: a standalone zstd frame the blob serves as `Content-Encoding: zstd`, so a
-// Browser reading it through a SAS receives the JSON while every server reader decompresses it itself
-// (readJsonBlob). Compressed on the libuv threadpool, so no request waits behind it. Returns the stored length,
-// Which is what an owner is charged, and the ETag the blob now holds, which a conditional write checks against
-// `conditions` passes an `ifMatch` or an `ifNoneMatch` through to the upload, so a write over a changed blob is refused
+// The one way a JSON document is stored: compressed at the default level and uploaded, so a browser reading it through a
+// SAS receives the JSON while every server reader decompresses it itself (readJsonBlob). Returns the stored length, which
+// Is what an owner is charged, and the ETag the blob now holds, which a conditional write checks against `conditions`
+// Passes an `ifMatch` or an `ifNoneMatch` through to the upload, so a write over a changed blob is refused
 export const writeJsonBlob = async (
   containerClient: ContainerClient,
   blobName: string,
   serializedJson: string,
   conditions?: BlobRequestConditions,
-): Promise<{ etag?: string; size: number }> => {
-  const compressedJson = await compress(serializedJson, {
-    params: {
-      [constants.ZSTD_c_compressionLevel]: JSON_BLOB_COMPRESSION_LEVEL,
-      [constants.ZSTD_c_windowLog]: MAX_CONTENT_ENCODING_WINDOW_LOG,
-    },
-  });
-  const { etag } = await containerClient
-    .getBlockBlobClient(blobName)
-    .upload(compressedJson, compressedJson.byteLength, {
-      blobHTTPHeaders: { blobContentEncoding: "zstd", blobContentType: "application/json" },
-      conditions,
-    });
-  return { etag, size: compressedJson.byteLength };
-};
+): Promise<{ etag?: string; size: number }> =>
+  uploadCompressedJson(containerClient, blobName, await compressJson(serializedJson), { conditions });

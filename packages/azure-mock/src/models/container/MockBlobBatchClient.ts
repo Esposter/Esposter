@@ -9,11 +9,18 @@ import type {
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
 
-import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
+import {
+  BLOB_NOT_FOUND_ERROR_CODE,
+  BLOB_NOT_FOUND_MESSAGE,
+  CONDITION_NOT_MET_ERROR_CODE,
+  CONDITION_NOT_MET_MESSAGE,
+} from "#src/constants";
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getAzureErrorXml } from "#src/services/container/getAzureErrorXml";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
 import { getMockContainer } from "#src/services/container/getMockContainer";
+import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
@@ -34,8 +41,16 @@ export class MockBlobBatchClient implements BlobBatchClient {
   deleteBlobs(
     urls: string[],
     credential: AnonymousCredential | StorageSharedKeyCredential,
-    _options?: BlobDeleteOptions,
+    options?: BlobDeleteOptions,
   ): Promise<BlobBatchDeleteBlobsResponse> {
+    // Only `ifUnmodifiedSince` is reproduced, the one a conditional delete takes. Any other condition would be dropped
+    // Silently, so the mock refuses it instead of answering as if the condition held
+    const { ifUnmodifiedSince, ...unsupportedConditions } = options?.conditions ?? {};
+    const unsupportedConditionName = Object.entries(unsupportedConditions).find(
+      ([, value]) => value !== undefined,
+    )?.[0];
+    if (unsupportedConditionName !== undefined)
+      return Promise.reject(new NotImplementedError(`deleteBlobs with ${unsupportedConditionName}`));
     const subResponses: BatchSubResponse[] = [];
     let subResponsesSucceededCount = 0;
     let subResponsesFailedCount = 0;
@@ -49,6 +64,14 @@ export class MockBlobBatchClient implements BlobBatchClient {
       }
 
       const { blobName, containerName } = urlParts;
+
+      if (this.#checkIsModifiedSince(containerName, blobName, ifUnmodifiedSince)) {
+        subResponses.push(
+          this.#createFailedSubResponse(credential, 412, CONDITION_NOT_MET_ERROR_CODE, CONDITION_NOT_MET_MESSAGE),
+        );
+        subResponsesFailedCount++;
+        continue;
+      }
 
       if (deleteMockBlob(containerName, blobName)) {
         subResponses.push({
@@ -82,6 +105,16 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
   getContainer(containerName: string): MapValue<typeof MockContainerDatabase> {
     return getMockContainer(containerName);
+  }
+
+  // A blob written after the instant a conditional delete names is refused, as the service refuses it. A blob that is not
+  // There is not refused: it answers 404 the way an unconditional delete does
+  #checkIsModifiedSince(containerName: string, blobName: string, ifUnmodifiedSince?: Date): boolean {
+    return (
+      ifUnmodifiedSince !== undefined &&
+      getMockContainer(containerName).has(blobName) &&
+      readMockBlobDates(containerName, blobName).lastModified > ifUnmodifiedSince
+    );
   }
 
   #createFailedSubResponse(

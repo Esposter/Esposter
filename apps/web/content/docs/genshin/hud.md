@@ -7,6 +7,10 @@ description: The heads-up display over the world, holding only the pieces the wo
 
 While a player is in the world, the game keeps a heads-up display over it. The world's HUD is `Hud/Screen`, drawn in the interface library's `GameScreen` over the world's canvas, so its pieces are sized in the game's own units and hold on any window shape ([interface library](/docs/genshin/interface-library)).
 
+## Decisions
+
+- **The HUD's rects are the game's own tree.** The HUD's page is the `InLevelMainPage` GameObject in `00/04803507.blk`, found through its party button's Animator `TeamBtn_MP`, which no other block holds. Its tree holds the minimap, Paimon's button, the stamina meter, the party and the skill buttons, and `fitHud` writes its rects to `data/hud/interfaceRects.json` as the login's are fitted ([interface layout](/docs/genshin/interface-layout)).
+
 ## How it works
 
 ```mermaid
@@ -55,29 +59,32 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                    |
-| :------------------------------------------------------------------ | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Hud/Screen/Index.vue`        | The HUD: its pieces, their places and the slots others fill             |
-| `packages/genshin-world/src/components/Hud/PaimonButton/Index.vue`  | The corner button that opens the Paimon menu                            |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`       | The corner map                                                          |
-| `packages/genshin-world/src/components/Hud/Quest/Index.vue`         | The quest tracker under the minimap                                     |
-| `packages/genshin-world/src/components/Hud/Stamina/Index.vue`       | The stamina meter beside the character                                  |
-| `packages/genshin-world/src/components/Hud/Party/Index.vue`         | The deployed team's portraits down the right                            |
-| `packages/genshin-world/src/components/Hud/Health/Index.vue`        | The member on the field's level and HP at the bottom's middle           |
-| `packages/genshin-world/src/components/Hud/Skills/Index.vue`        | The skill and burst buttons at the bottom right                         |
-| `packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts` | The HUD's parity fixture: the frame's party, member and tracked quest   |
-| `packages/genshin-world/src/models/hud/HudMember.ts`                | The field member's figures the health and skill buttons read            |
-| `packages/genshin-world/src/components/Hud/Touch/Index.vue`         | The touch controls under the pieces                                     |
-| `packages/genshin-world/src/models/hud/HudFrame.ts`                 | What the HUD reads off the world each frame                             |
-| `packages/genshin-world/src/services/quest/getQuestCounter.ts`      | A step's counted objective, as the tracker and the quest screen show it |
-| `packages/genshin-world/src/services/shared/getActionKeyCode.ts`    | The key a pressed piece holds in the world's input                      |
-| `packages/genshin-world/src/components/World/Session/Index.vue`     | Mounts the HUD, fills its slots with each piece's state, navigates on V |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`    | Raises the beam over the navigated objective in the world's group       |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`  | Which screens hide the HUD                                              |
+| File                                                                    | Role                                                                     |
+| :---------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Hud/Screen/Index.vue`            | The HUD: its pieces, their places and the slots others fill              |
+| `packages/genshin-world/src/data/hud/interfaceRects.json`               | The HUD's interface rects, fitted from the game's tree                   |
+| `scripts/src/services/genshinAssets/fit/fitHud.ts`                      | Fits the HUD's interface rects from its exported tree                    |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Names the HUD's page: its anchor `TeamBtn_MP` and root `InLevelMainPage` |
+| `packages/genshin-world/src/components/Hud/PaimonButton/Index.vue`      | The corner button that opens the Paimon menu                             |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`           | The corner map                                                           |
+| `packages/genshin-world/src/components/Hud/Quest/Index.vue`             | The quest tracker under the minimap                                      |
+| `packages/genshin-world/src/components/Hud/Stamina/Index.vue`           | The stamina meter beside the character                                   |
+| `packages/genshin-world/src/components/Hud/Party/Index.vue`             | The deployed team's portraits down the right                             |
+| `packages/genshin-world/src/components/Hud/Health/Index.vue`            | The member on the field's level and HP at the bottom's middle            |
+| `packages/genshin-world/src/components/Hud/Skills/Index.vue`            | The skill and burst buttons at the bottom right                          |
+| `packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts`     | The HUD's parity fixture: the frame's party, member and tracked quest    |
+| `packages/genshin-world/src/models/hud/HudMember.ts`                    | The field member's figures the health and skill buttons read             |
+| `packages/genshin-world/src/components/Hud/Touch/Index.vue`             | The touch controls under the pieces                                      |
+| `packages/genshin-world/src/models/hud/HudFrame.ts`                     | What the HUD reads off the world each frame                              |
+| `packages/genshin-world/src/services/quest/getQuestCounter.ts`          | A step's counted objective, as the tracker and the quest screen show it  |
+| `packages/genshin-world/src/services/shared/getActionKeyCode.ts`        | The key a pressed piece holds in the world's input                       |
+| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the HUD, fills its slots with each piece's state, navigates on V  |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Raises the beam over the navigated objective in the world's group        |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`      | Which screens hide the HUD                                               |
 
 ## Notes
 
-- **Its places and looks are provisional.** Each piece is to sit in the rect of its place in the HUD's own RectTransform tree, as the login's interface does ([interface layout](/docs/genshin/interface-layout)), once the HUD's block is found among the game's assets and its rects are fitted. Until then each place, size and colour is a provisional value marked in its file, as are the meter's offset, arc, flash and fades and its low share (`STAMINA_METER_LOW_SHARE`), the party's rows, the health bar's looks, and the skill and burst buttons' sizes, places, colours, sweep and glow. The Paimon button's mark waits on a trace of the game's ([roadmap](/docs/genshin/roadmap)).
+- **Its places and looks are provisional.** Each piece is to sit in the rect of its place in the HUD's own RectTransform tree, as the login's interface does ([interface layout](/docs/genshin/interface-layout)). The tree's rects are fitted; placing each piece by them is the next step. Until then each place, size and colour is a provisional value marked in its file, as are the meter's offset, arc, flash and fades and its low share (`STAMINA_METER_LOW_SHARE`), the party's rows, the health bar's looks, and the skill and burst buttons' sizes, places, colours, sweep and glow. The Paimon button's mark waits on a trace of the game's ([roadmap](/docs/genshin/roadmap)).
 - **Its parity is scored over the recording it is drawn over.** `hud-world-pickup` is the English PC client at 70 seconds of a public recording, cropped to the game's screen (its letterbox bars are black) and scored over the part clear of its subtitles. The recording's own HUD sits under ours, so the composite scores a placement and a look but cannot see a piece the HUD drops; `world-hud-hidden.mkv` on the Recordings owed list gives the bare scene. Scored: a mean difference of 0.95%, FLIP 0.0488, before the screen had a fixture at all, so there is no earlier score to set it against.
 - **What the composite shows is not yet the game's.** The minimap is a plain disc where the game paints its terrain, the tracker lacks the altitude line the game shows under the quest title ("Higher 1540m"), the reference names the Traveler "Tabibito" where the English text gives "Traveler" (a call for the user), and the burst energy and the skill cooldown in the fixture are provisional, read as the recording shows them until `world-skill-burst.mkv` lands.
 - **The meter has one section.** The game cuts it into sections of 100, and nothing raises the pool past `STAMINA_MAX` yet.

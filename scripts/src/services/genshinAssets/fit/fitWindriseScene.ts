@@ -17,11 +17,11 @@ import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-worl
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
-// Trunk's taper read off the export, its statue as one radial profile per mesh, its families' surface colours and each
-// Part's as the export's textures paint them, and its water's level over the oak's foot, the last three exact. Every region's capital is placed
-// With the landmarks, round the same origin, since the oak's foot is the whole world's. The statue's angle count is its
-// Own option, the rest ignore it
-export const fitWindriseScene = (only: readonly string[] = [], angleCount?: number): Promise<string> =>
+// Trunk's taper read off the export, its statue as stacks fitted piece by piece to its meshes, its families' surface
+// Colours and each part's as the export's textures paint them, and its water's level over the oak's foot, the last three
+// Exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's foot is the whole
+// World's
+export const fitWindriseScene = (only: readonly string[] = []): Promise<string> =>
   runFits(
     {
       ground: () => fitRegionGround(DerivedAssetComponent.Windrise, { x: 0, z: 0 }),
@@ -33,7 +33,7 @@ export const fitWindriseScene = (only: readonly string[] = [], angleCount?: numb
       oak: fitWindriseOak,
       paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
       plants: async () => [await writeWorldData("windrise/plants.json", await fitWindrisePlants())],
-      statue: () => fitWindriseStatue(angleCount),
+      statue: fitWindriseStatue,
       surfaces: async () => [
         await writeWorldData(
           "windrise/surfaces.json",

@@ -1,7 +1,7 @@
 const FULL_TURN = Math.PI * 2;
 
 // The sector of `angleCount` sectors about an axis a point stands in, counted from +x toward +z and each rounded to the
-// Nearest, so the sector a point reads is the one its radius is kept under (`fitRadialProfile`, `assignSectionParts`)
+// Nearest, so the sector a point reads is the one its radius is kept under (`fitRadialProfile`, `fitStatueStack`)
 export const toRadialSector = (
   x: number,
   z: number,

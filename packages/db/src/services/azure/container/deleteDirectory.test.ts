@@ -85,7 +85,7 @@ describe(deleteDirectory, () => {
     const { containerClient } = setupContainerClient([`${prefix}/a`], 403);
 
     await expect(deleteDirectory(containerClient, prefix)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Delete, name: deleteDirectory, 403]`,
+      `[InvalidOperationError: Invalid operation: Delete, name: deleteBlobs, 403]`,
     );
   });
 

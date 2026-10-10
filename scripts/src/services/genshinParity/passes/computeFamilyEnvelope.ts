@@ -2,7 +2,7 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { closeFamilyMask } from "#src/services/genshinParity/passes/closeFamilyMask";
 import { computeBoxSums } from "#src/services/genshinParity/passes/computeBoxSums";
-import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
+import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
 
 // A family's envelope at a radius: its pixels closed, its depth averaged over the family within the radius, and its
 // Normals averaged there and normalised, so a scattered family reads as the mass its cards make
@@ -19,7 +19,7 @@ export const computeFamilyEnvelope = (
   radius: number,
 ): FamilyEnvelope => {
   const pixelCount = width * height;
-  const mask = new Uint8Array(pixelCount);
+  const mask = readFamilyMask(targets.part, family, pixelCount);
   const depthValues = new Float32Array(pixelCount);
   const normalValues = [
     new Float32Array(pixelCount),
@@ -27,8 +27,7 @@ export const computeFamilyEnvelope = (
     new Float32Array(pixelCount),
   ] as const;
   for (let pixel = 0; pixel < pixelCount; pixel++) {
-    if (readTargetFamily(targets.part, pixel) !== family) continue;
-    mask[pixel] = 1;
+    if (mask[pixel] !== 1) continue;
     depthValues[pixel] = targets.depth[pixel * 4] ?? 0;
     for (const axis of [0, 1, 2] as const) normalValues[axis][pixel] = targets.normal[pixel * 4 + axis] ?? 0;
   }
