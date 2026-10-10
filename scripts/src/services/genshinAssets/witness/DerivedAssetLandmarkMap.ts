@@ -8,9 +8,11 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
-  // Inazuma City's landmarks name its capital's rigid meshes and their shares, which the extraction has not yet given:
-  // The keep's eaves and ledges, the platform's corners, the houses' bases and roofs and the pavilion's eaves, each read
-  // By eye off the reference's 4x crops (ParityReferenceMap's inazuma-city-location)
+  // Inazuma City's eleven landmarks (ParityReferenceMap's inazuma-city-location: the keep's eaves and ledge, the
+  // Platform's corners, a house's base and roof and the pavilion's eaves) name no mesh, so all eleven are dropped: the
+  // Extraction draws railings, roof trims and props within 600 metres of the capital, its largest a wharf platform 7.5
+  // Metres long, and the keep's and the houses' meshes its layout dumps name (Area_Dq_Build_MS_TsgHouse_02_Lod0,
+  // Area_Dq_Build_MS_CityHouse_04_Lod0) no OBJ exports, since its city blob roots only single-mesh props
   [DerivedAssetComponent.Inazuma]: {},
   // Liyue Harbor's six landmarks (ParityReferenceMap's liyue-harbor-location: the gate's and the tower's plinths) name
   // No mesh, so all six are dropped: the extraction holds nothing rigid within 140 metres of the harbour's anchor, its
