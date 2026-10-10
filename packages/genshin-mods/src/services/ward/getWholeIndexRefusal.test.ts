@@ -31,10 +31,29 @@ describe(getWholeIndexRefusal, () => {
     ["a whole-index add behind a pipe", "ls packages | xargs git add .", "git add ."],
     ["a whole-index add behind an AND", "cd packages && git add -A", "git add -A"],
     ["a whole-index add inside a shell command", 'bash -c "git add ."', "git add ."],
+    ["add the checkout's root", "git add :/", "git add ."],
+    ["add a dot with its slash", "git add ./", "git add ."],
+    ["restore the checkout's root", "git restore :/", "git restore ."],
+    ["checkout the checkout's root", "git checkout -- :/", "git checkout ."],
+    ["reset a commit with the checkout's root", "git reset HEAD :/", "git reset -- ."],
+    ["reset a lone operand, which may be a commit", "git reset HEAD", "git reset"],
   ])("refuses %s", (_description, command, form) => {
     expect.hasAssertions();
 
-    expect(getWholeIndexRefusal(command)).toBe(form);
+    expect(getWholeIndexRefusal(command)?.form).toBe(form);
+  });
+
+  test.each([
+    ["the session's own folder", "git clean -fd", ""],
+    ["a directory flag's folder", "git -C ../other clean -fd", "../other"],
+    ["each directory flag from the one before", "git -C ../other -C packages clean -fd", "../other/packages"],
+    ["the folder a cd before it moved to", "cd ../other && git clean -fd", "../other"],
+    ["a directory flag from the folder a cd moved to", "cd ../other && git -C packages add .", "../other/packages"],
+    ["the session's own folder past a cd home", "cd ~ && git clean -fd", ""],
+  ])("reads the folder git runs in from %s", (_description, command, directory) => {
+    expect.hasAssertions();
+
+    expect(getWholeIndexRefusal(command)?.directory).toBe(directory);
   });
 
   test.each([
@@ -44,6 +63,7 @@ describe(getWholeIndexRefusal, () => {
     ["restore a named path from the index", "git restore --staged packages/genshin-mods/src/register.ts"],
     ["reset a named path after the separator", "git reset -- packages/genshin-mods/src/register.ts"],
     ["reset the index to a commit for a named path", "git reset HEAD -- packages/genshin-mods/src/register.ts"],
+    ["reset a commit for a named path with no separator", "git reset HEAD packages/genshin-mods/src/register.ts"],
     ["reset only HEAD with soft", "git reset --soft HEAD~1"],
     ["checkout a named path", "git checkout -- packages/genshin-mods/src/register.ts"],
     ["checkout a branch", "git checkout ai/queue"],

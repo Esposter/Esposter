@@ -3,6 +3,7 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 import { atom, read } from "claude-code";
 
 import { InitialState } from "../InitialState";
+import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";
 import { getCheckoutRoot } from "./getCheckoutRoot";
 import { getRecordsPath } from "./getRecordsPath";
@@ -11,8 +12,9 @@ import { readRecords } from "./readRecords";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 
-// A whole-index git command is refused while the ward's records show another session editing this checkout. With the
-// Ward off nothing is recorded, so there is no peer to see and the command runs
+// A whole-index git command is refused while the ward's records show another session editing the checkout it runs in,
+// The session's folder moved by a `cd` before it and by its `-C`. With the Ward off nothing is recorded, so there is no
+// Peer to see and the command runs
 const wholeIndex = async (
   $: EngineInterface,
   command: string,
@@ -21,9 +23,9 @@ const wholeIndex = async (
   const refusal = getWholeIndexRefusal(command);
   if (refusal === undefined || !(await read($, enabledModsAtom)).ward) return proceed();
   const records = await readRecords($, await getRecordsPath($));
-  const checkoutRoot = await getCheckoutRoot($, await $.session.cwd());
+  const checkoutRoot = await getCheckoutRoot($, joinDirectory(await $.session.cwd(), refusal.directory));
   const peerPath = getCheckoutPeer(records, checkoutRoot, await $.session.id(), await $.clock.now());
-  return peerPath === undefined ? proceed() : { deny: getWholeIndexDenyReason(refusal, peerPath) };
+  return peerPath === undefined ? proceed() : { deny: getWholeIndexDenyReason(refusal.form, peerPath) };
 };
 
 // Any failure lets the command through, as the disk-scan guard's does: a guard that blocked on its own failure would

@@ -1,6 +1,7 @@
 import type { CommandRefusal } from "../shell/getShellRefusal";
 
 import { getShellRefusal } from "../shell/getShellRefusal";
+import { joinDirectory } from "../shell/joinDirectory";
 
 const GIT_NAMES: ReadonlySet<string> = new Set(["git", "git.exe"]);
 
@@ -12,7 +13,12 @@ const RESET_INDEX_MODES: ReadonlySet<string> = new Set(["--hard", "--keep", "--m
 
 const ADD_ALL_FLAGS: ReadonlySet<string> = new Set(["--all", "--update", "-A", "-u"]);
 
+// The pathspecs git reads as every path of the checkout, from its root or the folder the command runs in
+const WHOLE_CHECKOUT_PATHSPECS: ReadonlySet<string> = new Set([".", "./", ":/", ":/."]);
+
 const isFlag = (arg: string) => arg.startsWith("-");
+
+const isWholeCheckout = (operands: string[]) => operands.some((operand) => WHOLE_CHECKOUT_PATHSPECS.has(operand));
 
 // The flags, the words before a `--` and the words after it, so a path is read whether or not git was given a separator
 const splitArguments = (args: string[]) => {
@@ -27,28 +33,37 @@ const splitArguments = (args: string[]) => {
   };
 };
 
-// The subcommand past the options git takes before it, and the arguments after the subcommand
+// The subcommand past the options git takes before it, the arguments after the subcommand, and the folders its `-C`
+// Options name, each from the one before
 const getSubcommand = (args: string[]) => {
+  const directories: string[] = [];
   let index = 0;
-  while (index < args.length && isFlag(args[index] ?? "")) index += GIT_VALUE_OPTIONS.has(args[index] ?? "") ? 2 : 1;
-  return { arguments: args.slice(index + 1), name: args[index] ?? "" };
+  while (index < args.length && isFlag(args[index] ?? "")) {
+    if (args[index] === "-C") directories.push(args[index + 1] ?? "");
+    index += GIT_VALUE_OPTIONS.has(args[index] ?? "") ? 2 : 1;
+  }
+  return { arguments: args.slice(index + 1), directories, name: args[index] ?? "" };
 };
 
 // `add .`, `add -A` and `add -N` over every path reach a peer's work, while a named path does not
 const getAddRefusal = (args: string[]): string | undefined => {
   const { flags, operands } = splitArguments(args);
-  if (operands.includes(".")) return "git add .";
+  if (isWholeCheckout(operands)) return "git add .";
   const allFlag = flags.find((flag) => ADD_ALL_FLAGS.has(flag));
   if (allFlag !== undefined && operands.length === 0) return `git add ${allFlag}`;
   const isIntentToAdd = flags.some((flag) => flag === "-N" || flag === "--intent-to-add");
   return isIntentToAdd && operands.length === 0 ? "git add -N" : undefined;
 };
 
-// A reset that names a path after `--` is path-scoped, and one that moves HEAD alone with `--soft` leaves the index
-// As it is; every other reset rewrites the index to HEAD or the working tree, a peer's staged entries included
+// A reset that names a path is path-scoped: after `--`, or as a second operand with none, since git reads the first
+// As a commit or a path and every one after it as a path. A lone operand may be a commit, so it is refused, and a reset
+// That moves HEAD alone with `--soft` leaves the index as it is; every other reset rewrites the index to HEAD or the
+// Working tree, a peer's staged entries included
 const getResetRefusal = (args: string[]): string | undefined => {
-  const { after, flags, hasSeparator } = splitArguments(args);
-  if (hasSeparator) return after.includes(".") ? "git reset -- ." : after.length > 0 ? undefined : "git reset";
+  const { after, flags, hasSeparator, operands } = splitArguments(args);
+  const paths = hasSeparator ? after : operands.slice(1);
+  if (isWholeCheckout(paths)) return "git reset -- .";
+  if (paths.length > 0) return undefined;
   const isSoftOnly = flags.includes("--soft") && !flags.some((flag) => RESET_INDEX_MODES.has(flag));
   return isSoftOnly ? undefined : "git reset";
 };
@@ -56,7 +71,7 @@ const getResetRefusal = (args: string[]): string | undefined => {
 // `restore .` rewrites every path, staged or in the working tree, so the staged form is refused as the plain one is
 const getRestoreRefusal = (args: string[]): string | undefined => {
   const { flags, operands } = splitArguments(args);
-  if (!operands.includes(".")) return undefined;
+  if (!isWholeCheckout(operands)) return undefined;
   const isStaged = flags.some((flag) => flag === "--staged" || flag === "-S");
   return `git restore ${isStaged ? "--staged " : ""}.`;
 };
@@ -66,7 +81,7 @@ const getStashRefusal = (): string => "git stash";
 
 // `checkout .` and `checkout -- .` overwrite every path's working tree copy, a peer's edits included
 const getCheckoutRefusal = (args: string[]): string | undefined =>
-  splitArguments(args).operands.includes(".") ? "git checkout ." : undefined;
+  isWholeCheckout(splitArguments(args).operands) ? "git checkout ." : undefined;
 
 // A clean deletes every untracked file, a peer's new ones included; a dry run lists them and is allowed
 const getCleanRefusal = (args: string[]): string | undefined => {
@@ -84,14 +99,21 @@ const WHOLE_INDEX_REFUSALS: ReadonlyMap<string, (args: string[]) => string | und
   ["stash", getStashRefusal],
 ]);
 
-const getGitRefusal: CommandRefusal = (name, args) => {
+// The form refused and the folder git runs in, from the session's ("" for the session's own): the folder a `cd` before
+// It moved to, then each of its `-C` folders
+const getGitRefusal: CommandRefusal<{ directory: string; form: string }> = (name, args, directory) => {
   if (!GIT_NAMES.has(name)) return undefined;
   const subcommand = getSubcommand(args);
-  return WHOLE_INDEX_REFUSALS.get(subcommand.name)?.(subcommand.arguments);
+  const form = WHOLE_INDEX_REFUSALS.get(subcommand.name)?.(subcommand.arguments);
+  return form === undefined
+    ? undefined
+    : { directory: subcommand.directories.reduce((base, next) => joinDirectory(base, next), directory), form };
 };
 
-// The whole-index git form a Bash command runs, named as the form it is, undefined for a path-scoped or read-only command
-export const getWholeIndexRefusal = (command: string): string | undefined => getShellRefusal(command, getGitRefusal);
+// The whole-index git form a Bash command runs, named as the form it is, with the folder it runs in, undefined for a
+// Path-scoped or read-only command
+export const getWholeIndexRefusal = (command: string): undefined | { directory: string; form: string } =>
+  getShellRefusal(command, getGitRefusal);
 
 // The path-scoped forms that do the same job for the paths the session touched, named for the person's shared checkout
 export const getWholeIndexDenyReason = (form: string, peerPath: string): string =>
