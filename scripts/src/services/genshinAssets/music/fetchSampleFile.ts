@@ -4,13 +4,13 @@ import { SampleLibraryCommitMap } from "#src/services/genshinAssets/music/Sample
 import { SampleLibraryOwnerMap } from "#src/services/genshinAssets/music/SampleLibraryOwnerMap";
 import { SAMPLE_DOWNLOAD_TIMEOUT_MS, SAMPLES_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
+import { publishFile } from "#src/services/shared/publishFile";
 import { existsSync } from "node:fs";
-import { mkdir, rename, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 // A file of a sample library, a mapping or a sample, fetched at the library's pinned commit into the cache the first
-// Time it is read and found there after that. It is written beside its place and moved in, so a fetch cut short never
-// Leaves a file a later read takes for whole
+// Time it is read and found there after that. It is published through a partial file of its own, so a fetch cut short
+// Never leaves a file a later read takes for whole
 export const fetchSampleFile = async (library: SampleLibrary, path: string): Promise<string> => {
   const localPath = join(SAMPLES_DIRECTORY, library, path);
   if (existsSync(localPath)) return localPath;
@@ -19,10 +19,6 @@ export const fetchSampleFile = async (library: SampleLibrary, path: string): Pro
     `https://raw.githubusercontent.com/${SampleLibraryOwnerMap[library]}/${library}/${SampleLibraryCommitMap[library]}/${segments.join("/")}`,
     { timeoutMs: SAMPLE_DOWNLOAD_TIMEOUT_MS },
   );
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  await mkdir(dirname(localPath), { recursive: true });
-  const partialPath = `${localPath}.part`;
-  await writeFile(partialPath, bytes);
-  await rename(partialPath, localPath);
+  await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
   return localPath;
 };

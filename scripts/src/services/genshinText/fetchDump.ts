@@ -13,10 +13,10 @@ import {
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
+import { publishFile } from "#src/services/shared/publishFile";
 import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, statSync } from "node:fs";
-import { mkdir, rename, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
 // A directory of the AnimeGameData repository listed as its files, each with its path from the repository root and its
 // Size. A tree the API cut short throws, so a listing is never silently missing files
@@ -43,17 +43,14 @@ const listDumpFiles = async (): Promise<DumpFile[]> => {
 };
 
 // The fetch's download of every dump file the dump lacks or holds at another size, into the dump beside the others. A
-// File is written beside its place and moved in, so a fetch cut short leaves no file a later run keeps
+// File is published through a partial file of its own, so a fetch cut short leaves no file a later run keeps
 const downloadDumpFile = async ({ path }: DumpFile): Promise<void> => {
   const segments = path.split("/");
   const localPath = join(GAME_TEXT_DIRECTORY, ...segments);
   const response = await fetchOk(
     `${ANIME_GAME_DATA_URL}/${segments.map((segment) => encodeURIComponent(segment)).join("/")}`,
   );
-  await mkdir(dirname(localPath), { recursive: true });
-  const partialPath = `${localPath}.part`;
-  await writeFile(partialPath, new Uint8Array(await response.arrayBuffer()));
-  await rename(partialPath, localPath);
+  await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
 };
 
 // Every readable text and table the dump lacks, or holds at another size, fetched from AnimeGameData. Returns a note of
