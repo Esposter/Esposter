@@ -2,19 +2,14 @@ import type { ExcelCityLevelupRow } from "#src/models/genshinAssets/statues/Exce
 
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import {
-  MONDSTADT_CITY_ID,
-  MONDSTADT_STATUE_LEVELS_PATH,
-  STATUE_LEVELS_GENERATED_DIRECTORY,
-} from "#src/services/genshinAssets/statues/constants";
+import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
-// Mondstadt's Statue of The Seven levels, each row's reward joined from the reward table, written as one slice in the
-// World's generated folder. An unlisted reward is an error, since a level without its reward would level silently wrong
-export const writeStatueLevels = (): void => {
+// Mondstadt's Statue of The Seven levels, each row's reward joined from the reward table, published as one record of the
+// Statue levels dataset. An unlisted reward is an error, since a level without its reward would level silently wrong
+export const buildStatueLevels = (): Record<string, unknown> => {
   const rewardMap = readRewardMap();
   const levels = readExcelTable<ExcelCityLevelupRow>("CityLevelupConfigData")
     .filter(({ cityId }) => cityId === MONDSTADT_CITY_ID)
@@ -29,6 +24,5 @@ export const writeStatueLevels = (): void => {
         );
       return toStatueLevelRow(levelRow, reward);
     });
-  mkdirSync(STATUE_LEVELS_GENERATED_DIRECTORY, { recursive: true });
-  writeJsonFile(MONDSTADT_STATUE_LEVELS_PATH, levels);
+  return { [`${GameDataset.StatueLevels}/mondstadt`]: levels };
 };

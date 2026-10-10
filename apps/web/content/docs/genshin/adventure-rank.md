@@ -66,7 +66,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 | File                                                                                | Its role                                                              |
 | :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/adventureRank/writeAdventureRankTables.ts`      | writes the rank, lock and World Level tables from the dump            |
+| `scripts/src/services/genshinAssets/adventureRank/buildAdventureRankTables.ts`      | builds the rank, lock and World Level records from the dump           |
 | `packages/genshin-world/src/data/adventureRank/levels.json`                         | each rank's Adventure EXP                                             |
 | `packages/genshin-world/src/data/adventureRank/locks.json`                          | each World Level's rank cap, unlock rank and main quest               |
 | `packages/genshin-world/src/data/adventureRank/worldLevels.json`                    | each World Level's monster level                                      |

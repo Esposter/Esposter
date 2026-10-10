@@ -11,7 +11,7 @@ In the game the map shows how much of each area a player has explored, as a perc
 
 ```mermaid
 flowchart TD
-  T["The game's table: each area's total and its events"] --> S["Mondstadt's slice, imported as the world opens"]
+  T["The game's table: each area's total and its events"] --> S["Mondstadt's slice, fetched by its key as the world opens"]
   S --> K["Each doing an area counts: its kind and weight"]
   U["Unlocked Statues of The Seven"] -->|"a statue done: its area's waypoint"| D["The doings done"]
   K --> D
@@ -19,7 +19,7 @@ flowchart TD
   C --> L["The area's label on the map"]
 ```
 
-- **Read from the table, Mondstadt first.** `pnpm -C scripts genshin:assets exploration` writes `packages/genshin-world/src/generated/exploration/mondstadt.json` from the dump's `ExploreAreaTotalExpExcelConfigData` and `WorldAreaExploreEventConfigData`. The slice holds, for each of the four level-one areas Mondstadt holds (Starfell Valley, Galesong Hill, Windwail Highland and Brightcrown Mountains), its total and its counted doings. It is imported on demand as the world opens and checked against its schema as it arrives.
+- **Read from the table, Mondstadt first.** `pnpm -C scripts genshin:assets exploration` builds the slice from the dump's `ExploreAreaTotalExpExcelConfigData` and `WorldAreaExploreEventConfigData` and publishes it to the hosted game data as `exploration/mondstadt`. The slice holds, for each of the four level-one areas Mondstadt holds (Starfell Valley, Galesong Hill, Windwail Highland and Brightcrown Mountains), its total and its counted doings. The bundle still imports the committed copy, `packages/genshin-world/src/generated/exploration/mondstadt.json`, as the world opens, and checks it against its schema as it arrives.
 - **Three kinds are counted.** A camp (`EXPLORE_EVENT_CLEAR_GROUP_MONSTER`), a chest (`EXPLORE_EVENT_OPEN_CHEST`) and a waypoint (`EXPLORE_EVENT_UNLOCK_POINT`). The table also lists gathered items (`EXPLORE_EVENT_ITEM_ADD`), which are the ingredients picked up from plants and ores, and a force entered ("EXPLORE_EVENT_ENTER_FORCE"). Neither is one of the kinds the progress is read from, so both are left out. Whether a picked ingredient counts is one of the questions the recording settles.
 - **A statue done is its area's waypoint done.** `computeExploredDoingIds` names an area's waypoint done once a Statue of The Seven in that area is unlocked. Each Mondstadt area holds one waypoint event, which is its statue's, so a statue completes exactly one doing. Chests and camps are never done yet, since the world keeps no record of opening or clearing them.
 - **The label shows the count and the percentage.** Each area's label is drawn once a landmark in it is unlocked, and under its name the label now shows the done doings over the counted ones and the percentage. `computeExplorationProgress` takes the done weight as a share of the area's total and rounds it down, and caps nothing. Until the weights fit the totals the share can read 100 before every doing is done and pass 100 after: Galesong Hill's nineteen doings at ten each make 190 against its 146, so all of them done reads 130.
@@ -32,11 +32,11 @@ flowchart TD
 | :--------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`    | An area's count and percentage, the done weight over its total                                   |
 | `packages/genshin-world/src/services/exploration/computeExploredDoingIds.ts`       | The doings an area's unlocked statue has done                                                    |
-| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | Imports the Mondstadt slice and checks it against its schema                                     |
+| `packages/genshin-world/src/services/exploration/readMondstadtExplorationAreas.ts` | Fetches the Mondstadt slice by its key and checks it against its schema                          |
 | `packages/genshin-world/src/composables/useExplorationAreas.ts`                    | Reads the slice as the world opens, logging a slice that fails                                   |
 | `packages/genshin-world/src/components/Map/Overlay/Index.vue`                      | Shows each filled area's count and percentage under its name, and lists them for a screen reader |
 | `packages/genshin-world/src/models/exploration/ExplorationArea.ts`                 | An area's total and the doings its progress counts                                               |
-| `scripts/src/services/genshinAssets/exploration/writeMondstadtExplorationAreas.ts` | Writes the Mondstadt slice from the dump                                                         |
+| `scripts/src/services/genshinAssets/exploration/buildMondstadtExplorationAreas.ts` | Builds the Mondstadt slice from the dump, for publishing                                         |
 | `scripts/src/services/genshinAssets/exploration/ExploreEventKindMap.ts`            | The event types the progress counts, each as its kind                                            |
 | `scripts/src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap.ts`      | Each level-one area the world holds, by its catalogue area                                       |
 

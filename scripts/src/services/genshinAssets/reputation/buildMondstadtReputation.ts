@@ -5,17 +5,12 @@ import type { ExcelReputationLevelRow } from "#src/models/genshinAssets/reputati
 import type { ExcelReputationRequestRow } from "#src/models/genshinAssets/reputation/ExcelReputationRequestRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
-import {
-  MONDSTADT_REPUTATION_PATH,
-  REPUTATION_GENERATED_DIRECTORY,
-} from "#src/services/genshinAssets/reputation/constants";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
 // The reward a row names, read from the reward table, an unlisted one being an error since a level, request or bounty
 // Without its reward would pay silently wrong
@@ -29,11 +24,10 @@ const readReward = (rewardMap: Map<number, ExcelRewardRow>, rewardId: number, ow
     );
   return reward;
 };
-// Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels name
+// Mondstadt's Reputation from the dump: its levels with each level's reward, the requests of the groups its levels name,
 // Its exploration thresholds and its weekly bounties, each reward split into the Reputation EXP and the items it also gives.
-// Written as one slice in
-// The world's generated folder
-export const writeMondstadtReputation = (): void => {
+// Published as one record of the reputation dataset, keyed by Mondstadt
+export const buildMondstadtReputation = (): Record<string, unknown> => {
   const city = readExcelTable<ExcelReputationCityRow>("ReputationCityExcelConfigData").find(
     ({ cityId }) => cityId === MONDSTADT_CITY_ID,
   );
@@ -88,6 +82,5 @@ export const writeMondstadtReputation = (): void => {
         city.virtualItemId,
       ),
     }));
-  mkdirSync(REPUTATION_GENERATED_DIRECTORY, { recursive: true });
-  writeJsonFile(MONDSTADT_REPUTATION_PATH, { bounties, explores, levels, requests });
+  return { [`${GameDataset.Reputation}/mondstadt`]: { bounties, explores, levels, requests } };
 };

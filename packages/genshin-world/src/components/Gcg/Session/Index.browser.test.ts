@@ -1,3 +1,4 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey } from "genshin-text";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -14,7 +15,14 @@ describe("gcgSession", () => {
   test("should open the next round through the board's buttons", async () => {
     expect.hasAssertions();
 
-    render(GcgSession, { props: { gameId: 12, gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English } });
+    render(GcgSession, {
+      props: {
+        gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+        gameId: 12,
+        gameText: ENGLISH_GAME_TEXT,
+        language: GameLanguage.English,
+      },
+    });
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgConfirm] }).click();
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgReroll] }).click();
     await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.GcgEndRound] }).click();

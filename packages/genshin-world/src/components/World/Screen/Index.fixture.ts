@@ -1,3 +1,4 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
 import TerrainTileWorker from "#src/workers/terrainTile.worker?worker";
 import { QualityTier } from "genshin-engine";
@@ -9,7 +10,7 @@ import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 export const isMotionOnly = true;
 export const props = {
   createTerrainWorker: () => new TerrainTileWorker(),
-  gameDataBaseUrl: "game-data",
+  gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,
   language: GameLanguage.English,
   qualityTier: QualityTier.High,

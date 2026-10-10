@@ -141,16 +141,16 @@ flowchart LR
 | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets/gcg/writeGcgStandardRule.ts`               | Writes the standard rule's slice from the dump's rule and reaction tables                                |
 | `scripts/src/services/genshinAssets/gcg/toGcgStandardRule.ts`                  | The rule row, with each listed reaction joined to its element pair                                       |
-| `packages/genshin-world/src/generated/gcg/standardRule.json`                   | The written slice, imported on demand                                                                    |
-| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`               | Imports the slice and checks it against its schema                                                       |
+| `packages/genshin-world/src/generated/gcg/standardRule.json`                   | The slice the builder writes, fetched by its key                                                         |
+| `packages/genshin-world/src/services/gcg/readGcgStandardRule.ts`               | Fetches the rule by its key and checks it against its schema                                             |
 | `packages/genshin-world/src/services/gcg/createGcgDuel.ts`                     | Opens a duel between two decks                                                                           |
 | `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`                    | A side's preparation, and the first roll once both have prepared                                         |
 | `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`                     | A side's one reroll, and the action phase once both have rolled                                          |
 | `packages/genshin-world/src/services/gcg/useGcgSkill.ts`                       | A skill paid in dice and energy, then the turn passes                                                    |
 | `scripts/src/services/genshinAssets/gcg/writeGcgDeck.ts`                       | Writes one deck's slice from the dump's deck, character, skill, card and cost tables                     |
 | `scripts/src/services/genshinAssets/gcg/toGcgDeck.ts`                          | The slice's rows: costs, kinds and text ids from the dump's plain fields                                 |
-| `packages/genshin-world/src/generated/gcg/deck<id>.json`                       | The written slice of each opponent deck, imported on demand                                              |
-| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, imported on demand                                            |
+| `packages/genshin-world/src/generated/gcg/deck<id>.json`                       | The slice the builder writes for each opponent deck, fetched by its key                                  |
+| `packages/genshin-world/src/services/gcg/GcgDeckLoaderMap.ts`                  | Each opponent deck's slice by its deck id, fetched by its key                                            |
 | `packages/genshin-world/src/services/gcg/readGcgDeck.ts`                       | Reads a deck's slice by its id and checks it against its schema                                          |
 | `packages/genshin-world/src/services/gcg/effects/createGcgTalentCard.ts`       | A talent card equipped to its character while she is active, with its skill used at once                 |
 | `packages/genshin-world/src/services/gcg/effects/createGcgWeaponCard.ts`       | A weapon card that only its kind of character may equip, and that adds one DMG                           |
@@ -181,7 +181,7 @@ flowchart LR
 | `packages/genshin-world/src/components/Gcg/Screen/Index.reference.ts`          | The public frame the board is judged against, and what was found reading it                              |
 | `packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`                | Runs a side through its preparation, reroll, replacement or turn, until the duel waits on the other side |
 | `packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`             | The greedy policy a side takes its turn by: the first card, then the first skill, then the round's end   |
-| `packages/genshin-world/src/services/gcg/readGcgGame.ts`                       | A duel's game from the games map, by its game id in the game table                                       |
+| `packages/genshin-world/src/services/gcg/readGcgGame.ts`                       | A duel's game from the games record, by its game id in the game table                                    |
 | `packages/genshin-world/src/generated/gcg/games.json`                          | The games the world's residents duel with, each with its opponent's deck and the player's                |
 | `scripts/src/services/genshinAssets/gcg/writeGcgGames.ts`                      | Writes the games map from the dump's game table                                                          |
 | `scripts/src/services/genshinAssets/gcg/toGcgGames.ts`                         | Each game as a duel plays it, the placeholder deck where the game names an unbuilt one                   |
@@ -190,7 +190,7 @@ flowchart LR
 | `packages/genshin-world/src/services/dialogue/mergeTalks.ts`                   | The talk sources merged by id, a shared id held by the earlier source                                    |
 | `packages/genshin-world/src/services/resident/getStandingTalks.ts`             | The standing talks the residents hold, by talk id, where their duel names a game                         |
 | `scripts/src/services/genshinText/writeGcgText.ts`                             | The names and descriptions the slices name, one chunk of the world's per language                        |
-| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game chunk by text id, imported on demand                                           |
+| `packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`                  | Each language's card game words by text id, fetched by their key                                         |
 | `packages/genshin-world/src/generated/gcgText/`                                | The card game's names and descriptions, one chunk a language                                             |
 
 ## Sources

@@ -10,7 +10,4 @@ export const MONSTER_CODEX_TYPE = "CODEX_MONSTER";
 export const BASE_HEALTH_PROPERTY = "FIGHT_PROP_BASE_HP";
 export const BASE_ATTACK_PROPERTY = "FIGHT_PROP_BASE_ATTACK";
 export const BASE_DEFENSE_PROPERTY = "FIGHT_PROP_BASE_DEFENSE";
-// The world's data files the kinds and their curves are written to
-export const ENEMY_KINDS_PATH = "enemies/kinds.json";
-export const ENEMY_LEVEL_CURVES_PATH = "enemies/levelCurves.json";
 export const REGIONS_DIRECTORY = "regions";

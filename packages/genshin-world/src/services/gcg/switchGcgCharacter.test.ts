@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
@@ -28,8 +29,8 @@ describe("switching characters under the field's cards", () => {
   // A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the given dice
   const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
-    const deck = await readGcgDeck(PLAYER_DECK_ID);
-    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule());
+    const deck = await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, PLAYER_DECK_ID);
+    const duel = createGcgDuel([deck, deck], random, await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL));
     for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
     for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
     takeOne(duel.sides, 0).dice = dice;

@@ -2,6 +2,7 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
@@ -56,7 +57,7 @@ describe(dealGcgSkillDamage, () => {
   test("should add Dendro Core's two to the next Pyro skill damage and spend its usage", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const attacker = createSideState([createCharacterState(Element.Pyro)]);
     attacker.onstages.push({ cardId: GCG_DENDRO_CORE_ID, counter: 0, rounds: 0, usages: 1 });
     const duel: GcgDuel = {
@@ -81,7 +82,7 @@ describe(dealGcgSkillDamage, () => {
   test("should add Catalyzing Field's one to Dendro damage, and leave Pyro damage alone", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const attacker = createSideState([createCharacterState(Element.Dendro)]);
     attacker.onstages.push({ cardId: GCG_CATALYZING_FIELD_ID, counter: 0, rounds: 0, usages: 2 });
     const duel: GcgDuel = {

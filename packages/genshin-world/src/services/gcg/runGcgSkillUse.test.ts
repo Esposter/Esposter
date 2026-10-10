@@ -1,5 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
@@ -26,9 +27,12 @@ describe("a skill's on-use hooks", () => {
   const openDuel = async (dice: Element[]): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
     const duel = createGcgDuel(
-      [await readGcgDeck(OCEANID_DECK_ID), await readGcgDeck(TUTORIAL_DECK_ID)],
+      [
+        await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, OCEANID_DECK_ID),
+        await readGcgDeck(GAME_DATA_LOCAL_BASE_URL, TUTORIAL_DECK_ID),
+      ],
       random,
-      await readGcgStandardRule(),
+      await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL),
     );
     for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
     for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);

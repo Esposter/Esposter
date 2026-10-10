@@ -33,23 +33,23 @@ flowchart LR
 
 ## Key files
 
-| File                                                                              | Role                                                                        |
-| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`          | The grant to the deployed team but the Traveler, capped at the top level    |
-| `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels            |
-| `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The generated levels, imported on demand and checked against their shape    |
-| `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The generated namecards, imported on demand and checked against their shape |
-| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                          |
-| `packages/genshin-world/src/generated/friendship/friendship.json`                 | Each level's total EXP and each character's namecard, written from the dump |
-| `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                             |
-| `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema           |
-| `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the name chunk, to the profile panel       |
-| `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                       |
-| `packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts` | Each blossom kind's Companionship EXP per claim, provisional                |
-| `scripts/src/services/genshinText/writeNames.ts`                                  | Names each namecard's text id in the name chunk every language shares       |
-| `scripts/src/services/genshinAssets/friendship/writeFriendship.ts`                | Writes the friendship slice from the dump's tables                          |
-| `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts`          | Joins each level 10 card to its reward's namecard item and its name         |
-| `scripts/src/services/genshinAssets/friendship/toFriendshipLevels.ts`             | Sums each level's rows into its total                                       |
+| File                                                                              | Role                                                                                        |
+| :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`          | The grant to the deployed team but the Traveler, capped at the top level                    |
+| `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels                            |
+| `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The levels, fetched by their key from the friendship record and checked against their shape |
+| `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The namecards, fetched by their key from the same record and checked against their shape    |
+| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                                          |
+| `packages/genshin-world/src/generated/friendship/friendship.json`                 | Each level's total EXP and each character's namecard, committed from the dump               |
+| `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                                             |
+| `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema                           |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the name chunk, to the profile panel                       |
+| `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                                       |
+| `packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts` | Each blossom kind's Companionship EXP per claim, provisional                                |
+| `scripts/src/services/genshinText/writeNames.ts`                                  | Names each namecard's text id in the name chunk every language shares                       |
+| `scripts/src/services/genshinAssets/friendship/buildFriendship.ts`                | Builds the friendship record from the dump's tables, for publishing                         |
+| `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts`          | Joins each level 10 card to its reward's namecard item and its name                         |
+| `scripts/src/services/genshinAssets/friendship/toFriendshipLevels.ts`             | Sums each level's rows into its total                                                       |
 
 ## Sources
 

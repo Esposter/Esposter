@@ -1,14 +1,17 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
-import englishNameText from "#src/generated/nameText/English.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CraftingRecipeKind } from "#src/models/crafting/CraftingRecipeKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { createSeededRandom } from "genshin-engine";
-import { ENGLISH_GAME_TEXT } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 
 // The Tier recipe that makes a second-tier enhancement material, and Condensed Resin, which the player has learned from its
 // Instruction, both open at Adventure Rank 10, with the party's Sucrose, who doubles an enhancement material's craft

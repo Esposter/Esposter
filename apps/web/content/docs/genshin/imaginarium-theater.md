@@ -24,7 +24,7 @@ flowchart TD
 
 ## The schedule and the difficulties
 
-`pnpm -C scripts genshin:assets imaginarium` writes two slices from the role combat tables, each imported on demand from `packages/genshin-world/src/generated/imaginarium/`. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
+`pnpm -C scripts genshin:assets imaginarium` builds two records from the role combat tables and publishes them to the hosted game data as `imaginarium/seasons` and `imaginarium/difficulties`; the bundle still imports the committed copies from `packages/genshin-world/src/generated/imaginarium/`. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
 
 - **Seasons.** Every row of the schedule: its id, the moments it begins and ends in the game's time zone, the difficulty ids it runs and the reward group its Stellas draw from. The schedule ends with a season scheduled far ahead, which is not begun, so it is never played.
 - **Difficulties.** Every difficulty row: its id, its level from one to five, and its level floor. The floors are 60 for levels one and two and 70 for levels three to five.
@@ -54,7 +54,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 | File                                                                                  | Role                                                                      |
 | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------ |
-| `scripts/src/services/genshinAssets/imaginarium/writeImaginarium.ts`                  | The two slices written from the role combat tables                        |
+| `scripts/src/services/genshinAssets/imaginarium/buildImaginarium.ts`                  | The two records built from the role combat tables, for publishing         |
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumSeason.ts`               | One season from its schedule row                                          |
 | `scripts/src/services/genshinAssets/imaginarium/toImaginariumDifficulty.ts`           | One difficulty and its level floor from its table row                     |
 | `packages/genshin-world/src/services/imaginarium/findImaginariumSeason.ts`            | The season played at a moment                                             |

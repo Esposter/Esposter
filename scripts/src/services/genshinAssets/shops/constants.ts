@@ -1,6 +1,4 @@
 import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { join } from "node:path";
 
 // Paimon's Bargains' goods are the goods of shop 1001, the one whose goods restock monthly beside the Fates. Its shop row,
 // 102, names the shop and holds none of them
@@ -23,12 +21,3 @@ export const SHOP_REFRESH_BY_TABLE_TYPE: Partial<Record<string, ShopRefresh>> = 
 };
 // The offset the game's own shop times carry, UTC+8, appended to each one as it is written
 export const GAME_TIME_OFFSET = "+08:00";
-// The world's generated folder the shop slices are written to and imported on demand from
-export const SHOP_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-  "shops",
-);

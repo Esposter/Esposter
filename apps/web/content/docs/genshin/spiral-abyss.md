@@ -27,7 +27,7 @@ flowchart TD
 
 ## The floors and chambers
 
-`pnpm -C scripts genshin:assets spiral-abyss` writes three slices from the game's tower tables, each imported on demand from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the tower tables: the four the slices are written from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
+`pnpm -C scripts genshin:assets spiral-abyss` builds three records from the game's tower tables and publishes them to the hosted game data as `spiralAbyss/floors`, `spiralAbyss/rewards` and `spiralAbyss/periods`; the bundle still imports the committed copies from `packages/genshin-world/src/generated/spiralAbyss/`. The community dump the scripts read lacks the tower tables: the four the records are built from, and a fifth fetched beside them but not read, were fetched into the dump from the AnimeGameData repository and kept out of the commit. Its combine and forge tables match the dump's byte for byte, which makes the two one revision.
 
 - **Floors.** Every floor the tower table holds: its id and its place in the twelve, the level group that lists its three chambers, its teams and the stars its chambers must hold for the floor above. The Corridor's eight floors and each Moon Spire period's four are among them.
 - **Chambers.** Each chamber's three star conditions. A time condition is a mark on the clock's seconds left, and a monolith condition a mark on the monolith's health percent, each as the table names it.
@@ -59,7 +59,7 @@ flowchart TD
 
 | File                                                                             | Role                                                           |
 | :------------------------------------------------------------------------------- | :------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/spiralAbyss/writeSpiralAbyss.ts`             | The three slices written from the tower tables                 |
+| `scripts/src/services/genshinAssets/spiralAbyss/buildSpiralAbyss.ts`             | The three records built from the tower tables, for publishing  |
 | `scripts/src/services/genshinAssets/spiralAbyss/toAbyssFloor.ts`                 | One floor and its three chambers from the floor and level rows |
 | `scripts/src/services/genshinAssets/spiralAbyss/toAbyssStarCondition.ts`         | A star condition read by its kind and its mark                 |
 | `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.ts`                | One Moon Spire period from its schedule row                    |

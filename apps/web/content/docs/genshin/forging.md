@@ -31,7 +31,7 @@ flowchart TD
 
 ## The recipes
 
-`pnpm -C scripts genshin:assets forging` writes one slice, the blacksmith's recipes, from the game's forge table `ForgeExcelConfigData`, with each recipe's diagrams read off the material table's uses. Each recipe's results come from its own row, or for a row with no fixed result from the forge random table `ForgeRandomExcelConfigData`, which the writer reads alongside it. The repository's master matched the dump's combine table byte for byte, so the two share a revision.
+`pnpm -C scripts genshin:assets forging` builds one record, the blacksmith's recipes, from the game's forge table `ForgeExcelConfigData` and publishes it to the hosted game data as `forging/recipes`, with each recipe's diagrams read off the material table's uses. Each recipe's results come from its own row, or for a row with no fixed result from the forge random table `ForgeRandomExcelConfigData`, which the builder reads alongside it. The repository's master matched the dump's combine table byte for byte, so the two share a revision.
 
 - **Enhancement ores.** The Normal, Fine and Mystic Enhancement Ores, each with its ingredients, its Mora, its seconds per item, the most one queue holds and its forge points. Ten Normal Enhancement Ores take thirty seconds and fifty Mora.
 - **The Mystic Enhancement Ore.** Three Magical Crystal Chunks and ten Original Resin, five seconds and one at a time, with no forge points, so it counts nothing toward the day's cap. Each unit yields one of two results at equal weight, six Mystic Enhancement Ores or one hundred Adventure EXP.
@@ -55,31 +55,31 @@ flowchart TD
 
 ## Key files
 
-| File                                                                              | Role                                                                  |
-| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/forging/writeForgingRecipes.ts`               | The recipes slice written from the forge table and its random table   |
-| `scripts/src/services/genshinAssets/forging/toForgeRecipe.ts`                     | One forge row as a recipe, or left out                                |
-| `scripts/src/services/genshinAssets/forging/toForgeResults.ts`                    | A row's results: its fixed result, or the random table its drop names |
-| `scripts/src/services/genshinAssets/forging/constants.ts`                         | The drop id that names each random table                              |
-| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`                 | Each recipe's diagrams, read off the material table's uses            |
-| `scripts/src/services/genshinAssets/items/writeItems.ts`                          | The forge's and the drops' items written into the items slice         |
-| `packages/genshin-world/src/models/forging/ForgeProgress.ts`                      | The learned recipes, the queues' orders and the day's forge points    |
-| `packages/genshin-world/src/models/forging/ForgeResult.ts`                        | One result a unit yields, its count and its weight                    |
-| `packages/genshin-world/src/models/forging/ForgeTalent.ts`                        | A forging talent: its kind, its forge type and its ratio              |
-| `packages/genshin-world/src/services/forging/constants.ts`                        | The daily cap, the queue ranks, the talents by character              |
-| `packages/genshin-world/src/services/forging/computeForgeTalents.ts`              | The talents the party's characters give                               |
-| `packages/genshin-world/src/services/forging/startForge.ts`                       | An order started in a free queue, its materials, Mora and talents     |
-| `packages/genshin-world/src/services/forging/refundForgeOres.ts`                  | The ores a weapon's refund talent gives back into the bag             |
-| `packages/genshin-world/src/services/forging/obtainForgeOrder.ts`                 | A queue obtained: its results taken in, the Adventure EXP gained      |
-| `packages/genshin-world/src/services/forging/collectForgeOrder.ts`                | Each finished unit's result taken in, the rest waiting                |
-| `packages/genshin-world/src/services/forging/drawForgeResult.ts`                  | One unit's result drawn by weight                                     |
-| `packages/genshin-world/src/services/forging/checkIsForgeRecipeRefusedInRealm.ts` | Whether the Serenitea Pot refuses a recipe                            |
-| `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`      | Whether an order would pass the game day's forge points               |
-| `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`           | The queues an Adventure Rank opens                                    |
-| `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`                 | A recipe learned from a diagram in the bag                            |
-| `packages/genshin-world/src/generated/forging/recipes.json`                       | The blacksmith's recipes, a few dozen of them                         |
-| `packages/genshin-world/src/services/inventory/constants.ts`                      | The wallet's item ids, each currency's among them                     |
-| `packages/genshin-text/src/models/GameTextKey.ts`                                 | The enhancement ores' refusal words                                   |
+| File                                                                              | Role                                                                        |
+| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/forging/buildForgingRecipes.ts`               | The recipes built from the forge table and its random table, for publishing |
+| `scripts/src/services/genshinAssets/forging/toForgeRecipe.ts`                     | One forge row as a recipe, or left out                                      |
+| `scripts/src/services/genshinAssets/forging/toForgeResults.ts`                    | A row's results: its fixed result, or the random table its drop names       |
+| `scripts/src/services/genshinAssets/forging/constants.ts`                         | The drop id that names each random table                                    |
+| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`                 | Each recipe's diagrams, read off the material table's uses                  |
+| `scripts/src/services/genshinAssets/items/writeItems.ts`                          | The forge's and the drops' items written into the items slice               |
+| `packages/genshin-world/src/models/forging/ForgeProgress.ts`                      | The learned recipes, the queues' orders and the day's forge points          |
+| `packages/genshin-world/src/models/forging/ForgeResult.ts`                        | One result a unit yields, its count and its weight                          |
+| `packages/genshin-world/src/models/forging/ForgeTalent.ts`                        | A forging talent: its kind, its forge type and its ratio                    |
+| `packages/genshin-world/src/services/forging/constants.ts`                        | The daily cap, the queue ranks, the talents by character                    |
+| `packages/genshin-world/src/services/forging/computeForgeTalents.ts`              | The talents the party's characters give                                     |
+| `packages/genshin-world/src/services/forging/startForge.ts`                       | An order started in a free queue, its materials, Mora and talents           |
+| `packages/genshin-world/src/services/forging/refundForgeOres.ts`                  | The ores a weapon's refund talent gives back into the bag                   |
+| `packages/genshin-world/src/services/forging/obtainForgeOrder.ts`                 | A queue obtained: its results taken in, the Adventure EXP gained            |
+| `packages/genshin-world/src/services/forging/collectForgeOrder.ts`                | Each finished unit's result taken in, the rest waiting                      |
+| `packages/genshin-world/src/services/forging/drawForgeResult.ts`                  | One unit's result drawn by weight                                           |
+| `packages/genshin-world/src/services/forging/checkIsForgeRecipeRefusedInRealm.ts` | Whether the Serenitea Pot refuses a recipe                                  |
+| `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`      | Whether an order would pass the game day's forge points                     |
+| `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`           | The queues an Adventure Rank opens                                          |
+| `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`                 | A recipe learned from a diagram in the bag                                  |
+| `packages/genshin-world/src/generated/forging/recipes.json`                       | The blacksmith's recipes, a few dozen of them                               |
+| `packages/genshin-world/src/services/inventory/constants.ts`                      | The wallet's item ids, each currency's among them                           |
+| `packages/genshin-text/src/models/GameTextKey.ts`                                 | The enhancement ores' refusal words                                         |
 
 ## Notes
 

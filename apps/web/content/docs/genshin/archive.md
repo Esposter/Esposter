@@ -25,7 +25,7 @@ flowchart TD
   SCREEN -->|"an opened volume"| READER["Book reader: title and text, its body read from the hosted game data"]
   BODIES["hosted game data: one bookBody index a language, each volume's text by its body id"] --> READER
   DONE["Main quest 353 finished"] --> UNLOCK{"Unlocked the first time?"}
-  UNLOCK -->|"yes"| LOAD["Slices and names read on demand"]
+  UNLOCK -->|"yes"| LOAD["Slices and names fetched by their keys"]
   LOAD --> MENU["Paimon menu's Archive entry enabled"]
   MENU --> SCREEN
 ```
@@ -91,8 +91,8 @@ The Archive screen has no parity measure yet. Its places follow the achievements
 | `packages/genshin-world/src/models/archive/ArchiveProgress.ts`            | The opened ids of each section                                                   |
 | `packages/genshin-world/src/services/archive/openArchiveEntries.ts`       | Opens the entries of a bag's items                                               |
 | `packages/genshin-world/src/services/archive/openArchiveArtifactSets.ts`  | Opens a set's Equipment entry once the artifacts held cover all its pieces       |
-| `packages/genshin-world/src/services/archive/readArchiveEntries.ts`       | The slices of every section, imported on demand and checked                      |
-| `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`     | The names in each language, imported on demand                                   |
+| `packages/genshin-world/src/services/archive/readArchiveEntries.ts`       | The slices of every section, fetched by their keys and checked                   |
+| `packages/genshin-world/src/services/archive/ArchiveTextLoaderMap.ts`     | The names in each language, fetched by their key                                 |
 | `packages/genshin-world/src/services/archive/constants.ts`                | The main quest the Archive opens after                                           |
 | `packages/genshin-world/src/components/Archive/Screen/Index.vue`          | The Archive screen the Paimon menu opens                                         |
 | `packages/genshin-world/src/components/World/Session/Index.vue`           | `setInventory`, the unlock and the names' load, and the screen's slot            |

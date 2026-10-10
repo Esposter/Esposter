@@ -2,6 +2,7 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
@@ -55,7 +56,7 @@ describe(runGcgEndPhase, () => {
   test("should deal Burning Flame's one Pyro at the end phase, then take the summon off once its usage is spent", async () => {
     expect.hasAssertions();
 
-    const rule = await readGcgStandardRule();
+    const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const attacker = createSideState([createCharacterState(Element.Pyro)]);
     attacker.summons.push({ cardId: GCG_BURNING_FLAME_ID, counter: 0, rounds: 0, usages: 1 });
     const duel: GcgDuel = {

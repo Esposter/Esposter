@@ -7,20 +7,17 @@ import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/crafting/consta
 import {
   COMFORT_LEVEL_TABLE_NAME,
   FURNITURE_MAKE_TABLE_NAME,
-  HOME_BLUEPRINTS_PATH,
-  HOME_GENERATED_DIRECTORY,
-  HOME_LEVELS_PATH,
   HOMEWORLD_LEVEL_TABLE_NAME,
   UNLOCK_FURNITURE_USE_OP,
 } from "#src/services/genshinAssets/home/constants";
 import { toHomeBlueprint } from "#src/services/genshinAssets/home/toHomeBlueprint";
 import { readUnlockItemIdMap } from "#src/services/genshinAssets/items/readUnlockItemIdMap";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
-// The realm's rules from the game's tables, each written as a slice of the world's generated folder: the furnishings Tubby
-// Makes, with the diagrams that open each, and the Trust and Adeptal Energy ranks. Each slice is sorted by its id or rank
-export const writeHomeRules = (): void => {
+// The realm's rules from the game's tables, each published as a record of the home dataset: the furnishings Tubby makes,
+// With the diagrams that open each, and the Trust and Adeptal Energy ranks. Each record is sorted by its id or rank
+export const buildHomeRules = (): Record<string, unknown> => {
   const unlockItemIdMap = readUnlockItemIdMap(
     readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
     UNLOCK_FURNITURE_USE_OP,
@@ -45,7 +42,5 @@ export const writeHomeRules = (): void => {
       level: levelID,
     }))
     .toSorted((firstLevel, secondLevel) => firstLevel.level - secondLevel.level);
-  mkdirSync(HOME_GENERATED_DIRECTORY, { recursive: true });
-  writeFileSync(HOME_BLUEPRINTS_PATH, `${JSON.stringify(blueprints)}\n`);
-  writeFileSync(HOME_LEVELS_PATH, `${JSON.stringify({ comfort, trust })}\n`);
+  return { [`${GameDataset.Home}/blueprints`]: blueprints, [`${GameDataset.Home}/levels`]: { comfort, trust } };
 };

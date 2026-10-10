@@ -67,7 +67,7 @@ flowchart TD
 | `packages/genshin-world/src/services/wish/makeWishes.ts`             | A set's Fates spent, its wishes pulled, their returns and Stella Fortuna added |
 | `packages/genshin-world/src/services/wish/createBanners.ts`          | The two banners the world offers, from the stat tables and the names           |
 | `packages/genshin-world/src/services/wish/sortWishResults.ts`        | A set's results in the order the game shows them                               |
-| `packages/genshin-world/src/services/character/NameTextLoaderMap.ts` | One language's names the stat tables cite, imported on first use               |
+| `packages/genshin-world/src/services/character/NameTextLoaderMap.ts` | One language's names the stat tables cite, fetched by its key on first use     |
 | `packages/genshin-world/src/components/Wish/Screen/Index.vue`        | The wish's screen in the reader's language                                     |
 | `packages/genshin-interface/src/components/WishScreen/Index.vue`     | The banners, the sets, the counts and the results                              |
 

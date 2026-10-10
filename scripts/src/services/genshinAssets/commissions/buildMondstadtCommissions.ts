@@ -4,18 +4,17 @@ import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/Ex
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";
 
-import {
-  COMMISSIONS_GENERATED_DIRECTORY,
-  MONDSTADT_COMMISSIONS_PATH,
-} from "#src/services/genshinAssets/commissions/constants";
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { COMMISSION_RANK_BAND_COUNT, COMMISSION_RANK_BAND_SIZE, commissionSliceSchema } from "genshin-world";
-import { mkdirSync } from "node:fs";
+import {
+  COMMISSION_RANK_BAND_COUNT,
+  COMMISSION_RANK_BAND_SIZE,
+  commissionSliceSchema,
+  GameDataset,
+} from "genshin-world";
 
 // The level table must be the game's bands: twelve of five ranks each in order from rank one, since a claim reads its band
 // Off the rank alone and a table of other bands would pay every rank the wrong reward
@@ -38,8 +37,9 @@ const checkLevelBands = (levelRows: ExcelDailyTaskLevelRow[]): void => {
 
 // Mondstadt's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items of
 // Katheryne's bonus by band. Every preview is read through the reward table, and each band's items are the preview's
-// Items with a count drawn from its range, so the world's claim draws them. Written as one slice in the world's folder
-export const writeMondstadtCommissions = (): void => {
+// Items with a count drawn from its range, so the world's claim draws them. Published as one record of the commissions
+// Dataset, keyed by Mondstadt
+export const buildMondstadtCommissions = (): Record<string, unknown> => {
   const previews = new Map(
     readExcelTable<ExcelRewardPreviewRow>("RewardPreviewExcelConfigData").map((preview) => [preview.id, preview]),
   );
@@ -79,6 +79,5 @@ export const writeMondstadtCommissions = (): void => {
     .map((row) => toCommissionTask(row))
     .toSorted((firstTask, secondTask) => firstTask.id - secondTask.id);
   const slice = commissionSliceSchema.parse({ bonuses, rewardTiers, tasks });
-  mkdirSync(COMMISSIONS_GENERATED_DIRECTORY, { recursive: true });
-  writeJsonFile(MONDSTADT_COMMISSIONS_PATH, slice);
+  return { [`${GameDataset.Commissions}/mondstadt`]: slice };
 };

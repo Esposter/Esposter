@@ -20,6 +20,7 @@ import { getResultAsync } from "@esposter/shared";
 export const useWorldAchievements = ({
   achievementProgressMap,
   events,
+  gameDataBaseUrl,
   getWorldNow,
   language,
   screenKind,
@@ -28,6 +29,7 @@ export const useWorldAchievements = ({
 }: {
   achievementProgressMap: Ref<ReadonlyMap<number, AchievementProgress>>;
   events: WorldEvents;
+  gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
   language: GameLanguage;
   screenKind: Ref<ScreenKind>;
@@ -44,8 +46,8 @@ export const useWorldAchievements = ({
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
       const [{ achievements, categories }, textMap] = await Promise.all([
-        readAchievements(),
-        AchievementTextLoaderMap[language](),
+        readAchievements(gameDataBaseUrl),
+        AchievementTextLoaderMap[language](gameDataBaseUrl),
       ]);
       return { achievements, categories, textMap };
     }).match(
@@ -60,7 +62,7 @@ export const useWorldAchievements = ({
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(readAchievements).match(
+    getResultAsync(() => readAchievements(gameDataBaseUrl)).match(
       ({ achievements }) => {
         const now = getWorldNow();
         let primogems = 0;

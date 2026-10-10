@@ -64,7 +64,7 @@ flowchart TD
 
 ## Publishing
 
-- `pnpm -C scripts genshin:assets profile` and `pnpm -C scripts genshin:assets archive` build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request.
+- `pnpm -C scripts genshin:assets profile` and `pnpm -C scripts genshin:assets archive` build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The recipe and activity commands publish the same way: `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`, each scoped to its own dataset.
 - A real publish stores each missing object in both accounts, with `DefaultAzureCredential`, which resolves to the owner's `az login`. No account key is written to disk.
 - A rerun on the same dump reports `unchanged` and makes no request.
 - The lock is written only after both accounts hold every object, so a failed account leaves the committed lock naming nothing new, and a rerun converges.
@@ -72,7 +72,7 @@ flowchart TD
 
 A publish names the scopes it replaces. A dataset scope replaces every key under its dataset; a key scope (`login/music`) replaces that one key and keeps its dataset's other keys as the lock holds them, so a fit that refits one part publishes one key. A key scope is checked to sit under a dataset before anything is published (`toGameDataKeyScopes`).
 
-The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The builders of those datasets still write their files.
+The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The recipe and activity builders publish their records instead of writing files, and the other builders still write theirs.
 
 ## Reading
 

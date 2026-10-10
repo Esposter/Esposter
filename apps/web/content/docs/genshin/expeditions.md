@@ -32,13 +32,13 @@ stateDiagram-v2
 ## Data
 
 - **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; and `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`. The three expedition tables and the reward preview table are fetched from the community's dump into the game's text directory, which the dump lacked, and not committed.
-- **Written by** `pnpm -C scripts genshin:assets expeditions`, which writes Mondstadt's places as `packages/genshin-world/src/generated/expeditions/mondstadt.json` and the limit's ranks as `packages/genshin-world/src/data/expeditions/limits.json`. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
+- **Published by** `pnpm -C scripts genshin:assets expeditions`, which publishes Mondstadt's places as the record `expeditions/mondstadt` and the limit's ranks as `expeditions/limits` to the hosted game data. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
 - **Not read by this page:** "ExpeditionPathExcelConfigData" names the Adventurers' Guild's expedition missions, each with its team's elements, and "ExpeditionBonusExcelConfigData" gives a chance of a bonus by the sent character's level. Neither is a place to send a character, and neither's effect is in the tables read.
 
 ## Not built yet
 
 - **Katheryne and the screen.** No talk sends a character and no expedition screen is drawn, so the rules have no caller in the game. The screen's layout is a parity matter once Katheryne's branch is placed.
-- **The other nations' places.** Only Mondstadt's places are written. A nation's places join when its statues are in the region data with their scene points.
+- **The other nations' places.** Only Mondstadt's places are published. A nation's places join when its statues are in the region data with their scene points.
 - **Statues beyond Windrise's.** The places that name points 7 and 29 stay closed until those statues are in the region data.
 - **The bonus and the talents.** The bonus's payload is not in the tables read, and the characters' expedition talents wait on the character kits' passives.
 
@@ -55,7 +55,8 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`        | The most expeditions out at once at a rank                            |
 | `packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`     | The scene points of the statues unlocked, the points a place names    |
 | `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's slice, imported on demand and checked on arrival          |
-| `scripts/src/services/genshinAssets/expeditions/writeMondstadtExpeditions.ts`     | The writer of the places slice from the dump                          |
+| `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                        |
+| `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                 |
 
 ## Notes
 

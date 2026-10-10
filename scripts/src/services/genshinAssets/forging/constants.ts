@@ -1,6 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { ForgeRecipeKind } from "genshin-world";
-import { join } from "node:path";
 
 // The game's forge table in the dump, read by its name. The material table is the crafting's, read by the same name
 export const FORGE_TABLE_NAME = "ForgeExcelConfigData";
@@ -21,13 +19,3 @@ export const ForgeTypeRecipeKindMap: Record<number, ForgeRecipeKind> = {
   6: ForgeRecipeKind.Weapon,
   7: ForgeRecipeKind.Weapon,
 };
-// Where the recipe slice is written, in the world's generated folder it is imported on demand from
-export const FORGING_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-  "forging",
-);
-export const FORGING_RECIPES_PATH: string = join(FORGING_GENERATED_DIRECTORY, "recipes.json");

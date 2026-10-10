@@ -1,20 +1,15 @@
 import type { ExcelExploreAreaTotalRow } from "#src/models/genshinAssets/exploration/ExcelExploreAreaTotalRow";
 import type { ExcelWorldAreaExploreEventRow } from "#src/models/genshinAssets/exploration/ExcelWorldAreaExploreEventRow";
 
-import {
-  EXPLORATION_GENERATED_DIRECTORY,
-  MONDSTADT_EXPLORATION_PATH,
-} from "#src/services/genshinAssets/exploration/constants";
 import { ExploreAreaCatalogueIdMap } from "#src/services/genshinAssets/exploration/ExploreAreaCatalogueIdMap";
 import { toExplorationDoing } from "#src/services/genshinAssets/exploration/toExplorationDoing";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync } from "node:fs";
+import { GameDataset } from "genshin-world";
 
-// Mondstadt's exploration areas, each with its total and the doings its progress counts, written as one slice in the
-// World's generated folder. An area the table gives no total is an error, since its progress would have no share
-export const writeMondstadtExplorationAreas = (): void => {
+// Mondstadt's exploration areas, each with its total and the doings its progress counts, published as one record of the
+// Exploration dataset. An area the table gives no total is an error, since its progress would have no share
+export const buildMondstadtExplorationAreas = (): Record<string, unknown> => {
   const totals = readExcelTable<ExcelExploreAreaTotalRow>("ExploreAreaTotalExpExcelConfigData");
   const events = readExcelTable<ExcelWorldAreaExploreEventRow>("WorldAreaExploreEventConfigData");
   const areas = Object.entries(ExploreAreaCatalogueIdMap).map(([exploreAreaId, areaId]) => {
@@ -36,6 +31,5 @@ export const writeMondstadtExplorationAreas = (): void => {
       total: total.totalExp,
     };
   });
-  mkdirSync(EXPLORATION_GENERATED_DIRECTORY, { recursive: true });
-  writeJsonFile(MONDSTADT_EXPLORATION_PATH, areas);
+  return { [`${GameDataset.Exploration}/mondstadt`]: areas };
 };

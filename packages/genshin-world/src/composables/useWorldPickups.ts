@@ -39,6 +39,7 @@ import { GameTextKey } from "genshin-text";
 export const useWorldPickups = ({
   archive,
   events,
+  gameDataBaseUrl,
   gameText,
   getWorldNow,
   inventory,
@@ -50,6 +51,7 @@ export const useWorldPickups = ({
 }: {
   archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
   events: WorldEvents;
+  gameDataBaseUrl: string;
   gameText: GameText;
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
@@ -65,7 +67,7 @@ export const useWorldPickups = ({
   let placedDropCount = 0;
   // Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the instant
   // It was picked, and stands again once its respawn has come, read each time the clock is looked at
-  const { gatheringItems, gatheringPlaces } = useGatheringPoints();
+  const { gatheringItems, gatheringPlaces } = useGatheringPoints(gameDataBaseUrl);
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
   const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
   // The broken share of each ore struck and not yet broken, by its point, which the ore breaking takes out

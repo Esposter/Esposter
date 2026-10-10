@@ -63,7 +63,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts` | A boss back by its claim's time, not at once        |
 | `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`       | Still nothing for a boss, its reward the blossom's  |
 | `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`      | Each boss's poise type and immunities               |
-| `scripts/src/services/genshinAssets/enemies/writeEnemyKinds.ts`        | Writes the bosses' kinds as it writes every camp's  |
+| `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`        | Builds the bosses' kinds as it builds every camp's  |
 
 ## Sources
 

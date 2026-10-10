@@ -16,6 +16,7 @@ import { getResultAsync } from "@esposter/shared";
 export const useWorldMap = ({
   events,
   gainWorldAdventureExp,
+  gameDataBaseUrl,
   regionDataBaseUrl,
   setWallet,
   unlockedLandmarkIds: savedUnlockedLandmarkIds,
@@ -23,6 +24,7 @@ export const useWorldMap = ({
 }: {
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
+  gameDataBaseUrl: string;
   regionDataBaseUrl: string;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
@@ -32,7 +34,7 @@ export const useWorldMap = ({
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
   const jumpLandmarks = useJumpLandmarks(regionDataBaseUrl);
   // The areas the map counts the exploration of, read as the world opens and shown on each area the unlocked statues fill
-  const explorationAreas = useExplorationAreas();
+  const explorationAreas = useExplorationAreas(gameDataBaseUrl);
   const unlockedLandmarkIds = shallowRef<ReadonlySet<string>>(savedUnlockedLandmarkIds);
   const unlockedLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => unlockedLandmarkIds.value.has(id)));
 
@@ -42,7 +44,7 @@ export const useWorldMap = ({
     const pointId = LandmarkIdStatuePointIdMap[landmarkId];
     if (pointId === undefined) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(readOpenWorldTransPointRewards).match(
+    getResultAsync(() => readOpenWorldTransPointRewards(gameDataBaseUrl)).match(
       (rewards) => {
         const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
         if (!reward) return;

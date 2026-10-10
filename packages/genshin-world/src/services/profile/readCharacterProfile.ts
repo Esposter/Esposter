@@ -18,8 +18,8 @@ export const readCharacterProfile = async (
   friendshipExp: number,
 ): Promise<{ friendshipLevel: number; namecardNameTextId: number; profileText: ProfileText }> => {
   const [friendshipLevels, namecards, profileText] = await Promise.all([
-    readFriendshipLevels(),
-    readFriendshipNamecards(),
+    readFriendshipLevels(gameDataBaseUrl),
+    readFriendshipNamecards(gameDataBaseUrl),
     readGameDataEntry(gameDataBaseUrl, `${GameDataset.Profile}/${language}`, String(avatarId), profileTextSchema),
   ]);
   const friendshipLevel = computeLevelReached(friendshipExp, friendshipLevels);

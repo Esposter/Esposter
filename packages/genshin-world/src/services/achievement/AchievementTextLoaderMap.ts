@@ -1,23 +1,36 @@
+import type { TextChunk } from "#src/models/data/TextChunk";
+
+import { textChunkSchema } from "#src/models/data/TextChunk";
+import { readGameData } from "#src/services/data/readGameData";
 import { GameLanguage } from "genshin-text";
 
 // The achievements' and categories' titles and descriptions by text id, in each language, as `pnpm -C scripts genshin:assets
-// Achievements` writes them. Each is imported on demand, so a page downloads only the language it shows
-export const AchievementTextLoaderMap: Record<GameLanguage, () => Promise<Readonly<Record<string, string>>>> = {
-  [GameLanguage.ChineseSimplified]: async () =>
-    (await import("#src/generated/achievementText/ChineseSimplified.json")).default,
-  [GameLanguage.ChineseTraditional]: async () =>
-    (await import("#src/generated/achievementText/ChineseTraditional.json")).default,
-  [GameLanguage.English]: async () => (await import("#src/generated/achievementText/English.json")).default,
-  [GameLanguage.French]: async () => (await import("#src/generated/achievementText/French.json")).default,
-  [GameLanguage.German]: async () => (await import("#src/generated/achievementText/German.json")).default,
-  [GameLanguage.Indonesian]: async () => (await import("#src/generated/achievementText/Indonesian.json")).default,
-  [GameLanguage.Italian]: async () => (await import("#src/generated/achievementText/Italian.json")).default,
-  [GameLanguage.Japanese]: async () => (await import("#src/generated/achievementText/Japanese.json")).default,
-  [GameLanguage.Korean]: async () => (await import("#src/generated/achievementText/Korean.json")).default,
-  [GameLanguage.Portuguese]: async () => (await import("#src/generated/achievementText/Portuguese.json")).default,
-  [GameLanguage.Russian]: async () => (await import("#src/generated/achievementText/Russian.json")).default,
-  [GameLanguage.Spanish]: async () => (await import("#src/generated/achievementText/Spanish.json")).default,
-  [GameLanguage.Thai]: async () => (await import("#src/generated/achievementText/Thai.json")).default,
-  [GameLanguage.Turkish]: async () => (await import("#src/generated/achievementText/Turkish.json")).default,
-  [GameLanguage.Vietnamese]: async () => (await import("#src/generated/achievementText/Vietnamese.json")).default,
+// Achievements` writes them. Each is fetched by its key, so a page downloads only the language it shows
+export const AchievementTextLoaderMap: Record<GameLanguage, (gameDataBaseUrl: string) => Promise<TextChunk>> = {
+  [GameLanguage.ChineseSimplified]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/ChineseSimplified", textChunkSchema),
+  [GameLanguage.ChineseTraditional]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/ChineseTraditional", textChunkSchema),
+  [GameLanguage.English]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/English", textChunkSchema),
+  [GameLanguage.French]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "achievementText/French", textChunkSchema),
+  [GameLanguage.German]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "achievementText/German", textChunkSchema),
+  [GameLanguage.Indonesian]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Indonesian", textChunkSchema),
+  [GameLanguage.Italian]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Italian", textChunkSchema),
+  [GameLanguage.Japanese]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Japanese", textChunkSchema),
+  [GameLanguage.Korean]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "achievementText/Korean", textChunkSchema),
+  [GameLanguage.Portuguese]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Portuguese", textChunkSchema),
+  [GameLanguage.Russian]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Russian", textChunkSchema),
+  [GameLanguage.Spanish]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Spanish", textChunkSchema),
+  [GameLanguage.Thai]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "achievementText/Thai", textChunkSchema),
+  [GameLanguage.Turkish]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Turkish", textChunkSchema),
+  [GameLanguage.Vietnamese]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "achievementText/Vietnamese", textChunkSchema),
 };

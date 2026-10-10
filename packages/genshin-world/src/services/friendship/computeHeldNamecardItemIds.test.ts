@@ -1,3 +1,4 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeHeldNamecardItemIds } from "#src/services/friendship/computeHeldNamecardItemIds";
 import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { readFriendshipNamecards } from "#src/services/friendship/readFriendshipNamecards";
@@ -11,8 +12,8 @@ describe(computeHeldNamecardItemIds, () => {
   test("should hold Amber's namecard at Friendship Level 10 and not one EXP below it", async () => {
     expect.hasAssertions();
 
-    const friendshipLevels = await readFriendshipLevels();
-    const namecards = await readFriendshipNamecards();
+    const friendshipLevels = await readFriendshipLevels(GAME_DATA_LOCAL_BASE_URL);
+    const namecards = await readFriendshipNamecards(GAME_DATA_LOCAL_BASE_URL);
 
     expect(
       computeHeldNamecardItemIds(

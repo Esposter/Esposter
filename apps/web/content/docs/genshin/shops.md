@@ -38,9 +38,9 @@ flowchart TD
 | File                                                                         | Role                                                                                  |
 | :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
 | `scripts/src/services/genshinAssets/shops/checkIsPaimonsBargainsFateGood.ts` | The table's goods that are Paimon's Bargains' Fates bought with a Masterless currency |
-| `scripts/src/services/genshinAssets/shops/writeShopGoodSlice.ts`             | Writes one shop's goods as a slice the world imports, one row a good                  |
-| `scripts/src/services/genshinAssets/shops/writePaimonsBargainsGoods.ts`      | The Fates slice, by the Fates filter                                                  |
-| `scripts/src/services/genshinAssets/shops/writeMondstadtGeneralGoods.ts`     | The Mondstadt grocery's slice, by shop 1004                                           |
+| `scripts/src/services/genshinAssets/shops/buildShopGoodSlice.ts`             | Builds one shop's goods as a record, one row a good                                   |
+| `scripts/src/services/genshinAssets/shops/buildPaimonsBargainsGoods.ts`      | The Fates record, by the Fates filter                                                 |
+| `scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts`     | The Mondstadt grocery's record, by shop 1004                                          |
 | `scripts/src/services/genshinAssets/shops/toShopGoodRow.ts`                  | A good as the world reads it: its dates at the game's offset, its price and refresh   |
 | `packages/genshin-world/src/generated/shops/paimonsBargains.json`            | The generated Fates slice                                                             |
 | `packages/genshin-world/src/generated/shops/mondstadtGeneralGoods.json`      | The generated Mondstadt grocery slice                                                 |
