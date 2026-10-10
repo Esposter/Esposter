@@ -38,4 +38,17 @@ describe(readWindowFilePaths, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(readWindowFilePaths(baseSha, cwd, headSha)).toStrictEqual(["a.ts"]);
   });
+
+  test("keeps only the paths the base's path filters include, less the ones they exclude", () => {
+    expect.hasAssertions();
+
+    const cwd = getCwd();
+    const baseSha = commitFile(
+      ".coderabbit.yaml",
+      'reviews:\n  path_filters:\n    - "packages/**"\n    - "!**/generated/**"\n',
+    );
+    const headSha = commitFiles(["a.ts", "packages/b.ts", "packages/generated/c.ts"], "");
+
+    expect(readWindowFilePaths(baseSha, cwd, headSha)).toStrictEqual(["packages/b.ts"]);
+  });
 });
