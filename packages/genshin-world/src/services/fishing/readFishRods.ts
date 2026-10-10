@@ -1,11 +1,10 @@
 import type { FishRod } from "#src/models/fishing/FishRod";
 
 import { fishRodSchema } from "#src/models/fishing/FishRod";
+import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The rods, the slice `pnpm -C scripts genshin:assets fishing` writes, imported on demand and checked against its shape
-// As it arrives
-export const readFishRods = async (): Promise<FishRod[]> => {
-  const { default: fishRods } = await import("#src/generated/fishing/rods.json");
-  return z.array(fishRodSchema).parse(fishRods);
-};
+// The rods `pnpm -C scripts genshin:assets fishing` publishes
+// Fetched by its key from the hosted game data and checked against its shape as it arrives
+export const readFishRods = (gameDataBaseUrl: string): Promise<FishRod[]> =>
+  readGameData(gameDataBaseUrl, "fishing/rods", z.array(fishRodSchema));

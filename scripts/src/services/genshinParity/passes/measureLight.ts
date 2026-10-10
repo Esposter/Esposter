@@ -2,12 +2,12 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 import type { StoneLight } from "genshin-engine";
 
-import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { COLOUR_GATE, FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { measureGlow } from "#src/services/genshinParity/passes/measureGlow";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
-import { STONE_LIGHT_PATH } from "#src/services/genshinParity/witness/constants";
+import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
 import { readReferenceStoneSamples } from "#src/services/genshinParity/witness/readReferenceStoneSamples";
 import { readStoneColourDistance } from "#src/services/genshinParity/witness/readStoneColourDistance";
 import { solveReferenceShadows } from "#src/services/genshinParity/witness/solveReferenceShadows";
@@ -23,12 +23,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Shadow's edge on a receiver reads none. The glow the materials add over their lit colour is lit too, so the same pass
 // Reads it against the game's frame (`measureGlow`)
 export const measureLight = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
-  const lights = await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH);
+  const lights = await readPublishedGameData<Record<string, StoneLight>>(STONE_LIGHT_KEY);
   const measures: ParityPassMeasure[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
     const timeOfDay = ParityReferenceMap[referenceId]?.props?.timeOfDay;
     const light = typeof timeOfDay === "string" ? lights[timeOfDay] : undefined;
-    if (!light) throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `no light for ${referenceId}`);
+    if (!light) throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `no light for ${referenceId}`);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const reference = await readReferenceStoneSamples(referenceId, component);
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time

@@ -4,13 +4,13 @@ import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
 import { readLoginMusicSources } from "#src/services/genshinAssets/music/readLoginMusicSources";
 import { readSampleCatalogue } from "#src/services/genshinAssets/music/readSampleCatalogue";
 import { solveSampledVoices } from "#src/services/genshinAssets/music/solveSampledVoices";
 import { writeLayeredRecordings } from "#src/services/genshinAssets/music/writeLayeredRecordings";
 import { SAMPLED_VOICE_REPORTED_COUNT } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { fitHeldOutEqualiser } from "#src/services/genshinParity/music/fitHeldOutEqualiser";
 import { formatOnsetAgeSpan } from "#src/services/genshinParity/music/formatOnsetAgeSpan";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
@@ -82,6 +82,6 @@ export const instrumentsCommand: SubCommandsDef[string] = defineCommand({
         );
     }
     for (const path of await writeLayeredRecordings(music, segmentSolutionMap)) console.log(path);
-    console.log(await writeWorldData("login/music.json", music));
+    console.log(await publishGameDataRecord("login/music", music));
   },
 });

@@ -1,11 +1,10 @@
 import type { Fish } from "#src/models/fishing/Fish";
 
 import { fishSchema } from "#src/models/fishing/Fish";
+import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The fish, the slice `pnpm -C scripts genshin:assets fishing` writes, imported on demand and checked against its shape
-// As it arrives
-export const readFish = async (): Promise<Fish[]> => {
-  const { default: fish } = await import("#src/generated/fishing/fish.json");
-  return z.array(fishSchema).parse(fish);
-};
+// The fish `pnpm -C scripts genshin:assets fishing` publishes
+// Fetched by its key from the hosted game data and checked against its shape as it arrives
+export const readFish = (gameDataBaseUrl: string): Promise<Fish[]> =>
+  readGameData(gameDataBaseUrl, "fishing/fish", z.array(fishSchema));

@@ -61,7 +61,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-world/src/services/crafting/computeCraftableCount.ts`         | How many of a recipe the bag, wallet and regenerated resin pay for                          |
 | `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`             | Whether a recipe is open at a rank, and learned where an instruction opens it               |
 | `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`           | A recipe learned from an instruction in the bag                                             |
-| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`           | The slice imported on demand and checked against its shape                                  |
+| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`           | The recipes, fetched by their key from the hosted game data and checked against their shape |
 | `packages/genshin-world/src/models/crafting/CraftingSave.ts`                    | The save's crafting slice: the learned recipes and each recipe's crafted count              |
 | `packages/genshin-world/src/generated/crafting/recipes.json`                    | The bench's recipes, a few hundred of them                                                  |
 | `packages/genshin-world/src/components/Crafting/Screen/Index.vue`               | The bench's screen: the open recipes, the crafter, the count and the craft                  |

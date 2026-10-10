@@ -1,3 +1,5 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitGroundLayerField } from "#src/services/genshinAssets/fit/fitGroundLayerField";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
@@ -16,53 +18,53 @@ import {
   WINDRISE_GROUND_LAYER_TONES,
   WINDRISE_REGION_FILE,
 } from "#src/services/genshinAssets/shared/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
 import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-world";
 
-// Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
-// Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
-// Trunk's taper read off the export, its statue as stacks fitted piece by piece to its meshes, its families' surface
-// Colours and each part's as the export's textures paint them, and its water's level over the oak's foot, the last three
-// Exact, and its ground's layers as a field of their shares over its base maps. Every region's capital is placed with
-// The landmarks, round the same origin, since the oak's foot is the whole world's
-export const fitWindriseScene = (only: readonly string[] = []): Promise<string> =>
+// Windrise's parts fitted as our own generators' parameters, each a record under `windrise/`: its ground as hills, its
+// Oak's canopy as clusters and its trunk's taper read off the export, its statue as stacks fitted piece by piece to its
+// Meshes, its families' surface colours and each part's as the export's textures paint them, and its water's level over
+// The oak's foot, the last three exact, and its ground's layers as a field of their shares over its base maps. Its
+// Landmarks' places and turns are written into Mondstadt's region data, and every region's capital is placed with them,
+// Round the same origin, since the oak's foot is the whole world's
+export const fitWindriseScene = (only: readonly string[] = []): Promise<GameDataBuild> =>
   runFits(
     {
       ground: () => fitRegionGround(DerivedAssetComponent.Windrise, { x: 0, z: 0 }),
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
-      landmarks: async () => [
-        await fitRegionLandmarks(DerivedAssetComponent.Windrise, WINDRISE_REGION_FILE),
-        ...(await fitRegionCapitals()),
-      ],
+      landmarks: async () => {
+        const landmarksPath = await fitRegionLandmarks(DerivedAssetComponent.Windrise, WINDRISE_REGION_FILE);
+        const { notes, objects } = await fitRegionCapitals();
+        return { notes: [landmarksPath, ...notes], objects };
+      },
       oak: fitWindriseOak,
-      paving: async () => [await writeWorldData("windrise/paving.json", await fitWindrisePaving())],
-      plants: async () => [await writeWorldData("windrise/plants.json", await fitWindrisePlants())],
+      paving: async () => ({ notes: [], objects: { "windrise/paving": await fitWindrisePaving() } }),
+      plants: async () => ({ notes: [], objects: { "windrise/plants": await fitWindrisePlants() } }),
       statue: fitWindriseStatue,
-      surfaces: async () => [
-        await writeWorldData(
-          "windrise/surfaces.json",
-          await fitSurfaceColours(DerivedAssetComponent.Windrise, WindrisePartFamilyMeshRegexMap, GROUND_RADIUS, [
-            WindrisePartFamily.Ground,
-          ]),
-        ),
-        await writeWorldData(
-          "windrise/ground-layers.json",
-          await fitGroundLayerField(
+      surfaces: async () => ({
+        notes: [],
+        objects: {
+          "windrise/ground-layers": await fitGroundLayerField(
             DerivedAssetComponent.Windrise,
             GROUND_RADIUS,
             GROUND_LAYER_CELL_SIZE,
             WINDRISE_GROUND_LAYER_TONES,
           ),
-        ),
-      ],
+          "windrise/surfaces": await fitSurfaceColours(
+            DerivedAssetComponent.Windrise,
+            WindrisePartFamilyMeshRegexMap,
+            GROUND_RADIUS,
+            [WindrisePartFamily.Ground],
+          ),
+        },
+      }),
       water: async () => {
         const [[, originY], waterLevel] = await Promise.all([
           readWorldOrigin(DerivedAssetComponent.Windrise),
           readWorldWaterLevel(DerivedAssetComponent.Windrise),
         ]);
-        return [await writeWorldData("windrise/water.json", { level: roundFitted(waterLevel - originY) })];
+        return { notes: [], objects: { "windrise/water": { level: roundFitted(waterLevel - originY) } } };
       },
     },
     only,

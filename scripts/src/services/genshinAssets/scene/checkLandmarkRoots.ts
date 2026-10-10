@@ -2,12 +2,12 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldPlacements } from "#src/services/genshinAssets/world/readWorldPlacements";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { getWorldHeight } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -25,10 +25,11 @@ export const checkLandmarkRoots = async (
   regionFile: string,
 ): Promise<{ distance: number; id: string }[]> => {
   const regionLandmarks = (await readWorldOptions(component))?.regionLandmarks ?? [];
-  const [placements, origin, regionJson] = await Promise.all([
+  const [placements, origin, regionJson, getWorldHeight] = await Promise.all([
     readWorldPlacements(component),
     readWorldOrigin(component),
     readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
+    readWorldGroundHeight(),
   ]);
   const [, originY] = origin;
   const { landmarks } = parseMachineJson<{ landmarks: RegionLandmarkData[] }>(regionJson);

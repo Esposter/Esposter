@@ -63,7 +63,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 | `packages/genshin-world/src/models/character/CharacterTalentKit.ts` | A character's talent groups and passives                                            |
 | `packages/genshin-world/src/models/character/Passive.ts`            | A passive's group and the phase it opens at                                         |
 | `packages/genshin-world/src/services/character/upgradeTalent.ts`    | The upgrade rule: phase, Mora and items checked before any is taken                 |
-| `packages/genshin-world/src/services/character/readTalentTables.ts` | The two tables, imported on demand and checked against their shapes                 |
+| `packages/genshin-world/src/services/character/readTalentTables.ts` | The two tables, fetched by their keys and checked against their shapes              |
 | `packages/genshin-world/src/services/character/createCharacter.ts`  | Every combat talent at level 1                                                      |
 | `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`  | A character's talents from the first skill set that names all three                 |
 | `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`    | Each named group's levels from the second to the tenth, costs as the table has them |

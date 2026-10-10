@@ -2,9 +2,9 @@ import type { SubCommandsDef } from "citty";
 import type { Music, MusicNote, MusicVoice } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
 import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { computeNoteSupport } from "#src/services/genshinParity/music/computeNoteSupport";
 import { readGameMusicSegments } from "#src/services/genshinParity/music/readGameMusicSegments";
 import { renderMusicOnPage } from "#src/services/genshinParity/music/renderMusicOnPage";
@@ -90,6 +90,6 @@ export const notesCommand: SubCommandsDef[string] = defineCommand({
         );
         voice.notes = keptNotes;
       }
-    console.log(await writeWorldData("login/music.json", music));
+    console.log(await publishGameDataRecord("login/music", music));
   },
 });

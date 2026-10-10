@@ -5,7 +5,7 @@ description: The game's expeditions as pure state. A character but the Traveler 
 
 # Expeditions
 
-The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places come from the game's expedition table in a generated slice, imported on demand, and the limit by rank from a small data file. This page is what is built of [expeditions](/docs/proposals/genshin/expeditions). Katheryne's talk that opens the screen, the other nations' places and the expedition bonus and talents are not built, so no player can send a character from the game yet.
+The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](/docs/proposals/genshin/expeditions). Katheryne's talk that opens the screen, the other nations' places and the expedition bonus and talents are not built, so no player can send a character from the game yet.
 
 ## How it works
 
@@ -54,7 +54,7 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.ts`    | A place open by its rank, statue and quest                            |
 | `packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`        | The most expeditions out at once at a rank                            |
 | `packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`     | The scene points of the statues unlocked, the points a place names    |
-| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's slice, imported on demand and checked on arrival          |
+| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's places, fetched by key and checked on arrival             |
 | `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                        |
 | `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                 |
 

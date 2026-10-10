@@ -1,10 +1,14 @@
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Artifact } from "#src/models/artifact/Artifact";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { openArchiveArtifactSets } from "#src/services/archive/openArchiveArtifactSets";
+import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
 import { describe, expect, test } from "vitest";
+
+const reliquarySets = await readReliquarySets(GAME_DATA_LOCAL_BASE_URL);
 
 const createArtifact = (setId: number, slot: ArtifactSlot): Pick<Artifact, "setId" | "slot"> => ({ setId, slot });
 
@@ -26,12 +30,13 @@ describe(openArchiveArtifactSets, () => {
       createArtifact(FIVE_PIECE_SET_ID, ArtifactSlot.PlumeOfDeath),
     ];
 
-    expect(openArchiveArtifactSets(emptyProgress, fourPieces, EQUIPMENT_ENTRY_IDS)).toBe(emptyProgress);
+    expect(openArchiveArtifactSets(emptyProgress, fourPieces, EQUIPMENT_ENTRY_IDS, reliquarySets)).toBe(emptyProgress);
     expect(
       openArchiveArtifactSets(
         emptyProgress,
         [...fourPieces, createArtifact(FIVE_PIECE_SET_ID, ArtifactSlot.SandsOfEon)],
         EQUIPMENT_ENTRY_IDS,
+        reliquarySets,
       ),
     ).toStrictEqual(new Map([[ArchiveSection.Equipment, new Set([FIVE_PIECE_SET_ID])]]));
   });
@@ -44,6 +49,7 @@ describe(openArchiveArtifactSets, () => {
         emptyProgress,
         [createArtifact(ONE_PIECE_SET_ID, ArtifactSlot.CircletOfLogos)],
         EQUIPMENT_ENTRY_IDS,
+        reliquarySets,
       ),
     ).toStrictEqual(new Map([[ArchiveSection.Equipment, new Set([ONE_PIECE_SET_ID])]]));
   });
@@ -56,6 +62,7 @@ describe(openArchiveArtifactSets, () => {
         emptyProgress,
         [createArtifact(NO_ENTRY_SET_ID, ArtifactSlot.CircletOfLogos)],
         EQUIPMENT_ENTRY_IDS,
+        reliquarySets,
       ),
     ).toBe(emptyProgress);
   });
@@ -65,6 +72,6 @@ describe(openArchiveArtifactSets, () => {
 
     const progress: ArchiveProgress = new Map([[ArchiveSection.Equipment, new Set([FIVE_PIECE_SET_ID])]]);
 
-    expect(openArchiveArtifactSets(progress, [], EQUIPMENT_ENTRY_IDS)).toBe(progress);
+    expect(openArchiveArtifactSets(progress, [], EQUIPMENT_ENTRY_IDS, reliquarySets)).toBe(progress);
   });
 });

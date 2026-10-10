@@ -1,12 +1,10 @@
 import type { GameDataLock } from "genshin-world";
 
+import { MAX_CONCURRENT_VERIFY_FETCHES } from "#src/services/gameData/constants";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { getGameDataHash } from "#src/services/gameData/getGameDataHash";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 import { fetchJson, gameDataIndexSchema } from "genshin-world";
-
-// Fetches in flight at once against one account, which keeps the script's memory bounded by one wave of objects
-const MAX_CONCURRENT_VERIFY_FETCHES = 16;
 
 // Fetches one object anonymously from an account's base and checks that its content hashes to the name the lock gave it
 const verifyGameDataObject = async (baseUrl: string, hash: string): Promise<unknown> => {

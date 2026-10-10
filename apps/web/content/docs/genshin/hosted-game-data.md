@@ -5,7 +5,7 @@ description: Every dataset genshin-world reads is published to Azure Blob Storag
 
 # Hosted game data
 
-Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, the enemy, Adventure Rank and material tables, the HUD's rects, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
+Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, the enemy, Adventure Rank and material tables, the HUD's rects, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left: the recipe, activity, talent table, reliquary set and expedition limit readers already fetch by key, though no screen calls them yet.
 
 ## How it works
 
@@ -16,6 +16,8 @@ A record read whole is an object key, `<dataset>/<name>`: `stats/weapons`, `wind
 An entity collection a screen opens one entity of is an index object. `profile/<Language>` and `bookBody/<Language>` each map a body or character id to the hash of its record, one index a language, and `talentMultipliers` and `talentLabels` each map an avatar id to its record. Opening one entity costs two small fetches: the index, then the record.
 
 The container is AppAssets rather than GenshinAssets, because AppAssets is already public and serves the character packs, while GenshinAssets holds each player's save and must stay private.
+
+A character's pack follows the same principles under `genshin/characters/`. Its record in the `characterPacks` dataset, `characterPacks/<id>`, lists each of the pack's files by its sha256, and the record's own hash names the folder the files are stored in, `genshin/characters/<id>/<packHash>/`, each with the same immutable cache header. The model and the terms are zstd frames, the textures their own images. The publisher and the world's reader are the [characters](/docs/genshin/characters) page's.
 
 ```mermaid
 flowchart TD
@@ -54,7 +56,8 @@ flowchart TD
   Fetch["git fetch origin"] -->|fails| Skipped["prune skipped, with a note"]
   Fetch --> Locks["live locks: working tree, HEAD, each origin head, origin/main within 90 days"]
   Locks --> Live["every object and index entry they name"]
-  Listing["the account's listing with lastModified"] --> Candidates["listed, not live, older than 90 days"]
+  Listing["the account's listing of genshin/data/ with lastModified"] --> Candidates["listed, not live, older than 90 days"]
+  Packs["the listing of genshin/characters/, live by the packHash folder each file sits in"] --> Candidates
   Live --> Candidates
   Candidates --> Delete["batch delete, ifUnmodifiedSince the cutoff"]
   Delete --> Outcome{"sub-response"}
@@ -65,15 +68,18 @@ flowchart TD
 ## Publishing
 
 - `pnpm -C scripts genshin:assets profile`, `archive`, `achievements`, `gcg`, `stats` and `items`, and `pnpm -C scripts genshin:text names`, `quests` and `gcg`, build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The other data commands publish the same way, each scoped to its own dataset: the recipe and activity commands `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`; the map-point commands `chests`, `oculi`, `puzzles`, `wildlife`, `gathering`, `offerings` and `fishing`; and `enemies`, `rank`, `expeditions` and `shops`.
+- `pnpm -C scripts genshin:assets fit <component>` publishes each record it fits under its own key, each key its own scope, so `--only plants` replaces `windrise/plants` alone, and takes `--dry-run` as the builders do. The parity loops that refit one record publish it the same way after each run, with no dry run: `genshin:parity notes`, `expression` and `instruments` publish `login/music`, and `calibrate --write` publishes `login/stoneLight`.
+- `pnpm -C scripts genshin:data authored [--dry-run]` publishes the world's authored files, which people edit and no step generates, from the files the package commits: the catalogue as `catalogue/catalogue`, each region's ground as `ground/<region>` and the login's age rating as `login/ageRating`. When Windrise's landmarks fit moves a capital's plateau, it rewrites that region's ground file and publishes the ground in the same run.
 - A real publish stores each missing object in both accounts, with `DefaultAzureCredential`, which resolves to the owner's `az login`. No account key is written to disk.
 - A rerun on the same dump reports `unchanged` and makes no request.
 - A dry run that reports `N records would be published` means the builder's records differ from the lock: the dump has moved past the committed files, or the lock has gone stale for that dataset, and the publish is a separate step.
 - The lock is written only after both accounts hold every object, so a failed account leaves the committed lock naming nothing new, and a rerun converges.
-- `pnpm -C scripts genshin:data verify` fetches every object the lock reaches from each account, anonymously, and checks that each hashes to its name.
+- `pnpm -C scripts genshin:data verify` fetches every object the lock reaches from each account, anonymously, and checks that each hashes to its name, then asks each account for the headers of every file each character pack's record lists.
+- `pnpm -C scripts genshin:characters publish <folder>` publishes the characters' packs: their files first, create-only in both accounts, then each record through the same step and lock as every other dataset, one key scope a character.
 
 A publish names the scopes it replaces. A dataset scope replaces every key under its dataset; a key scope (`login/music`) replaces that one key and keeps its dataset's other keys as the lock holds them, so a fit that refits one part publishes one key. A key scope is checked to sit under a dataset before anything is published (`toGameDataKeyScopes`).
 
-The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The recipe and activity builders publish their records instead of writing files, the map-point, offering, gathering and fishing builders publish theirs too, and so do the achievements, the archive and its names, the quests, the names and the card game's decks, standard rule and games. The card game's words are still written by `genshin:text gcg`, since the lock's `gcgText` records name 102 texts where the committed decks name 176, and its publish is the proposal's to make; the other builders still write theirs.
+The first publish stored 5,765 objects in each account: the 5,735 distinct records behind the 5,880 committed files, and 30 index objects. Together they take 31.3 MB in each account, and the publish took 84 s. The second published every other dataset once from the files committed at the time: 225 object keys and the two talent indexes of 123 entries each, 463 distinct records stored in 13.5 s, which leaves 6,228 objects and 35.8 MB in each account. The recipe and activity builders publish their records instead of writing files, the map-point, offering, gathering and fishing builders publish theirs too, and so do the achievements, the archive and its names, the quests, the names, the card game's decks, standard rule and games, the fits and the parity loops. The card game's words are still written by `genshin:text gcg`, since the lock's `gcgText` records name 102 texts where the committed decks name 176, and its publish is the proposal's to make; the other builders still write theirs.
 
 ## Reading
 
@@ -81,7 +87,7 @@ The first publish stored 5,765 objects in each account: the 5,735 distinct recor
 
 The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names, the stat, enemy, Adventure Rank and material tables, the HUD's rects and the starting team's talent multipliers from it before the world opens, and hands the base and the tables to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
 
-A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`), never through genshin-world's build, which a step running under `tsx` may load stale. A fitted data file the package still keeps is read from disk first (`readWorldData`), since the fit that last wrote it holds its freshest copy, and from the dev account under its path less `.json` once it is published and gone.
+A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`), never through genshin-world's build, which a step running under `tsx` may load stale. A world data file is read through the lock first (`readWorldData`): the record the lock names under its path less `.json`, which a fit or a parity loop last published, from the dev account, and the file the package keeps only where the lock names nothing under that path, as for the region data.
 
 ## Tests
 
@@ -105,7 +111,7 @@ flowchart TD
 
 ## Deleting
 
-`pnpm -C scripts genshin:data prune [--dry-run]` deletes what no live lock reaches and what is older than 90 days, one account at a time, after fetching origin. The live set is the working tree's lock, HEAD's, each remote branch's, and every version of origin/main within the window, plus the one in force when the window opened. A batch delete carries the cutoff as `ifUnmodifiedSince`, so an object rewritten after the listing is kept. The account's seven-day soft delete is the last net.
+`pnpm -C scripts genshin:data prune [--dry-run]` deletes what no live lock reaches and what is older than 90 days, one account at a time, after fetching origin. A character pack's file is reached through its folder: it is live while a live lock names the record whose hash names the folder. The live set is the working tree's lock, HEAD's, each remote branch's, and every version of origin/main within the window, plus the one in force when the window opened. A batch delete carries the cutoff as `ifUnmodifiedSince`, so an object rewritten after the listing is kept. The account's seven-day soft delete is the last net.
 
 A publish does not prune. A revert resolves within the 90-day window, since its objects are still stored.
 
@@ -157,11 +163,15 @@ Wall times move with the machine's load, so the median of three is the steadier 
 - **The suites' base imports nothing.** `GAME_DATA_LOCAL_BASE_URL` has a module of its own, because the fixtures that pass it run in the browser through the parity page; the mirror's directory and its source address sit in a Node-only module beside the mirror.
 - **The mirror is the package's own tooling,** under `packages/genshin-world/scripts`, reached by `#scripts/*` and never shipped. Neither it nor the `scripts` package can import the other's tooling, so each writes the dev account's address.
 - **The mirror checks the bytes it downloaded.** The account stores the compact JSON the publisher hashed, so the downloaded bytes hash to their name with no re-serialization.
-- **A kept world data file is read before its published record.** Until a fit publishes its keys instead of writing its file, the file it last wrote is the freshest copy, and a parity loop that rewrites `login/music.json` reads its own last write.
+- **A world data file is read from its published record first.** The fits and the parity loops publish rather than write, so the record the lock names is the freshest copy, and a parity loop that refits `login/music` reads its own last publish.
+- **The fits run one at a time.** A fit holds the thread while it computes, so when the fits ran together, a record another fit was fetching outwaited its ten-second timeout. They share the one thread either way, so running them in turn costs only the reads they overlapped.
+- **A fit returns what a builder returns:** its notes and its records by key (`GameDataBuild`), which the fit command publishes as any step does.
+- **The authored files stay committed where they are.** The catalogue, the regions' grounds and the age rating are files people edit, and `genshin:data authored` publishes them from there. The catalogue and the grounds publish as dataset scopes, so a deleted ground leaves the lock with its file. The age rating publishes as a key scope, since the fits own the rest of `login`.
 - **The coverage shards only restore the mirror.** A shard reads a subset of what the lock names, and one exact key saved by whichever shard finished first would hold that subset for every later run.
 - **A combatant carries its weapon type.** The world's combat fills `weaponType` from the roster's table it already holds, so Bennett's field and the ores read the wielder off the combatant and nothing holds a copy of the table for a synchronous lookup. The field is optional: a character the roster's table does not hold wields nothing, and a test's combatant whose rules read no weapon leaves it out.
 - **A record holding several tables is parsed per field.** The friendship record carries the levels and the namecards, and each reader's schema takes only its own field, so a reader holds what it returns and nothing else.
 - **A step publishes its builders' records in one call.** Fishing's two builders share one scope, and a publish replaces every key under its scope, so a call per builder would drop the other builder's keys until its own call ran. Offerings publishes its two scopes in one call for the same reason.
+- **A reader nothing calls still moves.** The recipe, activity, talent table, reliquary set and expedition limit readers fetch their keys now, so the package imports none of their JSON ahead of the screen that calls them.
 
 ## Notes
 
@@ -182,6 +192,8 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/pruneGameData.ts`                                      | Deletes the objects no live lock reaches and that are past retention                                                 |
 | `scripts/src/services/gameData/readLiveGameDataLocks.ts`                              | The locks a stored object may still be reached by                                                                    |
 | `scripts/src/services/gameData/storeGameDataRecord.ts`                                | Writes one object create-only, or rewrites a stale copy with the same bytes                                          |
+| `scripts/src/services/gameData/storeBlob.ts`                                          | A create-only write that finds its blob already stored resolves as not written, shared with the character packs      |
+| `scripts/src/services/genshinCharacters/verifyCharacterPacks.ts`                      | Asks each account for every file a character pack's record lists                                                     |
 | `scripts/src/services/gameData/createGameDataContainerClient.ts`                      | The keyless container client each account is published through                                                       |
 | `scripts/src/services/gameData/commands/verifyCommand.ts`                             | `genshin:data verify`                                                                                                |
 | `scripts/src/services/gameData/commands/pruneCommand.ts`                              | `genshin:data prune`                                                                                                 |
@@ -212,7 +224,12 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `scripts/src/services/gameData/mergeGameDataLock.ts`                                  | Drops every entry a dataset or key scope names and lays the publication's entries over the rest                      |
 | `scripts/src/services/gameData/toGameDataKeyScopes.ts`                                | The keys a step republishes on their own, each checked to sit under a dataset                                        |
 | `scripts/src/services/gameData/readPublishedGameData.ts`                              | A record another step published, read through the lock on disk from the dev account                                  |
-| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                          | A fitted data file from disk while the package keeps it, else its published record                                   |
+| `scripts/src/services/genshinAssets/shared/readWorldData.ts`                          | A world data file's published record by its path less `.json`, else the file the package keeps                       |
+| `scripts/src/services/genshinAssets/commands/fitCommand.ts`                           | `genshin:assets fit`, which publishes each fitted record under its own key                                           |
+| `scripts/src/services/genshinAssets/fit/runFits.ts`                                   | Runs a component's fits one at a time and merges their records                                                       |
+| `scripts/src/services/gameData/publishGameDataRecord.ts`                              | One record published under its own key, the parity loops' publish                                                    |
+| `scripts/src/services/gameData/commands/authoredCommand.ts`                           | `genshin:data authored`, which publishes the authored files                                                          |
+| `scripts/src/services/gameData/readAuthoredGameData.ts`                               | The catalogue, the regions' grounds and the age rating, read from their committed files                              |
 | `packages/genshin-world/src/models/data/GameDataset.ts`                               | The datasets, each the scope a publish replaces and the first segment of its keys                                    |
 | `packages/genshin-world/src/models/data/GameDataKey.ts`                               | The lock's object keys, which type the key a reader names                                                            |
 | `packages/genshin-world/src/models/data/GameDataIndexKey.ts`                          | The lock's index keys, which type the index a reader names                                                           |

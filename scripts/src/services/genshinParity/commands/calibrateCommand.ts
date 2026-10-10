@@ -2,20 +2,18 @@ import type { SubCommandsDef } from "citty";
 import type { StoneLight } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
+import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
-import { STONE_LIGHT_PATH } from "#src/services/genshinParity/witness/constants";
+import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
 import { solveReferenceHaze } from "#src/services/genshinParity/witness/solveReferenceHaze";
 import { solveReferenceStoneLight } from "#src/services/genshinParity/witness/solveReferenceStoneLight";
 import { parseNames } from "#src/services/shared/parseNames";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 
-// The decimals a written light keeps, past which its colours move nothing the screen shows
+// The decimals a published light keeps, past which its colours move nothing the screen shows
 const LIGHT_DECIMALS = 4;
 const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(" ");
 const roundColor = (color: readonly number[]): number[] => color.map((value) => Number(value.toFixed(LIGHT_DECIMALS)));
@@ -24,7 +22,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {
     darkening: {
       description:
-        "The rate a metre up the light darkens at with height, held through the solve; the light written for the reference's hour keeps its own when none is given",
+        "The rate a metre up the light darkens at with height, held through the solve; the light published for the reference's hour keeps its own when none is given",
       type: "string",
     },
     reference: {
@@ -53,7 +51,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     },
     write: {
       default: false,
-      description: `Write the solved light into the world's ${STONE_LIGHT_PATH} under the reference's time of day`,
+      description: `Publish the solved light into the world's ${STONE_LIGHT_KEY} record under the reference's time of day`,
       type: "boolean",
     },
   },
@@ -63,10 +61,10 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     name: "calibrate",
   },
   run: async ({ args }) => {
-    // The haze lives in the scene's sky state, not the world's data, so a light written beside it would be drawn under
-    // A haze it was not solved under: the haze is set first, and the light written under the scene's own
+    // The haze lives in the scene's sky state, not the world's data, so a light published beside it would be drawn under
+    // A haze it was not solved under: the haze is set first, and the light published under the scene's own
     if (args.haze && args.write)
-      throw new InvalidOperationError(Operation.Update, STONE_LIGHT_PATH, "--haze solves a haze --write cannot set");
+      throw new InvalidOperationError(Operation.Update, STONE_LIGHT_KEY, "--haze solves a haze --write cannot set");
     if (args.haze) {
       const { haze, noneResidual, residual, sceneResidual } = await solveReferenceHaze(
         parseNames(args.reference, "reference"),
@@ -78,9 +76,10 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     const timeOfDay = ParityReferenceMap[args.reference]?.props?.timeOfDay;
-    const lights = existsSync(join(WORLD_DATA_DIRECTORY, STONE_LIGHT_PATH))
-      ? await readWorldData<Record<string, StoneLight>>(STONE_LIGHT_PATH)
-      : {};
+    const lights =
+      (await readGameDataLock()).objects[STONE_LIGHT_KEY] === undefined
+        ? {}
+        : await readPublishedGameData<Record<string, StoneLight>>(STONE_LIGHT_KEY);
     const heightDarkening =
       args.darkening === undefined
         ? ((typeof timeOfDay === "string" ? lights[timeOfDay]?.heightDarkening : undefined) ?? 0)
@@ -109,17 +108,17 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
     );
     if (!args.self && !args.write) return;
     if (typeof timeOfDay !== "string")
-      throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `${args.reference} sets no time of day`);
+      throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `${args.reference} sets no time of day`);
     if (args.self) {
-      const written = lights[timeOfDay];
-      if (!written)
-        throw new InvalidOperationError(Operation.Read, STONE_LIGHT_PATH, `no light written for ${timeOfDay}`);
-      // Every colour channel of the written light beside the one solved for it, knot by knot and term by term
+      const published = lights[timeOfDay];
+      if (!published)
+        throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `no light published for ${timeOfDay}`);
+      // Every colour channel of the published light beside the one solved for it, knot by knot and term by term
       const pairs = [
-        { set: written.ramp, solved: light.ramp },
-        { set: written.harmonics, solved: light.harmonics },
-        { set: [written.heightFade], solved: [light.heightFade] },
-        { set: [written.hazeColor, written.hazeScatterColor], solved: [light.hazeColor, light.hazeScatterColor] },
+        { set: published.ramp, solved: light.ramp },
+        { set: published.harmonics, solved: light.harmonics },
+        { set: [published.heightFade], solved: [light.heightFade] },
+        { set: [published.hazeColor, published.hazeScatterColor], solved: [light.hazeColor, light.hazeScatterColor] },
       ].flatMap(({ set, solved }) =>
         set.flatMap((colors, index) =>
           colors.map((value, channel) => ({ solved: solved[index]?.[channel] ?? 0, value })),
@@ -128,7 +127,7 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       const pairCount = Math.max(pairs.length, 1);
       const scale = Math.sqrt(pairs.reduce((sum, { value }) => sum + value ** 2, 0) / pairCount);
       const error = Math.sqrt(pairs.reduce((sum, { solved, value }) => sum + (solved - value) ** 2, 0) / pairCount);
-      console.log(`against the light written for ${timeOfDay}: ${error.toFixed(4)} off over its ${scale.toFixed(4)}`);
+      console.log(`against the light published for ${timeOfDay}: ${error.toFixed(4)} off over its ${scale.toFixed(4)}`);
       return;
     }
     lights[timeOfDay] = {
@@ -139,6 +138,6 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       heightFade: roundColor(light.heightFade),
       ramp: light.ramp.map(roundColor),
     };
-    console.log(await writeWorldData(STONE_LIGHT_PATH, lights));
+    console.log(await publishGameDataRecord(STONE_LIGHT_KEY, lights));
   },
 });

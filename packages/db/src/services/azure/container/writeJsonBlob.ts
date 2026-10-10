@@ -1,6 +1,6 @@
 import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob";
 
-import { compressJson } from "#src/services/azure/container/compressJson";
+import { compressZstd } from "#src/services/azure/container/compressZstd";
 import { uploadCompressedJson } from "#src/services/azure/container/uploadCompressedJson";
 
 // The one way a JSON document is stored: compressed at the default level and uploaded, so a browser reading it through a
@@ -13,4 +13,4 @@ export const writeJsonBlob = async (
   serializedJson: string,
   conditions?: BlobRequestConditions,
 ): Promise<{ etag?: string; size: number }> =>
-  uploadCompressedJson(containerClient, blobName, await compressJson(serializedJson), { conditions });
+  uploadCompressedJson(containerClient, blobName, await compressZstd(serializedJson), { conditions });

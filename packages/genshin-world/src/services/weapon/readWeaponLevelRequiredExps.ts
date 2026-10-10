@@ -1,10 +1,9 @@
 import type { RarityRequiredExpsMap } from "#src/models/weapon/RarityRequiredExpsMap";
 
+import { readGameData } from "#src/services/data/readGameData";
 import { z } from "zod";
 
-// The weapon levelling table `pnpm -C scripts genshin:assets stats` writes, imported on demand as a chunk of its own and
-// Checked against its shape as it arrives
-export const readWeaponLevelRequiredExps = async (): Promise<RarityRequiredExpsMap> => {
-  const { default: weaponLevelRequiredExps } = await import("#src/generated/stats/weaponLevelRequiredExps.json");
-  return z.record(z.string(), z.array(z.int().positive())).parse(weaponLevelRequiredExps);
-};
+// The weapon levelling table `pnpm -C scripts genshin:assets stats` publishes
+// Fetched by its key from the hosted game data and checked against its shape as it arrives
+export const readWeaponLevelRequiredExps = (gameDataBaseUrl: string): Promise<RarityRequiredExpsMap> =>
+  readGameData(gameDataBaseUrl, "stats/weaponLevelRequiredExps", z.record(z.string(), z.array(z.int().positive())));
