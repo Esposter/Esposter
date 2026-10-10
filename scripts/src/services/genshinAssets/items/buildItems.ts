@@ -12,14 +12,15 @@ import {
   ForgeRecipeKind,
   forgeRecipeSchema,
   GameDataset,
+  offeringLevelSchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
 
-// The items every drop family's table names, every expedition's reward preview gives, and every forge and crafting recipe
-// Takes or yields, each read from the game's Material table with its name's text id, which `genshin:text names` writes
+// The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
+// Takes or yields, and every offering the Frostbearing Tree's levels take or pay, each read from the game's Material table with its name's text id, which `genshin:text names` writes
 // Into the name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure
 // EXP is taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon
 // Table. The recipes are the records their steps published, read from the dev account. An item the table lacks is an
@@ -36,6 +37,9 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       .flatMap(({ results }) => results.map(({ itemId }) => itemId)),
   ];
   const craftingRecipes = z.array(craftingRecipeSchema).parse(await readPublishedGameData("crafting/recipes"));
+  const frostbearingTreeLevels = z
+    .array(offeringLevelSchema)
+    .parse(await readPublishedGameData("offerings/frostbearingTree"));
   const materialRows = parseMachineJson<MaterialRow[]>(
     await readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
   );
@@ -46,6 +50,8 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...forgeItemIds,
       ...craftingRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),
       ...craftingRecipes.map(({ resultItemId }) => resultItemId),
+      ...frostbearingTreeLevels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId),
+      ...frostbearingTreeLevels.flatMap(({ rewards }) => rewards.map(({ itemId }) => itemId)),
     ]),
   ]
     .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
