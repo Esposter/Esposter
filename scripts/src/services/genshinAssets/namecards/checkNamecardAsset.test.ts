@@ -14,6 +14,6 @@ describe(checkNamecardAsset, () => {
   ])("should return %s for %s", (expected, _description, name, type) => {
     expect.hasAssertions();
 
-    expect(checkNamecardAsset({ block: BLOCK, name, pathId: PATH_ID, type })).toBe(expected);
+    expect(checkNamecardAsset({ block: BLOCK, name, offset: 0, pathId: PATH_ID, type })).toBe(expected);
   });
 });

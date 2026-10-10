@@ -2,8 +2,8 @@ import type { RegionCapital } from "#src/models/genshinAssets/world/RegionCapita
 
 // Each region's first landmark by its region data file's id, and the areas whose waypoints place it: the capital, or
 // For Natlan, the first tribe the game enters it through. Snezhnaya's areas are not in the community's dump yet, so its
-// Capital is set at the place the scene has always been set at by hand. Each capital's city area is found by its place
-// (`readCapitalCityCode`)
+// Capital is set at the place the scene has always been set at by hand. Each capital's city areas are found by its place
+// (`selectCityAreasInView`)
 export const RegionCapitalMap: Record<string, RegionCapital> = {
   fontaine: { areaNames: ["Court of Fontaine"], landmarkId: "court-of-fontaine" },
   inazuma: { areaNames: ["Inazuma City"], landmarkId: "inazuma-city" },
