@@ -13,11 +13,19 @@ describe(resolveCharacterPackTextures, () => {
     });
   });
 
+  test("matches a texture whose path leaves a folder and comes back within the model's folder", () => {
+    expect.hasAssertions();
+    expect(resolveCharacterPackTextures([String.raw`a\..\b`], ["b"])).toStrictEqual({
+      files: [{ filePath: "b", path: "b" }],
+      missingPaths: [],
+    });
+  });
+
   test("reports a texture no file matches and one climbing out of the model's folder", () => {
     expect.hasAssertions();
-    expect(resolveCharacterPackTextures(["a", "../b"], ["b"])).toStrictEqual({
+    expect(resolveCharacterPackTextures(["a", "../b", "a/../../b"], ["b"])).toStrictEqual({
       files: [],
-      missingPaths: ["a", "../b"],
+      missingPaths: ["a", "../b", "a/../../b"],
     });
   });
 });
