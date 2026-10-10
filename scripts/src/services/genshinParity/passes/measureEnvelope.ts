@@ -42,6 +42,10 @@ export const measureEnvelope = async (
   if (family === -1) return [];
   const { height, width } = exportsRead;
   const exportsTargets = toTargets(exportsRead);
+  const maskOf = ({ part }: Targets) => readFamilyMask(part, family, width * height);
+  const exportsMask = maskOf(exportsTargets);
+  // The families are the scene's, not the frame's, so an Oak the reference's camera does not see has no envelope to read
+  if (!exportsMask.includes(1)) return [];
   const halves: Targets[] = [];
   for (const leafHalf of [0, 1] as const) {
     // oxlint-disable-next-line no-await-in-loop -- one half is drawn after the other on one page
@@ -52,8 +56,7 @@ export const measureEnvelope = async (
   const [firstHalf, secondHalf] = halves;
   if (!firstHalf || !secondHalf)
     throw new InvalidOperationError(Operation.Read, referenceId, "has no halves of its cards");
-  const maskOf = ({ part }: Targets) => readFamilyMask(part, family, width * height);
-  const radius = computeEnvelopeRadius(maskOf(exportsTargets), [maskOf(firstHalf), maskOf(secondHalf)], width, height);
+  const radius = computeEnvelopeRadius(exportsMask, [maskOf(firstHalf), maskOf(secondHalf)], width, height);
   const envelopeOf = (targets: Targets) => computeFamilyEnvelope(targets, family, width, height, radius);
   const floor = compareFamilyEnvelope(envelopeOf(firstHalf), envelopeOf(secondHalf), width, height);
   const ours = compareFamilyEnvelope(envelopeOf(exportsTargets), envelopeOf(toTargets(oursRead)), width, height);
