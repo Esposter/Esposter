@@ -2,6 +2,7 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
+import type { TreeTube, TreeTubePoint } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -13,20 +14,18 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
-import { traceRootCentrelines } from "#src/services/genshinAssets/fit/traceRootCentrelines";
+import { traceTubeCentrelines } from "#src/services/genshinAssets/fit/traceTubeCentrelines";
 import {
   CUTOFF_PROPERTY,
   OAK_BARK_MESH,
   OAK_CLUSTER_COUNT,
   OAK_CLUSTER_SEED,
   OAK_LEAF_MESH,
+  OAK_LIMB_SUBMESH,
   OAK_NORMAL_CELL_SIZE,
-  OAK_ROOT_LEVEL_STEP,
   OAK_ROOT_SUBMESH,
-  OAK_ROOT_TOLERANCE,
-  OAK_TRUNK_HEIGHTS,
-  OAK_TRUNK_REACH,
-  OAK_TRUNK_SLAB_HALF_HEIGHT,
+  OAK_TUBE_LEVEL_STEP,
+  OAK_TUBE_TOLERANCE,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
@@ -37,14 +36,10 @@ import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { getPercentile } from "#src/services/shared/getPercentile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
 import sharp from "sharp";
 import { Quaternion, Vector3 } from "three";
-
-// The bark's radius at a station is its 90th percentile, a stray sliver of bark not setting it
-const BARK_RADIUS_FRACTION = 0.9;
 
 // A mesh's faces, vertices and vertex normals in three's axes, placed where its placement stands it and taken round the
 // Oak's foot, the origin's place in the game's axes, so every point it yields is placed as every other fit's are, with
@@ -102,11 +97,22 @@ const findOakPlacement = (placements: AssetPlacement[], mesh: string): AssetPlac
   if (!placement) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, `places no ${mesh}`);
   return placement;
 };
-// The great oak's canopy, trunk and surface roots read off its export's Lod1 meshes, in three's axes round its foot: each
-// Leaf triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the share of
-// Its texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, the bark's radius at
-// Each trunk station, and its roots' submesh traced into the centrelines their tubes are swept along, as the record
-// `windrise/oak` with its report
+// A traced mesh's tubes as the record holds them, each point rounded as every fitted value is
+const toRecordTubes = (tubes: readonly TreeTube[]): TreeTubePoint[][] =>
+  tubes.map((tube) =>
+    tube.map(({ radius, x, y, z }) => ({
+      radius: roundFitted(radius),
+      x: roundFitted(x),
+      y: roundFitted(y),
+      z: roundFitted(z),
+    })),
+  );
+const countPoints = (tubes: readonly TreeTube[]): number => tubes.reduce((sum, tube) => sum + tube.length, 0);
+// The great oak's canopy, trunk, limbs and surface roots read off its export's Lod1 meshes, in three's axes round its
+// Foot: each leaf triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the
+// Share of its texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, and the
+// Bark's trunk and roots submeshes each traced into the centrelines their tubes are swept along, the trunk from its
+// Foot, as the record `windrise/oak` with its report
 export const fitWindriseOak = async (): Promise<GameDataBuild> => {
   const meshDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Mesh);
   const [placements, origin] = await Promise.all([
@@ -150,29 +156,21 @@ export const fitWindriseOak = async (): Promise<GameDataBuild> => {
     }),
     OAK_NORMAL_CELL_SIZE,
   );
-  const trunk = OAK_TRUNK_HEIGHTS.map((height) => {
-    const radius = getPercentile(
-      bark.vertices.flatMap(([x, y, z]) =>
-        Math.abs(y - height) <= OAK_TRUNK_SLAB_HALF_HEIGHT && Math.hypot(x, z) <= OAK_TRUNK_REACH
-          ? [Math.hypot(x, z)]
-          : [],
-      ),
-      BARK_RADIUS_FRACTION,
+  const traceBarkSubmesh = (submesh: number, hasTrunk: boolean): TreeTube[] => {
+    const group = `${OAK_BARK_MESH}_${submesh}`;
+    const tubes = traceTubeCentrelines(
+      bark.vertices,
+      bark.faces.filter((_face, index) => bark.faceGroups[index] === group),
+      { hasTrunk, levelStep: OAK_TUBE_LEVEL_STEP, tolerance: OAK_TUBE_TOLERANCE },
     );
-    if (Number.isNaN(radius))
-      throw new InvalidOperationError(Operation.Read, OAK_BARK_MESH, `has no bark at the trunk's height ${height}`);
-    return { height, radius: roundFitted(radius) };
-  });
-  const rootGroup = `${OAK_BARK_MESH}_${OAK_ROOT_SUBMESH}`;
-  const roots = traceRootCentrelines(
-    bark.vertices,
-    bark.faces.filter((_face, index) => bark.faceGroups[index] === rootGroup),
-    { levelStep: OAK_ROOT_LEVEL_STEP, tolerance: OAK_ROOT_TOLERANCE },
-  );
-  if (roots.length === 0) throw new InvalidOperationError(Operation.Read, rootGroup, "has no surface roots");
+    if (tubes.length === 0) throw new InvalidOperationError(Operation.Read, group, "has no tubes");
+    return tubes;
+  };
+  const limbs = traceBarkSubmesh(OAK_LIMB_SUBMESH, true);
+  const roots = traceBarkSubmesh(OAK_ROOT_SUBMESH, false);
   return {
     notes: [
-      `oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk ${trunk.length} stations, ${roots.length} roots through ${roots.reduce((sum, root) => sum + root.length, 0)} points`,
+      `oak: ${clusters.length} clusters over ${cards.length} leaf triangles, trunk and ${limbs.length - 1} limbs through ${countPoints(limbs)} points, ${roots.length} roots through ${countPoints(roots)} points`,
     ],
     objects: {
       "windrise/oak": {
@@ -183,16 +181,9 @@ export const fitWindriseOak = async (): Promise<GameDataBuild> => {
           y: roundFitted(y),
           z: roundFitted(z),
         })),
+        limbs: toRecordTubes(limbs),
         normalField,
-        roots: roots.map((root) =>
-          root.map(({ radius, x, y, z }) => ({
-            radius: roundFitted(radius),
-            x: roundFitted(x),
-            y: roundFitted(y),
-            z: roundFitted(z),
-          })),
-        ),
-        trunk,
+        roots: toRecordTubes(roots),
       },
     },
   };

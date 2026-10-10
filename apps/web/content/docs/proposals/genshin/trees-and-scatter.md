@@ -52,7 +52,6 @@ flowchart TD
 
 ## Deferred compute
 
-- **The great oak's parameters.** The shape pass fits them to the oak's export, matching its outline and depth (`genshin:parity passes windrise --pass Shape`), once a fit of the tree kit's parameters exists.
 - **Where a tree turns impostor.** The distance at which one of the game's own trees changes its detail, measured on a recording that backs away from it.
 - **The flowers' look.** Their spacing, sizes and colours matched to the references by their statistics.
 

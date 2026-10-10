@@ -9,23 +9,23 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-09T18:40:39.581Z
-- Commit: 2459b01999
+- Date: 2026-10-10T01:52:57.208Z
+- Commit: b83ab19799
 - Node: v26.10.0
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
 - RAM: 16.0 GiB
 
-## computeRootTubes > 8 roots
+## computeTreeTubes > 8 tubes
 
 | task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------------- | ------- | --------- | ------- | -------- | ------- |
-| 4 points a root  | 1.00×   | 0.0743    | ±2.47%  | 0.0792   | 10      |
-| 16 points a root | 0.24×   | 0.3061    | ±11.92% | 0.4020   | 10      |
+| 4 points a tube  | 1.00×   | 0.0899    | ±9.33%  | 0.1093   | 10      |
+| 16 points a tube | 0.28×   | 0.3207    | ±10.73% | 0.4185   | 10      |
 
-## computeRootTubes > 32 roots
+## computeTreeTubes > 32 tubes
 
 | task             | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------------- | ------- | --------- | ------- | -------- | ------- |
-| 4 points a root  | 1.00×   | 0.3553    | ±21.68% | 0.5200   | 10      |
-| 16 points a root | 0.3×    | 1.1822    | ±3.80%  | 1.2736   | 10      |
+| 4 points a tube  | 1.00×   | 0.3022    | ±14.32% | 0.4227   | 10      |
+| 16 points a tube | 0.23×   | 1.2985    | ±4.83%  | 1.4026   | 10      |
