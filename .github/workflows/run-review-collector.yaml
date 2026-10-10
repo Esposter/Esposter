@@ -157,9 +157,10 @@ jobs:
   # most likely clear by then. A cancelled run is woken only once it started: one superseded while pending is a run
   # the newer one in its group already carries, as is a retrigger a newer wake replaced. A red the newest runs keep
   # failing on alike — the same step, the same error line — is one no rerun answers and each wake may pay a session to
-  # meet again, so the guard opens one issue on it instead and wakes nothing; the next event or push wakes the cycle
-  # as usual. Its setup is the collect job's: a red that breaks it reads nothing, and is woken as before,
-  # since it fails before the cycle could spend anything
+  # meet again, so the guard opens one issue on it instead and wakes nothing, after a longer streak of reds in the
+  # collect job's setup, which GitHub or the network fails for a while; the next event or push wakes the cycle as
+  # usual. Its setup is the collect job's: a red that breaks it reads nothing, and is woken as before, since it fails
+  # before the cycle could spend anything
   guard:
     name: Guard
     needs: [collect, retrigger]
@@ -207,13 +208,17 @@ jobs:
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
         run: pnpm ai:coderabbit:guard
 
-      # Past a failed setup too, which set no output: only a streak read as held keeps the cycle asleep
+      # Past a failed setup too, and a held streak whose issue GitHub refused, neither of which set the output: only a
+      # streak held and reported keeps the cycle asleep
       - name: ⏳ Wait before waking
         if: ${{ !cancelled() && steps.streak.outputs.isWaking != 'false' }}
         run: sleep 300
 
+      # Asked for twenty minutes, as the retrigger's is: one that never lands fails the job, and the next event or push
+      # wakes the cycle
       - name: ♻️ Run the cycle again
         if: ${{ !cancelled() && steps.streak.outputs.isWaking != 'false' }}
+        timeout-minutes: 20
         env:
           GH_TOKEN: ${{ github.token }}
         run: until gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue; do sleep 60; done

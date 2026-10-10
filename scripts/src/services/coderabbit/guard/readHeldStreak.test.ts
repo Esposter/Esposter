@@ -7,11 +7,12 @@ import {
   COLLECT_JOB_NAME,
   FAILURE_ANNOTATION_LEVEL,
   GUARD_RUN_LIST_LIMIT,
+  GUARD_SETUP_RED_STREAK,
   RUN_CANCELLED_CONCLUSION,
   RUN_IN_PROGRESS_STATUS,
   SETUP_STEP_NAMES,
 } from "#src/services/coderabbit/guard/constants";
-import { readHeldSignature } from "#src/services/coderabbit/guard/readHeldSignature";
+import { readHeldStreak } from "#src/services/coderabbit/guard/readHeldStreak";
 import { describe, expect, test, vi } from "vitest";
 
 const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
@@ -52,7 +53,7 @@ const answerRuns = (runs: { conclusion: string; jobConclusion: string; line: str
   });
 };
 
-describe(readHeldSignature, () => {
+describe(readHeldStreak, () => {
   const red = { conclusion: CI_FAILURE_CONCLUSION, jobConclusion: CI_FAILURE_CONCLUSION, line: "", step: "" };
   const green = { conclusion: CI_SUCCESS_CONCLUSION, jobConclusion: CI_SUCCESS_CONCLUSION, line: "", step: "" };
   // The run the guard belongs to is still going, and its collect job is the newest red
@@ -72,6 +73,9 @@ describe(readHeldSignature, () => {
   // A checkout GitHub or the network failed, which leaves only git's exit code
   const [checkoutStepName = ""] = SETUP_STEP_NAMES;
   const checkoutRed = { ...red, step: checkoutStepName };
+  const ownCheckoutRed = { ...checkoutRed, conclusion: "" };
+  // Every streak a test holds on ends at the last run it lists, the oldest
+  const createdAt = new Date(1).toISOString();
 
   // Three in four runs are an event the filter skipped and most of the rest a fire superseded while pending, so a list
   // Of the newest runs held one collect job the streak could read
@@ -80,7 +84,11 @@ describe(readHeldSignature, () => {
 
     answerRuns([ownRed, ...Array.from({ length: GUARD_RUN_LIST_LIMIT }, () => skippedRun), supersededRun, red, red]);
 
-    expect(readHeldSignature()).toStrictEqual(getFailureSignature("", [red.line]));
+    expect(readHeldStreak()).toStrictEqual({
+      createdAt,
+      isSetup: false,
+      signature: getFailureSignature("", [red.line]),
+    });
   });
 
   // GitHub's rate limit lifts by itself, so a red it caused neither counts towards the streak nor ends it
@@ -89,16 +97,41 @@ describe(readHeldSignature, () => {
 
     answerRuns([ownRed, rateLimitedRed, red, red]);
 
-    expect(readHeldSignature()).toStrictEqual(getFailureSignature("", [red.line]));
+    expect(readHeldStreak()).toStrictEqual({
+      createdAt,
+      isSetup: false,
+      signature: getFailureSignature("", [red.line]),
+    });
   });
 
-  // A setup step fails on GitHub or the network, never on the collector's code, so its red is read past as an outage's
-  test("holds on the red the newest runs all failed on, past a red in a setup step", () => {
+  // The setup's reds keep a streak of their own, which the other reads past whether it is still going or ended
+  test.each([
+    ["older than the newest red", [ownRed, checkoutRed, red, red]],
+    ["newer than every red", [ownCheckoutRed, red, red, red]],
+  ])("holds on the red the newest runs all failed on, past a red in a setup step %s", (_title, runs) => {
     expect.hasAssertions();
 
-    answerRuns([ownRed, checkoutRed, red, red]);
+    answerRuns(runs);
 
-    expect(readHeldSignature()).toStrictEqual(getFailureSignature("", [red.line]));
+    expect(readHeldStreak()).toStrictEqual({
+      createdAt,
+      isSetup: false,
+      signature: getFailureSignature("", [red.line]),
+    });
+  });
+
+  // A dead token, a lockfile a frozen install refuses or a broken composite action fails the setup on every run, and
+  // GitHub or the network only for a while, so the setup's streak is the longer
+  test("holds on the setup red the newest runs all failed on, its own streak of them in a row", () => {
+    expect.hasAssertions();
+
+    answerRuns([ownCheckoutRed, ...Array.from({ length: GUARD_SETUP_RED_STREAK - 1 }, () => checkoutRed)]);
+
+    expect(readHeldStreak()).toStrictEqual({
+      createdAt,
+      isSetup: true,
+      signature: getFailureSignature(checkoutStepName, [checkoutRed.line]),
+    });
   });
 
   test.each([
@@ -112,11 +145,31 @@ describe(readHeldSignature, () => {
     ["they failed on different lines", [ownRed, { ...red, line: " " }, red]],
     ["fewer of them failed than the streak", [ownRed, red]],
     ["GitHub's rate limit failed them all", [{ ...rateLimitedRed, conclusion: "" }, rateLimitedRed, rateLimitedRed]],
+    [
+      "fewer of them failed in a setup step than its streak",
+      [ownCheckoutRed, ...Array.from({ length: GUARD_SETUP_RED_STREAK - 2 }, () => checkoutRed)],
+    ],
+    [
+      "a red past the setup lies between their setup reds",
+      [ownCheckoutRed, red, ...Array.from({ length: GUARD_SETUP_RED_STREAK - 1 }, () => checkoutRed)],
+    ],
+    [
+      "a red GitHub's rate limit caused past the setup lies between their setup reds",
+      [ownCheckoutRed, rateLimitedRed, ...Array.from({ length: GUARD_SETUP_RED_STREAK - 1 }, () => checkoutRed)],
+    ],
+    [
+      "their setup reds failed on different lines",
+      [
+        ownCheckoutRed,
+        { ...checkoutRed, line: " " },
+        ...Array.from({ length: GUARD_SETUP_RED_STREAK - 2 }, () => checkoutRed),
+      ],
+    ],
   ])("holds nothing when %s", (_title, runs) => {
     expect.hasAssertions();
 
     answerRuns(runs);
 
-    expect(readHeldSignature()).toBeUndefined();
+    expect(readHeldStreak()).toBeUndefined();
   });
 });
