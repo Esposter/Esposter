@@ -29,20 +29,26 @@ const isUpperRecursiveFlag = (token: string) => /^-[a-zA-Z]*R/u.test(token);
 const SEPARATE_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef]$|^--(?:regexp|file)$/u;
 const ATTACHED_PATTERN_FLAG_REGEX = /^-[a-zA-Z]*[ef].|^--(?:regexp|file)=/u;
 
-// Grep's search paths: a pattern flag's operand is its pattern and never a path, and with no pattern flag the first
-// Positional argument is the pattern
-const getGrepPaths = (args: string[]): string[] => {
+// Grep's flags and search paths: a pattern flag's operand is its pattern and never a flag or a path, every argument
+// After a `--` is a positional one, and with no pattern flag the first positional argument is the pattern
+const readGrepArguments = (args: string[]): { flags: string[]; paths: string[] } => {
+  const flags: string[] = [];
   const positionals: string[] = [];
   let hasPatternFlag = false;
   let isPatternOperand = false;
+  let isOptionEnd = false;
   for (const arg of args)
     if (isPatternOperand) isPatternOperand = false;
-    else if (SEPARATE_PATTERN_FLAG_REGEX.test(arg)) {
-      hasPatternFlag = true;
-      isPatternOperand = true;
-    } else if (ATTACHED_PATTERN_FLAG_REGEX.test(arg)) hasPatternFlag = true;
-    else if (!arg.startsWith("-")) positionals.push(arg);
-  return hasPatternFlag ? positionals : positionals.slice(1);
+    else if (isOptionEnd || !arg.startsWith("-")) positionals.push(arg);
+    else if (arg === "--") isOptionEnd = true;
+    else {
+      flags.push(arg);
+      if (SEPARATE_PATTERN_FLAG_REGEX.test(arg)) {
+        hasPatternFlag = true;
+        isPatternOperand = true;
+      } else if (ATTACHED_PATTERN_FLAG_REGEX.test(arg)) hasPatternFlag = true;
+    }
+  return { flags, paths: hasPatternFlag ? positionals : positionals.slice(1) };
 };
 
 // The scan's name when its arguments start it from a root, undefined when they do not
@@ -50,8 +56,8 @@ const getScanRefusal = (name: string, args: string[]): string | undefined => {
   if (name === "find" || name === "du") return args.some((arg) => isRoot(arg)) ? name : undefined;
   if (name === "ls")
     return args.some((arg) => isUpperRecursiveFlag(arg)) && args.some((arg) => isRoot(arg)) ? name : undefined;
-  if (!args.some((arg) => isRecursiveFlag(arg))) return undefined;
-  return getGrepPaths(args).some((path) => isRoot(path)) ? name : undefined;
+  const { flags, paths } = readGrepArguments(args);
+  return flags.some((flag) => isRecursiveFlag(flag)) && paths.some((path) => isRoot(path)) ? name : undefined;
 };
 
 const getScanCommandRefusal: CommandRefusal = (name, args) =>

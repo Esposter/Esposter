@@ -30,6 +30,8 @@ describe(getDiskScanRefusal, () => {
     ["find from the root's glob", "find /* -name x"],
     ["find from a drive's glob", "find /c/* -name x"],
     ["grep -r from the root after a long pattern flag", "grep -r --regexp=needle /"],
+    ["grep -r from the root after the options end, its pattern a dash", "grep -r -- -e /"],
+    ["a scan inside a command substitution whose body quotes a parenthesis", `echo "$(find / -name '(x)')"`],
   ])("refuses %s", (_description, command) => {
     expect.hasAssertions();
 
@@ -48,6 +50,7 @@ describe(getDiskScanRefusal, () => {
     ["a grep with the root but no recursion", "grep needle /"],
     ["a grep -r with the root as its pattern", "grep -r / src"],
     ["a grep -r with the root as its pattern flag's operand", "grep -r -e / packages"],
+    ["a grep over the root whose pattern is a recursion flag", "grep -e -r /"],
     ["an ls -R over a package", "ls -R packages"],
     ["an ls -r over the root, which is only a reverse sort", "ls -r /"],
     ["an rg over the repo", "rg needle packages"],
