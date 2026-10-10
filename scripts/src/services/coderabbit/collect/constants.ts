@@ -326,6 +326,10 @@ export const CHECK_REREAD_DELAY_SECONDS: number = Temporal.Duration.from({ minut
 // How soon a run whose push was refused because the branch moved under it runs again, when no push to that branch
 // Fires a run of its own (`getMovedOutcome`): the next run re-measures against the branch as it now stands
 export const MOVED_BRANCH_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
+// How soon a run that opened a window runs again to read its review (`openWindow`): the walk comes before the openings,
+// So the run that opened it set none of the waits on it, and an opening under the hourly ceiling sets no ceiling wake.
+// Live reviews have taken about nine to seventeen minutes, so this is the slowest of them with a margin
+export const OPENED_WINDOW_READ_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 20 }).total("seconds");
 // The wait after the first, second and third marked ask for a window's review (`REVIEW_ASK_MARKER`). Its length is the
 // Ask cap, and the wait after the last ask is the wait before the window is re-cut
 export const REVIEW_ASK_WAITS_MS: number[] = [15, 60, 60].map((minutes) =>

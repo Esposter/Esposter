@@ -1,7 +1,12 @@
 import type { runGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { DEVELOP_BRANCH, MAIN_BRANCH, WINDOW_TITLE } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  MAIN_BRANCH,
+  OPENED_WINDOW_READ_DELAY_SECONDS,
+  WINDOW_TITLE,
+} from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { openWindow } from "#src/services/coderabbit/collect/openWindow";
@@ -40,6 +45,7 @@ describe(openWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: `${WINDOW_TITLE} ${windowNumber} is open over ${MAIN_BRANCH} — its review reads only the commits above it`,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha,
     });
     expect(readSha(`origin/${branch}`)).toBe(targetSha);

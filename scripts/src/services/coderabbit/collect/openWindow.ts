@@ -2,7 +2,11 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { OpenWindowInput } from "#src/models/coderabbit/collect/OpenWindowInput";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
-import { DEVELOP_BRANCH, WINDOW_TITLE } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  OPENED_WINDOW_READ_DELAY_SECONDS,
+  WINDOW_TITLE,
+} from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { getWindowBranch } from "#src/services/coderabbit/collect/getWindowBranch";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
@@ -13,6 +17,7 @@ import { runGit } from "#src/services/shared/runGit";
 // One window cut at `targetSha`: its branch is pushed first, `develop` is fast-forwarded onto it, and the pull request
 // Is opened over the window below. The branch push leases whatever sits on its name — nothing for a new window, the
 // Head an earlier run pushed when that run died before opening it — so a dead run's window is taken over, never skipped.
+// The window wakes the cycle once its review is due, since the bot may post nothing and no session may push
 export const openWindow = ({
   baseBranch,
   baseSha,
@@ -50,6 +55,7 @@ export const openWindow = ({
   return {
     kind: CycleOutcomeKind.Opened,
     reason: `${title} is open over ${baseBranch} — its review reads only the commits above it`,
+    retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
     targetSha,
   };
 };
