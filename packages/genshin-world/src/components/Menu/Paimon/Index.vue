@@ -25,6 +25,8 @@ interface Props {
   // Whether the World Level can be lowered or restored now, and whether it is lowered; the button is drawn only when it can
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The server's clock minus this machine's, which the World Level's cooldown is read against
+  serverClockOffsetMs?: number;
   // When the World Level last changed, for the cooldown its panel shows
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;
@@ -123,6 +125,7 @@ onMounted(() => {
       class="world-level-tips"
       :game-text
       :is-world-level-lowered
+      :server-clock-offset-ms
       :world-level-changed-at
     />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />

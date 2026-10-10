@@ -16,12 +16,14 @@ import { computed, shallowRef } from "vue";
 // Step the player has lowered it by
 export const useWorldAdventureRank = ({
   finishedMainQuestIds,
+  getWorldNow,
   savedAdventureExp,
   savedWorldLevelAdjustment,
   setWallet,
   wallet,
 }: {
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
+  getWorldNow: () => Temporal.Instant;
   savedAdventureExp: number;
   savedWorldLevelAdjustment: WorldLevelAdjustment;
   setWallet: (nextWallet: Wallet) => void;
@@ -42,7 +44,7 @@ export const useWorldAdventureRank = ({
     worldLevelAdjustment.value = toggleWorldLevelLowering(
       worldLevelAdjustment.value,
       unlockedWorldLevel.value,
-      Temporal.Now.instant(),
+      getWorldNow(),
     );
   };
   const gainWorldAdventureExp = (amount: number) => {

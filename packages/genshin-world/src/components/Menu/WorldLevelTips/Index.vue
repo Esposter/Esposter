@@ -9,15 +9,20 @@ interface Props {
   gameText: GameText;
   // Whether the World Level is lowered, so the panel tells what the button does now
   isWorldLevelLowered: boolean;
+  // The server's clock minus this machine's, which the cooldown is read against
+  serverClockOffsetMs?: number;
   // When the World Level last changed, from which the cooldown left is read as the panel opens
   worldLevelChangedAt?: Temporal.Instant;
 }
 
-const { gameText, isWorldLevelLowered, worldLevelChangedAt } = defineProps<Props>();
+const { gameText, isWorldLevelLowered, serverClockOffsetMs = 0, worldLevelChangedAt } = defineProps<Props>();
 const tips =
   gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevertTips : GameTextKey.WorldLevelLowerTips].split("\n");
 // The panel mounts as it opens, so the cooldown is read at the moment the player sees it
-const cooldown = computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.instant());
+const cooldown = computeWorldLevelCooldown(
+  worldLevelChangedAt,
+  Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }),
+);
 </script>
 
 <template>

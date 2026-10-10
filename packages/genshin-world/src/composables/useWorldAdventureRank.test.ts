@@ -17,6 +17,7 @@ describe(useWorldAdventureRank, () => {
     const wallet = ref(savedState.wallet);
     const adventureRank = useWorldAdventureRank({
       finishedMainQuestIds: computed(() => finishedMainQuestIds),
+      getWorldNow: () => Temporal.Now.instant(),
       savedAdventureExp,
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
       setWallet: (nextWallet) => {

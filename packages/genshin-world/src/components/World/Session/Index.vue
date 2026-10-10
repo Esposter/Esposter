@@ -143,6 +143,8 @@ const {
   trackedQuestId,
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
+// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
+const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
   adventureExp,
@@ -155,6 +157,7 @@ const {
   worldLevelAdjustment,
 } = useWorldAdventureRank({
   finishedMainQuestIds,
+  getWorldNow,
   savedAdventureExp: savedState.adventureExp,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
   setWallet,
@@ -209,8 +212,6 @@ const landmarkCollider = createLandmarkCollider();
 const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
-// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
 const { achievementData } = useWorldAchievements({
   achievementProgressMap,
@@ -535,6 +536,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
+      :server-clock-offset-ms
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
       @quit="emit('quit')"
