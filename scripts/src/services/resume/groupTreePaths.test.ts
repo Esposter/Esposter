@@ -9,6 +9,11 @@ describe(groupTreePaths, () => {
       ["apps/web (2)", "apps/functions (1)", "package.json (1)"],
     ],
     [["R  old/x/a.ts -> new/y/a.ts"], ["new/y (1)"]],
+    [[" M pnpm-lock.yaml"], []],
+    [
+      [" M pnpm-lock.yaml", " M packages/x/package.json"],
+      ["pnpm-lock.yaml (1)", "packages/x (1)"],
+    ],
   ])("groups %j into %j", (lines, texts) => {
     expect.hasAssertions();
 
