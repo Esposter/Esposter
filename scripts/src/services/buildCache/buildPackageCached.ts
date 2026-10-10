@@ -12,7 +12,7 @@ import { readWorkspaceDependencyDirectories } from "#src/services/buildCache/rea
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, renameSync, rmSync, utimesSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, renameSync, rmSync, utimesSync } from "node:fs";
 import { join } from "node:path";
 
 // Builds one workspace package through the cache, after bringing up to date every workspace package it links, so a
@@ -35,12 +35,13 @@ export const buildPackageCached = (
   const outputDirectory = join(packageDirectory, BUILD_OUTPUT_DIRECTORY);
 
   // A hit is copied into the package's own ignored `node_modules`, on the output's disk, and renamed into place, so a key
-  // Another worktree's prune removes under the copy leaves the current `dist` standing and falls through to a build
+  // Another worktree's prune removes under the copy leaves the current `dist` standing and falls through to a build. Each
+  // Copy, and each store below, starts in a folder made empty for it, so a copy an interrupted run left never joins it
   if (existsSync(keyDirectory)) {
-    const stagingDirectory = join(
-      packageDirectory,
-      "node_modules",
-      `${BUILD_CACHE_TEMPORARY_PREFIX}${BUILD_OUTPUT_DIRECTORY}-${process.pid}`,
+    const stagingParentDirectory = join(packageDirectory, "node_modules");
+    mkdirSync(stagingParentDirectory, { recursive: true });
+    const stagingDirectory = mkdtempSync(
+      join(stagingParentDirectory, `${BUILD_CACHE_TEMPORARY_PREFIX}${BUILD_OUTPUT_DIRECTORY}-`),
     );
     const now = new Date();
     const isRestored = getResult(() => {
@@ -74,7 +75,7 @@ export const buildPackageCached = (
 
   // The store is written beside its key and renamed into place, so a reader never sees a half-copied key
   mkdirSync(packageCacheDirectory, { recursive: true });
-  const temporaryDirectory = join(packageCacheDirectory, `.${key}-${process.pid}`);
+  const temporaryDirectory = mkdtempSync(join(packageCacheDirectory, `${BUILD_CACHE_TEMPORARY_PREFIX}${key}-`));
   cpSync(outputDirectory, temporaryDirectory, { recursive: true });
   if (existsSync(keyDirectory)) rmSync(temporaryDirectory, { force: true, recursive: true });
   else renameSync(temporaryDirectory, keyDirectory);
