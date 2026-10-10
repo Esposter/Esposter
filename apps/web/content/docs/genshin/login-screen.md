@@ -21,21 +21,23 @@ flowchart LR
 
 - **The stages are the game's current build's.** The user's own recording of the Japanese client times them and shows which corner buttons each stage has (the title's notices and exit, the door's settings, repair, notices and exit). A 1080 high English recording of an older build gives the words and every size. The status says "Preparing to download resources", "Checking for updates...", "Loading game..." over the ornament's double diamond, then "Preparing to load data" over the progress bar, which folds into its diamond at 100%.
 - **The flight is the game's checks, and the door comes once they are done.** The flight is the screen's own clock for the door, the share of the way to it flown. The bar under it is the game's own checks before it loads the world, which on the page have nothing left to wait on, so the opening hands the screen a finished load: the share shown sweeps toward it at no more than one full bar per tenth of a second, the flight goes the share of the way the English recording's does before its bar is full, about two thirds, no faster than its last stretch's pace, and once the bar is full the flight flies whatever is left in the half second the bar takes to fold into its diamond and the status row to fade. The glide then carries the door's copy to the walkway's far end at its own pace, so the door rises on average about as long after the bar fills as the recording's does, 3 seconds. The world itself loads after the door, under the startup loading screen, whose marks follow it.
-- **Mainland China's client marks its own screen.** A Simplified Chinese reader, who plays mainland China's build, sees its CADPA age rating (12 and over) in the top right corner at every stage, and its build string under the CNREL prefix. The rating's box and colours are measured off a public recording of that client's launch, its age and notice traced from it (`ageRating.json`) and its CADPA set in a serif; the build string is the current build's, its revision numbers the global build's, since no source publishes the mainland's own.
+- **Mainland China's client marks its own screen.** A Simplified Chinese reader, who plays mainland China's build, sees its CADPA age rating (12 and over) in the top right corner at every stage, and its build string under the CNREL prefix. The rating's box and colours are measured off a public recording of that client's launch, its age and notice traced from it (the `login/ageRating` record) and its CADPA set in a serif; the build string is the current build's, its revision numbers the global build's, since no source publishes the mainland's own.
 - **Its music plays from the start, looping as the game's does.** `LoginMusic` plays the game's login playlist, re-derived, while the screen shows, once the browser allows sound ([music](/docs/genshin/music)). The scene alone, as a reference shows it with no interface, is silent.
-- **The interface moves on the game's own clips.** The login page's animation clips, decoded and fitted to keyframes (`interfaceClips.json`), play through `playInterfaceClip` as each stage begins: the white curtain and the page's fade in on arriving, the title's fade in, its fade out on the click, and the page's fade into white on entering, whose end is the `begin` below. Each piece a clip moves carries its path under the game's page as its `data-clip-target` (`LoginInterfaceClipTarget`), so the white the scene fades up out of and into is the interface's own, and a reference showing the scene alone has none.
+- **The interface moves on the game's own clips.** The login page's animation clips, decoded and fitted to keyframes (the `login/interfaceClips` record, made playable once as the interface mounts by `createLoginInterfaceClipMap`), play through `playInterfaceClip` as each stage begins: the white curtain and the page's fade in on arriving, the title's fade in, its fade out on the click, and the page's fade into white on entering, whose end is the `begin` below. Each piece a clip moves carries its path under the game's page as its `data-clip-target` (`LoginInterfaceClipTarget`), so the white the scene fades up out of and into is the interface's own, and a reference showing the scene alone has none.
 - **A click is the screen's unless it lands on a button.** The screen asks `checkIsNestedInteraction` before it moves on, so a click on a corner button stays the button's.
 - **A host can pin a stage.** The stage is a `v-model`, so the parity page and a test hold one still, and the opening leaves it free.
+- **The screen draws from the records the opening read.** The fits publish every part of the login, its interface's rects and clips, its music and its sounds as records of the hosted game data's `login` dataset, beside its authored age rating, and `GameOpening` reads all sixteen while its splashes play (`readLoginData`), holding the splashes' white if they have not arrived by the time the last splash has faded ([hosted game data](/docs/genshin/hosted-game-data)). The screen takes them as one `loginData` prop and hands each part only the records it draws: the scene its parts, sky, stone and light, the interface its rects, clips and age rating, and the music its notes and sounds.
 - **The opening says when the door is opened.** `GameOpening` emits `begin` as the screen hands on to the startup loading screen, so its host can act on the door rather than waiting for the world: the app's page mounts the world then, under the startup loading screen.
 - **The words are the reader's language's.** The title, the account label, the status lines, the door's prompt and the name a player who has not chosen one goes by are the game's own text in the language the host resolved, handed down as the `gameText` prop ([game text](/docs/genshin/game-text)). The account kit's welcome card, which drops in as the game's player signs in, is not shown until the page has an account to welcome; its greeting is already the kit's own in every language, with the name where each language puts it.
 
 ## The scene
 
-Every part's shape, place and stone is fitted from the game's own assets ([derived assets](/docs/genshin/derived-assets)), and whatever the blocks cannot hold is read off the captures and expressed over what they can:
+Every part's shape, place and stone is fitted from the game's own assets ([derived assets](/docs/genshin/derived-assets)), and whatever the blocks cannot hold is read off the captures and expressed over what they can. Each builder takes the record it builds from as its first argument, and what a record sets, where the door stands and how long it takes to rise, the camera's height over the walkway and its rest short of the door, and the rows the glide wraps by, is read or computed from the record where it is used (`getLoginDoorPosition`, `computeLoginDoorLiftMs`, `computeLoginCameraHeight`, `computeLoginCameraZ`, `computeLoginGlideTitleScrolled`), so nothing the fits set is a constant of the package's:
 
 ```mermaid
 flowchart TD
-  DATA["Every fitted part, in genshin-world/src/data/login"] --> SCENE[Login/Scene builds them with the engine's kits]
+  DATA["Every fitted part, a record of the hosted game data's login dataset"] --> READ["GameOpening reads them during the splashes"]
+  READ --> SCENE[Login/Scene builds them with the engine's kits]
   REF[Each hour's title frame, the door captures, the flight's frames] --> CAM["Camera: solved on the witness, one pose; the glide's pace by the walkway's repeats"]
   REF --> BANDS[Each cloud band's heights and spread]
   REF --> LIGHT["Each time of day's colours, and its lights' strengths over the fitted stone"]
@@ -75,46 +77,48 @@ flowchart TD
 
 ## Tests
 
-- `Game/Opening/Index.browser.test.ts` plays the whole opening with timers and frames faked, through the login's title, flight and door, and checks every handoff and the finish.
+- `Game/Opening/Index.browser.test.ts` plays the whole opening with timers and frames faked, through the login's title, flight and door, and checks every handoff and the finish, its records read through the suites' mirror; with every fetch held, it checks the opening holds the splashes' white rather than a title splash with no logo.
 - The walkway and the door have unit tests of their measures: the walkway's pieces span its underside to its curbs' tops, each about its own middle, and stand nowhere past its widest, and the door's frame and panel are built from their fitted layers, each layer standing out from the one under it, the back the front's mirror. `advanceLoginGlide`'s test holds the glide's pace changes to its acceleration, its rest to a whole number of the walkway's copies and the door to first standing past the walkway's far end. The row's test holds the camera's path, and a metre either side of it, open through the towers and the bridges' hulls from end to end. Each fit that builds the data has its own test in `scripts/src/services/genshinAssets`.
 - `Login/Interface` is shot in each stage as fixture variants and held to its approved images; its references are the English recording's frames, over which it is compared.
 
 ## Key files
 
-| File                                                                            | Role                                                                             |
-| :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Login/Screen/Index.vue`                  | The stages and the flight                                                        |
-| `packages/genshin-world/src/components/Login/Interface/Index.vue`               | Each stage's interface, from `genshin-interface`'s pieces, and its clips         |
-| `packages/genshin-world/src/services/login/interface/LoginInterfaceClipMap.ts`  | The login page's fitted clips, by the name the game plays each by                |
-| `packages/genshin-world/src/components/Login/Scene/Index.vue`                   | The camera, the glide, the fitted parts, the clouds, the sky, shadows            |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`                   | The login's music, played while the screen shows                                 |
-| `packages/genshin-world/src/services/login/constants.ts`                        | The words and the timings                                                        |
-| `packages/genshin-world/src/services/login/scene/constants.ts`                  | The camera, the glide and its rows, the haze, the light and the shadows          |
-| `packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`          | The glide a frame on, and its rest at the door                                   |
-| `packages/genshin-world/src/services/login/scene/LoginShadowBiasMap.ts`         | Each hour's shadow bias, the night's deeper                                      |
-| `packages/genshin-world/src/services/login/scene/LoginShadowIntensityMap.ts`    | Each hour's shadow strength, the night's at 0.8                                  |
-| `packages/genshin-world/src/services/login/scene/LoginShadowRadiusMap.ts`       | Each hour's shadow softness, the night's over two texels                         |
-| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`           | Each time of day's colours and light strengths                                   |
-| `packages/genshin-world/src/services/login/scene/LoginOcclusionRadiusMap.ts`    | How far each hour's screen-space occlusion reaches                               |
-| `packages/genshin-world/src/services/login/cloud/LoginCloudBandMap.ts`          | Each cloud band's heights, spread and widths                                     |
-| `packages/genshin-world/src/services/login/cloud/LoginCloudCoverMap.ts`         | The share of each cloud band each hour draws                                     |
-| `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`  | Every fitted tower, built as a lathe and stood where the game stands it          |
-| `packages/genshin-world/src/services/login/tower/createLoginTowerFacade.ts`     | The towers' traced surfaces drawn into one atlas and read as their stone         |
-| `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                | Each tower unrolled round its axis and its surface traced as loops               |
-| `packages/genshin-world/src/services/login/hull/createLoginHullsGeometry.ts`    | Every bridge and pillar, its hull's boxes stood where the game stands it         |
-| `packages/genshin-world/src/services/login/walkway/createLoginPaving.ts`        | The walkway's paint over its repeat, and its pockets and grooves as relief       |
-| `packages/genshin-world/src/services/login/walkway/sinkLoginWitnessWalkway.ts`  | The exports' walkway pieces assembling as ours do, for the stand-in table        |
-| `packages/genshin-world/src/services/login/door/createLoginDoorRelief.ts`       | The door's front painted in the tones its texture carries                        |
-| `packages/genshin-world/src/services/login/scene/createPlanCanvasNode.ts`       | A part's plan drawn once into a canvas and read where its geometry stands        |
-| `packages/genshin-world/src/services/login/scene/createPlanTonesNode.ts`        | A part painted in the tones its texture was read in, over its plan               |
-| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayPieces.ts` | The walkway's pieces, each its fitted outline extruded to its top, curbs over it |
-| `packages/genshin-world/src/services/login/walkway/getLoginWalkwaySink.ts`      | How far under its place a piece stands as the walkway assembles                  |
-| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`     | The door's pieces, each one's frame and panel built as the layers of its front   |
-| `packages/genshin-world/src/services/login/door/applyLoginDoorLift.ts`          | A piece of the door carried along its lift as the door rises                     |
-| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                     | A plan folded onto the repeat of its pattern, over blocks of its cells           |
-| `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                        | A surface's texture read as the tones it paints a plan in, as loops              |
-| `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                      | A rigidly skinned mesh split into its bones' pieces, each posed through a clip   |
-| `packages/genshin-world/src/data/login`                                         | Every fitted part                                                                |
+| File                                                                                 | Role                                                                             |
+| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Login/Screen/Index.vue`                       | The stages and the flight                                                        |
+| `packages/genshin-world/src/components/Login/Interface/Index.vue`                    | Each stage's interface, from `genshin-interface`'s pieces, and its clips         |
+| `packages/genshin-world/src/services/login/interface/createLoginInterfaceClipMap.ts` | The login page's fitted clips made playable, by the name the game plays each by  |
+| `packages/genshin-world/src/components/Login/Scene/Index.vue`                        | The camera, the glide, the fitted parts, the clouds, the sky, shadows            |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`                        | The login's music, played while the screen shows                                 |
+| `packages/genshin-world/src/services/login/constants.ts`                             | The words and the timings                                                        |
+| `packages/genshin-world/src/services/login/scene/constants.ts`                       | The camera's eye and rest, the glide, the haze, the light and the shadows        |
+| `packages/genshin-world/src/services/login/scene/computeLoginGlideTitleScrolled.ts`  | The moment of the loop the title opens at, on the walkway's row                  |
+| `packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`               | The glide a frame on, and its rest at the door                                   |
+| `packages/genshin-world/src/services/login/scene/LoginShadowBiasMap.ts`              | Each hour's shadow bias, the night's deeper                                      |
+| `packages/genshin-world/src/services/login/scene/LoginShadowIntensityMap.ts`         | Each hour's shadow strength, the night's at 0.8                                  |
+| `packages/genshin-world/src/services/login/scene/LoginShadowRadiusMap.ts`            | Each hour's shadow softness, the night's over two texels                         |
+| `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`                | Each time of day's colours and light strengths                                   |
+| `packages/genshin-world/src/services/login/scene/LoginOcclusionRadiusMap.ts`         | How far each hour's screen-space occlusion reaches                               |
+| `packages/genshin-world/src/services/login/cloud/LoginCloudBandMap.ts`               | Each cloud band's heights, spread and widths                                     |
+| `packages/genshin-world/src/services/login/cloud/LoginCloudCoverMap.ts`              | The share of each cloud band each hour draws                                     |
+| `packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`       | Every fitted tower, built as a lathe and stood where the game stands it          |
+| `packages/genshin-world/src/services/login/tower/createLoginTowerFacade.ts`          | The towers' traced surfaces drawn into one atlas and read as their stone         |
+| `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`                     | Each tower unrolled round its axis and its surface traced as loops               |
+| `packages/genshin-world/src/services/login/hull/createLoginHullsGeometry.ts`         | Every bridge and pillar, its hull's boxes stood where the game stands it         |
+| `packages/genshin-world/src/services/login/walkway/createLoginPaving.ts`             | The walkway's paint over its repeat, and its pockets and grooves as relief       |
+| `packages/genshin-world/src/services/login/walkway/sinkLoginWitnessWalkway.ts`       | The exports' walkway pieces assembling as ours do, for the stand-in table        |
+| `packages/genshin-world/src/services/login/door/createLoginDoorRelief.ts`            | The door's front painted in the tones its texture carries                        |
+| `packages/genshin-world/src/services/login/scene/createPlanCanvasNode.ts`            | A part's plan drawn once into a canvas and read where its geometry stands        |
+| `packages/genshin-world/src/services/login/scene/createPlanTonesNode.ts`             | A part painted in the tones its texture was read in, over its plan               |
+| `packages/genshin-world/src/services/login/walkway/createLoginWalkwayPieces.ts`      | The walkway's pieces, each its fitted outline extruded to its top, curbs over it |
+| `packages/genshin-world/src/services/login/walkway/getLoginWalkwaySink.ts`           | How far under its place a piece stands as the walkway assembles                  |
+| `packages/genshin-world/src/services/login/door/createLoginDoorGeometry.ts`          | The door's pieces, each one's frame and panel built as the layers of its front   |
+| `packages/genshin-world/src/services/login/door/applyLoginDoorLift.ts`               | A piece of the door carried along its lift as the door rises                     |
+| `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                          | A plan folded onto the repeat of its pattern, over blocks of its cells           |
+| `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`                             | A surface's texture read as the tones it paints a plan in, as loops              |
+| `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`                           | A rigidly skinned mesh split into its bones' pieces, each posed through a clip   |
+| `packages/genshin-world/src/services/login/readLoginData.ts`                         | Every fitted part, read from the hosted game data                                |
+| `packages/genshin-world/src/data/login/ageRating.json`                               | The age rating's traced paths, authored, which `genshin:data authored` publishes |
 
 ## Sources
 

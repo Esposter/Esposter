@@ -1,6 +1,6 @@
 ---
 title: Interface layout
-description: Every screen's interface laid out from the game's own RectTransform tree. A fit writes the tree's rects as data beside the screen, and one nesting component, GameRect, places each piece inside its game parent, so nothing is positioned by hand. Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc, so the browser is the layout engine. Only what the tree cannot hold, a prefab loaded at run time, a layout group's spacing or a line of text inside its rect, is measured.
+description: Every screen's interface laid out from the game's own RectTransform tree. A fit publishes the tree's rects as the screen's record of the hosted game data, and one nesting component, GameRect, places each piece inside its game parent, so nothing is positioned by hand. Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc, so the browser is the layout engine. Only what the tree cannot hold, a prefab loaded at run time, a layout group's spacing or a line of text inside its rect, is measured.
 ---
 
 # Interface layout
@@ -13,14 +13,14 @@ A screen's interface is laid out by the game's own tree. Unity places every piec
 flowchart LR
   EX["genshin:assets interface"] --> TREE["interface.json: the screen's RectTransform tree"]
   TREE --> FIT["fit: fitInterfaceRects"]
-  FIT -->|"rects by path, a layout group's children left out"| DATA["data/&lt;screen&gt;/interfaceRects.json"]
-  DATA -->|"imported, or published and read as the screen opens"| RECT["GameRect: nested in the nearest GameRect, or on the canvas"]
+  FIT -->|"rects by path, a layout group's children left out"| DATA["the screen's interfaceRects record, published to the hosted game data"]
+  DATA -->|"read before the screen opens, the pieces it places kept by name"| RECT["GameRect: nested in the nearest GameRect, or on the canvas"]
   RECT --> CSS["toCanvasRectStyle: absolute + calc"]
   MEASURED["A prefab, a group's spacing, a text line: measured"] --> LEAF["Scoped CSS inside the GameRect holding it"]
   RECT --> LEAF
 ```
 
-- **The tree is data beside the screen.** `genshin:assets interface` exports the screen's RectTransforms from the game's block, outside the repository like every other reference. The screen's `fit` turns it into `interfaceRects.json` with `fitInterfaceRects`: every piece's anchors, pivot, position and size in canvas units, and its scale where it is not one, keyed by its path under the interface's root. The root is the canvas itself, so it is left out. The HUD reads its rects from their published record in the [hosted game data](/docs/genshin/hosted-game-data) and keeps only the pieces it places by ([HUD](/docs/genshin/hud)); the login still imports its file.
+- **The tree is the screen's data.** `genshin:assets interface` exports the screen's RectTransforms from the game's block, outside the repository like every other reference. The screen's `fit` turns it into its `interfaceRects` record with `fitInterfaceRects`: every piece's anchors, pivot, position and size in canvas units, and its scale where it is not one, keyed by its path under the interface's root. The root is the canvas itself, so it is left out. Each screen reads its rects from their published record in the [hosted game data](/docs/genshin/hosted-game-data) and keeps only the pieces it places by, each named by the screen's own enum of them (`HudInterfaceRectName` for the [HUD](/docs/genshin/hud), `LoginInterfaceRectName` for the login, whose rects the opening reads during its splashes).
 - **One component nests the tree.** `GameRect` takes a piece's rect and draws a box placed by it inside its game parent's box, or on the canvas when its `parent` is the canvas's own rect, which is the default for a root. A nested piece takes its parent's resolved rect explicitly: the parent exposes it as a slot prop, `<GameRect v-slot="{ rect: centerRect }" ...>`, and the child passes it as `:parent="centerRect"`. The markup reads as the game's tree: `<GameRect :rect="interfaceRects['GrpLogin/Bottom']">` holds the `GameRect` of `GrpLogin/Bottom/CurrentAccount`, which holds that of its build string.
 - **The browser is the layout engine.** A RectTransform's corners are its anchors' points in the parent plus `offsetMin = anchoredPosition − sizeDelta × pivot` and `offsetMax = offsetMin + sizeDelta`, which absolute positioning with `calc()` expresses exactly (`toCanvasRectStyle`, over `computeRectOffsets`), at no cost per piece. A layout engine of its own (Yoga, Taffy) would lay out a different model and need Unity's rebuilt on top of it.
 - **A layout group's children are left out.** A `GridLayoutGroup` places its children at run time, so their rects read zero; the fit keeps the group's own rect and drops everything under it, and the group's stacking and spacing are scoped CSS on its `GameRect`, measured off a recording.
@@ -38,7 +38,7 @@ flowchart LR
 | :-------------------------------------------------------------------------- | :------------------------------------------------------------ |
 | `scripts/src/services/genshinAssets/interface/extractComponentInterface.ts` | The screen's RectTransform tree, exported from its block      |
 | `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts`               | The tree as rects keyed by path, a group's children out       |
-| `packages/genshin-world/src/data/login/interfaceRects.json`                 | The login page's fitted rects                                 |
+| `packages/genshin-world/src/models/login/LoginInterfaceRects.ts`            | The login page's fitted rects, by the pieces it places        |
 | `packages/genshin-interface/src/components/GameRect/Index.vue`              | A piece placed by its rect inside its parent's, or the canvas |
 | `packages/genshin-interface/src/services/toCanvasRectStyle.ts`              | Unity's RectTransform as CSS, the one layout computation      |
 | `packages/genshin-world/src/components/Login/Interface/Index.vue`           | The login's interface, nested as the game's tree              |

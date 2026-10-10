@@ -15,6 +15,11 @@
   "packageRules": [
     { "automerge": true, "matchUpdateTypes": ["minor", "patch"] },
     {
+      "description": "Every automerging minor and patch update shares one branch, so a move of `main` rebases one branch and starts one CI run rather than one per dependency on the shared runners. `rebaseWhen: \"conflicted\"` is not the answer: a branch automerge is a fast-forward and `main` requires its checks up to date, so Renovate raises a PR for a person on every stale branch instead. Later rules naming a `groupName` keep their own branch.",
+      "groupName": "non-major dependencies",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
       "description": "Nuxt 5 and the Nitro 3 it serves through ship their fixes as nightly packages, so `nuxt`, the three `@nuxt/*` packages a module builds against, and `nitro` are `npm:<name>-nightly@<tag>` aliases of a dist-tag: a lockfile refresh takes the newest nightly, and a nightly build is not a version Renovate can rank. Each name is matched beside its alias target. Replace the aliases with ranges and drop this rule once Nuxt 5 reaches `latest`.",
       "enabled": false,
       "matchPackageNames": [
@@ -55,7 +60,8 @@
     },
     {
       "automerge": false,
-      "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So every pnpm bump opens a PR a person merges after reading each release it crosses with `gh release view`, and the settings worth taking land in `pnpm-workspace.yaml` in the same PR.",
+      "description": "pnpm ships its new workspace settings in minors (`autoDedupe` arrived in 12.6), and a setting this repo should turn on is visible only in the release notes, never in a green check. So every pnpm bump opens a PR a person merges after reading each release it crosses with `gh release view`, and the settings worth taking land in `pnpm-workspace.yaml` in the same PR. Its own group keeps that read-before-merge bump out of the automerging non-major branch.",
+      "groupName": "pnpm",
       "matchPackageNames": ["pnpm"]
     },
     {

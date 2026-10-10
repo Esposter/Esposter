@@ -8,6 +8,11 @@ export const DEVELOP_BRANCH = "develop";
 export const QUEUE_BRANCH = "ai/queue";
 // Written by the collector alone and never deleted: the next drain after it is ported re-creates it from develop
 export const REVIEW_FIXES_BRANCH = "ai/review-fixes";
+// A commit no window could carry past its cap is pushed here before the replay drops it, one branch per commit named
+// By its short sha (`getHeldBranch`), and the branch is deleted once the commit is re-landed
+export const HELD_BRANCH_PREFIX = "ai/held/";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a literal would otherwise infer
+export const HELD_SHORT_SHA_LENGTH: number = 10;
 // Each window is its own branch under this prefix, numbered by a running count (`getWindowBranch`). The stack's pull
 // Requests are the ones whose head starts with it, so no other branch is ever read as a window
 export const WINDOW_BRANCH_PREFIX = "review/";
@@ -112,11 +117,10 @@ export const REPAIR_REGENERATE_COMMANDS: string[][] = [
 export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
-// How many times one unit of work's session may fail against one basis before it is a person's: a review is held
-// And every run fails red until its findings are answered, a commit is left for the port to hold on, a red head is
-// Left red. Nothing ports past a held review, since the window would be a release merged over findings no drain
-// Answered. The basis is what every attempt's marker names (`getMarker`): a count that outlived the collector code
-// That failed it would leave the work waiting on a person to reset a number.
+// How many times one unit of work's session may fail against one basis before the work is routed around it: past the
+// Cap a review's findings are deferred, a commit is parked, a fold's window is re-cut and a red signature gets an
+// Issue. Nothing fails red or waits on a person. The basis is what every attempt's marker names (`getMarker`): a
+// Count that outlived the collector code that failed it would leave the work waiting on a number nobody resets.
 export const SESSION_ATTEMPT_CAP = 3;
 // The tree whose hash at the run's start is the basis every attempt count names — a change to any of it is a fresh
 // Turn for whatever failed under the old. The collector's own services rather than the `scripts` package around
@@ -129,16 +133,12 @@ export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
 // Marker carries the instant it lifts, because nothing announces that.
 export const SESSION_LIMITED_MARKER = "review-collector session-limited";
 
-// A review whose drain failed past the attempt cap, noted once per basis on its pull request
-export const DRAIN_HELD_MARKER = "review-collector drain-held";
-
 export const DRAINS_MARKER = "review-collector drains";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
 // The commit is a person's, and the port holds on it
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
-// The queue's first owed commit that no window can take — the reshaper and the resolver both past their attempt
-// Caps — noted once on the commit itself, where the person the red run sends looks
+// Keys the one issue a park opens (`parkCommits`), by the first commit it parks
 export const HELD_MARKER = "review-collector held";
 // A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
@@ -147,15 +147,31 @@ export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 // A red `main` head whose repair the session failed on, counted on the head; with the repairs already stacked at
 // The head, the streak the cap bounds
 export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
-// A red `main` past its repairs, noted once on the head: nothing waits on it, and a person reads it there
+// Keys the one issue per failure signature whose repairs ran out: the repairer stops on that signature, and the walk
+// Never waits on it
 export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
+// The collector's own `@coderabbitai review` on a skipped or check-less window. Only these are counted, so an ask a
+// Person wrote, or the one the rate limit's settlement posts, spends nothing of the window's asks
+export const REVIEW_ASK_MARKER = "review-collector review-ask";
+// On every window a re-cut closes, carrying the file cap its replacement is cut to
+export const WINDOW_RECUT_MARKER = "review-collector recut";
+// Keys the one issue per window that lists the findings deferred past the drain's cap
+export const DRAIN_DEFERRED_MARKER = "review-collector drain-deferred";
+// The triage label (`.agents/triage-labels.md`) on every issue the collector opens. Each one names its commits,
+// Threads or run and the steps that finish it, so it is fully specified for an agent nobody watches
+export const COLLECTOR_ISSUE_LABEL = "ready-for-agent";
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
 
-// How long the carry session in `pnpm ai:queue:push` may run, which no job's timeout bounds as it does the runner's:
-// One haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
+// How long the carry session in `pnpm ai:queue:push` may run, sooner than every session's `SESSION_TIMEOUT_MS`: one
+// Haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
 export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
+// Every headless session's wall clock. A session past it is killed with its whole process tree and reads as not ended,
+// So its step counts the attempt and the run retries a minute later (`ATTEMPT_RETRY_DELAY_SECONDS`)
+export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
+// One repair attempt's deadline, covering the regenerators, the verify, the session and the lane's verify together
+export const REPAIR_ATTEMPT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,
@@ -229,6 +245,16 @@ export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minu
 // How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
 // Hours, so a run a minute apart would spend a runner per minute learning it is still down
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
+// The wait after the first, second and third marked ask for a window's review (`REVIEW_ASK_MARKER`). Its length is the
+// Ask cap, and the wait after the last ask is the wait before the window is re-cut
+export const REVIEW_ASK_WAITS_MS: number[] = [15, 60, 60].map((minutes) =>
+  Temporal.Duration.from({ minutes }).total("milliseconds"),
+);
+// How long the bottom window may go without a CodeRabbit check before it is asked like a skipped one
+export const MISSING_CHECK_WAIT_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
+// How far back a failure signature's repair attempts are counted. Without a span, a signature as common as one test
+// Job would stay exhausted for good after its third failure in any week
+export const REPAIR_SIGNATURE_SPAN_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
 // The span the hourly ceiling counts openings over, by the creation time of each window pull request

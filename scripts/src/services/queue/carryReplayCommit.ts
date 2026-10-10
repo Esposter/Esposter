@@ -25,7 +25,7 @@ const runCarrySession = async (conflictSha: string, cwd: string): Promise<boolea
     }),
   );
   return result.match(
-    ({ isEnded, isStarted }) => isStarted && isEnded,
+    ({ isEnded }) => isEnded,
     (error) => {
       console.error(error);
       return false;
