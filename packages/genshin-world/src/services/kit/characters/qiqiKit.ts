@@ -1,4 +1,5 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -10,21 +11,28 @@ import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
+import { reviveParty } from "#src/services/party/reviveParty";
 
 // Qiqi's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the third and
 // Fourth strikes each of two hits at one index, the charged attack's two slashes at 5 and its stamina at 6, and the
 // Plunges' collision, low and high at 7, 8 and 9. The skill group holds the regeneration on hit's ATK share at 0 and its
 // Flat HP at 1, the continuous regeneration's ATK share at 2 and flat HP at 3, Herald of Frost's damage at 4, its duration
-// At 5, its cooldown at 6 and its initial damage at 7. The burst group holds the Talisman's damage at 0, its cooldown at 4
-// And its energy cost at 5; its regeneration and seconds at 1 to 3 wait for the Talisman
+// At 5, its cooldown at 6 and its initial damage at 7. The burst group holds the Talisman's heal's ATK share at 0 and its
+// Flat HP at 1, its damage at 2, its seconds at 3, its cooldown at 4 and its energy cost at 5
 const QIQI_ATTACK_GROUP_ID = 3531;
 const QIQI_SKILL_GROUP_ID = 3532;
 const QIQI_BURST_GROUP_ID = 3539;
@@ -119,6 +127,48 @@ const BURST_HITMARK_FRAMES = 82;
 const BURST_ANIMATION_FRAMES = 115;
 const BURST_POISE_DAMAGE = 200;
 
+// The Fortune-Preserving Talisman on an enemy: damage it takes from the character on the field heals that character, at
+// Most once a second for each enemy. Measured: gcsim v2.47.2 (MIT) qiqi/burst.go, and the wiki's notes that the active
+// Character's own hits alone heal and that the burst's Talisman lands before its damage
+// https://genshin-impact.fandom.com/wiki/Adeptus_Art:_Preserver_of_Fortune
+const TALISMAN_STATUS_ID = "qiqi-talisman";
+const TALISMAN_HEAL_COOLDOWN_STATUS_ID = "qiqi-talisman-heal-cooldown";
+const TALISMAN_HEAL_COOLDOWN_SECONDS = 1;
+// A Glimpse into Arcanum, from Ascension 4: Qiqi's Normal and Charged Attacks give the enemy they hit a Talisman of 6
+// Seconds on a 50% roll, at most once every 30 seconds, unless it holds a longer one. Measured: gcsim v2.47.2 (MIT)
+// Qiqi/burst.go. https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/burst.go
+const A_GLIMPSE_INTO_ARCANUM_ASCENSION = 4;
+const A_GLIMPSE_INTO_ARCANUM_CHANCE = 0.5;
+const A_GLIMPSE_INTO_ARCANUM_TALISMAN_SECONDS = 6;
+const A_GLIMPSE_INTO_ARCANUM_COOLDOWN_STATUS_ID = "qiqi-a-glimpse-into-arcanum-cooldown";
+const A_GLIMPSE_INTO_ARCANUM_COOLDOWN_SECONDS = 30;
+// Ascetics of Frost, from one constellation: the Herald's hits on an enemy holding a Talisman give Qiqi 2 energy
+const ASCETICS_OF_FROST_CONSTELLATION = 1;
+const ASCETICS_OF_FROST_ENERGY = 2;
+// Frozen to the Bone, from two constellations: Qiqi's Normal and Charged Attack DMG against an enemy with Cryo on it,
+// Or frozen, is raised by 15%
+const FROZEN_TO_THE_BONE_CONSTELLATION = 2;
+const FROZEN_TO_THE_BONE_DAMAGE_BONUS = 0.15;
+// Divine Suppression, from four constellations: an enemy holding a Talisman strikes with 20% less ATK
+const DIVINE_SUPPRESSION_CONSTELLATION = 4;
+const DIVINE_SUPPRESSION_ATTACK_REDUCTION = 0.2;
+// Rite of Resurrection, from six constellations: the burst revives the fallen members of the deployed team at 50% of
+// Their Max HP, at most once every 15 minutes
+const RITE_OF_RESURRECTION_CONSTELLATION = 6;
+const RITE_OF_RESURRECTION_HEALTH_SHARE = 0.5;
+const RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID = "qiqi-rite-of-resurrection-cooldown";
+const RITE_OF_RESURRECTION_COOLDOWN_SECONDS = 15 * 60;
+
+// A Talisman for the seconds given, cutting the enemy's ATK from four constellations
+const createTalisman = ({ constellationCount }: Combatant, secondsRemaining: number): EnemyStatus => ({
+  ...(constellationCount >= DIVINE_SUPPRESSION_CONSTELLATION && {
+    attackReduction: DIVINE_SUPPRESSION_ATTACK_REDUCTION,
+  }),
+  damageTakenBonus: 0,
+  id: TALISMAN_STATUS_ID,
+  secondsRemaining,
+});
+
 // Measured: gcsim v2.47.2 (MIT) qiqi/plunge.go, the low plunge's hitmark at 46 frames and animation's 76, the high's 46 and
 // 77. The wiki's advanced properties give the low and high plunges 100 and 150 poise, as gcsim gives them, and the collision 25
 const LOW_PLUNGE_HITMARK_FRAMES = 46;
@@ -150,9 +200,9 @@ const createRegenerationOnHit = (talentMultiplierMap: TalentMultiplierMap): KitP
 });
 
 // Qiqi's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Herald of Frost with
-// Its swipes and its regeneration, and Fortune-Preserving Talisman's damage. The Talisman's heal, its A4 and its
-// Constellations wait for an event the kit does not see, a hit landing on the enemy the Talisman marks. Its multipliers
-// Are read from her proud skill groups
+// Its swipes and its regeneration, and Fortune-Preserving Talisman's damage and the Talisman it marks enemies with, whose
+// Heal, A Glimpse into Arcanum and the constellations answer the kit's events. Its multipliers are read from her proud
+// Skill groups. Life-Prolonging Methods is not built, as no heal reads an Incoming Healing Bonus
 export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const regenerationOnHit = createRegenerationOnHit(talentMultiplierMap);
   const normalAttacks: KitAction[] = QIQI_STRIKES.map(({ animationFrames, hits }): KitAction => ({
@@ -196,6 +246,9 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     })),
   ];
   const skillSeconds = getTalentMultiplier(talentMultiplierMap, QIQI_SKILL_GROUP_ID, TALENT_START_LEVEL, 5);
+  const talismanHealAttackShare = getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 0);
+  const talismanHealHealth = getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
+  const talismanSeconds = getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 3);
   // Continuous regeneration snapshots Qiqi's ATK on cast, as the wiki's note gives it, and heals the active character
   const createRegenerationTick =
     (combatant: Combatant): ((tick: KitFieldTick) => void) =>
@@ -248,17 +301,45 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: getTalentMultiplier(talentMultiplierMap, QIQI_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
+    // The Talisman goes on each enemy the burst strikes before its damage, so the burst's own hit heals Qiqi. From six
+    // Constellations the burst revives the fallen members, a step after it starts
     elementalBurst: {
       hits: [
         {
           element: Element.Cryo,
+          enemyStatus: (combatant) => createTalisman(combatant, talismanSeconds),
           gauge: 2,
           hitArea: BURST_HIT_AREA,
           hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
           poiseDamage: BURST_POISE_DAMAGE,
-          talentMultiplier: getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+          talentMultiplier: getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
         },
       ],
+      onStart: ({ body, combatant: { characterId, constellationCount }, kitEffectState }) => {
+        if (
+          constellationCount < RITE_OF_RESURRECTION_CONSTELLATION ||
+          checkHasKitStatus(kitEffectState.effects, characterId, RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID)
+        )
+          return;
+        addKitEffect(kitEffectState, {
+          characterId,
+          id: RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID,
+          kind: "status",
+          secondsRemaining: RITE_OF_RESURRECTION_COOLDOWN_SECONDS,
+        });
+        addKitEffect(kitEffectState, {
+          centre: { x: body.position.x, z: body.position.z },
+          characterId,
+          kind: "field",
+          nextTickSeconds: 0,
+          onTick: ({ party }) => reviveParty(party, RITE_OF_RESURRECTION_HEALTH_SHARE),
+          radius: UNBOUNDED_FIELD_RADIUS,
+          // The field lives a tenth of a second past its tick, so the step that runs it still has it
+          secondsRemaining: 0.1,
+          tickIndex: 0,
+          tickIntervalSeconds: Number.POSITIVE_INFINITY,
+        });
+      },
       seconds: BURST_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -268,6 +349,12 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       seconds: HERALD_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
+    getStrikeDamageBonus: ({ attackTag, combatant }, { elementalState: { auras } }) =>
+      combatant.constellationCount >= FROZEN_TO_THE_BONE_CONSTELLATION &&
+      (attackTag === AttackTag.NormalAttack || attackTag === AttackTag.ChargedAttack) &&
+      (auras.has(AuraType.Cryo) || auras.has(AuraType.Freeze))
+        ? FROZEN_TO_THE_BONE_DAMAGE_BONUS
+        : 0,
     highPlunge: {
       hits: [
         {
@@ -293,6 +380,50 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
+    // Damage an enemy holding a Talisman takes from the character on the field heals that character, a Normal or Charged
+    // Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her energy from
+    // One constellation
+    onKitEvent: (event, { activeCombatant, combatant, kitEffectState, party, random }) => {
+      if (event.kind !== KitEventKind.DamageTaken) return;
+      const { attackTag, enemy, hit, striker } = event;
+      const { ascension, characterId, constellationCount } = combatant;
+      const talisman = enemy.statuses.find(({ id }) => id === TALISMAN_STATUS_ID);
+      if (
+        talisman &&
+        striker.characterId === activeCombatant.characterId &&
+        !enemy.statuses.some(({ id }) => id === TALISMAN_HEAL_COOLDOWN_STATUS_ID)
+      ) {
+        addEnemyStatus(enemy, {
+          damageTakenBonus: 0,
+          id: TALISMAN_HEAL_COOLDOWN_STATUS_ID,
+          secondsRemaining: TALISMAN_HEAL_COOLDOWN_SECONDS,
+        });
+        healPartyMember(
+          party,
+          striker.characterId,
+          (talismanHealHealth + talismanHealAttackShare * combatant.attributes.attack) / striker.attributes.maxHealth,
+        );
+      }
+
+      if (striker.characterId !== characterId) return;
+      if (talisman && constellationCount >= ASCETICS_OF_FROST_CONSTELLATION && heraldHits.includes(hit))
+        gainPartyMemberEnergy(party, combatant, ASCETICS_OF_FROST_ENERGY);
+      if (
+        ascension < A_GLIMPSE_INTO_ARCANUM_ASCENSION ||
+        (attackTag !== AttackTag.NormalAttack && attackTag !== AttackTag.ChargedAttack) ||
+        checkHasKitStatus(kitEffectState.effects, characterId, A_GLIMPSE_INTO_ARCANUM_COOLDOWN_STATUS_ID) ||
+        random() >= A_GLIMPSE_INTO_ARCANUM_CHANCE ||
+        (talisman?.secondsRemaining ?? 0) >= A_GLIMPSE_INTO_ARCANUM_TALISMAN_SECONDS
+      )
+        return;
+      addEnemyStatus(enemy, createTalisman(combatant, A_GLIMPSE_INTO_ARCANUM_TALISMAN_SECONDS));
+      addKitEffect(kitEffectState, {
+        characterId,
+        id: A_GLIMPSE_INTO_ARCANUM_COOLDOWN_STATUS_ID,
+        kind: "status",
+        secondsRemaining: A_GLIMPSE_INTO_ARCANUM_COOLDOWN_SECONDS,
+      });
+    },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,
       hitmarkSeconds: 0,
