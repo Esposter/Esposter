@@ -197,8 +197,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     { body: kitBody, combatant, kitEffectState },
   );
   // The ores are struck by the hits as the kit gives them, before an infusion copies them
-  const landedOreHits =
-    landedHits.length > landedStart ? readOreHits(combatant.kit, characterId, landedHits.slice(landedStart)) : [];
+  const landedOreHits = landedHits.length > landedStart ? readOreHits(combatant, landedHits.slice(landedStart)) : [];
   if (infusion !== undefined) infuseKitHits(combatant.kit, infusion, landedHits, landedStart);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is

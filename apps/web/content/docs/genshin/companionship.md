@@ -46,7 +46,7 @@ flowchart LR
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the name chunk, to the profile panel                       |
 | `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                                       |
 | `packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts` | Each blossom kind's Companionship EXP per claim, provisional                                |
-| `scripts/src/services/genshinText/writeNames.ts`                                  | Names each namecard's text id in the name chunk every language shares                       |
+| `scripts/src/services/genshinText/buildNames.ts`                                  | Names each namecard's text id in the name chunk every language shares                       |
 | `scripts/src/services/genshinAssets/friendship/buildFriendship.ts`                | Builds the friendship record from the dump's tables, for publishing                         |
 | `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts`          | Joins each level 10 card to its reward's namecard item and its name                         |
 | `scripts/src/services/genshinAssets/friendship/toFriendshipLevels.ts`             | Sums each level's rows into its total                                                       |

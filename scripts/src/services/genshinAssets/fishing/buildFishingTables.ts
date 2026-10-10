@@ -1,19 +1,14 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
 import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFishRodRow";
 import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 import type { Fish, FishingPool, FishRod } from "genshin-world";
 
-import {
-  CityIdRegionMap,
-  FISH_PATH,
-  FISHING_POOLS_PATH,
-  FISHING_RODS_PATH,
-} from "#src/services/genshinAssets/fishing/constants";
+import { CityIdRegionMap } from "#src/services/genshinAssets/fishing/constants";
 import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { GameDataset } from "genshin-world";
 
 const toFish = (row: ExcelFishRow): Fish => ({
   attractRange: row.attractRange,
@@ -38,14 +33,9 @@ const toFishRod = (row: ExcelFishRodRow): FishRod => ({
   maxAttack: row.maxAttack,
 });
 
-const writeJson = async (path: string, content: unknown): Promise<void> => {
-  await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, `${JSON.stringify(content)}\n`);
-};
-
-// The fish, their rods and each region's pools written as the world's generated slices, the pools filed by the city they
-// Are fished in. A pool filed under no region named here is left out and counted in the report
-export const writeFishingTables = async (): Promise<string> => {
+// The fish, their rods and each region's pools built as the fishing dataset's records, the pools filed by the city they
+// Are fished in. A pool filed under no region named here is left out and counted in the notes
+export const buildFishingTables = (): GameDataBuild => {
   const stocks = new Map(
     readExcelTable<ExcelFishStockRow>("FishStockExcelConfigData").map((stock) => [stock.id, stock]),
   );
@@ -61,16 +51,15 @@ export const writeFishingTables = async (): Promise<string> => {
   }
   const fish = readExcelTable<ExcelFishRow>("FishExcelConfigData").map((row) => toFish(row));
   const rods = readExcelTable<ExcelFishRodRow>("FishRodExcelConfigData").map((row) => toFishRod(row));
-  await Promise.all([
-    writeJson(FISH_PATH, fish),
-    writeJson(FISHING_POOLS_PATH, regionPools),
-    writeJson(FISHING_RODS_PATH, rods),
-  ]);
-  return [
-    ...Object.entries(regionPools).map(([region, pools]) => `${region}: ${pools.length} pools`),
-    `${fish.length} fish and ${rods.length} rods, ${skippedPools} pools in no region left out`,
-    FISH_PATH,
-    FISHING_POOLS_PATH,
-    FISHING_RODS_PATH,
-  ].join("\n");
+  return {
+    notes: [
+      ...Object.entries(regionPools).map(([region, pools]) => `${region}: ${pools.length} pools`),
+      `${fish.length} fish and ${rods.length} rods, ${skippedPools} pools in no region left out`,
+    ],
+    objects: {
+      [`${GameDataset.Fishing}/fish`]: fish,
+      [`${GameDataset.Fishing}/pools`]: regionPools,
+      [`${GameDataset.Fishing}/rods`]: rods,
+    },
+  };
 };

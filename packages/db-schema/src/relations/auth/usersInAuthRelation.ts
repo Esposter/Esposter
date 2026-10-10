@@ -3,7 +3,9 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const usersInAuthRelation = defineRelationsPart(schema, (r) => ({
   usersInAuth: {
-    accountsInAuth: r.many.accountsInAuth({ from: r.usersInAuth.id, to: r.accountsInAuth.userId }),
+    // The model name plus `s`, the key better-auth's Drizzle adapter derives for a join to many rows: an OAuth
+    // Sign-in reads the user holding the provider's email with its accounts, and throws on any other key
+    accountsInAuths: r.many.accountsInAuth({ from: r.usersInAuth.id, to: r.accountsInAuth.userId }),
     achievementsViaUserAchievements: r.many.achievementsInAchievement({
       alias: "achievements_id_users_id_via_userAchievements",
       from: r.usersInAuth.id.through(r.userAchievementsInAchievement.userId),

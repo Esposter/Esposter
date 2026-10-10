@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { QIQI_CHARACTER_ID } from "#src/services/character/constants";
@@ -13,7 +14,7 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const QIQI_KIT = createQiqiKit(await readTalentMultipliers([QIQI_CHARACTER_ID]));
+const QIQI_KIT = createQiqiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [QIQI_CHARACTER_ID]));
 
 const createQiqiCombatant = (): Combatant => ({
   ascension: 0,

@@ -9,6 +9,7 @@ import type { GroundPoint } from "genshin-engine";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BENNETT_CHARACTER_ID, MONA_CHARACTER_ID } from "#src/services/character/constants";
 import { createBennettKit } from "#src/services/kit/characters/bennettKit";
@@ -25,14 +26,19 @@ import { describe, expect, test } from "vitest";
 
 const BENNETT_KIT = createBennettKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BENNETT_CHARACTER_ID]));
 
-const readFirstFieldTick = (combatant: Combatant, fieldCharacterId: number, healthShare: number): KitEffect[] => {
+const readFirstFieldTick = (
+  combatant: Combatant,
+  fieldCharacterId: number,
+  fieldWeaponType: WeaponType,
+  healthShare: number,
+): KitEffect[] => {
   const body = { x: 0, z: 0 };
   const party = createParty([BENNETT_CHARACTER_ID, MONA_CHARACTER_ID]);
   getPartyMember(party, fieldCharacterId).healthShare = healthShare;
   const kitEffectState: KitEffectState = { effects: [] };
   BENNETT_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
   stepKitEffects(kitEffectState, 34 / 60, {
-    activeCombatant: { ...combatant, characterId: fieldCharacterId },
+    activeCombatant: { ...combatant, characterId: fieldCharacterId, weaponType: fieldWeaponType },
     body,
     party,
   });
@@ -55,6 +61,7 @@ describe("bennett kit", () => {
     elementalResonances: [],
     kit: BENNETT_KIT,
     level: 90,
+    weaponType: WeaponType.Sword,
   });
 
   // Passion Overload pressed or held and released by the kit, its party member's cooldown read after the release
@@ -150,7 +157,12 @@ describe("bennett kit", () => {
     expect.hasAssertions();
     // Under 70% of its HP, the character on the field gets the 76% bonus its 56% and Grand Expectation's 20% make
     expect(
-      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 1 }, BENNETT_CHARACTER_ID, 0.5),
+      readFirstFieldTick(
+        { ...createBennettCombatant(), constellationCount: 1 },
+        BENNETT_CHARACTER_ID,
+        WeaponType.Sword,
+        0.5,
+      ),
     ).toStrictEqual([
       {
         amount: (0.56 + 0.2) * BASE_ATTACK,
@@ -166,7 +178,12 @@ describe("bennett kit", () => {
     expect.hasAssertions();
     // Bennett himself wields a sword, and constellation 6 keeps constellation 1's 76% bonus
     expect(
-      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 6 }, BENNETT_CHARACTER_ID, 1),
+      readFirstFieldTick(
+        { ...createBennettCombatant(), constellationCount: 6 },
+        BENNETT_CHARACTER_ID,
+        WeaponType.Sword,
+        1,
+      ),
     ).toStrictEqual([
       {
         amount: (0.56 + 0.2) * BASE_ATTACK,
@@ -190,7 +207,12 @@ describe("bennett kit", () => {
     expect.hasAssertions();
     // Mona wields a catalyst, and gets the same 76% bonus as the sword wielder
     expect(
-      readFirstFieldTick({ ...createBennettCombatant(), constellationCount: 6 }, MONA_CHARACTER_ID, 1),
+      readFirstFieldTick(
+        { ...createBennettCombatant(), constellationCount: 6 },
+        MONA_CHARACTER_ID,
+        WeaponType.Catalyst,
+        1,
+      ),
     ).toStrictEqual([
       {
         amount: (0.56 + 0.2) * BASE_ATTACK,

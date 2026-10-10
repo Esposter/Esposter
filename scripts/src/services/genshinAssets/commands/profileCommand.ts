@@ -13,7 +13,7 @@ export const profileCommand: SubCommandsDef[string] = defineCommand({
     name: "profile",
   },
   run: async ({ args }) => {
-    const { note, publication } = buildProfilePublication();
+    const { note, publication } = await buildProfilePublication();
     console.log(note);
     console.log(await publishGameDataStep({ isDryRun: args["dry-run"], publication, scopes: [GameDataset.Profile] }));
   },

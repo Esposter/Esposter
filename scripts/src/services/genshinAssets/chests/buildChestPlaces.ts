@@ -1,21 +1,22 @@
+import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ChestKindLabelIdMap } from "#src/services/genshinAssets/chests/ChestKindLabelIdMap";
-import { CHEST_PLACES_GENERATED_DIRECTORY } from "#src/services/genshinAssets/chests/constants";
+import { buildMapPointSlices } from "#src/services/genshinAssets/points/buildMapPointSlices";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
-import { writeMapPointSlices } from "#src/services/genshinAssets/points/writeMapPointSlices";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import { ChestKind } from "genshin-world";
+import { ChestKind, GameDataset } from "genshin-world";
 
-// Each region's chests written as one slice in the world's generated folder, from the official map's points and the
-// Fit, each carried into its region's axes round the Windrise origin as the region's landmarks are. The report counts each
-// Region's chests and what was left out
-export const writeChestPlaces = async (): Promise<string> => {
+// Each region's chests as one slice of the chests dataset, from the official map's points and the fit, each carried
+// Into its region's axes round the Windrise origin as the region's landmarks are. The notes count each region's chests
+// And what was left out
+export const buildChestPlaces = async (): Promise<GameDataBuild> => {
   const [origin, { points, transform }] = await Promise.all([
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readFittedMapPoints(),
   ]);
   const labelIdKindMap = new Map(Object.values(ChestKind).map((kind) => [ChestKindLabelIdMap[kind], kind]));
   const placement = placeMapPoints(points, transform, labelIdKindMap, "chest", origin);
-  return writeMapPointSlices(CHEST_PLACES_GENERATED_DIRECTORY, placement, "chests");
+  return buildMapPointSlices(GameDataset.Chests, placement, "chests");
 };

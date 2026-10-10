@@ -108,6 +108,7 @@ export const useWorldCombat = ({
           elementalResonances,
           kit,
           level: character.level,
+          weaponType: characterDataMap.get(character.id)?.weaponType,
         });
     }
     return combatantMap;

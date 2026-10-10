@@ -3,6 +3,7 @@ import { computeBuildKey } from "#src/services/buildCache/computeBuildKey";
 import {
   BUILD_CACHE_DIRECTORY,
   BUILD_CACHE_RUN_IN_SLOT_PATH,
+  BUILD_CACHE_TSDOWN_FLAGS,
   BUILD_OUTPUT_DIRECTORY,
   BUILD_STAMP_FILE,
 } from "#src/services/buildCache/constants";
@@ -65,7 +66,7 @@ export const buildPackageCached = (
     rmSync(outputDirectory, { force: true, recursive: true });
     const build = spawnSync(
       "bash",
-      [join(REPOSITORY_ROOT, BUILD_CACHE_RUN_IN_SLOT_PATH), "pnpm", "exec", "tsdown", "--no-clean"],
+      [join(REPOSITORY_ROOT, BUILD_CACHE_RUN_IN_SLOT_PATH), "pnpm", "exec", "tsdown", ...BUILD_CACHE_TSDOWN_FLAGS],
       { cwd: packageDirectory, stdio: "inherit" },
     );
     if (build.status !== 0)

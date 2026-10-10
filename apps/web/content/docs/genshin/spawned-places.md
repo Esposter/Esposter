@@ -5,7 +5,7 @@ description: The official Teyvat Interactive Map's statues and waypoints read in
 
 # Spawned places
 
-The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the first half of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, and its statues and waypoints fitted onto the scene's own transport points. Chests are the first kind written, into their own slices by the [chests](/docs/genshin/chests) page, and the puzzle mechanisms follow in slices of their own by the [puzzles](/docs/genshin/puzzles) page, and the plants and specialties by the [gathering](/docs/genshin/gathering) page. The Oculi are written here, in the [Oculi](#the-oculi) section, for the [statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) proposal to read; each other kind's places land with the page that uses them.
+The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them, so the official Teyvat Interactive Map's public points stand in for them. This page is the first half of the [spawned places](/docs/proposals/genshin/spawned-places) proposal: the map's points read into the references folder, and its statues and waypoints fitted onto the scene's own transport points. Chests are the first kind published, into their own slices by the [chests](/docs/genshin/chests) page, and the puzzle mechanisms follow in slices of their own by the [puzzles](/docs/genshin/puzzles) page, and the plants and specialties by the [gathering](/docs/genshin/gathering) page. The Oculi are published here, in the [Oculi](#the-oculi) section, for the [statues of The Seven](/docs/proposals/genshin/statues-of-the-seven) proposal to read; each other kind's places land with the page that uses them.
 
 ## How it works
 
@@ -19,7 +19,7 @@ flowchart TD
   GATE -->|"no"| STOP["An error, and nothing written"]
   GATE -->|"yes"| FILE["fit.json: the transform, the residual and each region's share"]
   FILE --> REPORT["The report: matches, residual and Oculi by region"]
-  FILE --> SLICES["One Oculi slice per region in genshin-world's generated folder"]
+  FILE --> SLICES["One Oculi slice per region, published to the oculi dataset"]
 ```
 
 ## The read
@@ -48,11 +48,11 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 
 ## The Oculi
 
-`pnpm -C scripts genshin:assets oculi` writes each Oculus the official map marks on the ground into its region's slice, as a compact list of places, each with its id (the map's point id), its kind and its position in the game's coordinates. Its kind is the map's own label, one of eight, named as the map labels them: Anemoculus, Geoculus, Electroculus, Dendroculus, Hydroculus, Pyroculus, Lunoculus and Cryoculus. Each region's area and kind are set in the region map, which the fit's report reads too, and the writer keeps only its points on the ground (below).
+`pnpm -C scripts genshin:assets oculi` publishes each Oculus the official map marks on the ground into its region's slice, as a compact list of places, each with its id (the map's point id), its kind and its position in the game's coordinates. Its kind is the map's own label, one of eight, named as the map labels them: Anemoculus, Geoculus, Electroculus, Dendroculus, Hydroculus, Pyroculus, Lunoculus and Cryoculus. Each region's area and kind are set in the region map, which the fit's report reads too, and the writer keeps only its points on the ground (below).
 
 - **Ground only.** Oculi on a layer under the ground stand on floors of their own, which the place does not yet know, so they are counted and left out. Fontaine holds the only ones, which is why its ground count sits below the fit's count of its Oculi.
 - **Not landmarks.** A place is acted on by the statues' rules, so it lives in its own model rather than in `LandmarkKind`, and no kit draws it.
-- **No height is written.** An Oculus stands on the ground at its point, its height read where it is stood on, as the [chests](/docs/genshin/chests) page sets out.
+- **No height is published.** An Oculus stands on the ground at its point, its height read where it is stood on, as the [chests](/docs/genshin/chests) page sets out.
 
 ## Key files
 
@@ -64,7 +64,7 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 | `scripts/src/services/genshinAssets/points/solveSimilarity.ts`         | Solves the least-squares similarity over a set of pairs                   |
 | `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` | Reads the scene's transport points, shared with the region capitals' fit  |
 | `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` | Each region's map area and Oculus kind, with the wiki's count             |
-| `scripts/src/services/genshinAssets/oculi/writeOculusPlaces.ts`        | Writes each region's Oculi slice from the points and the fit              |
+| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`        | Builds each region's Oculi slice from the points and the fit              |
 | `scripts/src/services/genshinAssets/oculi/OculusKindLabelIdMap.ts`     | Each Oculus kind's label on the official map                              |
 | `packages/genshin-world/src/models/oculus/OculusPlace.ts`              | A placed Oculus: its id, kind and ground position                         |
 | `packages/genshin-world/src/generated/oculi/`                          | One slice per region, imported on demand by the world                     |

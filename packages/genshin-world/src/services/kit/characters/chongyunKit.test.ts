@@ -4,6 +4,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -14,7 +15,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const CHONGYUN_KIT = createChongyunKit(await readTalentMultipliers([CHONGYUN_CHARACTER_ID]));
+const CHONGYUN_KIT = createChongyunKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHONGYUN_CHARACTER_ID]));
 
 const createChongyunCombatant = (): Combatant => ({
   ascension: 0,

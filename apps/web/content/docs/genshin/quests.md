@@ -13,8 +13,8 @@ The game's quests are its story: the Archon quests of the main story, a characte
 flowchart TD
   DUMP["The community's dump, outside the repository:<br/>its tables and quest files"] --> READ["genshin:text quests: the quests QuestId names"]
   DECODE["The text maps, decoded from the installed client"] --> READ
-  READ --> FILES["generated/quests: one file a quest, checked by its schema"]
-  READ --> WORDS["generated/questText: the quests' words, one chunk a language"]
+  READ --> FILES["quests/QuestId: one record a quest, checked by its schema"]
+  READ --> WORDS["questText per language: the quests' words, one record each"]
   FILES --> START["startQuests: the first Archon quest not finished starts"]
   START --> PROGRESS["Quests in progress, from step 0"]
   DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
@@ -64,7 +64,7 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### The quests' content
 
-`QuestId` is the inventory of quests the world carries, the prologue's first two to begin with. `pnpm -C scripts genshin:text quests` writes each one into the world: its kind, title and description from the quest table, and its shown steps from its binary output. It also writes the talks those steps end on, from the dialog table with each speaker named from the character table, and every word they show in every language. Each quest is checked against the world's own schema before it is written.
+`QuestId` is the inventory of quests the world carries, the prologue's first two to begin with. `pnpm -C scripts genshin:text quests` publishes each one to the game data: its kind, title and description from the quest table, and its shown steps from its binary output. It also publishes the talks those steps end on, from the dialog table with each speaker named from the character table, and every word they show in every language. Each quest is checked against the world's own schema before it is published.
 
 The dump scrambles the binary output's field names each patch, so the reader finds each field by its shape, as [game data formats](/docs/genshin/game-data-formats) describes. A step with no words is the game's own bookkeeping and is left out. A shown step whose conditions ask nothing the Traveler does, such as a cutscene played, is left out and noted.
 
@@ -89,7 +89,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/components/Quest/Screen/Index.vue`         | The quest screen J opens                                                |
 | `packages/genshin-world/src/components/Quest/Beam/Index.vue`           | The beam over the navigated objective                                   |
 | `packages/genshin-world/src/models/quest/QuestId.ts`                   | The quests the world carries, the reader's inventory                    |
-| `scripts/src/services/genshinText/writeQuests.ts`                      | The reader: every inventoried quest, its talks and words written        |
+| `scripts/src/services/genshinText/buildQuests.ts`                      | The builder: every inventoried quest, its talks and words, published    |
 | `scripts/src/services/genshinText/readQuestSteps.ts`                   | A quest's shown steps read off its scrambled binary output by shape     |
 | `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog table                                        |
 

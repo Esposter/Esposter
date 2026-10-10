@@ -1,6 +1,6 @@
 import type { ArchiveBook, ArchiveEntry } from "genshin-world";
 
-import { ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap } from "#src/services/genshinAssets/archive/constants";
+import { ArchiveSectionKeyMap } from "#src/services/genshinAssets/archive/constants";
 import { getNamedCandidates } from "#src/services/genshinAssets/archive/getNamedCandidates";
 import { readBookCandidates } from "#src/services/genshinAssets/archive/readBookCandidates";
 import { readEquipmentCandidates } from "#src/services/genshinAssets/archive/readEquipmentCandidates";
@@ -12,21 +12,25 @@ import { readTutorialCandidates } from "#src/services/genshinAssets/archive/read
 import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveEntries";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { archiveBookSchema, archiveEntrySchema, ArchiveSection, travelLogEntrySchema } from "genshin-world";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import {
+  archiveBookSchema,
+  archiveEntrySchema,
+  ArchiveSection,
+  GameDataset,
+  travelLogEntrySchema,
+} from "genshin-world";
 
 // Each section's entries checked against the world's schema for it, which keeps the fields its own entries carry
-const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): unknown[] => {
+const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): ArchiveEntry[] => {
   if (section === ArchiveSection.Books) return archiveBookSchema.array().parse(entries);
   if (section === ArchiveSection.TravelLog) return travelLogEntrySchema.array().parse(entries);
   return archiveEntrySchema.array().parse(entries);
 };
 
 // Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked against
-// The world's own schema, written as one slice per section into the world's generated folder. Returns the id of each
-// Volume's body, which the game data publish reads, and a note of each section's count
-export const writeArchive = (): { bodyIds: number[]; notes: string[] } => {
+// The world's own schema for it, published as one record per section. Returns the id of each Volume's body, which the book
+// Bodies read, a note of each section's count, and the sections' entries by their keys for the names to be read from
+export const buildArchive = (): { bodyIds: number[]; notes: string[]; objects: Record<string, ArchiveEntry[]> } => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const { artifactSets, weapons } = readEquipmentCandidates();
   const books: ArchiveBook[] = getNamedCandidates(readBookCandidates(), englishTextMap).map(
@@ -46,11 +50,12 @@ export const writeArchive = (): { bodyIds: number[]; notes: string[] } => {
     ),
     [ArchiveSection.Tutorials]: toArchiveEntries(readTutorialCandidates(), englishTextMap),
   };
-  mkdirSync(ARCHIVE_GENERATED_DIRECTORY, { recursive: true });
-  const notes = Object.values(ArchiveSection).map((section) => {
+  const notes: string[] = [];
+  const objects: Record<string, ArchiveEntry[]> = {};
+  for (const section of Object.values(ArchiveSection)) {
     const entries = parseSectionEntries(section, sectionEntriesMap[section]);
-    writeFileSync(join(ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap[section]), JSON.stringify(entries));
-    return `${section}: ${entries.length} entries`;
-  });
-  return { bodyIds: books.map(({ bodyId }) => bodyId), notes };
+    notes.push(`${section}: ${entries.length} entries`);
+    objects[`${GameDataset.Archive}/${ArchiveSectionKeyMap[section]}`] = entries;
+  }
+  return { bodyIds: books.map(({ bodyId }) => bodyId), notes, objects };
 };

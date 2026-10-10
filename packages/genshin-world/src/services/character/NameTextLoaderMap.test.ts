@@ -32,7 +32,7 @@ describe("name text loader map", () => {
   // The authored data files the lock does not name, read from the bundle
   const authoredDataFiles = import.meta.glob("#src/data/**/*.json", { eager: true, import: "default" });
 
-  // A cold mirror downloads every object the lock names, which outlasts a test's default timeout
+  // A cold mirror downloads the records the lock names outside the text datasets, past a test's default timeout
   test("every nameTextId in the world's data files is in the English name chunk", async () => {
     expect.hasAssertions();
     const names = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);

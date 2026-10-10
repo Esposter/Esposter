@@ -3,33 +3,29 @@ import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { Quest } from "genshin-world";
 
+import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import {
   DIALOG_PATH,
   MAIN_QUEST_PATH,
   NPC_PATH,
   QUEST_BINARY_DIRECTORY,
-  QUEST_TEXT_DIRECTORY,
-  QUESTS_DIRECTORY,
   SCRAMBLED_KEY_REGEX,
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
-import { getPlainGameText } from "#src/services/genshinText/getPlainGameText";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { QuestIds, QuestObjectiveKind, questSchema, TalkLineKind } from "genshin-world";
-import { mkdirSync, readFileSync, rmSync } from "node:fs";
+import { GameDataset, QuestIds, QuestObjectiveKind, questSchema, TalkLineKind } from "genshin-world";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Every quest `QuestId` names, written into the world: its kind, title and description from the quest table, its shown
-// Steps from its binary output, the talks its steps end on from the dialog table, and every word they show in every
-// Language, the text missing from a language taking English's and saying so. Each quest is checked against the world's
-// Own schema before it is written
-export const writeQuests = (): string[] => {
+// Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps from its
+// Binary output, the talks its steps end on from the dialog table, and every word they show, a language missing a word
+// Taking English's and saying so. Each quest is checked against the world's own schema before it is published
+export const buildQuests = (): { notes: string[]; objects: Record<string, unknown> } => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
   const mainQuestMap = new Map(
@@ -90,29 +86,16 @@ export const writeQuests = (): string[] => {
     ]),
   );
   textIds.delete("");
-  // Every language is read before the last run's files are removed, so a text map that fails to read leaves them
-  const languageQuestTexts = GameLanguages.map((language) => {
-    const textMap = language === GameLanguage.English ? englishTextMap : readTextMap(language);
-    const questText = Object.fromEntries(
-      [...textIds].toSorted().map((textId) => {
-        const text = textMap.get(textId);
-        if (!text) notes.push(`${textId} has no ${language} text; English stands in`);
-        return [textId, getPlainGameText(text || (englishTextMap.get(textId) ?? ""))];
-      }),
-    );
-    return [language, questText] as const;
-  });
-  for (const directory of [QUESTS_DIRECTORY, QUEST_TEXT_DIRECTORY]) {
-    rmSync(directory, { force: true, recursive: true });
-    mkdirSync(directory, { recursive: true });
-  }
-
-  for (const quest of quests) writeJsonFile(join(QUESTS_DIRECTORY, `${quest.id}.json`), quest);
-  for (const [language, questText] of languageQuestTexts)
-    writeJsonFile(join(QUEST_TEXT_DIRECTORY, `${language}.json`), questText);
-
+  const { notes: textNotes, objects: textObjects } = buildTextChunks(GameDataset.QuestText, [...textIds].toSorted());
   notes.push(
+    ...textNotes,
     `${quests.length} quests, and ${textIds.size} of their words, written in ${GameLanguages.length} languages`,
   );
-  return notes;
+  return {
+    notes,
+    objects: {
+      ...Object.fromEntries(quests.map((quest) => [`${GameDataset.Quests}/${quest.id}`, quest])),
+      ...textObjects,
+    },
+  };
 };

@@ -1,3 +1,4 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
@@ -11,7 +12,7 @@ describe(getCharacterAttributeLines, () => {
   test("gives the Traveler at level 90 the wiki's Max HP and DEF, and both ATK bases raised by the ascension's 24%", async () => {
     expect.hasAssertions();
 
-    const statTables = await readStatTables();
+    const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
     const attributeLines = getCharacterAttributeLines(
       {
         artifacts: [],

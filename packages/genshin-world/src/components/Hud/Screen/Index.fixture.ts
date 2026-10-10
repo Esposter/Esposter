@@ -1,9 +1,8 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import charactersJson from "#src/generated/stats/characters.json";
-import { characterDataSchema } from "#src/models/character/CharacterData";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { createParty } from "#src/services/party/createParty";
 import { createInput, STAMINA_MAX } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
@@ -17,11 +16,9 @@ const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_
 const PARTY_CHARACTER_IDS = [10000041, 10000029, 10000007];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(
-  characterDataSchema
-    .array()
-    .parse(charactersJson)
-    .filter(({ id }) => PARTY_CHARACTER_IDS.includes(id))
-    .map((characterData) => [characterData.id, characterData]),
+  [...(await readStatTables(GAME_DATA_LOCAL_BASE_URL)).characterDataMap].filter(([id]) =>
+    PARTY_CHARACTER_IDS.includes(id),
+  ),
 );
 const party = { ...createParty(PARTY_CHARACTER_IDS), activeIndex: FIELD_MEMBER_INDEX };
 const ALBEDO_QUEST_ID = "albedo";

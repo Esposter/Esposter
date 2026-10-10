@@ -1,3 +1,4 @@
+import { BUILD_CACHE_TSDOWN_FLAGS } from "#src/services/buildCache/constants";
 import { listBuildInputPaths } from "#src/services/buildCache/listBuildInputPaths";
 import {
   readLockfileImporter,
@@ -13,9 +14,10 @@ import { join, relative, resolve, sep } from "node:path";
 const hashContent = (content: Buffer | string): string => createHash("sha256").update(content).digest("hex");
 
 // The one name a package's cache is kept under: its own inputs by content, the lockfile's resolved versions of its
-// Importer and their transitive snapshots, the Node version it builds under, and the key of every workspace package it
-// Links, recursively, so a change anywhere it builds from moves every key downstream. Mtimes never enter it. A `keys`
-// Map shared across one run hashes each package's sources once, however many dependents link it.
+// Importer and their transitive snapshots, the Node version it builds under, the tsdown flags it builds with, and the
+// Key of every workspace package it links, recursively, so a change anywhere it builds from moves every key downstream.
+// Mtimes never enter it.
+// A `keys` Map shared across one run hashes each package's sources once, however many packages link it.
 export const computeBuildKey = (
   packageDirectory: string,
   repositoryRoot: string = REPOSITORY_ROOT,
@@ -40,6 +42,7 @@ export const computeBuildKey = (
     }));
     const key = hashContent(
       JSON.stringify({
+        flags: BUILD_CACHE_TSDOWN_FLAGS,
         importer: importer.lines,
         inputs,
         links,

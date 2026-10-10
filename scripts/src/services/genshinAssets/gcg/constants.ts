@@ -6,7 +6,7 @@ import { join } from "node:path";
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
 // Has no round to run out; its reactions and hand limit are the matchmaking rule's
 export const GCG_STANDARD_RULE_ID = 2;
-// Where the standard rule's slice is written, the world package's generated folder it is imported on demand from
+// The world package's generated folder, which the card game's text reads the deck slices from until they are published
 export const GCG_GENERATED_DIRECTORY: string = join(
   REPOSITORY_ROOT,
   "packages",
@@ -15,12 +15,10 @@ export const GCG_GENERATED_DIRECTORY: string = join(
   "generated",
   "gcg",
 );
-export const GCG_STANDARD_RULE_PATH: string = join(GCG_GENERATED_DIRECTORY, "standardRule.json");
 // The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
-// Written into one map beside the standard rule
+// Published beside the standard rule
 export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values()];
-export const GCG_GAMES_PATH: string = join(GCG_GENERATED_DIRECTORY, "games.json");
-// The deck the player plays when the game names one no slice is written for: deck 3 stands in until the game's own deck is
+// The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
 export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;
 // The card game's table names each element by its own name in capitals, which the world's Element enum spells otherwise

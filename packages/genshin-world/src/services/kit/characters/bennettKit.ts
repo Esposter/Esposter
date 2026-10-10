@@ -11,7 +11,6 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { getCharacterWeaponType } from "#src/services/character/getCharacterWeaponType";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -219,7 +218,7 @@ const getSkillCooldownMultiplier = (context: KitStepContext): number => {
 const createFieldTick =
   (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
   ({ activeCombatant, kitEffectState, party, tickIndex }: KitFieldTick): void => {
-    const { characterId } = activeCombatant;
+    const { characterId, weaponType } = activeCombatant;
     const { healthShare } = getPartyMember(party, characterId);
     const flatHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
     const maxHealthHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
@@ -247,7 +246,6 @@ const createFieldTick =
           kind: "buff",
           secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
         });
-        const weaponType = getCharacterWeaponType(characterId);
         if (weaponType !== undefined && FIRE_VENTURES_INFUSED_WEAPON_TYPES.has(weaponType))
           addKitEffect(kitEffectState, {
             characterId,

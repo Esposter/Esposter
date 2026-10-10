@@ -1,6 +1,6 @@
 ---
 title: Puzzles
-description: The official Teyvat Interactive Map's puzzle marks fitted into each region's generated slice by their four kinds, and the Elemental Monument as a state machine lit by its element or a reaction of its own, a timed one going out after its time. The world does not yet place, draw, strike or solve them.
+description: The official Teyvat Interactive Map's puzzle marks fitted into each region's slice of the game data by their four kinds, and the Elemental Monument as a state machine lit by its element or a reaction of its own, a timed one going out after its time. The world does not yet place, draw, strike or solve them.
 ---
 
 # Puzzles
@@ -16,7 +16,7 @@ flowchart TD
   K -->|"yes"| L{"On the ground layer, in a mapped region?"}
   L -->|"no"| LEFT["Left out, and counted in the report"]
   L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
-  T --> S["One slice per region in genshin-world's generated puzzles folder"]
+  T --> S["One slice per region, published to the puzzles dataset of the hosted game data"]
 ```
 
 ```mermaid
@@ -30,13 +30,13 @@ flowchart TD
   TIMED -->|"no"| STAY["Stays lit"]
 ```
 
-## The writer
+## The builder
 
-`pnpm -C scripts genshin:assets puzzles` writes one slice per region in `packages/genshin-world/src/generated/puzzles/`, in the shape the [chests](/docs/genshin/chests) page describes. Its report lists each region's places and the ones it left out.
+`pnpm -C scripts genshin:assets puzzles` publishes one slice per region to the puzzles dataset of the [hosted game data](/docs/genshin/hosted-game-data), in the shape the [chests](/docs/genshin/chests) page describes. Its report lists each region's places and the ones it left out.
 
 - **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share.
 - **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out.
-- **Only places.** The map gives no element, no timing and no wiring for a mark, so none of those is written. The writer shares its placement with the chests' writer, the `placeMapPoints` primitive, so a kind of point is one label map away from a slice.
+- **Only places.** The map gives no element, no timing and no wiring for a mark, so none of those is published. The builder shares its placement with the chests' builder, the `placeMapPoints` primitive, so a kind of point is one label map away from a slice.
 
 ## The monument
 
@@ -77,11 +77,11 @@ A `TimeTrialChallenge` holds its clock's limit and what is left of it, its state
 | `packages/genshin-world/src/services/puzzle/constants.ts`                   | The timed monument's lit time, and a Seelie's return and route times        |
 | `packages/genshin-world/src/generated/puzzles/`                             | One slice per region, imported on demand once the world places them         |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`       | Each kind's labels on the official map                                      |
-| `scripts/src/services/genshinAssets/puzzles/writePuzzlePlaces.ts`           | Writes each region's puzzle places from the points                          |
+| `scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`           | Builds each region's puzzle places from the points                          |
 | `scripts/src/services/genshinAssets/points/placeMapPoints.ts`               | Carries a kind's labelled points into their regions, shared with chests     |
 | `scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`             | `genshin:assets puzzles`                                                    |
 
 ## Sources
 
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the writer reads as references.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the builder reads as references.
 - [Elemental Monument](https://genshin-impact.fandom.com/wiki/Elemental_Monument), Genshin Impact Wiki: monuments lit by their element, reactions included, some for good and some for a time.

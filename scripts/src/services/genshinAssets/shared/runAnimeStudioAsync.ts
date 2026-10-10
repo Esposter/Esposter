@@ -2,6 +2,7 @@ import { assertAnimeStudioReady } from "#src/services/genshinAssets/shared/asser
 import { ANIMESTUDIO_CLI_PATH } from "#src/services/genshinAssets/shared/constants";
 import { getAnimeStudioArgs } from "#src/services/genshinAssets/shared/getAnimeStudioArgs";
 import { judgeAnimeStudioRun } from "#src/services/genshinAssets/shared/judgeAnimeStudioRun";
+import { getUtilityClampedCommand } from "#src/services/machine/getUtilityClampedCommand";
 import { spawn } from "node:child_process";
 import { dirname } from "node:path";
 
@@ -9,11 +10,9 @@ import { dirname } from "node:path";
 // A map run as processes of their own at once. Each run's output is held until it exits, which a map's warnings keep small
 export const runAnimeStudioAsync = (args: string[]): Promise<void> => {
   assertAnimeStudioReady();
+  const { args: spawnArgs, command } = getUtilityClampedCommand(ANIMESTUDIO_CLI_PATH, getAnimeStudioArgs(args));
   return new Promise<void>((resolve, reject) => {
-    const child = spawn(ANIMESTUDIO_CLI_PATH, getAnimeStudioArgs(args), {
-      cwd: dirname(ANIMESTUDIO_CLI_PATH),
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    const child = spawn(command, spawnArgs, { cwd: dirname(ANIMESTUDIO_CLI_PATH), stdio: ["ignore", "pipe", "pipe"] });
     const stdoutChunks: Buffer[] = [];
     const stderrChunks: Buffer[] = [];
     child.stdout.on("data", (chunk: Buffer) => stdoutChunks.push(chunk));

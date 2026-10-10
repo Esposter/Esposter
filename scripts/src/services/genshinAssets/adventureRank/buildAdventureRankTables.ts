@@ -6,7 +6,7 @@ import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable
 import { GameDataset } from "genshin-world";
 
 // The Adventure Rank tables the world reads, from the dump's player level, level lock and world level tables. The lock
-// Table's main quest is written as the game's id in a string, or "" where the World Level needs no quest, the way
+// Table's main quest is held as the game's id in a string, or "" where the World Level needs no quest, the way
 // The world's quests name theirs. Returns the records the tables publish under
 export const buildAdventureRankTables = (): Record<string, unknown> => {
   const levels = readExcelTable<ExcelPlayerLevelRow>("PlayerLevelExcelConfigData")
