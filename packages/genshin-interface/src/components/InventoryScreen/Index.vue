@@ -104,8 +104,10 @@ const emit = defineEmits<{
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
 // The dialog takes the focus as it opens, the bag behind it inert until it closes, so nothing behind it changes what OK
-// Destroys, and the focus goes back to what held it once it closes
+// Destroys, and the focus goes back to what held it once it closes, or to the trash where a confirmed destroy closed the
+// Destroy mode and its Destroy button with it
 const cancelButton = useTemplateRef("cancelButton");
+const trashButton = useTemplateRef("trashButton");
 let returnFocus: HTMLElement | undefined;
 watch(
   () => isConfirming,
@@ -114,7 +116,7 @@ watch(
       returnFocus = window.document.activeElement instanceof HTMLElement ? window.document.activeElement : undefined;
     await nextTick();
     if (isOpen) cancelButton.value?.focus();
-    else returnFocus?.focus();
+    else (returnFocus?.isConnected ? returnFocus : trashButton.value)?.focus();
   },
 );
 </script>
@@ -161,6 +163,7 @@ watch(
         <p class="detail-caption">{{ selectedCell.caption }}</p>
       </section>
       <button
+        ref="trashButton"
         class="trash"
         :aria-label="destroyLabel"
         :aria-pressed="isDestroying"
