@@ -85,7 +85,7 @@ A step in `scripts` reads what another step published through the lock on disk, 
 
 ## Tests
 
-No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror in `packages/genshin-world/node_modules/.cache/game-data`. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes. The coverage shards restore the mirror from the CI cache, keyed on the lock's hash, and a cold mirror needs the network. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold mirror's first run fits inside.
+No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror in `packages/genshin-world/node_modules/.cache/game-data`. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes. Each coverage shard restores the mirror from the CI cache and saves what it read, keyed on the lock's hash and its shard, falling back to any earlier mirror; a cold mirror needs the network. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold mirror's first run fits inside.
 
 ```mermaid
 flowchart TD
@@ -100,7 +100,7 @@ flowchart TD
   Hash -->|no| Refuse["throws: the mirror keeps nothing"]
   Hash -->|yes| Store["temp file, rename into the mirror"]
   Store --> Serve
-  Cache[("CI cache, keyed on the lock")] -->|"restored before the shards run"| Mirror
+  Cache[("CI cache, keyed on the lock and the shard")] <-->|"restored before a shard runs, saved after"| Mirror
 ```
 
 ## Deleting
