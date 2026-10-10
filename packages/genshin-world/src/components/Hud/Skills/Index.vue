@@ -36,8 +36,10 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
-// The share of a cooldown left, none for a kit whose cooldown is no time at all
-const getCooldownShare = (secondsLeft: number, seconds: number) => (seconds > 0 ? secondsLeft / seconds : 0);
+// The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
+// Kit's own, as a stance's end sets
+const getCooldownShare = (secondsLeft: number, seconds: number) =>
+  seconds > 0 ? Math.min(1, secondsLeft / seconds) : 0;
 // Hidden with the HUD, the buttons let go of the keys they hold
 onUnmounted(() => {
   input.release(skillCode);
