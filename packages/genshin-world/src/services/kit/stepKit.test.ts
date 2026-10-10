@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
@@ -274,5 +275,45 @@ describe(stepKit, () => {
     skillFixture.step({ locomotionState: LocomotionState.Jump });
 
     expect(skillFixture.kitState.action).toBe(TRAVELER_KIT.elementalSkill);
+  });
+
+  test("plays a normal attack faster by the Normal ATK SPD its character's infusion raises", () => {
+    expect.hasAssertions();
+    const [firstHit] = TRAVELER_KIT.normalAttacks[0]?.hits ?? [];
+    const hitmarkSeconds = firstHit?.hitmarkSeconds ?? 0;
+    // The hits a strike has landed once the seconds given have passed, under the Normal ATK SPD bonus given
+    const landStrike = (normalAttackSpeedBonus: number): KitHit[] => {
+      const kitState = createKitState();
+      const landedHits: KitHit[] = [];
+      const kitEffectState: KitEffectState = {
+        effects: [
+          {
+            characterId: TRAVELER_CHARACTER_ID,
+            element: Element.Cryo,
+            kind: "infusion",
+            normalAttackSpeedBonus,
+            secondsRemaining: 1,
+          },
+        ],
+      };
+      const step = (isAttackPressed: boolean, stepSeconds: number): void => {
+        stepKit(
+          kitState,
+          TRAVELER_KIT,
+          { ...IDLE_INPUT, isAttackPressed },
+          createPartyMember(),
+          createStamina(STAMINA_MAX),
+          stepSeconds,
+          landedHits,
+          { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant: TRAVELER_COMBATANT, kitEffectState },
+        );
+      };
+      step(true, 0);
+      step(false, hitmarkSeconds / 1.04);
+      return landedHits;
+    };
+
+    expect(landStrike(0)).toStrictEqual([]);
+    expect(landStrike(0.08)).toStrictEqual([firstHit]);
   });
 });

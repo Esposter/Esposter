@@ -8,8 +8,8 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
 
-// The damage an enemy's strike deals to a combatant: its ATK as physical damage through the combatant's defence and
-// Physical resistance
+// The damage an enemy's strike deals to a combatant: its ATK, less each of its statuses' cut of it, as physical damage
+// Through the combatant's defence and Physical resistance
 export const computeEnemyStrikeDamage = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -21,7 +21,7 @@ export const computeEnemyStrikeDamage = (
     attackerLevel: enemy.level,
     defense,
     resistance: attributeTotalMap[Attribute.PhysicalResistance],
-    stat: attack,
+    stat: attack * (1 - enemy.statuses.reduce((total, { attackReduction }) => total + (attackReduction ?? 0), 0)),
     talentMultiplier: ENEMY_STRIKE_TALENT_MULTIPLIER,
   });
 };

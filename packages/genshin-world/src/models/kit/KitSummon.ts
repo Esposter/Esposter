@@ -11,6 +11,8 @@ export interface KitSummon {
   combatant: Combatant;
   elapsedSeconds: number;
   hits: KitHit[];
+  // The name its character's kit finds it by among the team's effects, if the kit reads it again
+  id?: string;
   // Whether the summon moves with the body on the field, standing where that body stands on each step, whoever it is
   isFollowing?: true;
   kind: "summon";
@@ -18,5 +20,7 @@ export interface KitSummon {
   // With the normal attacks of whoever is on the field
   onNormalAttackStart?: (context: KitStepContext) => void;
   secondsRemaining: number;
+  // The seconds from its cast it appears on the field at, if not at once, which a kit asking whether it stands waits for
+  spawnSeconds?: number;
   travel?: { metresPerSecond: number; startSeconds: number };
 }

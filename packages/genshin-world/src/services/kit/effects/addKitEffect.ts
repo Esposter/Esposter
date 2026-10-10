@@ -1,9 +1,9 @@
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
-// Whether an effect restarts an earlier one: a buff or an infusion of the same kind on the same character, and for a
-// Buff the same attribute from the same source, or for an infusion the same element. A field, a bubble and a summon are
-// Never restarted, as each one is its own
+// Whether an effect restarts an earlier one: a buff, an infusion, a status or a stance of the same kind on the same
+// Character, and for a buff the same attribute from the same source, for an infusion the same element, and for a status
+// The same id. A field, a bubble and a summon are never restarted, as each one is its own
 const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   if (earlier.kind === "buff" && effect.kind === "buff")
     return (
@@ -13,10 +13,13 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
     );
   if (earlier.kind === "infusion" && effect.kind === "infusion")
     return earlier.characterId === effect.characterId && earlier.element === effect.element;
+  if (earlier.kind === "status" && effect.kind === "status")
+    return earlier.characterId === effect.characterId && earlier.id === effect.id;
+  if (earlier.kind === "stance" && effect.kind === "stance") return earlier.characterId === effect.characterId;
   return false;
 };
 
-// Adds an effect to the field's list, the game restarting a buff or an infusion it is given again rather than stacking it.
+// Adds an effect to the field's list, the game restarting what it is given again rather than stacking it.
 // A shield is recast over the one a character holds, which ends there, so the earlier one is dropped on the next step and
 // Its explosion, if it has one, goes off then
 export const addKitEffect = (kitEffectState: KitEffectState, effect: KitEffect): void => {

@@ -14,6 +14,7 @@ import {
   ON_FOOT_LOCOMOTION_STATES,
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
+import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { endKitAction } from "#src/services/kit/endKitAction";
 import { landKitHits } from "#src/services/kit/landKitHits";
 import { startKitAction } from "#src/services/kit/startKitAction";
@@ -21,9 +22,10 @@ import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { LocomotionState } from "genshin-engine";
 
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
-// Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, ends at its seconds or
-// Where the body leaves the states it allows, and once none is playing the presses start the next. It returns the
-// Action this step started, which the caller aims on, and pushes the hits that land this step into landedHits
+// Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster by
+// The Normal ATK SPD its character's infusion raises, ends at its seconds or where the body leaves the states it allows,
+// And once none is playing the presses start the next. It returns the action this step started, which the caller aims
+// On, and pushes the hits that land this step into landedHits
 export const stepKit = (
   kitState: KitState,
   kit: Kit,
@@ -89,7 +91,10 @@ export const stepKit = (
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
     if (isAllowed) {
       const fromSeconds = kitState.actionSeconds;
-      kitState.actionSeconds += stepSeconds;
+      const speedBonus = kit.normalAttacks.includes(action)
+        ? (getKitInfusion(context.kitEffectState.effects, context.combatant.characterId)?.normalAttackSpeedBonus ?? 0)
+        : 0;
+      kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
       landKitHits(action, fromSeconds, kitState.actionSeconds, landedHits);
       if (kitState.actionSeconds < action.seconds) {
