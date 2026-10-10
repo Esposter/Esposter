@@ -3,26 +3,28 @@ import type { GameLanguage, GameText } from "genshin-text";
 
 import { GameClient } from "#src/models/splash/GameClient";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
-import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
-import { TitleLogoPathMap } from "#src/services/splash/TitleLogoPathMap";
 import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // The reader's language, whose client's title logo the splash shows, with mainland China's licence under it
+  // The reader's language, under whose client's title logo mainland China's licence is shown
   language: GameLanguage;
+  // The client's title logo as one filled path on the 4096 by 2752 box of the game's own 1024 by 688 sprites, every
+  // Logo on the same canvas, as `pnpm -C scripts genshin:assets fit login` traces them from the sprites the login
+  // Interface picks by language
+  logoPath: string;
 }
 
-const { gameText, language } = defineProps<Props>();
+const { gameText, language, logoPath } = defineProps<Props>();
 const licenceLines = computed(() => gameText[GameTextKey.TitleLicence].split("\n"));
 </script>
 
 <template>
   <GameScreen class="title-splash" role="img" :aria-label="gameText[GameTextKey.GameTitle]">
     <svg class="logo" viewBox="0 0 4096 2752" aria-hidden="true">
-      <path :d="TitleLogoPathMap[GameLanguageTitleLogoMap[language]]" />
+      <path :d="logoPath" />
     </svg>
     <p v-if="GameLanguageGameClientMap[language] === GameClient.Mainland" class="licence">
       <span v-for="line of licenceLines" :key="line" class="line">{{ line }}</span>

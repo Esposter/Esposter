@@ -1,6 +1,6 @@
+import type { LoginDoor } from "#src/models/login/LoginDoor";
 import type { LoginDoorPieceGeometry } from "#src/models/login/LoginDoorPieceGeometry";
 
-import door from "#src/data/login/door.json";
 import { BufferGeometry, Float32BufferAttribute, ShapePath, ShapeUtils, Vector2 } from "three";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
@@ -11,7 +11,7 @@ const LOGIN_DOOR_CREASE_ANGLE = Math.PI / 6;
 // A part as the layers its front stands out in, deepest first, its back the front mirrored: the deepest a slab with
 // Straight sides through the part's middle, and each layer over it a step out from the one below, its top flat at its
 // Depth and its wall leaning from each corner down to that corner's foot, or straight where it keeps none
-const createReliefGeometry = (layers: (typeof door.pieces)[number]["frame"]): BufferGeometry => {
+const createReliefGeometry = (layers: LoginDoor["pieces"][number]["frame"]): BufferGeometry => {
   const positions: number[] = [];
   // A face as seen from the front, and its mirror on the back turned the other way round
   const addFace = (a: Corner, b: Corner, c: Corner, isMirrored = true): void => {
@@ -63,5 +63,5 @@ const createReliefGeometry = (layers: (typeof door.pieces)[number]["frame"]): Bu
 // On zero, and each part of it built as the layers the game's mesh carves its front in: the stone frame round its
 // Opening, its chamfer leaning in to the panel, and the panel recessed within it with its raised bands, which lights
 // When the door opens
-export const createLoginDoorGeometry = (): LoginDoorPieceGeometry[] =>
+export const createLoginDoorGeometry = (door: LoginDoor): LoginDoorPieceGeometry[] =>
   door.pieces.map(({ frame, panel }) => ({ frame: createReliefGeometry(frame), panel: createReliefGeometry(panel) }));

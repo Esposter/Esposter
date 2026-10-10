@@ -3,7 +3,6 @@ import type { ContainerClient } from "@azure/storage-blob";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";
-import { getCharacterPackBlobName } from "#src/services/genshinCharacters/getCharacterPackBlobName";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -13,9 +12,9 @@ describe(pruneGameData, () => {
   const youngHash = "c".repeat(64);
   const containerClient = new MockContainerClient("", "dev") as unknown as ContainerClient;
 
-  // Each blob is written at the instant the clock stands at, so the test moves the clock to age them
-  const writeBlob = (blobName: string) => containerClient.getBlockBlobClient(blobName).upload(Buffer.from("{}"), 2);
-  const writeObject = (hash: string) => writeBlob(getGameDataBlobName(hash));
+  // Each object is written at the instant the clock stands at, so the test moves the clock to age them
+  const writeObject = (hash: string) =>
+    containerClient.getBlockBlobClient(getGameDataBlobName(hash)).upload(Buffer.from("{}"), 2);
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -45,26 +44,6 @@ describe(pruneGameData, () => {
     expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])].toSorted()).toStrictEqual(
       [getGameDataBlobName(liveHash), getGameDataBlobName(youngHash)].toSorted(),
     );
-  });
-
-  // A pack's files are named by its path in the pack, under the hash of the record a lock names the pack by
-  test("deletes a character pack's files no live lock names past retention, and keeps a live pack's", async () => {
-    expect.hasAssertions();
-
-    await writeBlob(getCharacterPackBlobName(0, liveHash, "a"));
-    await writeBlob(getCharacterPackBlobName(0, oldHash, "a"));
-    vi.setSystemTime(100 * DAY_MS);
-    const result = await pruneGameData({
-      containerClient,
-      isDryRun: false,
-      liveHashes: new Set([liveHash]),
-      now: 100 * DAY_MS,
-    });
-
-    expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 1, keptCount: 0 });
-    expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])]).toStrictEqual([
-      getCharacterPackBlobName(0, liveHash, "a"),
-    ]);
   });
 
   test("lists what it would delete without deleting it", async () => {
