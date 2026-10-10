@@ -39,9 +39,12 @@ export const REPAIRS_TRAILER = "Repairs";
 // The held commit a re-land came from, one line per re-land its line of copies has been through: a copy parked again
 // Keeps them, so the count bounds a commit that keeps coming back only to be parked again (`relandHeldCommits`)
 export const RELANDED_TRAILER = "Relanded";
+// The workflow whose red is the open code-scanning alerts on `main` its own gate reads back, which is where the
+// Repairer reads the files that red names (`readFailurePaths`)
+export const CODEQL_WORKFLOW_FILE = "CodeQL.yaml";
 // The workflows whose conclusion on `main`'s head says the branch is red — the ones the repairer answers: CI's
 // Checks, and the code-scanning alerts CodeQL's own gate turns into a red
-export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", "CodeQL.yaml"];
+export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", CODEQL_WORKFLOW_FILE];
 
 export const CI_FAILURE_CONCLUSION = "failure";
 // A job's conclusion when it ended green, GitHub's own spelling, beside the red one

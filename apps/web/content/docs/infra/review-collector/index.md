@@ -14,7 +14,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the filters that name the window branches, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one stack without racing: the collector writes `develop` and each window branch, the session writes `ai/queue`.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
-6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of its own, last in the pass so no window waits on it — first in the run after one the run's budget could not hold; a red the queue already passes is a transit gap its windows heal, and spends nothing, and one it passes over `main`'s own tree is a flake whose failed jobs run again once.
+6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of its own, last in the pass so no window waits on it — first in the run after one the run's budget could not hold; a red the queue already passes — or a CodeQL red whose every alerted file the queue already changes — is a transit gap its windows heal, and spends nothing, and one it passes over `main`'s own tree is a flake whose failed jobs run again once.
 7. [Realign](/docs/infra/review-collector/realign) — the queue rebased onto `develop` on request, when a hand repair outside the collector has left its diff counting files the base already holds.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
@@ -63,9 +63,10 @@ flowchart TD
   OB -->|yes| W[Cut the next window, push review/n,<br/>fast-forward develop, open its pull request] --> OB
   OB -->|no| MR{main's own run red on CI or CodeQL,<br/>each workflow judged on its own}
   MR -->|yes, but a job it failed passes on the queue's run over it| TG[A transit gap the windows heal —<br/>recorded on main's head, exit, waking once a queue run's span has passed]
+  MR -->|yes, CodeQL's, and every file its alerts name<br/>changed on the queue's head| TC[A transit gap the windows heal —<br/>exit, waking once its own run's span has passed]
   MR -->|yes, but the queue passes a job it failed<br/>over main's own tree, not yet re-run| RR[Re-run main's failed jobs once —<br/>exit, waking the same way]
   MR -->|yes, and the queue's run over it is still going| HD[Held — exit, waking once a queue run's span has passed]
-  MR -->|yes, in no job the queue passes,<br/>its signature under the cap| RB{The attempt fits<br/>the run's budget}
+  MR -->|yes, in no job the queue passes nor files it changes,<br/>its signature under the cap| RB{The attempt fits<br/>the run's budget}
   RB -->|yes| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
   RB -->|no| MK[Mark it to go first next run —<br/>exit, waking in a minute]
   MR -->|yes, past the cap| RI[One issue for the signature, exit —<br/>waking when its oldest attempts age out]
