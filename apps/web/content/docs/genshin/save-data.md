@@ -65,7 +65,7 @@ flowchart TD
   W3 -->|"written"| N
 ```
 
-The server reads the lease from the blob and never from the page's copy. A session's own earlier write that landed before a lost response, or before an SDK retry, is written over under the fresh ETag, so a retry does not look like a replacement. Any other session's envelope is a replacement, and a write refused again is a CONFLICT too, since a blob that changed under the lease means the lease was lost. The two CONFLICTs carry different messages, so a replaced game and a failed save can be told apart.
+The server reads the lease from the blob and never from the page's copy. A session's own earlier write that landed before a lost response, or before an SDK retry, is written over under the fresh ETag, so a retry does not look like a replacement. Any other session's envelope is a replacement, and a write refused again is a CONFLICT too, since a blob that changed under the lease means the lease was lost. Both are the one replacement error (`getGenshinSessionReplacedError`), and the page reads any CONFLICT on a save as its session replaced.
 
 A blob that no longer parses is never overwritten. The start and the save answer a logged error and leave the blob as it is, because the save is the player's only copy and a fresh game written over it would be the loss. Only a blob that is absent begins a new player's save. A save written before a slice was added is not read with a default for that slice: the schema describes the latest shape only, and the stored blob is brought to it by a backfill (the backfills skill).
 
