@@ -47,6 +47,7 @@
     "ai:machine:watch": "tsx src/machine/watch/index.ts",
     "ai:proposals:report": "tsx src/proposals/report/index.ts",
     "ai:queue:push": "tsx src/queue/push/index.ts",
+    "ai:resume": "tsx src/resume/index.ts",
     "ai:skills:extract": "tsx src/skills/extract/index.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-prose": "node src/sweeps/duplicateProse/index.ts",
