@@ -32,7 +32,8 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Is applied at the gauge its internal cooldown leaves of it, and the hit's damage takes its own additive base DMG
 // Bonus and what its reactions amplify, catalyze or add, with each transformative reaction's damage added to it, before
 // The enemy takes it through damageEnemy. The enemy's RES to the element, or its Physical RES, is its own less each
-// Status's reduction of it. It returns the energy the hit dropped and the reactions it triggered
+// Status's reduction of it. It returns the energy the hit dropped, whether it was a CRIT hit and the reactions it
+// Triggered
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -93,6 +94,9 @@ export const strikeEnemy = (
         reactionElement === undefined ? kind.physicalResistance : kind.elementResistances[reactionElement],
       );
 
+  const isCritical =
+    random() <
+    attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const damage = getDamage({
     additiveBaseDamageBonus,
     amplifyingMultiplier,
@@ -106,9 +110,7 @@ export const strikeEnemy = (
       (kitHit.damageBonus ?? 0) +
       enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
     defense,
-    isCritical:
-      random() <
-      attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0),
+    isCritical,
     resistance:
       element === undefined
         ? kind.physicalResistance -
@@ -121,5 +123,9 @@ export const strikeEnemy = (
     stat: attack,
     talentMultiplier,
   });
-  return { energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }), reactions };
+  return {
+    energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }),
+    isCritical,
+    reactions,
+  };
 };

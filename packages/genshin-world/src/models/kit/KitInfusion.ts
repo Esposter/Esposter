@@ -9,5 +9,8 @@ export interface KitInfusion {
   // Whether the infusion converts the attacks it infuses, so each hit with a converted poise or reach deals that instead
   isConverted?: true;
   kind: "infusion";
+  // The share the infusion raises its character's Normal ATK SPD by, if it raises it, which plays each normal attack's
+  // Seconds and hitmarks that much faster
+  normalAttackSpeedBonus?: number;
   secondsRemaining: number;
 }
