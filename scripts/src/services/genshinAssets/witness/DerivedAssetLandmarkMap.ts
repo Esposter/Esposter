@@ -5,7 +5,11 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
-  // The Court's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the
+  // Bridge's springs and the drum tower's roof) name no mesh, so all six are dropped: the extraction draws market
+  // Stalls, railings and vines within 600 metres of the capital, no arch, bridge or tower, and the Court's buildings its
+  // Layout dumps name (Area_Fd_Build_FDC_Chengqiang_B_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
   // Inazuma City's eleven landmarks (ParityReferenceMap's inazuma-city-location: the keep's eaves and ledge, the
