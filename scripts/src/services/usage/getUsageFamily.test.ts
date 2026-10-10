@@ -6,6 +6,7 @@ describe(getUsageFamily, () => {
     ["claude-opus-5-5", "opus"],
     ["claude-sonnet-5-5", "sonnet"],
     ["claude-haiku-5-5", "haiku"],
+    ["claude-fable-5-1", "fable"],
     ["<synthetic>", "<synthetic>"],
   ])("%s is the %s family", (model, family) => {
     expect.hasAssertions();

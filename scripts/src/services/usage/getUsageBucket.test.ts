@@ -6,6 +6,7 @@ describe(getUsageBucket, () => {
   test.each([
     ["/projects/app/workflows/run.jsonl", UsageBucket.Workflow],
     ["/projects/app/subagents/agent.jsonl", UsageBucket.Subagent],
+    [String.raw`C:\projects\app\subagents\agent.jsonl`, UsageBucket.Subagent],
     ["/projects/app/session.jsonl", UsageBucket.Main],
   ])("%s is bucketed as %s", (path, bucket) => {
     expect.hasAssertions();

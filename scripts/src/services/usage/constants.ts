@@ -3,10 +3,10 @@ import { join } from "node:path";
 
 export const PROJECTS_DIRECTORY: string = join(homedir(), ".claude", "projects");
 export const MILLISECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
-export const USAGE_FAMILIES: readonly string[] = ["opus", "sonnet", "haiku"];
+export const USAGE_FAMILIES: readonly string[] = ["opus", "sonnet", "haiku", "fable"];
 export const SYNTHETIC_MODEL = "<synthetic>";
-export const WORKFLOW_FOLDER = "/workflows/";
-export const SUBAGENT_FOLDER = "/subagents/";
+export const WORKFLOW_FOLDER = "workflows";
+export const SUBAGENT_FOLDER = "subagents";
 // Checked before a line is parsed, so only the lines that can hold a usage record or a user message are read as JSON
 export const USAGE_MARKER = '"usage"';
 export const USER_MARKER = '"type":"user"';
