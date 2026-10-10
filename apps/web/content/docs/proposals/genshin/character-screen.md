@@ -55,7 +55,7 @@ packages/genshin-world/src/data/character/interfaceRects.json
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`        | The screen, with the character in the middle and every tab |
 | `packages/genshin-world/src/components/Character/AttributeList/Index.vue` | The summary, with Details beside it                        |
 | `packages/genshin-text/src/models/GameTextKey.ts`                         | Gains every label of the panels                            |
-| `scripts/src/services/genshinAssets/stats/writeStatTables.ts`             | Gains the promotion materials and the levels' EXP          |
+| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`             | Gains the promotion materials and the levels' EXP          |
 
 ## Sources
 

@@ -2,6 +2,7 @@ import type { DrainStepInput } from "#src/models/coderabbit/collect/DrainStepInp
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { OUTAGE_RETRY_DELAY_SECONDS } from "#src/services/coderabbit/collect/constants";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
@@ -11,7 +12,8 @@ import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedback
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
 // A drain that could not start ends the run, since porting would put a window ahead of findings that must lead
-// It; a limit Claude Code hit is the cycle's to hold, before this step is reached (`runCycle`).
+// It, and wakes the next one as an outage does: no event reports a launcher that wrote nothing coming back. A limit
+// Claude Code hit is the cycle's to hold, before this step is reached (`runCycle`).
 export const runDrainStep = async ({
   collectorSha,
   cwd,
@@ -66,7 +68,11 @@ export const runDrainStep = async ({
   if (drain.isStarted) return { reviewFixesSha: drain.reviewFixesSha };
   else
     return {
-      outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },
+      outcome: {
+        kind: CycleOutcomeKind.Idle,
+        reason: "the drain could not start — the findings stay open",
+        retriggerDelaySeconds: OUTAGE_RETRY_DELAY_SECONDS,
+      },
       reviewFixesSha,
     };
 };

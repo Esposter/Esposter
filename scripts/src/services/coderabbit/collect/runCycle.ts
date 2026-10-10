@@ -7,13 +7,16 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
 import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
-import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { DEVELOP_BRANCH, MAIN_BRANCH, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
 import { getNewestMergedPullRequest } from "#src/services/coderabbit/collect/getNewestMergedPullRequest";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
 import { getNextWindowNumber } from "#src/services/coderabbit/collect/getNextWindowNumber";
 import { getOpenedInLastHour } from "#src/services/coderabbit/collect/getOpenedInLastHour";
+import { getOpeningWaitMs } from "#src/services/coderabbit/collect/getOpeningWaitMs";
 import { getPausedWindow } from "#src/services/coderabbit/collect/getPausedWindow";
+import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRetriggerDelaySeconds";
+import { getSoonestDelay } from "#src/services/coderabbit/collect/getSoonestDelay";
 import { getWindowOpenCount } from "#src/services/coderabbit/collect/getWindowOpenCount";
 import { markFoldedWindowsMerged } from "#src/services/coderabbit/collect/markFoldedWindowsMerged";
 import { openNextWindow } from "#src/services/coderabbit/collect/openNextWindow";
@@ -32,8 +35,8 @@ import { walkWindowStack } from "#src/services/coderabbit/collect/walkWindowStac
 import { REVIEWS_PER_HOUR } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
-// Every outcome from the stack down carries whatever retrigger the bot's stated deadline owes, which only the walk over
-// The stack learns — the outcomes before it carry none
+// An outcome carries the retrigger a hold lifting at a stated instant owes — a rate limit's deadline, the reset Claude
+// Code's limit names, the hourly ceiling turning over — since no event reports any of them lifting
 const getOutcome = (
   kind: CycleOutcomeKind,
   reason: string,
@@ -100,6 +103,7 @@ export const runCycle = async ({
     return getOutcome(
       CycleOutcomeKind.Idle,
       `the session is limited until ${new Date(sessionLimitResetMs).toISOString()} — nothing merges or ports until a session can follow it`,
+      getRetriggerDelaySeconds(sessionLimitResetMs - Date.now() + RETRIGGER_BUFFER_MS),
     );
   // The express lane, before the stack is looked at: a commit claiming no review reaches `main` directly and the fold
   // Carries it to `develop` with the next window — and a red `main` its cut cannot pass is repaired by the lane's own cut
@@ -140,8 +144,7 @@ export const runCycle = async ({
       reviewFixesSha,
       viewerLogin,
     });
-    if (pending.outcome)
-      return getOutcome(pending.outcome.kind, pending.outcome.reason, undefined, pending.outcome.targetSha);
+    if (pending.outcome) return pending.outcome;
     reviewFixesSha = pending.reviewFixesSha;
   }
 
@@ -184,7 +187,7 @@ export const runCycle = async ({
       return getOutcome(
         drain.outcome.kind,
         drain.outcome.reason,
-        walked.retriggerDelaySeconds,
+        getSoonestDelay(walked.retriggerDelaySeconds, drain.outcome.retriggerDelaySeconds),
         drain.outcome.targetSha,
       );
     drainedPullRequests.push(namedPullRequest);
@@ -216,7 +219,13 @@ export const runCycle = async ({
       isStackOpen: openedStack.length > 0,
       mainSha: currentShas.mainSha,
     });
-    if (followed.outcome) return followed.outcome;
+    if (followed.outcome)
+      return getOutcome(
+        followed.outcome.kind,
+        followed.outcome.reason,
+        walked.retriggerDelaySeconds,
+        followed.outcome.targetSha,
+      );
   }
   let history = readWindowPullRequests(WindowPullRequestListState.All);
   let openingOutcome: CycleOutcome | undefined;
@@ -259,14 +268,22 @@ export const runCycle = async ({
     history = readWindowPullRequests(WindowPullRequestListState.All);
   }
 
+  // The ceiling counts openings by when they were made, so it turns over on the clock with no event behind it: while it
+  // Is what keeps the stack below the plan's figure, the run wakes again once the oldest opening ages out of the hour
+  const nowMs = Date.now();
+  const ceilingDelaySeconds =
+    getOpenedInLastHour(history, nowMs) >= REVIEWS_PER_HOUR && openedStack.length < REVIEWS_PER_HOUR
+      ? getRetriggerDelaySeconds(getOpeningWaitMs(history, nowMs) + RETRIGGER_BUFFER_MS)
+      : undefined;
+  const retriggerDelaySeconds = getSoonestDelay(walked.retriggerDelaySeconds, ceilingDelaySeconds);
   if (openingOutcome === undefined || openingOutcome.kind === CycleOutcomeKind.Idle) {
     const idleReasons = [...walked.blockReasons, ...(openingOutcome === undefined ? [] : [openingOutcome.reason])];
     return getOutcome(
       CycleOutcomeKind.Idle,
       idleReasons.join("; ") ||
         `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
-      walked.retriggerDelaySeconds,
+      retriggerDelaySeconds,
     );
   }
-  return getOutcome(openingOutcome.kind, openingOutcome.reason, walked.retriggerDelaySeconds, openingOutcome.targetSha);
+  return getOutcome(openingOutcome.kind, openingOutcome.reason, retriggerDelaySeconds, openingOutcome.targetSha);
 };

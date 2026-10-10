@@ -94,6 +94,7 @@ const {
   regionDataBaseUrl,
   save,
   serverClockOffsetMs = 0,
+  startingTalentMultipliers,
   statTables,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
@@ -271,6 +272,7 @@ const {
     if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
   },
   placeWorldDrops,
+  startingTalentMultipliers,
   statTables,
 });
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");

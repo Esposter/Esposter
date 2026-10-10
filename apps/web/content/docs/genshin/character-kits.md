@@ -22,18 +22,18 @@ flowchart LR
 - **A set with neither a skill nor a burst is left out.** A character none of whose sets has either is left out too. One of the Traveler's element sets, 705, holds neither in this dump, so the dump gives the Traveler no form for it.
 - **A burst's element is the one its energy names, when it names one of the seven.** A burst that costs no element has none. Which set a Traveler's kit reads is for the element a statue gives, which is not built yet.
 - **The Traveler's Anemo set** holds a skill of 5 seconds, one charge, and a burst of 15 seconds for 60 energy. `createTravelerKit` writes the same numbers beside its hits rather than reading them from this table, which no kit reads yet.
-- **The table is written by** `pnpm -C scripts genshin:assets stats`, the same run as the characters, weapons and artifacts. Each character is checked against the world's schema as it is written.
+- **The table is published by** `pnpm -C scripts genshin:assets stats`, the same run as the characters, weapons and artifacts. Each character is checked against the world's schema as it is built.
 
 ## Talent multipliers
 
-The stats run writes each playable character's combat talent multipliers into a chunk of its own, `talentMultipliers/<avatarId>.json`, keyed by the talent's proud skill group. A level keeps its parameters (`paramList`) up to the last one that is not zero, so a read past that point is zero. The labels, the text id naming each parameter (`paramDescList`), go apart into `talentLabels/<avatarId>.json`, which the talents screen loads when it opens and the combat table never carries.
+The stats run publishes each playable character's combat talent multipliers as its own entry of the `talentMultipliers` index, by its avatar id, keyed by the talent's proud skill group. A level keeps its parameters (`paramList`) up to the last one that is not zero, so a read past that point is zero. The labels, the text id naming each parameter (`paramDescList`), go apart into the character's entry of the `talentLabels` index, which the combat table never carries.
 
-Each character's multipliers are an entry of the hosted `talentMultipliers` index, under its avatar id ([hosted game data](/docs/genshin/hosted-game-data)). `TalentMultiplierLoaderMap` is keyed by avatar id, and each entry reads that character's record from the world's game data base and checks it against its schema. `readTalentMultipliers` merges the records by group, and `getTalentMultiplier` reads a parameter from the merged table by its index. The world loads the deployed team's multipliers as it starts and again whenever the team changes, and a kit is built from the loaded table, so the world's entry carries none of them. The one static import this replaced was 1.4 MB of it.
+Each character's multipliers are an entry of the hosted `talentMultipliers` index, under its avatar id ([hosted game data](/docs/genshin/hosted-game-data)). `TalentMultiplierLoaderMap` is keyed by avatar id, and each entry reads that character's record from the world's game data base and checks it against its schema. `readTalentMultipliers` merges the records by group, and `getTalentMultiplier` reads a parameter from the merged table by its index. The world's gate reads the starting team's multipliers before the world opens, so its first frame has each member's combatant, and the world reads a character's as the team changes to take it in. A kit is built from the loaded table, so the world's entry carries none of them. A member whose multipliers are still in flight has no combatant yet, which is a loading state rather than an error: it gains no energy, and on the field its kit's step waits, starting no attack, skill or burst and holding the team's effects, while the body moves on. The one static import this replaced was 1.4 MB of it.
 
 ```mermaid
 flowchart LR
   P["ProudSkillExcelConfigData: each group's levels and their parameters"] -->|"stats run, one record per character"| M["talentMultipliers index: avatar id to its record, keyed by group"]
-  M -->|"fetched when the character joins the party, checked by its schema"| R["readTalentMultipliers: merged by group"]
+  M -->|"fetched at the gate or as a character joins, checked by its schema"| R["readTalentMultipliers: merged by group"]
   R -->|"getTalentMultiplier reads a parameter by its index"| T["createTravelerKit: the Anemo form's hits' multipliers"]
 ```
 
@@ -248,15 +248,18 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 | `scripts/src/services/genshinAssets/stats/getCharacterSkillKits.ts`       | Every playable character's skill sets, from the dump's tables                                                                     |
 | `scripts/src/services/genshinAssets/stats/toSkillDepot.ts`                | One skill set, from its depot row and the skill rows                                                                              |
 | `scripts/src/services/genshinAssets/stats/toTalentTables.ts`              | Each character's talent groups: their levels, parameters and labels, apart                                                        |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`           | Each character's files and the loader map whose entries read the hosted index                                                     |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`           | Each character's entries of the two talent indexes, and the loader map whose entries read the hosted index                        |
 | `packages/genshin-world/src/generated/stats/characterSkillKits.json`      | The written table the app loads on demand                                                                                         |
 | `packages/genshin-world/src/generated/talentMultipliers/`                 | Each character's multipliers per level, and the loader map reading each from the hosted index as the character joins              |
 | `packages/genshin-world/src/services/kit/readTalentMultipliers.ts`        | The loaded characters' multipliers, checked and merged by proud skill group                                                       |
+| `packages/genshin-world/src/composables/useWorldCombat.ts`                | The deployed team's kits, built from the gate's multipliers and a character's read as the team takes it in                        |
+| `packages/genshin-world/src/services/kit/createCombatant.ts`              | A character's combatant once its kit is built: its attributes, and its element and weapon type off the roster                     |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                | The kit on the field at the world's step, playing nothing while its combatant is not built                                        |
 | `packages/genshin-world/src/services/kit/getTalentMultiplier.ts`          | A talent's parameter at a level, by its index                                                                                     |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`           | The targeting score an action turns the body to                                                                                   |
 | `packages/genshin-world/src/services/kit/characters/travelerKit.ts`       | `createTravelerKit`, the Traveler's Anemo kit over the loaded multipliers                                                         |
 | `packages/genshin-world/src/services/kit/characters/bennettKit.ts`        | `createBennettKit`, Bennett's kit with Passion Overload's Charge Levels and Fantastic Voyage's field                              |
-| `packages/genshin-world/src/models/kit/Combatant.ts`                      | A character as its hits are priced, the kind of weapon it wields among what it carries                                            |
+| `packages/genshin-world/src/models/kit/Combatant.ts`                      | A character as its hits are priced, its element and the kind of weapon it wields among what it carries                            |
 | `packages/genshin-world/src/models/kit/KitSkillHold.ts`                   | A skill's hold level: its action, cooldown and the seconds held to reach it                                                       |
 | `packages/genshin-world/src/models/kit/KitStepContext.ts`                 | What a step reads beyond its input: the body, the combatant and the team's effects                                                |
 | `packages/genshin-world/src/models/enemy/EnemyStatus.ts`                  | An enemy's status: its id, the seconds left of it, the DMG taken it adds to each hit and the RES it takes off                     |

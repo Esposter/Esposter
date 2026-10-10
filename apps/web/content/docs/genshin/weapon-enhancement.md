@@ -11,7 +11,7 @@ A weapon grows three ways a player spends on it: its level, its ascension phase 
 
 ```mermaid
 flowchart TD
-  DUMP["The dump's weapon, promotion and levelling tables"] -->|"genshin:assets stats"| TABLES["weapons.json and weaponLevelRequiredExps.json"]
+  DUMP["The dump's weapon, promotion and levelling tables"] -->|"genshin:assets stats"| TABLES["stats/weapons and stats/weaponLevelRequiredExps"]
   TABLES -->|"the levelling table, imported on demand"| REQUIRED["RarityRequiredExpsMap: each rarity's EXP per level"]
   TABLES -->|"WeaponData"| DATA["Fodder EXP, phases' costs, refinement costs and material"]
   REQUIRED --> ENHANCE["enhanceWeapon: paid EXP at Mora, levels gained, excess returned as ores"]

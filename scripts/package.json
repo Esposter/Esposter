@@ -68,7 +68,6 @@
     "genshin:parity": "tsx src/genshinParity/index.ts",
     "genshin:text": "tsx src/genshinText/index.ts",
     "graph:gen": "tsx src/dependencyGraph/index.ts",
-    "hooks:staged-imports": "node src/hooks/stagedImports/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "outdated:dependencies": "tsx src/outdatedDependencies/index.ts",

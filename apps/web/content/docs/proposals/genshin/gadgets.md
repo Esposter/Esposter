@@ -49,8 +49,8 @@ flowchart TD
 
 1. **Gadgets in the bag.**
    - `MaterialType` (`packages/genshin-world/src/models/inventory/MaterialType.ts`) gains `Widget = "MATERIAL_WIDGET"`, and `MaterialTypeItemCategoryMap` maps it to `ItemCategory.Gadget`.
-   - `writeItems` (`scripts/src/services/genshinAssets/items/writeItems.ts`) adds every id of `readGadgetRows()`'s slice to the item ids it writes; then `pnpm -C scripts genshin:assets items` rewrites `data/items/materials.json` and `pnpm -C scripts genshin:text names` its names into the existing name chunks.
-   - Test: `writeItems.test.ts` gains a case that every gadget the slice holds is written with `materialType` `MATERIAL_WIDGET`.
+   - `buildItems` (`scripts/src/services/genshinAssets/items/buildItems.ts`) adds every id of `readGadgetRows()`'s slice to the item ids it builds; rerunning `genshin:assets items` then `genshin:text names` republishes the materials and their names.
+   - Test: every gadget the slice holds comes out of `buildItems` with `materialType` `MATERIAL_WIDGET`.
 2. **The quick-use slot.** The equipped gadget and its use on `Z`, with the usable-here check once domains stand: `Inventory` gains the equipped gadget, the bag's screen equips one from its tab, and the HUD shows it with its cooldown. It touches the bag's screen, so the fleet offers it only while no inventory unit holds that folder.
 3. **Detectors**, the Treasure Compass to treasure boxes once a compass's city joins a region's chest slice, then the Oculus Resonance Stone once its target is settled.
 4. **Collectors and placed devices**, one kind at a time.

@@ -3,14 +3,10 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { ArtifactSlot, Element } from "genshin-world";
 import { join } from "node:path";
 
-// The world package's generated folder, which the stat tables and the talent chunks are written into and read from
+// The world package's generated folder, which holds the committed talent loader map
 const GENERATED_DIRECTORY = join(REPOSITORY_ROOT, "packages", "genshin-world", "src", "generated");
-// Where the stat tables are written, the world package's generated folder its loaders read
-export const STATS_GENERATED_DIRECTORY: string = join(GENERATED_DIRECTORY, "stats");
-// Each character's combat talent multipliers and labels, one chunk apiece: the multipliers imported on demand when the
-// Character joins the party, the labels when the talents screen opens
+// The folder of the committed loader map whose entries read each character's multipliers from the hosted index
 export const TALENT_MULTIPLIER_GENERATED_DIRECTORY: string = join(GENERATED_DIRECTORY, "talentMultipliers");
-export const TALENT_LABEL_GENERATED_DIRECTORY: string = join(GENERATED_DIRECTORY, "talentLabels");
 // What a character's quality means in stars: the purple four, and the gold five, the crossover's gold among them
 export const QualityTypeRarityMap: Readonly<Record<string, number>> = {
   QUALITY_ORANGE: 5,

@@ -2,8 +2,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
-import { MATERIAL_TABLE_FILENAME, MATERIALS_PATH } from "#src/services/genshinAssets/items/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
+import { MATERIAL_TABLE_FILENAME } from "#src/services/genshinAssets/items/constants";
 import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -12,6 +11,7 @@ import {
   EnemyDropFamilyDropTableMap,
   ForgeRecipeKind,
   forgeRecipeSchema,
+  GameDataset,
   WALLET_ITEM_IDS,
 } from "genshin-world";
 import { readFile } from "node:fs/promises";
@@ -23,8 +23,8 @@ import { z } from "zod";
 // Into the name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure
 // EXP is taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon
 // Table. The recipes are the records their steps published, read from the dev account. An item the table lacks is an
-// Error. Returns the file's path
-export const writeItems = async (): Promise<string> => {
+// Error. Returns the record the materials publish under
+export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
   );
@@ -63,5 +63,5 @@ export const writeItems = async (): Promise<string> => {
       stackLimit: materialRow.stackLimit,
     };
   });
-  return writeWorldData(MATERIALS_PATH, items);
+  return { [`${GameDataset.Items}/materials`]: items };
 };

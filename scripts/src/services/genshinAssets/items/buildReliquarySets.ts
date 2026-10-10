@@ -3,15 +3,13 @@ import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/Exc
 import type { ReliquarySetData } from "genshin-world";
 
 import { EQUIP_AFFIX_TABLE_NAME, RELIQUARY_SET_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
-import { RELIQUARY_SETS_PATH } from "#src/services/genshinAssets/items/constants";
-import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
-import { reliquarySetDataSchema } from "genshin-world";
+import { GameDataset, reliquarySetDataSchema } from "genshin-world";
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the pieces it is
-// Made of and the counts its bonuses take, written as the world's data, checked against the world's schema. A set whose
-// Equip affix names no text is left out. Returns the file's path
-export const writeReliquarySets = (): Promise<string> => {
+// Made of and the counts its bonuses take, checked against the world's schema. A set whose equip affix names no text is
+// Left out. Returns the record the sets publish under
+export const buildReliquarySets = (): Record<string, unknown> => {
   const equipAffixNameTextMapHashMap = new Map(
     readExcelTable<ExcelEquipAffixRow>(EQUIP_AFFIX_TABLE_NAME).map(({ id, nameTextMapHash }) => [id, nameTextMapHash]),
   );
@@ -23,5 +21,5 @@ export const writeReliquarySets = (): Promise<string> => {
         : [{ id: setId, nameTextId: String(nameTextMapHash), needCounts: setNeedNum, pieceItemIds: containsList }];
     })
     .toSorted((firstSet, secondSet) => firstSet.id - secondSet.id);
-  return writeWorldData(RELIQUARY_SETS_PATH, reliquarySetDataSchema.array().parse(sets));
+  return { [`${GameDataset.Items}/reliquarySets`]: reliquarySetDataSchema.array().parse(sets) };
 };

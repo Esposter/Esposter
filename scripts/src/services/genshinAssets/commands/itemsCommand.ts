@@ -1,17 +1,27 @@
 import type { SubCommandsDef } from "citty";
 
-import { writeItems } from "#src/services/genshinAssets/items/writeItems";
-import { writeReliquarySets } from "#src/services/genshinAssets/items/writeReliquarySets";
+import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { buildItems } from "#src/services/genshinAssets/items/buildItems";
+import { buildReliquarySets } from "#src/services/genshinAssets/items/buildReliquarySets";
 import { defineCommand } from "citty";
+import { GameDataset } from "genshin-world";
 
 export const itemsCommand: SubCommandsDef[string] = defineCommand({
+  args: { ...dryRunArgs },
   meta: {
     description:
-      "Write the materials the world's drops name, read from the game's material table in the text dump, and the artifact sets, as the world's data",
+      "Publish the materials the world's drops name, read from the game's material table in the text dump, and the artifact sets, to the game data",
     name: "items",
   },
-  run: async () => {
-    console.log(await writeItems());
-    console.log(await writeReliquarySets());
+  run: async ({ args }) => {
+    const objects = { ...(await buildItems()), ...buildReliquarySets() };
+    console.log(
+      await publishGameDataStep({
+        isDryRun: args["dry-run"],
+        publication: { indexes: {}, objects },
+        scopes: [GameDataset.Items],
+      }),
+    );
   },
 });

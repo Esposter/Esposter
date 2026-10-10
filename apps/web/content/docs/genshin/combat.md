@@ -126,7 +126,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **The plunge strikes on its way down and as it lands.** Every 0.3 seconds while it falls, provisional, its collision hits what stands in its area, and the landing is the low or high plunge by the drop from its start.
 - **A hit goes through combat as built.** A kit's hit is priced by `getDamage` from the attacker's attributes at the talent's multiplier. Its order is blunt first, then the internal cooldown and the element, then the damage with any amplifying, catalyze or transformative bonus, and last `damageEnemy` (`strikeEnemy`). No kit computes damage of its own.
 - **Each member's cooldowns run at the fixed step.** Every member of the deployed team's skill and burst cooldowns lower each step, off the field too, and stand still while a screen holds the world (`stepPartyCooldowns`).
-- **Particles reach every member standing.** Each particle a struck enemy drops gives each standing member of the deployed team `getEnergyGain`'s energy, up to its burst's cost. A fallen member takes none (`gainPartyEnergy`).
+- **Particles reach every member standing.** Each particle a struck enemy drops takes the striker's element, and gives each standing member of the deployed team `getEnergyGain`'s energy, more to a member of that element, up to its burst's cost. A member's element is its row of the roster's, none for the Traveler (`createCombatant`). A fallen member takes none (`gainPartyEnergy`).
 - **An enemy's strike uses the same formula.** Its ATK times a provisional multiplier of 1, as physical damage through `getDamage` with the member on the field's DEF and physical resistance, its base 0%. The least overflow the team's shields leave, over the member's Max HP, is the share the member takes (`strikePartyMember`).
 
 ## Key files
@@ -146,6 +146,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                        |
 | `packages/genshin-world/src/models/combat/ReactionType.ts`                             | Every reaction, merged from the amplifying, catalyze and transformative |
 | `packages/genshin-world/src/services/kit/stepKit.ts`                                   | A kit's step: its action, its hits and what the presses start           |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                             | The world's step of the kit on the field: aim, strikes, particles       |
 | `packages/genshin-world/src/services/kit/strikeEnemy.ts`                               | A kit's hit on an enemy, priced and applied by combat                   |
 | `packages/genshin-world/src/services/kit/strikePartyMember.ts`                         | An enemy's strike on the member on the field                            |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                   |

@@ -1,22 +1,53 @@
 #!/usr/bin/env bash
 # Runs one heavy command (a typecheck, a build, a test run) in one of a few machine-wide slots, so many agents never
-# Stack their 2 GB builds at once. Usage: bash .agents/skills/throughput/scripts/run-in-slot.sh <command> [args...]
+# stack their 2 GB builds at once. Usage: bash .agents/skills/throughput/scripts/run-in-slot.sh <command> [args...]
 # A slot is a directory, taken by an atomic mkdir; one whose holder died, or that never got its holder within a minute,
-# Is freed, so a killed agent never wedges it. A slot is only taken while free memory is above the gate, an eighth of
-# The machine's RAM, so the slot count can sit above what memory allows on a bad minute: the count keeps the cores fed
-# And the gate keeps the machine off swap. The gate reads memory as it stands, so runs admitted together would all pass
-# It on the same free gigabytes and then grow past it as one; a run is admitted only once the last one admitted has run
-# A minute, long enough for a package build to reach its peak, or has ended, and the check, the take and every free
-# Happen under one lock, so two runners never free the same slot and one never frees a slot just retaken. A stale lock
-# Is freed under a guard of its own, read again inside it, so two waiting runners never both free it and one never frees
-# The live lock a third has taken in between
-slotCount="${RUN_SLOT_COUNT:-4}"
+# is freed, so a killed agent never wedges it.
+# There are half as many slots as the machine has physical performance cores, from one to four (two on an M1's four
+# performance cores, four on the PC), unless RUN_SLOT_COUNT names a count.
+# A slot is only taken while free memory is above the gate, an eighth of the machine's RAM, so the slot count can sit
+# above what memory allows on a bad minute: the count keeps the cores fed and the gate keeps the machine off swap.
+# The gate reads memory as it stands, so runs admitted together would all pass it on the same free gigabytes and then
+# grow past it as one; a run is admitted only once the last one admitted has run a minute, long enough for a package
+# build to reach its peak, or has ended, and the check, the take and every free happen under one lock, so two runners
+# never free the same slot and one never frees a slot just retaken. A stale lock is freed under a guard of its own, read
+# again inside it, so two waiting runners never both free it and one never frees the live lock a third has taken in
+# between.
+# On macOS the command runs under the utility QoS clamp, which its children inherit, so the scheduler keeps it behind
+# the user's foreground apps
+systemName="$(uname -s)"
 slotDirectory="${TEMP:-/tmp}/esposter-run-slots"
 rampSeconds="${RUN_SLOT_RAMP_SECONDS:-60}"
 admitLockPath="$slotDirectory/admit.lock"
 admittedPath="$slotDirectory/admitted"
 reclaimLockPath="$slotDirectory/reclaim.lock"
+# A waiting run polls after 2 s, doubling to every 10 s: each poll spawns about ten processes, and a slot frees on the
+# scale of minutes
+pollSeconds=2
+maxPollSeconds=10
 mkdir -p "$slotDirectory"
+
+# The machine's physical performance cores: macOS's performance cluster (every physical core on a Mac with one kind),
+# Windows's logical processors halved for SMT, and Linux's distinct cores, or its online processors halved
+readPerformanceCoreCount() {
+  case "$systemName" in
+    Darwin) sysctl -n hw.perflevel0.physicalcpu 2>/dev/null || sysctl -n hw.physicalcpu ;;
+    MINGW* | MSYS* | CYGWIN*) echo $((${NUMBER_OF_PROCESSORS:-2} / 2)) ;;
+    *)
+      coreCount="$(awk -F': *' '/^physical id/ { socket = $2 } /^core id/ { cores[socket ":" $2] = 1 }
+        END { count = 0; for (core in cores) count++; print count }' /proc/cpuinfo 2>/dev/null)"
+      if [ "${coreCount:-0}" -gt 0 ] 2>/dev/null; then echo "$coreCount"; else echo $(($(getconf _NPROCESSORS_ONLN) / 2)); fi
+      ;;
+  esac
+}
+
+if [ -n "${RUN_SLOT_COUNT:-}" ]; then
+  slotCount="$RUN_SLOT_COUNT"
+else
+  performanceCoreCount="$(readPerformanceCoreCount)"
+  slotCount=$((${performanceCoreCount:-2} / 2))
+  if [ "$slotCount" -lt 1 ]; then slotCount=1; elif [ "$slotCount" -gt 4 ]; then slotCount=4; fi
+fi
 
 # Prints "free total" in kilobytes: /proc/meminfo on Linux and in Git Bash, the kernel's pressure level on macOS
 readMemory() {
@@ -48,7 +79,8 @@ freeStaleAdmitLock() {
     [ -n "$(find "$reclaimLockPath" -maxdepth 0 -mmin +1 2>/dev/null)" ] && rm -rf "$reclaimLockPath"
     return
   fi
-  holder="$(cat "$admitLockPath/pid" 2>/dev/null)"
+  holder=""
+  { read -r holder < "$admitLockPath/pid"; } 2>/dev/null
   if { [ -n "$holder" ] && ! kill -0 "$holder" 2>/dev/null; } ||
     [ -n "$(find "$admitLockPath" -maxdepth 0 -mmin +1 2>/dev/null)" ]; then
     rm -rf "$admitLockPath"
@@ -61,7 +93,7 @@ while :; do
     echo "$$" > "$admitLockPath/pid"
     takenSlotPath=""
     if checkHasMemory && checkIsRamped; then
-      for slot in $(seq 1 "$slotCount"); do
+      for ((slot = 1; slot <= slotCount; slot++)); do
         slotPath="$slotDirectory/$slot"
         if mkdir "$slotPath" 2>/dev/null; then
           trap 'rm -rf "$slotPath"' EXIT INT TERM
@@ -72,7 +104,8 @@ while :; do
           takenSlotPath="$slotPath"
           break
         fi
-        holder="$(cat "$slotPath/pid" 2>/dev/null)"
+        holder=""
+        { read -r holder < "$slotPath/pid"; } 2>/dev/null
         if [ -n "$holder" ]; then
           kill -0 "$holder" 2>/dev/null || rm -rf "$slotPath"
         elif [ -n "$(find "$slotPath" -maxdepth 0 -mmin +1 2>/dev/null)" ]; then
@@ -89,11 +122,16 @@ while :; do
       if [ -n "$total" ] && [[ "${NODE_OPTIONS:-}" != *max-old-space-size* ]]; then
         export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=$((total / 4 / 1024))"
       fi
-      "$@"
+      if [ "$systemName" = Darwin ] && command -v taskpolicy >/dev/null 2>&1; then
+        taskpolicy -c utility "$@"
+      else
+        "$@"
+      fi
       exit $?
     fi
   else
     freeStaleAdmitLock
   fi
-  sleep 2
+  sleep "$pollSeconds"
+  pollSeconds=$((pollSeconds * 2 > maxPollSeconds ? maxPollSeconds : pollSeconds * 2))
 done

@@ -12,18 +12,18 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
-import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
+import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
+import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
@@ -31,7 +31,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
-import { watchImmediate } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
 
 // The party the player fields, the characters it is made of and their combat, the enemies the world holds and the kit's
@@ -43,6 +42,7 @@ export const useWorldCombat = ({
   gameDataBaseUrl,
   onPartyRevived,
   placeWorldDrops,
+  startingTalentMultipliers,
   statTables,
 }: {
   enemyTables: EnemyTables;
@@ -50,26 +50,26 @@ export const useWorldCombat = ({
   gameDataBaseUrl: string;
   onPartyRevived: () => void;
   placeWorldDrops: (enemy: Enemy, enemyDrops: EnemyDrops) => void;
+  startingTalentMultipliers: TalentMultiplierMap;
   statTables: StatTables;
 }) => {
   // The player's characters, the Traveler alone as a new player's, on the field, and their party
   const characters = shallowRef<Character[]>([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
-  const party = reactive(createParty([TRAVELER_CHARACTER_ID]));
-  // The combat talent multipliers of the deployed team, read as the world starts and again whenever the team changes, each
-  // Character's chunk on demand. The Traveler's kit is built from them once they arrive, and nothing is priced until then
-  const talentMultipliers = shallowRef<TalentMultiplierMap>();
+  const party = reactive(createParty([...STARTING_TEAM_CHARACTER_IDS]));
+  // The combat talent multipliers of the deployed team: the starting team's, read at the world's gate, and each character's
+  // Chunk read on demand as the team changes to take it in
+  const talentMultipliers = shallowRef(startingTalentMultipliers);
   // The characters whose chunks have been read, whose kits are built from the multipliers
-  const loadedCharacterIds = shallowRef<number[]>([]);
+  const loadedCharacterIds = shallowRef<number[]>([...STARTING_TEAM_CHARACTER_IDS]);
   const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
-  watchImmediate(deployedCharacterIds, (characterIds) => {
-    // The Traveler's chunk is read beside the team's, since a character with no kit of its own fights with the Traveler's
+  watch(deployedCharacterIds, (characterIds) => {
+    const unloadedCharacterIds = characterIds.filter((characterId) => !loadedCharacterIds.value.includes(characterId));
+    if (unloadedCharacterIds.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() =>
-      readTalentMultipliers(gameDataBaseUrl, [...new Set([TRAVELER_CHARACTER_ID, ...characterIds])]),
-    ).match(
+    getResultAsync(() => readTalentMultipliers(gameDataBaseUrl, unloadedCharacterIds)).match(
       (newTalentMultipliers) => {
         talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
-        loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, TRAVELER_CHARACTER_ID, ...characterIds])];
+        loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, ...unloadedCharacterIds])];
       },
       (error) => {
         console.error(error);
@@ -78,7 +78,6 @@ export const useWorldCombat = ({
   });
   const characterIdKitMap = computed(() => {
     const kitMap = new Map<number, Kit>();
-    if (!talentMultipliers.value) return kitMap;
     for (const characterId of loadedCharacterIds.value)
       kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
     return kitMap;
@@ -99,20 +98,7 @@ export const useWorldCombat = ({
     );
     for (const character of characters.value) {
       const kit = characterIdKitMap.value.get(character.id);
-      if (kit)
-        combatantMap.set(character.id, {
-          ascension: character.ascension,
-          attributes: computeCharacterAttributes(
-            getCharacterAttributeLines(character, statTables),
-            elementalResonances,
-          ),
-          characterId: character.id,
-          constellationCount: character.constellationCount,
-          elementalResonances,
-          kit,
-          level: character.level,
-          weaponType: characterDataMap.get(character.id)?.weaponType,
-        });
+      if (kit) combatantMap.set(character.id, createCombatant(character, kit, elementalResonances, statTables));
     }
     return combatantMap;
   });

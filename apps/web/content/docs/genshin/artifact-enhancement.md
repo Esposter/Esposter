@@ -35,11 +35,11 @@ flowchart TD
 
 ## Where the tables come from
 
-`pnpm -C scripts genshin:assets stats` writes three of the tables this page reads from the dump the [game text](/docs/genshin/game-text) is read from, each checked against the world's schema as it is written:
+`pnpm -C scripts genshin:assets stats` publishes three of the tables this page reads from the dump the [game text](/docs/genshin/game-text) is read from, each checked against the world's schema as it is built:
 
-- `artifactRarities.json`: per rarity, its highest level (the reliquary table's highest row less one), its base EXP as fodder, each level's cost from `ReliquaryLevelExcelConfigData`, the levels a minor affix is due at, and the minor affix groups of its standard minor affix depot from `ReliquaryAffixExcelConfigData`, each group's tiers sorted lowest first.
-- `artifactMainAffixPools.json`: per slot, the attributes of its standard main affix depot in `ReliquaryMainPropExcelConfigData`.
-- `artifactExpMaterials.json`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
+- `stats/artifactRarities`: per rarity, its highest level (the reliquary table's highest row less one), its base EXP as fodder, each level's cost from `ReliquaryLevelExcelConfigData`, the levels a minor affix is due at, and the minor affix groups of its standard minor affix depot from `ReliquaryAffixExcelConfigData`, each group's tiers sorted lowest first.
+- `stats/artifactMainAffixPools`: per slot, the attributes of its standard main affix depot in `ReliquaryMainPropExcelConfigData`.
+- `stats/artifactExpMaterials`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
 
 The weights are not in the tables. They are the [wiki's](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) distribution, kept as constants beside the functions that draw by them, marked provisional where the source could not be checked.
 

@@ -70,15 +70,6 @@ export const GameLanguageCodeMap: Record<GameLanguage, string> = {
 export const VOICE_LINE_FETTER_TYPE = 1;
 export const GENSHIN_TEXT_SOURCE_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-text", "src");
 export const GENSHIN_TEXT_GENERATED_DIRECTORY: string = join(GENSHIN_TEXT_SOURCE_DIRECTORY, "generated");
-// The generated folder the card game's text is written into, one chunk a language, until its words are published
-export const GENSHIN_WORLD_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-);
-export const GCG_TEXT_DIRECTORY: string = join(GENSHIN_WORLD_GENERATED_DIRECTORY, "gcgText");
 // The datasets of words, which hold no `nameTextId` to read and so are never walked for one
 export const TEXT_GAME_DATASETS: readonly string[] = [
   GameDataset.AchievementText,

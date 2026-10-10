@@ -104,9 +104,11 @@ jobs:
           gh auth setup-git
           pnpm ai:coderabbit:collect
 
-  # The one missing webhook, supplied: a rate limit lifts on CodeRabbit's clock and announces nothing, so this
-  # job sleeps out the deadline the bot stated and runs the cycle again — which re-reads the pull request before
-  # asking, since a review a session push started meanwhile would be cancelled by a retrigger posted blind
+  # The missing webhooks, supplied: a rate limit lifting at the deadline the bot stated, Claude Code's limit lifting
+  # at the reset it printed, and the hourly opening ceiling turning over as its oldest window ages out of the hour
+  # all happen on a clock and announce nothing, so this job sleeps out the instant the run stated and runs the cycle
+  # again — which re-reads the remote before acting, since a review a session push started meanwhile would be
+  # cancelled by a retrigger posted blind
   retrigger:
     name: Retrigger
     needs: collect
@@ -123,7 +125,7 @@ jobs:
       group: review-collector-retrigger
       cancel-in-progress: true
     steps:
-      - name: ⏳ Wait out the rate limit
+      - name: ⏳ Wait out the hold
         env:
           DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
         run: sleep "$DELAY_SECONDS"

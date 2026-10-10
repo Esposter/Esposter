@@ -69,4 +69,21 @@ describe(gainPartyEnergy, () => {
     expect(getPartyMember(party, 1).energy).toBe(TRAVELER_KIT.burstEnergyCost);
     expect(getPartyMember(party, 2).energy).toBe(0);
   });
+
+  test("gives a member whose combatant is not built yet none", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1, 2]);
+    const characterIdCombatantMap = new Map([[1, createCombatant(1, Element.Pyro)]]);
+
+    gainPartyEnergy(
+      party,
+      { count: PARTICLE_COUNT, energyDropKind: EnergyDropKind.Particle, healthPercent: 50 },
+      Element.Pyro,
+      characterIdCombatantMap,
+    );
+
+    expect(getPartyMember(party, 1).energy).toBe(6);
+    expect(getPartyMember(party, 2).energy).toBe(0);
+  });
 });

@@ -1,20 +1,9 @@
 import { RESIDENT_DUEL_GAME_ID_MAP } from "#src/services/genshinAssets/residents/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { Element } from "genshin-world";
-import { join } from "node:path";
 
 // The rule the duels against the game's own residents run. Its clocks are all zero, since a duel against a resident
 // Has no round to run out; its reactions and hand limit are the matchmaking rule's
 export const GCG_STANDARD_RULE_ID = 2;
-// The world package's generated folder, which the card game's text reads the deck slices from until they are published
-export const GCG_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-  "gcg",
-);
 // The duels the world's residents play, by their game id in the game table: the games their seats name. Their decks are
 // Published beside the standard rule
 export const GCG_DUEL_GAME_IDS: number[] = [...RESIDENT_DUEL_GAME_ID_MAP.values()];
