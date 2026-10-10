@@ -1,5 +1,4 @@
 import type { ReplyPullRequestAnswersInput } from "#src/models/coderabbit/collect/ReplyPullRequestAnswersInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
@@ -16,7 +15,7 @@ export const replyPullRequestAnswers = ({
   pullRequest,
   viewerLogin,
 }: ReplyPullRequestAnswersInput): number => {
-  const commentIds = new Set(readEntries<GitHubEntry>(`pulls/${pullRequest}/comments`).map(({ id }) => id));
+  const commentIds = new Set(readEntries(`pulls/${pullRequest}/comments`).map(({ id }) => id));
   const reviewIds = new Set(readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`).map(({ id }) => id));
   const ownCommits = commits
     .map(({ answers, drains, sha, subject }) => ({
@@ -30,7 +29,7 @@ export const replyPullRequestAnswers = ({
     replyAnswered({
       commits: ownCommits,
       isDryRun,
-      issueComments: readEntries<GitHubEntry>(`issues/${pullRequest}/comments`),
+      issueComments: readEntries(`issues/${pullRequest}/comments`),
       pullRequest,
       viewerLogin,
     });

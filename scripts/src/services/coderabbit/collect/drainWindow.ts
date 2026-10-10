@@ -1,6 +1,5 @@
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
 import type { DrainWindowInput } from "#src/models/coderabbit/collect/DrainWindowInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { WindowPullRequestListState } from "#src/models/coderabbit/collect/WindowPullRequestListState";
@@ -45,7 +44,7 @@ export const drainWindow = async ({
       developCommits,
       developSha,
       isDryRun,
-      issueComments: readEntries<GitHubEntry>(`issues/${drainedPullRequest}/comments`),
+      issueComments: readEntries(`issues/${drainedPullRequest}/comments`),
       pullRequest: drainedPullRequest,
       queueSha,
       reviewFixesSha: drainedFixesSha,
