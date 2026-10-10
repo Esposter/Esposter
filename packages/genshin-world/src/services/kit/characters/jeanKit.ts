@@ -14,7 +14,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { getPartyMember } from "#src/services/party/getPartyMember";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Jean's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the charged
@@ -118,12 +118,7 @@ const createFieldTick =
     const heal = isActivation ? activationHeal : regenerationHeal;
     healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
     if (!isActivation || owner.ascension < 4) return;
-    const partyMember = getPartyMember(party, owner.characterId);
-    const { burstEnergyCost } = owner.kit;
-    partyMember.energy = Math.min(
-      burstEnergyCost,
-      partyMember.energy + LET_THE_WIND_LEAD_ENERGY_SHARE * burstEnergyCost,
-    );
+    gainPartyMemberEnergy(party, owner, LET_THE_WIND_LEAD_ENERGY_SHARE * owner.kit.burstEnergyCost);
   };
 
 // Jean's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Gale Blade's press

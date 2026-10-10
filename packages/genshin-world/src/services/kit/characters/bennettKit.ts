@@ -9,8 +9,8 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
-import { WeaponType } from "#src/models/weapon/WeaponType";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -85,11 +85,6 @@ const GRAND_EXPECTATION_BASE_ATTACK_SHARE = 0.2;
 // https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me
 const FIRE_VENTURES_WITH_ME_CONSTELLATION = 6;
 const FIRE_VENTURES_PYRO_DAMAGE_BONUS = 0.15;
-const FIRE_VENTURES_INFUSED_WEAPON_TYPES = new Set<WeaponType>([
-  WeaponType.Claymore,
-  WeaponType.Polearm,
-  WeaponType.Sword,
-]);
 
 // Measured: the wiki's Passion Overload page, the press's cooldown of 5 seconds and the hold's of 7.5 and 10 seconds
 // https://genshin-impact.fandom.com/wiki/Passion_Overload
@@ -246,7 +241,7 @@ const createFieldTick =
           kind: "buff",
           secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
         });
-        if (weaponType !== undefined && FIRE_VENTURES_INFUSED_WEAPON_TYPES.has(weaponType))
+        if (weaponType !== undefined && MELEE_WEAPON_TYPES.has(weaponType))
           addKitEffect(kitEffectState, {
             characterId,
             element: Element.Pyro,

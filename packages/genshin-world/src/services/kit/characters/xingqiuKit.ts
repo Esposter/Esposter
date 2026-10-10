@@ -19,7 +19,7 @@ import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { getPartyMember } from "#src/services/party/getPartyMember";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -318,13 +318,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       characterId: combatant.characterId,
       kind: "field",
       nextTickSeconds: swordHit.hitmarkSeconds,
-      onTick: ({ party }) => {
-        const partyMember = getPartyMember(party, combatant.characterId);
-        partyMember.energy = Math.min(
-          combatant.kit.burstEnergyCost,
-          partyMember.energy + HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY,
-        );
-      },
+      onTick: ({ party }) => gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY),
       radius: UNBOUNDED_FIELD_RADIUS,
       // The field lives a tenth of a second past its tick, so the step that runs it still has it
       secondsRemaining: swordHit.hitmarkSeconds + 0.1,
