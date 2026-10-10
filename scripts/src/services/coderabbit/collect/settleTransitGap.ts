@@ -2,9 +2,11 @@ import type { TransitGapInput } from "#src/models/coderabbit/collect/TransitGapI
 import type { TransitGapSettlement } from "#src/models/coderabbit/collect/TransitGapSettlement";
 
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
+import { checkIsQueuedChange } from "#src/services/coderabbit/collect/checkIsQueuedChange";
 import {
   CI_SUCCESS_CONCLUSION,
   MAIN_BRANCH,
+  QUEUE_BRANCH,
   RETRIGGER_BUFFER_MS,
   TRANSIT_GAP_MARKER,
 } from "#src/services/coderabbit/collect/constants";
@@ -13,6 +15,7 @@ import { getRetriggerDelaySeconds } from "#src/services/coderabbit/collect/getRe
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCarryingCheck } from "#src/services/coderabbit/collect/readCarryingCheck";
 import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readFailurePaths } from "#src/services/coderabbit/collect/readFailurePaths";
 import { readQueueCheck } from "#src/services/coderabbit/collect/readQueueCheck";
 import { readRunJobs } from "#src/services/coderabbit/collect/readRunJobs";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -29,25 +32,37 @@ import { rerunRedCheck } from "#src/services/coderabbit/collect/rerunRedCheck";
 // Verdict over `main`'s own tree heals nothing queued, so a job it passes is no gap but a flake, run again once
 // (`rerunRedCheck`). Nothing fires a pass when a queue run concludes, nor when no window is left in flight to merge
 // Over a gap, so every held red wakes the run itself once the newest queue run's span from push to verdict has passed
-// Again; while windows merge, their own events wake it sooner and the newest run's wake replaces this one
+// Again; while windows merge, their own events wake it sooner and the newest run's wake replaces this one. A workflow
+// The queue never runs — CodeQL, which scans `main` alone — has no queued verdict, so its red is judged by the files it
+// Names instead: a gap when the queue's head changes every one of them (`checkIsQueuedChange`), woken once its own
+// Run's span has passed again, since no queue run of it exists to measure
 export const settleTransitGap = ({
   check,
   cwd,
-  failedJobNames,
+  failedJobs,
   isDryRun,
   mainSha,
   viewerLogin,
 }: TransitGapInput): TransitGapSettlement => {
   const newestCheck = readQueueCheck(check);
-  if (!newestCheck) return { isHeld: false };
-
+  const spanCheck = newestCheck ?? check;
   const runMs =
-    Temporal.Instant.from(newestCheck.updatedAt).epochMilliseconds -
-    Temporal.Instant.from(newestCheck.createdAt).epochMilliseconds;
+    Temporal.Instant.from(spanCheck.updatedAt).epochMilliseconds -
+    Temporal.Instant.from(spanCheck.createdAt).epochMilliseconds;
   const held: TransitGapSettlement = {
     isHeld: true,
     retriggerDelaySeconds: getRetriggerDelaySeconds(runMs + RETRIGGER_BUFFER_MS),
   };
+  if (!newestCheck) {
+    const failurePaths = readFailurePaths(check.workflowFile, failedJobs);
+    if (!checkIsQueuedChange(failurePaths, mainSha, cwd)) return { isHeld: false };
+
+    console.info(
+      `${MAIN_BRANCH} is red on ${check.url} in ${failurePaths.join(", ")}, which ${QUEUE_BRANCH} changes: a transit gap its queued windows heal as they merge, so no repair is attempted while it lasts`,
+    );
+    return held;
+  }
+
   const queueCheck = readCarryingCheck(newestCheck, mainSha, cwd);
   if (!queueCheck) {
     console.info(
@@ -68,7 +83,7 @@ export const settleTransitGap = ({
       .jobs.filter(({ conclusion }) => conclusion === CI_SUCCESS_CONCLUSION)
       .map(({ name }) => name),
   );
-  const healedJobNames = failedJobNames.filter((name) => passedJobNames.has(name));
+  const healedJobNames = failedJobs.map(({ name }) => name).filter((name) => passedJobNames.has(name));
   if (healedJobNames.length === 0) return { isHeld: false };
   else if (isSameTree)
     return rerunRedCheck({ check, isDryRun, mainSha, queueCheck, viewerLogin }) ? held : { isHeld: false };

@@ -44,16 +44,17 @@ export const settleRedChecks = ({
   for (const check of readRedMainChecks(mainSha, cwd)) {
     const { jobs, workflowName } = readRunJobs(check.databaseId);
     // The jobs CI skipped behind a failed one are no part of the red, since they name no red of their own
-    const failedJobNames = jobs
-      .filter(({ conclusion }) => conclusion === CI_FAILURE_CONCLUSION)
-      .map(({ name }) => name);
-    const transitGap = settleTransitGap({ check, cwd, failedJobNames, isDryRun, mainSha, viewerLogin });
+    const failedJobs = jobs.filter(({ conclusion }) => conclusion === CI_FAILURE_CONCLUSION);
+    const transitGap = settleTransitGap({ check, cwd, failedJobs, isDryRun, mainSha, viewerLogin });
     if (transitGap.isHeld) {
       retriggerDelays.push(transitGap.retriggerDelaySeconds);
       continue;
     }
 
-    const signature = getFailureSignature(workflowName, failedJobNames);
+    const signature = getFailureSignature(
+      workflowName,
+      failedJobs.map(({ name }) => name),
+    );
     const attempts = getAttempts({
       collectorSha,
       comments: readSignatureAttempts(),
