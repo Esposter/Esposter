@@ -19,9 +19,14 @@ const writeInt32 = (value: number): Buffer => {
   bytes.writeInt32LE(value);
   return bytes;
 };
+const writeInt64 = (value: bigint): Buffer => {
+  const bytes = Buffer.alloc(8);
+  bytes.writeBigInt64LE(value);
+  return bytes;
+};
 
 describe(parseCabMap, () => {
-  test("reads each CAB's block and its dependencies in order, lowercase, a length past one byte included", () => {
+  test("reads each CAB's block, offset and dependencies in order, lowercase, a length past one byte included", () => {
     expect.hasAssertions();
 
     // A name of 128 characters takes a second byte for its length
@@ -31,7 +36,7 @@ describe(parseCabMap, () => {
       writeInt32(2),
       writeString("CAB-A"),
       writeString(String.raw`00\a.blk`),
-      Buffer.alloc(8),
+      writeInt64(1n),
       writeInt32(1),
       writeString(longName),
       writeString(longName.toUpperCase()),
@@ -42,8 +47,8 @@ describe(parseCabMap, () => {
 
     expect(parseCabMap(bytes)).toStrictEqual(
       new Map([
-        ["cab-a", { block: "00/a.blk", dependencies: [longName] }],
-        [longName, { block: "00/b.blk", dependencies: [] }],
+        ["cab-a", { block: "00/a.blk", dependencies: [longName], offset: 1 }],
+        [longName, { block: "00/b.blk", dependencies: [], offset: 0 }],
       ]),
     );
   });

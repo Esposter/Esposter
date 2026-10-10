@@ -1,4 +1,5 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
+import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
 import type { ComponentDirectory } from "#src/models/genshinAssets/shared/ComponentDirectory";
 import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions";
 
@@ -25,40 +26,47 @@ import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTile
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
-import { readCapitalCityCode } from "#src/services/genshinAssets/world/readCapitalCityCode";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
+import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDerivedPathNames";
+import { readLodPathHashes } from "#src/services/genshinAssets/world/readLodPathHashes";
+import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
+import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectCityAreasInView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
-// View and its architecture radius cover and its city's own StreamGen blob, all read by path hash, the placements
-// Those select (every one in view, and each architecture placement within the radius), each prefab of them rooted at
-// The game object its name finds in the blocks that name it or, failing that, in any block dumped for the derivation (a
-// Game object's block need not index its own mesh or material), and the 2x2 of terrain tiles its capital stands in.
-// Each step reads the game's own data (the asset index, the blobs, the community's path names and the ones the asset
-// Index's own names hash to, the dumped layouts), so a region gives only its capital's place. Returns the block with
-// The lines that report what did not resolve
+// View and its architecture radius cover and the StreamGen blob of every city area they reach, all read by path hash,
+// The placements those select (every one in view, and each architecture placement within the radius), each prefab of
+// Them rooted at the game object its name finds in the blocks that name it or, for a building, hold its prefab file
+// (`readPrefabBlocks`) or, failing that, in any block dumped for the derivation (a game object's block need not index
+// Its own mesh or material), and the 2x2 of terrain tiles its capital stands in. Each step reads the game's own data (the asset index,
+// The CAB map, the blobs, the game's LOD table, the community's path names and the ones the asset index's own names
+// Hash to, the dumped layouts), so a region gives only its capital's place. Returns the block with the lines that
+// Report what did not resolve
 export const deriveCapitalWorld = async (
   component: DerivedAssetComponent,
   directory: ComponentDirectory,
   dumpLayouts: (blocks: readonly string[]) => Promise<void>,
+  cabMap: ReadonlyMap<string, CabEntry>,
 ): Promise<{ lines: string[]; world: WorldOptions }> => {
   const windriseWorld = DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world;
   if (!windriseWorld) throw new InvalidOperationError(Operation.Read, component, "has no origin to stand round");
   const place = await readCapitalWorldPlace(component);
   const lines: string[] = [];
-  // Each covered tile's blob and index, then the capital's own city blob and index, by the names their path hash and
-  // Index name give. The city blob holds the props and buildings the tiles do not
+  // Each covered tile's blob and index, then those of every city area the view reaches, by the names their path hash and
+  // Index name give. A city area's blob holds the props and buildings the tiles do not
   const tileNames = getCoveredTiles(place, ARCHITECTURE_VIEW_METRES).map(({ column, row }) =>
     getWorldTileName(column, row),
   );
-  const cityCode = await readCapitalCityCode(component);
-  if (!cityCode) lines.push(`no city area within ${ARCHITECTURE_VIEW_METRES} metres of the capital`);
-  const streamNames = cityCode ? [...tileNames, getCityStreamName(cityCode)] : tileNames;
+  const cityCodes = selectCityAreasInView(await readCityAreas(), place).map(({ code }) => code);
+  lines.push(
+    `${cityCodes.length} city areas within ${ARCHITECTURE_VIEW_METRES} metres of the capital${cityCodes.length > 0 ? `: ${cityCodes.join(", ")}` : ""}`,
+  );
+  const streamNames = [...tileNames, ...cityCodes.map((code) => getCityStreamName(code))];
   const streamAssetNames = new Set(
     streamNames.flatMap((streamName) => [getStreamBlobName(streamName), `${streamName}${STREAM_INDEX_SUFFIX}`]),
   );
@@ -73,8 +81,11 @@ export const deriveCapitalWorld = async (
     else lines.push(`${streamName}: no stream in the asset index`);
   }
   exportWorldStreams(streams, directory.world);
-  // Each stream's placements, read from the blobs the export just wrote, and the names every prefab they draw is given
-  const streamPlacements = await Promise.all(
+  // Each stream's placements, read from the blobs the export just wrote, and the names every prefab they draw is given.
+  // A placement of a prefab grouped by level of detail carries no path hash, so it takes its finest level's from the
+  // Game's LOD table, the prefab it is rooted at
+  const prefabIdLodPathHashMap = await readLodPathHashes(directory.world);
+  const recordedPlacements = await Promise.all(
     streams.map(async ({ blob, index }) => {
       const [blobBytes, indexBytes] = await Promise.all([
         readFile(join(directory.world, AssetType.MiHoYoBinData, `${blob.name}.dat`)),
@@ -83,6 +94,15 @@ export const deriveCapitalWorld = async (
       return parseStreamingPlacements(blobBytes, parseStreamingIndex(indexBytes));
     }),
   );
+  const streamPlacements = recordedPlacements.map((placements) =>
+    placements.map((placement) =>
+      placement.pathHash ? placement : { ...placement, pathHash: prefabIdLodPathHashMap.get(placement.prefabId) ?? "" },
+    ),
+  );
+  const lodPlacementCount = recordedPlacements
+    .flat()
+    .filter(({ pathHash, prefabId }) => !pathHash && prefabIdLodPathHashMap.has(prefabId)).length;
+  lines.push(`${lodPlacementCount} placements named by their finest level in the game's LOD table`);
   // Each path hash the community's index leaves unnamed is named in the same run by hashing the asset index's own
   // Prefab names, so no step after the extraction is owed before its prefabs are named
   const pathNames = await readAssetPathNames();
@@ -110,22 +130,23 @@ export const deriveCapitalWorld = async (
     selectCapitalPlacements(placements, streamPrefabNames, place),
   );
   const prefabNames = getPrefabNames(viewPlacements.flat(), pathNames);
-  // The blocks that index each prefab's name, dumped so the game objects of that name can be found in them
-  const nameBlocksMap = new Map<string, string[]>();
+  // The blocks each prefab's game object may stand in, dumped so the game objects of its name can be found in them
   const indexedNames = new Set(prefabNames.values());
-  for (const { block, name: indexedName } of await readIndexedAssets(({ name }) => indexedNames.has(name))) {
-    const blocks = nameBlocksMap.get(indexedName) ?? [];
-    if (!blocks.includes(block)) blocks.push(block);
-    nameBlocksMap.set(indexedName, blocks);
-  }
+  const prefabAssets = await readIndexedAssets(({ name }) => indexedNames.has(name));
+  const nameBlocksMap = await readPrefabBlocks(prefabAssets, cabMap);
   const dumpedBlocks = [...new Set([...nameBlocksMap.values()].flat())];
+  const indexingBlocks = new Set(prefabAssets.map(({ block }) => block));
+  lines.push(
+    `${dumpedBlocks.length} blocks dumped for the prefabs' game objects, ${dumpedBlocks.filter((block) => !indexingBlocks.has(block)).length} of them for a building's prefab file alone`,
+  );
   await dumpLayouts(dumpedBlocks);
   const { objects } = await readSceneLayout(directory.layout);
   const prefabIdRootMap = new Map<number, AssetRoot>();
   const unrootedNames = new Set<string>();
   for (const [prefabId, name] of prefabNames) {
-    // A name's game object is looked for in the blocks indexing it first, then in every dumped block, since the index may
-    // Name a prefab's mesh or material in a block its game object does not stand in
+    // A name's game object is looked for in the blocks indexing it or, for a building, holding its prefab file first,
+    // Then in every dumped block, since the index may name a prefab's mesh or material in a block its game object does
+    // Not stand in
     const indexedRoot = resolvePrefabRoot(name, nameBlocksMap.get(name) ?? [], objects);
     const root = indexedRoot ?? resolvePrefabRoot(name, dumpedBlocks, objects);
     if (root) prefabIdRootMap.set(prefabId, root);

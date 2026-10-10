@@ -119,7 +119,9 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
     ),
   );
   // A capital's open world is derived before the closure, since the prefabs it places are roots the closure starts from
-  const derived = options.isCapitalWorld ? await deriveCapitalWorld(component, directory, dumpLayouts) : undefined;
+  const derived = options.isCapitalWorld
+    ? await deriveCapitalWorld(component, directory, dumpLayouts, cabMap)
+    : undefined;
   if (derived) await writeFile(join(directory.world, WORLD_JSON_NAME), JSON.stringify(derived.world));
   const world = derived?.world ?? options.world;
   const roots = [...componentRoots, ...spawns.map(({ prefab }) => prefab), ...getWorldRoots(world)];
