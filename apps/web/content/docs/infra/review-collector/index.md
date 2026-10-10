@@ -70,7 +70,7 @@ flowchart TD
   RB -->|yes| RG[Regenerators, else Claude repairs,<br/>each part on its own clock — push, exit]
   RB -->|no| MK[Mark it to go first next run —<br/>exit, waking in a minute]
   MR -->|yes, past the cap| RI[One issue for the signature, exit —<br/>waking when its oldest attempts age out]
-  MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, an ask's wait, a check's wait]
+  MR -->|no| X[Exit, waking at the soonest instant a run stated —<br/>the hour's oldest opening ageing out, a window it opened falling due<br/>for its review, an ask's wait, a check's wait]
 ```
 
 Three properties make the picture safe to fire from anything:

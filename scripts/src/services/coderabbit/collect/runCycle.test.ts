@@ -37,6 +37,7 @@ import {
   MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
   MOVED_BRANCH_RETRY_DELAY_SECONDS,
+  OPENED_WINDOW_READ_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
   PENDING_CHECK_WAIT_MS,
@@ -1112,8 +1113,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
   // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
-  // The queue's own sha.
-  test("pushes a single owed commit and opens the first window over it", async () => {
+  // The queue's own sha. One opening is under the hourly ceiling and no walk follows it, so the run wakes itself for
+  // The review, which a bot posting nothing would otherwise leave unread
+  test("pushes a single owed commit, opens the first window over it and wakes once its review is due", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -1124,7 +1126,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1144,7 +1146,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
@@ -1207,7 +1209,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(recutWindow.number + 1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: firstSha,
     });
   });
@@ -1233,7 +1235,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(recutWindow.number + 1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: readSha(`origin/${DEVELOP_BRANCH}`),
     });
   });
@@ -1258,7 +1260,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1331,7 +1333,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
   });
@@ -1355,7 +1357,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
   });
@@ -1443,7 +1445,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1, getWindowBranch(pullRequest)),
-      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     // The body lists the window's commits, which the test does not restate: the flags around it are what is asserted
@@ -1475,7 +1477,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1499,7 +1501,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha,
     });
     expect(runGit(["log", "--format=%s", `${developSha}..${targetSha}`], getCwd())).toBe(`${TEST_FILENAME}
@@ -1527,7 +1529,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
@@ -1876,7 +1878,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Opened,
       reason: getOpenedReason(1),
-      retriggerDelaySeconds: undefined,
+      retriggerDelaySeconds: OPENED_WINDOW_READ_DELAY_SECONDS,
       targetSha: developSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
