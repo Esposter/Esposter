@@ -3,6 +3,7 @@ import type { UsageWindow } from "../../models/UsageWindow";
 import {
   FIVE_HOUR_MAINTENANCE_PERCENTAGE,
   FIVE_HOUR_WIND_DOWN_PERCENTAGE,
+  WEEKLY_MAINTENANCE_PERCENTAGE,
   WEEKLY_WIND_DOWN_PERCENTAGE,
 } from "../constants";
 
@@ -14,5 +15,9 @@ export const RateLimitKindUsageWindowMap: Record<string, UsageWindow> = {
     name: "five-hour",
     windDownPercentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE,
   },
-  seven_day: { name: "weekly", windDownPercentage: WEEKLY_WIND_DOWN_PERCENTAGE },
+  seven_day: {
+    maintenancePercentage: WEEKLY_MAINTENANCE_PERCENTAGE,
+    name: "weekly",
+    windDownPercentage: WEEKLY_WIND_DOWN_PERCENTAGE,
+  },
 };
