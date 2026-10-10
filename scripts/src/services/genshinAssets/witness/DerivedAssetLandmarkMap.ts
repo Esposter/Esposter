@@ -62,7 +62,11 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Hall, a terrace stair and the walkway post) name no mesh, all seven dropped: the extraction draws the capital
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
-  // Nasha Town's landmarks name its capital's meshes and their shares, which the extraction has not yet given
+  // Nasha Town's seven landmarks (ParityReferenceMap's nasha-town-location: the central tower's plinth, ledge struts,
+  // Collar and column edges) name no mesh, so all seven are dropped: the extraction draws floor plates, flat walls,
+  // Pipes, railings and festival props within 600 metres of the capital, no round stack or plinth, and the town's
+  // Buildings its layout dumps name (Area_Ndkl_Build_NXZ_House_01_Lod0) no OBJ exports, since its city blob roots only
+  // Single-mesh props
   [DerivedAssetComponent.NodKrai]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
