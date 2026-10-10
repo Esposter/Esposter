@@ -25,6 +25,8 @@ interface Props {
   // Whether the World Level can be lowered or restored now, and whether it is lowered; the button is drawn only when it can
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The server's clock minus this machine's, which the World Level's cooldown is read against
+  serverClockOffsetMs?: number;
   // When the World Level last changed, for the cooldown its panel shows
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;
@@ -42,8 +44,13 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
 const backButton = useTemplateRef("backButton");
-// The World Level panel is open while its button is hovered or focused
+// The World Level's dialog, which its info icon opens and its own Back closes, focus returning to the icon
+const infoButton = useTemplateRef("infoButton");
 const isWorldLevelTipsOpen = ref(false);
+const closeWorldLevelTips = () => {
+  isWorldLevelTipsOpen.value = false;
+  infoButton.value?.focus();
+};
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
@@ -106,16 +113,7 @@ onMounted(() => {
     <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
     <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
     <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }} {{ worldLevel }}</p>
-    <button
-      v-if="isWorldLevelAdjustable"
-      class="world-level-adjust"
-      type="button"
-      @blur="isWorldLevelTipsOpen = false"
-      @click="emit('toggleWorldLevel')"
-      @focus="isWorldLevelTipsOpen = true"
-      @pointerenter="isWorldLevelTipsOpen = true"
-      @pointerleave="isWorldLevelTipsOpen = false"
-    >
+    <button v-if="isWorldLevelAdjustable" class="world-level-adjust" type="button" @click="emit('toggleWorldLevel')">
       {{ gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevert : GameTextKey.WorldLevelLower] }}
     </button>
     <MenuWorldLevelTips
@@ -123,7 +121,18 @@ onMounted(() => {
       class="world-level-tips"
       :game-text
       :is-world-level-lowered
+      :server-clock-offset-ms
       :world-level-changed-at
+      @close="closeWorldLevelTips()"
+    />
+    <button
+      v-if="isWorldLevelAdjustable"
+      ref="infoButton"
+      class="side-entry"
+      :aria-label="gameText[GameTextKey.WorldLevelAdjustTitle]"
+      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
+      type="button"
+      @click="isWorldLevelTipsOpen = true"
     />
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
     <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
@@ -332,8 +341,9 @@ onMounted(() => {
   top: calc(var(--unit) * 286);
 }
 
-/* The panel opens below the button, in the same reference pixels as the card */
+/* The dialog opens below the World Level, in the same reference pixels as the card, over the entries drawn after it */
 .world-level-tips {
+  z-index: 1;
   top: calc(var(--unit) * 276);
   left: calc(var(--unit) * 420);
 }

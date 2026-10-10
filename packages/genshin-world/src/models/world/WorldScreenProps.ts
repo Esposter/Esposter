@@ -3,7 +3,7 @@ import type { WorldCameraPose } from "#src/models/world/WorldCameraPose";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
-// The props the world's screen takes from its host, which it loads the game's names and stat tables for before it opens
+// The props the world's screen takes from its host, which it loads the game's names and tables for before it opens
 export interface WorldScreenProps {
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;

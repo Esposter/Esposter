@@ -8,12 +8,14 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const DILUC_KIT = createDilucKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DILUC_CHARACTER_ID]));
 
 describe(getBuffedCombatant, () => {
@@ -63,11 +65,11 @@ describe(getBuffedCombatant, () => {
     const shield: KitEffect = { characterId: 2, health: 100, kind: "shield", secondsRemaining: 12 };
     const damageOf = (buffed: Combatant): number => {
       const enemy = {
-        ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+        ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
         health: ENDURING_ROCK_HEALTH,
         maxHealth: ENDURING_ROCK_HEALTH,
       };
-      strikeEnemy(enemy, DILUC_KIT.plungeCollision, buffed, () => 1);
+      strikeEnemy(enemyTables, enemy, DILUC_KIT.plungeCollision, buffed, () => 1);
       return enemy.maxHealth - enemy.health;
     };
 

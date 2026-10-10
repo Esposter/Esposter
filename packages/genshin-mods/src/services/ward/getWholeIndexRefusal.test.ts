@@ -36,6 +36,8 @@ describe(getWholeIndexRefusal, () => {
     ["restore the checkout's root", "git restore :/", "git restore ."],
     ["checkout the checkout's root", "git checkout -- :/", "git checkout ."],
     ["reset a commit with the checkout's root", "git reset HEAD :/", "git reset -- ."],
+    ["reset quietly over a dot", "git reset -q .", "git reset -- ."],
+    ["reset interactively over a dot", "git reset -p .", "git reset -- ."],
     ["reset a lone operand, which may be a commit", "git reset HEAD", "git reset"],
   ])("refuses %s", (_description, command, form) => {
     expect.hasAssertions();

@@ -1,11 +1,15 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { describe, expect, test } from "vitest";
+
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(damageEnemy, () => {
   const { energyDrops, poiseType } = EnemyKindTraitsMap[ENEMY_CAMP_MEMBER.enemyKindId];
@@ -14,7 +18,7 @@ describe(damageEnemy, () => {
   test("drops the energy of a threshold it falls past once, however often it is hit after", () => {
     expect.hasAssertions();
 
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const firstEnergy = damageEnemy(enemy, { damage: enemy.maxHealth / 2, poiseDamage: 0 });
     const secondEnergy = damageEnemy(enemy, { damage: 0, poiseDamage: 0 });
 
@@ -25,12 +29,12 @@ describe(damageEnemy, () => {
   test("a defeating hit drops every threshold left and kills", () => {
     expect.hasAssertions();
 
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const energy = damageEnemy(enemy, { damage: enemy.maxHealth, poiseDamage: 0 });
 
     expect(energy).toStrictEqual(energyDrops);
     expect(enemy).toStrictEqual({
-      ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+      ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       droppedThresholdCount: energyDrops.length,
       health: 0,
       hitSeconds: 0,
@@ -41,12 +45,12 @@ describe(damageEnemy, () => {
   test("a hit that breaks its poise staggers it until the reset", () => {
     expect.hasAssertions();
 
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     setEnemyState(enemy, EnemyState.Windup);
     damageEnemy(enemy, { damage: 0, poiseDamage: length / endurance });
 
     expect(enemy).toStrictEqual({
-      ...createEnemy(ENEMY_CAMP_MEMBER, ""),
+      ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       hitSeconds: 0,
       poise: 0,
       poiseBrokenSeconds: resetSeconds,
@@ -57,7 +61,7 @@ describe(damageEnemy, () => {
   test("a hit sets an idle enemy on its attacker", () => {
     expect.hasAssertions();
 
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     damageEnemy(enemy, { damage: 0, poiseDamage: 0 });
 
     expect(enemy.state).toBe(EnemyState.Chase);
@@ -66,7 +70,7 @@ describe(damageEnemy, () => {
   test("a returning enemy is immune", () => {
     expect.hasAssertions();
 
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     setEnemyState(enemy, EnemyState.Return);
 
     expect(damageEnemy(enemy, { damage: enemy.maxHealth, poiseDamage: 0 })).toStrictEqual([]);

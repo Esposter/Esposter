@@ -1,4 +1,5 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,9 +10,13 @@ import { ENEMY_STRIKE_TALENT_MULTIPLIER } from "#src/services/kit/constants";
 
 // The damage an enemy's strike deals to a combatant: its ATK as physical damage through the combatant's defence and
 // Physical resistance
-export const computeEnemyStrikeDamage = (enemy: Enemy, combatant: Combatant): number => {
+export const computeEnemyStrikeDamage = (
+  { enemyKindMap, enemyLevelCurves }: EnemyTables,
+  enemy: Enemy,
+  combatant: Combatant,
+): number => {
   const { attributeTotalMap, defense } = combatant.attributes;
-  const { attack } = computeEnemyStats(getEnemyKind(enemy.enemyKindId), enemy.level);
+  const { attack } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemy.enemyKindId), enemy.level);
   return getDamage({
     attackerLevel: enemy.level,
     defense,

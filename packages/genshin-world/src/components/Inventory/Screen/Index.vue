@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { InventoryCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -29,12 +30,14 @@ interface Props {
   // The tab the bag opens on
   initialCategory: ItemCategory;
   inventory: Inventory;
+  // The game's material table by item id, which a destroy's returned materials are defined from
+  materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns
   names: Readonly<Record<string, string>>;
   wallet: Wallet;
 }
 
-const { gameText, initialCategory, inventory, names, wallet } = defineProps<Props>();
+const { gameText, initialCategory, inventory, materialDataMap, names, wallet } = defineProps<Props>();
 const emit = defineEmits<{ close: []; destroy: [destruction: InventoryDestruction] }>();
 const category = ref(initialCategory);
 const selectedId = ref("");
@@ -114,7 +117,9 @@ const recoveredNames = computed(() =>
   getDestroyReturns(chosenItems.value).map(({ count, id }) => {
     const currency = getWalletCurrency(id);
     const name =
-      currency === undefined ? getItemDefinition(id, names).name : gameText[CurrencyGameTextKeyMap[currency]];
+      currency === undefined
+        ? getItemDefinition(id, names, materialDataMap).name
+        : gameText[CurrencyGameTextKeyMap[currency]];
     return `${name} x${count}`;
   }),
 );
@@ -140,7 +145,9 @@ const quickSelect = (rarity: number) => {
 };
 // The destruction the chosen entries make, undefined where the bag cannot take what they return whole
 // The dialog holds its OK off then, under the game's bag-full line
-const destruction = computed(() => destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names));
+const destruction = computed(() =>
+  destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names, materialDataMap),
+);
 const isDestroyFull = computed(() => chosenIds.value.length > 0 && destruction.value === undefined);
 const confirmDestroy = () => {
   if (!destruction.value) return;

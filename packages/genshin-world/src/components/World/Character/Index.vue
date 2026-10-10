@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
@@ -68,6 +69,8 @@ interface Props {
   characterIdCombatantMap: Map<number, Combatant>;
   // The enemies in the world by their spawn key, which the kit on the field strikes and aims at
   enemyMap: Map<string, Enemy>;
+  // The game's enemy tables, which each strike on an enemy reads its defence and resistances from
+  enemyTables: EnemyTables;
   // The frame's input, which the world screen reads once a frame before the body moves
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
@@ -94,6 +97,7 @@ const {
   body,
   characterIdCombatantMap,
   enemyMap,
+  enemyTables,
   inputState,
   isHeld,
   isOrbiting,
@@ -235,7 +239,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       )
         continue;
       addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
-      const { energyDrops, reactions } = strikeEnemy(enemy, hit, pricedCombatant, random);
+      const { energyDrops, reactions } = strikeEnemy(enemyTables, enemy, hit, pricedCombatant, random);
       for (const energyDrop of energyDrops)
         gainPartyEnergy(party, energyDrop, strikeCombatant.element, characterIdCombatantMap);
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);

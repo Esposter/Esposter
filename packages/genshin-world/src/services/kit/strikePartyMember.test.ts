@@ -7,6 +7,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -15,6 +16,7 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 describe(strikePartyMember, () => {
@@ -37,10 +39,10 @@ describe(strikePartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
-    const damage = computeEnemyStrikeDamage(enemy, combatant);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
 
-    strikePartyMember(party, enemy, combatant, { effects: [] });
+    strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] });
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - damage / MAX_HEALTH);
   });
@@ -49,14 +51,14 @@ describe(strikePartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
-    const damage = computeEnemyStrikeDamage(enemy, combatant);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const damage = computeEnemyStrikeDamage(enemyTables, enemy, combatant);
     const shieldHealth = damage / 2;
     const kitEffectState: KitEffectState = {
       effects: [{ characterId: 1, health: shieldHealth, kind: "shield", secondsRemaining: 12 }],
     };
 
-    strikePartyMember(party, enemy, combatant, kitEffectState);
+    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - (damage - shieldHealth) / MAX_HEALTH);
     expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);

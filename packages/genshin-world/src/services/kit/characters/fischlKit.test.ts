@@ -74,6 +74,18 @@ describe(createFischlKit, () => {
     expect(oz?.hits.at(-1)?.hitmarkSeconds).toBeCloseTo((192 + 8 * 59) / 60);
   });
 
+  test("the burst's Oz ends the skill's, so one Oz stands", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = { body: kitBody, combatant: createFischlCombatant(), kitEffectState };
+    FISCHL_KIT.elementalSkill.onStart?.(context);
+    FISCHL_KIT.elementalBurst.onStart?.(context);
+
+    expect(kitEffectState.effects.map((effect) => effect.kind === "summon" && effect.hits)).toStrictEqual(
+      castSummons(FISCHL_KIT.elementalBurst).map(({ hits }) => hits),
+    );
+  });
+
   test("the skill's cooldown, the burst's cooldown and energy cost come from the dump's groups", () => {
     expect.hasAssertions();
 

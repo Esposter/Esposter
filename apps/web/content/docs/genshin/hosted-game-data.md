@@ -5,7 +5,7 @@ description: Every dataset genshin-world reads is published to Azure Blob Storag
 
 # Hosted game data
 
-Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
+Every dataset genshin-world reads is published to Azure Blob Storage, and `packages/genshin-world/src/generated/gameDataLock.json` maps each published key to the hash of its object. The character profiles, the book bodies, the talent multipliers, the stat tables a character is made and summed from, the enemy, Adventure Rank and material tables, the HUD's rects, and the names, achievements, Archive, quests, card game, gathering points, exploration areas, transport points and friendship tables are read only from there: a browser fetches a record when the screen or the combat that needs it asks, and no build reads or bundles them. The other datasets are published too, from the files the package still bundles, and [moving their readers](/docs/proposals/genshin/hosted-game-data) is what is left.
 
 ## How it works
 
@@ -64,7 +64,7 @@ flowchart TD
 
 ## Publishing
 
-- `pnpm -C scripts genshin:assets profile`, `archive`, `achievements` and `gcg`, and `pnpm -C scripts genshin:text names` and `quests`, build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The recipe and activity commands publish the same way: `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`, each scoped to its own dataset.
+- `pnpm -C scripts genshin:assets profile`, `archive`, `achievements` and `gcg`, and `pnpm -C scripts genshin:text names` and `quests`, build their records from the dump and publish them. Each takes `--dry-run`, which builds and reports what would publish without a credential or a request. The other data commands publish the same way, each scoped to its own dataset: the recipe and activity commands `cooking`, `crafting`, `forging`, `home`, `imaginarium`, `spiral-abyss`, `gadgets`, `reputation`, `statues`, `commissions`, `friendship`, `trans-points` and `exploration`; the map-point commands `chests`, `oculi`, `puzzles`, `wildlife`, `gathering`, `offerings` and `fishing`; and `enemies`, `rank`, `expeditions` and `shops`.
 - A real publish stores each missing object in both accounts, with `DefaultAzureCredential`, which resolves to the owner's `az login`. No account key is written to disk.
 - A rerun on the same dump reports `unchanged` and makes no request.
 - A dry run that reports `N records would be published` means the builder's records differ from the lock: the dump has moved past the committed files, or the lock has gone stale for that dataset, and the publish is a separate step.
@@ -79,13 +79,13 @@ The first publish stored 5,765 objects in each account: the 5,735 distinct recor
 
 `readGameData` reads the lock, then the record its key names; `readGameDataEntry` reads the lock, then the index object, then the one record. Each fetch is memoized by URL for the page's life. A failed fetch is dropped from the memo, so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS`, ten seconds. A reader parses the value with its own schema each time, so each caller holds a value of its own.
 
-The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names and the stat tables from it and hands it to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
+The base URL is the AppAssets path of the account the page reads. `World.vue` passes it to `WorldScreen` as a prop, which reads the names, the stat, enemy, Adventure Rank and material tables and the HUD's rects from it before the world opens, and hands the base and the tables to the Session; the Session hands it to the character screen's Profile tab and to the world's achievements, archive, quests, gathering points, map, combat and card game, and each reads its records from it. Dev reads the dev account and production reads the production account.
 
 A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, `readPublishedGameDataEntry`), never through genshin-world's build, which a step running under `tsx` may load stale. A fitted data file the package still keeps is read from disk first (`readWorldData`), since the fit that last wrote it holds its freshest copy, and from the dev account under its path less `.json` once it is published and gone.
 
 ## Tests
 
-No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror in `packages/genshin-world/node_modules/.cache/game-data`. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes. The coverage shards restore the mirror from the CI cache, keyed on the lock's hash, and a cold mirror needs the network. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold mirror's first run fits inside.
+No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror in `packages/genshin-world/node_modules/.cache/game-data`. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes. Each coverage shard restores the mirror from the CI cache and saves what it read, keyed on the lock's hash and its shard, falling back to any earlier mirror; a cold mirror needs the network. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold mirror's first run fits inside.
 
 ```mermaid
 flowchart TD
@@ -100,7 +100,7 @@ flowchart TD
   Hash -->|no| Refuse["throws: the mirror keeps nothing"]
   Hash -->|yes| Store["temp file, rename into the mirror"]
   Store --> Serve
-  Cache[("CI cache, keyed on the lock")] -->|"restored before the shards run"| Mirror
+  Cache[("CI cache, keyed on the lock and the shard")] <-->|"restored before a shard runs, saved after"| Mirror
 ```
 
 ## Deleting
@@ -201,7 +201,8 @@ Wall times move with the machine's load, so the median of three is the steadier 
 | `packages/genshin-world/src/services/profile/readCharacterProfile.ts`                 | The Profile tab's reader: the character's entry of its language's profile index                                      |
 | `packages/genshin-world/src/composables/useWorldArchive.ts`                           | Reads a volume's body in the game language when the reader opens it                                                  |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`                   | The Profile tab, which reads its character's record                                                                  |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and stat tables arrive, with the base URL among its props                             |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`                        | Opens the world once its names and tables arrive, with the base URL among its props                                  |
+| `packages/genshin-world/src/models/world/WorldTables.ts`                              | The names and tables the world's screen awaits before it opens its session                                           |
 | `packages/genshin-world/src/services/character/readStatTables.ts`                     | The stat tables, each fetched by its `stats/` key as the world opens                                                 |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`                    | Hands the base URL to the Profile tab                                                                                |
 | `packages/genshin-world/tsconfig.build.json`                                          | Maps the lock's exact path ahead of the generated stand-in                                                           |

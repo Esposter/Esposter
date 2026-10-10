@@ -7,24 +7,42 @@ import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-te
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // Whether the World Level is lowered, so the panel tells what the button does now
+  // Whether the World Level is lowered, so the dialog tells what the button does now
   isWorldLevelLowered: boolean;
-  // When the World Level last changed, from which the cooldown left is read as the panel opens
+  // The server's clock minus this machine's, which the cooldown is read against
+  serverClockOffsetMs?: number;
+  // When the World Level last changed, from which the cooldown left is read
   worldLevelChangedAt?: Temporal.Instant;
 }
 
-const { gameText, isWorldLevelLowered, worldLevelChangedAt } = defineProps<Props>();
-const tips =
-  gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevertTips : GameTextKey.WorldLevelLowerTips].split("\n");
-// The panel mounts as it opens, so the cooldown is read at the moment the player sees it
-const cooldown = computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.instant());
+const { gameText, isWorldLevelLowered, serverClockOffsetMs = 0, worldLevelChangedAt } = defineProps<Props>();
+const emit = defineEmits<{ close: [] }>();
+const titleId = useId();
+const closeButton = useTemplateRef("closeButton");
+const tips = computed(() =>
+  gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevertTips : GameTextKey.WorldLevelLowerTips].split("\n"),
+);
+// Read as the dialog opens and again whenever the World Level changes under it
+const cooldown = computed(() =>
+  computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs })),
+);
+// The dialog sits over the menu, so focus starts inside it, on its way back
+onMounted(() => {
+  closeButton.value?.focus();
+});
 </script>
 
 <template>
-  <!-- The tip the World Level button opens while it is hovered or focused: the game's title, what the change does, and the
-       hint of the cooldown left once a change has been made. Its colours are the game's own colour tags -->
-  <div class="world-level-tips" role="tooltip">
-    <p class="title">{{ gameText[GameTextKey.WorldLevelAdjustTitle] }}</p>
+  <!-- The dialog the World Level's info icon opens: the game's title, what the change does, and the hint of the cooldown
+       left once a change has been made. Its colours are the game's own colour tags -->
+  <div
+    class="world-level-tips"
+    role="dialog"
+    aria-modal="true"
+    :aria-labelledby="titleId"
+    @keydown.esc.stop="emit('close')"
+  >
+    <p :id="titleId" class="title">{{ gameText[GameTextKey.WorldLevelAdjustTitle] }}</p>
     <p v-for="(tip, tipIndex) of tips" :key="tipIndex" class="tip">
       <span
         v-for="(segment, segmentIndex) of splitGameTextColors(tip)"
@@ -36,12 +54,15 @@ const cooldown = computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.ins
     <p v-if="cooldown" class="cooldown">
       {{ fillGameTextValues(gameText[GameTextKey.WorldLevelCooldownHint], cooldown.hours, cooldown.minutes) }}
     </p>
+    <button ref="closeButton" class="close" type="button" @click="emit('close')">
+      {{ gameText[GameTextKey.Back] }}
+    </button>
   </div>
 </template>
 
 <style scoped>
-/* Provisional where the game is not yet fitted: the panel's size, its glass and its type wait on the English PC client's
-   menu measured at 1080 high. Its place is the parent's, which draws it beside the World Level button */
+/* Provisional where the game is not yet fitted: the dialog's size, its glass and its type wait on the English PC client's
+   menu measured at 1080 high. Its place is the parent's, which draws it beside the World Level */
 .world-level-tips {
   position: absolute;
   width: calc(var(--unit) * 560);
@@ -51,7 +72,6 @@ const cooldown = computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.ins
   color: #ece5d7;
   font-size: calc(var(--unit) * 16);
   line-height: 1.5;
-  pointer-events: none;
 }
 
 .title {
@@ -63,5 +83,15 @@ const cooldown = computeWorldLevelCooldown(worldLevelChangedAt, Temporal.Now.ins
 .tip,
 .cooldown {
   margin: 0 0 calc(var(--unit) * 6);
+}
+
+.close {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
 }
 </style>

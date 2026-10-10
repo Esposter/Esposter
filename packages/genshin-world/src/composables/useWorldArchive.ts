@@ -1,6 +1,8 @@
 import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { EnemyKind } from "#src/models/enemy/EnemyKind";
+import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref } from "vue";
@@ -25,12 +27,14 @@ import { z } from "zod";
 // Is done, as the game opens it, and its progress starts empty, the bag's items and the defeats opening its entries as they
 // Come in
 export const useWorldArchive = ({
+  enemyKindMap,
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
   language,
   screenKind,
 }: {
+  enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   gameDataBaseUrl: string;
@@ -109,7 +113,7 @@ export const useWorldArchive = ({
   });
   // A defeated enemy's entry is opened and its defeat counted
   events.on("defeatEnemy", (enemy) => {
-    const { archiveEntryId } = getEnemyKind(enemy.enemyKindId);
+    const { archiveEntryId } = getEnemyKind(enemyKindMap, enemy.enemyKindId);
     archiveProgressMap.value = openArchiveEntry(archiveProgressMap.value, ArchiveSection.LivingBeings, archiveEntryId);
     archiveKillsMap.value = countArchiveDefeat(archiveKillsMap.value, archiveEntryId);
   });

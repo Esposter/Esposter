@@ -2,11 +2,15 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
+import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -78,8 +82,11 @@ const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, hei
 
 // Measured: gcsim v2.47.2 (MIT) fischl/burst.go, Midnight Phantasmagoria's circle on the body of radius 0.5
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.5 });
-// Measured: gcsim v2.47.2 (MIT) fischl/skill.go, Oz's spawn strikes a circle of radius 2 on the primary target
-const OZ_SUMMON_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 2 });
+// Measured: gcsim v2.47.2 (MIT) fischl/skill.go, Oz's spawn strikes a circle of radius 2 on the primary target, and each of
+// Its attacks a box a metre long there, priced as a circle of a metre as the arrows are. Oz stands where Fischl cast it, so
+// Both are priced round its body at the skill's reach plus their own
+const OZ_SUMMON_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 2);
+const OZ_ATTACK_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 1);
 
 // Oz's attacks, as a summon's hits, from its spawn at the frame given: one every 59 frames, each 10 frames after its tick
 const createOzAttackHits = (
@@ -92,7 +99,7 @@ const createOzAttackHits = (
   return Array.from({ length: tickCount }, (_tick, index): KitHit => ({
     element: Element.Electro,
     gauge: 1,
-    hitArea: ARROW_HIT_AREA,
+    hitArea: OZ_ATTACK_HIT_AREA,
     hitmarkSeconds: (spawnFrames + firstTickFrames + index * OZ_TICK_INTERVAL_FRAMES + ARROW_TRAVEL_FRAMES) / 60,
     internalCooldownTag: OZ_TICK_INTERVAL_TAG,
     poiseDamage: OZ_POISE_DAMAGE,
@@ -140,6 +147,18 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     poiseDamage: MIDNIGHT_PHANTASMAGORIA_POISE_DAMAGE,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, FISCHL_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
   };
+  const skillOzHits = [ozSummonHit, ...createOzAttackHits(talentMultiplierMap, OZ_SPAWN_FRAMES, OZ_FIRST_TICK_FRAMES)];
+  const burstOzHits = createOzAttackHits(talentMultiplierMap, BURST_OZ_SPAWN_FRAMES, BURST_OZ_FIRST_TICK_FRAMES);
+  // Whether an effect is one of Fischl's Oz: the summon her skill or her burst casts
+  const checkIsOz = (effect: KitEffect, characterId: number): effect is KitSummon =>
+    effect.kind === "summon" &&
+    effect.combatant.characterId === characterId &&
+    (effect.hits === skillOzHits || effect.hits === burstOzHits);
+  // Only one Oz stands, so the skill's or the burst's ends the one before, as gcsim's spawn drops the earlier Oz's attacks
+  const castOz = ({ body, combatant, kitEffectState }: KitStepContext, hits: KitHit[]): void => {
+    kitEffectState.effects = kitEffectState.effects.filter((effect) => !checkIsOz(effect, combatant.characterId));
+    addKitEffect(kitEffectState, createKitSummon(body, combatant, hits));
+  };
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, FISCHL_BURST_GROUP_ID, TALENT_START_LEVEL, 4),
     burstEnergyCost: getTalentMultiplier(talentMultiplierMap, FISCHL_BURST_GROUP_ID, TALENT_START_LEVEL, 5),
@@ -165,29 +184,14 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Midnight Phantasmagoria's hit lands on the body, and Oz spawns at 113 frames from the cast and attacks from there
     elementalBurst: {
       hits: [midnightPhantasmagoria],
-      onStart: ({ body, combatant, kitEffectState }) =>
-        addKitEffect(
-          kitEffectState,
-          createKitSummon(
-            body,
-            combatant,
-            createOzAttackHits(talentMultiplierMap, BURST_OZ_SPAWN_FRAMES, BURST_OZ_FIRST_TICK_FRAMES),
-          ),
-        ),
+      onStart: (context) => castOz(context, burstOzHits),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
     // Oz spawns at 18 frames from the press, lands its summon's hit at 38 and attacks from its first tick
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
-        addKitEffect(
-          kitEffectState,
-          createKitSummon(body, combatant, [
-            ozSummonHit,
-            ...createOzAttackHits(talentMultiplierMap, OZ_SPAWN_FRAMES, OZ_FIRST_TICK_FRAMES),
-          ]),
-        ),
+      onStart: (context) => castOz(context, skillOzHits),
       seconds: SKILL_SECONDS,
       targetingArea: SKILL_TARGETING_AREA,
     },

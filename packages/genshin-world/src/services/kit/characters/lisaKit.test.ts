@@ -10,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { LISA_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -23,6 +24,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const LISA_KIT = createLisaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LISA_CHARACTER_ID]));
 
 const createLisaCombatant = (): Combatant => ({
@@ -68,10 +70,10 @@ describe("lisa kit", () => {
 
   test("stacks Conductive on each enemy its press strikes, up to three", () => {
     expect.hasAssertions();
-    const enemy = { ...createEnemy(ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
+    const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
     const press = takeOne(LISA_KIT.elementalSkill.hits);
 
-    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemy, press, createLisaCombatant(), () => 1);
+    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemyTables, enemy, press, createLisaCombatant(), () => 1);
 
     expect(enemy.statuses.map(({ id, stacks }) => [id, stacks])).toStrictEqual([["conductive", 3]]);
   });
@@ -80,7 +82,7 @@ describe("lisa kit", () => {
     expect.hasAssertions();
     const hold = LISA_KIT.elementalSkillHolds?.[0]?.action;
     const hit = takeOne(hold?.hits ?? []) satisfies KitHit;
-    const enemy = createEnemy(ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     enemy.statuses = [{ damageTakenBonus: 0, id: "conductive", secondsRemaining: Infinity, stacks: 2 }];
 
     const read = readKitStackedHit(enemy, hit);

@@ -3,6 +3,7 @@ import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -37,12 +38,14 @@ import { createSeededRandom } from "genshin-engine";
 // Effects on the team. A defeat places its drops and is a doing the quests count, and a team that falls revives where the
 // Host places it
 export const useWorldCombat = ({
+  enemyTables,
   events,
   gameDataBaseUrl,
   onPartyRevived,
   placeWorldDrops,
   statTables,
 }: {
+  enemyTables: EnemyTables;
   events: WorldEvents;
   gameDataBaseUrl: string;
   onPartyRevived: () => void;
@@ -167,11 +170,11 @@ export const useWorldCombat = ({
     const combatant = activeCombatant.value;
     if (!combatant) return;
     if (taunt) {
-      damageKitTaunt(taunt, computeEnemyStrikeDamage(enemy, combatant));
+      damageKitTaunt(taunt, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
       return;
     }
 
-    strikePartyMember(party, enemy, combatant, kitEffectState);
+    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState);
     respawnParty();
   };
   return {

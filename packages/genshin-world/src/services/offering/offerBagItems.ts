@@ -1,5 +1,6 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingOffer } from "#src/models/offering/OfferingOffer";
@@ -18,6 +19,7 @@ export const offerBagItems = (
   wallet: Wallet,
   progress: OfferingProgress<OfferingLevel>,
   names: Readonly<Record<string, string>>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
 ): OfferingOffer => {
   const offeringItemIds = new Set(progress.levels.filter(({ itemCount }) => itemCount > 0).map(({ itemId }) => itemId));
   const itemCounts: ItemCount[] = Array.from(offeringItemIds, (id) => ({ count: countInventoryItem(items, id), id }));
@@ -27,7 +29,7 @@ export const offerBagItems = (
   let paidWallet = wallet;
   let overflow = 0;
   for (const { itemCount, itemId } of gainedLevels.flatMap(({ rewards }) => rewards)) {
-    const pickUp = pickUpDroppedItem({ count: itemCount, itemId }, inventory, paidWallet, names);
+    const pickUp = pickUpDroppedItem({ count: itemCount, itemId }, inventory, paidWallet, names, materialDataMap);
     inventory = pickUp.inventory;
     paidWallet = pickUp.wallet;
     overflow += pickUp.overflow;

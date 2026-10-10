@@ -307,7 +307,6 @@ export const buildAnimeStudio = async (directory: string, skipParity = false): P
     "Release",
     "-r",
     RUNTIME_IDENTIFIER,
-    STAGING_DIRECTORY_NAME,
     "--self-contained",
     "true",
     "-o",

@@ -1,10 +1,14 @@
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
+import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { ADVENTURE_EXP_ITEM_ID, FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
 import { obtainForgeOrder } from "#src/services/forging/obtainForgeOrder";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
+
+const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(obtainForgeOrder, () => {
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
@@ -27,6 +31,7 @@ describe(obtainForgeOrder, () => {
   const inventory = { items: [], nextId: 1 };
   const obtainArguments = {
     adventureExp: 0,
+    adventureRankTables,
     completedMainQuestIds: new Set<string>(),
     definitions: new Map(),
     inventory,

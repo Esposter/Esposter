@@ -3,6 +3,7 @@ import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { createParty } from "#src/services/party/createParty";
 import { createInput, STAMINA_MAX } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
@@ -30,6 +31,7 @@ export const props = {
   frame: { pivotX: 0.5, pivotY: 0.5, seconds: 0, stamina: STAMINA_MAX },
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
+  interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
   landmarks: [],
   // Provisional: the burst unfilled and the skill off cooldown, read as the recording shows them until the
   // Energy and cooldown the frame holds are measured off a recording of the Traveler's buttons

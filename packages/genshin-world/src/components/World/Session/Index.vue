@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
-import type { StatTables } from "#src/models/character/StatTables";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -9,6 +8,7 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
+import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
 import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
@@ -73,23 +73,22 @@ import { GameTextKey } from "genshin-text";
 import { Euler, Group, MathUtils, PCFShadowMap, Vector3 } from "three";
 import { unref } from "vue";
 
-interface Props extends WorldScreenProps {
-  // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
-  nameText: Readonly<Record<string, string>>;
-  // The game's stat tables, read before the world opens
-  statTables: StatTables;
-}
+interface Props extends WorldScreenProps, WorldTables {}
 
 const {
+  adventureRankTables,
   cameraPose,
   characterPackBaseUrl,
   createTerrainWorker,
+  enemyTables,
   gameDataBaseUrl,
   gameText,
   heldMinutes,
+  hudInterfaceRects,
   isPaused,
   isTuning,
   language,
+  materialDataMap,
   nameText,
   qualityTier,
   regionDataBaseUrl,
@@ -112,8 +111,9 @@ const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
 const screenKind = ref(ScreenKind.World);
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
-// Names are the game's own in the reader's language, and its weapons are read from the stat tables, so both arrive first
-const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTables.weaponDataMap);
+// Names are the game's own in the reader's language, and its weapons and materials are read from the game's tables, so
+// All of them arrive first
+const savedState = readGenshinSave(save ?? EMPTY_GENSHIN_SAVE, nameText, statTables.weaponDataMap, materialDataMap);
 // The cross-system reactions of this screen, one emitter the systems share
 const events = createWorldEvents();
 const {
@@ -143,6 +143,8 @@ const {
   trackedQuestId,
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
+// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
+const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
   adventureExp,
@@ -154,7 +156,9 @@ const {
   worldLevel,
   worldLevelAdjustment,
 } = useWorldAdventureRank({
+  adventureRankTables,
   finishedMainQuestIds,
+  getWorldNow,
   savedAdventureExp: savedState.adventureExp,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
   setWallet,
@@ -162,6 +166,7 @@ const {
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
+  enemyKindMap: enemyTables.enemyKindMap,
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
@@ -209,8 +214,6 @@ const landmarkCollider = createLandmarkCollider();
 const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
-// Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
-const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
 const { achievementData } = useWorldAchievements({
   achievementProgressMap,
@@ -238,6 +241,7 @@ const {
   gameText,
   getWorldNow,
   inventory,
+  materialDataMap,
   nameText,
   serverClockOffsetMs,
   setInventory,
@@ -259,6 +263,7 @@ const {
   strikeParty,
   worldRandom,
 } = useWorldCombat({
+  enemyTables,
   events,
   gameDataBaseUrl,
   onPartyRevived: () => {
@@ -460,6 +465,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :character-id-combatant-map
           :kit-effect-state
           :enemy-map
+          :enemy-tables
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
@@ -489,6 +495,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :kit-effect-state
         :elemental-sight
         :enemy-map
+        :enemy-tables
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
@@ -499,12 +506,20 @@ defineExpose({ jumpTo, readCameraPosition });
         :quest-target-id
         :region-data-base-url
         :world-level
+        :world-level-rows="adventureRankTables.worldLevelRows"
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @ready="emit('ready')"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>
-    <WorldEnemyNameTags :elemental-sight :enemy-map :get-camera :name-text :origin />
+    <WorldEnemyNameTags
+      :elemental-sight
+      :enemy-kind-map="enemyTables.enemyKindMap"
+      :enemy-map
+      :get-camera
+      :name-text
+      :origin
+    />
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
     <HudScreen
       v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
@@ -513,6 +528,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :frame="hudFrame"
       :game-text
       :input
+      :interface-rects="hudInterfaceRects"
       :landmarks="unlockedLandmarks"
       :member="hudMember"
       :name-text-map="nameText"
@@ -535,6 +551,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
+      :server-clock-offset-ms
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
       @quit="emit('quit')"
@@ -620,6 +637,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           :initial-category="ItemCategory.Weapon"
           :inventory
+          :material-data-map
           :names="nameText"
           :wallet
           @close="screenKind = ScreenKind.World"

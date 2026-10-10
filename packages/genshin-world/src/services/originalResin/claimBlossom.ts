@@ -1,5 +1,7 @@
+import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaim } from "#src/models/originalResin/BlossomClaim";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
@@ -19,6 +21,7 @@ import { spendCondensedResin } from "#src/services/originalResin/spendCondensedR
 // EXP and the Companionship EXP left out. Undefined where the offer is not paid or the bag cannot take every item whole,
 // Which keeps the resin or the Condensed Resin in hand
 export const claimBlossom = (
+  adventureRankTables: AdventureRankTables,
   wallet: Wallet,
   inventory: Inventory,
   offer: BlossomClaimOffer,
@@ -27,6 +30,7 @@ export const claimBlossom = (
   completedMainQuestIds: ReadonlySet<string>,
   now: Temporal.Instant,
   names: Readonly<Record<string, string>>,
+  materialDataMap: ReadonlyMap<number, MaterialData>,
   drawReward: () => ItemCount[],
 ): BlossomClaim | undefined => {
   let paid: BlossomClaim | undefined;
@@ -34,7 +38,14 @@ export const claimBlossom = (
     const spentInventory = spendCondensedResin(inventory, kind);
     if (spentInventory) paid = { adventureExp, inventory: spentInventory, wallet };
   } else {
-    const claimedResin = claimOriginalResin(wallet, offer.resin, adventureExp, completedMainQuestIds, now);
+    const claimedResin = claimOriginalResin(
+      adventureRankTables,
+      wallet,
+      offer.resin,
+      adventureExp,
+      completedMainQuestIds,
+      now,
+    );
     if (claimedResin) paid = { adventureExp: claimedResin.adventureExp, inventory, wallet: claimedResin.wallet };
   }
   if (!paid) return undefined;
@@ -43,7 +54,7 @@ export const claimBlossom = (
   for (const { count, id } of Array.from({ length: offer.claimCount }, drawReward).flat())
     if (id === MORA_ITEM_ID) moraCount += count;
     else if (id !== ADVENTURE_EXP_ITEM_ID && id !== COMPANIONSHIP_EXP_ITEM_ID) {
-      const addition = addInventoryItem(claimedInventory, getItemDefinition(id, names), count);
+      const addition = addInventoryItem(claimedInventory, getItemDefinition(id, names, materialDataMap), count);
       if (addition.overflow > 0) return undefined;
       claimedInventory = addition.inventory;
     }

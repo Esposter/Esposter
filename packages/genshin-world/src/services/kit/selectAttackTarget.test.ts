@@ -2,13 +2,19 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { KitBody } from "#src/models/kit/KitBody";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { describe, expect, test } from "vitest";
 
-const createEnemyAt = (x: number, z: number): Enemy => ({ ...createEnemy(ENEMY_CAMP_MEMBER, ""), position: { x, z } });
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const createEnemyAt = (x: number, z: number): Enemy => ({
+  ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  position: { x, z },
+});
 
 describe(selectAttackTarget, () => {
   const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };

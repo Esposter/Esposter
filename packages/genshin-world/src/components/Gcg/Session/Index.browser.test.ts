@@ -41,7 +41,13 @@ describe("gcgSession", () => {
     await new Promise<void>((resolve) => {
       onLeave.mockImplementation(resolve);
       render(GcgSession, {
-        props: { gameId: -1, gameText: ENGLISH_GAME_TEXT, language: GameLanguage.English, onLeave },
+        props: {
+          gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+          gameId: -1,
+          gameText: ENGLISH_GAME_TEXT,
+          language: GameLanguage.English,
+          onLeave,
+        },
       });
     });
 

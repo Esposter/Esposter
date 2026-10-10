@@ -333,34 +333,41 @@ pnpm graph:gen
 
 ### Review Collector
 
-Three branches, each written by exactly one actor, turn a stream of AI-authored commits into reviewed releases
-without anyone waiting on anyone. Sessions push to `ai/queue` as fast as they commit. The review collector — a
-GitHub Actions workflow fired by every `ai/queue` push and every CodeRabbit review — drains the open findings,
-ports the largest window under CodeRabbit's file cap onto `develop`, and replies on each thread with the pushed
-sha. A review that comes back clean merges `develop` to `main` itself, and the push to `main` runs the same
-collector, which fast-forwards `develop` back onto it. A window is budgeted in **files** and spent on
-**findings**, so a commit that claims nothing in it needs a reviewer carries that claim as a trailer, and the
-collector cuts it straight to `main` once the checks pass on it — rather than letting a folder sweep occupy a
-window it will return nothing from. An external contributor's pull request enters at the same door: opened
-against `ai/queue` — never `main`, whose only pull request is the release, since any other spends the slot on
-arrival — and squash-merged onto the queue by a maintainer, where the collector cuts it like any session commit.
-The design and its fine print live in
+AI sessions commit faster than any reviewer reads, and nothing between a commit and a reviewed release waits on a
+person. Each session pushes the one permanent `ai/queue` branch with `pnpm ai:queue:push`. The review collector — a
+GitHub Actions workflow fired by queue pushes, CodeRabbit's status, reviews and comments, a window merging, and a
+red `main` — cuts the queue into windows, each a `review/<n>` pull request under the plan's file cap, stacked so
+the bottom one is based on `main` and each later one on the window below, with no more of them open, or opened
+within the hour, than the plan's hourly figure. CodeRabbit reviews each window once, on creation. The bottom window
+merges as soon as its review completes, whatever it found. A drain session holding no credential then fixes or
+rejects every finding onto `ai/review-fixes`, and each rejection is replied to at once. The fixes lead the next
+window, `ai/queue` is rewritten onto them, and every fixed thread's `Agreed, fixed in <sha>` reply goes out when
+that window opens. A commit carrying an `Express:` trailer — its claim that nothing in it needs a reviewer — goes
+straight to `main` unverified, and a red `main` is repaired; a push to `main` fast-forwards `develop` onto it once
+the stack is empty. A review skipped or rate limited is asked for again, and a hold that lifts on a clock schedules
+its own wake, so no stage needs a person to restart it. An external contributor's pull request enters at the same
+door: opened from an `external/*` branch against `ai/queue` — never `main`, where it would spend one of the plan's
+hourly reviews on arrival — and squash-merged onto the queue by a maintainer, where the collector cuts it like any
+session commit.
+The design, the plan's figures and the fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
 flowchart LR
-  S[AI sessions<br/>commit continuously] -->|git push| Q[(ai/queue)]
-  Q -->|push event| C{{Review collector<br/>gates, drains, ports}}
-  C -->|largest window<br/>under the cap| D[(develop)]
-  C -->|express: claims no review,<br/>checks agree| M
-  D -->|pull request synchronized| R[CodeRabbit review<br/>one slot per hour]
-  R -->|review submitted| C
-  C -->|fixes parked| F[(ai/review-fixes)]
-  F -->|lead the next window| D
-  D -->|review clean at the head| M[(main)]
-  P[External contributor<br/>external/* branch, PR squash-merged] -->|one commit| Q
-  M -->|push event| C
-  C -->|fast-forward after the merge<br/>fold what landed there into the next window| D
+  S[AI sessions] -->|pnpm ai:queue:push| Q[(ai/queue)]
+  P[External contributor<br/>external/* PR, squash-merged] --> Q
+  Q -->|push event| C{{Review collector}}
+  C -->|cut under the cap, stacked,<br/>up to the hourly figure| W[review/n pull requests]
+  W -->|opened| R[CodeRabbit<br/>one review per window]
+  R -->|status completed| C
+  R -->|skipped or rate limited| C
+  C -->|ask once, or sleep to the deadline| R
+  C -->|bottom window merged| M[(main)]
+  C -->|drain: fix or reject every finding| F[(ai/review-fixes)]
+  F -->|leads the next window,<br/>ai/queue rewritten onto it| Q
+  C -->|a reply on every thread| W
+  C -->|Express commits, unverified| M
+  M -->|push event, or CI red on its head:<br/>fast-forward develop, repair the head| C
 ```
 
 ## <a name="packages">📦 Packages</a>

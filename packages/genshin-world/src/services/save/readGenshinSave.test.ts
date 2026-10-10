@@ -88,19 +88,21 @@ describe(readGenshinSave, () => {
 
   test("reads a save back to the same save once written", () => {
     expect.hasAssertions();
-    expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP))).toStrictEqual(
+    expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       EMPTY_GENSHIN_SAVE,
     );
   });
 
   test("reads every system a save holds back to the same save once written", () => {
     expect.hasAssertions();
-    expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP))).toStrictEqual(POPULATED_SAVE);
+    expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
+      POPULATED_SAVE,
+    );
   });
 
   test("reads a bag's forged and wished weapons back as weapons, each named and rarity from its own data", () => {
     expect.hasAssertions();
-    expect(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP).inventory).toStrictEqual({
+    expect(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()).inventory).toStrictEqual({
       items: [
         {
           definition: {

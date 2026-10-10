@@ -1,22 +1,28 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { Currency } from "#src/models/inventory/Currency";
 import { computeAdventureExpAtRank } from "#src/services/adventureRank/computeAdventureExpAtRank";
 import { MAX_ADVENTURE_RANK, MORA_PER_EXCESS_ADVENTURE_EXP } from "#src/services/adventureRank/constants";
+import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { describe, expect, test } from "vitest";
 import { computed, ref } from "vue";
 
+const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
+
 describe(useWorldAdventureRank, () => {
-  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map());
+  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map());
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
-  const maxAdventureExp = computeAdventureExpAtRank(MAX_ADVENTURE_RANK);
+  const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
   const GAIN = 100;
 
   const createAdventureRank = (savedAdventureExp: number, finishedMainQuestIds: ReadonlySet<number>) => {
     const wallet = ref(savedState.wallet);
     const adventureRank = useWorldAdventureRank({
+      adventureRankTables,
       finishedMainQuestIds: computed(() => finishedMainQuestIds),
+      getWorldNow: () => Temporal.Now.instant(),
       savedAdventureExp,
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
       setWallet: (nextWallet) => {

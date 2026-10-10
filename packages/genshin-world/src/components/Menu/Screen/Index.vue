@@ -18,6 +18,8 @@ interface Props {
   // Whether the World Level can be lowered or restored now, and whether it is lowered
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The server's clock minus this machine's, which the World Level's cooldown is read against
+  serverClockOffsetMs?: number;
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;
 }
@@ -40,6 +42,7 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
     :game-text
     :is-world-level-adjustable
     :is-world-level-lowered
+    :server-clock-offset-ms
     :world-level
     :world-level-changed-at
     @close="screenKind = ScreenKind.World"

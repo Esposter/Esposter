@@ -16,8 +16,13 @@ export const TRACE_NODES_SCRIPT = `
       const { object } = renderObject;
       const { geometry } = object;
       const vertexCount = geometry?.attributes?.position?.count ?? 0;
-      const color = object.material?.color ? " #" + object.material.color.getHexString() : "";
-      const pass = material === object.material ? "" : " in a pass material";
+      // A grouped mesh holds a material per group and draws each in its own, so a draw is the object's own when its
+      // Material is any of them, and its colour is that group's
+      const ownMaterials = [object.material].flat();
+      const isOwnMaterial = ownMaterials.includes(material);
+      const colorMaterial = isOwnMaterial ? material : ownMaterials[0];
+      const color = colorMaterial?.color ? " #" + colorMaterial.color.getHexString() : "";
+      const pass = isOwnMaterial ? "" : " in a pass material";
       builds.set(builder, {
         detail: object.type + " " + (object.name || geometry?.type) + " " + vertexCount + " vertices" + color + pass,
         label: material.type,

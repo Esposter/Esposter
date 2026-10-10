@@ -1,5 +1,7 @@
+import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCampMember } from "#src/models/enemy/EnemyCampMember";
+import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeSpawnLevel } from "#src/services/adventureRank/computeSpawnLevel";
@@ -12,12 +14,14 @@ import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 // A camp member as it spawns under a World Level: idle at its spawn, its health and poise full, no element on it and no
 // Hit yet, at the level its World Level raises it to
 export const createEnemy = (
+  { enemyKindMap, enemyLevelCurves }: EnemyTables,
+  worldLevelRows: readonly WorldLevelRow[],
   { enemyKindId, id, level, patrol, position }: EnemyCampMember,
   campId: string,
   worldLevel = 0,
 ): Enemy => {
-  const spawnLevel = computeSpawnLevel(level, worldLevel);
-  const { maxHealth } = computeEnemyStats(getEnemyKind(enemyKindId), spawnLevel);
+  const spawnLevel = computeSpawnLevel(worldLevelRows, level, worldLevel);
+  const { maxHealth } = computeEnemyStats(enemyLevelCurves, getEnemyKind(enemyKindMap, enemyKindId), spawnLevel);
   const { length } = PoiseTypeSettingsMap[EnemyKindTraitsMap[enemyKindId].poiseType];
   return {
     attackCooldownSeconds: 0,

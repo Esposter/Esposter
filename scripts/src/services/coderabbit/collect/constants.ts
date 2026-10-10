@@ -118,9 +118,11 @@ export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 // Answered. The basis is what every attempt's marker names (`getMarker`): a count that outlived the collector code
 // That failed it would leave the work waiting on a person to reset a number.
 export const SESSION_ATTEMPT_CAP = 3;
-// The tree the collector's own source lives in, whose hash at the run's start is the basis every attempt count
-// Names — a change to any of it is a fresh turn for whatever failed under the old
-export const COLLECTOR_SOURCE_PATH = "scripts";
+// The tree whose hash at the run's start is the basis every attempt count names — a change to any of it is a fresh
+// Turn for whatever failed under the old. The collector's own services rather than the `scripts` package around
+// Them: the queue's sessions change `scripts` on most pushes, and a basis that moved with them would hand every
+// Capped step a fresh turn on every run
+export const COLLECTOR_SOURCE_PATH = "scripts/src/services/coderabbit";
 // Hidden markers in pull request comments — the collector's durable memory for what a commit cannot carry
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
 // Claude Code's own limit, which is not this review's problem and not counted against the attempt cap. The

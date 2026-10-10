@@ -1,13 +1,17 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
 import { EnemyDropFamilyDropTableMap } from "#src/services/enemy/EnemyDropFamilyDropTableMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
 describe(computeEnemyDrops, () => {
-  const enemyKind = getEnemyKind(EnemyKindId.HilichurlFighter);
+  const enemyKind = getEnemyKind(enemyTables.enemyKindMap, EnemyKindId.HilichurlFighter);
   const { materials } = EnemyDropFamilyDropTableMap[EnemyDropFamily.Hilichurls];
 
   test("drops the least Mora of its band, and a material's fraction as the chance of one more", () => {

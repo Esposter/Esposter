@@ -1,4 +1,9 @@
-import { OXFMT_BINARY_PATH, OXFMT_CONFIGURATION_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import {
+  MAX_BUFFER_BYTES,
+  OXFMT_BINARY_PATH,
+  OXFMT_CONFIGURATION_PATH,
+  REPOSITORY_ROOT,
+} from "#src/services/shared/constants";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -9,7 +14,12 @@ export const writeJsonFile = (path: string, value: unknown): void => {
   const formatted = execFileSync(
     process.execPath,
     [OXFMT_BINARY_PATH, `--config=${OXFMT_CONFIGURATION_PATH}`, `--stdin-filepath=${path}`],
-    { cwd: REPOSITORY_ROOT, encoding: "utf8", input: `${JSON.stringify(value, undefined, 2)}\n` },
+    {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      input: `${JSON.stringify(value, undefined, 2)}\n`,
+      maxBuffer: MAX_BUFFER_BYTES,
+    },
   );
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, formatted);
