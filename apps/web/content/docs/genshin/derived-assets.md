@@ -28,7 +28,7 @@ flowchart TD
 
 ## The pipeline
 
-`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (`GENSHIN_ANIMESTUDIO_CLI`, by default under `~/Downloads/AnimeStudio`) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`), so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
+`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (by default the CLI `genshin:animestudio:build` publishes on macOS, or under `~/Downloads/AnimeStudio` on Windows; `GENSHIN_ANIMESTUDIO_CLI` names a CLI kept elsewhere) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`), so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
 
 ```mermaid
 flowchart LR
@@ -147,7 +147,7 @@ Every step runs AnimeStudio through one runner, which fails a run that exits 0 y
 - **Requirements:** .NET 10 and CMake to build. The CLI is published self-contained, so it runs with no `DOTNET_ROOT` however .NET was installed, and the game-running check, which reads Windows' process list, passes on macOS, where the game has no build.
 - **Not on arm64:** FMOD audio, FBX export and HLSL shader decompilation ("AnimeStudio.HLSLDecompiler") are Windows-only or proprietary, so `genshin:assets` steps that need them do not run here.
 
-Then set `GENSHIN_ANIMESTUDIO_CLI` to the printed path (the default is `~/Downloads/AnimeStudio/AnimeStudio.CLI.exe`).
+The macOS default is this published CLI, so setting `GENSHIN_ANIMESTUDIO_CLI` to the printed path is needed only for a CLI kept elsewhere (the Windows default is `~/Downloads/AnimeStudio/AnimeStudio.CLI.exe`).
 
 ### Upstream
 

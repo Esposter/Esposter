@@ -3,6 +3,7 @@ import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
+import { CLI_EXECUTABLE_NAME, PUBLISH_DIRECTORY_NAME, TOOLS_DIRECTORY } from "#src/services/animeStudio/constants";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -21,10 +22,14 @@ export const ASSET_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET
 export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index.tsv");
 // Where each shard of the map's blocks is run from while it is mapped: its symlinked blocks and its own asset map
 export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "shards");
-// AnimeStudio's command line (github.com/Escartem/AnimeStudio), unpacked where the user keeps it. It writes its CAB map
-// Into a `Maps` folder beside its working directory, so it is run from its own folder
+// AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
+// Map is kept, or the one unpacked under Downloads on Windows, unless `GENSHIN_ANIMESTUDIO_CLI` names another. It writes its
+// CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
-  process.env.GENSHIN_ANIMESTUDIO_CLI ?? join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe");
+  process.env.GENSHIN_ANIMESTUDIO_CLI ??
+  (process.platform === "darwin"
+    ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
+    : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
 // The CAB map `map` builds there: every serialized file's block and the files it points into
 export const CAB_MAP_PATH: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps", `${ASSET_MAP_NAME}.bin`);
 // What a type filter is suffixed with to have AnimeStudio export a type's objects without parsing them: a raw export of

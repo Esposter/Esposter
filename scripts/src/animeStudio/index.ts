@@ -1,14 +1,12 @@
 import { buildAnimeStudio } from "#src/services/animeStudio/buildAnimeStudio";
-import { SITE_NAME } from "@esposter/shared";
+import { TOOLS_DIRECTORY } from "#src/services/animeStudio/constants";
 import { defineCommand, runMain } from "citty";
-import { homedir } from "node:os";
-import { join } from "node:path";
 
 await runMain(
   defineCommand({
     args: {
       directory: {
-        default: join(homedir(), SITE_NAME, "tools"),
+        default: TOOLS_DIRECTORY,
         description: "Where the sources, the builds and the published CLI are kept, outside the repository",
         required: false,
         type: "string",
