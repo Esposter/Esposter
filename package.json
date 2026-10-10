@@ -62,6 +62,7 @@
     "ai:sweep:skill-docs": "pnpm -C scripts ai:sweep:skill-docs",
     "ai:sweep:unterminated-results": "pnpm -C scripts ai:sweep:unterminated-results",
     "ai:triage:label": "pnpm -C scripts ai:triage:label",
+    "ai:usage": "pnpm -C scripts ai:usage",
     "ai:unocss:generate": "pnpm -C apps/web ai:unocss:generate",
     "ai:voice-match": "pnpm -C scripts ai:voice-match",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present bench",

@@ -58,6 +58,7 @@
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
     "ai:sweep:unterminated-results": "node src/sweeps/unterminatedResults/index.ts",
     "ai:triage:label": "tsx src/triage/index.ts",
+    "ai:usage": "tsx src/usage/index.ts",
     "ai:voice-match": "node src/voiceMatch/index.ts",
     "bench": "vitest bench --run",
     "build:fresh": "tsx --conditions=source src/buildCache/index.ts",
