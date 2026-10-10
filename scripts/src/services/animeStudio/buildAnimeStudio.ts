@@ -5,7 +5,6 @@ import {
   ANIMESTUDIO_SHA,
   CLI_EXECUTABLE_NAME,
   CLI_PROJECT_PATH,
-  KEPT_MAPS_DIRECTORY_NAME,
   MAPS_DIRECTORY_NAME,
   OOZ_LIBRARY_FILE_NAME,
   PARITY_DIRECTORY_NAME,
@@ -13,6 +12,7 @@ import {
   PARITY_TYPE_EXPORT_ARGUMENTS,
   PUBLISH_DIRECTORY_NAME,
   RUNTIME_IDENTIFIER,
+  STAGING_DIRECTORY_NAME,
   TARGET_FRAMEWORK,
   TEXTURE2DDECODER_LIBRARY_FILE_NAME,
   TEXTURE2DDECODER_REPOSITORY,
@@ -186,7 +186,7 @@ const buildAclLibrary = (projectDirectory: string, output: string): string => {
 const countFiles = (directory: string): number =>
   readdirSync(directory, { recursive: true, withFileTypes: true }).filter((entry) => entry.isFile()).length;
 
-// Exports one reference block with the freshly published CLI, one run per parity type as Windows' counts were taken,
+// Exports one reference block with the freshly staged CLI, one run per parity type as Windows' counts were taken,
 // And compares each type's file count with the table. No run may name an exception
 const checkParityBlock = (cliPath: string, block: string, types: Record<string, number>, directory: string): void => {
   const mismatches: string[] = [];
@@ -230,7 +230,7 @@ const checkParityBlock = (cliPath: string, block: string, types: Record<string, 
   console.log(`${block}: ${JSON.stringify(typeCounts)}, matches Windows`);
 };
 
-// The parity acceptance test, run after publish: each reference block in the table is exported and compared.
+// The parity acceptance test, run on the staged CLI: each reference block in the table is exported and compared.
 // The game's blocks are read from its install, so when they are absent the check fails.
 // It is skipped only with --skip-parity, which prints the reason.
 const checkParity = (cliPath: string, directory: string, skipParity: boolean): void => {
@@ -260,18 +260,16 @@ const checkParity = (cliPath: string, directory: string, skipParity: boolean): v
 // Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
 // So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The directory is
 // Resolved first, since clang++ runs from ACL's source and the printed path is set from anywhere. A rebuild keeps the
-// CAB map, which a map run takes hours to rebuild, and the parity check must pass before the path is returned
+// CAB map, which a map run takes hours to rebuild. The CLI is published to a staging folder and replaces the published
+// One only once the parity check passes, so a failed rebuild leaves the published CLI as it was. The parity runs pass
+// No map, so the staged CLI is checked without the CAB map, which moves over only on the pass
 export const buildAnimeStudio = async (directory: string, skipParity = false): Promise<string> => {
   const outputDirectory = resolve(directory);
   const workDirectory = join(outputDirectory, WORK_DIRECTORY_NAME);
   const publishDirectory = join(outputDirectory, PUBLISH_DIRECTORY_NAME);
-  const keptMapsDirectory = join(outputDirectory, KEPT_MAPS_DIRECTORY_NAME);
-  if (existsSync(join(publishDirectory, MAPS_DIRECTORY_NAME))) {
-    rmSync(keptMapsDirectory, { force: true, recursive: true });
-    renameSync(join(publishDirectory, MAPS_DIRECTORY_NAME), keptMapsDirectory);
-  }
+  const stagingDirectory = join(outputDirectory, STAGING_DIRECTORY_NAME);
   rmSync(workDirectory, { force: true, recursive: true });
-  rmSync(publishDirectory, { force: true, recursive: true });
+  rmSync(stagingDirectory, { force: true, recursive: true });
   mkdirSync(workDirectory, { recursive: true });
 
   const animeStudio = await fetchSource(ANIMESTUDIO_REPOSITORY, ANIMESTUDIO_SHA, workDirectory, "AnimeStudio");
@@ -309,17 +307,21 @@ export const buildAnimeStudio = async (directory: string, skipParity = false): P
     "Release",
     "-r",
     RUNTIME_IDENTIFIER,
+    STAGING_DIRECTORY_NAME,
     "--self-contained",
     "true",
     "-o",
-    publishDirectory,
+    stagingDirectory,
   ]);
-  copyFileSync(oozLibrary, join(publishDirectory, OOZ_LIBRARY_FILE_NAME));
-  copyFileSync(texture2DDecoderLibrary, join(publishDirectory, TEXTURE2DDECODER_LIBRARY_FILE_NAME));
-  copyFileSync(aclMhyLibrary, join(publishDirectory, ACL_MHY_LIBRARY_FILE_NAME));
-  if (existsSync(keptMapsDirectory)) renameSync(keptMapsDirectory, join(publishDirectory, MAPS_DIRECTORY_NAME));
+  copyFileSync(oozLibrary, join(stagingDirectory, OOZ_LIBRARY_FILE_NAME));
+  copyFileSync(texture2DDecoderLibrary, join(stagingDirectory, TEXTURE2DDECODER_LIBRARY_FILE_NAME));
+  copyFileSync(aclMhyLibrary, join(stagingDirectory, ACL_MHY_LIBRARY_FILE_NAME));
+  checkParity(join(stagingDirectory, CLI_EXECUTABLE_NAME), outputDirectory, skipParity);
 
-  const cliPath = join(publishDirectory, CLI_EXECUTABLE_NAME);
-  checkParity(cliPath, outputDirectory, skipParity);
-  return cliPath;
+  const publishedMapsDirectory = join(publishDirectory, MAPS_DIRECTORY_NAME);
+  if (existsSync(publishedMapsDirectory))
+    renameSync(publishedMapsDirectory, join(stagingDirectory, MAPS_DIRECTORY_NAME));
+  rmSync(publishDirectory, { force: true, recursive: true });
+  renameSync(stagingDirectory, publishDirectory);
+  return join(publishDirectory, CLI_EXECUTABLE_NAME);
 };
