@@ -75,10 +75,14 @@ export const PARITY_BACKDROP_FILE = "parity-backdrop.png";
 // Under the same folder by their export folders (`Mesh/<name>.obj`, `Texture2D/<name>.png`)
 export const WITNESS_PATH_PREFIX = "/witness-exports/";
 export const WITNESS_LAYOUT_PATH = "layout.json";
-// The folder holding the installed game's `GenshinImpact_Data`, read from `GENSHIN_GAME_DIRECTORY` so a machine that
-// Installed the game elsewhere points the tooling at it
+// The folder holding the installed game's `GenshinImpact_Data` and its `config.ini`, read from `GENSHIN_GAME_DIRECTORY` so
+// A machine that installed the game elsewhere points the tooling at it. On macOS it defaults to the parity folder's own
+// `game` copy, where the game is kept; elsewhere to the Windows install
 export const GAME_DIRECTORY: string =
-  process.env.GENSHIN_GAME_DIRECTORY ?? String.raw`C:\Program Files\Genshin Impact\Genshin Impact game`;
+  process.env.GENSHIN_GAME_DIRECTORY ??
+  (process.platform === "darwin"
+    ? join(PARITY_DIRECTORY, "game")
+    : String.raw`C:\Program Files\Genshin Impact\Genshin Impact game`);
 export const GAME_EXECUTABLE_NAME = "GenshinImpact.exe";
 export const GAME_EXECUTABLE_PATH: string = join(GAME_DIRECTORY, GAME_EXECUTABLE_NAME);
 // The game lays its interface out for a 1080-pixel-high screen and scales it with the height, so a shot is taken at
