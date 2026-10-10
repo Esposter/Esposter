@@ -12,7 +12,7 @@ Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). Several sessi
 Each Bash command goes through the reader of the [disk-scan guard](/docs/infra/claude-interface/genshin-mods/disk-scan): it is split at its separators, a quoted shell command is read again on its own, and `git -C <dir>` and `git -c key=value` are skipped before the subcommand. `.`, `./`, `:/` and `:/.` are each read as every path of the checkout. A subcommand is refused when it is one of these whole-index forms:
 
 - `add` with `.`, `-A`, `--all`, `-u` or `--update` with no path, or `-N` / `--intent-to-add` with `.` or no path;
-- `reset` with no path, except `--soft`, which moves HEAD alone and leaves the index as it is. A path is one after `--`, or a second operand with no `--`, since git reads the first as a commit or a path and every one after it as a path; a lone operand may be a commit, so it is refused;
+- `reset` with no path, except `--soft`, which moves HEAD alone and leaves the index as it is. A path is one after `--`, or a second operand with no `--`, since git reads the first as a commit or a path and every one after it as a path; a lone operand may be a commit, so it is refused, as `git reset`, unless it is one of the checkout's own pathspecs, which name no commit, so `git reset -q .` is refused as `git reset -- .`;
 - `restore` with `.`, staged or not;
 - `stash` in any form;
 - `checkout .` and `checkout -- .`;
