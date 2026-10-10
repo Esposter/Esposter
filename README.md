@@ -367,9 +367,11 @@ run out and a wake for when the oldest of them age out. Every session runs under
 session that never starts is retried five minutes later, GitHub refusing a request mid-pass — a server error, or a rate
 limit, waited out for as long as GitHub states where it states one — ends the run idle rather than red, a run that fails
 or is killed, or whose wake never dispatched, is woken five minutes later, and a hold that lifts on a clock schedules
-its own wake, so no stage needs a person to restart it. The one red left unwoken is the same step failing on the same
-line in the newest runs, never one GitHub caused or one in the job's setup, which a rerun would only meet again: it gets
-one issue, and the next push or event runs the cycle as usual. Its pace is the review budget's, not its own: each of the
+its own wake, as does a window just opened, for when its review is due, so no stage needs a person to restart it. The
+one red left unwoken is the same step failing on the same line in the newest runs, never one GitHub caused, which a
+rerun would only meet again — one in the job's setup, which GitHub or the network fails for a while, only past a longer
+streak: it gets one issue, opened before the wakes stop, and the next push or event runs the cycle as usual. Its pace
+is the review budget's, not its own: each of the
 plan's hourly reviews (`REVIEWS_PER_HOUR`) carries one window under the cap, so a backlog of hundreds of queue commits
 takes hours to drain. What still needs a person is billing — a CodeRabbit plan or usage credits that refuse every
 review, under which windows keep being cut smaller, and the Claude Code subscription every session runs on; the tokens —
@@ -402,7 +404,7 @@ flowchart LR
   H -->|re-landed or let go: next run at the head it was parked at,<br/>then each new main head or after a wait| Q
   C -->|Express commits, unverified| M
   M -->|push event, or CI red on its head:<br/>fast-forward develop| C
-  C -->|after the walk, or first once a budget held it back, repair each red workflow —<br/>unless the queue's run over the head passes a job it failed, or is still going| M
+  C -->|after the walk, or first once a budget held it back, repair each red workflow —<br/>unless the queue's run over the head passes a job it failed, or is still going,<br/>or, for CodeQL, the queue's head changes every file its alerts name| M
 ```
 
 ## <a name="packages">📦 Packages</a>
