@@ -33,14 +33,18 @@ describe("guardWorkflow", () => {
     ]);
   });
 
-  // A setup step renamed would have its red counted towards a streak again, the cycle held on a checkout GitHub failed
-  test.each([...SETUP_STEP_NAMES])("reads past a red in the collect job's %s step", (stepName) => {
-    expect.hasAssertions();
+  // A setup step renamed would have its red counted towards the shorter streak, the cycle held on a checkout GitHub
+  // Failed for a while
+  test.each([...SETUP_STEP_NAMES])(
+    "counts a red in the collect job's %s step towards the setup's streak",
+    (stepName) => {
+      expect.hasAssertions();
 
-    const lines = readWorkflowLines(runnerName);
+      const lines = readWorkflowLines(runnerName);
 
-    expect(lines.slice(lines.indexOf("  collect:"), lines.indexOf("  retrigger:"))).toContain(
-      `      - name: ${stepName}`,
-    );
-  });
+      expect(lines.slice(lines.indexOf("  collect:"), lines.indexOf("  retrigger:"))).toContain(
+        `      - name: ${stepName}`,
+      );
+    },
+  );
 });

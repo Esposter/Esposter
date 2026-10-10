@@ -3,8 +3,8 @@ export const COLLECTOR_WORKFLOW_FILE = "ReviewCollector.yaml";
 // The collect job's name in a run: the caller's job, then the called workflow's, as GitHub joins them
 export const COLLECT_JOB_NAME = "Run / Collect";
 // The collect job's steps that fetch the code and its toolchain, as the workflow names them. A red in one is GitHub's or
-// The network's, or a token or a tree the guard's own setup and read meet too and wake past — never the collector's
-// Code — so none counts towards a streak
+// The network's as often as a dead token's or a broken tree's — never the collector's code — so their reds keep a
+// Streak of their own, longer than the other's
 export const SETUP_STEP_NAMES: ReadonlySet<string> = new Set([
   "📥 Checkout",
   "📦 Install the collector's projects",
@@ -12,6 +12,9 @@ export const SETUP_STEP_NAMES: ReadonlySet<string> = new Set([
 ]);
 // The collector runs that must have failed alike before the guard stops waking the cycle
 export const GUARD_RED_STREAK = 3;
+// The collector runs that must have failed alike in a setup step before the guard stops waking the cycle: more than the
+// Other streak, since GitHub or the network fails one of those steps for a while and then clears by itself
+export const GUARD_SETUP_RED_STREAK = 6;
 // How many of the newest runs at one status are read for that streak. The API filters by status before it counts, so
 // The runs the caller's filter skipped, most of every run, never use up the bound
 export const GUARD_RUN_LIST_LIMIT = 100;
