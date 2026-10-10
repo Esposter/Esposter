@@ -33,4 +33,12 @@ describe(fitStatueStack, () => {
       { centre: [0.5, 0], height: 1, radii: [1, 1, 1, 1] },
     ]);
   });
+
+  test("reads a flat piece along an axis it spans nothing of as one section of its points", () => {
+    expect.hasAssertions();
+
+    const { sections } = fitStatueStack(toRing(0, 0), { angleCount: 4, axis: [0, 1, 0], sectionHeight: 1 });
+
+    expect(sections.map(({ radii }) => radii.map((value) => Number(value.toFixed(6))))).toStrictEqual([[1, 1, 1, 1]]);
+  });
 });
