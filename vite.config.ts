@@ -50,7 +50,11 @@ const configuration: UserConfig = defineConfig({
         "packages/*/src/index.ts",
         "packages/db-schema/src/generated/**",
       ]),
-      lint: createTask("run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused", [], []),
+      lint: createTask(
+        "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused lint:workflows",
+        [],
+        [],
+      ),
       typecheck: createTask("run-s --continue-on-error typecheck:root typecheck:workspace", ["apps/web/.nuxt/**"], []),
     },
   },

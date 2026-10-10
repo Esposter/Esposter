@@ -272,6 +272,9 @@ catalogs:
     '@jsonforms/vue':
       specifier: ^3.8.0
       version: 3.8.0
+    '@kjanat/actionlint':
+      specifier: ^1.17.0
+      version: 1.17.0
     '@lerna-lite/cli':
       specifier: ^5.6.2
       version: 5.6.2
@@ -925,6 +928,9 @@ importers:
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:packages/shared-node
+      '@kjanat/actionlint':
+        specifier: 'catalog:'
+        version: 1.17.0
       '@lerna-lite/cli':
         specifier: 'catalog:'
         version: 5.6.2(@lerna-lite/publish@5.6.2(@types/node@26.6.4)(conventional-commits-filter@6.0.1)(supports-color@8.1.1))(@lerna-lite/version@5.6.2(@lerna-lite/publish@5.6.2(@types/node@26.6.4)(conventional-commits-filter@6.0.1)(supports-color@8.1.1))(@types/node@26.6.4)(conventional-commits-filter@6.0.1))(@types/node@26.6.4)
@@ -4678,6 +4684,66 @@ packages:
 
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
+
+  '@kjanat-actionlint/actionlint-darwin-arm64@1.17.0':
+    resolution: {integrity: sha512-kB93q6knyWErHnvJdOCf6et16j9tgeLpIYny3KYnoO/qvzI624de2QAK8fgvZvN1XElmuqXE8zea5Uui7BiKoQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@kjanat-actionlint/actionlint-darwin-x64@1.17.0':
+    resolution: {integrity: sha512-Eh+pD63DkrPWNOTr1dACvDcJ4Brf8hPIvLrrd8bvZOQUXyIVc2rZ4QgWn1sTG24c0BQxHStgcSKCk4ZRUUOaIQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@kjanat-actionlint/actionlint-freebsd-ia32@1.17.0':
+    resolution: {integrity: sha512-Sr209gtHyUbqAfPzYmxIKqIm8Mm2l3SFIWPTOQQWWUuj/m6IuyTKOXrQfvftcr2obDXbFq5L+IFNfRwQz6OvHg==}
+    cpu: [ia32]
+    os: [freebsd]
+
+  '@kjanat-actionlint/actionlint-freebsd-x64@1.17.0':
+    resolution: {integrity: sha512-9S1XdFePaZgB4BPgiXr1HgrLheYlV4huwLxraRhZl6TzbFx6ngFBa4GaIwLVFcGqsFGl9PV0v0bViT5uWOcTQg==}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@kjanat-actionlint/actionlint-linux-arm64@1.17.0':
+    resolution: {integrity: sha512-gXwplEN84mc/iyIgD6UmL8w0Gs5C+xQnUWF/l1Yi5wXz02CLzxRWy87vnlSOewoejeVGUyS137WKyt/xPDvRww==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@kjanat-actionlint/actionlint-linux-arm@1.17.0':
+    resolution: {integrity: sha512-R4f+XuIFGNIo6gwK7Ha1OCehBrxQLEmzpqEdg7KCTxl8X6zt6svaItjyWigwnryZT9wK7tjpG6j3Wm4dJEoSGA==}
+    cpu: [arm]
+    os: [linux]
+
+  '@kjanat-actionlint/actionlint-linux-ia32@1.17.0':
+    resolution: {integrity: sha512-/yuoz9xU6JhkHwlNcZwA22qp/G/joHagElS8fiN/fVhNWYmY9xaZfOW29ae/eSMBmOPiEcMsEjXYxyd8AHgZSw==}
+    cpu: [ia32]
+    os: [linux]
+
+  '@kjanat-actionlint/actionlint-linux-x64@1.17.0':
+    resolution: {integrity: sha512-NpRSVyKuBd4yizECmaEkjVQmQwvTR8gOpDqm/DL5+E3pXmyt201QJ1IUWhsYFLVn+2MlVolWKaP/8UIPYkvPTQ==}
+    cpu: [x64]
+    os: [linux]
+
+  '@kjanat-actionlint/actionlint-win32-arm64@1.17.0':
+    resolution: {integrity: sha512-ew0OEIcsCV9m+SBt5jekbumV9wgQ4GnMq/NOaXDT7BkXfy5kA4uIy5LGzelGVixccEAze8ClJ/x2l2rHZTFrvg==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@kjanat-actionlint/actionlint-win32-ia32@1.17.0':
+    resolution: {integrity: sha512-pQkRrUZ5vPpjdESitC+eiEDI0HFo4oFrbYUkz92VWjTtz/GKO2FrcvmKArAMZ2sqqGMUQVmkMA0MPb51DU6bkw==}
+    cpu: [ia32]
+    os: [win32]
+
+  '@kjanat-actionlint/actionlint-win32-x64@1.17.0':
+    resolution: {integrity: sha512-d7P0FeO7TWYJL7zyxn2+KOmH5xpqsopvUlm08rdajETsc7kdzpj0fjy057ysRYC2jbQkMxi/9Oha4yZ/cidnYQ==}
+    cpu: [x64]
+    os: [win32]
+
+  '@kjanat/actionlint@1.17.0':
+    resolution: {integrity: sha512-FW1ggmACLgv1nB/sACgYJh2/4NXY78sSoEhx8XCEr9NcVNG5kQtA8Lv1dNQM0Lr/IAHnJXsOmwZjKYafhNTKTg==}
+    engines: {node: '>=18.20.0'}
+    hasBin: true
 
   '@lerna-lite/cli@5.6.2':
     resolution: {integrity: sha512-cGamXFFJR+Dac00RWinK8hd61XCqaN/7AbbMSHtMoh1RvLtHv2HDAdJT8MM673FBKyR7SZsr58JdjRbqHguk5A==}
@@ -9073,6 +9139,9 @@ packages:
   ansis@4.4.0:
     resolution: {integrity: sha512-9k3v7xcHwgdO/DruxGIg4HtjvlAZlcnsX/mzqUb1t3NkYnl9kK2UJ+Gq0io+vQf7iT//BD/HB/NBkUR1LWxoeA==}
     engines: {node: '>=14'}
+
+  ansispeck@0.4.2:
+    resolution: {integrity: sha512-ZIIS0aQgc1HyhgK3Rru5SgL162D8jpRd39BH84eWDYmyT7eUuMj0Mx5OrKplp1dZJxZ/eQQNuYzkoX9OFnoYtA==}
 
   anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
@@ -17871,6 +17940,55 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
+  '@kjanat-actionlint/actionlint-darwin-arm64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-darwin-x64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-freebsd-ia32@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-freebsd-x64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-linux-arm64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-linux-arm@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-linux-ia32@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-linux-x64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-win32-arm64@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-win32-ia32@1.17.0':
+    optional: true
+
+  '@kjanat-actionlint/actionlint-win32-x64@1.17.0':
+    optional: true
+
+  '@kjanat/actionlint@1.17.0':
+    dependencies:
+      ansispeck: 0.4.2
+    optionalDependencies:
+      '@kjanat-actionlint/actionlint-darwin-arm64': 1.17.0
+      '@kjanat-actionlint/actionlint-darwin-x64': 1.17.0
+      '@kjanat-actionlint/actionlint-freebsd-ia32': 1.17.0
+      '@kjanat-actionlint/actionlint-freebsd-x64': 1.17.0
+      '@kjanat-actionlint/actionlint-linux-arm': 1.17.0
+      '@kjanat-actionlint/actionlint-linux-arm64': 1.17.0
+      '@kjanat-actionlint/actionlint-linux-ia32': 1.17.0
+      '@kjanat-actionlint/actionlint-linux-x64': 1.17.0
+      '@kjanat-actionlint/actionlint-win32-arm64': 1.17.0
+      '@kjanat-actionlint/actionlint-win32-ia32': 1.17.0
+      '@kjanat-actionlint/actionlint-win32-x64': 1.17.0
+
   '@lerna-lite/cli@5.6.2(@lerna-lite/publish@5.6.2(@types/node@26.6.4)(conventional-commits-filter@6.0.1)(supports-color@8.1.1))(@lerna-lite/version@5.6.2(@lerna-lite/publish@5.6.2(@types/node@26.6.4)(conventional-commits-filter@6.0.1)(supports-color@8.1.1))(@types/node@26.6.4)(conventional-commits-filter@6.0.1))(@types/node@26.6.4)':
     dependencies:
       '@lerna-lite/core': 5.6.2(@types/node@26.6.4)
@@ -22945,6 +23063,8 @@ snapshots:
   ansi-styles@7.0.0: {}
 
   ansis@4.4.0: {}
+
+  ansispeck@0.4.2: {}
 
   anymatch@3.1.3:
     dependencies:

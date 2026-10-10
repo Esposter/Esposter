@@ -49,6 +49,7 @@ The argument for a job's shape lives in the page that owns it ("Owned elsewhere"
 
 ## Owned elsewhere — pointers, not copies
 
+- **Whether a workflow parses at all** — `pnpm lint:workflows`, actionlint as a leaf of the root `lint` (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Workflow lint").
 - **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts` ("Key Rules").
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates` (`references/github-actions.md`).
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.

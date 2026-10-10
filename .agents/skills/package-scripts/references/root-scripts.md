@@ -24,6 +24,11 @@ reported), and part of `lint`. A dependency only reached through an auto-import 
 listed in `ignoreDependencies`, never kept by an import that exists to satisfy it; a component nothing renders is
 not something knip can see, and `apps/web`'s unrendered-component test is.
 
+`pnpm lint:workflows` is actionlint over `.github/workflows`, and part of `lint`: the fork published as
+`@kjanat/actionlint`, run with ShellCheck and pyflakes off so no host's `PATH` changes the verdict. Why each of
+those, and why a broken workflow is this check's to catch rather than the collector's, is
+`apps/web/content/docs/architecture/monorepo-tooling.md` ("Workflow lint").
+
 The `ai:<domain>:<verb>` entries are the scripts no human types, named by audience — the rule is the
 `skill-authoring` skill's (`references/embedded-recipes.md`). Which ones exist and what each prints, read when a
 sweep or a review needs its script: `references/ai-scripts.md`.
