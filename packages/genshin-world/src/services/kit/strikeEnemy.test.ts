@@ -2,6 +2,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitHit } from "#src/models/kit/KitHit";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -24,7 +25,7 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
 

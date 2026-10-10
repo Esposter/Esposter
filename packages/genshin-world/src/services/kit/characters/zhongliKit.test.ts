@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Elements } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -15,7 +16,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ZHONGLI_KIT = createZhongliKit(await readTalentMultipliers([ZHONGLI_CHARACTER_ID]));
+const ZHONGLI_KIT = createZhongliKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ZHONGLI_CHARACTER_ID]));
 
 const createZhongliCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,

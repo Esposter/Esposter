@@ -1,5 +1,6 @@
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_AGGRO_RANGE } from "#src/services/enemy/constants";
@@ -12,7 +13,7 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 const createTaunt = (x: number, health: number): KitTaunt => ({
   body: { facing: 0, height: 0, position: { x, z: 0 } },
   combatant: {

@@ -9,8 +9,9 @@ import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Writes each character's multipliers and labels as a chunk of its own, and the loader map the world imports the
-// Multipliers through. Both folders are rewritten whole, so a character gone from the dump leaves no chunk behind
+// Writes each character's multipliers and labels as a file of its own, and the loader map whose entries read each
+// Character's multipliers from the hosted index. Both folders are rewritten whole, so a character gone from the dump
+// Leaves no file behind
 export const writeTalentTables = (talentTables: readonly TalentTables[]): void => {
   for (const directory of [TALENT_MULTIPLIER_GENERATED_DIRECTORY, TALENT_LABEL_GENERATED_DIRECTORY]) {
     rmSync(directory, { force: true, recursive: true });

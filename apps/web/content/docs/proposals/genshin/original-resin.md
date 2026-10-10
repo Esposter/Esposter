@@ -42,7 +42,7 @@ flowchart TD
 
 ## Scope and order
 
-**Built:** the resin, its regeneration, refills, a claim's price and Adventure EXP, and a blossom's ways to pay, on the [as-built page](/docs/genshin/original-resin). Also built: a Condensed Resin's spend for three claims (`spendCondensedResin`), and a claim's rewards drawn and taken in as one rule (`claimBlossom`, with the shared `drawRewardItems`).
+**Built:** the resin's rules, on the [as-built page](/docs/genshin/original-resin). Also built: a Condensed Resin's spend for three claims (`spendCondensedResin`), and a claim's rewards drawn and taken in as one rule (`claimBlossom`, with the shared `drawRewardItems`).
 
 **This still adds:** the claim's offer on F, its one step left. It waits on the ley line outcrops' blossom, which the world does not place yet.
 

@@ -320,7 +320,13 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Guia",
   "UI_TEXT_QUEST_GUIDE_LABEL": "Viajante",
   "UI_TRAININGGUIDE_TITLE": "Guia de Treinamento",
+  "UI_WORLDLEVEL_ADJUST_CD_HINT": "É possível ajustar o Nível do Mundo depois de {0}h e {1}m.",
+  "UI_WORLDLEVEL_ADJUST_DOWN_TIPS": "Após a confirmação, o Nível do Mundo será reduzido em 1.\n·O nível dos inimigos encontrados no mundo será reduzido;\n·As recompensas dropadas pelas Flores de Linha Ley e pelos inimigos serão reduzidas.\n·Não será possível ajustar o Nível do Mundo novamente nas 24 horas após ele ter sido alterado.",
+  "UI_WORLDLEVEL_ADJUST_TITLE": "Ajustar Nível do Mundo",
+  "UI_WORLDLEVEL_ADJUST_UP_TIPS": "Após a confirmação, o Nível do Mundo será restaurado para o nível original.\n·O nível dos inimigos encontrados no mundo será aumentado;\n·As recompensas dropadas pelas Flores de Linha Ley e pelos inimigos serão aumentadas para o Nível de Mundo correspondente.\n·Não será possível ajustar o Nível do Mundo novamente nas 24 horas após ele ter sido alterado.",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Diminuir Nível do Mundo",
   "UI_WORLDLEVEL_TITLE": "Nível do Mundo",
+  "UI_WORLDLEVEL_UP_BUTTON": "Restaurar Nível do Mundo",
   "VIDEO_RETREAT": "Voltar",
   "tips_enter_game": "%s, seja bem-vindo(a)"
 }

@@ -1,5 +1,12 @@
 {
   "extends": "../configuration/tsconfig.vue.json",
   "compilerOptions": { "types": ["@webgpu/types"] },
-  "include": ["../configuration/types/*.d.ts", "*.ts", "parity/**/*.ts", "src/**/*.ts", "src/**/*.vue"]
+  "include": [
+    "../configuration/types/*.d.ts",
+    "*.ts",
+    "parity/**/*.ts",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.vue"
+  ]
 }

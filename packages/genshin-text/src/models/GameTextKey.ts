@@ -393,9 +393,15 @@ export enum GameTextKey {
   WitheringPurpurbloom = "1419660612",
   Wolvendom = "3611930813",
   WorldLevel = "UI_WORLDLEVEL_TITLE",
+  // The World Level panel that opens on the profile card's button: its title, the hint of the cooldown left, and what
+  // Lowering or restoring the World Level does
+  WorldLevelAdjustTitle = "UI_WORLDLEVEL_ADJUST_TITLE",
+  WorldLevelCooldownHint = "UI_WORLDLEVEL_ADJUST_CD_HINT",
   // The profile card's World Level button: lowering it by one, and restoring it once lowered
   WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
+  WorldLevelLowerTips = "UI_WORLDLEVEL_ADJUST_DOWN_TIPS",
   WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
+  WorldLevelRevertTips = "UI_WORLDLEVEL_ADJUST_UP_TIPS",
   ZaytunPeach = "492153948",
 }
 

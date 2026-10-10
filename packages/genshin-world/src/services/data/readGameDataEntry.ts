@@ -1,3 +1,4 @@
+import type { GameDataIndexKey } from "#src/models/data/GameDataIndexKey";
 import type { z } from "zod";
 
 import { gameDataIndexSchema } from "#src/models/data/GameDataIndex";
@@ -9,11 +10,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Not name is a missing entry rather than a fetch of a guessed object
 export const readGameDataEntry = async <T>(
   gameDataBaseUrl: string,
-  indexKey: string,
+  indexKey: GameDataIndexKey,
   entryId: string,
   schema: z.ZodType<T>,
 ): Promise<T> => {
-  const indexHash = gameDataLock.indexes[indexKey];
+  const indexHash: string | undefined = gameDataLock.indexes[indexKey];
   if (indexHash === undefined)
     throw new InvalidOperationError(Operation.Read, indexKey, "is not in the game data lock");
   const index = gameDataIndexSchema.parse(await readGameDataObject(gameDataBaseUrl, indexHash));

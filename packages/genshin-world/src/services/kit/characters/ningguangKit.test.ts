@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NINGGUANG_CHARACTER_ID, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -16,8 +17,10 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const NINGGUANG_KIT = createNingguangKit(await readTalentMultipliers([NINGGUANG_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const NINGGUANG_KIT = createNingguangKit(
+  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NINGGUANG_CHARACTER_ID]),
+);
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const createNingguangCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,

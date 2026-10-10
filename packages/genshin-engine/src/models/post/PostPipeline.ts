@@ -4,7 +4,8 @@ import type { RenderPipeline } from "three/webgpu";
 
 // The pipeline, the passes whose own uniforms the tuning panel reaches (a pass the tier leaves out is absent), and the
 // Release of the pipeline with every pass it draws through, since the pipeline's own releases only its quad's material.
-// The scene's pipelines, outlines included, compile before a frame first draws them, so a host awaits this before it shows
+// Awaiting `compileAsync` draws every object of the scene once, unseen, outlines included, and waits for the GPU to finish
+// It, so a host awaits it before it shows and nothing it shows builds a material or a pipeline mid-frame
 export interface PostPipeline {
   bloomNode?: BloomNode;
   compileAsync: () => Promise<void>;

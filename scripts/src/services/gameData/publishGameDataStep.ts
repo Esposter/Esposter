@@ -1,5 +1,5 @@
 import type { GameDataPublication } from "#src/models/gameData/GameDataPublication";
-import type { GameDataset } from "genshin-world";
+import type { GameDataScope } from "#src/models/gameData/GameDataScope";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import { GameDataTarget } from "#src/models/gameData/GameDataTarget";
@@ -11,7 +11,7 @@ import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 interface PublishGameDataStepOptions {
   isDryRun: boolean;
   publication: GameDataPublication;
-  scopes: GameDataset[];
+  scopes: GameDataScope[];
 }
 
 // One generator's publish: the scopes it replaces are stored in both accounts, and the lock is committed only once both have

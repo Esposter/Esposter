@@ -320,7 +320,13 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "Guide",
   "UI_TEXT_QUEST_GUIDE_LABEL": "{M#Voyageur}{F#Voyageuse}",
   "UI_TRAININGGUIDE_TITLE": "Guide d'amélioration",
+  "UI_WORLDLEVEL_ADJUST_CD_HINT": "Attendez encore {0} h {1} min pour modifier à nouveau",
+  "UI_WORLDLEVEL_ADJUST_DOWN_TIPS": "Après confirmation, votre Niv. du monde diminuera de 1 :\n· Les ennemis baissent de Niv..\n· Les Fleurs des lignes énergétiques et les ennemis donnent moins de butin.\nUne fois changé, le Niv. du monde ne peut pas être modifié pendant 24 heures.",
+  "UI_WORLDLEVEL_ADJUST_TITLE": "Modifier le Niv. du monde",
+  "UI_WORLDLEVEL_ADJUST_UP_TIPS": "Après confirmation, vous retrouverez votre Niv. du monde d'origine :\n· Les ennemis retrouvent leur Niv. d'origine.\n· Les Fleurs des lignes énergétiques et les ennemis donnent un meilleur butin.\nUne fois changé, le Niv. du monde ne peut pas être modifié pendant 24 heures.",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "Baisser le Niv. du monde",
   "UI_WORLDLEVEL_TITLE": "Niv. du monde",
+  "UI_WORLDLEVEL_UP_BUTTON": "Restaurer le Niv. du monde initial",
   "VIDEO_RETREAT": "Retour",
   "tips_enter_game": "Bienvenue, %s."
 }

@@ -6,6 +6,7 @@ import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { GroundPoint } from "genshin-engine";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -22,7 +23,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const BENNETT_KIT = createBennettKit(await readTalentMultipliers([BENNETT_CHARACTER_ID]));
+const BENNETT_KIT = createBennettKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BENNETT_CHARACTER_ID]));
 
 const readFirstFieldTick = (combatant: Combatant, fieldCharacterId: number, healthShare: number): KitEffect[] => {
   const body = { x: 0, z: 0 };

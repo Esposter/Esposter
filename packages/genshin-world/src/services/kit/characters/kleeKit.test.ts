@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -13,8 +14,8 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KLEE_KIT = createKleeKit(await readTalentMultipliers([KLEE_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const KLEE_KIT = createKleeKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KLEE_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const createKleeCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,

@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NOELLE_CHARACTER_ID } from "#src/services/character/constants";
@@ -12,7 +13,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const NOELLE_KIT = createNoelleKit(await readTalentMultipliers([NOELLE_CHARACTER_ID]));
+const NOELLE_KIT = createNoelleKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NOELLE_CHARACTER_ID]));
 
 describe(healKitParty, () => {
   const NOELLE_HIT = takeOne(NOELLE_KIT.elementalSkill.hits);

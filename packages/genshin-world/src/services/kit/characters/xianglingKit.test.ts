@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -12,7 +13,9 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XIANGLING_KIT = createXianglingKit(await readTalentMultipliers([XIANGLING_CHARACTER_ID]));
+const XIANGLING_KIT = createXianglingKit(
+  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XIANGLING_CHARACTER_ID]),
+);
 
 const createXianglingCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,

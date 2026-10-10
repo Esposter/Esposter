@@ -2,6 +2,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -17,7 +18,7 @@ import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers([TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
 const NEVER_CRITICAL = (): number => 1;
 

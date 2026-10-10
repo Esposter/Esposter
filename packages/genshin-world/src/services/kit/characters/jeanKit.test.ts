@@ -3,6 +3,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -20,7 +21,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const JEAN_KIT = createJeanKit(await readTalentMultipliers([JEAN_CHARACTER_ID]));
+const JEAN_KIT = createJeanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [JEAN_CHARACTER_ID]));
 
 describe(createJeanKit, () => {
   const MAX_HEALTH = 10_000;

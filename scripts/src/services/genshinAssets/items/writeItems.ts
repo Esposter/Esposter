@@ -1,5 +1,6 @@
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
+import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TABLE_FILENAME, MATERIALS_PATH } from "#src/services/genshinAssets/items/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
@@ -7,32 +8,34 @@ import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
+  craftingRecipeSchema,
   EnemyDropFamilyDropTableMap,
   ForgeRecipeKind,
-  readCraftingRecipes,
-  readForgeRecipes,
+  forgeRecipeSchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, and every forge and crafting recipe
 // Takes or yields, each read from the game's Material table with its name's text id, which `genshin:text names` writes
 // Into the name-text chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure
 // EXP is taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon
-// Table. An item the table lacks is an error. Returns the file's path
+// Table. The recipes are the records their steps published, read from the dev account. An item the table lacks is an
+// Error. Returns the file's path
 export const writeItems = async (): Promise<string> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
   );
-  const forgeRecipes = await readForgeRecipes();
+  const forgeRecipes = z.array(forgeRecipeSchema).parse(await readPublishedGameData("forging/recipes"));
   const forgeItemIds = [
     ...forgeRecipes.flatMap(({ materials }) => materials.map(({ id }) => id)),
     ...forgeRecipes
       .filter(({ kind }) => kind !== ForgeRecipeKind.Weapon)
       .flatMap(({ results }) => results.map(({ itemId }) => itemId)),
   ];
-  const craftingRecipes = await readCraftingRecipes();
+  const craftingRecipes = z.array(craftingRecipeSchema).parse(await readPublishedGameData("crafting/recipes"));
   const materialRows = parseMachineJson<MaterialRow[]>(
     await readFile(join(EXCEL_DIRECTORY, MATERIAL_TABLE_FILENAME), "utf8"),
   );

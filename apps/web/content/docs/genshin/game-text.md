@@ -53,7 +53,7 @@ A consumer resolves a language once, loads its chunk once, and indexes the resul
 
 `matchGameLanguage` takes a reader's preference list, most preferred first, and returns the first game language that shares a tag's language and, once both are maximized through `Intl.Locale`, its script: `zh-TW` and `zh-HK` read Traditional Chinese and `zh-CN` Simplified, while `pt-BR` and `en-GB` take the one Portuguese and English the game ships. A tag that is not well formed is skipped rather than thrown on, since a header is anyone's to write, and English is the answer when nothing matches. `getAcceptLanguageTags` turns a header into that list by its quality weights.
 
-An interface string the game fills numbers its values, `{0}` first: a wish's button is `Wish ×{0}` and a bag tab's room `{0} {1}/{2}`. `fillGameTextValues` fills every number at once with the values as they are, so a name holding a replacement pattern is never read as one, and a number with no value is left in place.
+An interface string the game fills numbers its values, `{0}` first: a wish's button is `Wish ×{0}` and a bag tab's room `{0} {1}/{2}`. `fillGameTextValues` fills every number at once with the values as they are, so a name holding a replacement pattern is never read as one, and a number with no value is left in place. A string the game colours is split into runs by `splitGameTextColors`, each run keeping the colour its `<color=#RRGGBBAA>` tag gives it.
 
 ### The /genshin page
 
@@ -82,6 +82,7 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 | `packages/genshin-text/src/services/matchGameLanguage.ts`            | A reader's preference list to the nearest game language, English otherwise                          |
 | `packages/genshin-text/src/services/getAcceptLanguageTags.ts`        | An `Accept-Language` header as tags, most preferred first                                           |
 | `packages/genshin-text/src/services/fillGameTextValues.ts`           | An interface string's numbered values filled at once                                                |
+| `packages/genshin-text/src/services/splitGameTextColors.ts`          | A game string's colour tags split into runs, each with its CSS colour                               |
 | `packages/genshin-text/src/generated/GameTextLoaderMap.ts`           | English bundled, every other language a chunk imported on first use                                 |
 | `scripts/src/services/genshinText/writeGameText.ts`                  | The generator: every key, every language, the persona's copy and its newest lines                   |
 | `scripts/src/services/genshinText/writeQuests.ts`                    | The world's quests, their talks and their words in every language                                   |

@@ -320,7 +320,13 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "ガイド",
   "UI_TEXT_QUEST_GUIDE_LABEL": "旅人",
   "UI_TRAININGGUIDE_TITLE": "育成ガイド",
+  "UI_WORLDLEVEL_ADJUST_CD_HINT": "{0}時間{1}分後に再度調整可能",
+  "UI_WORLDLEVEL_ADJUST_DOWN_TIPS": "調整決定すると、世界ランクが1下がる：\n·世界の敵のレベルが下がる。\n·世界の地脈の花と敵からドロップする報酬が減少する。\n世界ランク調整後の24時間内、再度調整することはできない。",
+  "UI_WORLDLEVEL_ADJUST_TITLE": "世界ランクを調整する",
+  "UI_WORLDLEVEL_ADJUST_UP_TIPS": "調整決定すると、世界ランクが元に戻る：\n·世界の敵のレベルが元の世界ランク時のレベルに上がる。\n·世界の地脈の花と敵からドロップする報酬が元の世界ランク時のレベルに増加する。\n世界ランク調整後の24時間内、再度調整することはできない。",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "世界ランクを下げる",
   "UI_WORLDLEVEL_TITLE": "世界ランク",
+  "UI_WORLDLEVEL_UP_BUTTON": "世界ランクを戻す",
   "VIDEO_RETREAT": "戻る",
   "tips_enter_game": "%s、ようこそ"
 }

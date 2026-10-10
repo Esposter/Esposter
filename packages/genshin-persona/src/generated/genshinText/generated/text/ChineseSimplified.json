@@ -320,7 +320,13 @@
   "UI_TEXT_QUEST_GUIDE_BOOKMARK": "向导",
   "UI_TEXT_QUEST_GUIDE_LABEL": "旅行者",
   "UI_TRAININGGUIDE_TITLE": "提升指南",
+  "UI_WORLDLEVEL_ADJUST_CD_HINT": "{0}小时{1}分后可再次调整",
+  "UI_WORLDLEVEL_ADJUST_DOWN_TIPS": "确认后，世界等级将降低1级：\n·世界上的敌人等级降低；\n·世界上的「地脉之花」与敌人的掉落奖励降低。\n世界等级变动后的24小时内，无法再次调整。",
+  "UI_WORLDLEVEL_ADJUST_TITLE": "调整世界等级",
+  "UI_WORLDLEVEL_ADJUST_UP_TIPS": "确认后，世界等级将恢复至原本的等级：\n·世界上的敌人等级提升至原本世界等级对应的等级；\n·世界上的「地脉之花」与敌人的掉落奖励提升至原本世界等级对应的等级。\n世界等级变动后的24小时内无法再次调整。",
+  "UI_WORLDLEVEL_DOWN_BUTTON": "降低世界等级",
   "UI_WORLDLEVEL_TITLE": "世界等级",
+  "UI_WORLDLEVEL_UP_BUTTON": "还原世界等级",
   "VIDEO_RETREAT": "后退",
   "tips_enter_game": "%s，欢迎进入游戏"
 }

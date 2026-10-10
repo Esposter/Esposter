@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AMBER_CHARACTER_ID } from "#src/services/character/constants";
@@ -11,7 +12,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AMBER_KIT = createAmberKit(await readTalentMultipliers([AMBER_CHARACTER_ID]));
+const AMBER_KIT = createAmberKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AMBER_CHARACTER_ID]));
 
 const createAmberCombatant = (): Combatant => ({
   ascension: 0,

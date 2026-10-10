@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -14,7 +15,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const BARBARA_KIT = createBarbaraKit(await readTalentMultipliers([BARBARA_CHARACTER_ID]));
+const BARBARA_KIT = createBarbaraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BARBARA_CHARACTER_ID]));
 
 describe(createBarbaraKit, () => {
   const MAX_HEALTH = 10_000;

@@ -3,6 +3,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FISCHL_CHARACTER_ID } from "#src/services/character/constants";
@@ -11,7 +12,7 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const FISCHL_KIT = createFischlKit(await readTalentMultipliers([FISCHL_CHARACTER_ID]));
+const FISCHL_KIT = createFischlKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FISCHL_CHARACTER_ID]));
 
 const createFischlCombatant = (): Combatant => ({
   ascension: 0,

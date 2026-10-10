@@ -24,7 +24,9 @@ export const publishGameData = async ({
 }: PublishGameDataOptions): Promise<GameDataPublishResult> => {
   const plan = planGameDataPublication(publication);
   const plannedKeys = [...Object.keys(plan.lock.objects), ...Object.keys(plan.lock.indexes)];
-  const outsideScopeKey = plannedKeys.find((key) => !scopes.some((scope) => scope === takeOne(key.split("/"))));
+  const outsideScopeKey = plannedKeys.find(
+    (key) => !scopes.some((scope) => scope === key || scope === takeOne(key.split("/"))),
+  );
   if (outsideScopeKey !== undefined)
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeGameDataLock(currentLock, scopes, plan.lock);

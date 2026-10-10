@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { LISA_CHARACTER_ID } from "#src/services/character/constants";
@@ -22,7 +23,7 @@ import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const LISA_KIT = createLisaKit(await readTalentMultipliers([LISA_CHARACTER_ID]));
+const LISA_KIT = createLisaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LISA_CHARACTER_ID]));
 
 const createLisaCombatant = (): Combatant => ({
   ascension: 0,
