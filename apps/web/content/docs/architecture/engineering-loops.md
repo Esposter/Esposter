@@ -59,6 +59,7 @@ flowchart TD
 
 | The work                                                   | Enters at                                                                                              |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| A session starting, or picking work back up                | `resuming` skill and `pnpm ai:resume`                                                                  |
 | What is missing from a product, or whether an area is done | `product-review` skill                                                                                 |
 | What to build next, or the low-hanging fruit               | `building-proposals` skill and `pnpm ai:proposals:report`                                              |
 | A feature asked for with no proposal                       | `building-proposals` skill: the written-record check, then the build                                   |
@@ -88,11 +89,12 @@ A loop that finds as much on one pass as it did on the last is not converging. T
 
 A session that finishes a unit of work does not stop to ask whether to go on. It takes up the first of these that exists, runs it to its own stop rule, commits and pushes it, and reads the list again, until the list is empty or the user redirects it. Each one is read off a command rather than a list someone keeps:
 
-1. **Something red.** A failing collector run, or an issue the collector opened for what it routed around — commits parked on `ai/held/*`, findings deferred past the drain's attempts, a red `main` past its repairs (`review-queue` skill) — since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the collector drains them into the next window itself.
-2. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
-3. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
-4. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
-5. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
+1. **This machine's leftovers.** `pnpm ai:resume` lists what an earlier session left on this machine: uncommitted paths, unpushed commits, worktrees, its own stale claims, dead holds, missing plugins. Each one is finished, recorded or released before anything else, since every later step builds on the tree and the claims they hold (`resuming` skill).
+2. **Something red.** A failing collector run, or an issue the collector opened for what it routed around — commits parked on `ai/held/*`, findings deferred past the drain's attempts, a red `main` past its repairs (`review-queue` skill) — since every later piece of work lands on top of it. A review's findings are not on this list otherwise: the collector drains them into the next window itself.
+3. **This repository's follow-ups**, when the follow-ups plugin is installed: the owner wrote each one down, or accepted a session writing it, so it outranks work a session would pick for itself. The plugin's drain skill works them one change at a time to its own stop rule ([TodoList agent follow-ups](/docs/resource/todolist-agent-follow-ups)).
+4. **An area owed a product-review pass**, as `pnpm ai:proposals:report` lists it, so the specs match the shipped surface before anything is built from them.
+5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
+6. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
 
 No step on this list waits for approval, since each one ends in a queue push, which spends nothing and is reviewed by the collector's one release review. What still asks first is whatever spends something outside the queue: opening a pull request, pushing `develop` or `main`, a paid service, or a destructive change to shared infrastructure.
 
@@ -106,6 +108,7 @@ No step on this list waits for approval, since each one ends in a queue push, wh
 | `.agents/skills/code-review/SKILL.md`        | the two review lanes, the stop rule and the meta pass                |
 | `.agents/skills/sweeps/SKILL.md`             | sweeps, ledgers and handing a repeated finding to an enforcer        |
 | `.agents/skills/review-queue/SKILL.md`       | the session's side of the review collector                           |
+| `.agents/skills/resuming/SKILL.md`           | a session's leftovers brought back in sync before new work           |
 | `.agents/skills/skill-authoring/SKILL.md`    | where a lesson goes, and how a skill is kept                         |
 | `scripts/src/proposals/report/index.ts`      | sizes every open proposal and lists the areas owed a pass            |
 | `scripts/src/sweeps/ledgerCoverage/index.ts` | dates every ledger row from commit trailers                          |

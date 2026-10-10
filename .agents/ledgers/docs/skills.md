@@ -45,6 +45,7 @@
 | `readme-standards`        | 2026-10-05 · Opus 5.5 |       |
 | `recreation-tooling`      | 2026-10-07 · Opus 5.5 |       |
 | `responsive`              | 2026-10-05 · Opus 5.5 |       |
+| `resuming`                |                       |       |
 | `review-queue`            | 2026-10-05 · Opus 5.5 |       |
 | `routing`                 | 2026-10-05 · Opus 5.5 |       |
 | `run-app`                 | 2026-10-05 · Opus 5.5 |       |
