@@ -44,6 +44,19 @@ describe(destroyInventoryItems, () => {
     });
   });
 
+  test("returns an entry chosen twice once", () => {
+    expect.hasAssertions();
+
+    const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
+
+    expect(
+      destroyInventoryItems({ items: [weapon], nextId: 1 }, EMPTY_WALLET, [weapon.id, weapon.id], englishNameText),
+    ).toStrictEqual({
+      inventory: { items: [{ definition: getItemDefinition(ORE_ID, englishNameText), id: 1, quantity: 3 }], nextId: 2 },
+      wallet: EMPTY_WALLET,
+    });
+  });
+
   test("returns Mora into the wallet rather than the bag", () => {
     expect.hasAssertions();
 
