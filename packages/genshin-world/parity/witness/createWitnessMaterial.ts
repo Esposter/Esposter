@@ -31,9 +31,12 @@ export const createWitnessMaterial = (
   const tint = color(red, green, blue);
   material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
   // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader clips them
-  if (shader === LEAF_SHADER && diffuse) {
-    material.opacityNode = texture(diffuse).a;
-    material.alphaTest = floats[WitnessProperty.Cutoff] ?? 0;
+  if (shader === LEAF_SHADER) {
+    material.userData.isLeafCard = true;
+    if (diffuse) {
+      material.opacityNode = texture(diffuse).a;
+      material.alphaTest = floats[WitnessProperty.Cutoff] ?? 0;
+    }
   }
   const normal = getTexture(WitnessProperty.NormalMap);
   if (normal) material.normalNode = normalMap(texture(normal));

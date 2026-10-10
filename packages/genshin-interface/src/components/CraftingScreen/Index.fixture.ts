@@ -1,4 +1,5 @@
-// The Condensed Resin picked on the Gadget tab of the Crafting Table clip, crafted one at a time by the second crafter
+// The Condensed Resin picked on the Consumable tab (combine type 6) of the Crafting Table clip, crafted one at a time by
+// The second crafter
 export const props = {
   amount: 1,
   amountLabel: "Quantity",
@@ -21,5 +22,10 @@ export const props = {
   ],
   requiredCoins: 100,
   requiredLabel: "Required",
+  tabId: 6,
+  tabs: [
+    { id: 1, name: "Character and Weapon Enhancement Material" },
+    { id: 6, name: "Consumable" },
+  ],
   title: "Craft",
 };

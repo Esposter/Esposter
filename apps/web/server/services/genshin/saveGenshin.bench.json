@@ -1,0 +1,99 @@
+{
+  "files": [
+    {
+      "filepath": "server/services/genshin/saveGenshin.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.03484589999998207,
+              "name": "stringify",
+              "p99": 0.03958765999994966,
+              "rme": 4.011220447554281,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.49635840000000825,
+              "name": "validate",
+              "p99": 0.7097514700000375,
+              "rme": 12.332660366721269,
+              "sampleCount": 10
+            },
+            {
+              "mean": 10.785741600000028,
+              "name": "request body",
+              "p99": 10.984601030000036,
+              "rme": 0.9832584252617228,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "client stringify and send > 1000 bag entries"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.3629919000000427,
+              "name": "stringify",
+              "p99": 0.39834684000012205,
+              "rme": 3.0333154905879995,
+              "sampleCount": 10
+            },
+            {
+              "mean": 4.1106918000000405,
+              "name": "validate",
+              "p99": 4.89337378000007,
+              "rme": 7.6976342684523065,
+              "sampleCount": 10
+            },
+            {
+              "mean": 102.66469579999998,
+              "name": "request body",
+              "p99": 103.62979677999985,
+              "rme": 0.473236713938207,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "client stringify and send > 9300 bag entries"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.20632100000011633,
+              "name": "PUT under its ETag",
+              "p99": 0.21669325000023038,
+              "rme": 2.0112514645513486,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.1022749999999177,
+              "name": "412, then a rewrite",
+              "p99": 1.2753307199999653,
+              "rme": 6.056497549262932,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "saveGenshin > 1000 bag entries"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.8676374999999552,
+              "name": "PUT under its ETag",
+              "p99": 0.954413030000278,
+              "rme": 3.9094069525309174,
+              "sampleCount": 10
+            },
+            {
+              "mean": 6.803624900000023,
+              "name": "412, then a rewrite",
+              "p99": 7.040937500000023,
+              "rme": 1.7482556217289094,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "saveGenshin > 9300 bag entries"
+        }
+      ]
+    }
+  ]
+}

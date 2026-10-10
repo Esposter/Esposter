@@ -3,5 +3,4 @@
 # Slot and stores it under its key. Usage: bash .agents/skills/throughput/scripts/build-cached.sh <package directory>
 set -euo pipefail
 packageDirectory="$(cd "$1" && pwd)"
-cd "$(dirname "$0")/../../../../scripts"
-exec pnpm exec tsx src/buildCache/index.ts "$packageDirectory"
+pnpm -s -C "$(dirname "$0")/../../../../scripts" build:cached "$packageDirectory"

@@ -44,8 +44,10 @@ export const RIM_STRENGTH = 0.55;
 // Lie, and each layer paints the colour the terrain base maps hold on the faces its own rule paints, as fitted into
 // `surfaces.json`'s `Ground.layers` (a layer no face paints takes the ground's mean). Its layers' weights still place
 // The plants
+// The fit writes only the layers some face paints, so the file holds a few of the ground's layers by name
+const groundLayerColors: Partial<Record<GroundLayer, string>> = surfaces.Ground.layers;
 const getGroundLayerColors = (layer: GroundLayer) => {
-  const color = new Color(surfaces.Ground.layers[layer] ?? surfaces.Ground.color).getHex();
+  const color = new Color(groundLayerColors[layer] ?? surfaces.Ground.color).getHex();
   return { color, patchColor: color };
 };
 export const WINDRISE_GROUND_PAINT: GroundPaint = {

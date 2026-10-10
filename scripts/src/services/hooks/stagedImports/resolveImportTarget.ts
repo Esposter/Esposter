@@ -2,8 +2,21 @@ import type { ImportTarget } from "#src/models/hooks/ImportTarget";
 
 import { posix } from "node:path";
 
-// The suffixes the build probes an import with: the path as written, then the source extensions, then an index file
-const PROBE_SUFFIXES = ["", ".ts", ".mts", ".vue", ".json", "/index.ts", "/index.mts", "/index.vue", "/index.json"];
+// The suffixes the build probes an import with: the path as written, then the source extensions, then an index file.
+// A declaration-only folder (`types/index.d.ts`) is one the build resolves too, so its probe is listed
+const PROBE_SUFFIXES = [
+  "",
+  ".ts",
+  ".mts",
+  ".vue",
+  ".json",
+  ".d.ts",
+  "/index.ts",
+  "/index.mts",
+  "/index.vue",
+  "/index.json",
+  "/index.d.ts",
+];
 
 // The path a `#` specifier names through its package's `imports` map, a pattern's `*` standing for what it captures.
 // Only a string target is a path; a conditions object is not one this resolver reads. Several patterns can match one

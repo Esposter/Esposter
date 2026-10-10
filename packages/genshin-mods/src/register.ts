@@ -7,6 +7,7 @@ import { registerDiskScan } from "./services/diskScan/registerDiskScan";
 import { registerLifecycle } from "./services/registerLifecycle";
 import { registerVeil } from "./services/veil/registerVeil";
 import { registerWard } from "./services/ward/registerWard";
+import { registerWholeIndex } from "./services/ward/registerWholeIndex";
 
 export const register: Register = (on) => {
   registerBand(on);
@@ -16,4 +17,5 @@ export const register: Register = (on) => {
   registerLifecycle(on);
   registerVeil(on);
   registerWard(on);
+  registerWholeIndex(on);
 };

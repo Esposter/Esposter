@@ -1,5 +1,4 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { createGroundLayerClassifier } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
@@ -13,7 +12,7 @@ import { GROUND_RADIUS, WINDRISE_REGION_FILE } from "#src/services/genshinAssets
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
-import { WINDRISE_GROUND_PAINT, WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-world";
+import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-world";
 
 // Windrise's parts fitted as our own generators' parameters, each written as a data file of the world package's: its
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
@@ -36,9 +35,9 @@ export const fitWindriseScene = (only: readonly string[] = [], angleCount?: numb
       surfaces: async () => [
         await writeWorldData(
           "windrise/surfaces.json",
-          await fitSurfaceColours(DerivedAssetComponent.Windrise, WindrisePartFamilyMeshRegexMap, GROUND_RADIUS, {
-            [WindrisePartFamily.Ground]: createGroundLayerClassifier(WINDRISE_GROUND_PAINT),
-          }),
+          await fitSurfaceColours(DerivedAssetComponent.Windrise, WindrisePartFamilyMeshRegexMap, GROUND_RADIUS, [
+            WindrisePartFamily.Ground,
+          ]),
         ),
       ],
       water: async () => {

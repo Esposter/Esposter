@@ -58,6 +58,8 @@ The top bar's place and type are provisional until a recording measures them. Th
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | A refill for the day's next price, the day's count restarting at the game's day            |
 | `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts`         | A claim's price by its blossom kind and the weekly boss's claims that week                 |
 | `packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`               | A claim: the resin spent, the Adventure EXP gained and the Mora past rank 60               |
+| `packages/genshin-world/src/services/originalResin/claimBlossom.ts`                     | A blossom's claim: the offer paid, each draw of its reward taken into the bag and wallet   |
+| `packages/genshin-world/src/services/reward/drawRewardItems.ts`                         | A reward's items drawn to a count in their range, shared by commissions and expeditions    |
 | `packages/genshin-world/src/services/originalResin/computeBlossomClaimOffers.ts`        | The ways a blossom's claim is paid: one, two at twice the price, or a Condensed Resin      |
 | `packages/genshin-world/src/services/originalResin/checkIsMultiClaimBlossom.ts`         | A ley line or a domain, the blossoms that can be doubled or paid in Condensed Resin        |
 | `packages/genshin-world/src/services/originalResin/spendCondensedResin.ts`              | A Condensed Resin taken from the bag for three claims, refused at a boss                   |

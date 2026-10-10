@@ -62,7 +62,7 @@ import {
   createGenshinRenderer,
   createInput,
   createLandmarkCollider,
-  FOLLOW_CAMERA_PIVOT_HEIGHT,
+  FOLLOW_CAMERA_PIVOT_SHARE,
   GENSHIN_TONE_MAPPING,
   InputAction,
   QualityTierSettingsMap,
@@ -198,19 +198,26 @@ const { achievementData } = useWorldAchievements({
   wallet,
 });
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
-const { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop, placeWorldDrops, worldDrops } =
-  useWorldPickups({
-    archive: { archiveData, archiveProgressMap },
-    events,
-    gameText,
-    getWorldNow,
-    inventory,
-    nameText,
-    serverClockOffsetMs,
-    setInventory,
-    setWallet,
-    wallet,
-  });
+const {
+  bagFullHint,
+  pickUpGatheringPlace,
+  pickUpInteractables,
+  pickUpWorldDrop,
+  placeWorldDrops,
+  strikeGatheringOres,
+  worldDrops,
+} = useWorldPickups({
+  archive: { archiveData, archiveProgressMap },
+  events,
+  gameText,
+  getWorldNow,
+  inventory,
+  nameText,
+  serverClockOffsetMs,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   characterIdCombatantMap,
@@ -304,7 +311,9 @@ useRafFn(() => {
   const stamina = character.value?.stamina.value ?? STAMINA_MAX;
   if (stamina >= STAMINA_MAX && hudFrame.stamina >= STAMINA_MAX) return;
   hudFrame.stamina = stamina;
-  pivot.set(x - origin.x, y + FOLLOW_CAMERA_PIVOT_HEIGHT, z - origin.z).project(activeCamera);
+  pivot
+    .set(x - origin.x, y + locomotion.value.capsuleHeight * FOLLOW_CAMERA_PIVOT_SHARE, z - origin.z)
+    .project(activeCamera);
   hudFrame.pivotX = (pivot.x + 1) / 2;
   hudFrame.pivotY = (1 - pivot.y) / 2;
 });
@@ -423,6 +432,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :random="worldRandom"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
+          @strike-ore="(body, hit) => strikeGatheringOres(body, hit, worldRandom)"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
@@ -569,6 +579,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :wallet
           @close="screenKind = ScreenKind.World"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
       <template #[ScreenKind.Wish]>

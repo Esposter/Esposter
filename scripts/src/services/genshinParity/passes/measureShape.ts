@@ -1,6 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
-import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
@@ -9,21 +8,18 @@ import {
   SHAPE_NORMAL_GATE_DEGREES,
   SHAPE_OUTLINE_GATE_PIXELS,
 } from "#src/services/genshinParity/passes/constants";
+import { measureEnvelope } from "#src/services/genshinParity/passes/measureEnvelope";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
+import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
 import { writeShapeDiff } from "#src/services/genshinParity/passes/writeShapeDiff";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Depth, WitnessTargetName.Normal];
 // How many of a failing family's parts its note names
 const NAMED_PART_COUNT = 5;
-// The reason a family's depth or normal is read as when ours draws none of it where the exports do
-const NO_OVERLAP_REASON = "no overlap";
-// A reading of a family's shape, or the reason it has none where the two draw no pixel of it in common
-const toShapeReading = (name: string, gate: number, unit: string, value: number | undefined): ParityPassReading =>
-  value === undefined ? { gate, name, reason: NO_OVERLAP_REASON, unit } : { gate, name, unit, value };
 // The shape pass: each family of ours against the exports' it stands for, target by target (`compareFamilyTargets`):
 // Its outline in pixels at the shape's width, and where both draw it, its depth's gap as a share and its normals' angle
 export const measureShape = (component: DerivedAssetComponent): Promise<ParityPassMeasure> =>
-  measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead) => {
+  measureFamilyTargets(component, TARGET_NAMES, async (referenceId, exportsRead, oursRead, page, camera) => {
     const toTargets = ({
       targets,
     }: typeof exportsRead): { depth: Float32Array; normal: Float32Array; part: Float32Array } => ({
@@ -55,15 +51,19 @@ export const measureShape = (component: DerivedAssetComponent): Promise<ParityPa
           });
         return `${referenceId} ${exportsRead.families[family] ?? family} normal by part: ${parts.join(", ")}`;
       });
+    const envelopeReadings = await measureEnvelope(referenceId, exportsRead, oursRead, page, camera);
     return {
       notes: [`${referenceId} exports | ours | normals' angle and outlines apart: ${diffPath}`, ...partNotes],
-      readings: comparisons.flatMap(({ depth, family, normal, outline }) => {
-        const name = `${referenceId} ${exportsRead.families[family] ?? family}`;
-        return [
-          { gate: SHAPE_OUTLINE_GATE_PIXELS, name: `${name} outline`, unit: "px", value: outline },
-          toShapeReading(`${name} depth`, SHAPE_DEPTH_GATE, "share", depth),
-          toShapeReading(`${name} normal`, SHAPE_NORMAL_GATE_DEGREES, "degrees", normal),
-        ];
-      }),
+      readings: [
+        ...comparisons.flatMap(({ depth, family, normal, outline }) => {
+          const name = `${referenceId} ${exportsRead.families[family] ?? family}`;
+          return [
+            { gate: SHAPE_OUTLINE_GATE_PIXELS, name: `${name} outline`, unit: "px", value: outline },
+            toShapeReading(`${name} depth`, SHAPE_DEPTH_GATE, "share", depth),
+            toShapeReading(`${name} normal`, SHAPE_NORMAL_GATE_DEGREES, "degrees", normal),
+          ];
+        }),
+        ...envelopeReadings,
+      ],
     };
   });

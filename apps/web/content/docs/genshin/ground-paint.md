@@ -48,5 +48,5 @@ flowchart TD
 
 ## Notes
 
-- **Every band and colour is provisional.** Windrise's are set by eye; they are fitted to the game's own terrain layers once the inventory reads the weights its tiles hold, and judged in the surface pass ([terrain shapes](/docs/proposals/genshin/terrain-shapes)).
+- **Every band is provisional; the layer colours are fitted.** Windrise's bands are set by eye, to be fitted to the game's own terrain layers once the inventory reads the weights its tiles hold. Each layer's colour is fitted from the base maps: each texel under the ground's faces is classed to its nearest palette tone in Lab, and each layer's colour is its class's mean (`computeGroundLayerColours`, `Ground.layers` in `surfaces.json`). The surface pass judges both ([terrain shapes](/docs/proposals/genshin/terrain-shapes)).
 - **A layer has no texture.** Its detail is a pair of colours across patches tens of metres wide. The game's layer textures carry detail under a metre, which a per-pixel layer node would add; it is built only if the surface pass's structure, not its mean colour, says the ground needs it.

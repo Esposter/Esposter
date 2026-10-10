@@ -4,14 +4,19 @@ import { BODY_SHADOW_CASCADES, SHADOW_FRAME_PRIORITY } from "#src/services/const
 import { checkEnemiesMoved } from "#src/services/shadow/checkEnemiesMoved";
 import { writeEnemyPoses } from "#src/services/shadow/writeEnemyPoses";
 import { useLoop } from "@tresjs/core";
-import { checkSunTurned, FOLLOW_CAMERA_PIVOT_HEIGHT } from "genshin-engine";
+import { checkSunTurned, FOLLOW_CAMERA_PIVOT_SHARE } from "genshin-engine";
 import { Matrix4, Vector3 } from "three";
 
 // The sun's cascades are drawn only when something they show has turned: the sun, the character's body or an enemy. They
 // Are centred on the camera's pivot above the body, not the view, so an orbit draws nothing, and a walk draws the nearest
 // Two once the body has moved, and each once its anchor has moved a step of its map. Each frame that decides it, after the
 // Sky has turned the sun and the origin has shifted
-export const useSunShadow = ({ enemyMap, getCharacterBody, sunLight }: SunShadowOptions): void => {
+export const useSunShadow = ({
+  enemyMap,
+  getCharacterBody,
+  getCharacterLocomotion,
+  sunLight,
+}: SunShadowOptions): void => {
   const { onBeforeRender } = useLoop();
   const { cascadedShadowNode, light } = sunLight;
   // What the cascades were last drawn for, from which the frame is compared; the first frame draws them all
@@ -22,10 +27,11 @@ export const useSunShadow = ({ enemyMap, getCharacterBody, sunLight }: SunShadow
   onBeforeRender(() => {
     sunDirection.subVectors(light.position, light.target.position).normalize();
     const characterBody = getCharacterBody();
-    if (characterBody) {
+    const characterLocomotion = getCharacterLocomotion();
+    if (characterBody && characterLocomotion) {
       characterBody.updateMatrix();
       characterBody.getWorldPosition(cascadedShadowNode.anchor);
-      cascadedShadowNode.anchor.y += FOLLOW_CAMERA_PIVOT_HEIGHT;
+      cascadedShadowNode.anchor.y += characterLocomotion.capsuleHeight * FOLLOW_CAMERA_PIVOT_SHARE;
     }
     const isBodyMoved = characterBody !== undefined && !characterBody.matrix.equals(drawnBodyMatrix);
     const isSunOrEnemyMoved =

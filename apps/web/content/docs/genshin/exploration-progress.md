@@ -43,7 +43,7 @@ flowchart TD
 ## Notes
 
 - **Windrise's area is Galesong Hill.** The game counts exploration per level-one area. Windrise is a level-two area of Galesong Hill, and the statue that stands at Windrise is Galesong Hill's, so unlocking it completes Galesong Hill's waypoint.
-- **Not yet.** Chests, camps, Oculi and puzzles are not recorded as done, so an area's count holds only its statue until they are. The Reputation thresholds wait on Reputation being kept, as the [proposal](/docs/proposals/genshin/exploration-progress) records.
+- **Not yet.** Chests, camps, Oculi and puzzles are not recorded as done, so an area's count holds only its statue until they are. Mondstadt's Reputation is kept in the [save](/docs/genshin/save-data), but its thresholds are not paid yet: the [proposal](/docs/proposals/genshin/exploration-progress) records paying each one as the count reaches it as its next step.
 - **Provisional measures.** The label's type size and its line's place below the name are provisional until a recording of the map shows them at the game's own size.
 
 ## Sources

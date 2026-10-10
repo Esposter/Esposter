@@ -8,12 +8,14 @@ import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { checkIsRecipeOpen } from "#src/services/crafting/checkIsRecipeOpen";
+import { CombineTypeGameTextKeyMap } from "#src/services/crafting/CombineTypeGameTextKeyMap";
 import { computeCraftableCount } from "#src/services/crafting/computeCraftableCount";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { getItemName } from "#src/services/inventory/getItemName";
+import { takeOne } from "@esposter/shared";
 import { CraftingScreen, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -41,13 +43,25 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const amount = ref(1);
 const crafterId = ref(0);
 const recipeId = ref(0);
+const tabId = ref(0);
 // How many of each recipe this visit has crafted, which the Crafting Performed line counts; the save holds no count yet
 const craftedCountMap = ref<Readonly<Record<number, number>>>({});
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
-const recipeCells = computed(() =>
-  openRecipes.value.map((recipe) => ({ id: recipe.id, name: getItemName(recipe.nameTextId, nameText) })),
+// One tab per combine type the open recipes fall under, in the table's order and named by the game's own text
+const tabCells = computed(() =>
+  [...new Set(openRecipes.value.map((recipe) => recipe.combineType))]
+    .toSorted((firstCombineType, secondCombineType) => firstCombineType - secondCombineType)
+    .map((combineType) => ({ id: combineType, name: gameText[takeOne(CombineTypeGameTextKeyMap, combineType)] })),
 );
-const pickedRecipe = computed(() => openRecipes.value.find((recipe) => recipe.id === recipeId.value));
+// The tab the player picked, or the first tab while none is picked
+const pickedTabId = computed(() =>
+  tabCells.value.some((tab) => tab.id === tabId.value) ? tabId.value : (tabCells.value.at(0)?.id ?? 0),
+);
+const tabRecipes = computed(() => openRecipes.value.filter((recipe) => recipe.combineType === pickedTabId.value));
+const recipeCells = computed(() =>
+  tabRecipes.value.map((recipe) => ({ id: recipe.id, name: getItemName(recipe.nameTextId, nameText) })),
+);
+const pickedRecipe = computed(() => tabRecipes.value.find((recipe) => recipe.id === recipeId.value));
 // The most the bag and wallet pay for, and never less than one so the slider still reads as a count
 const amountMaximum = computed(() => {
   if (!pickedRecipe.value) return 1;
@@ -107,8 +121,11 @@ const craft = () => {
       :recipes="recipeCells"
       :required-coins
       :required-label="gameText[GameTextKey.CraftingRequired]"
+      :tab-id="pickedTabId"
+      :tabs="tabCells"
       :title="gameText[GameTextKey.CraftingTitle]"
       @close="emit('close')"
+      @update:tab-id="tabId = $event"
       @craft="craft()"
     />
   </GameScreen>

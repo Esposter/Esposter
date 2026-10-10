@@ -11,7 +11,7 @@
       "variance": 0.05790442412909495
     },
     "parts": {},
-    "layers": { "Grass": "#6d7b57", "Earth": "#7a8874", "Rock": "#74876c" }
+    "layers": { "Rock": "#b0b6c5", "Earth": "#807b67", "Grass": "#53753d" }
   },
   "Oak": {
     "color": "#627e55",

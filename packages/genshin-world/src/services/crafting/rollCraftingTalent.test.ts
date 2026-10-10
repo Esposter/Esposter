@@ -12,6 +12,7 @@ const drawsOf = (draws: number[]) => {
 describe(rollCraftingTalent, () => {
   const SUCROSE_AVATAR_ID = 10_000_043;
   const XINGQIU_AVATAR_ID = 10_000_025;
+  const YAE_MIKO_AVATAR_ID = 10_000_058;
   const NO_TALENT_AVATAR_ID = 1;
   const ENHANCEMENT_COMBINE_TYPE = 1;
   const TALENT_MATERIAL_COMBINE_TYPE = 3;
@@ -45,6 +46,22 @@ describe(rollCraftingTalent, () => {
 
     expect(rollCraftingTalent(XINGQIU_AVATAR_ID, talentRecipe, 1, drawsOf([0.1]))).toStrictEqual([
       { count: 1, id: MATERIAL_ID },
+    ]);
+  });
+
+  test("should add the same tier of another series in the book's region when a regional material is drawn", () => {
+    expect.hasAssertions();
+
+    const TEACHINGS_OF_FREEDOM_ID = 104_301;
+    const TEACHINGS_OF_BALLAD_ID = 104_307;
+    const talentBookRecipe = {
+      ...recipe,
+      combineType: TALENT_MATERIAL_COMBINE_TYPE,
+      materials: [{ count: 3, id: TEACHINGS_OF_FREEDOM_ID }],
+    };
+
+    expect(rollCraftingTalent(YAE_MIKO_AVATAR_ID, talentBookRecipe, 1, drawsOf([0.1, 0.7]))).toStrictEqual([
+      { count: 1, id: TEACHINGS_OF_BALLAD_ID },
     ]);
   });
 

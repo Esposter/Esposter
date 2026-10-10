@@ -2,9 +2,11 @@ import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { KitBody } from "#src/models/kit/KitBody";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameText } from "genshin-text";
@@ -16,13 +18,18 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
+import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
+import { rollOreDropCount } from "#src/services/gathering/rollOreDropCount";
+import { strikeOre } from "#src/services/gathering/strikeOre";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
+import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -61,6 +68,8 @@ export const useWorldPickups = ({
   const { gatheringItems, gatheringPlaces } = useGatheringPoints();
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
   const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
+  // The broken share of each ore struck and not yet broken, by its point, which the ore breaking takes out
+  const oreIdBrokenShareMap = shallowRef<ReadonlyMap<string, number>>(new Map());
   const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
   // Each drop, named by its item, and each gathering point that stands now, named by its item, each standing on the ground
   // Beneath its point
@@ -72,9 +81,14 @@ export const useWorldPickups = ({
       position: { x, y: getWorldHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + serverClockOffsetMs);
+    // An ore is struck until it breaks rather than picked up, so its points are left out of the pick ups
     const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
       const item = idGatheringItemMap.value.get(kind);
-      if (!item || !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now))
+      if (
+        !item ||
+        kind in OreItemIdBreakPoiseMap ||
+        !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now)
+      )
         return [];
       return [
         {
@@ -128,5 +142,43 @@ export const useWorldPickups = ({
     if (addition.overflow === 0)
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [placeId, getWorldNow()]]);
   };
-  return { bagFullHint, pickUpGatheringPlace, pickUpInteractables, pickUpWorldDrop, placeWorldDrops, worldDrops };
+  // The ores a character's hit reaches are struck: each standing ore in the hit's area takes the hit's share, and one that
+  // Breaks drops its pieces where it lies and is kept as picked at the instant it broke
+  const strikeGatheringOres = (body: KitBody, hit: OreHit, random: () => number) => {
+    const now = getWorldNow();
+    for (const { id, kind, position } of gatheringPlaces.value) {
+      const requirement = OreItemIdBreakPoiseMap[kind];
+      const item = idGatheringItemMap.value.get(kind);
+      if (
+        !requirement ||
+        !item ||
+        !checkIsGatheringPlaceStanding(gatheringPlaceIdPickedAtMap.value.get(id), item.respawn, now) ||
+        !checkIsInAttackArea(hit.hitArea, body, { position })
+      )
+        continue;
+      const brokenShare = strikeOre(oreIdBrokenShareMap.value.get(id) ?? 0, hit, requirement);
+      if (brokenShare < 1) {
+        oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value, [id, brokenShare]]);
+        continue;
+      }
+      const pieces = Array.from({ length: rollOreDropCount(random) }, (_value, index) => ({
+        count: 1,
+        id: [id, now.epochMilliseconds, index].join(ID_SEPARATOR),
+        itemId: kind,
+        position: { x: position.x, z: position.z },
+      }));
+      worldDrops.value = [...worldDrops.value, ...pieces];
+      gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [id, now]]);
+      oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
+    }
+  };
+  return {
+    bagFullHint,
+    pickUpGatheringPlace,
+    pickUpInteractables,
+    pickUpWorldDrop,
+    placeWorldDrops,
+    strikeGatheringOres,
+    worldDrops,
+  };
 };

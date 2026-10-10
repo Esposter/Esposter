@@ -25,7 +25,7 @@ flowchart TD
   L --> CMD["A parity command"]
   CMD --> EDGE["Its own Edge, closed with its page"]
   L --> SLOT["run-in-slot.sh — typecheck, build or tests"]
-  SLOT -->|"four slots, taken by mkdir above the memory gate,<br/>one admission a minute while the last runs"| RUN["One heavy run at a time per slot"]
+  SLOT -->|"four slots above the memory gate,<br/>one start a minute while the last runs"| RUN["One heavy run at a time per slot"]
   L --> SEARCH["rg over what git tracks"]
   L --> VIDEO["GPU video decode for a whole-video scan"]
 ```

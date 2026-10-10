@@ -4,6 +4,7 @@ description: Proposal — the rest of the opening as each client language's buil
 model: claude-opus-5-5
 needs: [media-engine]
 touches: ["scripts/src/services/genshinParity/shared/ParityReferenceMap.ts"]
+waiting: "the user's Japanese and Korean PC launch recordings on the roadmap's Recordings owed list, japanese-launch.mkv and korean-launch.mkv, each 30 seconds from the launch with the splash, notice and door in view"
 ---
 
 # Localized opening
@@ -27,11 +28,8 @@ flowchart LR
 
 ## Scope
 
-- **Next: the Japanese and Korean openings, from public clips.** Two public recordings are the references until the owed `opening-japanese.mkv` and `opening-korean.mkv` re-measure them, and they do not wait on them:
-  - the Japanese PC client's launch, [【原神】PCとiPhone13ProMaxの起動時間比較](https://www.youtube.com/watch?v=57d2PwbOdr0) (51 seconds): `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=57d2PwbOdr0 --from 0 --to 51 --name opening-japanese`;
-  - the Korean client's login at night, [원신 임팩트 - 로그인 화면 (야간)](https://www.youtube.com/watch?v=HFxhJB_N4Nk) (105 seconds): `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=HFxhJB_N4Nk --from 0 --to 105 --name opening-korean`.
-
-  Each is read a frame a second with `genshin:parity frames`, the builder picking from the images the seconds where the publisher splash, the title splash, the health notice and the door stand whole, and taking each with `genshin:parity frame <capture> --at <second> --name <reference>`. A clip that turns out to show a phone or another client's language is replaced by the next result of `ytsearch10:原神 起動 PC` or `ytsearch10:원신 로그인 화면 PC`. Each frame becomes a `ParityReferenceMap` entry named for its screen and language (`title-splash-japanese`, `health-notice-korean`, `login-interface-door-japanese`), with `props: { language: "Japanese" }` or `"Korean"` as `health-notice-mainland` has. `ParityReferenceMap.test.ts` proves each names a screen with a fixture, and each compare is queued as a `[page]` item for the user's eyes.
+- **Done: the Japanese PC client's health notice.** Its reference `health-notice-japanese` is the public recording's frame at 30 seconds (`yt-57d2PwbOdr0-opening-japanese.mp4`, clipped by `genshin:parity clip`), whole in its own words, scored over a region clear of the PC watermark and the recorder's icons. Its compare is a `[page]` item on the roadmap for the user's eyes.
+- **Not in any public clip.** Searches for each client's PC launch found none: the Japanese clip shows the PC client's title only as its iPhone capture, and no Japanese PC splash or door. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds. A 2020 Korean PC gameplay video (`yt-4zVvDgStMWQ`, 1080 high) opens on a title card and cuts to the world, with no splash, notice or door. So `title-splash-japanese`, `publisher-splash-japanese`, the Korean launch's stages and both clients' door stages wait on `japanese-launch.mkv` and `korean-launch.mkv` in the roadmap's Recordings owed list.
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.

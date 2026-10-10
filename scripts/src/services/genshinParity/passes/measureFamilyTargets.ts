@@ -1,6 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
 
 import { SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
@@ -25,6 +26,7 @@ export const measureFamilyTargets = async (
     exportsRead: WitnessTargetsRead,
     oursRead: WitnessTargetsRead,
     page: Page,
+    camera: NonNullable<WitnessView["camera"]>,
   ) => ParityPassMeasure | Promise<ParityPassMeasure>,
 ): Promise<ParityPassMeasure> => {
   await fetchReferences();
@@ -41,7 +43,7 @@ export const measureFamilyTargets = async (
         const exportsRead = await readWitnessTargets(page, targetNames);
         await setPageWitnessView(page, { camera, families: [], isAlone: true });
         const oursRead = await readWitnessTargets(page, targetNames, true);
-        return compare(referenceId, exportsRead, oursRead, page);
+        return compare(referenceId, exportsRead, oursRead, page, camera);
       },
       () => close(),
     );

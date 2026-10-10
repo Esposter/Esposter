@@ -2,28 +2,15 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
 
-import type { WardRecord } from "../../../types";
-
 import { WardAnswer, WardAnswers } from "../../models/WardAnswer";
 import { InitialState } from "../InitialState";
 import { getCollidingRecord } from "./getCollidingRecord";
+import { getRecordsPath } from "./getRecordsPath";
 import { getRecordsWithEdit } from "./getRecordsWithEdit";
+import { readRecords } from "./readRecords";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const AGE_FORMATTER = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-// One file every session on the machine reads afresh, beside the persona's state, so an edit made a moment ago in
-// Another session is always seen
-const readRecordsPath = async ($: EngineInterface) => {
-  const home = (await $.env.get("HOME")) ?? (await $.env.get("USERPROFILE")) ?? "";
-  return `${home}/.claude/genshin-mods/ward.json`;
-};
-
-const readRecords = async ($: EngineInterface, path: string): Promise<Record<string, WardRecord>> =>
-  (await $.fs.exists(path))
-    ? // oxlint-disable-next-line no-restricted-properties -- The records hold numbers and ids, no date, and a mod cannot import the shared reviver
-      (JSON.parse(await $.fs.read(path)) as Record<string, WardRecord>)
-    : {};
 
 // Before the edit: the question, when another session's record calls for one. After it: the edit recorded
 const ward = async (
@@ -32,7 +19,7 @@ const ward = async (
   proceed: () => Promise<ToolCallResult>,
 ): Promise<ToolCallResult> => {
   if (!(await read($, enabledModsAtom)).ward) return proceed();
-  const recordsPath = await readRecordsPath($);
+  const recordsPath = await getRecordsPath($);
   const sessionId = await $.session.id();
   const now = await $.clock.now();
   const collision = getCollidingRecord((await readRecords($, recordsPath))[path], sessionId, now);

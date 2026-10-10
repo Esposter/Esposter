@@ -1,8 +1,26 @@
 [
   {
+    "id": 100001,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "2483588484",
+    "rank": 90000,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 9999
+  },
+  {
     "id": 100011,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "1926602188",
+    "rank": 321,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 9999
+  },
+  {
+    "id": 100012,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1330975132",
     "rank": 321,
     "rarity": 0,
     "respawn": "Daily",
@@ -180,6 +198,15 @@
     "stackLimit": 9999
   },
   {
+    "id": 100054,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2189505020",
+    "rank": 320,
+    "rarity": 0,
+    "respawn": "TwoDays",
+    "stackLimit": 9999
+  },
+  {
     "id": 100055,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "144892988",
@@ -250,6 +277,51 @@
     "rarity": 0,
     "respawn": "Daily",
     "stackLimit": 999
+  },
+  {
+    "id": 101001,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "4060716292",
+    "rank": 301,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 99999
+  },
+  {
+    "id": 101002,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1747175596",
+    "rank": 301,
+    "rarity": 0,
+    "respawn": "TwoDays",
+    "stackLimit": 99999
+  },
+  {
+    "id": 101003,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1448077684",
+    "rank": 301,
+    "rarity": 0,
+    "respawn": "ThreeDays",
+    "stackLimit": 99999
+  },
+  {
+    "id": 101006,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "1269908988",
+    "rank": 301,
+    "rarity": 0,
+    "respawn": "TwoDays",
+    "stackLimit": 99999
+  },
+  {
+    "id": 101008,
+    "materialType": "MATERIAL_EXCHANGE",
+    "nameTextId": "2485846164",
+    "rank": 301,
+    "rarity": 0,
+    "respawn": "ThreeDays",
+    "stackLimit": 99999
   },
   {
     "id": 101201,
@@ -346,6 +418,15 @@
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "4160392220",
     "rank": 321,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 9999
+  },
+  {
+    "id": 101212,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "2119751124",
+    "rank": 90000,
     "rarity": 0,
     "respawn": "Daily",
     "stackLimit": 9999
@@ -468,6 +549,15 @@
     "stackLimit": 9999
   },
   {
+    "id": 101230,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "457891068",
+    "rank": 90000,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 9999
+  },
+  {
     "id": 101231,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "1070567836",
@@ -562,6 +652,15 @@
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "1334780260",
     "rank": 321,
+    "rarity": 0,
+    "respawn": "Daily",
+    "stackLimit": 9999
+  },
+  {
+    "id": 101244,
+    "materialType": "MATERIAL_NOTICE_ADD_HP",
+    "nameTextId": "767225220",
+    "rank": 90000,
     "rarity": 0,
     "respawn": "Daily",
     "stackLimit": 9999
