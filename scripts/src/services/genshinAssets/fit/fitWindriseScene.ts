@@ -1,4 +1,5 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { fitGroundLayerField } from "#src/services/genshinAssets/fit/fitGroundLayerField";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
@@ -9,7 +10,12 @@ import { fitWindrisePlants } from "#src/services/genshinAssets/fit/fitWindrisePl
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
-import { GROUND_RADIUS, WINDRISE_REGION_FILE } from "#src/services/genshinAssets/shared/constants";
+import {
+  GROUND_LAYER_CELL_SIZE,
+  GROUND_RADIUS,
+  WINDRISE_GROUND_LAYER_TONES,
+  WINDRISE_REGION_FILE,
+} from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldWaterLevel } from "#src/services/genshinAssets/world/readWorldWaterLevel";
@@ -19,8 +25,8 @@ import { WindrisePartFamily, WindrisePartFamilyMeshRegexMap } from "genshin-worl
 // Ground as hills, its landmarks' places and turns in Mondstadt's region data, its oak's canopy as clusters and its
 // Trunk's taper read off the export, its statue as stacks fitted piece by piece to its meshes, its families' surface
 // Colours and each part's as the export's textures paint them, and its water's level over the oak's foot, the last three
-// Exact. Every region's capital is placed with the landmarks, round the same origin, since the oak's foot is the whole
-// World's
+// Exact, and its ground's layers as a field of their shares over its base maps. Every region's capital is placed with
+// The landmarks, round the same origin, since the oak's foot is the whole world's
 export const fitWindriseScene = (only: readonly string[] = []): Promise<string> =>
   runFits(
     {
@@ -40,6 +46,15 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<string> 
           await fitSurfaceColours(DerivedAssetComponent.Windrise, WindrisePartFamilyMeshRegexMap, GROUND_RADIUS, [
             WindrisePartFamily.Ground,
           ]),
+        ),
+        await writeWorldData(
+          "windrise/ground-layers.json",
+          await fitGroundLayerField(
+            DerivedAssetComponent.Windrise,
+            GROUND_RADIUS,
+            GROUND_LAYER_CELL_SIZE,
+            WINDRISE_GROUND_LAYER_TONES,
+          ),
         ),
       ],
       water: async () => {

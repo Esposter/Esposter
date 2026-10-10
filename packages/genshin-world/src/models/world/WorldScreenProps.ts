@@ -10,6 +10,8 @@ export interface WorldScreenProps {
   // Where the host serves the characters' model packs, without which no character is drawn
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
+  // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
+  gameDataBaseUrl: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's minute of the day the clock is held at, as a reference of the game's shows it

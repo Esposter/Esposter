@@ -11,14 +11,15 @@ Some files in this repository are written by a script from a source outside it �
 
 **Under a `generated/` folder in the package that consumes it, in a sub-folder named for the generator, one file per entity.** The folder name is the whole marker: no per-file header, no `.generated` suffix, no comment saying who wrote it. A reader who sees `generated/` in the path knows the file is an output, and a reader who does not sees an authored file.
 
-| Generator                     | Writes                                                                                                                       | Consumer                   |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------- | :------------------------- |
-| `pnpm tiled:gen`              | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                      | the dungeons game          |
-| `pnpm phaser:gen`             | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                        | the dungeons game          |
-| `pnpm zstd:gen`               | `apps/web/app/generated/zstd/zstd.wasm` — the browser's zstd encoder, from pinned upstream source                            | delta content saves        |
-| `pnpm flow-map:gen`           | `apps/web/app/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                      | the UI library's docs page |
-| `pnpm ai:voice-match --write` | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map | the persona plugin         |
-| `pnpm registry:gen`           | `packages/db-schema/src/generated/` — every table, enum and Postgres schema, and every relation part, one registry each      | drizzle and better-auth    |
+| Generator                                            | Writes                                                                                                                                 | Consumer                         |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------- |
+| `pnpm tiled:gen`                                     | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                                                | the dungeons game                |
+| `pnpm phaser:gen`                                    | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                                                  | the dungeons game                |
+| `pnpm zstd:gen`                                      | `apps/web/app/generated/zstd/zstd.wasm` — the browser's zstd encoder, from pinned upstream source                                      | delta content saves              |
+| `pnpm flow-map:gen`                                  | `apps/web/app/generated/flowMap/flowMap.mmd` — which page links to which, one flowchart                                                | the UI library's docs page       |
+| `pnpm ai:voice-match --write`                        | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts` — the reference line and its likeness per character, one map           | the persona plugin               |
+| `pnpm registry:gen`                                  | `packages/db-schema/src/generated/` — every table, enum and Postgres schema, and every relation part, one registry each                | drizzle and better-auth          |
+| `pnpm -C scripts genshin:assets profile` / `archive` | `app-assets/genshin/data/` in both accounts, and `packages/genshin-world/src/generated/gameDataLock.json` — the lock only is committed | genshin-world, fetched on demand |
 
 Within `apps/web`, a file only the client reads through a query suffix — the flow map's `?raw` — sits under `app/generated/` rather than `shared/generated/`: the server build leaves everything under `shared/` for Nitro to bundle, and Nitro cannot load a path carrying a query.
 
@@ -27,6 +28,8 @@ One file per entity because that is how a consumer usually reads them — a sess
 **The exception is a set the consumer reads whole.** The persona plugin's reference map is a hundred-odd one-line entries read in one import by the hook and by the runner's own check; a re-run still changes one line per character that moved, so the review reads the same diff, and the rule's other reason — a consumer that loads one entity's module as it loads one card — buys nothing at this size and would cost a file-system read per entity. A generated set stays one file per entity until its consumer reads all of it at once, and then it is one file — at the `generated/` root rather than inside a folder named for the generator, since a folder standing over a single file names only what the file already names. The sub-folder comes back the moment a second generator writes into the same package.
 
 **Committed, because the consumer must not need the generator's inputs.** The reference map is read on every spoken reply, by a plugin copy installed on a machine with no encoder and no engine of the repository's; the tiled types are what the game is type-checked against. A generated file that only existed after a local run would make every consumer's build depend on a source the repository does not hold.
+
+**Published, when a browser fetches it, and only its lock committed.** A set a screen reads one record at a time, when it opens the record, is published to Blob storage as content-addressed objects instead of committed. The one file committed beside it is the lock that names each object's hash, so the consumer still never needs the generator's inputs and no build reads the records. The profiles and book bodies are the first such sets ([hosted game data](/docs/genshin/hosted-game-data)).
 
 ## What one never does
 

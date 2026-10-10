@@ -1,5 +1,6 @@
 import type { ImportTarget } from "#src/models/hooks/ImportTarget";
 
+import { takeOne } from "@esposter/shared";
 import { posix } from "node:path";
 
 // The suffixes the build probes an import with: the path as written, then the source extensions, then an index file.
@@ -60,7 +61,7 @@ export const resolveImportTarget = (
   aliases: Readonly<Record<string, unknown>>,
 ): ImportTarget | undefined => {
   // A Vite query (`?worker`, `?url`, `?raw`) names how the module is imported, not a file, so the path is probed without it
-  const specifierPath = specifier.split("?")[0] ?? specifier;
+  const specifierPath = takeOne(specifier.split("?"));
   let path: string | undefined;
   if (specifierPath.startsWith(".")) path = posix.join(posix.dirname(importingPath), specifierPath);
   else if (specifierPath.startsWith("#")) path = getAliasPath(specifierPath, packageDirectory, aliases);

@@ -19,6 +19,8 @@ export const ASSET_MAP_NAME = "gi_map";
 // It as tab separated lines, which a component's search reads in seconds
 export const ASSET_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET_MAP_NAME}.json`);
 export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index.tsv");
+// Where each shard of the map's blocks is run from while it is mapped: its symlinked blocks and its own asset map
+export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "shards");
 // AnimeStudio's command line (github.com/Escartem/AnimeStudio), unpacked where the user keeps it. It writes its CAB map
 // Into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
@@ -43,6 +45,17 @@ export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
 // How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
 export const GROUND_RADIUS = 1000;
+// The side of a ground layer field's cell in metres, where its shares hold the colour Windrise's reference camera sees
+// Within the colour gate at a few tens of kilobytes: read off the base maps at that camera, half the side gains a third
+// Of a ΔE for four times the bytes, and twice it misses the gate
+export const GROUND_LAYER_CELL_SIZE = 32;
+// Windrise's ground palette, each tone named by the layer its hue paints: the green is grass, the brown earth and the
+// Pale tone rock, as the palette `fitSurfaceColours` reads off its base maps
+export const WINDRISE_GROUND_LAYER_TONES: Record<string, string> = {
+  Earth: "#837e69",
+  Grass: "#53733e",
+  Rock: "#b0b6c5",
+};
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source

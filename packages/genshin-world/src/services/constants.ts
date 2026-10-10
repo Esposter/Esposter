@@ -25,8 +25,9 @@ export const REGION_RECHECK_DISTANCE = 64;
 // An area with several weathers turns to its next one each this many seconds, a special climate holding its one.
 // Provisional: read off the game's own weather schedule once a recording of a weather turning over minutes is in
 export const AREA_WEATHER_CHANGE_SECONDS = 300;
-// A region's fetch is abandoned as failed past this, so a stalled request cannot hold the world from being ready
-export const REGION_FETCH_TIMEOUT_MS = 10_000;
+// A fetch of the world's data, a region's or a game table's, is abandoned as failed past this, so a stalled request
+// Cannot hold the world from being ready
+export const DATA_FETCH_TIMEOUT_MS = 10_000;
 // How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
 export const TUNING_TINT_RANGE = 0.1;
 export const TUNING_TINT_CHANNELS = [

@@ -10,8 +10,8 @@ import type {
 } from "genshin-engine";
 
 import baseGround from "#src/data/windrise/base-ground.json";
+import groundLayers from "#src/data/windrise/ground-layers.json";
 import surfaces from "#src/data/windrise/surfaces.json";
-import water from "#src/data/windrise/water.json";
 import { GroundLayer } from "genshin-engine";
 import { Color, Vector2 } from "three";
 
@@ -40,18 +40,17 @@ export const UNDERWATER_FOG_DENSITY = 0.08;
 // How far the sun and the god rays' sun stand from what they look at
 export const SUN_DISTANCE = 120;
 export const RIM_STRENGTH = 0.55;
-// Windrise's ground as a temperate meadow paints it: the layers say where grass, bare earth, rock, sand, snow and path
-// Lie, and each layer paints the colour the terrain base maps hold on the faces its own rule paints, as fitted into
-// `surfaces.json`'s `Ground.layers` (a layer no face paints takes the ground's mean). Its layers' weights still place
-// The plants
-// The fit writes only the layers some face paints, so the file holds a few of the ground's layers by name
+// Windrise's ground as its terrain paints it: grass, bare earth and rock lie where the base maps place them, as fitted
+// Into `ground-layers.json`'s field of their shares, never by a slope or a height, and each layer paints the mean of the
+// Base-map texels classed into it, as fitted into `surfaces.json`'s `Ground.layers` (a layer the base maps hold no
+// Texel of takes the ground's mean). Its layers' weights also place the flowers
+// The fit writes only the layers some texel is classed into, so the file holds a few of the ground's layers by name
 const groundLayerColors: Partial<Record<GroundLayer, string>> = surfaces.Ground.layers;
 const getGroundLayerColors = (layer: GroundLayer) => {
   const color = new Color(groundLayerColors[layer] ?? surfaces.Ground.color).getHex();
   return { color, patchColor: color };
 };
 export const WINDRISE_GROUND_PAINT: GroundPaint = {
-  earthSlope: { end: 0.3, start: 0.2 },
   layerColors: {
     [GroundLayer.Earth]: getGroundLayerColors(GroundLayer.Earth),
     [GroundLayer.Grass]: getGroundLayerColors(GroundLayer.Grass),
@@ -60,11 +59,10 @@ export const WINDRISE_GROUND_PAINT: GroundPaint = {
     [GroundLayer.Sand]: getGroundLayerColors(GroundLayer.Sand),
     [GroundLayer.Snow]: getGroundLayerColors(GroundLayer.Snow),
   },
+  layerField: groundLayers,
   patchScale: 18,
   pathFalloff: 0.6,
   paths: [],
-  rockSlope: { end: 0.55, start: 0.3 },
-  sandHeight: { end: water.level + 0.4, start: water.level + 1.2 },
 };
 // Where a character starts in Windrise: on the slope before the statue, in the free camera's first view, its back to
 // The camera as the game shows a character

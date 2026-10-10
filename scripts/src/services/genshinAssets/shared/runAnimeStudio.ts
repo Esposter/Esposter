@@ -1,8 +1,7 @@
 import { assertAnimeStudioReady } from "#src/services/genshinAssets/shared/assertAnimeStudioReady";
 import { ANIMESTUDIO_CLI_PATH } from "#src/services/genshinAssets/shared/constants";
 import { getAnimeStudioArgs } from "#src/services/genshinAssets/shared/getAnimeStudioArgs";
-import { readAnimeStudioExceptions } from "#src/services/genshinAssets/shared/readAnimeStudioExceptions";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { judgeAnimeStudioRun } from "#src/services/genshinAssets/shared/judgeAnimeStudioRun";
 import { spawnSync } from "node:child_process";
 import { dirname } from "node:path";
 
@@ -17,17 +16,10 @@ export const runAnimeStudio = (args: string[]): void => {
     encoding: "utf8",
     maxBuffer: 1024 ** 3,
   });
-  const exceptions = readAnimeStudioExceptions(`${stdout}\n${stderr}`);
-  if (status === 0 && exceptions.length === 0) return;
-  if (status === 0)
-    throw new InvalidOperationError(
-      Operation.Read,
-      "AnimeStudio",
-      `exited 0 but threw ${exceptions.length} exception(s), skipping what threw:\n${exceptions.slice(0, 5).join("\n")}`,
-    );
-  throw new InvalidOperationError(
-    Operation.Create,
-    "AnimeStudio",
+  const failure = judgeAnimeStudioRun(
+    status,
+    `${stdout}\n${stderr}`,
     stderr || stdout || error?.message || `exited with ${status}`,
   );
+  if (failure) throw failure;
 };

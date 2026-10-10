@@ -44,25 +44,6 @@ export const ARCHIVE_TEXT_GENERATED_DIRECTORY: string = join(
   "generated",
   "archiveText",
 );
-// Where each book's body is written, one chunk per volume holding every language's text of it
-export const BOOK_BODY_GENERATED_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "generated",
-  "bookBody",
-);
-// The loader map the bodies' chunks are imported through, written beside the Archive's other services
-export const BOOK_BODY_LOADER_MAP_PATH: string = join(
-  REPOSITORY_ROOT,
-  "packages",
-  "genshin-world",
-  "src",
-  "services",
-  "archive",
-  "BookBodyLoaderMap.ts",
-);
 export const ArchiveSectionFileNameMap: Record<ArchiveSection, string> = {
   [ArchiveSection.Books]: "books.json",
   [ArchiveSection.Equipment]: "equipment.json",

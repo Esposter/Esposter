@@ -61,6 +61,20 @@ export const groundTopic: ReferenceTopic = {
       result:
         "The paint's one colour, #707e5d, is the base maps' mean over every terrain face within the terrain radius, weighted by area: the meadow's green (51% of the samples), bare earth (37%) and a pale rock (11%) averaged, while the camera sees the meadow. The exports' Ground there reads L 46.1, a -21.1, b 24.3, 13.42 from ours and 1.99 from the palette's green, #53733e. One colour has no variance, so the structure reads 1.0000. A base map is 512 texels over a 1,024-metre tile, 2 metres a texel, but `SURFACE_DETAIL_METRES_PER_TEXEL` draws every texture's octaves at 4 centimetres a texel, 50 times too fine, and the base map's variance of 0.058 is the whole tile's layout: the detail tried on the ground drew that as per-pixel noise, structure 207.2",
     },
+    {
+      method:
+        "Each TerrainData's bytes ahead of its heights read by their shapes in every region's tiles, its 256-square byte map set against Windrise's base maps' texels each classed to the nearest palette tone, and every base-map texel within the terrain radius classed and binned by its slope",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "The bytes are the tile's splat database: up to seven layers, each its diffuse, normal and mask pointers, its tiling of 4 to 16 metres and a kind, then two control maps, both resolutions 1024, and a byte a four-metre cell naming its layer, which matches one base-map tone on 91 to 95% of each tile, kind 1 always the grass. The slope sorts no tone: flat ground is about half grass and half earth, and steep ground mostly grass. So the layers are placed spatially, never by slope",
+    },
+    {
+      method:
+        "A field of each layer's shares fitted from the classed base-map texels at 16, 32 and 64 metres, read at the reference's camera against the base maps before any was built, then the 32-metre field drawn and read by the Surface pass, with and without the shore's sand band over it",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "Off the base maps: 64 metres misses the gate at about 3.2 ΔE for 11 KB, 32 metres holds at about 1.7 for 39 KB, and 16 metres gains a third of a ΔE for 138 KB; a slope factor inside a cell only misclasses more. Drawn at 32 metres, the Ground colour reads 1.55 ΔE against 2.30, from 9.10 under the slope bands, and 6.41 with the sand band laid over it, whose texels are three quarters earth. No other family's colour moves (the Statue's 5.19, failing since its stacks landed, reads the same without the field), and the Shape pass's held readings hold",
+    },
   ],
   openQuestions: [],
 };

@@ -10,7 +10,6 @@ import { readMaterialCandidates } from "#src/services/genshinAssets/archive/read
 import { readTravelLogCandidates } from "#src/services/genshinAssets/archive/readTravelLogCandidates";
 import { readTutorialCandidates } from "#src/services/genshinAssets/archive/readTutorialCandidates";
 import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveEntries";
-import { writeBookBodies } from "#src/services/genshinAssets/archive/writeBookBodies";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
 import { archiveBookSchema, archiveEntrySchema, ArchiveSection, travelLogEntrySchema } from "genshin-world";
@@ -25,9 +24,9 @@ const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveE
 };
 
 // Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked against
-// The world's own schema, written as one slice per section into the world's generated folder. Returns a note of each
-// Section's count
-export const writeArchive = (): string[] => {
+// The world's own schema, written as one slice per section into the world's generated folder. Returns the id of each
+// Volume's body, which the game data publish reads, and a note of each section's count
+export const writeArchive = (): { bodyIds: number[]; notes: string[] } => {
   const englishTextMap = readTextMap(GameLanguage.English);
   const { artifactSets, weapons } = readEquipmentCandidates();
   const books: ArchiveBook[] = getNamedCandidates(readBookCandidates(), englishTextMap).map(
@@ -53,5 +52,5 @@ export const writeArchive = (): string[] => {
     writeFileSync(join(ARCHIVE_GENERATED_DIRECTORY, ArchiveSectionFileNameMap[section]), JSON.stringify(entries));
     return `${section}: ${entries.length} entries`;
   });
-  return [...notes, ...writeBookBodies(books.map(({ bodyId }) => bodyId))];
+  return { bodyIds: books.map(({ bodyId }) => bodyId), notes };
 };

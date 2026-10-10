@@ -38,6 +38,8 @@ interface Props {
   characters: Character[];
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
+  // Where the host serves the game's published data, which the Profile tab reads its character's record from
+  gameDataBaseUrl: string;
   // The game's words in the reader's language
   gameText: GameText;
   // The tab the screen opens on, Attributes as the game's C opens it
@@ -56,6 +58,7 @@ const {
   activeCharacterId,
   characters,
   companionshipExpMap = new Map<number, number>(),
+  gameDataBaseUrl,
   gameText,
   initialTab,
   language = GameLanguage.English,
@@ -153,6 +156,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
         :key="`${character.id}-${language}-${companionshipExpMap.get(character.id) ?? 0}`"
         :avatar-id="character.id"
         :friendship-exp="companionshipExpMap.get(character.id) ?? 0"
+        :game-data-base-url
         :game-text
         :language
         :name-text

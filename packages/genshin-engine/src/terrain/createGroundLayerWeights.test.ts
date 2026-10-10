@@ -32,4 +32,16 @@ describe(createGroundLayerWeights, () => {
 
     expect(getWeights(height, slope, x, z)).toStrictEqual(expected);
   });
+
+  test("paints the field's shares in place of grass, with no slope rule over them", () => {
+    expect.hasAssertions();
+
+    const getFieldWeights = createGroundLayerWeights({
+      layerField: { cellSize: 1, layers: { [GroundLayer.Earth]: [1] }, origin: [0, 0], size: [1, 1] },
+      pathFalloff: 1,
+      paths: [],
+    });
+
+    expect(getFieldWeights(5, 1, 0, 0)).toStrictEqual({ ...none, [GroundLayer.Earth]: 1 });
+  });
 });
