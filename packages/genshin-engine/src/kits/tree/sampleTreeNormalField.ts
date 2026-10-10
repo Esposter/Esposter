@@ -1,14 +1,18 @@
 import type { TreeNormalField } from "#src/models/kits/tree/TreeNormalField";
 
 // The normal a field gives at a point, blended trilinearly from the cells around it and kept to the cells' edges, or
-// Undefined where the blend is nothing
+// Undefined where the blend is nothing. A cell's normal is the mean of the points its span holds, so it stands at the
+// Cell's centre, half a cell on from its corner
 export const sampleTreeNormalField = (
   { cellSize, normals, origin, size }: TreeNormalField,
   position: [number, number, number],
 ): [number, number, number] | undefined => {
   const [sizeX = 1, sizeY = 1, sizeZ = 1] = size;
   const cellCoordinate = (axis: 0 | 1 | 2, cellCount: number): [number, number, number] => {
-    const coordinate = Math.min(Math.max(((position[axis] ?? 0) - (origin[axis] ?? 0)) / cellSize, 0), cellCount - 1);
+    const coordinate = Math.min(
+      Math.max(((position[axis] ?? 0) - (origin[axis] ?? 0)) / cellSize - 0.5, 0),
+      cellCount - 1,
+    );
     const lower = Math.floor(coordinate);
     return [lower, Math.min(lower + 1, cellCount - 1), coordinate - lower];
   };
