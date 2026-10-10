@@ -65,9 +65,18 @@ describe(destroyInventoryItems, () => {
     const weapon = createWeapon(0, 3, DestroyRule.ReturnMaterial);
 
     expect(
-      destroyInventoryItems({ items: [weapon], nextId: 1 }, EMPTY_WALLET, [weapon.id, weapon.id], englishNameText),
+      destroyInventoryItems(
+        { items: [weapon], nextId: 1 },
+        EMPTY_WALLET,
+        [weapon.id, weapon.id],
+        englishNameText,
+        materialDataMap,
+      ),
     ).toStrictEqual({
-      inventory: { items: [{ definition: getItemDefinition(ORE_ID, englishNameText), id: 1, quantity: 3 }], nextId: 2 },
+      inventory: {
+        items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
+        nextId: 2,
+      },
       wallet: EMPTY_WALLET,
     });
   });
