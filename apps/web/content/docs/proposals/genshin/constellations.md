@@ -16,7 +16,7 @@ touches:
 
 # Constellations
 
-The table, the activation, the talent levels the third and fifth add, and the Stella Fortuna a wish brings are built, as the [constellations](/docs/genshin/constellations) page records. What is left is the Constellation tab's press, which the drawn tab is ready for; each constellation's effect, which waits on the [character kits](/docs/proposals/genshin/character-kits); and the Traveler's element sets, which wait on their sources.
+The table, the activation, the talent levels the third and fifth add, and the Stella Fortuna a wish brings are built, as the [constellations](/docs/genshin/constellations) page records. What is left is the Constellation tab's press, which the drawn tab is ready for; each constellation's effect, which waits on the [character kits](/docs/proposals/genshin/character-kits) for the characters with no module yet; the table's numbers, which the modules built so far type from the wiki and gcsim until the world's gate hands the kits the constellation table; and the Traveler's element sets, which wait on their sources.
 
 ## Decisions
 

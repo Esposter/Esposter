@@ -131,28 +131,28 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Key files
 
-| File                                                                                   | Role                                                                    |
-| :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                      | An element applied to a target: its reactions in order, and its aura    |
-| `packages/genshin-world/src/services/combat/aura/ElementReactionStepsMap.ts`           | Each element's reactions in the game's priority, with their coefficient |
-| `packages/genshin-world/src/services/combat/aura/advanceElementalState.ts`             | Decay, Electro-Charged's and Burning's ticks, at the fixed step         |
-| `packages/genshin-world/src/services/combat/aura/applyReactionAura.ts`                 | What Frozen, Quicken, Burning, Shattered and Crystallize leave or take  |
-| `packages/genshin-world/src/services/combat/aura/constants.ts`                         | The aura tax and durations, and every reaction's documented number      |
-| `packages/genshin-world/src/services/combat/damage/getDamage.ts`                       | The general damage formula                                              |
-| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`         | A transformative reaction's own damage                                  |
-| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts`     | The level multiplier by a character's level                             |
-| `packages/genshin-world/src/services/combat/internalCooldown/applyInternalCooldown.ts` | A hit counted into its internal cooldown                                |
-| `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`              | Damage taken on a shield                                                |
-| `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                        |
-| `packages/genshin-world/src/models/combat/ReactionType.ts`                             | Every reaction, merged from the amplifying, catalyze and transformative |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                                   | A kit's step: its action, its hits and what the presses start           |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                             | The world's step of the kit on the field: aim, strikes, particles       |
-| `packages/genshin-world/src/services/kit/strikeEnemy.ts`                               | A kit's hit on an enemy, priced and applied by combat                   |
-| `packages/genshin-world/src/services/kit/strikePartyMember.ts`                         | An enemy's strike on the member on the field                            |
-| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                   |
-| `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                       | Whether a hit's cylinder reaches an enemy                               |
-| `packages/genshin-world/src/services/kit/constants.ts`                                 | The Traveler's kit, the kit's timings and its areas                     |
-| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | Particle energy, as [party](/docs/genshin/party) gives it               |
+| File                                                                                   | Role                                                                                                                  |
+| :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                      | An element applied to a target: its reactions in order, and its aura                                                  |
+| `packages/genshin-world/src/services/combat/aura/ElementReactionStepsMap.ts`           | Each element's reactions in the game's priority, with their coefficient                                               |
+| `packages/genshin-world/src/services/combat/aura/advanceElementalState.ts`             | Decay, Electro-Charged's and Burning's ticks, at the fixed step                                                       |
+| `packages/genshin-world/src/services/combat/aura/applyReactionAura.ts`                 | What Frozen, Quicken, Burning, Shattered and Crystallize leave or take                                                |
+| `packages/genshin-world/src/services/combat/aura/constants.ts`                         | The aura tax and durations, and every reaction's documented number                                                    |
+| `packages/genshin-world/src/services/combat/damage/getDamage.ts`                       | The general damage formula                                                                                            |
+| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`         | A transformative reaction's own damage                                                                                |
+| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts`     | The level multiplier by a character's level                                                                           |
+| `packages/genshin-world/src/services/combat/internalCooldown/applyInternalCooldown.ts` | A hit counted into its internal cooldown                                                                              |
+| `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`              | Damage taken on a shield                                                                                              |
+| `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                                                                      |
+| `packages/genshin-world/src/models/combat/ReactionType.ts`                             | Every reaction, merged from the amplifying, catalyze and transformative                                               |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                                   | A kit's step: its action, its hits and what the presses start                                                         |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                             | The world's step of the kit on the field: aim, its stance, the kit events, and its strikes through `strikeKitEnemies` |
+| `packages/genshin-world/src/services/kit/strikeEnemy.ts`                               | A kit's hit on an enemy, priced and applied by combat                                                                 |
+| `packages/genshin-world/src/services/kit/strikePartyMember.ts`                         | An enemy's strike on the member on the field                                                                          |
+| `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                        | The enemy an action turns the body to                                                                                 |
+| `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                       | Whether a hit's cylinder reaches an enemy                                                                             |
+| `packages/genshin-world/src/services/kit/constants.ts`                                 | The Traveler's kit, the kit's timings and its areas                                                                   |
+| `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                         | Particle energy, as [party](/docs/genshin/party) gives it                                                             |
 
 ## Notes
 
