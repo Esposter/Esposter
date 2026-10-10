@@ -22,8 +22,9 @@ import { join } from "node:path";
 const TSDOWN_CONFIGURATION_REGEX = /^tsdown\.config\.[cm]?[jt]s$/u;
 
 // Brings one workspace package to its key, after bringing up to date every workspace package it links, so a fresh
-// Worktree's leaf builds its whole chain. A dist stamped with the key, and its barrels present, is left alone; otherwise
-// A hit restores the cached output, and a miss builds it in a slot and stores it. Either way the dist ends stamped.
+// Worktree's leaf builds its whole chain. A dist stamped with the key is left alone while the key's entry is still cached
+// To write its barrels back from; otherwise a hit restores the cached output, and a miss builds it in a slot and stores
+// It. Either way the dist ends stamped.
 // A package two dependency paths reach is brought up to date once per request, its outcome kept by its directory
 export const buildPackageCached = (
   packageDirectory: string,
@@ -51,7 +52,7 @@ export const buildPackageCached = (
   const outputDirectory = join(packageDirectory, BUILD_OUTPUT_DIRECTORY);
   const stampPath = join(outputDirectory, BUILD_STAMP_FILE);
   const keyDirectory = join(BUILD_CACHE_DIRECTORY, name, key);
-  if (existsSync(stampPath) && readFileSync(stampPath, "utf8") === key) {
+  if (existsSync(stampPath) && readFileSync(stampPath, "utf8") === key && existsSync(keyDirectory)) {
     restoreGeneratedPaths(packageDirectory, keyDirectory);
     console.info(`${name}: ${BuildCacheOutcome.Fresh}`);
     directoryOutcomeMap.set(packageDirectory, BuildCacheOutcome.Fresh);
