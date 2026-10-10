@@ -273,24 +273,25 @@ export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_FIGURE_MESH_REGEX: RegExp = /^Stages_MdGoddess_Lite/u;
 // The great oak as its export's Lod1 meshes: its canopy's clusters grouped from the leaf's card centres by a seeded
-// K-means, the same export always clustering the same way, and its trunk's radius at each station read off the bark
-// Within a slab of a station's height and within the trunk's reach of its axis. The clusters are as many as the shape
-// Pass's envelope stops reading nearer at, about five cards a cluster (`Oak.reference`)
+// K-means, the same export always clustering the same way, as many as the shape pass's envelope stops reading nearer
+// At, about five cards a cluster (`Oak.reference`)
 export const OAK_LEAF_MESH = "Stages_Unique_CyTree01_Leaf_Lod1";
 export const OAK_BARK_MESH = "Stages_Unique_CyTree01_Bark_Lod1";
 export const OAK_CLUSTER_COUNT = 1280;
 export const OAK_CLUSTER_SEED = 12345;
-export const OAK_TRUNK_HEIGHTS: number[] = [0, 2, 4, 6, 8, 10, 12];
-export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;
-export const OAK_TRUNK_REACH = 8;
+// The oak's trunk and limbs are its bark's first submesh, drawn in its first bark material: the trunk standing on the
+// Ground and each limb a tube open where it leaves the trunk or the limb it grows from, traced as the roots are
+// (`Oak.reference`)
+export const OAK_LIMB_SUBMESH = 0;
 // The side of a cell of the oak's leaf normal field, in metres: vertices within a few metres agree to about 18 degrees
 export const OAK_NORMAL_CELL_SIZE = 4;
 // The oak's surface roots are its bark's second submesh, drawn in its second bark material, each root a tube open only
-// Where it leaves the trunk or the root it forks from. Each is cut every half metre along itself into the loops its
-// Centreline runs through, and kept within 5 cm, its radius weighed as its place is (`Oak.reference`)
+// Where it leaves the trunk or the root it forks from. Each of the bark's tubes, a root or a limb, is cut every half
+// Metre along itself into the loops its centreline runs through, and kept within 5 cm, its radius weighed as its place
+// Is (`Oak.reference`)
 export const OAK_ROOT_SUBMESH = 1;
-export const OAK_ROOT_LEVEL_STEP = 0.5;
-export const OAK_ROOT_TOLERANCE = 0.05;
+export const OAK_TUBE_LEVEL_STEP = 0.5;
+export const OAK_TUBE_TOLERANCE = 0.05;
 // A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
 // It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
 // And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while

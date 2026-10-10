@@ -1,5 +1,5 @@
 import type { Vector } from "#src/models/shared/Vector";
-import type { TreeRoot } from "genshin-engine";
+import type { TreeTube } from "genshin-engine";
 
 import { joinMeshVertices } from "#src/services/genshinAssets/fit/joinMeshVertices";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
@@ -28,48 +28,76 @@ const toCrossSection = (points: readonly Vector[]): Pick<SkeletonNode, "centre" 
   for (const point of points) for (const axis of AXES) centre[axis] += point[axis] / points.length;
   return { centre, radius: points.reduce((sum, point) => sum + toDistance(point, centre), 0) / points.length };
 };
+// A piece's open loops, the edges only one of its triangles holds joined where they share a corner, each as its
+// Vertices in the order its edges first name them, its edges, and its centroid and mean radius
+const findOpenLoops = (
+  vertices: readonly Vector[],
+  pieceFaces: readonly Vector[],
+): (Pick<SkeletonNode, "centre" | "radius"> & { edges: [number, number][]; vertices: number[] })[] => {
+  const edgeFaceCountMap = new Map<string, number>();
+  const edgeVerticesMap = new Map<string, [number, number]>();
+  for (const face of pieceFaces)
+    for (const [corner, first] of face.entries()) {
+      const second = face[(corner + 1) % 3] ?? first;
+      const key = toEdgeKey(first, second);
+      edgeFaceCountMap.set(key, (edgeFaceCountMap.get(key) ?? 0) + 1);
+      if (!edgeVerticesMap.has(key)) edgeVerticesMap.set(key, [first, second]);
+    }
+  const openEdges = [...edgeFaceCountMap].flatMap(([key, faceCount]) => {
+    const edge = edgeVerticesMap.get(key);
+    return faceCount === 1 && edge ? [edge] : [];
+  });
+  const loopParentMap = new Map<number, number>();
+  const findLoop = (vertex: number): number => {
+    let loop = vertex;
+    while ((loopParentMap.get(loop) ?? loop) !== loop) loop = loopParentMap.get(loop) ?? loop;
+    return loop;
+  };
+  for (const [first, second] of openEdges) {
+    if (!loopParentMap.has(first)) loopParentMap.set(first, first);
+    if (!loopParentMap.has(second)) loopParentMap.set(second, second);
+    loopParentMap.set(findLoop(second), findLoop(first));
+  }
+  const loopMap = new Map<number, { edges: [number, number][]; vertices: number[] }>();
+  const seenVertices = new Set<number>();
+  for (const edge of openEdges) {
+    const loopKey = findLoop(edge[0]);
+    const loop = loopMap.get(loopKey) ?? { edges: [], vertices: [] };
+    loop.edges.push(edge);
+    for (const vertex of edge) {
+      if (seenVertices.has(vertex)) continue;
+      seenVertices.add(vertex);
+      loop.vertices.push(vertex);
+    }
+    loopMap.set(loopKey, loop);
+  }
+  return Array.from(loopMap.values(), ({ edges, vertices: loopVertices }) => {
+    const { centre, radius } = toCrossSection(loopVertices.map((vertex) => vertices[vertex] ?? [0, 0, 0]));
+    return { centre, edges, radius, vertices: loopVertices };
+  });
+};
 // One piece's skeleton: its vertices' distances along its edges from its start, cut at every step of that distance into
 // The loops each level crosses the piece in, each loop a node grown from the nearest node a step nearer the start, and
 // The piece's farthest vertex past each loop nothing grows from, its tip
 const traceSkeleton = (
   vertices: readonly Vector[],
   pieceFaces: readonly Vector[],
+  startVertices: readonly number[],
   levelStep: number,
 ): SkeletonNode[] => {
-  const edgeFaceCountMap = new Map<string, number>();
   const edgeVerticesMap = new Map<string, [number, number]>();
   const neighbourMap = new Map<number, number[]>();
   for (const face of pieceFaces)
     for (const [corner, first] of face.entries()) {
       const second = face[(corner + 1) % 3] ?? first;
       const key = toEdgeKey(first, second);
-      const faceCount = edgeFaceCountMap.get(key) ?? 0;
-      edgeFaceCountMap.set(key, faceCount + 1);
-      if (faceCount > 0) continue;
+      if (edgeVerticesMap.has(key)) continue;
       edgeVerticesMap.set(key, [first, second]);
       neighbourMap.set(first, [...(neighbourMap.get(first) ?? []), second]);
       neighbourMap.set(second, [...(neighbourMap.get(second) ?? []), first]);
     }
   const pieceVertices = [...neighbourMap.keys()];
   const readVertex = (vertex: number): Vector => vertices[vertex] ?? [0, 0, 0];
-  // The piece starts at its open end, where it leaves the trunk or the root it forks from, else at its vertex nearest
-  // The trunk's axis
-  const openVertices = [
-    ...new Set(
-      [...edgeFaceCountMap].flatMap(([key, faceCount]) => (faceCount === 1 ? (edgeVerticesMap.get(key) ?? []) : [])),
-    ),
-  ];
-  const startVertices =
-    openVertices.length > 0
-      ? openVertices
-      : [
-          pieceVertices.reduce((nearest, vertex) =>
-            Math.hypot(readVertex(vertex)[0], readVertex(vertex)[2]) <
-            Math.hypot(readVertex(nearest)[0], readVertex(nearest)[2])
-              ? vertex
-              : nearest,
-          ),
-        ];
   // Dijkstra from every start vertex at once, along the piece's edges
   const distanceMap = new Map(pieceVertices.map((vertex) => [vertex, Infinity]));
   for (const vertex of startVertices) distanceMap.set(vertex, 0);
@@ -87,7 +115,7 @@ const traceSkeleton = (
   }
   const readDistance = (vertex: number): number => distanceMap.get(vertex) ?? 0;
   const nodes: SkeletonNode[] = [
-    { ...toCrossSection(startVertices.map((vertex) => readVertex(vertex))), farVertices: startVertices, level: 0 },
+    { ...toCrossSection(startVertices.map((vertex) => readVertex(vertex))), farVertices: [...startVertices], level: 0 },
   ];
   const maxDistance = Math.max(...pieceVertices.map((vertex) => readDistance(vertex)));
   let previousLevel = [0];
@@ -205,22 +233,61 @@ const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
   }
   return paths;
 };
-// A mesh of tubes, such as a tree's surface roots, as the centrelines it is swept along, in the mesh's own frame: each
-// Piece it splits into is traced from its open end along its own length, cut at every step of that distance into the
-// Loops round it, each loop's centroid and mean radius a point, forking where the loops part and closing on its tip with
-// No radius. Each path is simplified within the tolerance, its radius weighed as its place is
-export const traceRootCentrelines = (
+// A mesh of tubes, such as a tree's surface roots or its trunk and limbs, as the centrelines it is swept along, in the
+// Mesh's own frame: each piece it splits into is traced along its own length from its start, cut at every step of that
+// Distance into the loops round it, each loop's centroid and mean radius a point, forking where the loops part and
+// Closing on its tip with no radius. A piece starts at its widest open loop, where it leaves the trunk or the limb or
+// Root it grows from, else at its vertex nearest the axis; the trunk, the piece standing lowest where the mesh has one,
+// Starts at its foot, its vertices within a step of its lowest. Every other open loop is a hole in the bark, filled by
+// A fan from its centroid so the cuts pass over it as over the bark round it. Each path is simplified within the
+// Tolerance, its radius weighed as its place is
+export const traceTubeCentrelines = (
   vertices: readonly Vector[],
   faces: readonly Vector[],
-  { levelStep, tolerance }: { levelStep: number; tolerance: number },
-): TreeRoot[] => {
+  { hasTrunk, levelStep, tolerance }: { hasTrunk: boolean; levelStep: number; tolerance: number },
+): TreeTube[] => {
   const joined = joinMeshVertices(vertices);
-  return splitMeshComponents(vertices, faces).flatMap((pieceFaceIndices) => {
-    const pieceFaces = pieceFaceIndices.map((face): Vector => {
+  const pieces = splitMeshComponents(vertices, faces).map((pieceFaceIndices) =>
+    pieceFaceIndices.map((face): Vector => {
       const [first = 0, second = 0, third = 0] = faces[face] ?? [];
       return [joined[first] ?? first, joined[second] ?? second, joined[third] ?? third];
-    });
-    return toPaths(traceSkeleton(vertices, pieceFaces, levelStep)).flatMap((path): TreeRoot[] => {
+    }),
+  );
+  const readHeight = (vertex: number): number => vertices[vertex]?.[1] ?? 0;
+  const readLowest = (pieceFaces: readonly Vector[]): number =>
+    Math.min(...pieceFaces.flat().map((vertex) => readHeight(vertex)));
+  const pieceLowests = pieces.map((pieceFaces) => readLowest(pieceFaces));
+  const trunkPiece = hasTrunk ? pieceLowests.indexOf(Math.min(...pieceLowests)) : -1;
+  return pieces.flatMap((pieceFaces, piece) => {
+    const loops = findOpenLoops(vertices, pieceFaces);
+    const widestLoop = loops.reduce<(typeof loops)[number] | undefined>(
+      (widest, loop) => (widest && widest.radius >= loop.radius ? widest : loop),
+      undefined,
+    );
+    const pieceVertices = [...new Set(pieceFaces.flat())];
+    let startVertices: number[];
+    if (piece === trunkPiece) {
+      const lowest = pieceLowests[piece] ?? 0;
+      startVertices = pieceVertices.filter((vertex) => readHeight(vertex) <= lowest + levelStep);
+    } else if (widestLoop) startVertices = widestLoop.vertices;
+    else
+      startVertices = [
+        pieceVertices.reduce((nearest, vertex) =>
+          Math.hypot(vertices[vertex]?.[0] ?? 0, vertices[vertex]?.[2] ?? 0) <
+          Math.hypot(vertices[nearest]?.[0] ?? 0, vertices[nearest]?.[2] ?? 0)
+            ? vertex
+            : nearest,
+        ),
+      ];
+    const holes = loops.filter((loop) => piece === trunkPiece || loop !== widestLoop);
+    const filledVertices = holes.length > 0 ? [...vertices, ...holes.map(({ centre }) => centre)] : vertices;
+    const filledFaces = [
+      ...pieceFaces,
+      ...holes.flatMap(({ edges }, hole) =>
+        edges.map(([first, second]): Vector => [first, second, vertices.length + hole]),
+      ),
+    ];
+    return toPaths(traceSkeleton(filledVertices, filledFaces, startVertices, levelStep)).flatMap((path): TreeTube[] => {
       const [first, second, ...rest] = simplifyPath(path, tolerance).map(([x, y, z, radius]) => ({ radius, x, y, z }));
       return first && second ? [[first, second, ...rest]] : [];
     });
