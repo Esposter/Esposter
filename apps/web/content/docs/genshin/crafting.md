@@ -70,7 +70,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Notes
 
-- **Each recipe carries its result's name.** A recipe's `nameTextId` is the text id of the item it makes, read from the material table, and `genshin:text names` writes it into the world's names chunk per language, so a bench screen can show it without a game text key.
+- **Each recipe carries its result's name.** A recipe's `nameTextId` is the text id of the item it makes, read from the material table, and `genshin:text names` publishes it in the world's `nameText` record per language, so a bench screen can show it without a game text key.
 - **The bench is not placed.** The official map marks no crafting bench, and the scene's streaming records, which place one in a city, are not read yet, so no bench stands in the world and no prompt offers a craft.
 - **The gadget instructions' sources are not read.** Each gadget's recipe is offered once its instruction is learned, but where the instruction is obtained in the world is left to the pages that place those sources.
 - **The screen is reached through its fixture.** The recipe list, the crafter's pick, the count and the craft are the `CraftingScreen` unit under `genshin-interface`, wrapped by the world's `Crafting/Screen`, which opens as an NPC screen. Its words are the game's own text ids, and its look waits on the bench's passes against the clip.
