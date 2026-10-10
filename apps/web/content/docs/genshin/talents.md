@@ -17,8 +17,8 @@ A character's three combat talents, the normal attack, the Elemental Skill and t
 
 ```mermaid
 flowchart LR
-  P["ProudSkillExcelConfigData: each group's levels"] -->|"stats run, levels 2 to 10"| U["talentUpgrades.json, keyed by group"]
-  D["AvatarSkillDepot and AvatarSkill: each set's talent groups and passives"] -->|"stats run, the first complete set"| K["characterTalentKits.json"]
+  P["ProudSkillExcelConfigData: each group's levels"] -->|"stats run, levels 2 to 10"| U["stats/talentUpgrades, keyed by group"]
+  D["AvatarSkillDepot and AvatarSkill: each set's talent groups and passives"] -->|"stats run, the first complete set"| K["stats/characterTalentKits"]
   K -->|"the groups it names"| U
   U -->|"readTalentTables, on demand"| UP{"upgradeTalent: the next level's phase, Mora and items held?"}
   UP -->|"yes"| C["Character: the talent one level higher, Mora and items taken"]
@@ -67,7 +67,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 | `packages/genshin-world/src/services/character/createCharacter.ts`  | Every combat talent at level 1                                                      |
 | `scripts/src/services/genshinAssets/stats/toCharacterTalentKit.ts`  | A character's talents from the first skill set that names all three                 |
 | `scripts/src/services/genshinAssets/stats/toTalentUpgradeMap.ts`    | Each named group's levels from the second to the tenth, costs as the table has them |
-| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`       | Builds both tables with the other stat tables                                       |
+| `scripts/src/services/genshinAssets/stats/buildStatTables.ts`       | Builds both tables with the other stat tables, published under their `stats/` keys  |
 
 ## Sources
 
