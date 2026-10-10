@@ -28,6 +28,8 @@ export const AREA_WEATHER_CHANGE_SECONDS = 300;
 // A fetch of the world's data, a region's or a game table's, is abandoned as failed past this, so a stalled request
 // Cannot hold the world from being ready
 export const DATA_FETCH_TIMEOUT_MS = 10_000;
+// A failed read the world repeats on its own, since nothing the player does repeats it, is read again this long after
+export const DATA_FETCH_RETRY_MS = 5000;
 // How far the tuning panel moves a grade's tint each way, and a tint's channels by the tuple key it writes through
 export const TUNING_TINT_RANGE = 0.1;
 export const TUNING_TINT_CHANNELS = [

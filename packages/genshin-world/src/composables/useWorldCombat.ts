@@ -14,7 +14,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
-import { WORLD_RANDOM_SEED } from "#src/services/constants";
+import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { createCombatant } from "#src/services/kit/createCombatant";
@@ -31,6 +31,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync } from "@esposter/shared";
+import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
 
 // The party the player fields, the characters it is made of and their combat, the enemies the world holds and the kit's
@@ -62,8 +63,14 @@ export const useWorldCombat = ({
   // The characters whose chunks have been read, whose kits are built from the multipliers
   const loadedCharacterIds = shallowRef<number[]>([...STARTING_TEAM_CHARACTER_IDS]);
   const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
-  watch(deployedCharacterIds, (characterIds) => {
-    const unloadedCharacterIds = characterIds.filter((characterId) => !loadedCharacterIds.value.includes(characterId));
+  // A failed read is read again a wait later, as a team that does not change starts no other
+  const { start: retryTalentMultipliers } = useTimeoutFn(() => readUnloadedTalentMultipliers(), DATA_FETCH_RETRY_MS, {
+    immediate: false,
+  });
+  const readUnloadedTalentMultipliers = () => {
+    const unloadedCharacterIds = deployedCharacterIds.value.filter(
+      (characterId) => !loadedCharacterIds.value.includes(characterId),
+    );
     if (unloadedCharacterIds.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() => readTalentMultipliers(gameDataBaseUrl, unloadedCharacterIds)).match(
@@ -73,9 +80,11 @@ export const useWorldCombat = ({
       },
       (error) => {
         console.error(error);
+        retryTalentMultipliers();
       },
     );
-  });
+  };
+  watch(deployedCharacterIds, readUnloadedTalentMultipliers);
   const characterIdKitMap = computed(() => {
     const kitMap = new Map<number, Kit>();
     for (const characterId of loadedCharacterIds.value)
