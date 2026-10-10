@@ -28,6 +28,7 @@ import { createBanners } from "#src/services/wish/createBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -140,12 +141,11 @@ const wish = (count: number) => {
   );
   let nextInventory = inventory.value;
   for (const { item } of wishes.results)
-    if (item.kind === WishItemKind.Weapon)
-      nextInventory = addInventoryItem(
-        nextInventory,
-        toWeaponDefinition({ id: item.id, name: item.name, rarity: item.rarity }),
-        1,
-      ).inventory;
+    if (item.kind === WishItemKind.Weapon) {
+      const weaponData = statTables.weaponDataMap.get(item.id);
+      if (!weaponData) throw new InvalidOperationError(Operation.Read, String(item.id), "has no weapon data");
+      nextInventory = addInventoryItem(nextInventory, toWeaponDefinition(weaponData, item.name), 1).inventory;
+    }
   // A character drawn for the first time joins the roster in the order it was drawn, a duplicate only counting a copy
   const newCharacters = [...wishes.heldCountMap.keys()]
     .filter((id) => !characterCopyCountMap.value.has(id))

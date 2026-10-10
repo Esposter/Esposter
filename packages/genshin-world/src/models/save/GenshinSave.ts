@@ -1,5 +1,6 @@
 import { achievementProgressSaveSchema } from "#src/models/achievement/AchievementProgressSave";
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
+import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
@@ -17,6 +18,7 @@ export const genshinSaveSchema = z
     achievements: achievementProgressSaveSchema,
     adventureExp: adventureExpSaveSchema,
     companionshipExp: companionshipExpSaveSchema,
+    crafting: craftingSaveSchema,
     inventory: inventorySaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,

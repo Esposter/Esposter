@@ -40,12 +40,12 @@ const { adventureRank, crafters, gameText, nameText, progress, random, recipes }
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
+// How many of each recipe the player has crafted, by the recipe's id, which the Crafting Performed line counts
+const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
 const amount = ref(1);
 const crafterId = ref(0);
 const recipeId = ref(0);
 const tabId = ref(0);
-// How many of each recipe this visit has crafted, which the Crafting Performed line counts; the save holds no count yet
-const craftedCountMap = ref<Readonly<Record<number, number>>>({});
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));
 // One tab per combine type the open recipes fall under, in the table's order and named by the game's own text
 const tabCells = computed(() =>
@@ -76,7 +76,7 @@ const amountMaximum = computed(() => {
 });
 const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * amount.value);
 const craftedLabel = computed(() =>
-  fillGameTextValues(gameText[GameTextKey.CraftingCrafted], craftedCountMap.value[recipeId.value] ?? 0),
+  fillGameTextValues(gameText[GameTextKey.CraftingCrafted], craftedCountMap.value.get(recipeId.value) ?? 0),
 );
 // The picked recipe's results, rolled through the crafter's talent: the bag and wallet after the craft, with the
 // Talent's extra items put in the bag after the craft's own results, one that finds no room left out
@@ -96,10 +96,8 @@ const craft = () => {
     crafted.inventory,
   );
   wallet.value = crafted.wallet;
-  craftedCountMap.value = {
-    ...craftedCountMap.value,
-    [recipe.id]: (craftedCountMap.value[recipe.id] ?? 0) + amount.value,
-  };
+  const craftedCount = craftedCountMap.value.get(recipe.id) ?? 0;
+  craftedCountMap.value = new Map(craftedCountMap.value).set(recipe.id, craftedCount + amount.value);
 };
 </script>
 

@@ -110,6 +110,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 1,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -235,6 +238,9 @@
       }
     ],
     "baseExp": 1200,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 2,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -410,6 +416,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -595,6 +604,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -780,6 +792,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -965,6 +980,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -1150,6 +1168,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -1335,6 +1356,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -1520,6 +1544,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -1705,6 +1732,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -1890,6 +1920,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -2075,6 +2108,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -2260,6 +2296,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -2445,6 +2484,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -2630,6 +2672,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -2815,6 +2860,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3000,6 +3048,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3185,6 +3236,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3320,6 +3374,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3495,6 +3552,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3675,6 +3735,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -3860,6 +3923,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4045,6 +4111,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4230,6 +4299,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4410,6 +4482,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4595,6 +4670,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4702,6 +4780,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4804,6 +4885,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -4906,6 +4990,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -5086,6 +5173,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -5271,6 +5361,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -5456,6 +5549,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -5641,6 +5737,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -5826,6 +5925,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6011,6 +6113,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6118,6 +6223,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6298,6 +6406,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6483,6 +6594,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6668,6 +6782,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -6853,6 +6970,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7038,6 +7158,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7223,6 +7346,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7408,6 +7534,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7593,6 +7722,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7778,6 +7910,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -7963,6 +8098,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8098,6 +8236,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8223,6 +8364,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8348,6 +8492,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8523,6 +8670,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8708,6 +8858,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -8893,6 +9046,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -9078,6 +9234,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -9263,6 +9422,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -9448,6 +9610,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -9633,6 +9798,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -9818,6 +9986,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10003,6 +10174,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10188,6 +10362,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10373,6 +10550,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10508,6 +10688,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 1,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10633,6 +10816,9 @@
       }
     ],
     "baseExp": 1200,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 2,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10808,6 +10994,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -10993,6 +11182,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -11178,6 +11370,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -11285,6 +11480,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -11470,6 +11668,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -11655,6 +11856,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -11840,6 +12044,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12025,6 +12232,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12210,6 +12420,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12395,6 +12608,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12580,6 +12796,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12765,6 +12984,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -12950,6 +13172,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -13135,6 +13360,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -13320,6 +13548,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -13505,6 +13736,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -13690,6 +13924,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -13875,6 +14112,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14060,6 +14300,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14245,6 +14488,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14430,6 +14676,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14615,6 +14864,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14800,6 +15052,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -14985,6 +15240,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -15170,6 +15428,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -15355,6 +15616,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -15540,6 +15804,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -15725,6 +15992,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -15910,6 +16180,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -16095,6 +16368,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -16280,6 +16556,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -16465,6 +16744,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -16650,6 +16932,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -16835,6 +17120,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17020,6 +17308,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17155,6 +17446,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17280,6 +17574,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17405,6 +17702,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17530,6 +17830,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17705,6 +18008,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -17890,6 +18196,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18075,6 +18384,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18260,6 +18572,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18445,6 +18760,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18630,6 +18948,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18765,6 +19086,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 1,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -18890,6 +19214,9 @@
       }
     ],
     "baseExp": 1200,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 2,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19065,6 +19392,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19250,6 +19580,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19435,6 +19768,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19542,6 +19878,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19722,6 +20061,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -19907,6 +20249,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -20092,6 +20437,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -20277,6 +20625,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -20462,6 +20813,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -20647,6 +21001,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -20832,6 +21189,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21017,6 +21377,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21202,6 +21565,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21387,6 +21753,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21572,6 +21941,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21757,6 +22129,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -21942,6 +22317,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -22127,6 +22505,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -22312,6 +22693,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -22497,6 +22881,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -22682,6 +23069,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -22867,6 +23257,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23052,6 +23445,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23237,6 +23633,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23422,6 +23821,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23607,6 +24009,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23792,6 +24197,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -23977,6 +24385,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24162,6 +24573,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24297,6 +24711,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24472,6 +24889,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24657,6 +25077,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24792,6 +25215,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -24967,6 +25393,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -25152,6 +25581,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -25337,6 +25769,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -25522,6 +25957,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -25707,6 +26145,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -25892,6 +26333,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26077,6 +26521,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26262,6 +26709,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26447,6 +26897,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26582,6 +27035,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 1,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26707,6 +27163,9 @@
       }
     ],
     "baseExp": 1200,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 2,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -26882,6 +27341,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27067,6 +27529,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27252,6 +27717,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27437,6 +27905,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27622,6 +28093,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27729,6 +28203,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -27914,6 +28391,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -28099,6 +28579,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -28284,6 +28767,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -28469,6 +28955,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -28654,6 +29143,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -28839,6 +29331,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29024,6 +29519,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29209,6 +29707,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29394,6 +29895,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29579,6 +30083,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29714,6 +30221,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -29889,6 +30399,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30074,6 +30587,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30259,6 +30775,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30444,6 +30963,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30629,6 +31151,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30814,6 +31339,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -30999,6 +31527,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -31184,6 +31715,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -31369,6 +31903,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -31554,6 +32091,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -31739,6 +32279,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -31924,6 +32467,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32109,6 +32655,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32294,6 +32843,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32479,6 +33031,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32664,6 +33219,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32849,6 +33407,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -32984,6 +33545,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -33159,6 +33723,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -33344,6 +33911,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -33529,6 +34099,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -33664,6 +34237,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -33839,6 +34415,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34024,6 +34603,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34209,6 +34791,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34394,6 +34979,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34579,6 +35167,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34764,6 +35355,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -34949,6 +35543,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -35134,6 +35731,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -35319,6 +35919,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -35504,6 +36107,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -35689,6 +36295,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -35874,6 +36483,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36059,6 +36671,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36244,6 +36859,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36379,6 +36997,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 1,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36504,6 +37125,9 @@
       }
     ],
     "baseExp": 1200,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 2,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36679,6 +37303,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -36864,6 +37491,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37049,6 +37679,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37234,6 +37867,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37419,6 +38055,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37526,6 +38165,9 @@
       }
     ],
     "baseExp": 1800,
+    "destroyRule": "DESTROY_RETURN_MATERIAL",
+    "destroyReturnMaterial": 104011,
+    "destroyReturnMaterialCount": 3,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37711,6 +38353,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -37896,6 +38541,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -38081,6 +38729,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -38266,6 +38917,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -38451,6 +39105,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -38636,6 +39293,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -38821,6 +39481,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39006,6 +39669,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39191,6 +39857,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39376,6 +40045,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39561,6 +40233,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39746,6 +40421,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -39931,6 +40609,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -40116,6 +40797,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -40301,6 +40985,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -40481,6 +41168,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -40666,6 +41356,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -40851,6 +41544,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41036,6 +41732,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41221,6 +41920,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41406,6 +42108,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41591,6 +42296,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41776,6 +42484,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -41961,6 +42672,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -42146,6 +42860,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -42331,6 +43048,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -42516,6 +43236,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -42701,6 +43424,9 @@
       }
     ],
     "baseExp": 50000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -42886,6 +43612,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43071,6 +43800,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43256,6 +43988,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43391,6 +44126,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43516,6 +44254,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43641,6 +44382,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -43816,6 +44560,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44001,6 +44748,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44186,6 +44936,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44371,6 +45124,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44556,6 +45312,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44741,6 +45500,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -44926,6 +45688,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45111,6 +45876,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45296,6 +46064,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45431,6 +46202,9 @@
       }
     ],
     "baseExp": 300000,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45556,6 +46330,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45681,6 +46458,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45806,6 +46586,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -45931,6 +46714,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -46056,6 +46842,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -46181,6 +46970,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",
@@ -46306,6 +47098,9 @@
       }
     ],
     "baseExp": 600,
+    "destroyRule": "DESTROY_NONE",
+    "destroyReturnMaterial": 0,
+    "destroyReturnMaterialCount": 0,
     "growAttributes": [
       {
         "attribute": "FIGHT_PROP_BASE_ATTACK",

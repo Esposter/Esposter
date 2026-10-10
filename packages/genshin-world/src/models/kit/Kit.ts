@@ -18,6 +18,9 @@ export interface Kit {
   elementalSkill: KitAction;
   // The presses a skill can take in a row after its first, if any, which the window of each press allows
   elementalSkillChain?: KitSkillChain;
+  // The charges the skill holds, if more than one: each use spends one, and they come back one at a time, each on the
+  // Skill's cooldown
+  elementalSkillCharges?: number;
   // The hold levels a skill has, ordered by their minimum seconds, if it has any. A skill with holds starts on its release
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is

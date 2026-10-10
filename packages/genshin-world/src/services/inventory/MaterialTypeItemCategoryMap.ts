@@ -10,4 +10,5 @@ export const MaterialTypeItemCategoryMap = {
   [MaterialType.Food]: ItemCategory.Food,
   [MaterialType.NoticeAddHp]: ItemCategory.Material,
   [MaterialType.WeaponExpStone]: ItemCategory.Material,
+  [MaterialType.Widget]: ItemCategory.Material,
 } as const satisfies Record<MaterialType, ItemCategory>;

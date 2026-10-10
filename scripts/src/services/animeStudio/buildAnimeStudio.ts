@@ -5,7 +5,12 @@ import {
   ANIMESTUDIO_SHA,
   CLI_EXECUTABLE_NAME,
   CLI_PROJECT_PATH,
+  KEPT_MAPS_DIRECTORY_NAME,
+  MAPS_DIRECTORY_NAME,
   OOZ_LIBRARY_FILE_NAME,
+  PARITY_DIRECTORY_NAME,
+  PARITY_REFERENCE_BLOCKS,
+  PARITY_TYPE_EXPORT_ARGUMENTS,
   PUBLISH_DIRECTORY_NAME,
   RUNTIME_IDENTIFIER,
   TARGET_FRAMEWORK,
@@ -14,12 +19,25 @@ import {
   TEXTURE2DDECODER_SHA,
   WORK_DIRECTORY_NAME,
 } from "#src/services/animeStudio/constants";
+import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readAnimeStudioExceptions } from "#src/services/genshinAssets/shared/readAnimeStudioExceptions";
+import { checkIsGameRunning } from "#src/services/genshinParity/shared/checkIsGameRunning";
+import { GAME_EXECUTABLE_NAME } from "#src/services/genshinParity/shared/constants";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { availableParallelism } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, parse, resolve } from "node:path";
 
 const run = (command: string, args: string[], cwd?: string): void => {
   const result = spawnSync(command, args, { cwd, stdio: "inherit" });
@@ -108,6 +126,32 @@ const patchOozCopies = (oozDirectory: string): void => {
   writeFileSync(path, patched);
 };
 
+const replaceCounted = (source: string, search: string, replacement: string, expected: number): string => {
+  const occurrences = source.split(search).length - 1;
+  if (occurrences !== expected)
+    throw new InvalidOperationError(
+      Operation.Update,
+      "kraken.cpp",
+      `has ${occurrences} of ${JSON.stringify(search)} where ${expected} were expected at this commit`,
+    );
+  return source.replaceAll(search, replacement);
+};
+
+// The Leviathan decoder keeps each match's offset as a size_t, so its copy source, dst + offset, wraps for every backward match.
+// That overflow is undefined: the optimizer may move a copy's load above the store of the copy before it, reading a stale byte.
+// Windows' build never reads one, so the offset is signed.
+const patchOozSignedOffsets = (oozDirectory: string): void => {
+  const path = join(oozDirectory, "kraken.cpp");
+  const source = readFileSync(path, "utf8");
+  const patched = replaceCounted(
+    replaceCounted(source, "size_t last_offset", "ptrdiff_t last_offset", 12),
+    "  size_t offset = -8;\n",
+    "  ptrdiff_t offset = -8;\n",
+    1,
+  );
+  writeFileSync(path, patched);
+};
+
 const buildCmakeLibrary = (source: string, build: string, options: string[], output: string): string => {
   run("cmake", ["-S", source, "-B", build, "-DCMAKE_BUILD_TYPE=Release", ...options]);
   run("cmake", ["--build", build, "--config", "Release", "-j", String(availableParallelism())]);
@@ -139,13 +183,93 @@ const buildAclLibrary = (projectDirectory: string, output: string): string => {
   return output;
 };
 
+const countFiles = (directory: string): number =>
+  readdirSync(directory, { recursive: true, withFileTypes: true }).filter((entry) => entry.isFile()).length;
+
+// Exports one reference block with the freshly published CLI, one run per parity type as Windows' counts were taken,
+// And compares each type's file count with the table. No run may name an exception
+const checkParityBlock = (cliPath: string, block: string, types: Record<string, number>, directory: string): void => {
+  const mismatches: string[] = [];
+  const typeCounts: Record<string, number> = {};
+  for (const [type, exportArguments] of Object.entries(PARITY_TYPE_EXPORT_ARGUMENTS)) {
+    const outputDirectory = join(directory, PARITY_DIRECTORY_NAME, parse(block).name, type);
+    rmSync(outputDirectory, { force: true, recursive: true });
+    mkdirSync(outputDirectory, { recursive: true });
+    const { error, status, stderr, stdout } = spawnSync(
+      cliPath,
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        outputDirectory,
+        "--types",
+        type,
+        ...exportArguments,
+        "--group_assets",
+        "ByType",
+        "--game",
+        "GI",
+        "--logger_flags",
+        "Warning",
+        "Error",
+      ],
+      { cwd: dirname(cliPath), encoding: "utf8", maxBuffer: 1024 ** 3 },
+    );
+    if (status !== 0)
+      throw new InvalidOperationError(
+        Operation.Create,
+        block,
+        stderr || stdout || error?.message || `exited ${status}`,
+      );
+    mismatches.push(...readAnimeStudioExceptions(`${stdout}\n${stderr}`).slice(0, 5));
+    const typeDirectory = join(outputDirectory, type);
+    typeCounts[type] = existsSync(typeDirectory) ? countFiles(typeDirectory) : 0;
+    if (typeCounts[type] !== (types[type] ?? 0))
+      mismatches.push(`${type} ${typeCounts[type]}, Windows ${types[type] ?? 0}`);
+  }
+  if (mismatches.length > 0)
+    throw new InvalidOperationError(Operation.Create, block, `does not match Windows: ${mismatches.join("; ")}`);
+  console.log(`${block}: ${JSON.stringify(typeCounts)}, matches Windows`);
+};
+
+// The parity acceptance test, run after publish: each reference block in the table is exported and compared.
+// The game's blocks are read from its install, so when they are absent the check fails.
+// It is skipped only with --skip-parity, which prints the reason.
+const checkParity = (cliPath: string, directory: string, skipParity: boolean): void => {
+  const absentBlocks = PARITY_REFERENCE_BLOCKS.filter(({ block }) => !existsSync(join(GAME_BLOCKS_DIRECTORY, block)));
+  if (absentBlocks.length > 0) {
+    const reason = `the game's blocks are absent under ${GAME_BLOCKS_DIRECTORY} (${absentBlocks.map(({ block }) => block).join(", ")})`;
+    if (skipParity) {
+      console.log(`Parity check skipped: ${reason}.`);
+      return;
+    }
+    throw new InvalidOperationError(
+      Operation.Read,
+      GAME_BLOCKS_DIRECTORY,
+      `${reason}; pass --skip-parity to build without the parity check`,
+    );
+  }
+  if (checkIsGameRunning())
+    throw new InvalidOperationError(
+      Operation.Read,
+      GAME_EXECUTABLE_NAME,
+      "is running: close the game before AnimeStudio reads its blocks",
+    );
+  for (const { block, types } of PARITY_REFERENCE_BLOCKS) checkParityBlock(cliPath, block, types, directory);
+  rmSync(join(directory, PARITY_DIRECTORY_NAME), { force: true, recursive: true });
+};
+
 // Builds the CLI and its natives for macOS, and returns the path the CLI is published to. The CLI carries its own runtime,
 // So it starts wherever .NET was installed from, with no DOTNET_ROOT for the asset runs to pass it. The directory is
-// Resolved first, since clang++ runs from ACL's source and the printed path is set from anywhere
-export const buildAnimeStudio = async (directory: string): Promise<string> => {
+// Resolved first, since clang++ runs from ACL's source and the printed path is set from anywhere. A rebuild keeps the
+// CAB map, which a map run takes hours to rebuild, and the parity check must pass before the path is returned
+export const buildAnimeStudio = async (directory: string, skipParity = false): Promise<string> => {
   const outputDirectory = resolve(directory);
   const workDirectory = join(outputDirectory, WORK_DIRECTORY_NAME);
   const publishDirectory = join(outputDirectory, PUBLISH_DIRECTORY_NAME);
+  const keptMapsDirectory = join(outputDirectory, KEPT_MAPS_DIRECTORY_NAME);
+  if (existsSync(join(publishDirectory, MAPS_DIRECTORY_NAME))) {
+    rmSync(keptMapsDirectory, { force: true, recursive: true });
+    renameSync(join(publishDirectory, MAPS_DIRECTORY_NAME), keptMapsDirectory);
+  }
   rmSync(workDirectory, { force: true, recursive: true });
   rmSync(publishDirectory, { force: true, recursive: true });
   mkdirSync(workDirectory, { recursive: true });
@@ -159,6 +283,7 @@ export const buildAnimeStudio = async (directory: string): Promise<string> => {
   );
   retargetProjects(animeStudio);
   patchOozCopies(join(animeStudio, "AnimeStudio.Ooz"));
+  patchOozSignedOffsets(join(animeStudio, "AnimeStudio.Ooz"));
 
   const oozLibrary = buildCmakeLibrary(
     join(animeStudio, "AnimeStudio.Ooz"),
@@ -192,6 +317,9 @@ export const buildAnimeStudio = async (directory: string): Promise<string> => {
   copyFileSync(oozLibrary, join(publishDirectory, OOZ_LIBRARY_FILE_NAME));
   copyFileSync(texture2DDecoderLibrary, join(publishDirectory, TEXTURE2DDECODER_LIBRARY_FILE_NAME));
   copyFileSync(aclMhyLibrary, join(publishDirectory, ACL_MHY_LIBRARY_FILE_NAME));
+  if (existsSync(keptMapsDirectory)) renameSync(keptMapsDirectory, join(publishDirectory, MAPS_DIRECTORY_NAME));
 
-  return join(publishDirectory, CLI_EXECUTABLE_NAME);
+  const cliPath = join(publishDirectory, CLI_EXECUTABLE_NAME);
+  checkParity(cliPath, outputDirectory, skipParity);
+  return cliPath;
 };

@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Zerstören",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "{0}/{1} ausgewählt",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Folgende Objekte werden zerstört:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Wiederverwertete Materialien:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Zerstörte Objekte können nicht wiederhergestellt werden.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "Okay",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Objekte zerstören",

@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Destroy",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "{0}/{1} selected",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "The following items will be destroyed:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Recovered:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "The item(s) will be destroyed. This action cannot be undone.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "OK",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Destroy Items",

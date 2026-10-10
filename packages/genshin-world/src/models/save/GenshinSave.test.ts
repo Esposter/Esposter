@@ -5,6 +5,7 @@ import {
   EMPTY_GENSHIN_SAVE,
   MAX_ACHIEVEMENT_COUNT,
   MAX_CHARACTER_COUNT,
+  MAX_CRAFTING_RECIPE_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_QUEST_COUNT,
@@ -36,6 +37,15 @@ describe("genshinSaveSchema", () => {
           maxNumber,
         ]),
       ),
+      crafting: {
+        craftedCounts: Object.fromEntries(
+          Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [
+            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+            maxNumber,
+          ]),
+        ),
+        learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
+      },
       inventory: {
         items: Array.from({ length: MAX_INVENTORY_ITEM_COUNT }, (_value, index) => ({
           id: maxNumber - index,
@@ -81,8 +91,6 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);
   });
 
-  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
-  // Would only hide a save nobody brought to it
   // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
   // Would only hide a save nobody brought to it
   test("refuses a save written before the slices were added", () => {

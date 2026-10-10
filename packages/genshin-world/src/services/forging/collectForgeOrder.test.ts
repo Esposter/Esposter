@@ -2,9 +2,12 @@ import type { ForgeOrder } from "#src/models/forging/ForgeOrder";
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { collectForgeOrder } from "#src/services/forging/collectForgeOrder";
 import { FORGE_ENHANCEMENT_TYPE } from "#src/services/forging/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -45,7 +48,7 @@ describe(collectForgeOrder, () => {
     startedAt: EPOCH,
     unitSeconds: UNIT_SECONDS,
   });
-  const weapons = new Map<number, Pick<ItemDefinition, "name" | "rarity">>();
+  const weapons = new Map<number, Pick<ItemDefinition, "name"> & WeaponData>();
   const collectArguments = { definitions, inventory: emptyInventory, random: () => 0, talents: [], weapons };
 
   test("should take in the units done by now and leave the rest queued from where they stopped", () => {
@@ -140,6 +143,21 @@ describe(collectForgeOrder, () => {
     expect.hasAssertions();
 
     const WEAPON_ID = 11_406;
+    const ORE_ID = 104_011;
+    const weaponData: WeaponData = {
+      ascensionPhases: [],
+      baseExp: 0,
+      destroyReturnMaterial: ORE_ID,
+      destroyReturnMaterialCount: 1,
+      destroyRule: DestroyRule.ReturnMaterial,
+      growAttributes: [],
+      id: WEAPON_ID,
+      nameTextId: "",
+      rarity: 1,
+      refinementCosts: [],
+      refinementMaterialId: 0,
+      weaponType: WeaponType.Sword,
+    };
     const weaponRecipe: ForgeRecipe = {
       ...recipe,
       kind: ForgeRecipeKind.Weapon,
@@ -148,13 +166,16 @@ describe(collectForgeOrder, () => {
     const result = collectForgeOrder(weaponRecipe, order(1), {
       ...collectArguments,
       now: EPOCH.add({ seconds: UNIT_SECONDS }),
-      weapons: new Map([[WEAPON_ID, { name: "Dull Blade", rarity: 1 }]]),
+      weapons: new Map([[WEAPON_ID, { ...weaponData, name: "Dull Blade" }]]),
     });
 
     expect(result.inventory.items).toStrictEqual([
       {
         definition: {
           category: ItemCategory.Weapon,
+          destroyReturnMaterial: ORE_ID,
+          destroyReturnMaterialCount: 1,
+          destroyRule: DestroyRule.ReturnMaterial,
           id: WEAPON_ID,
           name: "Dull Blade",
           rank: 0,

@@ -18,6 +18,8 @@ export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
+// The bench's recipes are the combine table's rows, each named by its id once in the learned list and once in the counts
+export const MAX_CRAFTING_RECIPE_COUNT = 512;
 // The game's achievement table keeps this many achievements, counted by `genshin:assets achievements` into the
 // World's data
 export const MAX_ACHIEVEMENT_COUNT: number = achievementCount.count;
@@ -43,6 +45,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
   companionshipExp: {},
+  crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: { items: [], nextId: MAX_SAVE_NUMBER },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
@@ -76,6 +79,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   SKELETON_GENSHIN_SAVE_LENGTH +
   MAX_ACHIEVEMENT_COUNT * getRecordEntryLength({ count: MAX_SAVE_NUMBER, finishedAt: MAX_SAVE_INSTANT }) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
       objectiveCounts: Array.from({ length: MAX_OBJECTIVE_COUNT }, () => MAX_SAVE_NUMBER),
@@ -99,6 +103,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
   companionshipExp: {},
+  crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: EMPTY_INVENTORY_SAVE,
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,

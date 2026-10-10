@@ -48,6 +48,7 @@ const items: InventoryItem[] = [
 
 export const props = {
   adventureRank: 10,
+  craftedCountMap: new Map<number, number>(),
   crafters: [
     { id: 10_000_043, name: "Sucrose" },
     { id: 10_000_058, name: "Yae Miko" },

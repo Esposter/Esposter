@@ -2,6 +2,9 @@
 export interface ExcelWeaponRow {
   awakenCosts: number[];
   awakenMaterial: number;
+  destroyReturnMaterial: number[];
+  destroyReturnMaterialCount: number[];
+  destroyRule: string;
   id: number;
   nameTextMapHash: number;
   rankLevel: number;

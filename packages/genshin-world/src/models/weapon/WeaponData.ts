@@ -2,16 +2,21 @@ import type { GrowAttribute } from "#src/models/character/GrowAttribute";
 import type { WeaponAscensionPhase } from "#src/models/weapon/WeaponAscensionPhase";
 
 import { growAttributeSchema } from "#src/models/character/GrowAttribute";
+import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { weaponAscensionPhaseSchema } from "#src/models/weapon/WeaponAscensionPhase";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { z } from "zod";
 
 // A weapon of the game's as its tables hold it, by the game's own id: its name by text id, its kind, its rarity in stars,
 // Its base ATK and secondary attribute growing with its level, its ascension phases, the EXP it gives as fodder, and what
-// Each refinement rank takes: the Mora per rank gained, from the second rank, and the material that may stand for a copy
+// Each refinement rank takes: the Mora per rank gained, from the second rank, and the material that may stand for a copy,
+// And what destroying it gives back: the game's destroy rule, and the material and how many of it a destroy returns
 export interface WeaponData {
   ascensionPhases: WeaponAscensionPhase[];
   baseExp: number;
+  destroyReturnMaterial: number;
+  destroyReturnMaterialCount: number;
+  destroyRule: DestroyRule;
   growAttributes: GrowAttribute[];
   id: number;
   nameTextId: string;
@@ -24,6 +29,9 @@ export interface WeaponData {
 export const weaponDataSchema = z.object({
   ascensionPhases: z.array(weaponAscensionPhaseSchema).min(1),
   baseExp: z.int().nonnegative(),
+  destroyReturnMaterial: z.int().nonnegative(),
+  destroyReturnMaterialCount: z.int().nonnegative(),
+  destroyRule: z.enum(DestroyRule),
   growAttributes: z.array(growAttributeSchema),
   id: z.int().positive(),
   nameTextId: z.string().min(1),

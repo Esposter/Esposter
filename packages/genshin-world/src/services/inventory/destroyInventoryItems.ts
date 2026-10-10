@@ -1,8 +1,24 @@
-import type { InventoryItem } from "#src/models/inventory/InventoryItem";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
+import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { destroyInventoryItem } from "#src/services/inventory/destroyInventoryItem";
+import { addDestroyReturn } from "#src/services/inventory/addDestroyReturn";
+import { getDestroyableItem } from "#src/services/inventory/getDestroyableItem";
+import { getDestroyReturns } from "#src/services/inventory/getDestroyReturns";
 
-// The bag's entries after every entry with those ids is destroyed, each through `destroyInventoryItem`, so a chosen entry
-// The bag may not destroy refuses the whole destruction
-export const destroyInventoryItems = (items: InventoryItem[], ids: number[]): InventoryItem[] =>
-  ids.reduce((remainingItems, id) => destroyInventoryItem(remainingItems, id), items);
+// The bag and the wallet after every chosen entry is destroyed: each entry must be one the bag may destroy, or the whole
+// Destruction is refused, and what the destroyed entries return is taken into the wallet or the bag. Undefined where the
+// Bag cannot take every returned material whole, which refuses the destruction as a whole, nothing destroyed
+export const destroyInventoryItems = (
+  { items, nextId }: Inventory,
+  wallet: Wallet,
+  ids: number[],
+  names: Readonly<Record<string, string>>,
+): InventoryDestruction | undefined => {
+  const destroyedItems = ids.map((id) => getDestroyableItem(items, id));
+  const remainingInventory: Inventory = { items: items.filter((item) => !destroyedItems.includes(item)), nextId };
+  return getDestroyReturns(destroyedItems).reduce<InventoryDestruction | undefined>(
+    (destruction, itemCount) => destruction && addDestroyReturn(destruction, itemCount, names),
+    { inventory: remainingInventory, wallet },
+  );
+};

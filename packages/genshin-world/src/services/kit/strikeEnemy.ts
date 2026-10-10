@@ -28,10 +28,10 @@ import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constant
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
-// Is applied at the gauge its internal cooldown leaves of it, and the hit's damage takes what its reactions amplify,
-// Catalyze or add, with each transformative reaction's damage added to it, before damageEnemy takes it. The enemy's RES
-// To the element is its own less each status's reduction of it. It returns the energy the hit dropped and the reactions
-// It triggered
+// Is applied at the gauge its internal cooldown leaves of it, and the hit's damage takes its own additive base DMG
+// Bonus and what its reactions amplify, catalyze or add, with each transformative reaction's damage added to it, before
+// The enemy takes it through damageEnemy. The enemy's RES to the element, or its Physical RES, is its own less each
+// Status's reduction of it. It returns the energy the hit dropped and the reactions it triggered
 export const strikeEnemy = (
   enemy: Enemy,
   kitHit: KitHit,
@@ -67,7 +67,7 @@ export const strikeEnemy = (
   const { defense } = computeEnemyStats(kind, enemy.level);
   const elementalMastery = attributeTotalMap[Attribute.ElementalMastery];
   let amplifyingMultiplier = 1;
-  let additiveBaseDamageBonus = 0;
+  let additiveBaseDamageBonus = kitHit.additiveBaseDamageBonus?.(combatant) ?? 0;
   let transformativeDamage = 0;
   for (const { element: reactionElement, reactionType } of reactions)
     if (
@@ -76,7 +76,7 @@ export const strikeEnemy = (
     )
       amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery);
     else if (reactionType === CatalyzeReactionType.Aggravate || reactionType === CatalyzeReactionType.Spread)
-      additiveBaseDamageBonus = getCatalyzeBonus(reactionType, combatant.level, elementalMastery);
+      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, combatant.level, elementalMastery);
     else if (
       reactionType === TransformativeReactionType.Overloaded ||
       reactionType === TransformativeReactionType.Superconduct ||
@@ -109,7 +109,11 @@ export const strikeEnemy = (
       attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0),
     resistance:
       element === undefined
-        ? kind.physicalResistance
+        ? kind.physicalResistance -
+          enemy.statuses.reduce(
+            (total, { physicalResistanceReduction }) => total + (physicalResistanceReduction ?? 0),
+            0,
+          )
         : kind.elementResistances[element] -
           enemy.statuses.reduce((total, { resistanceReduction }) => total + (resistanceReduction?.[element] ?? 0), 0),
     stat: attack,

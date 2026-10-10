@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { InventoryCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -13,6 +14,9 @@ import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameText
 import { CurrencyRarityMap } from "#src/services/inventory/CurrencyRarityMap";
 import { destroyInventoryItems } from "#src/services/inventory/destroyInventoryItems";
 import { DestroyQuickSelectGameTextKeyMap } from "#src/services/inventory/DestroyQuickSelectGameTextKeyMap";
+import { getDestroyReturns } from "#src/services/inventory/getDestroyReturns";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { InventorySortGameTextKeyMap } from "#src/services/inventory/InventorySortGameTextKeyMap";
 import { ItemCategoryGameTextKeyMap } from "#src/services/inventory/ItemCategoryGameTextKeyMap";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
@@ -25,11 +29,13 @@ interface Props {
   // The tab the bag opens on
   initialCategory: ItemCategory;
   inventory: Inventory;
+  // The game's names in the reader's language, by their text ids, for the materials a destroy returns
+  names: Readonly<Record<string, string>>;
   wallet: Wallet;
 }
 
-const { gameText, initialCategory, inventory, wallet } = defineProps<Props>();
-const emit = defineEmits<{ close: []; "update:inventory": [inventory: Inventory] }>();
+const { gameText, initialCategory, inventory, names, wallet } = defineProps<Props>();
+const emit = defineEmits<{ close: []; destroy: [destruction: InventoryDestruction] }>();
 const category = ref(initialCategory);
 const selectedId = ref("");
 const isDestroying = ref(false);
@@ -101,8 +107,16 @@ const destroyableCount = computed(() => inventory.items.filter(checkIsInventoryI
 const destroySelectedLabel = computed(() =>
   fillGameTextValues(gameText[GameTextKey.InventoryDestroySelected], chosenIds.value.length, destroyableCount.value),
 );
-const chosenNames = computed(() =>
-  inventory.items.filter(({ id }) => chosenIds.value.includes(String(id))).map(({ definition: { name } }) => name),
+const chosenItems = computed(() => inventory.items.filter(({ id }) => chosenIds.value.includes(String(id))));
+const chosenNames = computed(() => chosenItems.value.map(({ definition: { name } }) => name));
+// The materials the chosen entries return, each named as the game names it, with its count, summed by material
+const recoveredNames = computed(() =>
+  getDestroyReturns(chosenItems.value).map(({ count, id }) => {
+    const currency = getWalletCurrency(id);
+    const name =
+      currency === undefined ? getItemDefinition(id, names).name : gameText[CurrencyGameTextKeyMap[currency]];
+    return `${name} x${count}`;
+  }),
 );
 const quickSelects = computed(() =>
   (DestroyQuickSelectGameTextKeyMap[category.value] ?? []).map(({ gameTextKey, rarity }) => ({
@@ -124,9 +138,13 @@ const quickSelect = (rarity: number) => {
   const rarityIds = cells.value.filter((cell) => cell.isDestroyable && cell.rarity === rarity).map(({ id }) => id);
   chosenIds.value = [...new Set([...chosenIds.value, ...rarityIds])];
 };
+// The destruction the chosen entries make, undefined where the bag cannot take what they return whole
+// The dialog holds its OK off then, under the game's bag-full line
+const destruction = computed(() => destroyInventoryItems(inventory, wallet, chosenIds.value.map(Number), names));
+const isDestroyFull = computed(() => chosenIds.value.length > 0 && destruction.value === undefined);
 const confirmDestroy = () => {
-  const ids = chosenIds.value.map(Number);
-  emit("update:inventory", { ...inventory, items: destroyInventoryItems(inventory.items, ids) });
+  if (!destruction.value) return;
+  emit("destroy", destruction.value);
   isConfirming.value = false;
   isDestroying.value = false;
   chosenIds.value = [];
@@ -158,10 +176,14 @@ const currencies = computed(() =>
       :destroy-cannot-label="gameText[GameTextKey.InventoryDestroyCannot]"
       :destroy-confirm-button-label="gameText[GameTextKey.InventoryDestroyConfirmButton]"
       :destroy-confirm-list-label="gameText[GameTextKey.InventoryDestroyConfirmList]"
+      :destroy-full-label="gameText[GameTextKey.BagFull]"
+      :is-destroy-full="isDestroyFull || undefined"
       :destroy-confirm-title="gameText[GameTextKey.InventoryDestroyConfirmTitle]"
       :destroy-confirm-warning-label="gameText[GameTextKey.InventoryDestroyConfirmWarning]"
       :destroy-label="gameText[GameTextKey.InventoryDestroy]"
       :destroy-names="chosenNames"
+      :destroy-recovered-label="gameText[GameTextKey.InventoryDestroyRecovered]"
+      :destroy-recovered-names="recoveredNames"
       :destroy-selected-label
       :destroy-tip-label="gameText[GameTextKey.InventoryDestroyTip]"
       :is-confirming="isConfirming || undefined"

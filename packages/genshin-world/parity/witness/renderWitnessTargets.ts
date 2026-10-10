@@ -56,8 +56,8 @@ let occlusion:
     };
 // The witness render's G-buffer at its current view, one floating-point target a quantity, each read back from the
 // Renderer as rows of four floats a pixel: the albedo its exported material draws unlit, the depth along the view in
-// Metres, the light the material adds after lighting, the world normal its normal map bends (encoded into 0 to 1, as
-// `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, the share of light
+// Metres, the light the material adds after lighting, the world normal its normal map bends and the one its geometry
+// Carries before the map (each encoded into 0 to 1, as `readWitnessTargets` decodes it), the share of the sun reaching it through the scene's shadows, the share of light
 // The scene's occlusion leaves it over the parts' own depth (all of it where the scene draws none), the part (its
 // Identifier from one, the order the header lists it in) with its family's index, the families listed in that order,
 // And the place on the part's own geometry it shows, before its placement moves it (where a plan of ours reads it),
@@ -149,6 +149,7 @@ export const renderWitnessTargets = async (
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),
       [WitnessTarget.Emission]: vec4(emission ?? vec3(0), 1),
+      [WitnessTarget.GeometryNormal]: vec4(normalWorld.mul(0.5).add(0.5), 1),
       // Halved and lifted into 0 to 1, since the material's colour output clips what falls below 0, which took every
       // Normal's negative components; read back, it is let down again
       [WitnessTarget.Normal]: vec4(worldNormal.mul(0.5).add(0.5), 1),

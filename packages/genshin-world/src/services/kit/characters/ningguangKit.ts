@@ -14,6 +14,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -33,14 +34,11 @@ const STRIKE_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, he
 const SKILL_TARGETING_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 10, radius: 15 });
 // Measured: gcsim v2.47.2 (MIT) ningguang/attack.go, charge.go and burst.go. Each gem is a circle on the primary target, of
 // Radius 0.5 for a strike's gem, a Star Jade and a Starshatter gem, 3.5 for a strike's gem from Piercing Fragments and 1.5
-// For the charged attack's. An area does not hold a target, so each is priced round the body as the 5 metres an attack
-// Targets within plus its radius
+// For the charged attack's
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ningguang/attack.go
-const createGemReach = (radius: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: STRIKE_TARGETING_AREA.radius + radius });
-const GEM_HIT_AREA = createGemReach(0.5);
-const PIERCING_FRAGMENTS_HIT_AREA = createGemReach(3.5);
-const CHARGED_ATTACK_HIT_AREA = createGemReach(1.5);
+const GEM_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 0.5);
+const PIERCING_FRAGMENTS_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 3.5);
+const CHARGED_ATTACK_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 1.5);
 // Measured: gcsim v2.47.2 (MIT) ningguang/skill.go, the screen standing 3 metres ahead of the body, and the skill's hit a
 // Circle of radius 5 round it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ningguang/skill.go

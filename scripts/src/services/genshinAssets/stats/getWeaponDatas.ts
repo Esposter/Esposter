@@ -5,11 +5,12 @@ import type { WeaponData } from "genshin-world";
 import { EMPTY_ITEM_ID, EMPTY_PROPERTY_TYPE } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
+import { takeOne } from "@esposter/shared";
 import { weaponDataSchema } from "genshin-world";
 
 // Every weapon with ascension phases as the game's tables hold it: its name by text id, its base ATK and secondary
 // Attribute growing along their curves, its phases from its promotion table with what entering each costs, its fodder
-// EXP, and the Mora and material each refinement rank takes
+// EXP, the Mora and material each refinement rank takes, and what its destroy gives back
 export const getWeaponDatas = (notes: string[]): WeaponData[] => {
   const promoteIdRowsMap = Map.groupBy(
     readExcelTable<ExcelWeaponPromoteRow>("WeaponPromoteExcelConfigData"),
@@ -30,6 +31,9 @@ export const getWeaponDatas = (notes: string[]): WeaponData[] => {
             requiredPlayerLevel,
           })),
         baseExp: row.weaponBaseExp,
+        destroyReturnMaterial: takeOne(row.destroyReturnMaterial, 0),
+        destroyReturnMaterialCount: takeOne(row.destroyReturnMaterialCount, 0),
+        destroyRule: row.destroyRule,
         growAttributes: row.weaponProp
           .filter(({ propType }) => propType !== EMPTY_PROPERTY_TYPE)
           .map(({ initValue = 0, propType, type }) => ({ attribute: propType, base: initValue, curve: type })),

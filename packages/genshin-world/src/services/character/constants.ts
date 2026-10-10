@@ -47,6 +47,8 @@ export const BEIDOU_CHARACTER_ID = 10_000_024;
 export const XINGQIU_CHARACTER_ID = 10_000_025;
 export const XIAO_CHARACTER_ID = 10_000_026;
 export const NINGGUANG_CHARACTER_ID = 10_000_027;
+export const KLEE_CHARACTER_ID = 10_000_029;
+export const ZHONGLI_CHARACTER_ID = 10_000_030;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],

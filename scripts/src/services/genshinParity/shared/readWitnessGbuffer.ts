@@ -4,7 +4,7 @@ import type { Page } from "playwright";
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 
-// The witness page's whole G-buffer at the view last set
+// The witness page's G-buffer at the view last set: the four targets it holds, each read alone
 export const readWitnessGbuffer = async (page: Page): Promise<WitnessGbuffer> => {
   const {
     targets: {
@@ -14,6 +14,11 @@ export const readWitnessGbuffer = async (page: Page): Promise<WitnessGbuffer> =>
       part = new Float32Array(),
     },
     ...rest
-  } = await readWitnessTargets(page, Object.values(WitnessTargetName));
+  } = await readWitnessTargets(page, [
+    WitnessTargetName.Albedo,
+    WitnessTargetName.Depth,
+    WitnessTargetName.Normal,
+    WitnessTargetName.Part,
+  ]);
   return { ...rest, albedo, depth, normal, part };
 };

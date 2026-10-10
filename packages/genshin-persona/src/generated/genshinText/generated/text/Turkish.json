@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Yok Et",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "{0}/{1} seçildi",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Bu eşyalar yok edilecek:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Geri Alındı:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Bu eşya(lar) yok edilecek. Bu eylem geri alınamaz.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "Tamam",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Eşyaları Yok Et",

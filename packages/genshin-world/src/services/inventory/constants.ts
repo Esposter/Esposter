@@ -11,8 +11,6 @@ import { ItemCategory } from "genshin-interface";
 export const EQUIPMENT_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Weapon, ItemCategory.Artifact];
 // The tabs the game sorts from the highest quality down
 export const QUALITY_SORTED_CATEGORIES: readonly ItemCategory[] = [ItemCategory.Gadget, ItemCategory.Quest];
-// The highest rarity a weapon or an artifact may be destroyed at, one to four stars
-export const DESTROY_RARITY_LIMIT = 4;
 // A new weapon is at level 1 and a new artifact at 0
 export const WEAPON_START_LEVEL = 1;
 export const ARTIFACT_START_LEVEL = 0;
@@ -45,7 +43,7 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
 export const MORA_ITEM_ID = 202;
 // The item id each currency the wallet holds is filed under in the game's material table, so a drop or a reward naming
 // One is a wallet grant, never a bag item
-const CurrencyItemIdMap: Record<Currency, number> = {
+export const CurrencyItemIdMap: Record<Currency, number> = {
   [Currency.AcquaintFate]: 224,
   [Currency.GenesisCrystal]: 203,
   [Currency.IntertwinedFate]: 223,

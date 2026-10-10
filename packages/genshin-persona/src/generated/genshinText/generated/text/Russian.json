@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Уничтожить",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "Выбрано {0}/{1}",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Следующие предметы будут уничтожены:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Возвращено:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Выбранные предметы будут уничтожены. Потом их нельзя вернуть.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "Подтвердить",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Уничтожение предметов",

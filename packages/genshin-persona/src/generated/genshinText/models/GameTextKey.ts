@@ -215,6 +215,8 @@ export enum GameTextKey {
   InventoryDestroyConfirmList = "UI_STC_BAGPAGE_DESTROY_CONFIRM_1",
   InventoryDestroyConfirmTitle = "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE",
   InventoryDestroyConfirmWarning = "UI_STC_BAGPAGE_DESTROY_CONFIRM_3",
+  // The list of the materials a destroy returns, its label in the destroy dialog
+  InventoryDestroyRecovered = "UI_STC_BAGPAGE_DESTROY_CONFIRM_2",
   // The count beside the destroy button, `{0}/{1} selected`
   InventoryDestroySelected = "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED",
   // The line the destroy mode opens with

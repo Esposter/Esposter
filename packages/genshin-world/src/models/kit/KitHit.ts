@@ -12,6 +12,8 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 // Character's own, the cylinder it reaches, when its hitmark falls in the action's seconds, its internal cooldown tag,
 // Whether it is blunt, its poise damage and the talent's multiplier
 export interface KitHit {
+  // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats
+  additiveBaseDamageBonus?: (combatant: Combatant) => number;
   // The bubble it holds each enemy it strikes in, if it casts one
   bubble?: KitBubbleSpec;
   // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches another

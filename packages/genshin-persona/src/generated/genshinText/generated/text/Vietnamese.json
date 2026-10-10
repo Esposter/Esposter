@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Tiêu Hủy",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "Đã chọn {0} / {1}",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Sẽ tiêu hủy những vật phẩm sau:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Trả lại:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Tiêu hủy sẽ không thể khôi phục vật phẩm",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "Xác Nhận",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Tiêu hủy vật phẩm",

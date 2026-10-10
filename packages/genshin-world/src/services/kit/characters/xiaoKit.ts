@@ -351,6 +351,8 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: { hits: [], onStart: castDash, seconds: DASH_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
+    // The skill set's, the wiki's and gcsim v2.47.2 (MIT) xiao/xiao.go's 2 charges
+    elementalSkillCharges: 2,
     // The wiki's Whirlwind Thrust gives the plunges 100 and 150 poise, 150 and 225 converted, both blunt
     highPlunge: {
       hits: [

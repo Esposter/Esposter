@@ -280,6 +280,7 @@
   "UI_STC_BAGPAGE_DESTROY_BUTTON_CONFIRM": "Destruir",
   "UI_STC_BAGPAGE_DESTROY_BUTTON_SELECTED": "{0}/{1} seleccionados",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_1": "Los siguientes objetos serán destruidos:",
+  "UI_STC_BAGPAGE_DESTROY_CONFIRM_2": "Materiales recuperados:",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_3": "Los objetos serán destruidos. Esta acción no se puede deshacer.",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_BUTTON": "Confirmar",
   "UI_STC_BAGPAGE_DESTROY_CONFIRM_TITTLE": "Destruir objetos",

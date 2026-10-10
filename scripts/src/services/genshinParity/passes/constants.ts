@@ -38,6 +38,9 @@ export const SHAPE_NORMAL_GATE_DEGREES = 10;
 // A family of scattered cards is read on its envelope too (`measureEnvelope`), each card cut to its size in metres as
 // The export's leaves measure (Oak.reference's record): the envelope's window spans one card
 export const ENVELOPE_CARD_METRES = 5.9;
+// The square of a block a family's pixels are split into two halves by, as a chequerboard, so each half spreads over the
+// Whole surface: the two halves read against each other are the floor a statistic matched in distribution is gated at
+export const SPLIT_BLOCK_PIXELS = 32;
 // The gate a mean colour is held to, a surface's unlit or glow or the clear sky's: within the CIELab distance two colours
 // Side by side are just told apart at
 export const COLOUR_GATE = 2.3;

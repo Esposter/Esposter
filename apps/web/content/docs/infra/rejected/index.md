@@ -30,3 +30,4 @@ Ideas we decided against. Check here before proposing — never re-argue a decid
 - [Voxel atelier](/docs/infra/rejected/voxel-atelier) — a voxel room changed by the session; the character's place is the Genshin world itself.
 - [Codebase city](/docs/infra/rejected/codebase-city) — the repository as a voxel city walked by the player; the world is Genshin's continent now.
 - [Voxel runtime budget](/docs/infra/rejected/voxel-runtime-budget) — cost rules for the voxel views and rooms; the Genshin engine keeps its own budget.
+- [CDN in front of Blob storage](/docs/infra/rejected/cdn-in-front-of-blob-storage) — a CDN caching the game's immutable data objects at the edge; immutable caching already serves a repeat visit, and the CDN's base fee and per-GB rate buy little on top of Blob storage.

@@ -64,9 +64,11 @@ export const useGenshinSave = async () => {
       Temporal.Instant.from(serverNow).epochMilliseconds - (sentAt + receivedAt) / 2,
     );
   };
-  const startLease = async () => {
+  const startLease = async (startSessionId: string) => {
     const sentAt = Date.now();
-    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate(), { key: "startGenshin" });
+    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: startSessionId }), {
+      key: "startGenshin",
+    });
     if (outcome.status === MutationStatus.Failed) console.error(outcome.error);
     if (outcome.status !== MutationStatus.Succeeded) return undefined;
 
@@ -87,12 +89,15 @@ export const useGenshinSave = async () => {
     }, delayMs);
     return promise;
   };
+  // Every attempt sends the page's one session id, so an attempt whose write landed and whose response was lost is retried
+  // As the same start, which the server answers without taking the lease again
   const startUntilStarted = async (
+    startSessionId: string,
     attempt: number,
   ): Promise<NonNullable<Awaited<ReturnType<typeof startLease>>> | undefined> => {
     if (isLeft) return undefined;
 
-    const start = await startLease();
+    const start = await startLease(startSessionId);
     if (start) {
       isStartRetrying.value = false;
       return start;
@@ -100,19 +105,23 @@ export const useGenshinSave = async () => {
 
     isStartRetrying.value = true;
     await waitForStartRetry(getGenshinStartRetryDelayMs(attempt));
-    return startUntilStarted(attempt + 1);
+    return startUntilStarted(startSessionId, attempt + 1);
   };
   const retryStart = () => {
     retryStartNow?.();
   };
   // The journal holds the save the account has not acknowledged, and is cleared once it has. A page can be closed the
   // Moment it is hidden, so the journal is written at once rather than sent, and the next start adopts it only when it
-  // Replaced the session that wrote it
+  // Replaced the session that wrote it. Each save is journaled before it is sent, so the journal is never older than a
+  // Save the account may hold
+  const writeJournal = (save: GenshinSave) => {
+    journalJson.value = JSON.stringify({ save, sessionId });
+  };
   const syncJournal = () => {
     if (!journalUserId.value || !sessionId || !isSaveLoaded.value || isReplaced.value) return;
 
     if (JSON.stringify(latestSave) === persistedJson) journalJson.value = null;
-    else journalJson.value = JSON.stringify({ save: latestSave, sessionId });
+    else writeJournal(latestSave);
   };
   // One save at a time: a save requested while one is in flight is sent once after it settles, carrying the newest save
   // And the ETag that save acknowledged, so the page never sends a save over one it has not heard back about
@@ -145,6 +154,7 @@ export const useGenshinSave = async () => {
     const currentEtag = etag;
     const currentSessionId = sessionId;
     const sentAt = Date.now();
+    writeJournal(save);
     const outcome = await executeMutation(
       () =>
         $trpc.genshin.saveGenshin.mutate({ etag: currentEtag, save: parsedResult.data, sessionId: currentSessionId }),
@@ -170,14 +180,17 @@ export const useGenshinSave = async () => {
     persistedJson = JSON.stringify(latestSave);
     isSaveLoaded.value = true;
   };
-  const loadAccountSave = async () => {
+  const loadAccountSave = async (accountUserId: string) => {
     const guestSave = readGuestSave();
-    const start = await startUntilStarted(0);
+    const start = await startUntilStarted(crypto.randomUUID(), 0);
     if (!start) return;
 
-    // The journal is adopted only by the start that replaced the session which wrote it, since only then is the save it
-    // Holds the one the account would have kept. Any other journal is out of date, so it is discarded
-    const journal = parseGenshinJournal(journalJson.value);
+    // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed, since
+    // Another window of the browser may have written it since. It is adopted only by the start that replaced the session
+    // Which wrote it, since only then is the save it holds the one the account would have kept. Any other journal is out
+    // Of date, so it is discarded
+    // eslint-disable-next-line no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
+    const journal = parseGenshinJournal(window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)));
     const adoptedJournal = journal && journal.sessionId === start.previousSessionId ? journal : undefined;
     if (journal && !adoptedJournal) journalJson.value = null;
 
@@ -192,14 +205,14 @@ export const useGenshinSave = async () => {
     if (guestSave && JSON.stringify(latestSave) === persistedJson) clearGuestSave();
   };
   // The account's save loads in the background, so the page is not held in setup while a start is retried. Its loading
-  // Screen waits on isSaveLoaded, and a failed start on isStartRetrying
-  const readAccountSave = () => {
-    const accountUserId = session.value.data?.user.id;
-    if (checkIsServer() || !accountUserId || journalUserId.value) return;
+  // Screen waits on isSaveLoaded, and a failed start on isStartRetrying. The account is the one useReadData's session
+  // Names, since the client's own session is still pending on a direct load
+  const readAccountSave = (accountUserId: string) => {
+    if (checkIsServer() || journalUserId.value) return;
 
     journalUserId.value = accountUserId;
     // oxlint-disable-next-line typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it
-    loadAccountSave();
+    loadAccountSave(accountUserId);
   };
   if (!checkIsServer()) {
     // A session another sign-in replaced hears it through the real-time layer, the replacing session's id reaching every
@@ -257,7 +270,9 @@ export const useGenshinSave = async () => {
   };
   // The game is taken back by a new start, and the page reloads to resume the save that start holds
   const takeBack = async () => {
-    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate(), { key: "startGenshin" });
+    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: crypto.randomUUID() }), {
+      key: "startGenshin",
+    });
     if (outcome.status === MutationStatus.Succeeded) window.location.reload();
     else if (outcome.status === MutationStatus.Failed) console.error(outcome.error);
   };

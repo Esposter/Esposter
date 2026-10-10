@@ -29,16 +29,23 @@ interface Props {
   destroyConfirmListLabel: string;
   destroyConfirmTitle: string;
   destroyConfirmWarningLabel: string;
+  // The line the dialog shows where the bag cannot take what the chosen entries return, in the reader's language
+  destroyFullLabel: string;
   // The trash's way into the destroy mode, in the reader's language
   destroyLabel: string;
   // The names of the entries chosen for a destroy, listed in its dialog
   destroyNames: string[];
+  // The materials the chosen entries return, each listed as its name and count, under the dialog's recovered label
+  destroyRecoveredLabel: string;
+  destroyRecoveredNames: string[];
   // The count beside the Destroy button, `{0}/{1} selected` filled in the reader's language
   destroySelectedLabel: string;
   // The destroy mode's opening line in the reader's language
   destroyTipLabel: string;
   // Whether the dialog is open over the bag
   isConfirming?: true;
+  // Whether the chosen entries' returns do not all fit in the bag, which holds the dialog's OK off
+  isDestroyFull?: true;
   // Whether the bag is in its destroy mode, where a tick chooses an entry for a destroy rather than showing it
   isDestroying?: true;
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
@@ -69,11 +76,15 @@ const {
   destroyConfirmListLabel,
   destroyConfirmTitle,
   destroyConfirmWarningLabel,
+  destroyFullLabel,
   destroyLabel,
   destroyNames,
+  destroyRecoveredLabel,
+  destroyRecoveredNames,
   destroySelectedLabel,
   destroyTipLabel,
   isConfirming,
+  isDestroyFull,
   isDestroying,
   isSortable,
   orderLabel,
@@ -193,9 +204,16 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
         <li v-for="(name, index) of destroyNames" :key="index">{{ name }}</li>
       </ul>
       <p class="confirm-warning">{{ destroyConfirmWarningLabel }}</p>
+      <p v-if="isDestroyFull" class="confirm-warning">{{ destroyFullLabel }}</p>
+      <template v-if="destroyRecoveredNames.length">
+        <p class="confirm-list-label">{{ destroyRecoveredLabel }}</p>
+        <ul class="confirm-names">
+          <li v-for="(name, index) of destroyRecoveredNames" :key="index">{{ name }}</li>
+        </ul>
+      </template>
       <div class="confirm-buttons">
         <button class="confirm-button" type="button" @click="emit('cancelDestroy')">{{ cancelLabel }}</button>
-        <button class="confirm-button" type="button" @click="emit('confirmDestroy')">
+        <button :disabled="isDestroyFull" class="confirm-button" type="button" @click="emit('confirmDestroy')">
           {{ destroyConfirmButtonLabel }}
         </button>
       </div>

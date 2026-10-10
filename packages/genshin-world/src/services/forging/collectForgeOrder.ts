@@ -4,6 +4,7 @@ import type { ForgeResult } from "#src/models/forging/ForgeResult";
 import type { ForgeTalent } from "#src/models/forging/ForgeTalent";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ForgeRecipeKind } from "#src/models/forging/ForgeRecipeKind";
 import { ForgeTalentKind } from "#src/models/forging/ForgeTalent";
@@ -36,7 +37,7 @@ export const collectForgeOrder = (
     now: Temporal.Instant;
     random: () => number;
     talents: ForgeTalent[];
-    weapons: Map<number, Pick<ItemDefinition, "name" | "rarity">>;
+    weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
   },
 ): { adventureExp: number; inventory: Inventory; order?: ForgeOrder } => {
   const elapsedSeconds = now.since(order.startedAt).total({ unit: "second" });
@@ -85,12 +86,12 @@ const toResultDefinition = (
   recipe: ForgeRecipe,
   itemId: number,
   definitions: Map<number, ItemDefinition>,
-  weapons: Map<number, Pick<ItemDefinition, "name" | "rarity">>,
+  weapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>,
 ): ItemDefinition => {
   if (recipe.kind === ForgeRecipeKind.Weapon) {
     const weapon = weapons.get(itemId);
     if (!weapon) throw new InvalidOperationError(Operation.Read, String(itemId), "has no weapon definition");
-    return toWeaponDefinition({ id: itemId, name: weapon.name, rarity: weapon.rarity });
+    return toWeaponDefinition(weapon, weapon.name);
   }
   const definition = definitions.get(itemId);
   if (!definition) throw new InvalidOperationError(Operation.Read, String(itemId), "has no definition in the bag");

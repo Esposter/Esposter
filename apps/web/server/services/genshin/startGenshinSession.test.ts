@@ -20,7 +20,7 @@ describe(startGenshinSession, () => {
     const firstEnvelope = startGenshinSession(undefined, "first");
     const secondEnvelope = startGenshinSession(firstEnvelope, "second");
 
-    expect(secondEnvelope).toStrictEqual({ save: EMPTY_GENSHIN_SAVE, sessionId: "second" });
+    expect(secondEnvelope).toStrictEqual({ previousSessionId: "first", save: EMPTY_GENSHIN_SAVE, sessionId: "second" });
     expect(checkIsGenshinSessionCurrent(secondEnvelope, "first")).toBe(false);
     expect(checkIsGenshinSessionCurrent(secondEnvelope, "second")).toBe(true);
   });

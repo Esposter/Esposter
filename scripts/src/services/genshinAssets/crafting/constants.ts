@@ -17,14 +17,15 @@ export const CONDENSED_RESIN_ITEM_ID = 220007;
 // Condensed Resin takes one crystal core and this much Original Resin
 export const CONDENSED_RESIN_CRYSTAL_CORE_ITEM_ID = 100085;
 export const CONDENSED_RESIN_ORIGINAL_RESIN_COUNT = 60;
-// The kind of recipe each combine type the bench crafts is written as. Combine type six holds Condensed Resin beside
-// The resonance stones and Portable Waypoint, which no page places yet, so it is left out here
+// The kind of recipe each combine type the bench crafts is written as. Combine type six holds Condensed Resin beside the
+// Resonance Stones and Portable Waypoint; a row makes Condensed Resin by its result, so the rest of that type are gadgets
 export const CombineTypeCraftingRecipeKindMap: Record<number, CraftingRecipeKind> = {
   1: CraftingRecipeKind.Tier,
   2: CraftingRecipeKind.Tier,
   3: CraftingRecipeKind.Tier,
   4: CraftingRecipeKind.Potion,
   5: CraftingRecipeKind.Tier,
+  6: CraftingRecipeKind.Gadget,
   10: CraftingRecipeKind.Bait,
   12: CraftingRecipeKind.Potion,
 };

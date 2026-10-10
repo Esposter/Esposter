@@ -1,6 +1,7 @@
 import type { GenshinSave } from "genshin-world/save";
 
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { parseJsonWithSchema } from "@/services/shared/parseJsonWithSchema";
 import { getResult } from "@esposter/shared";
 import { genshinSaveSchema } from "genshin-world/save";
 
@@ -13,14 +14,5 @@ export const readGuestSave = (): GenshinSave | undefined => {
   )
     .orTee(console.error)
     .unwrapOr(null);
-  if (!guestJson) return undefined;
-
-  // Parsed as plain JSON, because the save holds its instants as ISO strings the schema reads. A date revival would turn
-  // Them into Dates, which `z.iso.datetime()` rejects, so every save would read as none
-  // oxlint-disable-next-line no-restricted-properties -- the save schema reads its instants as ISO strings itself, so there is no Date for a reviver to restore
-  const parsedJson: unknown = getResult(() => JSON.parse(guestJson))
-    .orTee(console.error)
-    .unwrapOr(undefined);
-  const result = genshinSaveSchema.safeParse(parsedJson);
-  return result.success ? result.data : undefined;
+  return guestJson ? parseJsonWithSchema(guestJson, genshinSaveSchema) : undefined;
 };
