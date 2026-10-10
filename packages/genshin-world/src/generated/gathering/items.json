@@ -198,15 +198,6 @@
     "stackLimit": 9999
   },
   {
-    "id": 100054,
-    "materialType": "MATERIAL_EXCHANGE",
-    "nameTextId": "2189505020",
-    "rank": 320,
-    "rarity": 0,
-    "respawn": "TwoDays",
-    "stackLimit": 9999
-  },
-  {
     "id": 100055,
     "materialType": "MATERIAL_EXCHANGE",
     "nameTextId": "144892988",

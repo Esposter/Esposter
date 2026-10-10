@@ -30,7 +30,7 @@ flowchart TD
 The slices are written by `pnpm -C scripts genshin:assets gathering`. It reads three tables from the game text dump, the gather table and the material table in `ExcelBinOutput/` and the English text map, and the official map's label tree and fitted points from the references folder. The gather table, which the dump lacked, is fetched from the community's AnimeGameData repository into the dump and never committed.
 
 - **A row is picked off the ground.** A gather row counts when it sits on the ground and saves its pick. The rows that save nothing belong to other pages, such as fishing, animals and events, and are not points here.
-- **An item is named as its label.** The item's English name is matched to the label of the same name the official map files under Local Specialties, Inventory / Materials or Ores. A Magical Crystal Chunk is left out, since a mining outcrop draws it, and so are a Scarlet Quartz and a Rainbowdrop Crystal, which have no poise requirement on the wiki's Mineral page. Special Items, which holds the Oculi, is left to the statues' page.
+- **An item is named as its label.** The item's English name is matched to the label of the same name the official map files under Local Specialties, Inventory / Materials or Ores. A Magical Crystal Chunk is left out, since a mining outcrop draws it, and so are a Scarlet Quartz, a Rainbowdrop Crystal and an Electro Crystal (shattered from a Tourmaline by Pyro), which have no poise requirement on the wiki's Mineral page. Special Items, which holds the Oculi, is left to the statues' page.
 - **Each point is the fit's.** Every point of a labelled item is carried into the game's coordinates by the [spawned places](/docs/genshin/spawned-places) fit and then into its region's axes, its kind the item's id, and its region from its map area. Points on layers under the ground are left out, as the places' writer already does.
 
 ## The respawn
@@ -40,7 +40,7 @@ The gather table's refresh ids do not name a policy in the dump. The ground rows
 - **A local specialty comes back 46 hours after it is picked**, the wiki's own figure for specialties.
 - **A cooking ingredient comes back at the game's midnight that follows the pick.** The wiki says the common overworld ingredients spawn at 0:00 server time each day, and a picked point is read as back at the next such midnight. The game's time zone is UTC+8, as the [Original Resin](/docs/genshin/original-resin) page reads it.
 
-An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the game's midnight, a White Iron Chunk, Starsilver or Electro Crystal two days after the break, and a Crystal Chunk, Amethyst Lump or Condessence Crystal three days after. Those labels are keyed by the map's label id, since a plant's category does not settle them.
+An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the game's midnight, a White Iron Chunk or Starsilver two days after the break, and a Crystal Chunk, Amethyst Lump or Condessence Crystal three days after. Those labels are keyed by the map's label id, since a plant's category does not settle them.
 
 A point is kept as picked with the instant of the pick, and stands again once its respawn has come. Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks once a minute while it is open.
 
