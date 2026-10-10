@@ -13,6 +13,7 @@ import {
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { getWorldHeight } from "#src/services/world/getWorldHeight";
 import { TreeSpeciesOptionsMap } from "#src/services/world/TreeSpeciesOptionsMap";
+import { withFinalizer } from "@esposter/shared";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
 import { createImpostorMaterial, createToonMaterial, createTreeGeometry } from "genshin-engine";
 import { Euler, Group, InstancedMesh, Matrix4, PlaneGeometry, Quaternion, SphereGeometry, Vector3 } from "three";
@@ -78,9 +79,13 @@ for (const { name, places } of plantsData.plants)
 onBeforeRender(() => {
   if (oakImpostor || !isWebGPURenderer(renderer)) return;
   const { branchGeometry, leafGeometry } = createTreeGeometry(TreeSpeciesOptionsMap[TreeSpecies.GreatOak]);
-  oakImpostor = bakeTreeImpostor(renderer, branchGeometry, leafGeometry);
-  branchGeometry.dispose();
-  leafGeometry.dispose();
+  oakImpostor = withFinalizer(
+    () => bakeTreeImpostor(renderer, branchGeometry, leafGeometry),
+    () => {
+      branchGeometry.dispose();
+      leafGeometry.dispose();
+    },
+  );
   const { bottom, height, width } = oakImpostor;
   const impostorGeometry = new PlaneGeometry(width, height).translate(0, bottom + height / 2, 0);
   const impostorMaterial = createImpostorMaterial({
@@ -97,6 +102,7 @@ onBeforeRender(() => {
 });
 
 onUnmounted(() => {
+  for (const child of plantsGroup.children) if (child instanceof InstancedMesh) child.dispose();
   domeGeometry.dispose();
   domeMaterial.dispose();
   for (const geometry of oakTreeGeometries) geometry.dispose();
