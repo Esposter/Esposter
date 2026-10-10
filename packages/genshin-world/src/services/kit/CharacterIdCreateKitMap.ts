@@ -19,6 +19,7 @@ import {
   NOELLE_CHARACTER_ID,
   QIQI_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
+  TARTAGLIA_CHARACTER_ID,
   VENTI_CHARACTER_ID,
   XIANGLING_CHARACTER_ID,
   XIAO_CHARACTER_ID,
@@ -42,6 +43,7 @@ import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createQiqiKit } from "#src/services/kit/characters/qiqiKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
+import { createTartagliaKit } from "#src/services/kit/characters/tartagliaKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
 import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
@@ -68,6 +70,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [NOELLE_CHARACTER_ID]: createNoelleKit,
   [QIQI_CHARACTER_ID]: createQiqiKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
+  [TARTAGLIA_CHARACTER_ID]: createTartagliaKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
   [XIANGLING_CHARACTER_ID]: createXianglingKit,
   [XIAO_CHARACTER_ID]: createXiaoKit,

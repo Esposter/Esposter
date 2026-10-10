@@ -7,4 +7,6 @@ export enum InternalCooldownTag {
   LisaElectroDamage = "LisaElectroDamage",
   MonaHydroDamage = "MonaHydroDamage",
   NormalAttack = "NormalAttack",
+  TartagliaFoulLegacy = "TartagliaFoulLegacy",
+  TartagliaRiptide = "TartagliaRiptide",
 }
