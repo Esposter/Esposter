@@ -135,19 +135,19 @@ export const renderWitnessTargets = async (
     const key = `${target}/${id}/${familyIndex}`;
     const cached = targetMaterials.get(key);
     if (cached) return cached;
-    if (target === WitnessTarget.Shadow) {
-      const shadowMaterial = new WitnessShadowMaterial(sunRadiance);
-      targetMaterials.set(key, shadowMaterial);
-      return shadowMaterial;
-    }
-    const material = new MeshBasicNodeMaterial();
+    const material =
+      target === WitnessTarget.Shadow ? new WitnessShadowMaterial(sunRadiance) : new MeshBasicNodeMaterial();
     material.toneMapped = false;
-    // The source's cut and its sides, so a card its material clips is drawn clipped in every target too, and a face it
-    // Draws from behind is drawn from behind, as the source draws it
+    // The source's cut and its sides, so a card its material clips is drawn clipped in every target too, the shadow's
+    // Among them, and a face it draws from behind is drawn from behind, as the source draws it
     if (mesh.material instanceof NodeMaterial) {
       material.opacityNode = mesh.material.opacityNode;
       material.alphaTest = mesh.material.alphaTest;
       material.side = mesh.material.side;
+    }
+    if (target === WitnessTarget.Shadow) {
+      targetMaterials.set(key, material);
+      return material;
     }
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken

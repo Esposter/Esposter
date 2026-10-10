@@ -29,11 +29,11 @@ flowchart LR
 ## Scope
 
 - **Done: the Japanese PC client's health notice.** Its reference `health-notice-japanese` is the public recording's frame at 30 seconds (`yt-57d2PwbOdr0-opening-japanese.mp4`, clipped by `genshin:parity clip`), whole in its own words, scored over a region clear of the PC watermark and the recorder's icons. Its compare is a `[page]` item on the roadmap for the user's eyes.
+- **Done: the mainland's door with its prompt.** Its reference `login-interface-door-mainland` is the launch recording's frame at 15.5 seconds, the first of the 12 to 17 second stills with the prompt whole, scored over the whole frame, its rating included; its score is its row in the parity reference snapshot.
 - **Not in any public clip.** Searches for each client's PC launch found none: the Japanese clip shows the PC client's title only as its iPhone capture, and no Japanese PC splash or door. The Korean clip (`yt-HFxhJB_N4Nk-opening-korean.mp4`, 720 high) is the account login form for all 105 seconds. A 2020 Korean PC gameplay video (`yt-4zVvDgStMWQ`, 1080 high) opens on a title card and cuts to the world, with no splash, notice or door. So `title-splash-japanese`, `publisher-splash-japanese`, the Korean launch's stages and both clients' door stages wait on `japanese-launch.mkv` and `korean-launch.mkv` in the roadmap's Recordings owed list.
 
 - The publisher splash where a client shows a different publisher's logo.
 - The health notice and login screen's layout where a recording shows a difference.
-- The mainland's door with its prompt. Its reference `login-interface-door-mainland` is registered at 15.5 seconds, the first of the 12 to 17 second stills with the prompt whole, and its whole-frame compare waits in the [roadmap](/docs/genshin/roadmap)'s compute queue.
 - The Japanese and Korean layouts, keyed by language only on a screen whose compare above reads a mean further off than the English reference's own row in the parity reference snapshot.
 
 ## Key files

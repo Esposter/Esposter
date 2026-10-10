@@ -5,13 +5,17 @@ import { createGroundToneClassifier } from "#src/services/genshinAssets/fit/crea
 import { WINDRISE_GROUND_LAYER_TONES } from "#src/services/genshinAssets/shared/constants";
 
 // Each base-map texel is classed to the tone nearest to it in Lab, and each layer's colour is the area-weighted mean of
-// The texels classed into it, as hex
+// The texels classed into it, as hex. A texel of no weight counts for nothing, so a layer with no weight is absent rather
+// Than fitted to nothing
 export const computeGroundLayerColours = (
   samples: readonly SurfaceSample[],
   tones: Record<string, string> = WINDRISE_GROUND_LAYER_TONES,
 ): Record<string, string> => {
   const classify = createGroundToneClassifier(tones);
-  const classes = Object.groupBy(samples, ({ colour }) => classify(colour));
+  const classes = Object.groupBy(
+    samples.filter(({ weight }) => weight > 0),
+    ({ colour }) => classify(colour),
+  );
   return Object.fromEntries(
     Object.entries(classes).flatMap(([layer, members]) =>
       members === undefined ? [] : [[layer, computeSurfaceTones(members, 1).color]],

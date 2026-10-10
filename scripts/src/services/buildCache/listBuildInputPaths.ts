@@ -1,3 +1,4 @@
+import { readGeneratedBarrelPaths } from "#src/services/buildCache/readGeneratedBarrelPaths";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -7,8 +8,9 @@ const BUILD_INPUT_DIRECTORIES = ["src", "types"];
 
 // The files a package's build reads from its own folder, relative to it and sorted: `src/**`, `types/**` where it has
 // One, its manifest, its tsdown configuration and its tsconfig files. Everything else in the folder is either output or
-// A file no build reads.
+// A file no build reads, and the barrels the build generates into `src` are output too.
 export const listBuildInputPaths = (packageDirectory: string): string[] => {
+  const generatedPaths = new Set(readGeneratedBarrelPaths(packageDirectory));
   const rootInputPaths = readdirSync(packageDirectory, { encoding: "utf8" }).filter((name) =>
     BUILD_ROOT_INPUT_REGEX.test(name),
   );
@@ -20,6 +22,6 @@ export const listBuildInputPaths = (packageDirectory: string): string[] => {
     ),
   );
   return [...rootInputPaths, ...directoryInputPaths]
-    .filter((path) => statSync(join(packageDirectory, path)).isFile())
+    .filter((path) => !generatedPaths.has(path) && statSync(join(packageDirectory, path)).isFile())
     .toSorted();
 };

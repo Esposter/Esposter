@@ -31,6 +31,7 @@ import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useInteraction } from "#src/composables/useInteraction";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
+import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldMap } from "#src/composables/useWorldMap";
@@ -41,8 +42,6 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { computeAdventureRankProgress } from "#src/services/adventureRank/computeAdventureRankProgress";
-import { computeAdventureRankStanding } from "#src/services/adventureRank/computeAdventureRankStanding";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -144,11 +143,13 @@ const {
   trackedQuestId,
   trackerQuest,
 } = useWorldQuests({ events, language, savedQuestProgressMap: savedState.quests });
-// The World Level the camps spawn at, from the player's Adventure EXP and quests. No source adds Adventure EXP or
-// Completes a main quest yet, so the EXP is the saved one and the quests are none
-const adventureRankStanding = computeAdventureRankStanding(savedState.adventureExp, new Set<string>());
-const worldLevel = adventureRankStanding.worldLevel;
-const adventureExpProgress = computeAdventureRankProgress(savedState.adventureExp, adventureRankStanding.rank);
+// The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
+const { adventureExp, adventureExpProgress, gainWorldAdventureExp, rank, worldLevel } = useWorldAdventureRank({
+  finishedMainQuestIds,
+  savedAdventureExp: savedState.adventureExp,
+  setWallet,
+  wallet,
+});
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
   events,
@@ -266,13 +267,20 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
 });
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
 const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unlockedLandmarkIds, unlockedLandmarks } =
-  useWorldMap({ events, regionDataBaseUrl, setWallet, unlockedLandmarkIds: savedState.unlockedLandmarkIds, wallet });
-// The Adventure EXP, the Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
+  useWorldMap({
+    events,
+    gainWorldAdventureExp,
+    regionDataBaseUrl,
+    setWallet,
+    unlockedLandmarkIds: savedState.unlockedLandmarkIds,
+    wallet,
+  });
+// The Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
     achievementProgressMap: achievementProgressMap.value,
-    adventureExp: savedState.adventureExp,
+    adventureExp: adventureExp.value,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
@@ -508,7 +516,7 @@ defineExpose({ jumpTo, readCameraPosition });
     <MenuScreen
       v-model:screen-kind="screenKind"
       :adventure-exp-progress
-      :adventure-rank="adventureRankStanding.rank"
+      :adventure-rank="rank"
       :game-text
       :world-level
       @quit="emit('quit')"

@@ -19,17 +19,15 @@ export const CATEGORY_RESPAWN_MAP: Record<number, GatheringRespawn> = {
   [LOCAL_SPECIALTIES_LABEL_ID]: GatheringRespawn.Specialty,
 };
 // The labels whose points come back on their own rule rather than their category's, as the wiki's Reset page gives
-// Them: an Iron Chunk at the game's midnight, a White Iron Chunk, Starsilver or Electro Crystal two days after, and a
-// Crystal Chunk, Amethyst Lump or Condessence Crystal (which the Reset page does not name) three days after. A Magical
-// Crystal Chunk is a mining outcrop, drawn daily by its own place rule, and a Scarlet Quartz or Rainbowdrop Crystal has no
-// Poise requirement on the Mineral page, so neither is written
+// Them: an Iron Chunk at the game's midnight, a White Iron Chunk or Starsilver two days after, and a Crystal Chunk,
+// Amethyst Lump or Condessence Crystal (which the Reset page does not name) three days after. A Magical Crystal Chunk is
+// A mining outcrop, drawn daily by its own place rule, and a Scarlet Quartz, Rainbowdrop Crystal or Electro Crystal (a
+// Tourmaline shattered by Pyro) has no poise requirement on the Mineral page, so none is written
 export const LABEL_RESPAWN_MAP: Record<number, GatheringRespawn> = {
   // White Iron Chunk
   15: GatheringRespawn.TwoDays,
   // Crystal Chunk
   16: GatheringRespawn.ThreeDays,
-  // Electro Crystal
-  63: GatheringRespawn.TwoDays,
   // Starsilver
   139: GatheringRespawn.TwoDays,
   // Iron Chunk

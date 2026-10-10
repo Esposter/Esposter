@@ -15,6 +15,7 @@ The Profile tab and the book reader already fetch their records from the publish
 - **Synchronous reads become awaited reads.** The Bennett kit reads a weapon type it has no access to today, the gcg game table is imported at module load, and the Windrise wildlife layer is a static import. Each becomes a value loaded at mount and handed down, so no screen waits on a module it did not need.
 - **Scripts read what the publisher wrote, from the account.** A step that reads another step's output reads it through the lock and the dev account, never through `genshin-world`'s build, which a step running under `tsx` may load stale.
 - **Tests read a local mirror.** Suites and the parity page read the records through a content-addressed cache that a missing record fills from the dev account, so no test reads a copy of the game data.
+- **The develop deployment reads the dev account.** The owner admitted `https://esposter-develop.up.railway.app` on `devstesposter001`'s Blob CORS (2026-10-09), beside `http://localhost:3000` and with its methods, so a develop World mount reads its records from the dev account rather than from production's.
 
 ## Datasets
 
@@ -52,7 +53,6 @@ The dataset list is what the builders publish, in the order each one depends on 
 
 ## Open decisions
 
-- **The develop deployment is not admitted.** `https://esposter-develop.up.railway.app` is in neither account's CORS list, so a develop World mount against `devstesposter001` would fail once the World reads its stats from the account. The choice is between admitting that origin on the dev account and pointing develop at production data; it needs the owner's decision before this phase ships.
 - **The npm package needs a host.** Consumers outside Esposter must serve the objects the lock names and pass `gameDataBaseUrl`. The README says so.
 - **World mount latency is measured, not assumed.** Mount waits on the account's round trips instead of same-origin chunks. The phase ends with a timing before and after; a preconnect, or merging the stats tables into one object, follows only if mount got slower.
 

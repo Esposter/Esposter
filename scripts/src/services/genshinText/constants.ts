@@ -151,6 +151,9 @@ export const DUMP_TABLE_NAMES: readonly string[] = [
   "FetterStoryExcelConfigData",
   "DocumentLocalizationFormatExcelConfigData",
   "LocalizationExcelConfigData",
+  "GCGGameExcelConfigData",
+  "GCGLevelExcelConfigData",
+  "GCGWeekLevelExcelConfigData",
 ];
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
 export const DUMP_FETCH_BATCH_SIZE = 8;

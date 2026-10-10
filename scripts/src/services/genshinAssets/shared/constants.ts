@@ -58,6 +58,8 @@ export const WINDRISE_GROUND_LAYER_TONES: Record<string, string> = {
 };
 // The texture slot a material's albedo is sampled from, which the witness reads as a colour
 export const MAIN_TEXTURE_SLOT = "_MainTex";
+// The float a cut-out material clips its albedo's alpha at, which the game's foliage shader reads
+export const CUTOFF_PROPERTY = "_Cutoff";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
 export const SOURCE_EXPORT_SUFFIX = ".blk_export";
 // The installed game's asset blocks, every one AnimeStudio reads
@@ -267,10 +269,11 @@ export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 export const STATUE_FIGURE_MESH_REGEX: RegExp = /^Stages_MdGoddess_Lite/u;
 // The great oak as its export's Lod1 meshes: its canopy's clusters grouped from the leaf's card centres by a seeded
 // K-means, the same export always clustering the same way, and its trunk's radius at each station read off the bark
-// Within a slab of a station's height and within the trunk's reach of its axis
+// Within a slab of a station's height and within the trunk's reach of its axis. The clusters are as many as the shape
+// Pass's envelope stops reading nearer at, about five cards a cluster (`Oak.reference`)
 export const OAK_LEAF_MESH = "Stages_Unique_CyTree01_Leaf_Lod1";
 export const OAK_BARK_MESH = "Stages_Unique_CyTree01_Bark_Lod1";
-export const OAK_CLUSTER_COUNT = 40;
+export const OAK_CLUSTER_COUNT = 1280;
 export const OAK_CLUSTER_SEED = 12345;
 export const OAK_TRUNK_HEIGHTS: number[] = [0, 2, 4, 6, 8, 10, 12];
 export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;

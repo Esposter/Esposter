@@ -13,9 +13,9 @@ Every Bash command is read before it runs. The command is split at its separator
 
 - `find`, `du`: refused when any argument is a root.
 - `ls`: refused when it has the capital `-R` and any argument is a root (a lowercase `-r` is only a reverse sort).
-- `grep`: refused when it recurses (`-r`, `-R`, `--recursive`, in any flag group) and a path argument is a root. The operand of `-e`, `-f`, `--regexp` or `--file`, attached or separate, is a pattern and never a path; with such a flag every other positional argument is a path, and otherwise the first is the pattern.
+- `grep`: refused when it recurses (`-r`, `-R`, `--recursive`, in any flag group) and a path argument is a root. The operand of `-e`, `-f`, `--regexp` or `--file`, attached or separate, is a pattern and never a flag or a path, and every argument after a `--` is positional; with a pattern flag every positional argument is a path, and otherwise the first is the pattern.
 
-A root is `/`, a drive's folder such as `/c` or `C:\`, `/Users`, `/home`, a user's home folder (`/Users/<name>`, `/c/Users/<name>`, `C:\Users\<name>`, `/home/<name>`), or the home folder by name (`~`, `$HOME`, `${HOME}`, `$USERPROFILE`). Windows spellings, a trailing slash and a trailing glob (`/*`, which the shell expands to the root's entries) read as the same root. A command passed as one quoted argument to a shell (`bash -c "find / …"`), and the body of a command substitution (`$(…)` or backticks, which run even inside double quotes), are read again on their own, to three levels.
+A root is `/`, a drive's folder such as `/c` or `C:\`, `/Users`, `/home`, a user's home folder (`/Users/<name>`, `/c/Users/<name>`, `C:\Users\<name>`, `/home/<name>`), or the home folder by name (`~`, `$HOME`, `${HOME}`, `$USERPROFILE`). Windows spellings, a trailing slash and a trailing glob (`/*`, which the shell expands to the root's entries) read as the same root. A command passed as one quoted argument to a shell (`bash -c "find / …"`), and the body of a command substitution (`$(…)` or backticks, which run even inside double quotes, a `$(…)` body running to its closing parenthesis past any a quote holds), are read again on their own, to three levels.
 
 A refused command is denied with a message that names the known homes, so the next attempt goes where the file is:
 

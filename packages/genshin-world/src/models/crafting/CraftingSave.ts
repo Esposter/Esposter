@@ -1,4 +1,5 @@
-import { MAX_CRAFTING_RECIPE_COUNT, MAX_SAVE_ID_LENGTH } from "#src/services/save/constants";
+import { numericSaveIdSchema } from "#src/models/save/numericSaveIdSchema";
+import { MAX_CRAFTING_RECIPE_COUNT } from "#src/services/save/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -6,7 +7,7 @@ import { z } from "zod";
 // Of each recipe the player has crafted, by the recipe's id
 export const craftingSaveSchema = z.object({
   craftedCounts: z
-    .record(z.string().min(1).max(MAX_SAVE_ID_LENGTH), z.int().positive())
+    .record(numericSaveIdSchema, z.int().positive())
     .refine((countMap) => Object.keys(countMap).length <= MAX_CRAFTING_RECIPE_COUNT, "Too many recipes"),
   learnedRecipeIds: createUniqueArraySchema(z.int().positive()).max(MAX_CRAFTING_RECIPE_COUNT),
 });

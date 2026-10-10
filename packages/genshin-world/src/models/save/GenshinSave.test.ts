@@ -26,23 +26,17 @@ describe("genshinSaveSchema", () => {
     const save = {
       achievements: Object.fromEntries(
         Array.from({ length: MAX_ACHIEVEMENT_COUNT }, (_value, index) => [
-          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+          String(maxNumber - index),
           { count: maxNumber, finishedAt: maxInstant },
         ]),
       ),
       adventureExp: maxNumber,
       companionshipExp: Object.fromEntries(
-        Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [
-          String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-          maxNumber,
-        ]),
+        Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),
       crafting: {
         craftedCounts: Object.fromEntries(
-          Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [
-            String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-            maxNumber,
-          ]),
+          Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
         ),
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
@@ -89,6 +83,18 @@ describe("genshinSaveSchema", () => {
     };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(true);
+  });
+
+  // A numeric id's key is read back as its number, so a key such as "01" beside "1" would lose one of the two on the
+  // Next write
+  test("refuses an id key that is not its number's own decimal", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      crafting: { ...EMPTY_GENSHIN_SAVE.crafting, craftedCounts: { "01": 1, "1": 1 } },
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
   // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default

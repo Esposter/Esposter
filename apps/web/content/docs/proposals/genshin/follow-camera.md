@@ -14,7 +14,7 @@ waiting: "the user's recordings on the roadmap's Recordings owed list, follow-ca
 
 # Follow camera
 
-The [follow camera](/docs/genshin/follow-camera) stands behind the character today: it orbits a pivot at a share of the body's height, is pulled in by the ground, the water and the landmarks, and in photo mode orbits the held body. Its field of view, its pitch limits and the wheel's nearest and furthest distances are the game's own, read from the game's camera profile, and its pivot is read off recordings. How far a notch moves the eye, how fast it eases back out and how far a reset tilts it are still provisional, and the settings the game offers for the camera are not there yet.
+The [follow camera](/docs/genshin/follow-camera) stands behind the character today: it orbits a pivot at a share of the body's height, is pulled in by the ground, the water and the landmarks, and in photo mode orbits the held body. Its pitch limits and the wheel's nearest and furthest distances are the game's own, read from the game's camera profile; its field of view is the game's too, the 45 degrees the game sets its world camera to at run time, as a published field-of-view tool reads it, since the profile holds none; and its pivot is read off recordings. How far a notch moves the eye, how fast it eases back out and how far a reset tilts it are still provisional, and the settings the game offers for the camera are not there yet.
 
 ## Decisions
 

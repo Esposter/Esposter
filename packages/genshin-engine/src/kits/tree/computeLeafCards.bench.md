@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-04T08:07:44.309Z
-- Commit: 78d2bd75c7
+- Date: 2026-10-09T09:19:31.475Z
+- Commit: cc047969da
 - Node: v26.10.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,12 +20,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task               | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------ | ------- | --------- | ------- | -------- | ------- |
-| 8 cards a cluster  | 1.00×   | 0.1072    | ±47.55% | 0.2872   | 10      |
-| 32 cards a cluster | 0.28×   | 0.3790    | ±15.69% | 0.4925   | 10      |
+| 8 cards a cluster  | 1.00×   | 0.1524    | ±24.39% | 0.2848   | 10      |
+| 32 cards a cluster | 0.25×   | 0.6157    | ±20.90% | 1.0313   | 10      |
 
 ## computeLeafCards > 64 clusters
 
-| task               | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
-| ------------------ | ------- | --------- | -------- | -------- | ------- |
-| 8 cards a cluster  | 1.00×   | 0.7625    | ±141.76% | 4.6456   | 10      |
-| 32 cards a cluster | 0.88×   | 0.8712    | ±7.89%   | 1.0622   | 10      |
+| task               | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------ | ------- | --------- | ------- | -------- | ------- |
+| 8 cards a cluster  | 1.00×   | 0.5877    | ±14.19% | 0.8109   | 10      |
+| 32 cards a cluster | 0.23×   | 2.5925    | ±34.91% | 5.5971   | 10      |

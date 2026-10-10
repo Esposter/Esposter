@@ -29,3 +29,8 @@ export const SURFACE_DETAIL_METRES_PER_TEXEL = 0.04;
 // The scale a surface's detail octaves are drawn at, over the amplitudes that reproduce its export's energies: the
 // Render's noise carries less energy per unit amplitude than the octaves model, and the surface pass settles it
 export const SURFACE_DETAIL_RENDER_GAIN = 4;
+// How wide a leaf card's pointed oval is at its middle, a share of the card's half-width (`createLeafShapeNode`), and so
+// The share of its card the oval keeps: its half-width falls as one less the square of the height along the card, which
+// Keeps two thirds of the width's share
+export const LEAF_SHAPE_WIDTH = 0.8;
+export const LEAF_SHAPE_KEPT_SHARE: number = (LEAF_SHAPE_WIDTH * 2) / 3;

@@ -14,12 +14,13 @@ export const CLI_PROJECT_PATH = "AnimeStudio.CLI/AnimeStudio.CLI.csproj";
 export const CLI_EXECUTABLE_NAME = "AnimeStudio.CLI";
 export const WORK_DIRECTORY_NAME = "animestudio-build";
 export const PUBLISH_DIRECTORY_NAME = "animestudio-cli";
+// Where a rebuild publishes first, so the published CLI is replaced only once the new one passes the parity check
+export const STAGING_DIRECTORY_NAME = "animestudio-cli-staging";
 // AnimeStudio keeps its CAB map in a Maps folder beside its working directory, which is the publish folder, so a rebuild
-// Moves that folder aside under KEPT_MAPS_DIRECTORY_NAME, beside the build and outside the publish folder, and back after publish
+// Moves that folder into the staged CLI's once the staged CLI passes, before the staged folder replaces the published one
 export const MAPS_DIRECTORY_NAME = "Maps";
-export const KEPT_MAPS_DIRECTORY_NAME = "animestudio-maps";
 // Where the parity check exports each reference block, beside the build and outside the repository
-export const PARITY_DIRECTORY_NAME = "parity";
+export const PARITY_DIRECTORY_NAME = "animestudio-parity";
 // The types the parity check exports, one run each as the Windows reference was taken: the textures and sprites as
 // PNG with no export type, the MonoBehaviours as JSON
 export const PARITY_TYPE_EXPORT_ARGUMENTS: Readonly<Record<string, readonly string[]>> = {

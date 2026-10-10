@@ -69,8 +69,10 @@ export const fitStatueStack = (
   });
   const lengths = locals.map(([length]) => length);
   const foot = Math.min(...lengths);
-  const sectionCount = Math.max(1, Math.round((Math.max(...lengths) - foot) / sectionHeight));
-  const height = (Math.max(...lengths) - foot) / sectionCount;
+  const span = Math.max(...lengths) - foot;
+  const sectionCount = Math.max(1, Math.round(span / sectionHeight));
+  // A flat piece read upright spans nothing along the axis, so its one section is kept a hair tall to bin its points
+  const height = Math.max(span / sectionCount, Number.EPSILON);
   const sectionPoints = Array.from({ length: sectionCount }, (): Vector[] => []);
   for (const local of locals)
     sectionPoints[Math.min(sectionCount - 1, Math.floor((local[0] - foot) / height))]?.push(local);

@@ -7,12 +7,15 @@
 # And the gate keeps the machine off swap. The gate reads memory as it stands, so runs admitted together would all pass
 # It on the same free gigabytes and then grow past it as one; a run is admitted only once the last one admitted has run
 # A minute, long enough for a package build to reach its peak, or has ended, and the check, the take and every free
-# Happen under one lock, so two runners never free the same slot and one never frees a slot just retaken
+# Happen under one lock, so two runners never free the same slot and one never frees a slot just retaken. A stale lock
+# Is freed under a guard of its own, read again inside it, so two waiting runners never both free it and one never frees
+# The live lock a third has taken in between
 slotCount="${RUN_SLOT_COUNT:-4}"
 slotDirectory="${TEMP:-/tmp}/esposter-run-slots"
 rampSeconds="${RUN_SLOT_RAMP_SECONDS:-60}"
 admitLockPath="$slotDirectory/admit.lock"
 admittedPath="$slotDirectory/admitted"
+reclaimLockPath="$slotDirectory/reclaim.lock"
 mkdir -p "$slotDirectory"
 
 # Prints "free total" in kilobytes: /proc/meminfo on Linux and in Git Bash, the kernel's pressure level on macOS
@@ -38,13 +41,19 @@ checkIsRamped() {
   [ "$(($(date +%s) - admittedAt))" -ge "$rampSeconds" ] || ! kill -0 "$admittedPid" 2>/dev/null
 }
 
-# A lock whose holder died, or one older than a minute when admission takes milliseconds, is freed
+# A lock whose holder died, or one older than a minute when admission takes milliseconds, is freed, read and freed under
+# The guard alone. A guard left by a runner killed inside it is freed a minute on, since a reclaim takes milliseconds
 freeStaleAdmitLock() {
+  if ! mkdir "$reclaimLockPath" 2>/dev/null; then
+    [ -n "$(find "$reclaimLockPath" -maxdepth 0 -mmin +1 2>/dev/null)" ] && rm -rf "$reclaimLockPath"
+    return
+  fi
   holder="$(cat "$admitLockPath/pid" 2>/dev/null)"
   if { [ -n "$holder" ] && ! kill -0 "$holder" 2>/dev/null; } ||
     [ -n "$(find "$admitLockPath" -maxdepth 0 -mmin +1 2>/dev/null)" ]; then
     rm -rf "$admitLockPath"
   fi
+  rm -rf "$reclaimLockPath"
 }
 
 while :; do

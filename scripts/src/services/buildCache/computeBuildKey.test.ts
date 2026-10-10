@@ -1,4 +1,5 @@
 import { computeBuildKey } from "#src/services/buildCache/computeBuildKey";
+import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -45,6 +46,7 @@ snapshots:
 
   beforeAll(() => {
     repositoryRoot = mkdtempSync(join(tmpdir(), "build-cache-"));
+    execFileSync("git", ["init", "-q"], { cwd: repositoryRoot });
     writeRepositoryFile("pnpm-lock.yaml", LOCKFILE);
     writeRepositoryFile(".node-version", "26.10.0\n");
     writeRepositoryFile("packages/a/package.json", '{ "name": "a" }');

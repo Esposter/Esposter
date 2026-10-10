@@ -7,7 +7,7 @@ import type { ItemCategory } from "#src/models/ItemCategory";
 
 import { InventorySorts } from "#src/models/InventorySort";
 import { ItemCategories } from "#src/models/ItemCategory";
-import { computed } from "vue";
+import { computed, nextTick, useTemplateRef, watch } from "vue";
 
 interface Props {
   // The way back to the world in the reader's language
@@ -103,6 +103,20 @@ const emit = defineEmits<{
   toggleDestroy: [];
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
+// The dialog takes the focus as it opens, the bag behind it inert until it closes, so nothing behind it changes what OK
+// Destroys, and the focus goes back to what held it once it closes
+const cancelButton = useTemplateRef("cancelButton");
+let returnFocus: HTMLElement | undefined;
+watch(
+  () => isConfirming,
+  async (isOpen) => {
+    if (isOpen)
+      returnFocus = window.document.activeElement instanceof HTMLElement ? window.document.activeElement : undefined;
+    await nextTick();
+    if (isOpen) cancelButton.value?.focus();
+    else returnFocus?.focus();
+  },
+);
 </script>
 
 <template>
@@ -111,90 +125,92 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
        Tabs' icons and the grid's entries' icons wait on the glyph pass, and the sort, the wallet's place and the
        Panel's stats and footer wait on the bag's other recordings -->
   <div class="inventory-screen">
-    <p class="title" role="heading" aria-level="1">{{ title }}</p>
-    <ul class="tabs">
-      <li v-for="itemCategory of ItemCategories" :key="itemCategory">
-        <button
-          class="tab"
-          :aria-label="tabLabels[itemCategory]"
-          :aria-pressed="itemCategory === category"
-          :data-category="itemCategory"
-          type="button"
-          @click="category = itemCategory"
-        />
-      </li>
-    </ul>
-    <p class="capacity">{{ capacity }}</p>
-    <button class="back" :aria-label="backLabel" type="button" @click="emit('close')" />
-    <ul class="grid">
-      <li v-for="cell of cells" :key="cell.id">
-        <button
-          class="cell"
-          :aria-label="cell.name"
-          :aria-pressed="cell.id === selectedCell?.id"
-          :data-rarity="cell.rarity"
-          :data-selected="cell.isSelected"
-          type="button"
-          @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : (selectedId = cell.id)"
-        >
-          <span class="caption">{{ cell.caption }}</span>
-        </button>
-      </li>
-    </ul>
-    <section v-if="selectedCell" class="detail" :data-rarity="selectedCell.rarity">
-      <p class="detail-name">{{ selectedCell.name }}</p>
-      <p class="detail-caption">{{ selectedCell.caption }}</p>
-    </section>
-    <button
-      class="trash"
-      :aria-label="destroyLabel"
-      :aria-pressed="isDestroying"
-      type="button"
-      @click="emit('toggleDestroy')"
-    />
-    <!-- The destroy mode's foot, in place of the sort or the currencies: its opening line, the quick selects by rarity,
-         the count of the chosen entries and the Destroy button that opens the dialog. Provisional until the mode is recorded -->
-    <section v-if="isDestroying" class="destroy">
-      <p class="destroy-tip">{{ destroyTipLabel }}</p>
-      <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>
-      <ul class="quick-selects">
-        <li v-for="{ label, rarity } of quickSelects" :key="rarity">
-          <button class="quick-select" :data-rarity="rarity" type="button" @click="emit('quickSelect', rarity)">
-            {{ label }}
+    <div class="bag" :inert="isConfirming">
+      <p class="title" role="heading" aria-level="1">{{ title }}</p>
+      <ul class="tabs">
+        <li v-for="itemCategory of ItemCategories" :key="itemCategory">
+          <button
+            class="tab"
+            :aria-label="tabLabels[itemCategory]"
+            :aria-pressed="itemCategory === category"
+            :data-category="itemCategory"
+            type="button"
+            @click="category = itemCategory"
+          />
+        </li>
+      </ul>
+      <p class="capacity">{{ capacity }}</p>
+      <button class="back" :aria-label="backLabel" type="button" @click="emit('close')" />
+      <ul class="grid">
+        <li v-for="cell of cells" :key="cell.id">
+          <button
+            class="cell"
+            :aria-label="cell.name"
+            :aria-pressed="isDestroying ? Boolean(cell.isSelected) : cell.id === selectedCell?.id"
+            :data-rarity="cell.rarity"
+            :data-selected="cell.isSelected"
+            type="button"
+            @click="isDestroying && cell.isDestroyable ? emit('choose', cell.id) : (selectedId = cell.id)"
+          >
+            <span class="caption">{{ cell.caption }}</span>
           </button>
         </li>
       </ul>
-      <p class="destroy-count">{{ destroySelectedLabel }}</p>
-      <button class="destroy-button" :disabled="!destroyNames.length" type="button" @click="emit('destroy')">
-        {{ destroyButtonLabel }}
-      </button>
-    </section>
-    <template v-else-if="isSortable">
-      <span class="filter" />
-      <div class="sort">
-        <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- the sort's caption is no game text key yet, so no name in the reader's language exists until the bag's sort recording keys it; its options name it meanwhile -->
-        <select v-model="sort" class="sort-select">
-          <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
-            {{ sortLabels[inventorySort] }}
-          </option>
-        </select>
-      </div>
+      <section v-if="selectedCell" class="detail" :data-rarity="selectedCell.rarity">
+        <p class="detail-name">{{ selectedCell.name }}</p>
+        <p class="detail-caption">{{ selectedCell.caption }}</p>
+      </section>
       <button
-        class="order"
-        :aria-label="orderLabel"
-        :data-descending="isDescending"
+        class="trash"
+        :aria-label="destroyLabel"
+        :aria-pressed="isDestroying"
         type="button"
-        @click="isDescending = !isDescending"
+        @click="emit('toggleDestroy')"
       />
-    </template>
-    <ul v-else class="currencies">
-      <li v-for="{ id, isTopUp, name, quantity } of currencies" :key="id" class="currency" :data-currency="id">
-        <span class="currency-name">{{ name }}</span>
-        <span class="currency-icon" />
-        {{ quantity }}
-        <span v-if="isTopUp" class="top-up" />
-      </li>
-    </ul>
+      <!-- The destroy mode's foot, in place of the sort or the currencies: its opening line, the quick selects by rarity,
+         the count of the chosen entries and the Destroy button that opens the dialog. Provisional until the mode is recorded -->
+      <section v-if="isDestroying" class="destroy">
+        <p class="destroy-tip">{{ destroyTipLabel }}</p>
+        <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>
+        <ul class="quick-selects">
+          <li v-for="{ label, rarity } of quickSelects" :key="rarity">
+            <button class="quick-select" :data-rarity="rarity" type="button" @click="emit('quickSelect', rarity)">
+              {{ label }}
+            </button>
+          </li>
+        </ul>
+        <p class="destroy-count">{{ destroySelectedLabel }}</p>
+        <button class="destroy-button" :disabled="!destroyNames.length" type="button" @click="emit('destroy')">
+          {{ destroyButtonLabel }}
+        </button>
+      </section>
+      <template v-else-if="isSortable">
+        <span class="filter" />
+        <div class="sort">
+          <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- the sort's caption is no game text key yet, so no name in the reader's language exists until the bag's sort recording keys it; its options name it meanwhile -->
+          <select v-model="sort" class="sort-select">
+            <option v-for="inventorySort of InventorySorts" :key="inventorySort" :value="inventorySort">
+              {{ sortLabels[inventorySort] }}
+            </option>
+          </select>
+        </div>
+        <button
+          class="order"
+          :aria-label="orderLabel"
+          :data-descending="isDescending"
+          type="button"
+          @click="isDescending = !isDescending"
+        />
+      </template>
+      <ul v-else class="currencies">
+        <li v-for="{ id, isTopUp, name, quantity } of currencies" :key="id" class="currency" :data-currency="id">
+          <span class="currency-name">{{ name }}</span>
+          <span class="currency-icon" />
+          {{ quantity }}
+          <span v-if="isTopUp" class="top-up" />
+        </li>
+      </ul>
+    </div>
     <!-- The dialog the Destroy button opens over the bag: the entries to be destroyed, and the warning that it cannot be
          undone, in the game's own wording. Provisional until the dialog is recorded -->
     <section v-if="isConfirming" class="confirm" role="dialog" aria-modal="true" :aria-label="destroyConfirmTitle">
@@ -212,7 +228,9 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
         </ul>
       </template>
       <div class="confirm-buttons">
-        <button class="confirm-button" type="button" @click="emit('cancelDestroy')">{{ cancelLabel }}</button>
+        <button ref="cancelButton" class="confirm-button" type="button" @click="emit('cancelDestroy')">
+          {{ cancelLabel }}
+        </button>
         <button :disabled="isDestroyFull" class="confirm-button" type="button" @click="emit('confirmDestroy')">
           {{ destroyConfirmButtonLabel }}
         </button>
@@ -238,6 +256,11 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
   overflow: hidden;
   clip-path: inset(50%);
   margin: 0;
+}
+
+/* The bag's own pieces, placed against the screen as if the wrapper that makes them inert under the dialog were not there */
+.bag {
+  display: contents;
 }
 
 .tabs,
@@ -411,7 +434,8 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
 }
 
 /* The destroy mode's foot and dialog are placed in the game's 1080-high units by the recording, not yet measured, so
-   they sit in the foot's band and the screen's centre until then */
+   they sit in the foot's band and the screen's centre until then: the count and the Destroy button share the quick
+   selects' row, so the foot's three rows end above the screen's 1080 */
 .destroy {
   position: absolute;
   top: calc(var(--unit) * 960);
@@ -424,10 +448,13 @@ const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.val
 }
 
 .destroy-tip,
-.destroy-cannot,
-.destroy-count {
+.destroy-cannot {
   margin: 0;
   width: 100%;
+}
+
+.destroy-count {
+  margin: 0;
 }
 
 .destroy-cannot {

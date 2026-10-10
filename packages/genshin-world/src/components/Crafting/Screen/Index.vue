@@ -61,7 +61,10 @@ const tabRecipes = computed(() => openRecipes.value.filter((recipe) => recipe.co
 const recipeCells = computed(() =>
   tabRecipes.value.map((recipe) => ({ id: recipe.id, name: getItemName(recipe.nameTextId, nameText) })),
 );
-const pickedRecipe = computed(() => tabRecipes.value.find((recipe) => recipe.id === recipeId.value));
+// The recipe the player picked in the tab, or the tab's first while none of its own is picked
+const pickedRecipe = computed(
+  () => tabRecipes.value.find((recipe) => recipe.id === recipeId.value) ?? tabRecipes.value.at(0),
+);
 // The most the bag and wallet pay for, and never less than one so the slider still reads as a count
 const amountMaximum = computed(() => {
   if (!pickedRecipe.value) return 1;
@@ -74,16 +77,22 @@ const amountMaximum = computed(() => {
     1,
   );
 });
-const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * amount.value);
+// The amount the player picked, kept to the most the bag and wallet still pay for once a craft has spent them
+const pickedAmount = computed(() => Math.min(amount.value, amountMaximum.value));
+const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * pickedAmount.value);
 const craftedLabel = computed(() =>
-  fillGameTextValues(gameText[GameTextKey.CraftingCrafted], craftedCountMap.value.get(recipeId.value) ?? 0),
+  fillGameTextValues(
+    gameText[GameTextKey.CraftingCrafted],
+    craftedCountMap.value.get(pickedRecipe.value?.id ?? 0) ?? 0,
+  ),
 );
 // The picked recipe's results, rolled through the crafter's talent: the bag and wallet after the craft, with the
 // Talent's extra items put in the bag after the craft's own results, one that finds no room left out
 const craft = () => {
   const recipe = pickedRecipe.value;
   if (!recipe) return;
-  const crafted = craftRecipe(recipe, amount.value, getItemDefinition(recipe.resultItemId, nameText), {
+  const craftCount = pickedAmount.value;
+  const crafted = craftRecipe(recipe, craftCount, getItemDefinition(recipe.resultItemId, nameText), {
     adventureRank,
     inventory: inventory.value,
     now: Temporal.Now.instant(),
@@ -91,13 +100,13 @@ const craft = () => {
     wallet: wallet.value,
   });
   if (!crafted) return;
-  inventory.value = rollCraftingTalent(crafterId.value, recipe, amount.value, random).reduce(
+  inventory.value = rollCraftingTalent(crafterId.value, recipe, craftCount, random).reduce(
     (bag, { count, id }) => addInventoryItem(bag, getItemDefinition(id, nameText), count).inventory,
     crafted.inventory,
   );
   wallet.value = crafted.wallet;
   const craftedCount = craftedCountMap.value.get(recipe.id) ?? 0;
-  craftedCountMap.value = new Map(craftedCountMap.value).set(recipe.id, craftedCount + amount.value);
+  craftedCountMap.value = new Map(craftedCountMap.value).set(recipe.id, craftedCount + craftCount);
 };
 </script>
 
@@ -106,16 +115,17 @@ const craft = () => {
        and the party's crafter who may pass a talent's extra on to the bag -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CraftingTitle]">
     <CraftingScreen
-      v-model:amount="amount"
       v-model:crafter-id="crafterId"
-      v-model:recipe-id="recipeId"
+      :amount="pickedAmount"
       :amount-label="gameText[GameTextKey.CraftingAmount]"
       :amount-maximum
+      :close-label="gameText[GameTextKey.Back]"
       :coins="wallet[Currency.Mora]"
       :crafted-label
       :crafting-materials-label="gameText[GameTextKey.CraftingMaterials]"
       :craft-label="gameText[GameTextKey.CraftingTitle]"
       :crafters
+      :recipe-id="pickedRecipe?.id ?? 0"
       :recipes="recipeCells"
       :required-coins
       :required-label="gameText[GameTextKey.CraftingRequired]"
@@ -123,6 +133,8 @@ const craft = () => {
       :tabs="tabCells"
       :title="gameText[GameTextKey.CraftingTitle]"
       @close="emit('close')"
+      @update:amount="amount = $event"
+      @update:recipe-id="recipeId = $event"
       @update:tab-id="tabId = $event"
       @craft="craft()"
     />

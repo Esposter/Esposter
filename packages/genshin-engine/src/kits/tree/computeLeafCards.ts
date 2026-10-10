@@ -3,6 +3,7 @@ import type { TreeCluster } from "#src/models/kits/tree/TreeCluster";
 import type { TreeOptions } from "#src/models/kits/tree/TreeOptions";
 
 import { sampleTreeNormalField } from "#src/kits/tree/sampleTreeNormalField";
+import { LEAF_SHAPE_KEPT_SHARE } from "#src/nodes/constants";
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
 const VERTICES_PER_CARD = 4;
@@ -13,27 +14,30 @@ const CORNER_SIGNS = [
   [1, 1],
   [-1, 1],
 ] as const;
-// Leaf cards scattered through a sphere around each cluster's centre, each facing a random way. Every vertex's normal
-// Points out from its cluster's centre rather than off its card, so the toon ramp shades each cluster as one soft
-// Mass with a clean terminator, which is how the game's crowns read
+// Leaf cards scattered through a sphere around each cluster's centre, each facing a random way, as many as keep the
+// Cluster's leaf area times the tree's scale between them. Every vertex takes its normal from the tree's normal field,
+// Or points out from its cluster's centre where none is given, never off its card, so the toon ramp shades the crown as
+// Soft masses with a clean terminator, which is how the game's crowns read
 export const computeLeafCards = (
   clusters: readonly TreeCluster[],
   {
     cardSize,
-    cardsPerCluster,
+    leafAreaScale,
     normalField,
     seed,
-  }: Pick<TreeOptions, "cardSize" | "cardsPerCluster" | "normalField" | "seed">,
+  }: Pick<TreeOptions, "cardSize" | "leafAreaScale" | "normalField" | "seed">,
 ): LeafCards => {
   const random = createSeededRandom(seed + 1);
-  const cardCount = clusters.length * cardsPerCluster;
+  const cardKeptArea = (2 * cardSize) ** 2 * LEAF_SHAPE_KEPT_SHARE;
+  const clusterCardCounts = clusters.map(({ leafArea }) => Math.round((leafArea * leafAreaScale) / cardKeptArea));
+  const cardCount = clusterCardCounts.reduce((sum, clusterCardCount) => sum + clusterCardCount, 0);
   const positions = new Float32Array(cardCount * VERTICES_PER_CARD * 3);
   const normals = new Float32Array(cardCount * VERTICES_PER_CARD * 3);
   const uvs = new Float32Array(cardCount * VERTICES_PER_CARD * 2);
   const indices = new Uint32Array(cardCount * INDICES_PER_CARD);
   let card = 0;
-  for (const { radius, x: centerX, y: centerY, z: centerZ } of clusters)
-    for (let cardIndex = 0; cardIndex < cardsPerCluster; cardIndex++, card++) {
+  for (const [cluster, { radius, x: centerX, y: centerY, z: centerZ }] of clusters.entries())
+    for (let cardIndex = 0; cardIndex < (clusterCardCounts[cluster] ?? 0); cardIndex++, card++) {
       // A point in the unit ball by rejection, flattened a little so a cluster is wider than it is tall
       let offsetX: number;
       let offsetY: number;

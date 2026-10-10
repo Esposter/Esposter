@@ -2,8 +2,8 @@ import type { Character } from "#src/models/character/Character";
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNamecard";
 
-import { computeFriendshipLevel } from "#src/services/friendship/computeFriendshipLevel";
 import { FRIENDSHIP_NAMECARD_LEVEL } from "#src/services/friendship/constants";
+import { computeLevelReached } from "#src/services/shared/computeLevelReached";
 
 // The item ids of the namecards the characters' Friendship has opened, a namecard held from the level it is reached at and
 // Never stored, so a character's Friendship and the namecards it holds cannot disagree
@@ -16,7 +16,7 @@ export const computeHeldNamecardItemIds = (
   return namecards
     .filter(
       ({ characterId }) =>
-        computeFriendshipLevel(characterExpMap.get(characterId) ?? 0, friendshipLevels) >= FRIENDSHIP_NAMECARD_LEVEL,
+        computeLevelReached(characterExpMap.get(characterId) ?? 0, friendshipLevels) >= FRIENDSHIP_NAMECARD_LEVEL,
     )
     .map(({ itemId }) => itemId);
 };
