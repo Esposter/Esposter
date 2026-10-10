@@ -176,7 +176,8 @@ export const registerLifecycle = (on: On): void => {
   // Measurement a window's reset raises, which finds none. The toast names the window once, as the reserve starts, and
   // Again as its maintenance tier is raised to the wind-down
   on("session.measure", async ($, e, next) => {
-    const reserveWindow = getReserveWindow(e.rateLimits);
+    const now = await $.clock.now();
+    const reserveWindow = getReserveWindow(e.rateLimits, now);
     const previousReserveWindow = await read($, reserveWindowAtom);
     await update($, reserveWindowAtom, () => reserveWindow ?? InitialState.reserveWindow);
     if (

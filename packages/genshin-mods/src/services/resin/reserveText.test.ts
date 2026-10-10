@@ -4,6 +4,7 @@ import {
   FIVE_HOUR_MAINTENANCE_PERCENTAGE,
   FIVE_HOUR_WIND_DOWN_PERCENTAGE,
   MAINTENANCE_INSTRUCTION,
+  PACE_FLOOR_PERCENTAGE,
   RESERVE_INSTRUCTION,
 } from "../constants";
 import { formatResetsAt } from "./formatResetsAt";
@@ -16,9 +17,31 @@ describe(reserveText, () => {
     expect.hasAssertions();
 
     expect(
-      reserveText({ isWindDown: false, name: "five-hour", percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE, resetsAt }),
+      reserveText({
+        isAheadOfPace: false,
+        isWindDown: false,
+        name: "five-hour",
+        percentage: FIVE_HOUR_MAINTENANCE_PERCENTAGE,
+        resetsAt,
+      }),
     ).toBe(
       `Usage maintenance: the five-hour usage window has passed ${FIVE_HOUR_MAINTENANCE_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}. ${MAINTENANCE_INSTRUCTION}`,
+    );
+  });
+
+  test("names the pace a maintenance tier entered ahead of an even pace was passed at", () => {
+    expect.hasAssertions();
+
+    expect(
+      reserveText({
+        isAheadOfPace: true,
+        isWindDown: false,
+        name: "weekly",
+        percentage: PACE_FLOOR_PERCENTAGE,
+        resetsAt,
+      }),
+    ).toBe(
+      `Usage maintenance: the weekly usage window has passed ${PACE_FLOOR_PERCENTAGE}% ahead of an even pace and resets at ${formatResetsAt(resetsAt)}. ${MAINTENANCE_INSTRUCTION}`,
     );
   });
 
@@ -26,7 +49,13 @@ describe(reserveText, () => {
     expect.hasAssertions();
 
     expect(
-      reserveText({ isWindDown: true, name: "five-hour", percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE, resetsAt }),
+      reserveText({
+        isAheadOfPace: false,
+        isWindDown: true,
+        name: "five-hour",
+        percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE,
+        resetsAt,
+      }),
     ).toBe(
       `Usage reserve: the five-hour usage window has passed ${FIVE_HOUR_WIND_DOWN_PERCENTAGE}% and resets at ${formatResetsAt(resetsAt)}. ${RESERVE_INSTRUCTION}`,
     );
