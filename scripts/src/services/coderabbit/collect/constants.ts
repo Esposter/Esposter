@@ -109,6 +109,7 @@ export const REPAIR_VERIFY_COMMANDS: string[][] = [
   ["lint:eslint"],
   ["lint:workspace"],
   ["lint:unused"],
+  ["lint:workflows"],
   REPAIR_BUILD_APPS_COMMAND,
   ["test"],
 ];
