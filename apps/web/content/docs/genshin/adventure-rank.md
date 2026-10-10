@@ -50,7 +50,7 @@ The rank is the EXP's own, held at the cap of the last World Level open. So a pl
 
 From World Level 3 the player may lower it by one, and restore it by one (`toggleWorldLevelLowering`). Either change waits 24 hours after the last, so a lowering cannot be undone at once and a restore cannot be lowered again at once. The World Level played at is the unlocked one less that single step (`computeWorldLevel`).
 
-Hovering or focusing the card's World Level button opens the game's panel (`Menu/WorldLevelTips`): its title, the tips for what the change does, and, once a change has been made, the cooldown left, read as the panel opens (`computeWorldLevelCooldown`). The panel is not measured yet: no public clip shows the hover panel (the published tutorials open the World Level dialog from its info icon), so its size, place and colours wait on `world-level-panel.mkv` in the roadmap's Recordings owed list. The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
+Clicking the card's info icon opens the game's World Level dialog (`Menu/WorldLevelTips`), as the published tutorials open it: its title, the tips for what the change does, and, once a change has been made, the cooldown left (`computeWorldLevelCooldown`), each read again when the World Level changes under it. Its own Back or Escape closes it and focus returns to the icon. The dialog is not measured yet: its size, place and colours wait on `world-level-dialog.mkv` in the roadmap's Recordings owed list. The tips' colour tags are split by `splitGameTextColors`, so the game's orange numbers stay orange.
 
 ## Enemies at a World Level
 
@@ -59,7 +59,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 ## Notes
 
 - Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
-- `useWorldAdventureRank` holds the player's Adventure EXP live, started from the save and read back through the save sync, so a gain moves the rank, the World Level and the bar at once. A gain past rank 60 is paid in Mora. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The card's World Level button lowers it by one from World Level 3 or restores it, through `toggleWorldLevel`; the adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload. The button's panel of the game's tips and cooldown hint is built, its place beside the button provisional until the English client's menu is measured.
+- `useWorldAdventureRank` holds the player's Adventure EXP live, started from the save and read back through the save sync, so a gain moves the rank, the World Level and the bar at once. A gain past rank 60 is paid in Mora. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The card's World Level button lowers it by one from World Level 3 or restores it, through `toggleWorldLevel`; the adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload. The info icon's dialog of the game's tips and cooldown hint is built, its place below the World Level provisional until the English client's menu is measured.
 - The rank's rewards are not read yet. Katheryne, who hands them out, is not yet placed in Mondstadt's region data.
 
 ## Key files
@@ -78,7 +78,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/services/adventureRank/computeAdventureRankProgress.ts` | the EXP's share of the bar toward the next rank                       |
 | `packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`            | a camp's enemy level at a World Level                                 |
 | `packages/genshin-world/src/services/adventureRank/computeWorldLevelCooldown.ts`    | the time left before the World Level can be changed again             |
-| `packages/genshin-world/src/components/Menu/WorldLevelTips/Index.vue`               | the World Level button's panel: title, tips and the cooldown left     |
+| `packages/genshin-world/src/components/Menu/WorldLevelTips/Index.vue`               | the World Level's dialog: title, tips and the cooldown left           |
 | `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                       | the profile card's rank, EXP bar, World Level and its lowering button |
 | `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                   | the session's live EXP, the World Level it plays at and its toggle    |
 | `packages/genshin-world/src/services/enemy/createEnemy.ts`                          | spawns an enemy at its World Level's level                            |
