@@ -16,17 +16,21 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, renameSync, rmSync, utimesS
 import { join } from "node:path";
 
 // Builds one workspace package through the cache, after bringing up to date every workspace package it links, so a
-// Fresh worktree's leaf package builds its whole chain: a hit restores its `dist`, a miss builds it in a slot and stores it
+// Fresh worktree's leaf package builds its whole chain: a hit restores its `dist`, a miss builds it in a slot and stores it.
+// A package two dependency paths reach is brought up to date once per request, its outcome kept by its directory
 export const buildPackageCached = (
   packageDirectory: string,
   visiting: ReadonlySet<string> = new Set<string>(),
+  directoryOutcomeMap = new Map<string, BuildCacheOutcome>(),
 ): BuildCacheOutcome => {
+  const finishedOutcome = directoryOutcomeMap.get(packageDirectory);
+  if (finishedOutcome) return finishedOutcome;
   if (visiting.has(packageDirectory))
     throw new InvalidOperationError(Operation.Create, packageDirectory, "its workspace dependencies form a cycle");
 
   const nextVisiting = new Set([...visiting, packageDirectory]);
   for (const dependencyDirectory of readWorkspaceDependencyDirectories(packageDirectory))
-    buildPackageCached(dependencyDirectory, nextVisiting);
+    buildPackageCached(dependencyDirectory, nextVisiting, directoryOutcomeMap);
 
   const name = readPackageName(packageDirectory);
   const key = computeBuildKey(packageDirectory);
@@ -58,6 +62,7 @@ export const buildPackageCached = (
       rmSync(outputDirectory, { force: true, recursive: true });
       renameSync(stagingDirectory, outputDirectory);
       console.info(`${name}: ${BuildCacheOutcome.Hit}`);
+      directoryOutcomeMap.set(packageDirectory, BuildCacheOutcome.Hit);
       return BuildCacheOutcome.Hit;
     }
     rmSync(stagingDirectory, { force: true, recursive: true });
@@ -81,5 +86,6 @@ export const buildPackageCached = (
   else renameSync(temporaryDirectory, keyDirectory);
   pruneBuildCache(packageCacheDirectory);
   console.info(`${name}: ${BuildCacheOutcome.Miss}`);
+  directoryOutcomeMap.set(packageDirectory, BuildCacheOutcome.Miss);
   return BuildCacheOutcome.Miss;
 };
