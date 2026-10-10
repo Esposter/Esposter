@@ -12,7 +12,7 @@ The Archive's seven sections, their entries read from the game's codex tables, t
 
 ## Decisions
 
-- **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when read; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
+- **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when picked up; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
 - **Living Beings counts kills.** Each enemy's entry shows how many have been defeated, and each animal's waits on the wildlife's strike, and its model turns on the screen as the game's does, drawn by the [characters](/docs/genshin/characters) reader once its model is built.
 - **A viewpoint is placed by its scene group.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, which only the scene group export places; the official map's Viewpoint label (85) places 224 points with no name to join them by, so it is not used.
 - **A viewpoint is taken in where it stands.** Each viewpoint is a place in the world that, reached, offers to be viewed, which opens its entry with its picture as the game does; its picture is drawn by the world from its place, never the game's image.
@@ -21,7 +21,7 @@ The Archive's seven sections, their entries read from the game's codex tables, t
 
 ```mermaid
 flowchart LR
-  DOING["Defeated, read, finished, shown, viewed, held as a set"] --> FIRST{"Its entry still locked?"}
+  DOING["Defeated, picked up, finished, shown, viewed, held as a set"] --> FIRST{"Its entry still locked?"}
   FIRST -->|"yes"| OPEN["Entry opened, kept with the progress"]
   FIRST -->|"no, a defeat"| COUNT["Living Beings: one more defeated"]
   OPEN -->|"a defeat"| COUNT
