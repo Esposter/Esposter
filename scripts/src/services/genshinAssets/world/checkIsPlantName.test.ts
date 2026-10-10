@@ -12,8 +12,9 @@ describe(checkIsPlantName, () => {
         "Eff_Plant_Leaf_Fall",
         "Item_Drop_Plant",
         "Area_MdProps_Flowerpot02",
+        "Area_MdProps_FlowerPot02",
         "Area_Common_Build_Ruin_H_06_Vo",
       ].map((name) => checkIsPlantName(name)),
-    ).toStrictEqual([true, true, false, false, false, false]);
+    ).toStrictEqual([true, true, false, false, false, false, false]);
   });
 });
