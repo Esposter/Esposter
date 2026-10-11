@@ -5,9 +5,9 @@ import { usePlugin } from "grapesjs";
 import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
 import { customCodePlugin } from "@/services/webpageEditor/plugins/customCodePlugin";
+import { formsPlugin } from "@/services/webpageEditor/plugins/formsPlugin";
 import grapesJSParserPostcss from "grapesjs-parser-postcss";
 import grapesJSPluginExport from "grapesjs-plugin-export";
-import grapesJSPluginForms from "grapesjs-plugin-forms";
 import grapesJSPresetWebpage from "grapesjs-preset-webpage";
 import grapesJSStyleBg from "grapesjs-style-bg";
 import grapesJSTabs from "grapesjs-tabs";
@@ -21,7 +21,7 @@ const { css: cssFormat, html: htmlFormat } = jsBeautify;
 
 export const WebpageEditorPlugins: EditorConfig["plugins"] = [
   usePlugin(blocksBasicPlugin, { flexGrid: true }),
-  usePlugin(grapesJSPluginForms, { blocks: [] }),
+  usePlugin(formsPlugin, { blocks: [] }),
   countdownPlugin,
   grapesJSPluginExport,
   usePlugin(grapesJSTabs, { tabsBlock: { category: "Extra" } }),
