@@ -1,43 +1,19 @@
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
+import type { GoDeclaration } from "#src/models/genshinAssets/kits/gcsim/GoDeclaration";
+import type { GoElementAssignment } from "#src/models/genshinAssets/kits/gcsim/GoElementAssignment";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-interface Declaration {
-  expression: GoExpression;
-  file: string;
-  line: number;
-}
-
-interface ElementAssignment extends Declaration {
-  indexes: GoExpression[];
-  name: string;
-}
-
 const DECLARATION_KEYWORDS = new Set(["const", "var"]);
-
-const checkIsPunctuation = (token: GoToken | undefined, text: string): boolean =>
-  token?.kind === GoTokenKind.Punctuation && token.text === text;
-
-// The position after the bracketed run opening at the position, nested brackets and all
-const skipBalanced = (tokens: readonly GoToken[], start: number): number => {
-  let depth = 0;
-  let position = start;
-  do {
-    const token = tokens[position];
-    if (token === undefined) return position;
-    if (token.kind === GoTokenKind.Punctuation && ["(", "[", "{"].includes(token.text)) depth++;
-    else if (token.kind === GoTokenKind.Punctuation && [")", "]", "}"].includes(token.text)) depth--;
-    position++;
-  } while (depth > 0);
-  return position;
-};
 
 const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
   let position = start;
@@ -50,35 +26,35 @@ const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
 // `init` assigns them, a whole slice or one element at a time, as the frame helpers are. A name whose value is a call
 // Into the simulation or any form past those is left out
 export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, GoConstant> => {
-  const declarationMap = new Map<string, Declaration>();
-  const elementAssignments: ElementAssignment[] = [];
+  const declarationMap = new Map<string, GoDeclaration>();
+  const elementAssignments: GoElementAssignment[] = [];
   const readDeclarationSpec = (tokens: readonly GoToken[], start: number, file: string): number => {
     const names: string[] = [];
     let position = start;
     while (tokens[position]?.kind === GoTokenKind.Identifier) {
       names.push(tokens[position]?.text ?? "");
       position++;
-      if (!checkIsPunctuation(tokens[position], ",")) break;
+      if (!checkIsGoPunctuation(tokens[position], ",")) break;
       position++;
     }
     while (
       position < tokens.length &&
       tokens[position]?.kind !== GoTokenKind.Newline &&
-      !checkIsPunctuation(tokens[position], "=")
+      !checkIsGoPunctuation(tokens[position], "=")
     )
-      position = checkIsPunctuation(tokens[position], "[") ? skipBalanced(tokens, position) : position + 1;
-    if (!checkIsPunctuation(tokens[position], "=")) return position + 1;
+      position = checkIsGoPunctuation(tokens[position], "[") ? skipGoBrackets(tokens, position) : position + 1;
+    if (!checkIsGoPunctuation(tokens[position], "=")) return position + 1;
     position++;
     for (const name of names) {
       const line = tokens[position]?.line ?? 0;
       const { end, expression } = parseGoExpression(tokens, position);
       declarationMap.set(name, { expression, file, line });
-      position = checkIsPunctuation(tokens[end], ",") ? end + 1 : end;
+      position = checkIsGoPunctuation(tokens[end], ",") ? end + 1 : end;
     }
     return skipToNewline(tokens, position);
   };
   const readInitBody = (tokens: readonly GoToken[], start: number, file: string): number => {
-    const end = skipBalanced(tokens, start);
+    const end = skipGoBrackets(tokens, start);
     let position = start + 1;
     while (position < end) {
       const token = tokens[position];
@@ -89,12 +65,12 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
       const name = token.text;
       let cursor = position + 1;
       const indexes: GoExpression[] = [];
-      while (checkIsPunctuation(tokens[cursor], "[")) {
+      while (checkIsGoPunctuation(tokens[cursor], "[")) {
         const index = parseGoExpression(tokens, cursor + 1);
         indexes.push(index.expression);
         cursor = index.end + 1;
       }
-      if (checkIsPunctuation(tokens[cursor], "=")) {
+      if (checkIsGoPunctuation(tokens[cursor], "=")) {
         const { end: expressionEnd, expression } = parseGoExpression(tokens, cursor + 1);
         if (indexes.length === 0) declarationMap.set(name, { expression, file, line: token.line });
         else elementAssignments.push({ expression, file, indexes, line: token.line, name });
@@ -109,8 +85,8 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     while (position < tokens.length) {
       const token = tokens[position];
       if (token?.kind !== GoTokenKind.Identifier) position++;
-      else if (DECLARATION_KEYWORDS.has(token.text) && checkIsPunctuation(tokens[position + 1], "(")) {
-        const end = skipBalanced(tokens, position + 1);
+      else if (DECLARATION_KEYWORDS.has(token.text) && checkIsGoPunctuation(tokens[position + 1], "(")) {
+        const end = skipGoBrackets(tokens, position + 1);
         position += 2;
         while (position < end - 1)
           position =
@@ -120,11 +96,11 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
         position = end;
       } else if (DECLARATION_KEYWORDS.has(token.text)) position = readDeclarationSpec(tokens, position + 1, file);
       else if (token.text === "func") {
-        const isInit = tokens[position + 1]?.text === "init" && checkIsPunctuation(tokens[position + 2], "(");
-        while (position < tokens.length && !checkIsPunctuation(tokens[position], "{")) position++;
-        position = isInit ? readInitBody(tokens, position, file) : skipBalanced(tokens, position);
-      } else if (token.text === "import" && checkIsPunctuation(tokens[position + 1], "("))
-        position = skipBalanced(tokens, position + 1);
+        const isInit = tokens[position + 1]?.text === "init" && checkIsGoPunctuation(tokens[position + 2], "(");
+        while (position < tokens.length && !checkIsGoPunctuation(tokens[position], "{")) position++;
+        position = isInit ? readInitBody(tokens, position, file) : skipGoBrackets(tokens, position);
+      } else if (token.text === "import" && checkIsGoPunctuation(tokens[position + 1], "("))
+        position = skipGoBrackets(tokens, position + 1);
       else position = skipToNewline(tokens, position);
     }
   }

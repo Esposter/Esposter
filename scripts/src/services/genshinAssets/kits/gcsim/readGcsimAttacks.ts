@@ -6,18 +6,16 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
-
-const checkIsPunctuation = (token: GoToken | undefined, text: string): boolean =>
-  token?.kind === GoTokenKind.Punctuation && token.text === text;
 
 // The name an expression is rooted in, `attack` for `attack[c.NormalCounter][i]`
 const getRootName = (expression: GoExpression): string | undefined => {
   if (expression.kind === GoExpressionKind.Identifier) return expression.name;
   else if (expression.kind === GoExpressionKind.Index) return getRootName(expression.target);
-  return undefined;
+  else return undefined;
 };
 
 const getName = (expression: GoExpression | undefined): string | undefined =>
@@ -28,7 +26,7 @@ const getName = (expression: GoExpression | undefined): string | undefined =>
 const readAliases = (tokens: readonly GoToken[]): Map<string, string> => {
   const aliasMap = new Map<string, string>();
   for (const [position, token] of tokens.entries()) {
-    if (!checkIsPunctuation(token, ":=")) continue;
+    if (!checkIsGoPunctuation(token, ":=")) continue;
     const isRange = tokens[position + 1]?.text === "range";
     const { expression } = parseGoExpression(tokens, position + (isRange ? 2 : 1));
     const rootName = getRootName(expression);
@@ -52,19 +50,19 @@ export const readGcsimAttacks = (
     const tokens = tokenizeGo(source);
     const aliasMap = readAliases(tokens);
     const resolveAlias = (name: string | undefined): string | undefined => {
-      let resolved = name;
-      for (let depth = 0; resolved !== undefined && aliasMap.has(resolved) && depth < 8; depth++)
-        resolved = aliasMap.get(resolved);
-      return resolved;
+      let resolvedName = name;
+      for (let depth = 0; resolvedName !== undefined && aliasMap.has(resolvedName) && depth < 8; depth++)
+        resolvedName = aliasMap.get(resolvedName);
+      return resolvedName;
     };
     const attacks: GcsimAttack[] = [];
     for (const [position, token] of tokens.entries()) {
-      if (token.text !== "AttackInfo" || !checkIsPunctuation(tokens[position + 1], "{")) continue;
+      if (token.text !== "AttackInfo" || !checkIsGoPunctuation(tokens[position + 1], "{")) continue;
       const fieldMap = new Map<string, { expression: GoExpression; line: number }>();
       let cursor = position + 2;
-      while (cursor < tokens.length && !checkIsPunctuation(tokens[cursor], "}")) {
+      while (cursor < tokens.length && !checkIsGoPunctuation(tokens[cursor], "}")) {
         const keyToken = tokens[cursor];
-        if (keyToken?.kind === GoTokenKind.Identifier && checkIsPunctuation(tokens[cursor + 1], ":")) {
+        if (keyToken?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[cursor + 1], ":")) {
           const { end, expression } = parseGoExpression(tokens, cursor + 2);
           fieldMap.set(keyToken.text, { expression, line: keyToken.line });
           cursor = end;
@@ -75,7 +73,7 @@ export const readGcsimAttacks = (
         const value = field === undefined ? undefined : evaluateGoExpression(field.expression, resolveName);
         return typeof value === "number" ? value : undefined;
       };
-      const multiplier = fieldMap.get("Mult");
+      const multiplierField = fieldMap.get("Mult");
       const poiseDamage = evaluateNumber("PoiseDMG");
       const poiseField = fieldMap.get("PoiseDMG");
       attacks.push({
@@ -90,7 +88,8 @@ export const readGcsimAttacks = (
         poiseDamageVariable:
           poiseDamage === undefined && poiseField !== undefined ? getRootName(poiseField.expression) : undefined,
         strikeType: getName(fieldMap.get("StrikeType")?.expression),
-        talentVariable: multiplier === undefined ? undefined : resolveAlias(getRootName(multiplier.expression)),
+        talentVariable:
+          multiplierField === undefined ? undefined : resolveAlias(getRootName(multiplierField.expression)),
       });
     }
     return attacks;

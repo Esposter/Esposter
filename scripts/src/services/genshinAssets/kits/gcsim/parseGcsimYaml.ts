@@ -1,9 +1,6 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import type { GcsimYamlLine } from "#src/models/genshinAssets/kits/gcsim/GcsimYamlLine";
 
-interface YamlLine {
-  indent: number;
-  text: string;
-}
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const FLOW_DELIMITER_REGEX = /[,:[\]{}]/u;
 const FLOW_START_REGEX = /^[[{]/u;
@@ -17,11 +14,10 @@ const SCALAR_START_REGEX = /(?:^|[:\-[{,])\s*$/u;
 const stripComment = (line: string): string => {
   let quote: string | undefined;
   for (let index = 0; index < line.length; index++) {
-    const character = line[index];
+    const character = line[index] ?? "";
     if (quote !== undefined) {
       if (character === quote) quote = undefined;
-    } else if ((character === "'" || character === '"') && SCALAR_START_REGEX.test(line.slice(0, index)))
-      quote = character;
+    } else if (['"', "'"].includes(character) && SCALAR_START_REGEX.test(line.slice(0, index))) quote = character;
     else if (character === "#" && (index === 0 || line[index - 1] === " ")) return line.slice(0, index);
   }
   return line;
@@ -29,10 +25,10 @@ const stripComment = (line: string): string => {
 
 const parseScalar = (text: string): unknown => {
   if (text.startsWith("'") && text.endsWith("'")) return text.slice(1, -1).replaceAll("''", "'");
-  if (text.startsWith('"') && text.endsWith('"')) return text.slice(1, -1);
-  if (NUMBER_REGEX.test(text)) return Number(text);
-  if (text === "true" || text === "false") return text === "true";
-  return text;
+  else if (text.startsWith('"') && text.endsWith('"')) return text.slice(1, -1);
+  else if (NUMBER_REGEX.test(text)) return Number(text);
+  else if (["false", "true"].includes(text)) return text === "true";
+  else return text;
 };
 
 // A flow collection, `[0, 1]` or `{time: 0.03, scale: 0.01}`, read from its first character to its last, each of its
@@ -86,10 +82,10 @@ const parseValue = (text: string): unknown => (FLOW_START_REGEX.test(text) ? par
 // Scalars, and comments.
 // Anything past that, an anchor, a tag or a block scalar, is refused rather than read wrong
 export const parseGcsimYaml = (yaml: string): unknown => {
-  const lines: YamlLine[] = yaml.split("\n").flatMap((rawLine) => {
+  const lines: GcsimYamlLine[] = yaml.split("\n").flatMap((rawLine) => {
     const text = stripComment(rawLine).trimEnd();
-    const trimmed = text.trimStart();
-    return trimmed === "" ? [] : [{ indent: text.length - trimmed.length, text: trimmed }];
+    const trimmedText = text.trimStart();
+    return trimmedText === "" ? [] : [{ indent: text.length - trimmedText.length, text: trimmedText }];
   });
   let index = 0;
   const parseBlock = (indent: number): unknown => {
