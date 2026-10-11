@@ -1,6 +1,6 @@
 ---
 title: Voxel open world
-description: Growing the agent console's voxel terrain into an original high-fantasy realm of biomes, rivers and snow, with the views set down in it as places — rejected, because the console's world is now Genshin's own continent.
+description: Growing the agent console's voxel terrain into an original high-fantasy realm of biomes, rivers and snow, with the views set down in it as places — rejected, because the console's world is Genshin's own continent.
 ---
 
 # Voxel open world
