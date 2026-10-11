@@ -2,7 +2,6 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
@@ -14,6 +13,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
@@ -295,10 +295,7 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     onKitEvent: (event, { kitEffectState }) => {
       if (event.kind !== KitEventKind.DamageTaken || event.hit !== irisCheckHit) return;
       const { enemy, striker } = event;
-      const tags = kitEffectState.effects.find(
-        (effect): effect is KitStatus =>
-          effect.kind === "status" && effect.characterId === striker.characterId && effect.id === IRIS_TAG_STATUS_ID,
-      );
+      const tags = findKitStatus(kitEffectState.effects, striker.characterId, IRIS_TAG_STATUS_ID);
       if (!tags || (tags.stacks ?? 0) >= IRIS_MAX_TAGS) return;
       tags.stacks = (tags.stacks ?? 0) + 1;
       const element = findAbsorbedElement([enemy]);

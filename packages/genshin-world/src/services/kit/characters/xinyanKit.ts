@@ -8,7 +8,6 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -24,6 +23,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { createKitField } from "#src/services/kit/effects/createKitField";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Xinyan's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -145,12 +145,7 @@ const getRequiredShieldLevel = (hitCount: number, ascension: number): number => 
 // Beside the shield, lasting as long as it, so a shield that breaks or runs out takes its level with it
 const findShieldLevel = (effects: readonly KitEffect[], characterId: number): number => {
   if (!effects.some((effect) => checkIsKitShieldLive(effect) && effect.characterId === characterId)) return 0;
-  return (
-    effects.find(
-      (effect): effect is KitStatus =>
-        effect.kind === "status" && effect.characterId === characterId && effect.id === SHIELD_LEVEL_STATUS_ID,
-    )?.stacks ?? SHIELD_LEVEL_ONE
-  );
+  return findKitStatus(effects, characterId, SHIELD_LEVEL_STATUS_ID)?.stacks ?? SHIELD_LEVEL_ONE;
 };
 
 // Xinyan's hit that the shield's Pyro DoT strikes with, every 2 seconds from the field Rave sets, one frame after its tick
@@ -258,10 +253,7 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     isBlunt: true,
     // Each enemy the hit strikes counts toward the shield's level, which the hit steps up as the count reaches each level
     onStrike: ({ kitEffectState }, { body, combatant }) => {
-      const hitCount = kitEffectState.effects.find(
-        (effect): effect is KitStatus =>
-          effect.kind === "status" && effect.characterId === combatant.characterId && effect.id === HIT_COUNT_STATUS_ID,
-      );
+      const hitCount = findKitStatus(kitEffectState.effects, combatant.characterId, HIT_COUNT_STATUS_ID);
       if (!hitCount) return;
       hitCount.stacks = (hitCount.stacks ?? 0) + 1;
       const requiredLevel = getRequiredShieldLevel(hitCount.stacks, combatant.ascension);

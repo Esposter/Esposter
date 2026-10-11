@@ -7,7 +7,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -20,6 +19,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -413,12 +413,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         const { effect } = event;
         if (effect.kind !== "stance" || effect.characterId !== characterId) return;
         const partyMember = getPartyMember(party, characterId);
-        const havocAnnihilation = kitEffectState.effects.find(
-          (status): status is KitStatus =>
-            status.kind === "status" &&
-            status.characterId === characterId &&
-            status.id === HAVOC_ANNIHILATION_STATUS_ID,
-        );
+        const havocAnnihilation = findKitStatus(kitEffectState.effects, characterId, HAVOC_ANNIHILATION_STATUS_ID);
         if (havocAnnihilation) {
           havocAnnihilation.secondsRemaining = 0;
           partyMember.skillCooldownSeconds = 0;
