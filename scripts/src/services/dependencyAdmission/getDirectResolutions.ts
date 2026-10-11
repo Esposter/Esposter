@@ -16,7 +16,7 @@ export const getDirectResolutions = (lockYaml: string): Map<string, string> => {
     if (!name || !version) continue;
 
     const resolvedVersion = takeOne(version.split("("));
-    resolutions.set(name, !resolvedVersion.includes("@", 1) ? `${name}@${resolvedVersion}` : resolvedVersion);
+    resolutions.set(name, resolvedVersion.includes("@", 1) ? resolvedVersion : `${name}@${resolvedVersion}`);
   }
 
   return resolutions;
