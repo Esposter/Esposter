@@ -13,10 +13,10 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Sayu's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 4, the charged
 // Attack's two hits at 5 and 6 and its flat stamina at 7, and the plunges' collision, low and high at 9, 10 and 11. The
@@ -234,8 +234,8 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const atk = combatant.attributes.attack;
         const initialHeal = burstInitialHealFlat + atk * burstInitialHealAttackShare;
-        scheduleKitTask(kitEffectState, combatant.characterId, 0, ({ activeCombatant, party }) =>
-          healPartyMember(party, activeCombatant.characterId, initialHeal / activeCombatant.attributes.maxHealth),
+        scheduleKitTask(kitEffectState, combatant.characterId, 0, (tick) =>
+          changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, initialHeal),
         );
         const tickHits = createPeriodicKitHits(
           {
@@ -253,10 +253,10 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         const ahead = createAheadBody(body, BURST_FIELD_CENTRE_METRES);
         castKitField(kitEffectState, combatant.characterId, ahead.position, {
           nextTickSeconds: BURST_TICK_FIRST_FRAMES / 60,
-          onTick: ({ activeCombatant, party }) => {
-            if (getPartyMember(party, activeCombatant.characterId).healthShare > BURST_HEAL_HP_SHARE) return;
-            const tickHeal = burstTickHealFlat + atk * burstTickHealAttackShare;
-            healPartyMember(party, activeCombatant.characterId, tickHeal / activeCombatant.attributes.maxHealth);
+          onTick: (tick) => {
+            const { characterId } = tick.activeCombatant;
+            if (getPartyMember(tick.party, characterId).healthShare > BURST_HEAL_HP_SHARE) return;
+            changeKitMemberHealth(tick, combatant, characterId, burstTickHealFlat + atk * burstTickHealAttackShare);
           },
           radius: BURST_FIELD_RADIUS,
           secondsRemaining: (BURST_TICK_FIRST_FRAMES + BURST_TICK_INTERVAL_FRAMES * BURST_TICK_COUNT) / 60,

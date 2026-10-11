@@ -18,10 +18,10 @@ import {
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Bennett's proud skill groups, read at its talent level. The attack group holds the five strikes at 0 to 4, the charged
 // Attack's two hits at 5 and 6 and its stamina at 7, and the plunges' collision, low and high at 8, 9 and 10. The skill
@@ -206,19 +206,17 @@ const getSkillCooldownMultiplier = (context: KitContext): number => {
 // The field's tick, written for the character who cast it. From the second tick a character under 70% of its HP is healed
 // By 577 plus 6% of Bennett's Max HP. One above 70% gains an ATK bonus of 56% of Bennett's base ATK, which Grand Expectation
 // Lifts to any HP above zero and adds 20% to. From Fire Ventures With Me, that bonus also gives the character on the field
-// A 15% Pyro DMG Bonus, and Pyro on its weapon if it wields a sword, claymore or polearm, all for 2.1 seconds. The heal's
-// Healing Bonus is not read
+// A 15% Pyro DMG Bonus, and Pyro on its weapon if it wields a sword, claymore or polearm, all for 2.1 seconds
 const createFieldTick =
   (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
-  ({ activeCombatant, kitEffectState, party }: KitContext, tickIndex: number): void => {
+  (context: KitContext, tickIndex: number): void => {
+    const { activeCombatant, kitEffectState, party } = context;
     const { characterId, weaponType } = activeCombatant;
     const { healthShare } = getPartyMember(party, characterId);
     const flatHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
     const maxHealthHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
-    if (tickIndex > 0 && healthShare < BENNETT_FIELD_HP_THRESHOLD) {
-      const heal = flatHeal + maxHealthHeal * owner.attributes.maxHealth;
-      healPartyMember(party, characterId, heal / activeCombatant.attributes.maxHealth);
-    }
+    if (tickIndex > 0 && healthShare < BENNETT_FIELD_HP_THRESHOLD)
+      changeKitMemberHealth(context, owner, characterId, flatHeal + maxHealthHeal * owner.attributes.maxHealth);
     const hasGrandExpectation = owner.constellationCount >= GRAND_EXPECTATION_CONSTELLATION;
     if (healthShare > (hasGrandExpectation ? 0 : BENNETT_FIELD_HP_THRESHOLD)) {
       buffKitMember(kitEffectState, characterId, {

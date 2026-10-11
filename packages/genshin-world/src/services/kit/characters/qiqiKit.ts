@@ -23,11 +23,11 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 
 // Qiqi's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the third and
@@ -204,7 +204,7 @@ export const QIQI_CHARACTER_ID = 10_000_035;
 // Qiqi's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Herald of Frost with
 // Its swipes and its regeneration, and Fortune-Preserving Talisman's damage and the Talisman it marks enemies with, whose
 // Heal, A Glimpse into Arcanum and the constellations answer the kit's events. Its multipliers are read from her proud
-// Skill groups. Life-Prolonging Methods is not built, as no heal reads an Incoming Healing Bonus
+// Skill groups. Life-Prolonging Methods is not built
 export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const regenerationOnHit = createRegenerationOnHit(talentMultiplierMap);
   const normalAttacks: KitAction[] = QIQI_STRIKES.map(({ animationFrames, hits }): KitAction => ({
@@ -254,13 +254,15 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Continuous regeneration snapshots Qiqi's ATK on cast, as the wiki's note gives it, and heals the active character
   const createRegenerationTick =
     (combatant: Combatant): KitField["onTick"] =>
-    ({ activeCombatant, party }) => {
-      const regenerationHealth =
+    (tick) =>
+      changeKitMemberHealth(
+        tick,
+        combatant,
+        tick.activeCombatant.characterId,
         getTalentMultiplier(talentMultiplierMap, QIQI_SKILL_GROUP_ID, TALENT_START_LEVEL, 3) +
-        getTalentMultiplier(talentMultiplierMap, QIQI_SKILL_GROUP_ID, TALENT_START_LEVEL, 2) *
-          combatant.attributes.attack;
-      healPartyMember(party, activeCombatant.characterId, regenerationHealth / activeCombatant.attributes.maxHealth);
-    };
+          getTalentMultiplier(talentMultiplierMap, QIQI_SKILL_GROUP_ID, TALENT_START_LEVEL, 2) *
+            combatant.attributes.attack,
+      );
   // Herald of Frost is cast where Qiqi stands: its swipes follow her, and its regeneration ticks from the press
   const castHerald = (body: KitBody, combatant: Combatant, kitEffectState: KitEffectState): void => {
     castKitSummon(kitEffectState, body, combatant, heraldHits, { isFollowing: true, secondsRemaining: skillSeconds });
@@ -371,7 +373,8 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // Damage an enemy holding a Talisman takes from the character on the field heals that character, a Normal or Charged
     // Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her energy from
     // One constellation
-    onKitEvent: (event, { activeCombatant, kitEffectState, party, random }, combatant) => {
+    onKitEvent: (event, context, combatant) => {
+      const { activeCombatant, kitEffectState, party, random } = context;
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, striker } = event;
       const { ascension, characterId, constellationCount } = combatant;
@@ -386,10 +389,11 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           id: TALISMAN_HEAL_COOLDOWN_STATUS_ID,
           secondsRemaining: TALISMAN_HEAL_COOLDOWN_SECONDS,
         });
-        healPartyMember(
-          party,
+        changeKitMemberHealth(
+          context,
+          combatant,
           striker.characterId,
-          (talismanHealHealth + talismanHealAttackShare * combatant.attributes.attack) / striker.attributes.maxHealth,
+          talismanHealHealth + talismanHealAttackShare * combatant.attributes.attack,
         );
       }
 

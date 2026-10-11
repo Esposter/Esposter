@@ -69,7 +69,7 @@ describe("kaeya kit", () => {
     const partyMember = getPartyMember(party, KAEYA_CHARACTER_ID);
     partyMember.healthShare = 0.5;
 
-    healKitStriker(party, combatant, hit);
+    healKitStriker(createKitTestContext(combatant, { party }), combatant, combatant, hit);
     expect(partyMember.healthShare).toBeCloseTo(
       0.5 + (0.15 * combatant.attributes.attack) / combatant.attributes.maxHealth,
       5,

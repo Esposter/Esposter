@@ -4,8 +4,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { Party } from "#src/models/party/Party";
 
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -18,11 +18,11 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Charlotte's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
 // Attack at 3 and its flat stamina at 4, the plunges' collision, low and high at 5, 6 and 7, and Spiritbreath Thorn's
@@ -109,18 +109,10 @@ const createSnappyMark = (): EnemyStatus => ({
   tickIntervalSeconds: SNAPPY_MARK_INTERVAL_SECONDS,
 });
 
-const healTeam = (
-  party: Party,
-  characterIdCombatantMap: Map<number, Combatant>,
-  caster: Combatant,
-  flatHealth: number,
-  attackShare: number,
-): void => {
+const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, attackShare: number): void => {
   const healedHealth = flatHealth + attackShare * caster.attributes.attack;
-  for (const characterId of party.characterIdMemberMap.keys()) {
-    const member = characterIdCombatantMap.get(characterId);
-    if (member) healPartyMember(party, characterId, healedHealth / member.attributes.maxHealth);
-  }
+  for (const characterId of context.party.teams[context.party.deployedTeamIndex]?.characterIds ?? [])
+    changeKitMemberHealth(context, caster, characterId, healedHealth);
 };
 
 export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
@@ -264,24 +256,24 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: burstMultiplier(2),
       },
     ],
-    onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId } = combatant;
       const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
       castKitSummon(kitEffectState, body, combatant, kameraHits);
-      // The cast heal reaches the whole party wherever it stands, whatever the burst strikes
-      scheduleKitTask(kitEffectState, characterId, BURST_HITMARK_FRAMES / 60, ({ characterIdCombatantMap }) =>
-        healTeam(party, characterIdCombatantMap, combatant, burstMultiplier(1), burstMultiplier(0)),
+      // The cast heal reaches the whole deployed team wherever it stands, whatever the burst strikes
+      scheduleKitTask(kitEffectState, characterId, BURST_HITMARK_FRAMES / 60, (tick) =>
+        healTeam(tick, combatant, burstMultiplier(1), burstMultiplier(0)),
       );
       // Each Kamera tick heals the character on the field while it stands in the circle the burst was cast at
       for (const frames of KAMERA_TICK_FRAMES)
         castKitField(kitEffectState, characterId, castCentre, {
           nextTickSeconds: frames / 60,
-          onTick: ({ activeCombatant, party: tickParty }) =>
-            healPartyMember(
-              tickParty,
-              activeCombatant.characterId,
-              (burstMultiplier(4) + burstMultiplier(3) * combatant.attributes.attack) /
-                activeCombatant.attributes.maxHealth,
+          onTick: (tick) =>
+            changeKitMemberHealth(
+              tick,
+              combatant,
+              tick.activeCombatant.characterId,
+              burstMultiplier(4) + burstMultiplier(3) * combatant.attributes.attack,
             ),
           radius: BURST_HEAL_RADIUS,
           secondsRemaining: frames / 60 + SUMMON_LINGER_SECONDS,

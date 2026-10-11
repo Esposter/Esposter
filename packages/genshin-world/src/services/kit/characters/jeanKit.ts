@@ -16,9 +16,9 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Jean's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the charged
 // Attack at 5 and its stamina at 6, and the plunges' collision, low and high at 7, 8 and 9. The skill group holds Gale
@@ -109,12 +109,16 @@ const createNormalAttack = (
 // Each later tick heals the character on the field by the regeneration
 const createFieldTick =
   (owner: Combatant, activationHeal: number, regenerationHeal: number) =>
-  ({ activeCombatant, party }: KitContext, tickIndex: number): void => {
+  (context: KitContext, tickIndex: number): void => {
     const isActivation = tickIndex === 0;
-    const heal = isActivation ? activationHeal : regenerationHeal;
-    healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
+    changeKitMemberHealth(
+      context,
+      owner,
+      context.activeCombatant.characterId,
+      isActivation ? activationHeal : regenerationHeal,
+    );
     if (!isActivation || owner.ascension < 4) return;
-    gainPartyMemberEnergy(party, owner, LET_THE_WIND_LEAD_ENERGY_SHARE * owner.kit.burstEnergyCost);
+    gainPartyMemberEnergy(context.party, owner, LET_THE_WIND_LEAD_ENERGY_SHARE * owner.kit.burstEnergyCost);
   };
 
 export const JEAN_CHARACTER_ID = 10_000_003;
@@ -179,8 +183,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     ),
   ];
   const fieldDamageMultiplier = getTalentMultiplier(talentMultiplierMap, JEAN_BURST_GROUP_ID, TALENT_START_LEVEL, 1);
-  // The activation heal is 251.2% of Jean's ATK plus 1540 and the regeneration 25.12% plus 154 at level 1, neither scaled
-  // By Healing Bonus, as Bennett's is not
+  // The activation heal is 251.2% of Jean's ATK plus 1540 and the regeneration 25.12% plus 154 at level 1
   const activationAttackShare = getTalentMultiplier(talentMultiplierMap, JEAN_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
   const activationFlatHeal = getTalentMultiplier(talentMultiplierMap, JEAN_BURST_GROUP_ID, TALENT_START_LEVEL, 3);
   const regenerationAttackShare = getTalentMultiplier(talentMultiplierMap, JEAN_BURST_GROUP_ID, TALENT_START_LEVEL, 4);

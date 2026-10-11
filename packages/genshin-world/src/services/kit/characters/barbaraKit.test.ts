@@ -85,25 +85,19 @@ describe(createBarbaraKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const hitHealthShare = (72.2227 + 0.0075 * MAX_HEALTH) / MAX_HEALTH;
 
-    expect(healKitParty(party, characterIdCombatantMap, [], combatant, strike, () => 0)).toBe(false);
+    expect(
+      healKitParty(createKitTestContext(combatant, { characterIdCombatantMap, party }), combatant, combatant, strike),
+    ).toBe(false);
 
-    BARBARA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
-    const isStrikeHealed = healKitParty(
-      party,
+    const context = createKitTestContext(combatant, {
       characterIdCombatantMap,
-      kitEffectState.effects,
-      combatant,
-      strike,
-      () => 0.99,
-    );
-    const isChargedAttackHealed = healKitParty(
+      kitEffectState,
       party,
-      characterIdCombatantMap,
-      kitEffectState.effects,
-      combatant,
-      chargedAttack,
-      () => 0.99,
-    );
+      random: () => 0.99,
+    });
+    BARBARA_KIT.elementalSkill.onStart?.(context);
+    const isStrikeHealed = healKitParty(context, combatant, combatant, strike);
+    const isChargedAttackHealed = healKitParty(context, combatant, combatant, chargedAttack);
 
     expect([isStrikeHealed, isChargedAttackHealed]).toStrictEqual([true, true]);
     expect(partyMember.healthShare).toBeCloseTo(0.5 + 5 * hitHealthShare, 5);
@@ -121,16 +115,7 @@ describe(createBarbaraKit, () => {
     stepKitEffects(76 / 60, context);
 
     expect(partyMember.healthShare).toBe(0.1);
-    expect(
-      healKitParty(
-        party,
-        new Map([[BARBARA_CHARACTER_ID, combatant]]),
-        kitEffectState.effects,
-        combatant,
-        takeOne(takeOne(BARBARA_KIT.normalAttacks).hits),
-        () => 0,
-      ),
-    ).toBe(false);
+    expect(healKitParty(context, combatant, combatant, takeOne(takeOne(BARBARA_KIT.normalAttacks).hits))).toBe(false);
 
     stepKitEffects(1, context);
 

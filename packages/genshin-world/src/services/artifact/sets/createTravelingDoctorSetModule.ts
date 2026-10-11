@@ -6,7 +6,7 @@ import { healPartyMember } from "#src/services/party/healPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Traveling Doctor's four-piece bonus, the share of its wearer's Max HP in the set table's row: a burst its wearer uses
-// Restores that share of its HP to it as the burst starts. Its Incoming Healing Bonus is not read, as no heal reads it
+// Restores that share of its HP to it as the burst starts. Its Incoming Healing Bonus is not read
 export const createTravelingDoctorSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
   const healedHealthShare = takeOne(params, 0);
   return {

@@ -14,10 +14,10 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Escoffier's proud skill groups, read at her talent level. The attack group holds the normal attack's hits at 0 to 3,
 // The charged attack at 4, its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group holds
@@ -130,13 +130,13 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     createKitField(combatant.characterId, body.position, {
       id: BURST_HEAL_FIELD_ID,
       nextTickSeconds: BURST_HEAL_FRAMES / 60,
-      onTick: ({ activeCombatant, party }) =>
-        healPartyMember(
-          party,
-          activeCombatant.characterId,
-          (burstMultiplier(BURST_HEAL_FLAT_INDEX) +
-            burstMultiplier(BURST_HEAL_PER_ATTACK_INDEX) * combatant.attributes.attack) /
-            activeCombatant.attributes.maxHealth,
+      onTick: (tick) =>
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          burstMultiplier(BURST_HEAL_FLAT_INDEX) +
+            burstMultiplier(BURST_HEAL_PER_ATTACK_INDEX) * combatant.attributes.attack,
         ),
       radius: BURST_HIT_AREA.radius,
       secondsRemaining: BURST_HEAL_FRAMES / 60 + 0.5,
@@ -149,11 +149,12 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     return createKitField(combatant.characterId, body.position, {
       id: REHAB_DIET_FIELD_ID,
       nextTickSeconds: REHAB_DIET_FIRST_TICK_FRAMES / 60,
-      onTick: ({ activeCombatant, party }) =>
-        healPartyMember(
-          party,
-          activeCombatant.characterId,
-          (REHAB_DIET_SCALING * combatant.attributes.attack) / activeCombatant.attributes.maxHealth,
+      onTick: (tick) =>
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          REHAB_DIET_SCALING * combatant.attributes.attack,
         ),
       radius: BURST_HIT_AREA.radius,
       secondsRemaining: lastTickSeconds + 0.5,

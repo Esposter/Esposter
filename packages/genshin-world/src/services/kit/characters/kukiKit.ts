@@ -18,12 +18,12 @@ import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { healPartyMember } from "#src/services/party/healPartyMember";
 
 // Kuki's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
 // Attack's two slashes at 4 and 5 and its stamina at 6, and the plunges' collision, low and high at 7, 8 and 9. The skill
@@ -162,18 +162,18 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       (combatant.constellationCount >= RING_CONSTELLATION ? RING_CONSTELLATION_SECONDS : 0);
     return createKitField(combatant.characterId, position, {
       nextTickSeconds: (RING_START_FRAMES + RING_TICK_INTERVAL_FRAMES) / 60,
-      onTick: ({ activeCombatant, kitEffectState, party }) => {
+      onTick: (tick) => {
         const ascensionHealing =
           combatant.ascension >= ASCENSION_4
             ? ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE * getElementalMastery(combatant)
             : 0;
-        healPartyMember(
-          party,
-          activeCombatant.characterId,
-          (skillTalentMultiplier(3) * combatant.attributes.maxHealth + skillTalentMultiplier(2) + ascensionHealing) /
-            activeCombatant.attributes.maxHealth,
+        changeKitMemberHealth(
+          tick,
+          combatant,
+          tick.activeCombatant.characterId,
+          skillTalentMultiplier(3) * combatant.attributes.maxHealth + skillTalentMultiplier(2) + ascensionHealing,
         );
-        castKitSummon(kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
+        castKitSummon(tick.kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
       },
       secondsRemaining: RING_START_FRAMES / 60 + ringSeconds + SUMMON_LINGER_SECONDS,
       tickIntervalSeconds: RING_TICK_INTERVAL_FRAMES / 60,
