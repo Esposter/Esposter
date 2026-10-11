@@ -1,5 +1,6 @@
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
 
+import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 // Every screen the console recreates from the game, by the reference it is judged against
@@ -613,6 +614,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Tab's words, the two headings, the twelve rows in sight and the scroll bar are filled from the blurred world around
   // Them, which the page draws them over, so only what the page draws can differ
   "settings-graphics-rows": {
+    approval: { bar: 2, measure: ParityApprovalMeasure.MeanDifference },
     capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
     isBackdrop: true,
     plate: [
