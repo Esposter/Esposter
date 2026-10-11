@@ -78,7 +78,8 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
   },
 };
 // A weather changes over this many seconds, eased in and out, so the sky darkens and the rain thickens together.
-// Read off a recording of a thunderstorm clearing to sun on a fixed camera: the sky's frame-to-frame change over its top left, smoothed over a second, spikes as the weather turns and its width at half its height is the take's length
+// Read off a recording of a thunderstorm clearing to sun on a fixed camera: the sky's frame-to-frame change over its
+// Top left, smoothed over a second, spikes as the weather turns, and its width at half its height is the take's length
 export const WEATHER_TRANSITION_SECONDS = 9;
 // A strike's flash: two pulses, the second dimmer, each dying away over its decay, so the sky flickers and is dark
 // Again within a second. The flash turns the sky's colours this far toward its own, sRGB as the palette sees it, and
