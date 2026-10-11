@@ -2,7 +2,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
-import { createTerrainShapeHeight } from "genshin-engine";
+import { createTerrainShapeHeight, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const { baseGround, regionGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
@@ -24,6 +24,23 @@ describe(createWorldHeight, () => {
       expect(groundHeight - getWindriseHeight(x, z)).toBeCloseTo(height);
       expect(groundHeight).toBeGreaterThanOrEqual(minHeight);
       expect(groundHeight).toBeLessThanOrEqual(maxHeight);
+    }
+  });
+
+  test("draws Windrise's own features as its fitted ground does", () => {
+    expect.hasAssertions();
+
+    const getGroundHeight = createWorldHeight(baseGround, []);
+    const getWindriseHeight = createTerrainShapeHeight(baseGround);
+    const cliffs = (baseGround.features ?? []).filter((feature) => feature.kind === TerrainFeatureKind.Cliff);
+
+    expect(cliffs).not.toHaveLength(0);
+
+    for (const { endX, endZ, startX, startZ } of cliffs) {
+      const x = (startX + endX) / 2;
+      const z = (startZ + endZ) / 2;
+
+      expect(getGroundHeight(x, z)).toBe(getWindriseHeight(x, z));
     }
   });
 });

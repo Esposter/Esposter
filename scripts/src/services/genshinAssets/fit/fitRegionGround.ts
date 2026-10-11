@@ -8,6 +8,7 @@ import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGrou
 import { computeLagDifference } from "#src/services/genshinAssets/fit/computeLagDifference";
 import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
+import { fitTerrainCliffs } from "#src/services/genshinAssets/fit/fitTerrainCliffs";
 import { fitTerrainPlateaus } from "#src/services/genshinAssets/fit/fitTerrainPlateaus";
 import { fitTerrainResidual } from "#src/services/genshinAssets/fit/fitTerrainResidual";
 import { fitTerrainResidualFade } from "#src/services/genshinAssets/fit/fitTerrainResidualFade";
@@ -49,8 +50,8 @@ interface Catalogue {
 // Which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted round the
 // Region's centre and only inside its catalogue outlines, so no region's ground runs into another's; a region the
 // Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. Returns the hills, the
-// Plateaus the hills leave, the residual's noise faded out where they hold and the heights they stand between as the
-// Record `<region>/base-ground`, with a report holding the composed ground's error with and without the residual
+// Plateaus and cliffs the hills leave, the residual's noise faded out where they hold and the heights they stand between
+// As the record `<region>/base-ground`, with a report holding the composed ground's error with and without the residual
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<GameDataBuild> => {
   const [getGameHeight, origin, catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
@@ -86,7 +87,9 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   );
   const computeMisses = (getGroundHeight: (x: number, z: number) => number): TerrainResidualGrid =>
     mapTerrainResidualGrid(heightGrid, (x, z, height) => height - getGroundHeight(x, z));
-  const { features, remainder } = fitTerrainPlateaus(computeMisses(createGaussianHillsHeight(hills)));
+  const plateaus = fitTerrainPlateaus(computeMisses(createGaussianHillsHeight(hills)));
+  const { features: cliffs, remainder } = fitTerrainCliffs(plateaus.remainder);
+  const features = [...plateaus.features, ...cliffs];
   const footprints = await readGroundFootprints(centre, GROUND_RADIUS, GROUND_BAR_RADIUS, origin);
   const fade = {
     ...fitTerrainResidualFade(remainder, GROUND_FADE_CELL_SIZE, GROUND_RESIDUAL_GATE_METRES),
@@ -127,7 +130,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   return {
     notes: [
       `ground: ${hills.hills.length} hills, ${errors.map(({ rms, within }) => `${rms} metres within ${within}`).join(", ")}`,
-      `ground: ${features.length} plateaus, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
+      `ground: ${plateaus.features.length} plateaus and ${cliffs.length} cliffs, a residual of ${residual.amplitude} metres at a ${residual.scale} metre scale`,
       `ground: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
       `ground: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over the fitted extent and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
       `ground: places cleared of the residual, ${footprints.map(({ id, radius, source, x, z }) => `${id} ${radius} metres from ${source}, its residual ${roundFitted(getGroundHeight(x, z) - getFeaturedHeight(x, z))} metres`).join(", ")}`,
