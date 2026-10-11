@@ -15,8 +15,8 @@ import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
 import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { useLoop } from "@tresjs/core";
-import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
-import { CapsuleGeometry, InstancedMesh, Matrix4, Vector3 } from "three";
+import { createFixedStepLoop, createInstancedMesh, createToonMaterial } from "genshin-engine";
+import { CapsuleGeometry, Matrix4, Vector3 } from "three";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each animal stands on
@@ -40,7 +40,7 @@ const fixedStepLoop = createFixedStepLoop(WILDLIFE_STEP_SECONDS, () => {
 });
 // Every animal is one capsule of one instanced draw, stood on the ground and turned to its heading, as a stand-in until
 // Its model lands. The capsules move, so the mesh's bounds, measured once, would cull them where they once stood
-const wildlifeMesh = new InstancedMesh(
+const wildlifeMesh = createInstancedMesh(
   new CapsuleGeometry(WILDLIFE_CAPSULE_RADIUS, WILDLIFE_CAPSULE_HEIGHT - WILDLIFE_CAPSULE_RADIUS * 2),
   createToonMaterial({ color: WILDLIFE_COLOR, lightUniforms, rampTexture }),
   WILDLIFE_CAPACITY,

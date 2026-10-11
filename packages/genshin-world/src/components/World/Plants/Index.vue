@@ -15,7 +15,7 @@ import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColo
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { withFinalizer } from "@esposter/shared";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
-import { createImpostorMaterial, createToonMaterial, createTreeGeometry } from "genshin-engine";
+import { createImpostorMaterial, createInstancedMesh, createToonMaterial, createTreeGeometry } from "genshin-engine";
 import { Euler, Group, InstancedMesh, Matrix4, PlaneGeometry, Quaternion, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
@@ -61,7 +61,7 @@ const addInstances = (
   places: WindrisePlant["places"],
   factor: Vector3,
 ): void => {
-  const mesh = new InstancedMesh(geometry, material, places.length);
+  const mesh = createInstancedMesh(geometry, material, places.length);
   for (const [
     index,
     {

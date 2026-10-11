@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { LightUniforms } from "genshin-engine";
-import type { DataTexture, Scene } from "three";
+import type { DataTexture, InstancedMesh, Scene } from "three";
 
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
 import {
@@ -15,9 +15,9 @@ import {
 } from "#src/services/interaction/constants";
 import { PROVISIONAL_LOCOMOTION } from "#src/services/world/locomotion/constants";
 import { watchImmediate } from "@vueuse/core";
-import { createToonMaterial } from "genshin-engine";
+import { createInstancedMesh, createToonMaterial } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
-import { BoxGeometry, CapsuleGeometry, InstancedMesh, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
+import { BoxGeometry, CapsuleGeometry, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
 
 interface Props {
   // The drops and the residents in the world, each a row of the prompts
@@ -31,17 +31,17 @@ interface Props {
 const { interactables, lightUniforms, rampTexture, sightScene } = defineProps<Props>();
 // A drop is a small sphere on the ground, a chest a box, and a resident the capsule every body stands in as until it is
 // Measured
-const dropMesh = new InstancedMesh(
+const dropMesh = createInstancedMesh(
   new SphereGeometry(DROP_STAND_IN_RADIUS),
   createToonMaterial({ color: DROP_STAND_IN_COLOR, lightUniforms, rampTexture }),
   INTERACTABLE_CAPACITY,
 );
-const chestMesh = new InstancedMesh(
+const chestMesh = createInstancedMesh(
   new BoxGeometry(CHEST_STAND_IN_SIZE, CHEST_STAND_IN_SIZE, CHEST_STAND_IN_SIZE),
   createToonMaterial({ color: CHEST_STAND_IN_COLOR, lightUniforms, rampTexture }),
   CHEST_STAND_IN_CAPACITY,
 );
-const residentMesh = new InstancedMesh(
+const residentMesh = createInstancedMesh(
   new CapsuleGeometry(
     PROVISIONAL_LOCOMOTION.capsuleRadius,
     PROVISIONAL_LOCOMOTION.capsuleHeight - PROVISIONAL_LOCOMOTION.capsuleRadius * 2,

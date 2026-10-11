@@ -37,8 +37,8 @@ import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
-import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
-import { CapsuleGeometry, Color, InstancedMesh, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
+import { createFixedStepLoop, createInstancedMesh, createToonMaterial } from "genshin-engine";
+import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
@@ -146,7 +146,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
 });
 // Every enemy is one capsule of one instanced draw, stood on the ground, turned to its heading and tinted by its state,
 // And one that was hit in the last moments is tinted by the hit, with a small flash drawn at its middle
-const enemyMesh = new InstancedMesh(
+const enemyMesh = createInstancedMesh(
   new CapsuleGeometry(ENEMY_CAPSULE_RADIUS, ENEMY_CAPSULE_HEIGHT - ENEMY_CAPSULE_RADIUS * 2),
   createToonMaterial({ color: "#ffffff", lightUniforms, rampTexture }),
   ENEMY_CAPACITY,
@@ -154,7 +154,7 @@ const enemyMesh = new InstancedMesh(
 enemyMesh.castShadow = true;
 // The capsules move, so the mesh's bounds, measured once, would cull them where they once stood
 enemyMesh.frustumCulled = false;
-const hitFlashMesh = new InstancedMesh(
+const hitFlashMesh = createInstancedMesh(
   new SphereGeometry(ENEMY_HIT_FLASH_RADIUS),
   new MeshBasicMaterial({ color: HIT_TINT_COLOR }),
   ENEMY_CAPACITY,

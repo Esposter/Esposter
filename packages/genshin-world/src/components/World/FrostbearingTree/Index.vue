@@ -9,8 +9,8 @@ import {
   FROSTBEARING_TREE_STAND_IN_RADIUS,
 } from "#src/services/offering/constants";
 import { watchImmediate } from "@vueuse/core";
-import { createToonMaterial } from "genshin-engine";
-import { CapsuleGeometry, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
+import { createInstancedMesh, createToonMaterial } from "genshin-engine";
+import { CapsuleGeometry, Matrix4, Quaternion, Vector3 } from "three";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each stand-in stands on
@@ -24,7 +24,7 @@ interface Props {
 const { getGroundHeight, lightUniforms, places, rampTexture } = defineProps<Props>();
 // Every tree is one capsule of one instanced draw sharing one material, stood on the ground until its model lands. The
 // Stand-ins are placed anywhere in the world, so the mesh's bounds, measured from its geometry alone, would cull them
-const treeMesh = new InstancedMesh(
+const treeMesh = createInstancedMesh(
   new CapsuleGeometry(
     FROSTBEARING_TREE_STAND_IN_RADIUS,
     FROSTBEARING_TREE_STAND_IN_HEIGHT - FROSTBEARING_TREE_STAND_IN_RADIUS * 2,
