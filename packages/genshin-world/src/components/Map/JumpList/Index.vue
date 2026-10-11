@@ -3,6 +3,7 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { GameText } from "genshin-text";
 
+import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -35,16 +36,16 @@ const regionJumps = computed(() =>
   <nav class="jump-list" :aria-label="gameText[GameTextKey.Teleport]">
     <section v-for="{ id, jumps, name } of regionJumps" :key="id">
       <h2 class="region">{{ name }}</h2>
-      <button
+      <GameButton
         v-for="{ areaName, landmark } of jumps"
         :key="landmark.id"
         class="jump"
-        type="button"
+        :kind="GameButtonKind.Row"
         @click="emit('jump', landmark)"
       >
         <span>{{ areaName }}</span>
         <span class="kind">{{ gameText[GameTextKey.StatueOfTheSeven] }}</span>
-      </button>
+      </GameButton>
     </section>
   </nav>
 </template>
@@ -70,19 +71,11 @@ const regionJumps = computed(() =>
   width: 100%;
   flex-direction: column;
   padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-  border: none;
   border-radius: calc(var(--unit) * 8);
   background: rgb(255 255 255 / 0.08);
   color: inherit;
-  cursor: inherit;
-  font: inherit;
   font-size: calc(var(--unit) * 24);
   text-align: start;
-}
-
-.jump:hover,
-.jump:focus-visible {
-  background: rgb(255 255 255 / 0.2);
 }
 
 .kind {
