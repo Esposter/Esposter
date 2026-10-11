@@ -6,7 +6,6 @@ import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand"
 import { benchCommand } from "#src/services/genshinParity/commands/benchCommand";
 import { blackCommand } from "#src/services/genshinParity/commands/blackCommand";
 import { calibrateCommand } from "#src/services/genshinParity/commands/calibrateCommand";
-import { clipCommand } from "#src/services/genshinParity/commands/clipCommand";
 import { compareCommand } from "#src/services/genshinParity/commands/compareCommand";
 import { coverCommand } from "#src/services/genshinParity/commands/coverCommand";
 import { decayCommand } from "#src/services/genshinParity/commands/decayCommand";
@@ -38,7 +37,6 @@ import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { screensCommand } from "#src/services/genshinParity/commands/screensCommand";
 import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
-import { searchCommand } from "#src/services/genshinParity/commands/searchCommand";
 import { shadowsCommand } from "#src/services/genshinParity/commands/shadowsCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
@@ -100,8 +98,6 @@ export const genshinParityCommand: CommandDef = defineCommand({
     still: stillCommand,
     rank: rankCommand,
     record: recordCommand,
-    clip: clipCommand,
-    search: searchCommand,
     screens: screensCommand,
     frame: frameCommand,
   },

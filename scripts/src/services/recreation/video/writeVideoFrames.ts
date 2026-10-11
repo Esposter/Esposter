@@ -1,4 +1,4 @@
-import { runFfmpeg } from "#src/services/genshinParity/shared/runFfmpeg";
+import { runFfmpeg } from "#src/services/recreation/video/runFfmpeg";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 

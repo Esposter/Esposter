@@ -1,4 +1,4 @@
-import { resolveFfmpeg } from "#src/services/genshinParity/shared/resolveFfmpeg";
+import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { execFileSync } from "node:child_process";
 
 // Any audio FFmpeg reads as two channels of 32-bit samples at a rate, left then right, a single channel heard in both

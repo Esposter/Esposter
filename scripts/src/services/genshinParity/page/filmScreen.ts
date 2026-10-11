@@ -3,8 +3,8 @@ import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityP
 import { FILMS_DIRECTORY, PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
-import { writeContactSheet } from "#src/services/genshinParity/shared/writeContactSheet";
-import { writeVideoFrames } from "#src/services/genshinParity/shared/writeVideoFrames";
+import { writeContactSheet } from "#src/services/recreation/video/writeContactSheet";
+import { writeVideoFrames } from "#src/services/recreation/video/writeVideoFrames";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";

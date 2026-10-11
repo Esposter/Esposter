@@ -1,8 +1,8 @@
-import type { SearchCandidate } from "#src/services/genshinParity/shared/parseSearchCandidates";
+import type { SearchCandidate } from "#src/services/recreation/video/parseSearchCandidates";
 import type { SubCommandsDef } from "citty";
 
-import { VideoSite } from "#src/models/genshinParity/VideoSite";
-import { searchVideos } from "#src/services/genshinParity/shared/searchVideos";
+import { VideoSite } from "#src/models/recreation/video/VideoSite";
+import { searchVideos } from "#src/services/recreation/video/searchVideos";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
@@ -24,7 +24,7 @@ const formatCandidate = (candidate: SearchCandidate): string[] => {
   return [candidate.url, details.join(" · "), ...chapters];
 };
 
-const isVideoSite = (site: string): site is VideoSite => Object.values<string>(VideoSite).includes(site);
+const checkIsVideoSite = (site: string): site is VideoSite => Object.values<string>(VideoSite).includes(site);
 
 export const searchCommand: SubCommandsDef[string] = defineCommand({
   args: {
@@ -43,7 +43,7 @@ export const searchCommand: SubCommandsDef[string] = defineCommand({
     name: "search",
   },
   run: async ({ args }) => {
-    if (!isVideoSite(args.site)) throw new InvalidOperationError(Operation.Read, args.site, "is not a video site");
+    if (!checkIsVideoSite(args.site)) throw new InvalidOperationError(Operation.Read, args.site, "is not a video site");
     const candidates = await searchVideos(args.site, Number(args.count), args.query);
     for (const candidate of candidates) console.log(formatCandidate(candidate).join("\n"));
   },

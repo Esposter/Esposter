@@ -5,8 +5,8 @@ import { CAPTURES_DIRECTORY, PARITY_DIRECTORY } from "#src/services/genshinParit
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
-import { writeVideoFrames } from "#src/services/genshinParity/shared/writeVideoFrames";
 import { refineCameraPose } from "#src/services/genshinParity/witness/refineCameraPose";
+import { writeVideoFrames } from "#src/services/recreation/video/writeVideoFrames";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";

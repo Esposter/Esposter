@@ -1,4 +1,4 @@
-import { resolveFfmpeg } from "#src/services/genshinParity/shared/resolveFfmpeg";
+import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 

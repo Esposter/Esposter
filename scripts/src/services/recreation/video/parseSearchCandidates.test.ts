@@ -1,4 +1,4 @@
-import { parseSearchCandidates } from "#src/services/genshinParity/shared/parseSearchCandidates";
+import { parseSearchCandidates } from "#src/services/recreation/video/parseSearchCandidates";
 import { describe, expect, test } from "vitest";
 
 describe(parseSearchCandidates, () => {

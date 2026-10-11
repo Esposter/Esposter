@@ -1,4 +1,4 @@
-import { YT_DLP_PINNED_TOOL } from "#src/services/genshinParity/shared/constants";
+import { YT_DLP_PINNED_TOOL } from "#src/services/recreation/video/constants";
 import { resolvePinnedTool } from "#src/services/shared/resolvePinnedTool";
 
 // The pinned yt-dlp, fetched and checked the first time it is needed. Off Windows the yt-dlp on the PATH stands in,

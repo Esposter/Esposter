@@ -1,9 +1,9 @@
-import { CAPTURES_DIRECTORY, CLIP_NAME_REGEX } from "#src/services/genshinParity/shared/constants";
+import { CLIP_NAME_REGEX } from "#src/services/recreation/video/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { isAbsolute, join } from "node:path";
 
 // The yt-dlp arguments for one section of a public video: the best MP4 at or under 1080 high, merged by the pinned
-// FFmpeg, saved into captures as `yt-<videoId>-<name>.mp4`, and its path printed once written. yt-dlp reads its FFmpeg's
+// FFmpeg, saved into the directory as `yt-<videoId>-<name>.mp4`, and its path printed once written. yt-dlp reads its FFmpeg's
 // Location only as a path, so the FFmpeg on the PATH, named bare off Windows, is left for it to find. A name is a file
 // Name's part, so a path or a separator is refused rather than written somewhere else
 export const getClipArguments = (
@@ -12,6 +12,7 @@ export const getClipArguments = (
   toSeconds: number,
   name: string,
   ffmpegPath: string,
+  directory: string,
 ): string[] => {
   if (!Number.isFinite(fromSeconds) || !Number.isFinite(toSeconds) || fromSeconds < 0 || toSeconds <= fromSeconds)
     throw new InvalidOperationError(Operation.Read, url, `has no section from ${fromSeconds} to ${toSeconds}`);
@@ -29,7 +30,7 @@ export const getClipArguments = (
     "mp4",
     ...(isAbsolute(ffmpegPath) ? ["--ffmpeg-location", ffmpegPath] : []),
     "--output",
-    join(CAPTURES_DIRECTORY, `yt-%(id)s-${name}.%(ext)s`),
+    join(directory, `yt-%(id)s-${name}.%(ext)s`),
     url,
   ];
 };

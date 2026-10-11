@@ -1,4 +1,4 @@
-import { runFfmpeg } from "#src/services/genshinParity/shared/runFfmpeg";
+import { runFfmpeg } from "#src/services/recreation/video/runFfmpeg";
 import { rm } from "node:fs/promises";
 import sharp from "sharp";
 

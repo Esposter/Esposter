@@ -1,4 +1,4 @@
-import { YT_DLP_PINNED_TOOL } from "#src/services/genshinParity/shared/constants";
+import { YT_DLP_PINNED_TOOL } from "#src/services/recreation/video/constants";
 import { basename } from "node:path";
 import { describe, expect, test } from "vitest";
 

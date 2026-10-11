@@ -5,7 +5,7 @@ import {
   RECORD_ENCODING,
   RECORD_FRAME_RATE,
 } from "#src/services/genshinParity/shared/constants";
-import { runFfmpeg } from "#src/services/genshinParity/shared/runFfmpeg";
+import { runFfmpeg } from "#src/services/recreation/video/runFfmpeg";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 

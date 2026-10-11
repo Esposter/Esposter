@@ -1,10 +1,10 @@
-import type { VideoSite } from "#src/models/genshinParity/VideoSite";
-import type { SearchCandidate } from "#src/services/genshinParity/shared/parseSearchCandidates";
+import type { VideoSite } from "#src/models/recreation/video/VideoSite";
+import type { SearchCandidate } from "#src/services/recreation/video/parseSearchCandidates";
 
-import { SEARCH_MAX_BUFFER_BYTES } from "#src/services/genshinParity/shared/constants";
-import { getSearchArguments } from "#src/services/genshinParity/shared/getSearchArguments";
-import { parseSearchCandidates } from "#src/services/genshinParity/shared/parseSearchCandidates";
-import { resolveYtDlp } from "#src/services/genshinParity/shared/resolveYtDlp";
+import { SEARCH_MAX_BUFFER_BYTES } from "#src/services/recreation/video/constants";
+import { getSearchArguments } from "#src/services/recreation/video/getSearchArguments";
+import { parseSearchCandidates } from "#src/services/recreation/video/parseSearchCandidates";
+import { resolveYtDlp } from "#src/services/recreation/video/resolveYtDlp";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 

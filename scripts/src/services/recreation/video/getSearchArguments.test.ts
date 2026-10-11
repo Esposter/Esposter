@@ -1,5 +1,5 @@
-import { VideoSite } from "#src/models/genshinParity/VideoSite";
-import { getSearchArguments } from "#src/services/genshinParity/shared/getSearchArguments";
+import { VideoSite } from "#src/models/recreation/video/VideoSite";
+import { getSearchArguments } from "#src/services/recreation/video/getSearchArguments";
 import { describe, expect, test } from "vitest";
 
 describe(getSearchArguments, () => {

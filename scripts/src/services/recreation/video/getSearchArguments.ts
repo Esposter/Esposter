@@ -1,4 +1,4 @@
-import { VideoSite } from "#src/models/genshinParity/VideoSite";
+import { VideoSite } from "#src/models/recreation/video/VideoSite";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The yt-dlp arguments printing the public videos a query finds, one JSON line each, with nothing downloaded. The

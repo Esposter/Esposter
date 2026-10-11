@@ -1,4 +1,4 @@
-import { CONTACT_SHEET_CELL_WIDTH, CONTACT_SHEET_COLUMNS } from "#src/services/genshinParity/shared/constants";
+import { CONTACT_SHEET_CELL_WIDTH, CONTACT_SHEET_COLUMNS } from "#src/services/recreation/video/constants";
 import sharp from "sharp";
 
 const LABEL_HEIGHT = 24;
