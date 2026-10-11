@@ -574,6 +574,12 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "publisher-splash": { capture: "session-2.mp4", screen: "SplashPublisher", seconds: 1 },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high
   "quest-screen": { screen: "QuestScreen", wikiTitle: "File:Quest Screen.png" },
+  // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
+  "quest-screen-details": {
+    region: { height: 680, width: 899, x: 877, y: 100 },
+    screen: "QuestScreen",
+    wikiTitle: "File:Quest Screen.png",
+  },
   // The same still's band across the top, the tabs, the banner and the close button, clear of the blurred world
   "quest-screen-header": {
     region: { height: 95, width: 1920, x: 0, y: 0 },
@@ -583,12 +589,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn
   "quest-screen-list": {
     region: { height: 850, width: 666, x: 150, y: 105 },
-    screen: "QuestScreen",
-    wikiTitle: "File:Quest Screen.png",
-  },
-  // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
-  "quest-screen-details": {
-    region: { height: 680, width: 899, x: 877, y: 100 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
   },

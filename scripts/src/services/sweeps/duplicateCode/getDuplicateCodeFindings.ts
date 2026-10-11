@@ -4,9 +4,9 @@ import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/Dupl
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { checkIsRangeFree } from "#src/services/sweeps/duplicateCode/checkIsRangeFree";
 import { checkIsRegisterFile } from "#src/services/sweeps/duplicateCode/checkIsRegisterFile";
+import { getLeadingImportLines } from "#src/services/sweeps/duplicateCode/getLeadingImportLines";
 import { getNonDataRowLines } from "#src/services/sweeps/duplicateCode/getNonDataRowLines";
 import { getNonDeclarationLines } from "#src/services/sweeps/duplicateCode/getNonDeclarationLines";
-import { getLeadingImportLines } from "#src/services/sweeps/duplicateCode/getLeadingImportLines";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
 import { getNonRecordRowLines } from "#src/services/sweeps/duplicateCode/getNonRecordRowLines";
 import { getOrCreate } from "@esposter/shared";
