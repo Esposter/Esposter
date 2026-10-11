@@ -1,6 +1,7 @@
 import type { MachineHeartbeat } from "#src/models/fleet/MachineHeartbeat";
 
 import { lastPushSchema } from "#src/models/queue/LastPush";
+import { checkIsInstant } from "#src/services/shared/checkIsInstant";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 
@@ -10,7 +11,7 @@ const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>
   "machine" in value &&
   typeof value.machine === "string" &&
   "at" in value &&
-  typeof value.at === "string" &&
+  checkIsInstant(value.at) &&
   "cpu" in value &&
   typeof value.cpu === "number" &&
   "freeMemory" in value &&
