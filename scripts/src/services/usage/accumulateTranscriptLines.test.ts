@@ -4,7 +4,12 @@ import { UsageBucket } from "#src/models/usage/UsageBucket";
 import { accumulateTranscriptLines } from "#src/services/usage/accumulateTranscriptLines";
 import { describe, expect, test } from "vitest";
 
-const createUsageLine = (id: string, requestId: string, model: string, milliseconds: number): string =>
+const createUsageLine = (
+  id: string | undefined,
+  requestId: string | undefined,
+  model: string,
+  milliseconds: number,
+): string =>
   JSON.stringify({
     message: {
       id,
@@ -36,6 +41,22 @@ describe(accumulateTranscriptLines, () => {
     expect([...tally.totals.values()]).toStrictEqual([
       { bucket: UsageBucket.Main, cacheRead: 100, cacheWrite: 20, context: 130, family: "opus", output: 5, turns: 1 },
       { bucket: UsageBucket.Main, cacheRead: 100, cacheWrite: 20, context: 130, family: "sonnet", output: 5, turns: 1 },
+    ]);
+  });
+
+  test("counts every line that names neither id", () => {
+    expect.hasAssertions();
+
+    const tally: UsageTally = { seenIds: new Set(), totals: new Map(), transcripts: new Map() };
+    const lines = [
+      createUsageLine(undefined, undefined, "claude-opus-5-5", 2000),
+      createUsageLine(undefined, undefined, "claude-opus-5-5", 2000),
+    ];
+
+    accumulateTranscriptLines(tally, { bucket: UsageBucket.Main, lines, path: "/session.jsonl", prompt: "" }, 1000);
+
+    expect([...tally.totals.values()]).toStrictEqual([
+      { bucket: UsageBucket.Main, cacheRead: 200, cacheWrite: 40, context: 260, family: "opus", output: 10, turns: 2 },
     ]);
   });
 });

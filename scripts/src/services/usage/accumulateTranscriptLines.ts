@@ -9,7 +9,8 @@ import { readTranscriptLine } from "#src/services/usage/readTranscriptLine";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // Counts a transcript's assistant turns in the window into the tally;
-// Streaming writes one message as several lines, so a message is counted once, by its message id and request id
+// Streaming writes one message as several lines, so a message is counted once, by its message id and request id; a line
+// Naming neither is counted as it stands, since nothing says two of them are one message
 export const accumulateTranscriptLines = (tally: UsageTally, transcript: UsageTranscript, sinceMs: number): void => {
   for (const line of transcript.lines) {
     if (!line.includes(USAGE_MARKER)) continue;
@@ -18,9 +19,11 @@ export const accumulateTranscriptLines = (tally: UsageTally, transcript: UsageTr
     if (transcriptLine?.timestamp === undefined || message?.model === undefined || message.usage === undefined)
       continue;
     if (message.model === SYNTHETIC_MODEL || Date.parse(transcriptLine.timestamp) < sinceMs) continue;
-    const seenId = `${message.id ?? ""}${ID_SEPARATOR}${transcriptLine.requestId ?? ""}`;
-    if (tally.seenIds.has(seenId)) continue;
-    tally.seenIds.add(seenId);
+    if (message.id !== undefined || transcriptLine.requestId !== undefined) {
+      const seenId = `${message.id ?? ""}${ID_SEPARATOR}${transcriptLine.requestId ?? ""}`;
+      if (tally.seenIds.has(seenId)) continue;
+      tally.seenIds.add(seenId);
+    }
     const family = getUsageFamily(message.model);
     const input = message.usage.input_tokens ?? 0;
     const cacheRead = message.usage.cache_read_input_tokens ?? 0;
