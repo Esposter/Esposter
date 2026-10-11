@@ -1,6 +1,8 @@
 import { props } from "#src/components/World/Screen/Index.fixture";
 import WorldScreen from "#src/components/World/Screen/Index.vue";
-import { describe, expect, test } from "vitest";
+import liyueRegionJson from "#src/data/regions/liyue.json";
+import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
@@ -20,6 +22,15 @@ const readLuminances = async (): Promise<number[]> => {
   return luminances;
 };
 
+// When the last of a load step's measures since a moment ended
+const readLoadStepEnd = (name: string, since: number): number =>
+  Math.max(
+    ...performance
+      .getEntriesByName(`${LOAD_STEP_MEASURE_PREFIX}${name}`, "measure")
+      .filter(({ startTime }) => startTime >= since)
+      .map(({ duration, startTime }) => startTime + duration),
+  );
+
 const waitForFrames = async (frameCount: number): Promise<void> => {
   for (let frame = 0; frame < frameCount; frame++)
     // oxlint-disable-next-line no-await-in-loop -- each frame is waited on after the one before it
@@ -33,6 +44,15 @@ describe("worldScreen", () => {
   const timeoutMs = 60_000;
   // A second of frames, past what the ground of one view takes to stream in
   const settleFrameCount = 60;
+  // Just inside Liyue's reach, toward its heart from the oak, so Liyue's region and its ground are read at the start
+  const liyueReachPose = {
+    fov: 45,
+    heading: 56.9,
+    pitch: -8,
+    position: [-711.8, 192, -464.6] as [number, number, number],
+  };
+  // Past what the first view's ground takes to stream in here without a region's
+  const holdMs = 15_000;
 
   test(
     "is ready once the ground of its first view has arrived, unveiled",
@@ -72,6 +92,43 @@ describe("worldScreen", () => {
       await render(WorldScreen, { attrs: { onReady: resolveReady }, props: { ...props, isPaused: true } });
 
       await expect(ready).resolves.toBeUndefined();
+    },
+    timeoutMs,
+  );
+
+  test(
+    "is ready only once the grounds in reach of its start have arrived, however late",
+    async () => {
+      expect.hasAssertions();
+
+      const since = performance.now();
+      // Liyue's read is held until the terrain is ready without it, or until long after its first view would have been
+      const { promise: terrainReady, resolve: resolveTerrainReady } = Promise.withResolvers<void>();
+      const observer = new PerformanceObserver((list) => {
+        if (list.getEntriesByName(`${LOAD_STEP_MEASURE_PREFIX}terrain`).length > 0) resolveTerrainReady();
+      });
+      observer.observe({ type: "measure" });
+      const held = Promise.race([
+        terrainReady,
+        new Promise((resolve) => {
+          setTimeout(resolve, holdMs);
+        }),
+      ]);
+      const { fetch } = window;
+      const fetchSpy = vi.spyOn(window, "fetch").mockImplementation(async (input, init) => {
+        if (typeof input !== "string" || !input.endsWith("/liyue.json")) return fetch(input, init);
+        await held;
+        return Response.json(liyueRegionJson);
+      });
+      onTestFinished(() => {
+        observer.disconnect();
+        fetchSpy.mockRestore();
+      });
+      const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
+      await render(WorldScreen, { attrs: { onReady: resolveReady }, props: { ...props, cameraPose: liyueReachPose } });
+      await ready;
+
+      expect(readLoadStepEnd("terrain", since)).toBeGreaterThanOrEqual(readLoadStepEnd("regions", since));
     },
     timeoutMs,
   );

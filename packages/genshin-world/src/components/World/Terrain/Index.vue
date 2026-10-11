@@ -55,6 +55,9 @@ interface Props {
   createTerrainWorker: () => Worker;
   // Written each frame with the tiles drawn, for whatever else reads the ground, such as the grass's capture
   draws: TerrainSelection;
+  // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
+  // Terrain is not ready before then, since a ground arriving after would rebuild the tiles its first view waited on
+  isGroundSettled: boolean;
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
@@ -75,6 +78,7 @@ interface Props {
 const {
   createTerrainWorker,
   draws,
+  isGroundSettled,
   lightUniforms,
   origin,
   rampTexture,
@@ -297,8 +301,8 @@ measureLoadStep("terrain", isTerrainReady);
 // Frustum is built in world coordinates, the scene's view moved by the origin, so the selection never sees the
 // Floating origin. The camera's matrices are brought up to date first, since this runs before the frame's render does
 // It and runs while a paused canvas renders nothing. The eye the ground morphs by is written here too, so every pass of
-// The frame draws the ground the view selected. The terrain is ready the first frame every tile its view wants has
-// Arrived or been given up
+// The frame draws the ground the view selected. The terrain is ready, once every ground in reach has arrived, the first
+// Frame every finest tile its view wants has arrived over them or been given up
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
@@ -333,7 +337,12 @@ onBeforeRender(() => {
     });
     refreshStart = undefined;
   }
-  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => checkIsFirstFrameSettled(key))) return;
+  if (
+    isReady ||
+    !isGroundSettled ||
+    !wanted.keys.subarray(0, wanted.count).every((key) => checkIsFirstFrameSettled(key))
+  )
+    return;
   isReady = true;
   resolveTerrainReady();
   emit("ready");

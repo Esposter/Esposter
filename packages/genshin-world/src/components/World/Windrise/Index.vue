@@ -401,6 +401,7 @@ onUnmounted(() => {
         <WorldTerrain
           :create-terrain-worker
           :draws="terrainDraws"
+          :is-ground-settled="isRegionDataSettled"
           :light-uniforms
           :origin
           :ramp-texture
