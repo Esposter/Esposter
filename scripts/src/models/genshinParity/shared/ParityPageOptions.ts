@@ -13,6 +13,8 @@ export interface ParityPageOptions {
   isFrameRateUnlimited?: boolean;
   // The motion the page holds at its start, for a shot at times
   motion?: ParityMotion;
+  // The page's address up to its query: the dev server's by default, a preview server's when a load run measures a build
+  pageRoot?: string;
   // Props over the fixture's, as JSON the page reads
   props?: Record<string, unknown>;
   screen: string;
