@@ -30,7 +30,12 @@ describe(createMikaKit, () => {
       burstEnergyCost: MIKA_KIT.burstEnergyCost,
       chargedAttackStamina: MIKA_KIT.chargedAttackStamina,
       skillCooldownSeconds: MIKA_KIT.skillCooldownSeconds,
-    }).toStrictEqual({ burstCooldownSeconds: 18, burstEnergyCost: 70, chargedAttackStamina: 25, skillCooldownSeconds: 15 });
+    }).toStrictEqual({
+      burstCooldownSeconds: 18,
+      burstEnergyCost: 70,
+      chargedAttackStamina: 25,
+      skillCooldownSeconds: 15,
+    });
   });
 
   test("his press strikes at 17 frames and his hold releases a flare at 12 frames from its own minimum half second", () => {
