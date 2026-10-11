@@ -150,6 +150,52 @@ describe("docsLinks", () => {
   });
 });
 
+describe("manualVerification", () => {
+  const ROADMAP_PAGE = "genshin/roadmap.md";
+  const SECTION_HEADING = "Manual verification";
+  const ITEM_REGEX = /^- \[[ x]\] /u;
+  const DOCS_LINK_REGEX = /\]\(\/docs\//u;
+  // An item is a question, the page that holds its source and the one fact to judge it by, so a batch of a hundred
+  // Reads at a glance; whatever is longer is the owning page's decision
+  const MAX_QUESTION_LENGTH = 300;
+  const section =
+    (getPages().find(({ page }) => page === ROADMAP_PAGE)?.markdown ?? "")
+      .split(/^## /mu)
+      .find((part) => part.startsWith(SECTION_HEADING)) ?? "";
+  // Everything from the first list line on is an item or a part of one; the intro paragraph above stays prose
+  const lines = section.split(/\r?\n/u).filter((line) => line.trim() !== "");
+  const itemLines = lines.slice(
+    Math.max(
+      0,
+      lines.findIndex((line) => line.startsWith("-")),
+    ),
+  );
+
+  test("the section holds items", () => {
+    expect.hasAssertions();
+
+    expect(itemLines.length).toBeGreaterThan(1);
+  });
+
+  test("every item is one checkbox line with no continuation", () => {
+    expect.hasAssertions();
+
+    expect(itemLines.filter((line) => !ITEM_REGEX.test(line))).toStrictEqual([]);
+  });
+
+  test("every item links a docs page", () => {
+    expect.hasAssertions();
+
+    expect(itemLines.filter((line) => ITEM_REGEX.test(line) && !DOCS_LINK_REGEX.test(line))).toStrictEqual([]);
+  });
+
+  test(`every item is under ${MAX_QUESTION_LENGTH} characters`, () => {
+    expect.hasAssertions();
+
+    expect(itemLines.filter((line) => line.length >= MAX_QUESTION_LENGTH)).toStrictEqual([]);
+  });
+});
+
 describe("keyFiles", () => {
   const pages = getPages();
   const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
