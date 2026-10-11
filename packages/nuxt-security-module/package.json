@@ -99,7 +99,8 @@
     "@nuxt/kit": "catalog:",
     "@nuxt/schema": "catalog:",
     "defu": "catalog:",
-    "rou3": "catalog:"
+    "rou3": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
