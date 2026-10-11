@@ -175,7 +175,7 @@ flowchart TD
 
 ## Tests
 
-No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror in `packages/genshin-world/node_modules/.cache/game-data`. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes.
+No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from a content-addressed mirror, `GAME_DATA_MIRROR_DIRECTORY` under the package's own node_modules cache. The parity page and the browser suite reach the same mirror through a Vite middleware on the same path. A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name; a worker that loses the race to write it has written the same bytes.
 
 CI keys the mirror on the lock's hash. The `build-packages` job looks the key up, and when no cache holds it, `pnpm game-data:mirror` downloads every object and index entry the lock names and the cache action saves it under that key as the job ends; each coverage shard only restores it, so a run fetches nothing until the lock moves. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold local mirror's first run fits inside.
 
