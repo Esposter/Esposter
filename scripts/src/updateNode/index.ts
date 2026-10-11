@@ -1,16 +1,29 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_LOCK_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
+import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
 import { readNodeVersions } from "#src/services/updateNode/readNodeVersions";
 import { readRegistryLatestVersionForPrefix } from "#src/services/updateNode/readRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
+import { setLockfileNodeVersion } from "#src/services/updateNode/setLockfileNodeVersion";
+import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNodeVersion";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand, runMain } from "citty";
 import { spawnSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, relative, resolve } from "node:path";
+
+// Rewrite a file only when the edit changed it, and say which node floor it now carries
+const updateNodeFloorFile = (path: string, version: string, setFloor: (text: string) => string): void => {
+  const text = readFileSync(path, "utf8");
+  const updatedText = setFloor(text);
+  if (updatedText === text) return;
+
+  writeFileSync(path, updatedText);
+  console.info(`✔ ${relative(REPOSITORY_ROOT, path)} node → >=${version}`);
+};
 
 await runMain(
   defineCommand({
@@ -51,8 +64,15 @@ await runMain(
         const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
         writeFileSync(workspacePath, workspaceWithTypesNode);
         console.info(`✔ ${WORKSPACE_FILE} @types/node → ^${typesVersion}`);
+        // 4. Move every manifest's node floor with the pin, and each npm lockfile's root entry beside one.
+        for (const { path } of readManifestFiles(REPOSITORY_ROOT)) {
+          updateNodeFloorFile(path, version, (text) => setManifestNodeVersion(text, version));
+          const lockfilePath = resolve(dirname(path), PACKAGE_LOCK_JSON_FILENAME);
+          if (existsSync(lockfilePath))
+            updateNodeFloorFile(lockfilePath, version, (text) => setLockfileNodeVersion(text, version));
+        }
       } else console.info(`node is already ${version} in ${NODE_VERSION_FILENAME} — ensuring it is installed.\n`);
-      // 4. Hand the install to the global `vp`, which reads `.node-version` and `packageManager` itself and shims
+      // 5. Hand the install to the global `vp`, which reads `.node-version` and `packageManager` itself and shims
       // Pnpm in place of Corepack; `clean` then removes the versions no pin or default names any more.
       for (const vpArgs of [
         ["env", "install"],

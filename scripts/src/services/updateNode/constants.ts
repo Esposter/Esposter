@@ -4,3 +4,15 @@ export const TYPES_NODE_CATALOG_REGEX: RegExp = /(?<lead>"@types\/node":\s*)(?<v
 export const NODE_VERSION_FILENAME = ".node-version";
 // Node.js's own release feed — the npm `node` package's `latest` dist-tag is a third party's and lags the real release line
 export const NODE_DIST_INDEX_URL = "https://nodejs.org/dist/index.json";
+// A manifest's `engines.node` value, the one object key a `"node"` value sits under in a package.json or a lockfile root entry
+export const ENGINES_NODE_REGEX: RegExp = /(?<lead>"engines":\s*\{\s*"node":\s*")[^"]*/u;
+// The `devEngines` key, after which only that field's runtime entries are edited
+export const DEV_ENGINES_KEY = '"devEngines"';
+// A flat object in a `devEngines` runtime field, the object form or one entry of the array form
+export const FLAT_OBJECT_REGEX: RegExp = /\{[^{}]*\}/gu;
+export const NODE_RUNTIME_NAME_REGEX: RegExp = /"name":\s*"node"/u;
+export const RUNTIME_VERSION_REGEX: RegExp = /(?<lead>"version":\s*")[^"]*/u;
+// The `packages[""]` root entry of an npm lockfile, which is the first entry at this indent
+export const LOCKFILE_ROOT_ENTRY_REGEX: RegExp = /\n {4}"": \{/u;
+// The next entry of `packages` after the root, at the same indent as the root's own key
+export const LOCKFILE_NEXT_ENTRY_KEY = '\n    "';
