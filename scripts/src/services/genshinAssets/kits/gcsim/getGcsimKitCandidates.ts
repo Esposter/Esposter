@@ -344,7 +344,8 @@ export const getGcsimKitCandidates = (
   // The skill and burst: their hitmarks from `<slot>Hitmark` or `<slot>Hitmarks`, or the skill's press's or tap's,
   // Their frames from `<slot>Frames` or the press's or tap's, and each hit by its place among the slot's talent
   // Multipliers and the ability's hitboxes, where they are as many as its hitmarks. A skill of one hit with no hitbox for
-  // Each takes the `E-Tap` or `E-Press` hitbox
+  // Each takes the `E-Tap` or `E-Press` hitbox. A press's `Hitmarks` listing numbers is its hitmark in each state gcsim
+  // Reads it at, so it gives no hits
   for (const [slot, ability, attackTags, pressNames, pressHitboxNames] of [
     ["skill", "skill", GCSIM_SKILL_ATTACK_TAGS, ["skillPress", "skillTap"], GCSIM_SKILL_PRESS_HITBOX_NAMES],
     ["burst", "burst", GCSIM_BURST_ATTACK_TAGS, [], []],
@@ -356,7 +357,9 @@ export const getGcsimKitCandidates = (
       ...pressNames.flatMap((pressName) => [`${pressName}Hitmarks`, `${pressName}Hitmark`]),
     );
     const hitmarkValues = toNumbers(hitmarks?.value);
-    if (hitmarks === undefined || hitmarkValues === undefined) continue;
+    const isPressStateList =
+      Array.isArray(hitmarks?.value) && pressNames.some((pressName) => hitmarks.name === `${pressName}Hitmarks`);
+    if (hitmarks === undefined || hitmarkValues === undefined || isPressStateList) continue;
     const slotAttacks = attacks.filter(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag));
     const slotLeaves = [...new Set(slotAttacks.map(({ talentVariable }) => talentVariable))].flatMap(
       (variable) => config.talentVariables.find(({ name }) => name === variable)?.leaves ?? [],
@@ -393,8 +396,9 @@ export const getGcsimKitCandidates = (
     }
   }
   // The skill's holds: one for each of the short hold and the hold gcsim gives frames or hitmarks for, the shorter first,
-  // Or one for each level its hitmarks list, each with its frames from `<hold>Frames`, its hits from `<hold>Hitmark` or
-  // `<hold>Hitmarks`, and a hit's area from the `E-Hold` hitbox where the hold has one hit
+  // Or one for each level its `<hold>Hitmarks` lists, each with its frames from `<hold>Frames`, its hit from
+  // `<hold>Hitmark` and its area from the `E-Hold` hitbox. A hold's `Hitmarks` listing numbers is its hitmark in each
+  // State gcsim reads it at, so it gives no hits
   const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): GcsimHoldSource[] => {
     const hitmarks = readConstant(`${prefix}Hitmarks`, `${prefix}Hitmark`);
     const framesName = `${prefix}Frames`;
@@ -403,7 +407,7 @@ export const getGcsimKitCandidates = (
       return levelHitmarks.map((level, levelIndex) => ({
         hitmarks: { ...hitmarks, line: hitmarks.elementLines[levelIndex] ?? hitmarks.line, values: toNumbers(level) },
       }));
-    const hitmarkValues = toNumbers(hitmarks?.value);
+    const hitmarkValues = typeof hitmarks?.value === "number" ? [hitmarks.value] : undefined;
     if (hitmarks === undefined && !constantMap.has(framesName)) return [];
     return [{ framesName, ...(hitmarks !== undefined && { hitmarks: { ...hitmarks, values: hitmarkValues } }) }];
   });

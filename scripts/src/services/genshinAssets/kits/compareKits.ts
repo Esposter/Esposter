@@ -65,9 +65,14 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     tables,
     unreadSites,
   } of inputs) {
-    const gapPaths = getResult(() => buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName))).match(
-      ({ record }) => getMismatchedKitPaths(record, moduleRecord),
-      (error) => [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
+    const { gapPaths, overlayFailures } = getResult(() =>
+      buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName)),
+    ).match(
+      ({ record }) => ({ gapPaths: getMismatchedKitPaths(record, moduleRecord), overlayFailures: [] }),
+      (error) => ({
+        gapPaths: [],
+        overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
+      }),
     );
     gapCount += gapPaths.length;
     if (gapPaths.length > 0) gapLines.push(`  ${name} (${gapPaths.length})`);
@@ -104,7 +109,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     );
     if (readPastLicencePaths.length > 0)
       readPastLicenceLines.push(`  ${name} (${readPastLicencePaths.length}): ${readPastLicencePaths.join(", ")}`);
-    const kitFailures = [...notes, ...failures.map((failure) => `build: ${failure}`)];
+    const kitFailures = [...notes, ...overlayFailures, ...failures.map((failure) => `build: ${failure}`)];
     if (kitFailures.length > 0) failureLines.push(`  ${name}: ${kitFailures.join("; ")}`);
   }
   return [

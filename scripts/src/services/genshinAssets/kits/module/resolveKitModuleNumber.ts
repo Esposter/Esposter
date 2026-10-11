@@ -37,7 +37,7 @@ export const resolveKitModuleNumber = (
   } else if (!ts.isIdentifier(node)) return undefined;
   const symbol = source.checker.getSymbolAtLocation(node);
   const argument = symbol === undefined ? undefined : parameterArgumentMap.get(symbol);
-  if (argument !== undefined) return resolveKitModuleNumber(source, argument);
+  if (argument !== undefined) return resolveKitModuleNumber(source, argument, parameterArgumentMap);
   const declaration = findKitModuleDeclaration(source, node);
   if (
     declaration !== undefined &&
