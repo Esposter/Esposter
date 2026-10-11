@@ -4,6 +4,7 @@ import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/Dupl
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { checkIsRangeFree } from "#src/services/sweeps/duplicateCode/checkIsRangeFree";
 import { checkIsRegisterFile } from "#src/services/sweeps/duplicateCode/checkIsRegisterFile";
+import { getNonDataRowLines } from "#src/services/sweeps/duplicateCode/getNonDataRowLines";
 import { getNonDeclarationLines } from "#src/services/sweeps/duplicateCode/getNonDeclarationLines";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
 import { getNonRecordRowLines } from "#src/services/sweeps/duplicateCode/getNonRecordRowLines";
@@ -11,11 +12,13 @@ import { getOrCreate } from "@esposter/shared";
 import { relative, sep } from "node:path";
 
 // Each reader gives the code lines of a file once one kind of non-logic is read as data. A clone free of code under
-// Any reader is a copy of that non-logic alone: imports, a declaration or wiring, or the rows of an enum-keyed record.
+// Any reader is a copy of that non-logic alone: imports, a declaration or wiring, the rows of an enum-keyed record, or
+// The numeric and colour rows of a table.
 const NON_LOGIC_LINE_READERS: ((text: string) => Set<number>)[] = [
   getNonImportLines,
   getNonDeclarationLines,
   getNonRecordRowLines,
+  getNonDataRowLines,
 ];
 
 const getPath = ({ sourceId, start }: DuplicateCodeClone["duplicationA"]) =>

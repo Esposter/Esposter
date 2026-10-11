@@ -53,6 +53,20 @@ describe(getDuplicateCodeFindings, () => {
     ).toStrictEqual([]);
   });
 
+  test("reads a clone of numeric and colour rows in both files as no finding", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDuplicateCodeFindings(
+        [createClone(2, 3)],
+        () => `export const map: Record<number, number> = {
+  1: 17.165605,
+  2: 18.535048,
+};`,
+      ),
+    ).toStrictEqual([]);
+  });
+
   test("reads a clone across two Claude plugins as no finding", () => {
     expect.hasAssertions();
 
