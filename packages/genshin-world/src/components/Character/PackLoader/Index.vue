@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { CharacterPack } from "#src/models/character/CharacterPack";
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
-import type { PickedCharacterPack } from "#src/models/character/PickedCharacterPack";
 
 import CharacterTerms from "#src/components/Character/Terms/Index.vue";
 import { readCharacterIdNamesMap } from "#src/services/character/readCharacterIdNamesMap";
 import { readCharacterPackFolders } from "#src/services/character/readCharacterPackFolders";
-import { readCharacterPackZip } from "#src/services/character/readCharacterPackZip";
+import { readCharacterPackZips } from "#src/services/character/readCharacterPackZips";
 import { readPickedCharacterPacks } from "#src/services/character/readPickedCharacterPacks";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -50,13 +49,16 @@ const pickCharacterPacks = (input: HTMLInputElement | null) => {
   errorMessages.value = [];
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
   getResultAsync(async () => {
-    const pickedCharacterPacks: PickedCharacterPack[] = input.webkitdirectory
-      ? readCharacterPackFolders(files)
-      : await Promise.all(
-          files.map(async (file) => readCharacterPackZip(file.name, new Uint8Array(await file.arrayBuffer()))),
-        );
+    const { pickedCharacterPacks, failures: unreadFailures } = input.webkitdirectory
+      ? { pickedCharacterPacks: readCharacterPackFolders(files), failures: [] }
+      : await readCharacterPackZips(files);
     const characterIdNamesMap = await readCharacterIdNamesMap(gameDataBaseUrl);
-    return readPickedCharacterPacks(pickedCharacterPacks, characterIdNamesMap, characterId);
+    const { characterPacks: newCharacterPacks, failures } = await readPickedCharacterPacks(
+      pickedCharacterPacks,
+      characterIdNamesMap,
+      characterId,
+    );
+    return { characterPacks: newCharacterPacks, failures: [...unreadFailures, ...failures] };
   }).match(
     ({ characterPacks: newCharacterPacks, failures }) => {
       isPending.value = false;
