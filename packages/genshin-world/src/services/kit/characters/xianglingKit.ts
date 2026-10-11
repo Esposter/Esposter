@@ -12,6 +12,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 
 // Guoba stands 1.3 metres ahead of the body, as gcsim v2.47.2 (MIT) xiangling/guoba.go places it
@@ -74,7 +75,7 @@ const castChiliPepper = (
         secondsRemaining: CHILI_PEPPER_BUFF_SECONDS,
         source: CHILI_PEPPER_SOURCE,
       });
-      tickKitEffectState.effects = tickKitEffectState.effects.filter((effect) => effect !== chiliPepper);
+      removeKitEffects(tickKitEffectState, (effect) => effect === chiliPepper);
     },
     radius: CHILI_PEPPER_PICKUP_RADIUS,
     secondsRemaining: guobaSeconds + CHILI_PEPPER_SECONDS,

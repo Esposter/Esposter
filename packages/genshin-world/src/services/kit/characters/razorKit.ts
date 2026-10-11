@@ -11,6 +11,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -81,9 +82,7 @@ export const createRazorKitBehaviour = ({
       if (sigilCount === 0) return;
       const partyMember = getPartyMember(party, owner.characterId);
       partyMember.energy = Math.min(owner.kit.burstEnergyCost, partyMember.energy + sigilEnergy * sigilCount);
-      tickEffectState.effects = tickEffectState.effects.filter(
-        (effect) => !checkIsRazorBuff(effect, owner.characterId, ELECTRO_SIGIL_SOURCE),
-      );
+      removeKitEffects(tickEffectState, (effect) => checkIsRazorBuff(effect, owner.characterId, ELECTRO_SIGIL_SOURCE));
     });
   // Lightning Fang's Wolf Within, cast from the burst's hit for its seconds while Razor stays on the field. Its first
   // Tick, at the hit, resets his skill's cooldown from Ascension 1 and gives him the Electro RES bonus that marks it
@@ -93,8 +92,9 @@ export const createRazorKitBehaviour = ({
       nextTickSeconds: lightningFangHitmarkSeconds,
       onTick: ({ activeCombatant, kitEffectState: tickKitEffectState, party }, tickIndex) => {
         if (activeCombatant.characterId !== owner.characterId) {
-          tickKitEffectState.effects = tickKitEffectState.effects.filter(
-            (effect) => effect !== wolfWithin && !checkIsRazorBuff(effect, owner.characterId, LIGHTNING_FANG_SOURCE),
+          removeKitEffects(
+            tickKitEffectState,
+            (effect) => effect === wolfWithin || checkIsRazorBuff(effect, owner.characterId, LIGHTNING_FANG_SOURCE),
           );
           return;
         }

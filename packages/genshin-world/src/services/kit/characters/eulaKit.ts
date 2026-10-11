@@ -16,6 +16,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
@@ -46,11 +47,11 @@ const LIGHTFALL_SUMMON_ID = "eula-lightfall";
 // This kit leaves out
 const CONSTELLATION_6_STARTING_STACKS = 5;
 
+const checkIsGrimheartStack = (effect: KitEffect, characterId: number): boolean =>
+  effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id);
+
 const countGrimheartStacks = (effects: readonly KitEffect[], characterId: number): number =>
-  effects.filter(
-    (effect) =>
-      effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id),
-  ).length;
+  effects.filter((effect) => checkIsGrimheartStack(effect, characterId)).length;
 
 // Each Grimheart stack gained refreshes every stack's seconds, as gcsim refreshes its one duration, and two is the most
 const gainGrimheartStack = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void => {
@@ -59,12 +60,8 @@ const gainGrimheartStack = (kitEffectState: KitEffectState, combatant: Combatant
     addKitStatus(kitEffectState, combatant.characterId, { id, secondsRemaining: seconds });
 };
 
-const clearGrimheartStacks = (kitEffectState: KitEffectState, characterId: number): void => {
-  kitEffectState.effects = kitEffectState.effects.filter(
-    (effect) =>
-      !(effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id)),
-  );
-};
+const clearGrimheartStacks = (kitEffectState: KitEffectState, characterId: number): void =>
+  removeKitEffects(kitEffectState, (effect) => checkIsGrimheartStack(effect, characterId));
 
 export const EULA_CHARACTER_ID = 10_000_051;
 
@@ -135,9 +132,7 @@ export const createEulaKitBehaviour = ({
         const { characterId } = combatant;
         // A fresh cast takes the Sword's stacks from zero, as the cast resets them, Constellation 6 starting it with five
         spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
-        kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) => !(effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID),
-        );
+        removeKitEffects(kitEffectState, (effect) => effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID);
         // Ascension 4 gains a Grimheart stack, which gcsim keeps only while the Grimheart it adds to is up
         if (combatant.ascension >= 4 && countGrimheartStacks(kitEffectState.effects, characterId) > 0)
           gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
@@ -173,7 +168,7 @@ export const createEulaKitBehaviour = ({
       if (summon === undefined) return;
       const stacks = spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
       const hit = createLightfallExplosion(stacks, lightfallTriggerDelaySeconds);
-      kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== summon);
+      removeKitEffects(kitEffectState, (effect) => effect === summon);
       castKitSummon(kitEffectState, summon.body, summon.combatant, [hit]);
     },
     skill: {

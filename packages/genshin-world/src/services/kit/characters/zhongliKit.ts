@@ -15,6 +15,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { takeOne } from "@esposter/shared";
 
@@ -120,9 +121,7 @@ export const createZhongliKitBehaviour = ({
       nextTickSeconds: 0,
       onTick: ({ kitEffectState: tickKitEffectState }) => {
         if (shield.secondsRemaining > 0 && tickKitEffectState.effects.includes(shield)) return;
-        tickKitEffectState.effects = tickKitEffectState.effects.filter(
-          (effect) => effect !== resistanceCut && effect !== end,
-        );
+        removeKitEffects(tickKitEffectState, (effect) => effect === resistanceCut || effect === end);
       },
       secondsRemaining: shieldSeconds,
       tickIntervalSeconds: FIXED_STEP_SECONDS,

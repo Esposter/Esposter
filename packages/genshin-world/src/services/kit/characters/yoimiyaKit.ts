@@ -8,6 +8,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 // Ryuukin Saxifrage's first enemy struck carries Aurous Blaze, as gcsim v2.47.2 (MIT) yoimiya/burst.go marks it, while
 // The burst is pending, and the explosion's internal cooldown is a status of its own on the enemy
@@ -52,13 +53,12 @@ export const createYoimiyaKitBehaviour = ({
       if (striker.characterId === characterId) {
         if (hit !== burstHit || !checkHasKitStatus(kitEffectState.effects, characterId, AUROUS_BLAZE_PENDING_STATUS_ID))
           return;
-        kitEffectState.effects = kitEffectState.effects.filter(
+        removeKitEffects(
+          kitEffectState,
           (effect) =>
-            !(
-              effect.kind === "status" &&
-              effect.characterId === characterId &&
-              effect.id === AUROUS_BLAZE_PENDING_STATUS_ID
-            ),
+            effect.kind === "status" &&
+            effect.characterId === characterId &&
+            effect.id === AUROUS_BLAZE_PENDING_STATUS_ID,
         );
         addEnemyStatus(enemy, {
           damageTakenBonus: 0,

@@ -11,6 +11,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { takeOne } from "@esposter/shared";
 
 // The stamina each seal cuts a charged attack's cost by is 15%, 25% from Constellation 1, as gcsim (MIT) yanfei/asc.go
@@ -120,9 +121,7 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter }: KitRecordR
           ...takeOne(chargedAttackHits, seals),
         };
         castKitSummon(kitEffectState, body, combatant, [hit]);
-        kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) => !checkIsSealStatus(effect, combatant.characterId),
-        );
+        removeKitEffects(kitEffectState, (effect) => checkIsSealStatus(effect, combatant.characterId));
       },
     },
     getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant, kitEffectState }) => {

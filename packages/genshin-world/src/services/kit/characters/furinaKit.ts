@@ -25,6 +25,7 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -117,7 +118,7 @@ const endSalon = (kitEffectState: KitEffectState, characterId: number): void => 
       (effect.id === SALON_MEMBER_FIELD_ID || effect.id === SINGER_FIELD_ID)) ||
     (effect.kind === "summon" && effect.combatant.characterId === characterId && effect.id === SALON_ATTACK_SUMMON_ID);
   for (const effect of kitEffectState.effects) if (checkIsSalonEffect(effect)) effect.secondsRemaining = 0;
-  kitEffectState.effects = kitEffectState.effects.filter((effect) => !checkIsSalonEffect(effect));
+  removeKitEffects(kitEffectState, checkIsSalonEffect);
 };
 
 // Constellation 4's energy, once each five seconds
@@ -360,7 +361,7 @@ export const createFurinaKitBehaviour = ({
   const switchArkhe = (kitEffectState: KitEffectState, combatant: Combatant, centre: GroundPoint): void => {
     const { characterId } = combatant;
     const pneuma = findKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
-    if (pneuma) kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== pneuma);
+    if (pneuma) removeKitEffects(kitEffectState, (effect) => effect === pneuma);
     else
       addKitStatus(kitEffectState, characterId, { id: PNEUMA_STATUS_ID, secondsRemaining: Number.POSITIVE_INFINITY });
     const salon = findKitStatus(kitEffectState.effects, characterId, SALON_STATUS_ID);

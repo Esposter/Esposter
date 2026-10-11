@@ -11,6 +11,7 @@ import type { GroundPoint } from "genshin-engine";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -136,7 +137,7 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
   }: KitContext): KitSummon | undefined => {
     const jadeScreen = kitEffectState.effects.find((effect) => checkIsJadeScreen(effect, combatant.characterId));
     if (jadeScreen === undefined) return undefined;
-    kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== jadeScreen);
+    removeKitEffects(kitEffectState, (effect) => effect === jadeScreen);
     if (
       combatant.constellationCount >= SHOCK_EFFECT_CONSTELLATION &&
       !kitEffectState.effects.some((effect) => checkIsShockEffect(effect, combatant.characterId))
@@ -155,9 +156,7 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
         const jadeScreen = shatterJadeScreen(context);
         if (jadeScreen !== undefined) castKitSummon(kitEffectState, body, jadeScreen.combatant, jadeScreenGems);
         if (combatant.constellationCount < GRANDEUR_CONSTELLATION) return;
-        kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) => !checkIsStarJade(effect, combatant.characterId),
-        );
+        removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
         for (let index = 0; index < GRANDEUR_STAR_JADE_COUNT; index++)
           castStarJade(kitEffectState, combatant.characterId, body.position);
       },
@@ -167,7 +166,7 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const starJades = kitEffectState.effects.filter((effect) => checkIsStarJade(effect, combatant.characterId));
-        kitEffectState.effects = kitEffectState.effects.filter((effect) => !starJades.includes(effect));
+        removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
         const shot = starJades.length === GRANDEUR_STAR_JADE_COUNT ? grandeurStarJadeShot : starJadeShot;
         castKitSummon(kitEffectState, body, combatant, [chargedAttackGem, ...starJades.map(() => shot)]);
       },

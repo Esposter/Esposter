@@ -15,6 +15,7 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -138,9 +139,9 @@ export const createRaidenKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
         const stacks = spendKitResource(kitEffectState, characterId, RESOLVE_RESOURCE_ID);
-        kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) =>
-            !(effect.kind === "status" && effect.characterId === characterId && effect.id === RESTORE_COUNT_ID),
+        removeKitEffects(
+          kitEffectState,
+          (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === RESTORE_COUNT_ID,
         );
         const damageBonus = checkHasEye(kitEffectState.effects, characterId) ? eyeBurstDamageBonus : 0;
         castKitSummon(kitEffectState, body, combatant, [

@@ -15,6 +15,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -90,7 +91,7 @@ const onKitEvent = (
     gainPartyMemberEnergy(party, combatant, ASCENSION_4_ENERGY);
   const triggers = (status.stacks ?? 0) + 1;
   if (triggers < ASCENSION_4_MAXIMUM_TRIGGERS) addKitEffect(kitEffectState, { ...status, stacks: triggers });
-  else kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== status);
+  else removeKitEffects(kitEffectState, (effect) => effect === status);
 };
 // Ororon's behaviour: Dark Voices' Echo casts its soundwave field where he stands, each tick a summon landing the
 // Soundwave from where it was cast. Constellations 2 and 4 and Ascension 4 are built. The Spirit Orb's bounce, Ascension 1

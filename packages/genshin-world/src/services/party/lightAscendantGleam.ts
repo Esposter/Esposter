@@ -3,6 +3,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { ASCENDANT_GLEAM_SECONDS, ASCENDANT_GLEAM_STATUS_ID } from "#src/services/party/constants";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
@@ -21,8 +23,9 @@ export const lightAscendantGleam = (
     getMoonsignLevel(characterIdCombatantMap, party) !== MoonsignLevel.AscendantGleam
   )
     return;
-  kitEffectState.effects = [
-    ...kitEffectState.effects.filter((effect) => effect.kind !== "status" || effect.id !== ASCENDANT_GLEAM_STATUS_ID),
-    { characterId, id: ASCENDANT_GLEAM_STATUS_ID, kind: "status", secondsRemaining: ASCENDANT_GLEAM_SECONDS },
-  ];
+  removeKitEffects(kitEffectState, (effect) => effect.kind === "status" && effect.id === ASCENDANT_GLEAM_STATUS_ID);
+  addKitStatus(kitEffectState, characterId, {
+    id: ASCENDANT_GLEAM_STATUS_ID,
+    secondsRemaining: ASCENDANT_GLEAM_SECONDS,
+  });
 };

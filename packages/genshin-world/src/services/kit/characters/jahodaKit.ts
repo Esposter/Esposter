@@ -11,6 +11,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { takeOne } from "@esposter/shared";
 
@@ -89,13 +90,12 @@ export const createJahodaKitBehaviour = ({
   // Timer end, the gauge and the absorbed element with them. The hit is a summon cast where the drain is
   const drainFlask = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant, filledHit: KitHit): void => {
     const hit = readFlaskGauge(kitEffectState, combatant.characterId) >= FLASK_GAUGE_MAXIMUM ? filledHit : unfilledHit;
-    kitEffectState.effects = kitEffectState.effects.filter(
+    removeKitEffects(
+      kitEffectState,
       (effect) =>
-        !(effect.kind === "field" && (effect.id === PURSUIT_FIELD_ID || effect.id === DRAIN_FIELD_ID)) &&
-        !(
-          effect.kind === "status" &&
-          (effect.id === FLASK_GAUGE_STATUS_ID || effect.id.startsWith(FLASK_ABSORBED_STATUS_PREFIX))
-        ),
+        (effect.kind === "field" && (effect.id === PURSUIT_FIELD_ID || effect.id === DRAIN_FIELD_ID)) ||
+        (effect.kind === "status" &&
+          (effect.id === FLASK_GAUGE_STATUS_ID || effect.id.startsWith(FLASK_ABSORBED_STATUS_PREFIX))),
     );
     castKitSummon(kitEffectState, body, combatant, [hit]);
   };

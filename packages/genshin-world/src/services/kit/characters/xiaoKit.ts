@@ -12,6 +12,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -86,10 +87,11 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
       nextTickSeconds: 0,
       onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
         if (activeCombatant.characterId === characterId) return;
-        tickKitEffectState.effects = tickKitEffectState.effects.filter(
+        removeKitEffects(
+          tickKitEffectState,
           (effect) =>
-            !baneOfAllEvilEffects.includes(effect) &&
-            !(effect.kind === "buff" && effect.characterId === characterId && effect.source === TAMER_OF_DEMONS_SOURCE),
+            baneOfAllEvilEffects.includes(effect) ||
+            (effect.kind === "buff" && effect.characterId === characterId && effect.source === TAMER_OF_DEMONS_SOURCE),
         );
       },
       secondsRemaining: infusion.secondsRemaining,

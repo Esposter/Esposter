@@ -4,6 +4,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 
 export const CHEVREUSE_CHARACTER_ID = 10_000_090;
 
@@ -34,11 +35,11 @@ export const createChevreuseKitBehaviour = (): KitBehaviour => ({
         checkIsActive: ({ activeCombatant: combatant, kitEffectState }) =>
           checkHasKitStatus(kitEffectState.effects, combatant.characterId, OVERCHARGED_BALL_STATUS_ID),
         // The Overcharged Ball's hold spends the ball as it starts, so the next hold is a plain one again
-        onStart: ({ kitEffectState }) => {
-          kitEffectState.effects = kitEffectState.effects.filter(
-            (effect) => !(effect.kind === "status" && effect.id === OVERCHARGED_BALL_STATUS_ID),
-          );
-        },
+        onStart: ({ kitEffectState }) =>
+          removeKitEffects(
+            kitEffectState,
+            (effect) => effect.kind === "status" && effect.id === OVERCHARGED_BALL_STATUS_ID,
+          ),
       },
     },
   ],
