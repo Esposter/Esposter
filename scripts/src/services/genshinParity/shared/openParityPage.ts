@@ -122,7 +122,9 @@ export const openParityPage = async ({
   }).match(
     (value) => value,
     async (error) => {
-      await close();
+      // The browser alone, which closes its context: a browser that has died with the page (its connection dropped
+      // Under a load) has no context left to close, and closing one would throw over the failure that killed it
+      await browser.close();
       // A missing export can fail the page in any way, an error the page reports or a readiness that never comes, so
       // Whatever failed it names the first export that was not on disk
       const [missingFile] = missingFiles;

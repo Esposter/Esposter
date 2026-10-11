@@ -89,18 +89,16 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const witnessComponent = searchParameters.get("witnessComponent");
-  const claims = witnessComponent ? screen.witnessComponents?.[witnessComponent] : screen;
-  // A component the fixture does not list is a typo in the tool's URL, never a reason to inventory with the screen's claims
-  if (!claims)
-    throw new InvalidOperationError(Operation.Read, witnessComponent ?? "", "not a witness component of the screen");
-  const loaded = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, claims.witnessFamilies) : undefined;
-  const witness: SceneWitness | undefined = loaded
+  const getClaims = (witnessComponent: string) => screen.witnessComponents?.[witnessComponent] ?? screen;
+  const parts = witnessLayoutUrl
+    ? await loadWitness(witnessLayoutUrl, getClaims(searchParameters.get("witnessComponent") ?? "").witnessFamilies)
+    : undefined;
+  const witness: SceneWitness | undefined = parts
     ? {
-        families: ref(loaded.parts.children.map(({ name: family }) => family)),
+        families: ref(parts.children.map(({ name: family }) => family)),
         isAlone: ref(false),
         isClockHeld: ref(false),
-        parts: loaded.parts,
+        parts,
       }
     : undefined;
   const sceneContext = shallowRef<SceneContext>();
@@ -142,8 +140,14 @@ if (screen && root) {
   Reflect.set(window, "setSceneLights", (shares: Parameters<typeof setSceneLights>[1]) =>
     setSceneLights(sceneContext.value, shares),
   );
-  // Each renderer of the exports with what of the scene claims it, the inventory pass's measure
-  if (loaded) Reflect.set(window, "claimWitnessRenderers", () => claimWitnessRenderers(loaded.layout, claims));
+  // Each renderer of a component's exports with what of the scene claims it, the inventory pass's measure, from the
+  // Placements the host reads out of the exports' layout, so no witness is loaded for it
+  Reflect.set(
+    window,
+    "claimWitnessRenderers",
+    (placements: Parameters<typeof claimWitnessRenderers>[0], witnessComponent: string) =>
+      claimWitnessRenderers(placements, getClaims(witnessComponent)),
+  );
   // The camera solve and the ranking set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));

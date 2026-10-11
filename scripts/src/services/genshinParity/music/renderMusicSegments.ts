@@ -3,7 +3,7 @@ import type { MusicVoice } from "genshin-engine";
 
 import { readGameMusicSegments } from "#src/services/genshinParity/music/readGameMusicSegments";
 import { renderMusicOnPage } from "#src/services/genshinParity/music/renderMusicOnPage";
-import { MUSIC_PAGE_SIZE } from "#src/services/genshinParity/shared/constants";
+import { UNDRAWN_PAGE_SIZE } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -19,7 +19,7 @@ export const renderMusicSegments = async (
   segmentVoicesMap: ReadonlyMap<number, MusicVoice[]> = new Map(),
 ): Promise<{ game: Float32Array; id: number; index: number; ours: Float32Array }[]> => {
   const games = await readGameMusicSegments(component);
-  const { close, page } = await openParityPage({ height: MUSIC_PAGE_SIZE, screen, width: MUSIC_PAGE_SIZE });
+  const { close, page } = await openParityPage({ height: UNDRAWN_PAGE_SIZE, screen, width: UNDRAWN_PAGE_SIZE });
   return withFinalizerAsync(
     async () => {
       const renders: { game: Float32Array; id: number; index: number; ours: Float32Array }[] = [];

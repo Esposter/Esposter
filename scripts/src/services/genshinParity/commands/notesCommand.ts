@@ -10,11 +10,11 @@ import { renderMusicOnPage } from "#src/services/genshinParity/music/renderMusic
 import {
   LISTEN_SAMPLE_RATE,
   LOGIN_MUSIC_SCREEN,
-  MUSIC_PAGE_SIZE,
   NOTE_SUPPORT_FOLDS,
   NOTE_SUPPORT_FRAME_LENGTH,
   NOTE_SUPPORT_HOP_LENGTH,
   NOTE_SUPPORT_MIN_DECIBELS,
+  UNDRAWN_PAGE_SIZE,
 } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
@@ -44,9 +44,9 @@ export const notesCommand: SubCommandsDef[string] = defineCommand({
     }));
     const noteSupportMap = new Map<MusicNote, number>();
     const { close, page } = await openParityPage({
-      height: MUSIC_PAGE_SIZE,
+      height: UNDRAWN_PAGE_SIZE,
       screen: LOGIN_MUSIC_SCREEN,
-      width: MUSIC_PAGE_SIZE,
+      width: UNDRAWN_PAGE_SIZE,
     });
     await withFinalizerAsync(
       async () => {
