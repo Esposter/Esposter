@@ -19,6 +19,8 @@ export interface ModuleOptions {
   hidePoweredBy: boolean;
   nonce: boolean;
   rateLimiter: false | RateLimiterOptions;
+  // Drops the console calls from the built client and server code, through the bundler's own minifier
+  removeLoggers: boolean;
   requestSizeLimiter: false | RequestSizeLimiterOptions;
   sri: boolean;
   ssg: false | SsgOptions;

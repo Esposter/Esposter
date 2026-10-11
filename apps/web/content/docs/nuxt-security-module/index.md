@@ -16,12 +16,11 @@ The decision to absorb it, and the rule a security-shaped absorption meets, are 
 
 ## Status
 
-The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware are typed and built but not yet run inside a Nuxt app, so the app still runs the upstream package.
+The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode, and the `removeLoggers` option, which sets the bundler's `dropConsole`. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware are typed and built but not yet run inside a Nuxt app, so the app still runs the upstream package.
 
 Decided not to build, with the reason on the [upstream audit](/docs/nuxt-security-module/upstream#decisions-not-built):
 
 - The XSS validator, as its filter rejects ordinary text and passes a script once escaping is off.
-- `removeLoggers`, until a bundler option that drops calls is verified for each build target the app uses.
 
 Not built yet, in order:
 
