@@ -3,9 +3,8 @@ import { toClicker } from "@/services/clicker/save/toClicker";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useClickerStore } from "@/store/clicker";
 import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
-import { getResult, jsonDateParse } from "@esposter/shared";
+import { getResult, jsonDateParse, omitDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
-import { omitDeep } from "lodash-omitdeep";
 
 export const useReadClicker = async () => {
   const { $trpc } = useNuxtApp();

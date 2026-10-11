@@ -155,7 +155,6 @@
     "keyframe-store": "workspace:*",
     "livekit-client": "catalog:",
     "livekit-server-sdk": "catalog:",
-    "lodash-omitdeep": "catalog:",
     "lowlight": "catalog:",
     "lru-cache": "catalog:",
     "marked": "catalog:",
