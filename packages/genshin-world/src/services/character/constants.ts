@@ -83,9 +83,11 @@ export const QIQI_CHARACTER_ID = 10_000_035;
 export const CHONGYUN_CHARACTER_ID = 10_000_036;
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
 export const GANYU_CHARACTER_ID = 10_000_037;
+export const GOROU_CHARACTER_ID = 10_000_055;
 export const ALBEDO_CHARACTER_ID = 10_000_038;
 export const DIONA_CHARACTER_ID = 10_000_039;
 export const KEQING_CHARACTER_ID = 10_000_042;
+export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 export const SUCROSE_CHARACTER_ID = 10_000_043;
 export const XINYAN_CHARACTER_ID = 10_000_044;
 export const ROSARIA_CHARACTER_ID = 10_000_045;
@@ -101,9 +103,12 @@ export const RAIDEN_CHARACTER_ID = 10_000_052;
 export const YELAN_CHARACTER_ID = 10_000_060;
 export const KIRARA_CHARACTER_ID = 10_000_061;
 export const ALOY_CHARACTER_ID = 10_000_062;
+export const SHENHE_CHARACTER_ID = 10_000_063;
+export const YUNJIN_CHARACTER_ID = 10_000_064;
 export const ITTO_CHARACTER_ID = 10_000_057;
 export const HEIZOU_CHARACTER_ID = 10_000_059;
 export const YAE_MIKO_CHARACTER_ID = 10_000_058;
+export const KUKI_CHARACTER_ID = 10_000_065;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [
   [Attribute.CriticalRate, GameTextKey.AttributeCriticalRate],

@@ -36,14 +36,14 @@ const searchResultSchema = z.object({
 const toSearchCandidate = (result: z.infer<typeof searchResultSchema>): SearchCandidate => ({
   title: result.title,
   url: result.webpage_url,
-  ...(result.chapters != null && {
+  ...(Array.isArray(result.chapters) && {
     chapters: result.chapters.map((chapter) => ({ startSeconds: chapter.start_time, title: chapter.title })),
   }),
-  ...(result.duration != null && { durationSeconds: result.duration }),
-  ...(result.fps != null && { fps: result.fps }),
-  ...(result.height != null && { height: result.height }),
-  ...(result.uploader != null && { uploader: result.uploader }),
-  ...(result.upload_date != null && {
+  ...(typeof result.duration === "number" && { durationSeconds: result.duration }),
+  ...(typeof result.fps === "number" && { fps: result.fps }),
+  ...(typeof result.height === "number" && { height: result.height }),
+  ...(typeof result.uploader === "string" && { uploader: result.uploader }),
+  ...(typeof result.upload_date === "string" && {
     uploadDate: `${result.upload_date.slice(0, 4)}-${result.upload_date.slice(4, 6)}-${result.upload_date.slice(6)}`,
   }),
 });

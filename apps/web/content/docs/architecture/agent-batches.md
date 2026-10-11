@@ -19,7 +19,7 @@ flowchart TD
   W -->|"every report in"| F["One fixer — barrels, tests, typecheck,<br/>lint, snapshots, once"]
   CI -->|"red"| F
   F --> Q
-  W -->|"a measure owed off the game"| CQ["Compute queue — the roadmap"]
+  W -->|"a measure owed off the game"| CQ["Compute queue — its area pages"]
   CQ -->|"[page] lane"| RP["One page runner — the GPU,<br/>its own worktree"]
   CQ -->|"[cpu] lane"| RC["A few CPU runners —<br/>their own worktree"]
   RP -->|"meets its bar"| Q
@@ -54,4 +54,4 @@ A wave ends when every report is in and the fixer has run. The next wave is buil
 | `.agents/skills/llm-delegation/references/delegation-prompt.md` | what every agent's prompt holds                                               |
 | `.agents/skills/throughput/references/machine-efficiency.md`    | every check once, searches, long runs, the GPU: the recipes                   |
 | `.agents/skills/genshin-parity/references/compute-queue.md`     | a queue item, and how a runner takes one                                      |
-| `apps/web/content/docs/genshin/roadmap.md`                      | the compute queue itself, under its own heading                               |
+| `apps/web/content/docs/genshin/compute/`                        | the compute queue itself, one page per area                                   |

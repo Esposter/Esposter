@@ -174,7 +174,7 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
   if (options.world) await exportWorld(options.world, directory.world);
   const worldLines = world ? await extractWorld(world, directory) : [];
-  await writeProducerStamp(directory.root, EXTRACT_PRODUCER_PATHS);
+  writeProducerStamp(directory.root, EXTRACT_PRODUCER_PATHS);
   const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
   return [
     `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,

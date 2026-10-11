@@ -10,6 +10,7 @@ import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { KitVariant } from "#src/models/kit/KitVariant";
 import type { Party } from "#src/models/party/Party";
 
 // A character's combat kit: its normal attack's string, its charged attack, its plunges, its skill and burst with their
@@ -20,6 +21,9 @@ export interface Kit {
   chargedAttack: KitAction;
   chargedAttackStamina: number;
   elementalBurst: KitAction;
+  // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
+  // Hits harder at low HP
+  elementalBurstVariant?: KitVariant;
   elementalSkill: KitAction;
   // The presses a skill can take in a row after its first, if any, which the window of each press allows
   elementalSkillChain?: KitSkillChain;

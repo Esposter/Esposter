@@ -26,6 +26,8 @@ import {
   KIRARA_CHARACTER_ID,
   KLEE_CHARACTER_ID,
   KOKOMI_CHARACTER_ID,
+  KUJOU_SARA_CHARACTER_ID,
+  KUKI_CHARACTER_ID,
   LISA_CHARACTER_ID,
   MONA_CHARACTER_ID,
   NINGGUANG_CHARACTER_ID,
@@ -35,6 +37,7 @@ import {
   RAZOR_CHARACTER_ID,
   ROSARIA_CHARACTER_ID,
   SAYU_CHARACTER_ID,
+  SHENHE_CHARACTER_ID,
   SUCROSE_CHARACTER_ID,
   TARTAGLIA_CHARACTER_ID,
   THOMA_CHARACTER_ID,
@@ -43,6 +46,7 @@ import {
   XIAO_CHARACTER_ID,
   XINGQIU_CHARACTER_ID,
   YELAN_CHARACTER_ID,
+  YUNJIN_CHARACTER_ID,
   YOIMIYA_CHARACTER_ID,
   YANFEI_CHARACTER_ID,
   XINYAN_CHARACTER_ID,
@@ -71,8 +75,10 @@ import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { createKazuhaKit } from "#src/services/kit/characters/kazuhaKit";
 import { createKeqingKit } from "#src/services/kit/characters/keqingKit";
 import { createKiraraKit } from "#src/services/kit/characters/kiraraKit";
+import { createKujouSaraKit } from "#src/services/kit/characters/kujouSaraKit";
 import { createKleeKit } from "#src/services/kit/characters/kleeKit";
 import { createKokomiKit } from "#src/services/kit/characters/kokomiKit";
+import { createKukiKit } from "#src/services/kit/characters/kukiKit";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
 import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
@@ -82,6 +88,7 @@ import { createRaidenKit } from "#src/services/kit/characters/raidenKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createRosariaKit } from "#src/services/kit/characters/rosariaKit";
 import { createSayuKit } from "#src/services/kit/characters/sayuKit";
+import { createShenheKit } from "#src/services/kit/characters/shenheKit";
 import { createSucroseKit } from "#src/services/kit/characters/sucroseKit";
 import { createTartagliaKit } from "#src/services/kit/characters/tartagliaKit";
 import { createThomaKit } from "#src/services/kit/characters/thomaKit";
@@ -90,6 +97,7 @@ import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
 import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
 import { createYelanKit } from "#src/services/kit/characters/yelanKit";
+import { createYunjinKit } from "#src/services/kit/characters/yunjinKit";
 import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
 import { createYanfeiKit } from "#src/services/kit/characters/yanfeiKit";
 import { createXinyanKit } from "#src/services/kit/characters/xinyanKit";
@@ -123,6 +131,8 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [KIRARA_CHARACTER_ID]: createKiraraKit,
   [KLEE_CHARACTER_ID]: createKleeKit,
   [KOKOMI_CHARACTER_ID]: createKokomiKit,
+  [KUJOU_SARA_CHARACTER_ID]: createKujouSaraKit,
+  [KUKI_CHARACTER_ID]: createKukiKit,
   [LISA_CHARACTER_ID]: createLisaKit,
   [MONA_CHARACTER_ID]: createMonaKit,
   [NINGGUANG_CHARACTER_ID]: createNingguangKit,
@@ -132,6 +142,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [ROSARIA_CHARACTER_ID]: createRosariaKit,
   [SAYU_CHARACTER_ID]: createSayuKit,
+  [SHENHE_CHARACTER_ID]: createShenheKit,
   [SUCROSE_CHARACTER_ID]: createSucroseKit,
   [TARTAGLIA_CHARACTER_ID]: createTartagliaKit,
   [THOMA_CHARACTER_ID]: createThomaKit,
@@ -142,6 +153,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [YELAN_CHARACTER_ID]: createYelanKit,
   [YANFEI_CHARACTER_ID]: createYanfeiKit,
   [YOIMIYA_CHARACTER_ID]: createYoimiyaKit,
+  [YUNJIN_CHARACTER_ID]: createYunjinKit,
   [XINYAN_CHARACTER_ID]: createXinyanKit,
   [YAE_MIKO_CHARACTER_ID]: createYaeMikoKit,
   [ZHONGLI_CHARACTER_ID]: createZhongliKit,

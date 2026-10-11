@@ -17,6 +17,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createAlbedoKit } from "#src/services/kit/characters/albedoKit";
 import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -52,7 +53,7 @@ describe(createAlbedoKit, () => {
     combatant = createAlbedoCombatant(),
   ): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
     return kitEffectState.effects;
   };
   // The Solar Isotoma as the press casts it, and as it stands once its hit has landed

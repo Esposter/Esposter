@@ -95,7 +95,7 @@ The login runs through every pass from its inventory as its measures land, each 
 
 ## Scope
 
-Every pass has its measure in `genshin:parity passes` ([parity](/docs/genshin/parity)), and each run it owes is an item of the [roadmap](/docs/genshin/roadmap)'s compute queue. What the passes still lack is in two of them, the display's bloom and the atmosphere's cloud layer, in this order:
+Every pass has its measure in `genshin:parity passes` ([parity](/docs/genshin/parity)), and each run it owes is an item of the [compute queue](/docs/genshin/compute). What the passes still lack is in two of them, the display's bloom and the atmosphere's cloud layer, in this order:
 
 ```text
 packages/genshin-engine/src/post/createGameBloomNode.ts

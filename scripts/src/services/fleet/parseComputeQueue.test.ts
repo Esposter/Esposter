@@ -2,40 +2,39 @@ import { parseComputeQueue } from "#src/services/fleet/parseComputeQueue";
 import { describe, expect, test } from "vitest";
 
 describe(parseComputeQueue, () => {
-  const ROADMAP = [
-    "## Compute queue",
-    "",
-    "Runs owed.",
+  const PAGE = [
+    "## Queue",
     "",
     "- [ ] `[cpu]` {first-run} needs game-install — **First.** Writes `a/b.json`.",
+    "- [x] `[cpu]` {done-run} — **Done.**",
     "- [ ] `[page]` {second-run} needs parity-page — **Second.**",
     "",
-    "### Waiting",
+    "## Waiting",
     "",
     "- [ ] `[cpu]` {waiting-run} — **Waiting.**",
     "",
-    "## Awaiting the user",
+    "## Notes",
     "",
-    "- [ ] `[cpu]` {after-section} — **Not in the queue.**",
+    "- [ ] `[cpu]` {after-section} — **Not in the page's queue.**",
   ].join("\n");
 
-  test("reads the open items above the waiting heading, in roadmap order", () => {
+  test("reads the open items under the queue heading, in page order", () => {
     expect.hasAssertions();
 
-    expect(parseComputeQueue(ROADMAP).entries.map(({ id }) => id)).toStrictEqual(["first-run", "second-run"]);
+    expect(parseComputeQueue(PAGE).entries.map(({ id }) => id)).toStrictEqual(["first-run", "second-run"]);
   });
 
-  test("counts an open line with no id as skipped, above or below the waiting heading", () => {
+  test("counts an open line with no id as skipped, under the queue heading or the waiting one", () => {
     expect.hasAssertions();
 
     expect(
       parseComputeQueue(
-        "## Compute queue\n\n- [ ] `[cpu]` **Untagged.** Writes `a.ts`.\n\n### Waiting\n\n- [ ] `[page]` **Waiting, no id.**",
+        "## Queue\n\n- [ ] `[cpu]` **Untagged.** Writes `a.ts`.\n\n## Waiting\n\n- [ ] `[page]` **Waiting, no id.**",
       ),
     ).toStrictEqual({ entries: [], skipped: 2 });
   });
 
-  test("reads no items from a roadmap without a compute queue", () => {
+  test("reads no items from a page with no queue heading", () => {
     expect.hasAssertions();
 
     expect(parseComputeQueue("## Opening\n\n- [ ] `[cpu]` {elsewhere} — x")).toStrictEqual({ entries: [], skipped: 0 });

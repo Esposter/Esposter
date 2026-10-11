@@ -13,6 +13,7 @@ import { createKitState } from "#src/services/kit/createKitState";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { createParty } from "#src/services/party/createParty";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
@@ -60,6 +61,7 @@ describe(stepKit, () => {
           body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
           combatant: TRAVELER_COMBATANT,
           kitEffectState: { effects: [] },
+          party: createParty([TRAVELER_CHARACTER_ID]),
         },
       );
     };
@@ -139,6 +141,7 @@ describe(stepKit, () => {
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant: TRAVELER_COMBATANT,
       kitEffectState: { effects: [] },
+      party: createParty([TRAVELER_CHARACTER_ID]),
     };
     const step = (input: Partial<KitInput>) =>
       stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
@@ -181,6 +184,7 @@ describe(stepKit, () => {
         body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
         combatant: { ...TRAVELER_COMBATANT, elementalResonances: [Element.Anemo] },
         kitEffectState: { effects: [] },
+        party: createParty([TRAVELER_CHARACTER_ID]),
       },
     );
 
@@ -208,6 +212,7 @@ describe(stepKit, () => {
           body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
           combatant: TRAVELER_COMBATANT,
           kitEffectState: { effects: [] },
+          party: createParty([TRAVELER_CHARACTER_ID]),
         },
       );
     const actions = [press(), press(), press()];
@@ -305,7 +310,12 @@ describe(stepKit, () => {
           createStamina(STAMINA_MAX),
           stepSeconds,
           landedHits,
-          { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant: TRAVELER_COMBATANT, kitEffectState },
+          {
+            body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+            combatant: TRAVELER_COMBATANT,
+            kitEffectState,
+            party: createParty([TRAVELER_CHARACTER_ID]),
+          },
         );
       };
       step(true, 0);

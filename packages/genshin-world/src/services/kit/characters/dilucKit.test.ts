@@ -15,6 +15,7 @@ import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -63,13 +64,23 @@ describe("diluc kit", () => {
     expect.hasAssertions();
     const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
     const kitEffectState: KitEffectState = { effects: [] };
-    DILUC_KIT.elementalBurst.onStart?.({ body, combatant: createCombatant(3), kitEffectState });
+    DILUC_KIT.elementalBurst.onStart?.({
+      body,
+      combatant: createCombatant(3),
+      kitEffectState,
+      party: createParty([DILUC_CHARACTER_ID]),
+    });
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 8 },
     ]);
 
     kitEffectState.effects = [];
-    DILUC_KIT.elementalBurst.onStart?.({ body, combatant: createCombatant(4), kitEffectState });
+    DILUC_KIT.elementalBurst.onStart?.({
+      body,
+      combatant: createCombatant(4),
+      kitEffectState,
+      party: createParty([DILUC_CHARACTER_ID]),
+    });
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 12 },
       {
@@ -110,6 +121,7 @@ describe("diluc kit", () => {
           body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
           combatant: DILUC_COMBATANT,
           kitEffectState: { effects: [] },
+          party: createParty([DILUC_CHARACTER_ID]),
         },
       );
     };
@@ -158,6 +170,7 @@ describe("diluc kit", () => {
       body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
       combatant: createCombatant(0),
       kitEffectState,
+      party: createParty([DILUC_CHARACTER_ID]),
     });
     const phoenix = takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
     expect(phoenix.body.position.z).toBeCloseTo(-1, 5);

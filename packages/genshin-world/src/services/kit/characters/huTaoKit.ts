@@ -1,4 +1,5 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
@@ -8,11 +9,15 @@ import type { KitStance } from "#src/models/kit/KitStance";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { damagePartyMember } from "#src/services/party/damagePartyMember";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Hu Tao's proud skill groups, read at her talent level. The attack group holds the string's hits at 0 to 6, the charged
 // Attack at 7 and its stamina at 8, and the plunges' collision, low and high at 9, 10 and 11, with N5's two hits at 4 and
@@ -84,6 +89,8 @@ const PARAMITA_CHARGED_ANIMATION_FRAMES = 42;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/skill.go
 const SKILL_ANIMATION_FRAMES = 52;
 const PARAMITA_SOURCE = "hu-tao-paramita";
+// Guide to Afterlife's HP cost never takes Hu Tao below this much HP
+const GUIDE_MINIMUM_HP = 1;
 
 // Measured: gcsim v2.47.2 (MIT) hutao/burst.go, Spirit Soother's circle of radius 6 round the body at 66 frames of a 98-frame
 // Animation, with its cooldown and energy cost in the table
@@ -92,6 +99,23 @@ const SPIRIT_SOOTHER_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, 
 const SPIRIT_SOOTHER_HITMARK_FRAMES = 66;
 const SPIRIT_SOOTHER_ANIMATION_FRAMES = 98;
 
+// Measured: gcsim v2.47.2 (MIT) hutao/skill.go, Blood Blossom's status for 570 frames, ticking every 240 frames on the one
+// Enemy it is put on, each tick a Pyro hit of durability 25, which is 1U. The Paramita's charged attack puts it on the enemies
+// It hits, from gcsim's hutao/charge.go. The tick's hit lands a frame after the tick, as Tartaglia's riptide's do
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/skill.go
+const BLOOD_BLOSSOM_STATUS_ID = "hu-tao-blood-blossom";
+const BLOOD_BLOSSOM_SECONDS = 570 / 60;
+const BLOOD_BLOSSOM_INTERVAL_SECONDS = 240 / 60;
+const BLOOD_BLOSSOM_GAUGE = 1;
+const BLOOD_BLOSSOM_HITMARK_SECONDS = 1 / 60;
+// Blood Blossom on an enemy, which the Paramita's charged attack gives each enemy it hits
+const createBloodBlossomStatus = (): EnemyStatus => ({
+  damageTakenBonus: 0,
+  id: BLOOD_BLOSSOM_STATUS_ID,
+  nextTickSeconds: BLOOD_BLOSSOM_INTERVAL_SECONDS,
+  secondsRemaining: BLOOD_BLOSSOM_SECONDS,
+  tickIntervalSeconds: BLOOD_BLOSSOM_INTERVAL_SECONDS,
+});
 // Provisional: gcsim gives Hu Tao's strikes, charged attack, skill and burst no poise, so each deals none until the wiki's
 // Advanced properties are measured
 const NO_POISE_DAMAGE = 0;
@@ -100,9 +124,9 @@ const PLUNGE_SECONDS = 0.4;
 
 // Hu Tao's first kit, at talent level 1: a six-strike string with its seventh hit, a charged attack, a collision and two
 // Plunges, and Guide to Afterlife's Paramita Papilio stance. It infuses her attacks with Pyro and adds ATK from her Max HP
-// It lasts its seconds, and Spirit Soother's hit. Her multipliers are read from her proud skill groups. Her HP cost, the burst's
-// Half HP hit and heal, Blood Blossom, her passives and her constellations are not built, as the kit's actions reach no
-// Party HP and no status of the enemy yet
+// It lasts its seconds, and Spirit Soother's hit with its half HP variant. Her multipliers are read from her proud skill
+// Groups. Her HP cost is paid from the party, and Blood Blossom is put on the enemies the Paramita's charged attack hits and
+// Ticks on each. Spirit Soother's heal, her passives and her constellations are not built
 export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, HU_TAO_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -125,6 +149,16 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const normalAttacks = STANDARD_STRIKES.map((strike) => createStrikeAction(strike));
   const paramitaNormalAttacks = PARAMITA_STRIKES.map((strike) => createStrikeAction(strike));
 
+  // Blood Blossom's tick, a Pyro hit on the one enemy it is put on, priced by Hu Tao's skill multiplier at index 2
+  const bloodBlossomHit: KitHit = {
+    element: Element.Pyro,
+    gauge: BLOOD_BLOSSOM_GAUGE,
+    hitArea: circle(0),
+    hitmarkSeconds: BLOOD_BLOSSOM_HITMARK_SECONDS,
+    poiseDamage: NO_POISE_DAMAGE,
+    talentMultiplier: skillTalentMultiplier(2),
+  };
+
   const chargedAttack: KitAction = {
     hits: [
       {
@@ -141,6 +175,7 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     hits: [
       {
         hitArea: CHARGED_HIT_AREA,
+        enemyStatus: createBloodBlossomStatus,
         hitmarkSeconds: PARAMITA_CHARGED_HITMARK_FRAMES / 60,
         poiseDamage: NO_POISE_DAMAGE,
         talentMultiplier: attackTalentMultiplier(7),
@@ -150,19 +185,21 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     targetingArea: STRIKE_TARGETING_AREA,
   };
 
-  const spiritSoother: KitAction = {
+  const createSpiritSoother = (talentMultiplier: number): KitAction => ({
     hits: [
       {
         element: Element.Pyro,
         hitArea: SPIRIT_SOOTHER_HIT_AREA,
         hitmarkSeconds: SPIRIT_SOOTHER_HITMARK_FRAMES / 60,
         poiseDamage: NO_POISE_DAMAGE,
-        talentMultiplier: burstTalentMultiplier(0),
+        talentMultiplier,
       },
     ],
     seconds: SPIRIT_SOOTHER_ANIMATION_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
-  };
+  });
+  const spiritSoother = createSpiritSoother(burstTalentMultiplier(0));
+  const lowHealthSpiritSoother = createSpiritSoother(burstTalentMultiplier(1));
 
   // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in its
   // Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her Max HP
@@ -193,9 +230,22 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     chargedAttack,
     chargedAttackStamina: attackTalentMultiplier(8),
     elementalBurst: spiritSoother,
+    elementalBurstVariant: {
+      action: lowHealthSpiritSoother,
+      checkIsActive: ({ combatant, party }) =>
+        getPartyMember(party, combatant.characterId).healthShare <= burstTalentMultiplier(6),
+    },
     elementalSkill: {
       hits: [],
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ combatant, kitEffectState, party }) => {
+        // Guide to Afterlife takes its HP share of her current HP, but never below GUIDE_MINIMUM_HP
+        const { healthShare } = getPartyMember(party, combatant.characterId);
+        const minimumHealthShare = GUIDE_MINIMUM_HP / combatant.attributes.maxHealth;
+        const lostHealthShare = Math.max(
+          0,
+          Math.min(skillTalentMultiplier(0) * healthShare, healthShare - minimumHealthShare),
+        );
+        damagePartyMember(party, combatant.characterId, lostHealthShare);
         addKitEffect(kitEffectState, createParamitaStance(combatant.characterId));
         addKitEffect(kitEffectState, createPyroInfusion(combatant.characterId));
         addKitEffect(kitEffectState, {
@@ -235,6 +285,13 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
+    onKitEvent: (event, { combatant, kitEffectState }) => {
+      if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
+      const tick = createKitSummon({ facing: 0, height: 0, position: event.enemy.position }, combatant, [
+        bloodBlossomHit,
+      ]);
+      addKitEffect(kitEffectState, { ...tick, target: event.enemy });
+    },
     plungeCollision: {
       hitArea: createFanReach(360, 1),
       hitmarkSeconds: 0,

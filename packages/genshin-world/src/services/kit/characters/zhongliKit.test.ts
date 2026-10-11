@@ -35,7 +35,7 @@ describe(createZhongliKit, () => {
   // The summons an action's start casts, as the kit's effects hold them
   const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState });
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ZHONGLI_CHARACTER_ID]) });
     return kitEffectState.effects.filter((effect) => effect.kind === "summon");
   };
 
@@ -94,7 +94,12 @@ describe(createZhongliKit, () => {
       const context = { activeCombatant: combatant, body, party: createParty([ZHONGLI_CHARACTER_ID]) };
       const kitEffectState: KitEffectState = { effects: [] };
       for (let press = 0; press < 3; press++) {
-        ZHONGLI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+        ZHONGLI_KIT.elementalSkill.onStart?.({
+          body: kitBody,
+          combatant,
+          kitEffectState,
+          party: createParty([ZHONGLI_CHARACTER_ID]),
+        });
         stepKitEffects(kitEffectState, 1, context);
       }
 
@@ -109,9 +114,14 @@ describe(createZhongliKit, () => {
     const combatant = createZhongliCombatant(0, 0);
     const context = { activeCombatant: combatant, body, party: createParty([ZHONGLI_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    ZHONGLI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    ZHONGLI_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([ZHONGLI_CHARACTER_ID]),
+    });
     stepKitEffects(kitEffectState, 1, context);
-    holdAction.onStart?.({ body: kitBody, combatant, kitEffectState });
+    holdAction.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([ZHONGLI_CHARACTER_ID]) });
     const cutStrikes = stepKitEffects(kitEffectState, 0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
@@ -141,7 +151,12 @@ describe(createZhongliKit, () => {
       expect.hasAssertions();
       const combatant = createZhongliCombatant(0, constellationCount);
       const kitEffectState: KitEffectState = { effects: [] };
-      ZHONGLI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      ZHONGLI_KIT.elementalBurst.onStart?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([ZHONGLI_CHARACTER_ID]),
+      });
       const meteor = takeOne(kitEffectState.effects.filter((effect) => effect.kind === "summon"));
 
       expect(meteor.body.position).toStrictEqual({ x: 0, z: -5 });

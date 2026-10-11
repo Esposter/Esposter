@@ -1,4 +1,5 @@
 import type { ProducerStaleness } from "#src/models/producerStamp/ProducerStaleness";
+import type { Except } from "type-fest";
 
 import { PRODUCER_STALE_WINDOW_DAYS } from "#src/services/producerStamp/constants";
 import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
@@ -18,7 +19,7 @@ const checkIsKnown = (commit: string): boolean =>
     () => false,
   );
 
-const listRecentCommits = (producerPaths: string[]): Omit<ProducerStaleness, "stamp"> => ({
+const listRecentCommits = (producerPaths: string[]): Except<ProducerStaleness, "stamp"> => ({
   commits: readCommitLines(["HEAD", `--since=${PRODUCER_STALE_WINDOW_DAYS} days ago`, "--", ...producerPaths]),
   isApproximate: true,
 });
@@ -26,7 +27,7 @@ const listRecentCommits = (producerPaths: string[]): Omit<ProducerStaleness, "st
 // The commits to a producer's paths since its stamp's commit, each `<short sha> <subject>`. A commit still on the branch
 // Is listed from its own ancestry. One the queue rewrote is found again by its subject, and its newer commits are the
 // Ones above that match. One git does not know at all lists the window's commits, as an approximation
-export const listProducerCommits = (commit: string, producerPaths: string[]): Omit<ProducerStaleness, "stamp"> => {
+export const listProducerCommits = (commit: string, producerPaths: string[]): Except<ProducerStaleness, "stamp"> => {
   if (!checkIsKnown(commit)) return listRecentCommits(producerPaths);
   if (checkIsAncestor(commit, "HEAD"))
     return { commits: readCommitLines([`${commit}..HEAD`, "--", ...producerPaths]), isApproximate: false };

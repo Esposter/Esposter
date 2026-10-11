@@ -227,6 +227,33 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "HudScreen",
     seconds: 30,
   },
+  // The English PC client's skill and burst at 1080 high, from the same public recording at 20 seconds, before it moves
+  // To the phone: Chongyun on the field with his burst charged, scored over the keys' corner clear of the gadget above
+  // And the UID below. Only the field member's figures change, so the rest of the frame's HUD is left out of the region
+  "hud-world-keys": {
+    capture: "world-pickup.mkv",
+    isBackdrop: true,
+    props: {
+      isTouch: false,
+      member: {
+        burstCooldown: 0,
+        burstCooldownSeconds: 0,
+        characterId: 10_000_036,
+        element: "Ice",
+        energy: 40,
+        energyCost: 40,
+        health: 13_056,
+        level: 80,
+        maxHealth: 17_065,
+        skillCooldown: 0,
+        skillCooldownSeconds: 0,
+        weaponType: "WEAPON_CLAYMORE",
+      },
+    },
+    region: { height: 148, width: 250, x: 1640, y: 905 },
+    screen: "HudScreen",
+    seconds: 20,
+  },
   // The English mobile client's world HUD from the public recording of a session at 70 seconds, played on a phone, its
   // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
   // Recording's own frame, so a piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop`

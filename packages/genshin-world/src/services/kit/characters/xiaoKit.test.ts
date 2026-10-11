@@ -50,9 +50,9 @@ describe(createXiaoKit, () => {
     const combatant = createXiaoCombatant(0);
     const party = createParty([XIAO_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+    XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     const dashStrikes = stepEffects(kitEffectState, 0.2, { activeCombatant: combatant, body, party });
-    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     const multipliers = [
       ...XIAO_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(XIAO_KIT.chargedAttack.hits).talentMultiplier,
@@ -81,7 +81,7 @@ describe(createXiaoKit, () => {
       const party = createParty([XIAO_CHARACTER_ID]);
       const context = { activeCombatant: combatant, body, party };
       const kitEffectState: KitEffectState = { effects: [] };
-      XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+      XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       // Tamer of Demons gives its last 5% at 12 seconds, and the burst stands until 57 frames past 15
       stepEffects(kitEffectState, 13, context);
       const buff = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
@@ -99,7 +99,7 @@ describe(createXiaoKit, () => {
     const party = createParty([XIAO_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const travelerCombatant: Combatant = { ...combatant, characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
     const kitEffectState: KitEffectState = { effects: [] };
-    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     // Xiao's HP drains at 1.95 and 2.95 seconds, and he leaves the field before the third
     stepEffects(kitEffectState, 3, { activeCombatant: combatant, body, party });
     stepEffects(kitEffectState, 13, { activeCombatant: travelerCombatant, body, party });
@@ -121,7 +121,7 @@ describe(createXiaoKit, () => {
       const kitEffectState: KitEffectState = { effects: [] };
       const waitSeconds = [1, 1, 1, 9, 1];
       const damageBonuses = waitSeconds.flatMap((seconds) => {
-        XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState });
+        XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
         return stepKitEffects(kitEffectState, seconds, context).map(({ hit }) => hit.damageBonus);
       });
 

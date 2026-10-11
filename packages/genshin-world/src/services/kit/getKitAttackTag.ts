@@ -10,7 +10,8 @@ export const getKitAttackTag = (kit: Kit, hit: KitHit): AttackTag | undefined =>
   if (kit.chargedAttack.hits.includes(hit)) return AttackTag.ChargedAttack;
   if (hit === kit.plungeCollision || kit.lowPlunge.hits.includes(hit) || kit.highPlunge.hits.includes(hit))
     return AttackTag.PlungingAttack;
-  if (kit.elementalBurst.hits.includes(hit)) return AttackTag.ElementalBurst;
+  const burstActions = [kit.elementalBurst, ...(kit.elementalBurstVariant ? [kit.elementalBurstVariant.action] : [])];
+  if (burstActions.some(({ hits }) => hits.includes(hit))) return AttackTag.ElementalBurst;
   const skillActions = [
     kit.elementalSkill,
     ...(kit.elementalSkillChain?.followUps ?? []),

@@ -10,6 +10,8 @@ export interface KitField {
   cooldownMultiplier?: number;
   // The name its character's kit finds it by among the team's effects, if the kit reads it again
   id?: string;
+  // Whether the field moves with the body on the field, its centre standing where that body stands on each step
+  isFollowing?: true;
   kind: "field";
   nextTickSeconds: number;
   onTick: (tick: KitFieldTick) => void;

@@ -10,8 +10,8 @@ await runMain(
       description: "Lists the code two files share, longest first, with tests and import blocks left out",
       name: "ai:sweep:duplicate-code",
     },
-    async run() {
-      const findings = await readDuplicateCodeFindings();
+    run() {
+      const findings = readDuplicateCodeFindings();
       for (const finding of findings) console.info(getDuplicateCodeFindingLine(finding));
       console.info(`${findings.length} findings`);
     },

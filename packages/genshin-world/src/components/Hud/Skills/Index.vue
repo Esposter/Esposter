@@ -47,6 +47,8 @@ const {
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
+// A key's cap reads its letter, the physical code's own
+const getKeyCapText = (code: string) => code.replace(/^Key/u, "");
 const skillGlyphs = computed(() => CharacterIdSkillGlyphsMap[characterId]);
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
@@ -63,10 +65,10 @@ onUnmounted(() => {
 <template>
   <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts its
        Seconds down to a tenth, each carries its icon, and the burst fills with its energy from the foot in its element's
-       Colour, its icon dim until the whole disc is in that colour once full.
+       Colour, its icon dim until the whole disc is in that colour once full. The keys' layout caps each with its key.
        Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a focused one's,
        Stopped before the world's own keys hear them -->
-  <div class="skills" :class="{ touch: isTouch }">
+  <div class="skills" :class="isTouch ? 'touch' : 'keys'">
     <button
       class="skill"
       :aria-label="gameText[GameTextKey.ElementalSkill]"
@@ -101,30 +103,22 @@ onUnmounted(() => {
       <HudGlyph v-if="skillGlyphs" class="glyph" :glyph-layers="skillGlyphs.burst" />
       <span v-if="burstCooldown > 0" class="cooldown">{{ burstCooldown.toFixed(1) }}</span>
     </button>
+    <template v-if="!isTouch">
+      <kbd class="key skill-key">{{ getKeyCapText(skillCode) }}</kbd>
+      <kbd class="key burst-key">{{ getKeyCapText(burstCode) }}</kbd>
+    </template>
   </div>
 </template>
 
 <style scoped>
-/* Provisional: the keys' layout, its buttons' sizes, places, colours, sweep and glow, measured off a recording of the
-   English PC client's world HUD in a fight */
-.skills {
-  --skill-glyph-share: 1.355;
-  --burst-glyph-share: 1.048;
-
-  display: flex;
-  align-items: flex-end;
-  gap: calc(var(--unit) * 28);
-}
-
 .skill,
 .burst {
-  position: relative;
+  position: absolute;
   display: grid;
   place-items: center;
   padding: 0;
-  border: calc(var(--unit) * 3) solid rgb(236 229 216 / 0.85);
+  border: none;
   border-radius: 50%;
-  background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), rgb(23 29 41 / 0.45) 0);
   color: #fff;
   cursor: inherit;
   font: inherit;
@@ -132,17 +126,8 @@ onUnmounted(() => {
   touch-action: none;
 }
 
-.skill {
-  --glyph-size: calc(var(--unit) * 76 * var(--skill-glyph-share));
-
-  width: calc(var(--unit) * 76);
-  height: calc(var(--unit) * 76);
-}
-
-/* Each icon's square is centred on its disc, its side a share of the disc's measured in `hud-world-pickup` from the
-   Mark's box against its icon's: the skill's 1.355, Skyward Sonnet's 84 by 90 pixel mark being 65 by 70 of its icon's
-   128, and the burst's 1.048, Wind's Grand Ode's inner circle 37.5 pixels across against its icon's 51.5. The burst's
-   Icon is white at 0.14 over its disc until charged, as that recording shows it at 24% energy */
+/* Each icon's square is centred on its disc, its side a share of the disc's measured from the mark's box against its
+   Icon's. The burst's icon is white at 0.14 over its disc until charged, as `hud-world-pickup` shows it at 24% energy */
 .glyph {
   position: absolute;
   top: 50%;
@@ -166,34 +151,79 @@ onUnmounted(() => {
    Solved at, and a member with no element fills in white */
 .burst {
   --burst-fill: color-mix(in srgb, var(--burst-bright, #fff) 33%, transparent);
-  --glyph-size: calc(var(--unit) * 104 * var(--burst-glyph-share));
-
-  width: calc(var(--unit) * 104);
-  height: calc(var(--unit) * 104);
-  background:
-    conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), transparent 0),
-    linear-gradient(to top, var(--burst-fill) calc(var(--energy) * 100%), rgb(23 29 41 / 0.45) 0);
 }
 
-/* Charged, the disc is its element's charged tone, ringed and lit in its bright one */
+/* Charged, the disc is its element's charged tone, haloed in half its bright one, as `hud-world-keys` shows the halo
+   Some 16 wide and faint */
 .burst.ready {
-  border-color: var(--burst-bright, #fff);
+  box-shadow: 0 0 calc(var(--unit) * 16) color-mix(in srgb, var(--burst-bright, #fff) 50%, transparent);
+}
+
+/* The keys' skill and burst as `hud-world-keys` shows them at 1080 high, measured from the right edge and the foot of
+   `GrpActionBtn`, which on a 16:9 screen are the screen's: the skill's disc of diameter 74 centred 228.5 in and 92 up,
+   Darkening what lies under it by a quarter, and the burst's of diameter 112 at 101 in and 109.5 up, ringed 6 wide in
+   Its element's bright tone once charged. Under each its key's cap, 30 by 25 and white, 28.5 up. Each icon's
+   Square is 1.29 of the skill's disc and 1.066 of the burst's, Chonghua's Layered Frost's white 36 by 58 pixels against
+   Its icon's 47 by 80 and Cloud-Parting Star's 77 by 77 against its icon's 82 by 83. Provisional: the uncharged burst,
+   Which no frame of the keys shows, drawn as the skill's disc filling as the touch layout's does */
+.keys .skill {
+  --glyph-size: calc(var(--unit) * 74 * 1.29);
+
+  right: calc(var(--unit) * 191.5);
+  bottom: calc(var(--unit) * 55);
+  width: calc(var(--unit) * 74);
+  height: calc(var(--unit) * 74);
+  background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), rgb(0 0 0 / 0.26) 0);
+}
+
+.keys .burst {
+  --glyph-size: calc(var(--unit) * 112 * 1.066);
+
+  right: calc(var(--unit) * 45);
+  bottom: calc(var(--unit) * 53.5);
+  width: calc(var(--unit) * 112);
+  height: calc(var(--unit) * 112);
+  background:
+    conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), transparent 0),
+    linear-gradient(to top, var(--burst-fill) calc(var(--energy) * 100%), rgb(0 0 0 / 0.26) 0);
+}
+
+.keys .burst.ready {
+  border: calc(var(--unit) * 6) solid var(--burst-bright, #fff);
   background: var(--burst-charged, #fff);
-  box-shadow: 0 0 calc(var(--unit) * 16) var(--burst-bright, #fff);
+}
+
+.key {
+  position: absolute;
+  bottom: calc(var(--unit) * 28.5);
+  display: grid;
+  width: calc(var(--unit) * 30);
+  height: calc(var(--unit) * 25);
+  place-items: center;
+  border-radius: calc(var(--unit) * 3);
+  background: #fdfdfd;
+  color: #2e2b30;
+  font-family: inherit;
+  font-size: calc(var(--unit) * 20);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.skill-key {
+  right: calc(var(--unit) * 213.5);
+}
+
+.burst-key {
+  right: calc(var(--unit) * 86.5);
 }
 
 /* The touch layout's skill and burst as `hud-world-pickup` shows them, each a disc as the action buttons' are, measured
    In that recording's pixels from the right edge and the foot of `GrpActionBtn` at 1080 / 934 units a pixel: the
-   Skill's of radius 61 centred 482.6 in and 129 up, and the burst's of radius 44.5 at 629.1 in and 93.5 up. Provisional:
-   Each one's own icon, the character's */
-.touch .skill,
-.touch .burst {
-  position: absolute;
-  border: none;
-}
-
+   Skill's of radius 61 centred 482.6 in and 129 up, and the burst's of radius 44.5 at 629.1 in and 93.5 up. Each icon's
+   Square is 1.355 of the skill's disc and 1.048 of the burst's, Skyward Sonnet's 84 by 90 pixel mark being 65 by 70 of
+   Its icon's 128 and Wind's Grand Ode's inner circle 37.5 pixels across against its icon's 51.5 */
 .touch .skill {
-  --glyph-size: calc(var(--unit) * 141.1 * var(--skill-glyph-share));
+  --glyph-size: calc(var(--unit) * 141.1 * 1.355);
 
   right: calc(var(--unit) * 487.5);
   bottom: calc(var(--unit) * 78.6);
@@ -203,7 +233,7 @@ onUnmounted(() => {
 }
 
 .touch .burst {
-  --glyph-size: calc(var(--unit) * 102.9 * var(--burst-glyph-share));
+  --glyph-size: calc(var(--unit) * 102.9 * 1.048);
 
   right: calc(var(--unit) * 676);
   bottom: calc(var(--unit) * 56.7);

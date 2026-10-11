@@ -36,7 +36,12 @@ const readFirstFieldTick = (
   const party = createParty([BENNETT_CHARACTER_ID, MONA_CHARACTER_ID]);
   getPartyMember(party, fieldCharacterId).healthShare = healthShare;
   const kitEffectState: KitEffectState = { effects: [] };
-  BENNETT_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+  BENNETT_KIT.elementalBurst.onStart?.({
+    body: { facing: 0, height: 0, position: body },
+    combatant,
+    kitEffectState,
+    party,
+  });
   stepKitEffects(kitEffectState, 34 / 60, {
     activeCombatant: { ...combatant, characterId: fieldCharacterId, weaponType: fieldWeaponType },
     body,
@@ -87,6 +92,7 @@ describe("bennett kit", () => {
       body: { facing: 0, height: 0, position: body },
       combatant: { ...createBennettCombatant(), ascension },
       kitEffectState: { effects },
+      party: createParty([BENNETT_CHARACTER_ID]),
     };
     for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
       stepKit(
@@ -132,7 +138,12 @@ describe("bennett kit", () => {
     const party = createParty([BENNETT_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    BENNETT_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    BENNETT_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
 
     // The first tick, at 34 frames, gives the ATK bonus of 56% of Bennett's base ATK, and no heal
     stepKitEffects(kitEffectState, 34 / 60, { activeCombatant: combatant, body, party });

@@ -23,5 +23,5 @@ export const stepKitSummon = (summon: KitSummon, stepSeconds: number, body: Grou
   }
   return summon.hits
     .filter(({ hitmarkSeconds }) => hitmarkSeconds > fromSeconds && hitmarkSeconds <= summon.elapsedSeconds)
-    .map((hit) => ({ body: summon.body, combatant: summon.combatant, hit }));
+    .map((hit) => ({ body: summon.body, combatant: summon.combatant, hit, target: summon.target }));
 };

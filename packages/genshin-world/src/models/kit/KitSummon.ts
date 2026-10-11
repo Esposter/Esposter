@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -20,6 +21,8 @@ export interface KitSummon {
   // With the normal attacks of whoever is on the field
   onNormalAttackStart?: (context: KitStepContext) => void;
   secondsRemaining: number;
+  // The one enemy its hits land on, instead of each enemy their areas reach, if it lands on one
+  target?: Enemy;
   // The seconds from its cast it appears on the field at, if not at once, which a kit asking whether it stands waits for
   spawnSeconds?: number;
   travel?: { metresPerSecond: number; startSeconds: number };

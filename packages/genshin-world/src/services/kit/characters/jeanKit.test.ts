@@ -66,7 +66,12 @@ describe(createJeanKit, () => {
     partyMember.healthShare = 0.1;
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    JEAN_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    JEAN_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
     const context = { activeCombatant: combatant, body, party };
 
     // The activation, at 40 frames, heals by 251.2% of Jean's ATK plus 1540, and lands the entering damage of 78.4%
@@ -104,7 +109,12 @@ describe(createJeanKit, () => {
     const party = createParty([JEAN_CHARACTER_ID]);
     const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    JEAN_KIT.elementalBurst.onStart?.({ body: { facing: 0, height: 0, position: body }, combatant, kitEffectState });
+    JEAN_KIT.elementalBurst.onStart?.({
+      body: { facing: 0, height: 0, position: body },
+      combatant,
+      kitEffectState,
+      party,
+    });
     stepKitEffects(kitEffectState, 40 / 60, { activeCombatant: combatant, body, party });
 
     expect(getPartyMember(party, JEAN_CHARACTER_ID).energy).toBe(energy);
@@ -158,7 +168,12 @@ describe(createJeanKit, () => {
       };
       const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
       const kitEffectState: KitEffectState = { effects: [] };
-      const context = { body, combatant: createJeanCombatant(0, constellationCount), kitEffectState };
+      const context = {
+        body,
+        combatant: createJeanCombatant(0, constellationCount),
+        kitEffectState,
+        party: createParty([JEAN_CHARACTER_ID]),
+      };
       for (let step = 0; step < 12; step++)
         stepKit(kitState, JEAN_KIT, input, partyMember, stamina, 0.1, landedHits, context);
       const action = stepKit(

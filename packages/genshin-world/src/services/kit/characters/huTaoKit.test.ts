@@ -1,6 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,11 +10,18 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { HU_TAO_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHuTaoKit } from "#src/services/kit/characters/huTaoKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const HU_TAO_KIT = createHuTaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [HU_TAO_CHARACTER_ID]));
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createHuTaoCombatant = (): Combatant => ({
   ascension: 0,
@@ -25,17 +34,22 @@ const createHuTaoCombatant = (): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
+// A party with Hu Tao on the field at the given share of her Max HP
+const createHuTaoParty = (healthShare: number) => {
+  const party = createParty([HU_TAO_CHARACTER_ID]);
+  getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare = healthShare;
+  return party;
+};
+
 describe(createHuTaoKit, () => {
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("guide to Afterlife holds the Paramita stance, its Pyro infusion and an ATK share of her Max HP", () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    HU_TAO_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-    });
+    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party: createHuTaoParty(1) });
 
     const buff = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
     if (!buff) throw new Error("Guide to Afterlife gave no ATK buff");
@@ -45,5 +59,75 @@ describe(createHuTaoKit, () => {
     expect(infusion?.element).toBe(Element.Pyro);
     expect(buff.attribute).toBe(Attribute.Attack);
     expect(buff.amount / combatant.attributes.maxHealth).toBeCloseTo(0.03841);
+  });
+
+  test("guide to Afterlife takes its HP share of Hu Tao's current HP", () => {
+    expect.hasAssertions();
+    const party = createHuTaoParty(1);
+
+    HU_TAO_KIT.elementalSkill.onStart?.({
+      body: kitBody,
+      combatant: createHuTaoCombatant(),
+      kitEffectState: { effects: [] },
+      party,
+    });
+
+    expect(getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare).toBeCloseTo(0.7);
+  });
+
+  test("guide to Afterlife never takes Hu Tao below 1 HP", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    // At 1.2 HP, 30% of her HP would leave her under 1 HP, so the cost stops at 1
+    const party = createHuTaoParty(1.2 / combatant.attributes.maxHealth);
+
+    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState: { effects: [] }, party });
+
+    const { healthShare } = getPartyMember(party, HU_TAO_CHARACTER_ID);
+    expect(healthShare * combatant.attributes.maxHealth).toBeCloseTo(1);
+  });
+
+  test.each([
+    [0.5, true],
+    [0.6, false],
+  ])("the burst's low HP variant is played at %s of HP", (healthShare, isActive) => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+
+    expect(
+      HU_TAO_KIT.elementalBurstVariant?.checkIsActive({
+        body: kitBody,
+        combatant,
+        kitEffectState: { effects: [] },
+        party: createHuTaoParty(healthShare),
+      }),
+    ).toBe(isActive);
+  });
+
+  test("the Paramita's charged attack puts Blood Blossom on the enemies it hits, and its tick strikes the one enemy", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    HU_TAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party: createHuTaoParty(1) });
+    const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
+    const bloodBlossom = stance?.actions.chargedAttack.hits[0]?.enemyStatus?.(combatant);
+    if (!bloodBlossom) throw new Error("the Paramita's charged attack gave no Blood Blossom");
+    const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses: [bloodBlossom] };
+
+    // Each tick falls due one interval on, which a step of that many seconds reaches
+    for (const event of tickEnemyStatuses([enemy], bloodBlossom.tickIntervalSeconds ?? 0))
+      HU_TAO_KIT.onKitEvent?.(event, {
+        activeCombatant: combatant,
+        body: kitBody,
+        characterIdCombatantMap: new Map([[HU_TAO_CHARACTER_ID, combatant]]),
+        combatant,
+        enemyMap: new Map([[enemy.id, enemy]]),
+        kitEffectState,
+        party: createHuTaoParty(1),
+        random: () => 0,
+      });
+
+    const tick = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    expect(tick?.target).toBe(enemy);
   });
 });

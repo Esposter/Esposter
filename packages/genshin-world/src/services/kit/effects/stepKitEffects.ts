@@ -20,17 +20,35 @@ import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
 export const stepKitEffects = (
   kitEffectState: KitEffectState,
   stepSeconds: number,
-  context: { activeCombatant: Combatant; body: GroundPoint; enemyMap?: Map<string, Enemy>; party: Party },
+  context: {
+    activeCombatant: Combatant;
+    body: GroundPoint;
+    characterIdCombatantMap?: Map<number, Combatant>;
+    enemyMap?: Map<string, Enemy>;
+    party: Party;
+  },
   expiredEffects: KitEffect[] = [],
 ): KitStrike[] => {
-  const { activeCombatant, body, enemyMap = new Map<string, Enemy>(), party } = context;
+  const {
+    activeCombatant,
+    body,
+    characterIdCombatantMap = new Map<number, Combatant>(),
+    enemyMap = new Map<string, Enemy>(),
+    party,
+  } = context;
   for (const effect of kitEffectState.effects) {
     effect.secondsRemaining -= stepSeconds;
     if (effect.kind === "stance") effect.elapsedSeconds += stepSeconds;
   }
   for (const effect of kitEffectState.effects)
     if (effect.kind === "field")
-      stepKitField(effect, stepSeconds, body, { activeCombatant, enemyMap, kitEffectState, party });
+      stepKitField(effect, stepSeconds, body, {
+        activeCombatant,
+        characterIdCombatantMap,
+        enemyMap,
+        kitEffectState,
+        party,
+      });
   const strikes = kitEffectState.effects.flatMap((effect) => {
     if (effect.kind === "summon") return stepKitSummon(effect, stepSeconds, body);
     if (effect.kind === "taunt") return stepKitTaunt(effect);

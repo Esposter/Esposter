@@ -3,17 +3,17 @@ import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/get
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-describe(getDuplicateCodeFindings, () => {
-  const createClone = (startLine: number, endLine: number) => {
-    const duplication = (sourceId: string) => ({
-      end: { line: endLine },
-      range: [0, 0] as [number, number],
-      sourceId: join(REPOSITORY_ROOT, sourceId),
-      start: { line: startLine },
-    });
-    return { duplicationA: duplication("a"), duplicationB: duplication("b"), format: "typescript" };
-  };
+const createClone = (startLine: number, endLine: number) => {
+  const duplication = (sourceId: string) => ({
+    end: { line: endLine },
+    range: [0, 0] as [number, number],
+    sourceId: join(REPOSITORY_ROOT, sourceId),
+    start: { line: startLine },
+  });
+  return { duplicationA: duplication("a"), duplicationB: duplication("b"), format: "typescript" };
+};
 
+describe(getDuplicateCodeFindings, () => {
   test("reads a clone whose lines are import declarations in both files as no finding", () => {
     expect.hasAssertions();
 

@@ -45,7 +45,12 @@ describe(createSucroseKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const castEffects = (combatant: Combatant): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    SUCROSE_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    SUCROSE_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([SUCROSE_CHARACTER_ID]),
+    });
     return kitEffectState.effects;
   };
 

@@ -7,6 +7,9 @@ import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImpo
 import { getOrCreate } from "@esposter/shared";
 import { relative, sep } from "node:path";
 
+const getPath = ({ sourceId, start }: DuplicateCodeClone["duplicationA"]) =>
+  `${relative(REPOSITORY_ROOT, sourceId).split(sep).join("/")}:${start.line}`;
+
 // Every clone jscpd found, as a finding, except the ones whose lines are import declarations in both files. `readSource`
 // Is passed in so the filter reads the same text the clone was found in, and a test can supply it.
 export const getDuplicateCodeFindings = (
@@ -16,8 +19,6 @@ export const getDuplicateCodeFindings = (
   const sourceIdNonImportLinesMap = new Map<string, Set<number>>();
   const readNonImportLines = (sourceId: string) =>
     getOrCreate(sourceIdNonImportLinesMap, sourceId, () => getNonImportLines(readSource(sourceId)));
-  const getPath = ({ sourceId, start }: DuplicateCodeClone["duplicationA"]) =>
-    `${relative(REPOSITORY_ROOT, sourceId).split(sep).join("/")}:${start.line}`;
   const findings: DuplicateCodeFinding[] = [];
   for (const { duplicationA, duplicationB } of clones) {
     const isImportOnly =
