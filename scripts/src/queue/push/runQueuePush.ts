@@ -4,9 +4,7 @@ import { PUSH_LOCK_PATH, PUSH_PENDING_PATH } from "#src/queue/push/constants";
 import { markPushPending } from "#src/queue/push/markPushPending";
 import { releasePushLock } from "#src/queue/push/releasePushLock";
 import { takePushPending } from "#src/queue/push/takePushPending";
-import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
-import { releaseProcessLock } from "#src/services/shared/releaseProcessLock";
-import { getResultAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 
 // Runs one push under the lock, shared by the post-commit hook and a manual call. A commit that lands while a push holds
@@ -23,14 +21,16 @@ export const runQueuePush = async (
       if (!acquireProcessLock(lockPath)) return QueuePushOutcome.Queued;
     }
 
-    // oxlint-disable-next-line no-await-in-loop -- Each pass starts only once the one before it has pushed and let go of the lock
-    const result = await getResultAsync(() => {
-      takePushPending(pendingPath);
-
-      outcome = await push();
-    } finally {
-      releasePushLock(lockPath);
-    }
+    // oxlint-disable-next-line no-await-in-loop -- one push at a time: a pending pass runs only after the push before it lets go
+    const outcome = await withFinalizerAsync(
+      async () => {
+        takePushPending(pendingPath);
+        return push();
+      },
+      () => {
+        releasePushLock(lockPath);
+      },
+    );
 
     if (!existsSync(pendingPath)) return outcome;
   }
