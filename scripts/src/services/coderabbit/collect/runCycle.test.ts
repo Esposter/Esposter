@@ -37,6 +37,7 @@ import {
   MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
   MOVED_BRANCH_RETRY_DELAY_SECONDS,
+  OPEN_WINDOW_CAP,
   OPENED_WINDOW_READ_DELAY_SECONDS,
   PASS_BUCKET,
   PENDING_BUCKET,
@@ -1739,7 +1740,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
+      reason: `no window opens — the hourly ceiling, the open-window cap or the stacking guard holds for ${DEVELOP_BRANCH}`,
       retriggerDelaySeconds: Temporal.Duration.from({
         milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
       }).total("seconds"),
@@ -1748,24 +1749,25 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  // The hour is the one budget, so the plan's figure of windows open is no reason to sleep through the slot it gives back
-  test("wakes the cycle when the hour turns over with the plan's figure of windows open", async () => {
+  // Only the bottom window merges, so a window cut over a full stack would wait out the merges below it while its review
+  // Spent a slot the bottom's own review is refused: the queue waits on the stack to drain instead
+  test("opens nothing over a stack at the open-window cap, though the hour has its slots left", async () => {
     expect.hasAssertions();
 
-    const nowMs = Temporal.Duration.from({ minutes: 50 }).total("milliseconds");
+    const nowMs = WINDOW_OPENING_WINDOW_MS;
     vi.useFakeTimers({ now: nowMs, toFake: ["Date"] });
     const configSha = publish(MAIN_BRANCH, commitFile(".coderabbit.yaml", stackingConfig));
     publish(DEVELOP_BRANCH, configSha);
-    publish(getWindowBranch(REVIEWS_PER_HOUR - 1), configSha);
+    publish(getWindowBranch(OPEN_WINDOW_CAP - 1), configSha);
     publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    const windowNumbers = Array.from({ length: REVIEWS_PER_HOUR }, (_value, index) => index);
+    const windowNumbers = Array.from({ length: OPEN_WINDOW_CAP }, (_value, index) => index);
     answerGh(
       windowNumbers.map((number) => ({
         ...getWindowPullRequest(WindowPullRequestState.Open, number),
         baseRefName: number === 0 ? MAIN_BRANCH : getWindowBranch(number - 1),
       })),
     );
-    // The bottom review started a moment ago, so its pending wait ends after the hour turns over
+    // The bottom review started a moment ago, so its pending wait is the one wake the run states
     const answerRest = runGh.getMockImplementation();
     runGh.mockImplementation((args) =>
       args[0] === "pr" && args[1] === "view" ? new Date(nowMs).toISOString() : (answerRest?.(args) ?? ""),
@@ -1779,9 +1781,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         `pull request #${pullRequest} — the review is running; asked for once it has waited until ${new Date(nowMs + PENDING_CHECK_WAIT_MS).toISOString()}`,
         ...windowNumbers.slice(1).map((number) => `pull request #${number} — the review is running`),
       ].join("; "),
-      retriggerDelaySeconds: Temporal.Duration.from({
-        milliseconds: WINDOW_OPENING_WINDOW_MS - nowMs + RETRIGGER_BUFFER_MS,
-      }).total("seconds"),
+      retriggerDelaySeconds: getRetriggerDelaySeconds(PENDING_CHECK_WAIT_MS),
       targetSha: undefined,
     });
     expect(getPrCalls("create")).toHaveLength(0);

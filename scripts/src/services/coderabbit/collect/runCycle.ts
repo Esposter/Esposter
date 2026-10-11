@@ -7,7 +7,12 @@ import { WindowPullRequestListState } from "#src/models/coderabbit/collect/Windo
 import { WindowPullRequestState } from "#src/models/coderabbit/collect/WindowPullRequestState";
 import { checkIsRepairFirst } from "#src/services/coderabbit/collect/checkIsRepairFirst";
 import { checkIsStackingAllowed } from "#src/services/coderabbit/collect/checkIsStackingAllowed";
-import { DEVELOP_BRANCH, MAIN_BRANCH, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  MAIN_BRANCH,
+  OPEN_WINDOW_CAP,
+  RETRIGGER_BUFFER_MS,
+} from "#src/services/coderabbit/collect/constants";
 import { drainWindow } from "#src/services/coderabbit/collect/drainWindow";
 import { getNewestMergedPullRequest } from "#src/services/coderabbit/collect/getNewestMergedPullRequest";
 import { getNewestWindowPullRequest } from "#src/services/coderabbit/collect/getNewestWindowPullRequest";
@@ -59,12 +64,12 @@ const checkIsStackingAllowedOver = (openStack: WindowPullRequest[], cwd: string)
 };
 
 // One pass: return, express, then the open stack — the release from `develop` while it is open, and each window's gate,
-// The bottom one merged and drained once its review completes — then as many windows opened as the hourly ceiling and
-// The stacking guard allow, each cut from the top of the stack, and last the repair of a red `main`, which no window
-// Waits on — first instead, in the one run after a repair the budget could not hold. Every input is a remote fact and
-// Every write is either a push or guarded by a predicate a later run re-evaluates, so any event may run this and a run
-// Against unchanged state does nothing. It returns its verdict rather than exiting, which is what makes a dry run one
-// Mode of the same code path (docs: infra/review-collector).
+// The bottom one merged and drained once its review completes — then as many windows opened as the hourly ceiling, the
+// Open-window cap and the stacking guard allow, each cut from the top of the stack, and last the repair of a red
+// `main`, which no window waits on — first instead, in the one run after a repair the budget could not hold. Every
+// Input is a remote fact and every write is either a push or guarded by a predicate a later run re-evaluates, so any
+// Event may run this and a run against unchanged state does nothing. It returns its verdict rather than exiting, which
+// Is what makes a dry run one mode of the same code path (docs: infra/review-collector).
 export const runCycle = async ({
   collectorSha,
   cwd,
@@ -169,8 +174,8 @@ export const runCycle = async ({
   }
 
   // Bottom up, the stack is walked: the bottom merges and is drained once its review completes, a window above an
-  // Unmerged one waits, and a rate limit is settled wherever it refused a review. A window off the chain from `main` is
-  // Closed first, for the opener to cut again
+  // Unmerged one waits, and only the window next to merge is asked for a review the bot owes it. A window off the chain
+  // From `main` is closed first, for the opener to cut again
   const chain = settleWindowChain({ cwd, isDryRun, stackPullRequests, viewerLogin });
   const { stack } = chain;
   const walked = await walkWindowStack({
@@ -226,8 +231,8 @@ export const runCycle = async ({
       walkedRetriggerDelaySeconds,
     );
 
-  // The windows: one at a time, for as long as the hourly ceiling and the stacking guard allow. A window that did not
-  // Reach the remote ends the openings, and what the openings returned is the run's verdict
+  // The windows: one at a time, for as long as the hourly ceiling, the open-window cap and the stacking guard allow. A
+  // Window that did not reach the remote ends the openings, and what the openings returned is the run's verdict
   let openedStack = orderWindowStack(readWindowPullRequests(WindowPullRequestListState.Open));
   // The stroke is asked again, since the walk may have merged the stack or a re-cut closed it: it moves `develop` only
   // Once the stack is empty
@@ -255,6 +260,7 @@ export const runCycle = async ({
       isStackingAllowed: checkIsStackingAllowedOver(openedStack, cwd),
       openCount: openedStack.length,
       openedInLastHour: getOpenedInLastHour(history, Date.now()),
+      openWindowCap: OPEN_WINDOW_CAP,
       reviewsPerHour: REVIEWS_PER_HOUR,
     }) > 0
   ) {
@@ -332,7 +338,7 @@ export const runCycle = async ({
     return getOutcome(
       CycleOutcomeKind.Idle,
       idleReasons.join("; ") ||
-        `no window opens — the hourly ceiling or the stacking guard holds for ${DEVELOP_BRANCH}`,
+        `no window opens — the hourly ceiling, the open-window cap or the stacking guard holds for ${DEVELOP_BRANCH}`,
       retriggerDelaySeconds,
     );
   }

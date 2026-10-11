@@ -167,6 +167,27 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
+  // The bot serves whichever ask reaches a free slot first, so an ask above the bottom window is a review that merges
+  // Nothing sooner and a slot the bottom's own review is refused
+  test("asks only the bottom window when a rate limit refused the windows above it too", async () => {
+    expect.hasAssertions();
+
+    const bottom = getWindow(0, MAIN_BRANCH);
+    const above = getWindow(1, bottom.headRefName);
+    readCheckStatus.mockReturnValue({ bucket: PASS_BUCKET, description: RATE_LIMITED_DESCRIPTION, name: CHECK_NAME });
+    answerGh([bottom, above], []);
+
+    await expect(walkWindowStack({ ...baseInput, cwd: getCwd(), stack: [bottom, above] })).resolves.toStrictEqual({
+      blockReasons: [
+        `pull request #${bottom.number} — asked 1 of ${REVIEW_ASK_WAITS_MS.length} times for the review the limit refused — its answer fires the cycle again`,
+        `pull request #${above.number} — rate limited — the bot ran nothing`,
+      ],
+      drainedPullRequests: [],
+      retriggerDelaySeconds: getRetriggerDelaySeconds(takeOne(REVIEW_ASK_WAITS_MS, 0)),
+    });
+    expect(getPrCalls(["comment"])).toStrictEqual([[["pr", "comment", bottom.number.toString(), "--body", askBody]]]);
+  });
+
   test("waits on a bottom window with no check until the missing-check wait has passed", async () => {
     expect.hasAssertions();
 
