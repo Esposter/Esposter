@@ -13,7 +13,7 @@ export const scheduleKitTask = (
   delaySeconds: number,
   onTick: KitField["onTick"],
   fields: Partial<Pick<KitField, "id">> = {},
-): void =>
+): void => {
   castKitField(
     kitEffectState,
     characterId,
@@ -26,3 +26,4 @@ export const scheduleKitTask = (
       ...fields,
     },
   );
+};

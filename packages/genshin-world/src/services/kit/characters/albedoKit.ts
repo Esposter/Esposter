@@ -4,7 +4,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
@@ -15,9 +14,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -207,17 +204,11 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
-        const solarIsotoma: KitSummon = createKitSummon(
-          createAheadBody(body, SOLAR_ISOTOMA_AHEAD_METRES),
-          combatant,
-          [solarIsotomaHit],
-          {
-            id: SOLAR_ISOTOMA_ID,
-            secondsRemaining: getTalentMultiplier(talentMultiplierMap, ALBEDO_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
-            spawnSeconds: SOLAR_ISOTOMA_HITMARK_FRAMES / 60,
-          },
-        );
-        addKitEffect(kitEffectState, solarIsotoma);
+        castKitSummon(kitEffectState, createAheadBody(body, SOLAR_ISOTOMA_AHEAD_METRES), combatant, [solarIsotomaHit], {
+          id: SOLAR_ISOTOMA_ID,
+          secondsRemaining: getTalentMultiplier(talentMultiplierMap, ALBEDO_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
+          spawnSeconds: SOLAR_ISOTOMA_HITMARK_FRAMES / 60,
+        });
       },
       seconds: SOLAR_ISOTOMA_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

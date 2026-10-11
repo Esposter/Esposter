@@ -8,9 +8,8 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Collei's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the fully
@@ -146,7 +145,7 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         // The leap's field ticks from the kitty's first leap at 68 frames, every 30 frames while its status lasts, and each
         // Tick's hit is cast where the kitty was cast, so it lands from there whatever the body does after
-        const field = createKitField(combatant.characterId, position, {
+        const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: LEAP_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [leapHit]);
@@ -155,7 +154,6 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           secondsRemaining: EXPLOSION_HITMARK_FRAMES / 60 + TRUMP_CARD_KITTY_SECONDS,
           tickIntervalSeconds: LEAP_TICK_INTERVAL_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, field);
       },
       seconds: TRUMP_CARD_KITTY_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

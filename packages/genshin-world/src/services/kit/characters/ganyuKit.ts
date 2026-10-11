@@ -15,8 +15,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ganyu's proud skill groups, read at her talent level. The attack group holds the six strikes at 0 to 5, the aimed shot at
@@ -199,7 +199,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        const field = createKitField(combatant.characterId, position, {
+        const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: CELESTIAL_SHOWER_START_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
             if (combatant.ascension >= HARMONY_ASCENSION)
@@ -218,7 +218,6 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             0.1,
           tickIntervalSeconds: CELESTIAL_SHOWER_TICK_INTERVAL_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, field);
       },
       seconds: CELESTIAL_SHOWER_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

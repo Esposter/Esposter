@@ -4,7 +4,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -13,11 +12,9 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -183,11 +180,11 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
     const centre = { x: body.position.x, z: body.position.z };
-    const sparks: KitSummon = createKitSummon(body, combatant, sparkHits, {
+    const sparks = castKitSummon(kitEffectState, body, combatant, sparkHits, {
       isFollowing: true,
       secondsRemaining: burstSeconds,
     });
-    const exit = createKitField(characterId, centre, {
+    const exit = castKitField(kitEffectState, characterId, centre, {
       nextTickSeconds: 0,
       onTick: ({ activeCombatant, kitEffectState: tickKitEffectState }) => {
         if (activeCombatant.characterId === characterId || !tickKitEffectState.effects.includes(sparks)) return;
@@ -200,8 +197,6 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       secondsRemaining: burstSeconds,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
     });
-    addKitEffect(kitEffectState, sparks);
-    addKitEffect(kitEffectState, exit);
     if (constellationCount < BLAZING_DELIGHT_CONSTELLATION) return;
     scheduleKitTask(kitEffectState, characterId, 0, ({ kitEffectState: tickKitEffectState, party }) => {
       buffKitTeam(tickKitEffectState, party, {

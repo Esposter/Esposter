@@ -15,11 +15,9 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -306,12 +304,13 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== SNAPPY_MARK_STATUS_ID) return;
       const { enemy } = event;
-      const tick = createKitSummon(
+      castKitSummon(
+        kitEffectState,
         { facing: 0, height: 0, position: { x: enemy.position.x, z: enemy.position.z } },
         combatant,
         [snappyMarkHit],
+        { target: enemy },
       );
-      addKitEffect(kitEffectState, { ...tick, target: enemy });
     },
     plungeCollision: {
       element: Element.Cryo,

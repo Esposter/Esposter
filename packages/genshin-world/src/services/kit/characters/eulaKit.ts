@@ -6,7 +6,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -16,12 +15,10 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
@@ -298,13 +295,13 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           startingStacks,
           LIGHTFALL_MAX_STACKS,
         );
-        const lightfall: KitSummon = createKitSummon(
+        castKitSummon(
+          kitEffectState,
           body,
           combatant,
           [createLightfallExplosion(explodeBase, explodePerStack, startingStacks, LIGHTFALL_EXPLOSION_FRAMES / 60)],
           { id: LIGHTFALL_SUMMON_ID },
         );
-        addKitEffect(kitEffectState, lightfall);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

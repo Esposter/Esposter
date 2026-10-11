@@ -12,8 +12,8 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitField } from "#src/services/kit/effects/createKitField";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -220,9 +220,9 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: (context) => {
         addInfusion(context);
         const { activeCombatant: combatant, body, kitEffectState } = context;
-        const whirlwind = createKitSummon(body, combatant, tickHits);
+        const whirlwind = castKitSummon(kitEffectState, body, combatant, tickHits);
         let isAbsorbed = false;
-        const absorbField = createKitField(combatant.characterId, whirlwind.body.position, {
+        castKitField(kitEffectState, combatant.characterId, whirlwind.body.position, {
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap }) => {
             if (isAbsorbed) return;
@@ -242,8 +242,6 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             ABSORB_FIELD_LINGER_SECONDS,
           tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, whirlwind);
-        addKitEffect(kitEffectState, absorbField);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

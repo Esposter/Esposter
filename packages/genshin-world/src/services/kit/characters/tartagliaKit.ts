@@ -166,8 +166,9 @@ const HAVOC_ANNIHILATION_CONSTELLATION = 6;
 const HAVOC_ANNIHILATION_STATUS_ID = "tartaglia-havoc-annihilation";
 
 // A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands
-const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void =>
+const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void => {
   castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, hits);
+};
 
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
 
