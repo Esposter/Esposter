@@ -4,6 +4,7 @@ import { TIMINGS_DIRECTORY } from "#src/services/timing/constants";
 import { getSlowRunWarning } from "#src/services/timing/getSlowRunWarning";
 import { getTimingArgs } from "#src/services/timing/getTimingArgs";
 import { recordTimingRun } from "#src/services/timing/recordTimingRun";
+import { getResult } from "@esposter/shared";
 import { runMain } from "citty";
 import { writeSync } from "node:fs";
 import { join } from "node:path";
@@ -20,15 +21,24 @@ export const timeCommand = (command: string): void => {
   process.once("exit", (exitCode) => {
     // `performance.now()` counts from the process's start, so a run includes loading its own modules, as its reader waits for it
     const milliseconds = performance.now();
-    const history = recordTimingRun(getLogPath(command), {
-      args: getTimingArgs(rawArgs),
-      command,
-      date,
-      exitCode,
-      milliseconds: Math.round(milliseconds),
-    });
-    const warning = exitCode === 0 ? getSlowRunWarning(command, milliseconds, history) : undefined;
-    if (warning !== undefined) writeSync(2, `${warning}\n`);
+    // The record is best effort: a log another run is replacing at that moment costs this run its line, never its exit
+    getResult(() =>
+      recordTimingRun(getLogPath(command), {
+        args: getTimingArgs(rawArgs),
+        command,
+        date,
+        exitCode,
+        milliseconds: Math.round(milliseconds),
+      }),
+    ).match(
+      (history) => {
+        const warning = exitCode === 0 ? getSlowRunWarning(command, milliseconds, history) : undefined;
+        if (warning !== undefined) writeSync(2, `${warning}\n`);
+      },
+      (error) => {
+        writeSync(2, `${command}'s run was not timed: ${error.message}\n`);
+      },
+    );
   });
 };
 
