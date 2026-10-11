@@ -2,8 +2,9 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
-import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
+import { REGION_REACH } from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
@@ -25,17 +26,14 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string, catalo
   const settle = () => {
     isRegionDataSettled.value = pendingRegionIds.size === 0;
   };
-  let checkedX = Infinity;
-  let checkedZ = Infinity;
+  const checkIsRecheckDue = createRecheckDueCheck();
 
   onBeforeRender(() => {
     const activeCamera = camera.value;
     if (!activeCamera) return;
     const x = activeCamera.position.x + origin.x;
     const z = activeCamera.position.z + origin.z;
-    if (Math.hypot(x - checkedX, z - checkedZ) < REGION_RECHECK_DISTANCE) return;
-    checkedX = x;
-    checkedZ = z;
+    if (!checkIsRecheckDue(x, z)) return;
     for (const { areas, id } of catalogue.regions) {
       const isInReach = areas.some(({ outline }) => computeOutlineDistance(outline, x, z) <= REGION_REACH);
       if (!isInReach) {

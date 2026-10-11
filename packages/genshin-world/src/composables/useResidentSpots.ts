@@ -4,8 +4,9 @@ import type { GameClock } from "genshin-engine";
 
 import { computeResidentSpot } from "#src/services/resident/computeResidentSpot";
 import { computeShownResidentSpot } from "#src/services/resident/computeShownResidentSpot";
+import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { useLoop, useTres } from "@tresjs/core";
-import { Frustum, Matrix4, Vector3 } from "three";
+import { Frustum, Vector3 } from "three";
 import { shallowRef } from "vue";
 
 // Where each resident of the regions in reach stands at the clock's minute, a change of spot held while the resident is
@@ -21,8 +22,7 @@ export const useResidentSpots = (
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const frustum = new Frustum();
-  const originMatrix = new Matrix4();
-  const viewProjection = new Matrix4();
+  const setFrustum = createFrustumSetter();
   const point = new Vector3();
   const shownSpots = new Map<string, ResidentSpot | undefined>();
   const visitedIds = new Set<string>();
@@ -44,12 +44,7 @@ export const useResidentSpots = (
   onBeforeRender(() => {
     const activeCamera = camera.value;
     if (!activeCamera) return;
-    activeCamera.updateMatrixWorld();
-    originMatrix.makeTranslation(-origin.x, -origin.y, -origin.z);
-    viewProjection
-      .multiplyMatrices(activeCamera.projectionMatrix, activeCamera.matrixWorldInverse)
-      .multiply(originMatrix);
-    frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
+    setFrustum(frustum, activeCamera, origin);
     let isChanged = false;
     visitedIds.clear();
     for (const { residents } of regionDataMap.values())
