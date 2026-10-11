@@ -8,7 +8,7 @@ const HOISTED_CALLEE = "vi.hoisted";
 const MOCK_CALLEE = "vi.mock";
 
 interface Candidate {
-  initializer: ts.Expression | undefined;
+  initializer?: ts.Expression;
   line: number;
   name: string;
 }
