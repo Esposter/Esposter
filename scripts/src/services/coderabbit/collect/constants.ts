@@ -213,9 +213,6 @@ export const RELAND_RETRY_WAITS_MS: number[] = [30, 120].map((minutes) =>
   Temporal.Duration.from({ minutes }).total("milliseconds"),
 );
 
-// How long the carry session in `pnpm ai:queue:push` may run, sooner than every session's `SESSION_TIMEOUT_MS`: one
-// Haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
-export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
 // Every headless session's wall clock. A session past it is killed with its whole process tree and reads as not ended,
 // So its step counts the attempt and the run retries a minute later (`ATTEMPT_RETRY_DELAY_SECONDS`)
 export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
