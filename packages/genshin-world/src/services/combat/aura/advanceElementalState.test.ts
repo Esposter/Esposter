@@ -3,6 +3,7 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
@@ -123,5 +124,18 @@ describe(advanceElementalState, () => {
       Array.from({ length: 5 }, () => ({ element: Element.Electro, reactionType: ReactionType.ElectroCharged })),
     );
     expect(state.auras).toStrictEqual(new Map([[AuraType.Hydro, hydro]]));
+  });
+
+  test("ticks no Electro-Charged while its Electro and Hydro lie together as Lunar-Charged", () => {
+    expect.hasAssertions();
+
+    const state = createElementalState();
+    const lunarReactionTypes = [LunarReactionType.LunarCharged];
+    applyElement(state, Element.Hydro, 1, { lunarReactionTypes });
+    applyElement(state, Element.Electro, 1, { lunarReactionTypes });
+    const reactions = run(state, 3);
+
+    expect(reactions).toStrictEqual([]);
+    expect(state.isLunarCharged).toBe(true);
   });
 });

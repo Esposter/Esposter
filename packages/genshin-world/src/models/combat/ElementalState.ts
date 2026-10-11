@@ -6,9 +6,17 @@ import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
 // Last ticked and it last crystallized, and the cooldown its Burning applies Pyro under
 export interface ElementalState {
   auras: Map<AuraType, Aura>;
+  // Each aura's sources, by the id of the character whose application stands in it, each held as how far the aura's
+  // Gauge stands above that source's own share, so every reduction of the aura reduces each share alike, as gcsim keeps
+  // An aura's durability per source. A source whose share is spent stands at or above the aura's gauge
+  auraSourceDeficitMap: Map<AuraType, Map<number, number>>;
   burningInternalCooldown: InternalCooldown;
   burningSeconds: number;
   crystallizeSeconds: number;
   electroChargedSeconds: number;
+  // Whether the Electro and Hydro lying on it together are Lunar-Charged, which ticks no Electro-Charged, and when a
+  // Lunar-Charged hit last struck it
+  isLunarCharged: boolean;
+  lunarChargedSeconds: number;
   seconds: number;
 }

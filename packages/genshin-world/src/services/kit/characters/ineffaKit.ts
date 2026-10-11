@@ -7,6 +7,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import {
@@ -102,8 +103,15 @@ const BURST_HIT_AREA = createCircleReach(0, 6);
 // Its action starts, and its seconds are the standard the other plunges borrow, as Mizuki's are
 const PLUNGE_SECONDS = 0.4;
 
+// Measured: gcsim (MIT, main) ineffa/asc.go, her Moonsign Benediction turns the party's Electro-Charged into
+// Lunar-Charged and adds 0.7% Base DMG Bonus to its Lunar-Charged for each 100 of her ATK, at most 14%
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/asc.go
+const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
+const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
+
 // Ineffa's first kit, at talent level 1: her four strikes, a charged attack, a collision and two plunges, the skill with its
-// Shield and Birgitta, and the burst, which summons Birgitta again. Her multipliers are read from her proud skill groups
+// Shield and Birgitta, the burst, which summons Birgitta again, and her Moonsign Benediction. Her multipliers are read from
+// Her proud skill groups
 export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, INEFFA_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -228,6 +236,11 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     },
     highPlunge: createPlunge(PLUNGE_HIT_AREAS.high, 150, ATTACK_INDEX_HIGH_PLUNGE),
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, 100, ATTACK_INDEX_LOW_PLUNGE),
+    moonsignBenediction: {
+      getBaseDamageBonus: ({ attributes }) =>
+        Math.min(attributes.attack * BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK, BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS),
+      lunarReactionTypes: [LunarReactionType.LunarCharged],
+    },
     normalAttacks,
     plungeCollision: {
       hitArea: PLUNGE_HIT_AREAS.collision,

@@ -1,10 +1,12 @@
 import type { ElementalState } from "#src/models/combat/ElementalState";
-import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import type { ElementApplication } from "#src/models/combat/ElementApplication";
 import type { Reaction } from "#src/models/combat/Reaction";
 
 import { AuraType } from "#src/models/combat/AuraType";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { addAuraSource } from "#src/services/combat/aura/addAuraSource";
 import { applyAura } from "#src/services/combat/aura/applyAura";
 import { applyReactionAura } from "#src/services/combat/aura/applyReactionAura";
 import { checkIsElectroCharged } from "#src/services/combat/aura/checkIsElectroCharged";
@@ -33,13 +35,15 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 // And lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to
 // Lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras
 // It could meet. A reaction the attacking party's Moonsign turns Lunar is recorded as its Lunar form, consuming as the
-// Reaction it replaces does
+// Reaction it replaces does. Where the Moonsign turns Electro-Charged Lunar, each Electro or Hydro that leaves the two
+// Lying together, with no Freeze over them, triggers Lunar-Charged instead, which ticks nothing of its own, as gcsim
+// (MIT) pkg/reactable/lunarcharged.go has each application trigger it. The aura an application leaves keeps its source's
+// Share
 export const applyElement = (
   state: ElementalState,
   element: Element,
   gauge: number,
-  lunarReactionTypes: readonly LunarReactionType[] = [],
-  selfAuraSeconds?: number,
+  { lunarReactionTypes = [], selfAuraSeconds, sourceId }: ElementApplication = {},
 ): Reaction[] => {
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];
@@ -90,6 +94,7 @@ export const applyElement = (
       ({ auraTypes, coefficient }) => coefficient === 0 || !auraTypes.some((stepAuraType) => auras.has(stepAuraType)),
     );
   if (auraType && isAuraLeft) {
+    const gaugeBefore = auras.get(auraType)?.gauge ?? 0;
     const taxedGauge = AURA_TAX * remainingGauge;
     applyAura(
       auras,
@@ -102,11 +107,30 @@ export const applyElement = (
           }
         : { decayRate: gauge / selfAuraSeconds, gauge: remainingGauge, isImmutable: false },
     );
+    if (sourceId !== undefined)
+      addAuraSource(
+        state,
+        auraType,
+        sourceId,
+        selfAuraSeconds === undefined ? taxedGauge : remainingGauge,
+        gaugeBefore,
+      );
   }
   extinguishBurning(auras);
-  if (!wasElectroCharged && checkIsElectroCharged(auras)) {
+  const isElectroCharged = checkIsElectroCharged(auras);
+  if (
+    isElectroCharged &&
+    remainingGauge > 0 &&
+    (element === Element.Electro || element === Element.Hydro) &&
+    !auras.has(AuraType.Freeze) &&
+    lunarReactionTypes.includes(LunarReactionType.LunarCharged)
+  ) {
+    state.isLunarCharged = true;
+    reactions.push({ element: Element.Electro, reactionType: ReactionType.LunarCharged });
+  } else if (!wasElectroCharged && isElectroCharged && !state.isLunarCharged) {
     state.electroChargedSeconds = seconds;
     reactions.push(tickElectroCharged(auras));
   }
+  if (!isElectroCharged) state.isLunarCharged = false;
   return reactions;
 };

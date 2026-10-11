@@ -26,6 +26,11 @@ export const BURNING_MINIMUM_DRAIN_RATE = 0.4;
 export const ELECTRO_CHARGED_TICK_SECONDS = 1;
 export const ELECTRO_CHARGED_TICK_GAUGE = 0.4;
 export const ELECTRO_CHARGED_FINAL_TICK_SECONDS = 0.5;
+// A Lunar-Charged hit strikes a target once every 2 seconds at most, taking 0.4 units from its Electro and its Hydro, as
+// Gcsim (MIT) pkg/reactable/lunarcharged.go strikes it
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+export const LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS = 2;
+export const LUNAR_CHARGED_HIT_GAUGE = 0.4;
 // Crystallize triggers on a target once a second at most
 export const CRYSTALLIZE_COOLDOWN_SECONDS = 1;
 // A Swirl spreads its element at (G - 0.04) × 1.25 + 1 units, where G is the Anemo's gauge if the aura takes all of it

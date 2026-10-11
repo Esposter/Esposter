@@ -27,6 +27,7 @@ import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
+import { strikeLunarChargedCloud } from "#src/services/kit/strikeLunarChargedCloud";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -36,11 +37,11 @@ import { stepVerdantDew } from "#src/services/party/stepVerdantDew";
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
 // The last step, the strikes the team's taunts took since, the team's effects that run out, the statuses on the enemies
 // That fall due and a burst that starts are sent to the deployed team's kits, the party's Verdant Dew gathers, the
-// Crystallize shards in reach of the body are picked up, the ticks the enemies' elements brought since are struck and the
-// Dendro Cores whose seconds ran out burst, the kit plays the step's presses as its stance, if it holds one, plays them,
-// A skill or burst that starts lights Ascendant Gleam, an action that starts turns the body to the enemy it targets, or
-// To the camera's aim for an aimed shot, and every hit the step lands strikes the Ores, the Dendro Cores and the
-// Enemies in its area, a normal or charged attack's that struck an enemy rolling for its
+// Crystallize shards in reach of the body are picked up, the ticks the enemies' elements brought since and the party's
+// Lunar-Charged cloud strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses as its
+// Stance, if it holds one, plays them, a skill or burst that starts lights Ascendant Gleam, an action that starts turns
+// The body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes the
+// Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for its
 // Energy, and the changes to the members' HP are sent last. A character whose combatant is not built yet, its talent
 // Multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
@@ -95,6 +96,7 @@ export const stepActiveKit = (
   for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emit(event);
   const strikeContext: KitStrikeContext = { ...context, emit };
   strikeElementalTicks(strikeContext);
+  strikeLunarChargedCloud(stepSeconds, position, strikeContext);
   burstKitDendroCores(expiredEffects, strikeContext);
   const infusion = getKitInfusion(kitEffectState.effects, characterId);
   const landedStart = landedHits.length;
