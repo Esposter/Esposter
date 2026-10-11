@@ -7,7 +7,7 @@ touches: ["packages/genshin-world/src/services/artifact/**"]
 
 # Artifact enhancement
 
-Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, is built. What is left is the other sets the world carries, whose bonuses rest on a hook the [character kits](/docs/proposals/genshin/character-kits) do not provide yet, and so wait on them.
+Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, and The Exile's, which answers a burst used, are built. What is left is the other sets the world carries, whose bonuses rest on a hook the [character kits](/docs/proposals/genshin/character-kits) do not provide yet, and so wait on them.
 
 ## Decisions
 
@@ -16,13 +16,13 @@ Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhan
 
 ## Scope and order
 
-**Today:** an artifact's unconditional set lines are summed, each bonus carries its affix's numbers, and a combatant's kit carries the modules of the sets it wears. Instructor's four-piece is the first module; every other set the world carries in its chests' pools gives only its attributes.
+**Today:** an artifact's unconditional set lines are summed, each bonus carries its affix's numbers, and a combatant's kit carries the modules of the sets it wears. Instructor's and The Exile's four-pieces are modules; every other set the world carries in its chests' pools gives only its attributes.
 
 **Still to build, in order:**
 
 1. **Each other carried set's bonus as a module**, written as an entry of `ArtifactSetIdCreateModuleMap` once the [character kits](/docs/proposals/genshin/character-kits), the unit the other machine holds, provide the hook it rests on:
    - Berserker's four-piece, more CRIT Rate below a share of the wearer's HP, waits on a pricing hook that reads the wearer's HP, since a passive's bonuses read only its combatant.
-   - The Exile's four-piece, energy for the others over seconds after a burst, and Traveling Doctor's, a heal as a burst is used, wait on a kit event for a burst used; The Exile's also needs the off-field members' combatants in what it ticks.
+   - Traveling Doctor's four-piece, a heal as a burst is used, answers the kit event for a burst used.
    - Adventurer's four-piece, a heal over seconds as a chest opens, and Lucky Dog's, a flat heal as Mora is picked up, wait on those world actions reaching a kit, which only sprinting does today.
 
 ## Data and measures
