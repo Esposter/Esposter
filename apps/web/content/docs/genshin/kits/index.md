@@ -253,6 +253,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Citlali](/docs/genshin/kits/citlali)               | Three strikes, the charged attack and Ice Storm                                   |
 | [Clorinde](/docs/genshin/kits/clorinde)             | Five strikes, the charged attack and Last Lightfall                               |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap                            |
+| [Columbina](/docs/genshin/kits/columbina)           | Three strikes, the charged attack, and the skill's press and DoT field            |
 | [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite                       |
 | [Dahlia](/docs/genshin/kits/dahlia)                 | Four strikes, charged attack, Immersive Ordinance, Radiant Psalter                |
 | [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                             |
