@@ -15,8 +15,8 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop } from "@esposter/shared";
@@ -61,8 +61,8 @@ describe(burstKitDendroCores, () => {
 
   const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitStrikeContext => ({
     characterIdCombatantMap: new Map([
-      [TRAVELER_CHARACTER_ID, combatant],
       [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
+      [TRAVELER_CHARACTER_ID, combatant],
     ]),
     emit: noop,
     enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),

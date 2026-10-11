@@ -1,7 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { describe, expect, test } from "vitest";

@@ -9,9 +9,9 @@ import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/serv
 import { startForge } from "#src/services/forging/startForge";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
-import { ItemCategory } from "genshin-interface";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
+import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
 const createDefinition = (id: number): ItemDefinition => ({

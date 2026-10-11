@@ -1,6 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { SAYU_CHARACTER_ID } from "#src/services/kit/characters/sayuKit";
-import { createSayuKit } from "#src/services/kit/characters/sayuKit";
+import { createSayuKit, SAYU_CHARACTER_ID } from "#src/services/kit/characters/sayuKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
