@@ -20,7 +20,7 @@ committed.
 | `character-weapons` | `CharacterScreen` | 10.19% | 0.479 | 6.42% | 0.4153 |
 | `character-weapons-tabs` | `CharacterScreen` | 7.35% | 0.503 | 5.26% | 0.3381 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
-| `crafting-table` | `CraftingScreen` | 53.70% | 0.024 | 58.66% | 0.9173 |
+| `crafting-table` | `CraftingScreen` | 52.26% | 0.080 | 51.36% | 0.8988 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.34% | 0.756 | 8.55% | 0.4678 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { CraftingCell } from "#src/models/CraftingCell";
 
-import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
-
 interface Props {
   // The amount slider's name for assistive tech
   amountLabel: string;
@@ -55,23 +53,30 @@ const emit = defineEmits<{ close: []; craft: [] }>();
 </script>
 
 <template>
-  <!-- The crafting bench, the Craft screen: the recipes on the left, the picked one's icon, count and cost on the right,
-       and the way out and the coins across the head. Provisional: every place, size and colour waits on the crafting
-       screen's passes against the public clip of the Crafting Table (references/crafting-screen) -->
-  <TwoColumnScreen>
+  <!-- The Craft screen, its pieces placed in the game's own pixels at 1080 high (`--unit` a pixel of that frame): the title
+       and the coins across the head, the way out at the head's right, and the recipe tabs under the title. The screen takes its
+       place from the game's layout, not a two-column grid, since its recipe list is narrower than its detail -->
+  <div class="crafting-screen">
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
-      <p class="coins">{{ coins }}</p>
-      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">×</button>
+      <p class="coins">
+        <span class="coin" aria-hidden="true" />
+        {{ coins }}
+      </p>
+      <button class="close" :aria-label="closeLabel" type="button" @click="emit('close')">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6 18 18M18 6 6 18" />
+        </svg>
+      </button>
     </header>
+    <ul class="tabs">
+      <li v-for="tab of tabs" :key="tab.id">
+        <button class="tab" :aria-pressed="tab.id === tabId" type="button" @click="tabId = tab.id">
+          <span class="tab-name">{{ tab.name }}</span>
+        </button>
+      </li>
+    </ul>
     <div class="list">
-      <ul class="tabs">
-        <li v-for="tab of tabs" :key="tab.id">
-          <button class="tab" :aria-pressed="tab.id === tabId" type="button" @click="tabId = tab.id">
-            <span class="tab-name">{{ tab.name }}</span>
-          </button>
-        </li>
-      </ul>
       <ul class="recipes">
         <li v-for="recipe of recipes" :key="recipe.id">
           <button class="recipe" :aria-pressed="recipe.id === recipeId" type="button" @click="recipeId = recipe.id">
@@ -107,11 +112,103 @@ const emit = defineEmits<{ close: []; craft: [] }>();
       <p class="materials-label">{{ craftingMaterialsLabel }}</p>
       <button class="craft" type="button" @click="emit('craft')">{{ craftLabel }}</button>
     </div>
-  </TwoColumnScreen>
+  </div>
 </template>
 
 <style scoped>
+.crafting-screen {
+  position: absolute;
+  inset: 0;
+  color: #fff7ea;
+}
+
 .head {
-  grid-column: 1 / -1;
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--unit) * 95);
+  background: #161c31;
+}
+
+.title {
+  position: absolute;
+  top: calc(var(--unit) * 30);
+  left: calc(var(--unit) * 145);
+  margin: 0;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 32);
+}
+
+.coins {
+  position: absolute;
+  top: calc(var(--unit) * 34);
+  left: calc(var(--unit) * 1650);
+  margin: 0;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 26);
+}
+
+.coin {
+  position: absolute;
+  top: calc(var(--unit) * 4);
+  left: calc(var(--unit) * -30);
+  width: calc(var(--unit) * 20);
+  height: calc(var(--unit) * 20);
+  border-radius: 50%;
+  background: #e6b84a;
+}
+
+.close {
+  position: absolute;
+  top: calc(var(--unit) * 18);
+  left: calc(var(--unit) * 1828);
+  width: calc(var(--unit) * 56);
+  height: calc(var(--unit) * 56);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fdfdfd;
+  box-shadow: 0 0 calc(var(--unit) * 3) calc(var(--unit) * 1) rgb(0 0 0 / 0.3);
+  cursor: inherit;
+}
+
+.close svg {
+  width: calc(var(--unit) * 24);
+  height: calc(var(--unit) * 24);
+  fill: none;
+  stroke: #212121;
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.tabs {
+  position: absolute;
+  top: calc(var(--unit) * 24);
+  left: calc(var(--unit) * 822);
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tab {
+  width: calc(var(--unit) * 96);
+  height: calc(var(--unit) * 68);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: inherit;
+}
+
+.tab[aria-pressed="true"] {
+  border-bottom: calc(var(--unit) * 4) solid #e8d9b0;
+}
+
+.tab-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 </style>
