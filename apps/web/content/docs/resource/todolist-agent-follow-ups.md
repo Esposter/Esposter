@@ -54,7 +54,7 @@ A todo with an `origin` is a **follow-up**, and otherwise an ordinary todo: it s
 
 ## The follow-up procedures
 
-Four procedures on the TodoList router, each opted into the MCP bridge with a description written for the agent, and each taking the list's `id` and the owner guard every TodoList procedure has.
+Four procedures on the TodoList router, each opted into the MCP bridge under the `FollowUps` scope with a description written for the agent, and each taking the list's `id` and the owner guard every TodoList procedure has. A key reaches them only when it was made with that scope ([agent access](/docs/architecture/agent-access)).
 
 | Procedure          | Input                                                          | Does                                                                                                                                |
 | ------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -63,14 +63,14 @@ Four procedures on the TodoList router, each opted into the MCP bridge with a de
 | `completeFollowUp` | follow-up id, a line on what was done, IANA time zone          | ticks it as the checkbox does, so a repeating one rolls to its next due date in that zone, and appends the line to its notes        |
 | `handBackFollowUp` | follow-up id, the reason                                       | sets `handedBackAt` and appends the reason to its notes                                                                             |
 
-- **Only a follow-up is in reach.** Each acts on a todo with an `origin`, open and not handed back: an id naming a todo the owner wrote answers not found before anything is saved, so no key ticks or annotates it, and there is no delete.
+- **Only a follow-up is in reach.** Each acts on a todo with an `origin`, open and not handed back: an id naming a todo the owner wrote answers not found before anything is saved, so no follow-ups key ticks or annotates it, and there is no delete. A key holding only this scope reaches nothing else of the list.
 - **Read, changed and saved on the server.** Where the browser saves the whole list it holds, each of these reads the list, changes the one follow-up and saves the list at the version it read. A save the owner made in between makes that save stale, and the list is read again and the change reapplied, a bounded number of times, rather than written over.
 - **A repeating follow-up waits for its date.** Ticking one rolls it forward and leaves it open, so `readFollowUps` holds it back until its next due date instead of handing it straight back to a drain: one take per occurrence.
 - **Everything written is validated** by the same `todoListItemSchema` a browser save is.
 
 ## The plugin
 
-The endpoint, the session's values and the skills ship as one Claude Code plugin, `packages/follow-ups`, laid out as the [persona plugin](/docs/infra/claude-interface/persona-plugin) is and listed in the same marketplace, so one install reaches every repository on the machine. The list's **Connect an agent** button opens the steps: create a key under API keys in the settings, install the plugin, and give its install the site, the list's id and the key, each with a copy button.
+The endpoint, the session's values and the skills ship as one Claude Code plugin, `packages/follow-ups`, laid out as the [persona plugin](/docs/infra/claude-interface/persona-plugin) is and listed in the same marketplace, so one install reaches every repository on the machine. The list's **Connect an agent** button opens the steps: create a key with the Follow-ups scope under API keys in the settings, install the plugin, and give its install the site, the list's id and the key, each with a copy button.
 
 ```text
 packages/follow-ups/

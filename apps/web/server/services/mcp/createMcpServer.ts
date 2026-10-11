@@ -1,4 +1,5 @@
 import type { Context } from "#server/trpc/context";
+import type { McpScope } from "#shared/models/auth/McpScope";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { AnyRouter } from "@trpc/server";
 
@@ -9,10 +10,12 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError } from "@modelcontextprotocol/sdk/types.js";
 import { callTRPCProcedure } from "@trpc/server";
 
-// A server whose tools are the router's opted-in procedures, each called through tRPC's own call path with the
-// Caller's context, so its middleware, parsing, guards and rate limit run exactly as they do for the browser
-export const createMcpServer = (router: AnyRouter, ctx: Context) => {
-  const mcpTools = getMcpTools(router);
+// A server whose tools are the router's opted-in procedures of the scopes the caller's key holds, each called through
+// The tRPC call path with the caller's context, so its middleware, parsing, guards and rate limit run exactly as they
+// Do for the browser. A tool outside those scopes is neither listed nor callable: this is the one place a key's scopes
+// Are checked, and every call an agent makes passes through it
+export const createMcpServer = (router: AnyRouter, ctx: Context, mcpScopes: McpScope[]) => {
+  const mcpTools = getMcpTools(router).filter(({ scope }) => mcpScopes.includes(scope));
   // The low-level server rather than `McpServer`, which parses a tool's arguments with its schema and hands the
   // Handler the parsed output: tRPC would then parse that output a second time, which only holds while every input's
   // Transforms are idempotent. A generic bridge is the advanced use the SDK keeps this server for
@@ -20,7 +23,12 @@ export const createMcpServer = (router: AnyRouter, ctx: Context) => {
   const server = new Server({ name: SITE_NAME, version: packageJson.version }, { capabilities: { tools: {} } });
 
   server.setRequestHandler(ListToolsRequestSchema, () => ({
-    tools: mcpTools.map(({ description, inputSchema, name }) => ({ description, inputSchema, name })),
+    tools: mcpTools.map(({ annotations, description, inputSchema, name }) => ({
+      annotations,
+      description,
+      inputSchema,
+      name,
+    })),
   }));
   server.setRequestHandler(CallToolRequestSchema, ({ params: { arguments: toolArguments, name } }) => {
     const mcpTool = mcpTools.find((tool) => tool.name === name);

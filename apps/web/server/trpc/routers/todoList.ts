@@ -8,6 +8,7 @@ import { updateTodoListContent } from "#server/services/resource/todoList/update
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { addFollowUpInputSchema } from "#shared/models/db/resource/todoList/AddFollowUpInput";
 import { completeFollowUpInputSchema } from "#shared/models/db/resource/todoList/CompleteFollowUpInput";
 import { handBackFollowUpInputSchema } from "#shared/models/db/resource/todoList/HandBackFollowUpInput";
@@ -17,9 +18,10 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { ResourceType } from "@esposter/db-schema";
 
-// The follow-up procedures an agent reaches through the MCP endpoint (/docs/resource/todolist-agent-follow-ups). Each
-// Reads, changes and saves the list on the server, and acts only on a follow-up — a todo with an origin, open and not
-// Handed back — so no key ticks or annotates a todo the owner wrote, and none deletes one
+// The follow-up procedures an agent reaches through the MCP endpoint with a follow-ups key
+// (/docs/resource/todolist-agent-follow-ups). Each reads, changes and saves the list on the server, and acts only on a
+// Follow-up — a todo with an origin, open and not handed back — so no follow-ups key ticks or annotates a todo the owner
+// Wrote, and none deletes one
 export const todoListRouter = router({
   ...createResourceProcedures(ResourceType.TodoList),
   addFollowUp: getOwnerProcedure(ResourceType.TodoList, addFollowUpInputSchema, "id")
@@ -27,6 +29,7 @@ export const todoListRouter = router({
       mcp: {
         description:
           "Write down one follow-up this session found and is leaving undone: work outside the change in hand that a later session can finish in one change. Write it the moment it is recognised. Answers with its id.",
+        scope: McpScope.FollowUps,
       },
     })
     .mutation<string>(({ ctx, input: { dueAt, id, name, notes, repository, sessionId } }) =>
@@ -47,6 +50,7 @@ export const todoListRouter = router({
       mcp: {
         description:
           "Tick a follow-up once its change is committed, with a line on what was done that names the commit. A repeating follow-up rolls to its next due date instead.",
+        scope: McpScope.FollowUps,
       },
     })
     .mutation<void>(async ({ ctx, input: { id, itemId, summary, timeZone } }) => {
@@ -64,6 +68,7 @@ export const todoListRouter = router({
       mcp: {
         description:
           "Hand a follow-up to the owner when doing it needs a design decision, anything spent outside the repository's review queue, or more than one change. It leaves readFollowUps until the owner clears the handback.",
+        scope: McpScope.FollowUps,
       },
     })
     .mutation<void>(async ({ ctx, input: { id, itemId, reason } }) => {
@@ -78,6 +83,7 @@ export const todoListRouter = router({
       mcp: {
         description:
           "The open follow-ups of this repository, in the order the owner put them, first to be taken first. Read again after every follow-up, since the owner edits the list while a drain runs.",
+        scope: McpScope.FollowUps,
       },
     })
     .query<FollowUp[]>(async ({ ctx, input: { repository } }) => {

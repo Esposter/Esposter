@@ -32,6 +32,6 @@ export const createResourceRow = async (
   // Awaited, unlike every other activity write: this is the one entry a caller can roll back over, and an
   // In-flight write would land after the cleanup's partition delete and resurrect it as an orphan. The write
   // Never rejects, so awaiting it costs latency and nothing else
-  await writeResourceActivity({ activityType, resourceId: newResource.id, userId });
+  await writeResourceActivity(ctx, { activityType, resourceId: newResource.id });
   return newResource;
 };

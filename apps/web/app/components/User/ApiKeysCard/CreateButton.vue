@@ -1,18 +1,25 @@
 <script setup lang="ts">
+import type { McpScope } from "#shared/models/auth/McpScope";
+import type { CreateApiKeyInput } from "#shared/models/db/user/CreateApiKeyInput";
+
+import { McpScopes } from "#shared/models/auth/McpScope";
 import { API_KEY_NAME_MAX_LENGTH } from "#shared/services/auth/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { McpScopeTitleMap } from "@/services/auth/McpScopeTitleMap";
 import { UiRules } from "@/services/ui/UiRules";
 
 interface Props {
   // Answers with the whole key, which the server keeps only hashed
-  create: (name: string) => Promise<string>;
+  create: (input: CreateApiKeyInput) => Promise<string>;
 }
 
 const { create } = defineProps<Props>();
 const isOpen = ref(false);
 const name = ref("");
+// What the key reaches, and nothing until the owner ticks it: a key is made for one kind of work
+const mcpScopes = ref<McpScope[]>([]);
 const isValid = ref(true);
 // Shown once, on the dialog that created it, and gone with the dialog
 const createdKey = ref("");
@@ -27,6 +34,7 @@ const { answer } = useDialogAnswer(isOpen);
     @click="
       () => {
         name = createdKey = '';
+        mcpScopes = [];
         isOpen = true;
       }
     "
@@ -55,7 +63,7 @@ const { answer } = useDialogAnswer(isOpen);
       gap-3
       @submit="
         answer(async () => {
-          createdKey = await create(name);
+          createdKey = await create({ mcpScopes, name });
           return false;
         })
       "
@@ -67,9 +75,31 @@ const { answer } = useDialogAnswer(isOpen);
         label="Name"
         :rules="nameRules"
       />
+      <p text-muted>
+        What the key reaches: Follow-ups is the TodoList's follow-ups a coding session writes and works through,
+        Resources finds, reads and edits the content of every resource you own.
+      </p>
+      <div role="group" aria-label="Scopes" flex flex-col gap-2>
+        <UiCheckbox
+          v-for="mcpScope of McpScopes"
+          :key="mcpScope"
+          is-label-shown
+          :label="McpScopeTitleMap[mcpScope]"
+          :model-value="mcpScopes.includes(mcpScope)"
+          @update:model-value="
+            (isChecked) => {
+              mcpScopes = isChecked
+                ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
+                : mcpScopes.filter((scope) => scope !== mcpScope);
+            }
+          "
+        />
+      </div>
       <footer flex gap-2 justify-end>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid" type="submit" :variant="UiButtonVariant.Accent">Create</UiButton>
+        <UiButton :disabled="!isValid || mcpScopes.length === 0" type="submit" :variant="UiButtonVariant.Accent">
+          Create
+        </UiButton>
       </footer>
     </UiForm>
   </UiDialog>

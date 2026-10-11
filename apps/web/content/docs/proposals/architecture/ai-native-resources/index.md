@@ -14,7 +14,7 @@ This proposal wires the agent surface once, at the resource layer. A resource ty
 
 Each is a unit built on its own, listed in build order:
 
-- [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — scopes on API keys, so the follow-up keys keep their promise; read-only hints, writes attributed to their key, and the operations that stay the owner's
+- [Agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](/docs/architecture/agent-access))
 - [Content tools](/docs/proposals/architecture/ai-native-resources/content-tools) — find, describe, read at a JSON Pointer and edit by JSON Patch, generic over every type, and the test that holds every type to it
 - [Live edits](/docs/proposals/architecture/ai-native-resources/live-edits) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
 - [Lifecycle tools](/docs/proposals/architecture/ai-native-resources/lifecycle-tools) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures

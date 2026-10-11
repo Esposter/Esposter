@@ -1046,6 +1046,37 @@ describe("resourceRouter", () => {
     );
   });
 
+  // An agent writes as the owner from a key of its own, so its run of saves is a line of its own naming the key rather
+  // Than one folded into the owner's typing
+  test("records an agent's content save apart from the owner's, naming its key", async () => {
+    expect.hasAssertions();
+
+    const apiKey = { id: crypto.randomUUID(), name };
+    const agentWebpageCaller = createCallerFactory(webpageRouter)({ ...mockContext, apiKey });
+    const webpageResource = await webpageCaller.createResource({ name });
+    vi.advanceTimersByTime(1);
+    await saveWebpageContent(webpageResource, webpageEditor);
+    // Drained before the clock moves, so the next save's coalescing scan sees this entry
+    await waitForSynchronizedFunctions();
+    vi.advanceTimersByTime(1);
+    await agentWebpageCaller.saveResourceContent({
+      content: webpageEditor,
+      contentVersion: webpageResource.contentVersion + 1,
+      id: webpageResource.id,
+    });
+    await waitForSynchronizedFunctions();
+    const { items } = await caller.readActivities({ id: webpageResource.id });
+
+    expect(
+      items
+        .filter(({ activityType }) => activityType === ResourceActivityType.ContentSaved)
+        .map(({ apiKeyId, apiKeyName }) => ({ apiKeyId, apiKeyName })),
+    ).toStrictEqual([
+      { apiKeyId: apiKey.id, apiKeyName: name },
+      { apiKeyId: "", apiKeyName: "" },
+    ]);
+  });
+
   test("records a content save once the coalesce window has passed", async () => {
     expect.hasAssertions();
 

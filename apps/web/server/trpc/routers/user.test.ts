@@ -9,6 +9,7 @@ import { createCallerFactory } from "#server/trpc";
 import {
   consumeMockSessionOnce,
   createMockContext,
+  getMockCreateApiKey,
   getMockSession,
   mockNoSessionOnce,
   mockSessionOnce,
@@ -16,6 +17,7 @@ import {
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { userRouter } from "#server/trpc/routers/user";
 import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
@@ -67,6 +69,23 @@ describe("userRouter", () => {
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(userStatusesInMessage);
+  });
+
+  // The plugin takes a key's permissions only from the server, so this is the one place they are set: to the scopes the
+  // Owner ticked, on a key that belongs to the caller
+  test("creates a key holding the scopes ticked, for the caller", async () => {
+    expect.hasAssertions();
+
+    const key = "key";
+    const mcpScopes = [McpScope.FollowUps];
+    getMockCreateApiKey().mockResolvedValueOnce({ key });
+
+    const createdKey = await caller.createApiKey({ mcpScopes, name });
+
+    expect(createdKey).toBe(key);
+    expect(getMockCreateApiKey()).toHaveBeenCalledExactlyOnceWith({
+      body: { name, permissions: { mcp: mcpScopes }, userId },
+    });
   });
 
   test("reads empty statuses with default values", async () => {

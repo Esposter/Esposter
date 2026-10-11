@@ -202,12 +202,7 @@ export const saveResourceContent = async (
   ]);
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
   // Every write the user is waiting on
-  if (activityType)
-    getSynchronizedFunction(writeResourceActivity)({
-      activityType,
-      resourceId: id,
-      userId: ctx.getSessionPayload.user.id,
-    });
+  if (activityType) getSynchronizedFunction(writeResourceActivity)(ctx, { activityType, resourceId: id });
   runAfterSaveResourceContent(ctx, savedResource, parsedContent, previousContent);
   return savedResource;
 };

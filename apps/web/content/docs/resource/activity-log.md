@@ -15,7 +15,7 @@ Events are emitted inside the `createResourceProcedures` mutations, in the best-
 
 The `Created`/`Duplicated` entry is the one exception to the fire-and-forget tail: `createResourceRow` awaits it. That entry is the only one a caller can roll back over — a failed content clone or a mid-deploy failure rolls back through `deleteCreatedResources`, which deletes the trail partition — and an in-flight write landing after that delete would resurrect the entry as an orphan no read can reach, since reading a trail is gated on the row. The write never rejects, so awaiting it costs latency and nothing else.
 
-`ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user already has a `ContentSaved` inside the last hour" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in.
+`ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user, through this API key or by hand, already has a `ContentSaved` inside the last hour" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in, and keying it by the API key as well keeps an agent's run of saves a line apart from the owner's typing.
 
 ```mermaid
 sequenceDiagram
@@ -28,7 +28,7 @@ sequenceDiagram
   U->>P: mutate
   P->>PG: primary write
   PG-->>P: ok
-  P--)AT: writeResourceActivity (best-effort,<br/>ContentSaved coalesced per user·hour)
+  P--)AT: writeResourceActivity (best-effort,<br/>ContentSaved coalesced per user·key·hour)
   Note over P,AT: an activity failure logs, never fails the mutation
   P-->>U: mutation result
   U->>B: open Activity blade
@@ -40,7 +40,9 @@ sequenceDiagram
 
 `AzureTable.ResourceActivity` partitions by `resourceId`, with `rowKey = getReverseTickedTimestamp()` so a plain partition scan returns newest-first without a sort — the existing convention.
 
-`ResourceActivityEntity` carries `activityType` (`Created | Renamed | ContentSaved | Published | Unpublished | Duplicated | Restored`), `userId`, and per-type payload fields (`oldName`/`newName`, `publishVersion`). Every payload field is optional: Azure Table is schemaless per row, and a `Renamed` has nothing to say about `publishVersion`.
+`ResourceActivityEntity` carries `activityType` (`Created | Renamed | ContentSaved | Published | Unpublished | Duplicated | Restored`), `userId`, who wrote it as `apiKeyId` and `apiKeyName`, and per-type payload fields (`oldName`/`newName`, `publishVersion`). Every payload field is optional: Azure Table is schemaless per row, and a `Renamed` has nothing to say about `publishVersion`.
+
+The API key fields are the key an agent wrote through, read off the request's context ([agent access](/docs/architecture/agent-access)), or `""` for the owner's own hand — `writeResourceActivity` takes the context rather than a user id, so no write can forget to say who made it. The name is copied in as the key held it when it wrote, so an entry still reads after the key is renamed or deleted, and the blade adds it to the entry's detail.
 
 `Restored` covers both restores: out of the [recycle bin](/docs/resource/recycle-bin), and of a [snapshot](/docs/resource/resource-snapshots) into the working copy. Both hand the owner back content they had before, so the trail says the same thing about them.
 
@@ -65,10 +67,11 @@ Soft delete leaves the partition intact: history survives the [recycle bin](/doc
 | `apps/web/server/services/resource/writeResourceActivity.ts`        | Best-effort emit + `ContentSaved` coalescing |
 | `packages/db/src/services/resource/deleteTablePartitionEntities.ts` | Purge-time partition sweep                   |
 | `apps/web/app/components/Resource/ActivityLog.vue`                  | The blade timeline                           |
+| `apps/web/app/components/Resource/ActivityLogListItem.vue`          | One entry, naming the API key an agent used  |
 
 ## Notes
 
-- Resources are single-owner and every procedure is owner-scoped, so every actor on a resource's trail is its owner. The blade therefore shows no actor column — it would say the same name on every line.
+- Resources are single-owner and every procedure is owner-scoped, so every actor on a resource's trail is its owner. The blade therefore shows no actor column — it would say the same name on every line — and the one distinction it draws is an agent's key, named in the detail.
 - Icons are severity-neutral. An activity trail records what happened; it does not judge it.
 - Activity is the durable trail; the [notifications bell](/docs/resource/notifications) is ephemeral session feedback. They share event sources but never storage.
 - No cross-resource feed (the portal's subscription-level log) — per-resource only until something needs more.

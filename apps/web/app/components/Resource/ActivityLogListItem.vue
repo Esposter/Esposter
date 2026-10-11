@@ -9,7 +9,12 @@ interface Props {
 }
 
 const { activity } = defineProps<Props>();
-const detail = computed(() => getResourceActivityDetail(activity));
+// What the entry's type spells out, then the API key an agent wrote it through, so an agent's change reads as its own
+const detail = computed(() =>
+  [getResourceActivityDetail(activity), activity.apiKeyName ? `Through the API key "${activity.apiKeyName}"` : ""]
+    .filter(Boolean)
+    .join(" · "),
+);
 </script>
 
 <!-- One change as one row: its mark, what happened and the detail after it, and when at the row's end. A log entry goes

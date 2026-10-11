@@ -266,12 +266,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // A tags-only edit is not a rename, so it leaves no Renamed entry.
         // Best-effort: a failed write loses one trail entry, never the rename.
         if (updatedResource.name !== oldName)
-          getSynchronizedFunction(writeResourceActivity)({
+          getSynchronizedFunction(writeResourceActivity)(ctx, {
             activityType: ResourceActivityType.Renamed,
             newName: updatedResource.name,
             oldName,
             resourceId: id,
-            userId: ctx.getSessionPayload.user.id,
           });
         return updatedResource;
       },
@@ -417,11 +416,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // See /docs/resource/storage-quotas
         if (writtenVersion) await chargeSnapshotVersion(ctx.db, ctx.resource, writtenVersion);
         // Best-effort: a failed write loses one trail entry, never the publish.
-        getSynchronizedFunction(writeResourceActivity)({
+        getSynchronizedFunction(writeResourceActivity)(ctx, {
           activityType: ResourceActivityType.Published,
           publishVersion: publication.publishVersion,
           resourceId: id,
-          userId: ctx.getSessionPayload.user.id,
         });
         await publishResourceOperation(ctx.getSessionPayload, {
           path: RoutePath.Resource(id),
@@ -505,10 +503,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
           new Date(),
         ).match(noop, console.error);
         // Best-effort: a failed write loses one trail entry, never the unpublish.
-        getSynchronizedFunction(writeResourceActivity)({
+        getSynchronizedFunction(writeResourceActivity)(ctx, {
           activityType: ResourceActivityType.Unpublished,
           resourceId: id,
-          userId: ctx.getSessionPayload.user.id,
         });
         await publishResourceOperation(ctx.getSessionPayload, {
           path: RoutePath.Resource(id),

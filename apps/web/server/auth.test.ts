@@ -1,5 +1,6 @@
 import type { auth as realAuth } from "#server/auth";
 import type { Context } from "#server/trpc/context";
+import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Session, User } from "better-auth";
 
@@ -49,6 +50,11 @@ export const insertMockSession = async ({ session, user: sessionUser }: GetSessi
 };
 
 export const authMocks = {
+  // A key is made by the plugin from the server, which is the one side allowed to set its permissions
+  createApiKey:
+    vi.fn<
+      (input: { body: { name: string; permissions: ApiKeyPermissions; userId: string } }) => Promise<{ key: string }>
+    >(),
   // Async like the real thing, and awaited by its one caller, `readSession`, which is what lets every session a request
   // Is handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per call is
   // Deliberate: a suite driving two requests is driving two devices, and several rely on that
@@ -65,12 +71,13 @@ export const authMocks = {
   user,
 };
 
-// The better-auth surface the server reads — the three methods are the whole of it, so the rest of the instance
+// The better-auth surface the server reads — the four methods are the whole of it, so the rest of the instance
 // Is uncalled. Registered over `#server/auth` by the vitest setup file, never by a `vi.mock` in a helper: a
 // Mock is hoisted only within the file that writes it, so one written beside the session helpers reached a suite
 // Only while that module loaded before the suite's router import loaded the real one
 export const auth = {
   api: {
+    createApiKey: authMocks.createApiKey,
     // Answered in the shape the caller asks for: a read that forwards the extended cookie asks for the headers too
     getSession: async (input?: { returnHeaders?: boolean }) => {
       const getSessionPayload = await authMocks.getSession();

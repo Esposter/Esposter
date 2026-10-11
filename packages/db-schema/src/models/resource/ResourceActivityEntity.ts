@@ -15,8 +15,12 @@ import { z } from "zod";
 // `partitionKey` is the resourceId and `rowKey` the reverseTickedTimestamp, so a read is newest-first
 // Without a sort.
 // Payload fields are per-activityType and therefore all optional — Azure Table is schemaless per row.
+// The API key is who wrote the entry beside its user: the key an agent came through, named as it was when it wrote,
+// Or "" for the owner's own hand
 export class ResourceActivityEntity extends AzureEntity {
   declare activityType: ResourceActivityType;
+  apiKeyId = "";
+  apiKeyName = "";
   newName?: string;
   oldName?: string;
   publishVersion?: number;
@@ -36,6 +40,8 @@ export const resourceActivityEntitySchema = z.object({
     z.object({ partitionKey: selectResourceInResourceSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
   activityType: resourceActivityTypeSchema,
+  apiKeyId: z.string(),
+  apiKeyName: z.string(),
   newName: z.string().optional(),
   oldName: z.string().optional(),
   publishVersion: z.int().positive().optional(),
