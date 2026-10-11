@@ -1,0 +1,79 @@
+{
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 131 },
+  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 1 },
+  "chargedAttack.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
+  },
+  "chargedAttack.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "chargedAttack.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 120 },
+  "chargedAttack.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 5731 } },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 120 },
+  "chargedAttackStamina": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 5731 } },
+  "normalAttacks.0.cancelFrames": { "cause": "Unclassified", "value": 41 },
+  "normalAttacks.0.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
+  },
+  "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 82.9 },
+  "normalAttacks.1.cancelFrames": { "cause": "Unclassified", "value": 51 },
+  "normalAttacks.1.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
+  },
+  "normalAttacks.1.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 77.9 },
+  "normalAttacks.2.cancelFrames": { "cause": "Unclassified", "value": 57 },
+  "normalAttacks.2.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
+  },
+  "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 98.3 },
+  "normalAttacks.3.cancelFrames": { "cause": "Unclassified", "value": 83 },
+  "normalAttacks.3.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.580273550544841 }
+  },
+  "normalAttacks.3.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 124.5 },
+  "plungeCollision.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 31 },
+  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "plunges.high.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
+  },
+  "plunges.high.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 200 },
+  "plunges.low.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
+  },
+  "plunges.low.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "plunges.low.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 150 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.5 }
+  },
+  "skill.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
+  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 14 },
+  "skill.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "skill.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 5732 } },
+  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 250 },
+  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" }
+}

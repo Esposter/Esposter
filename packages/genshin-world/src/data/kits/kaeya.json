@@ -1,0 +1,12 @@
+{
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "burstCooldownSeconds": { "cause": "DiffersFromSource", "value": 20 },
+  "burstEnergyCost": { "cause": "DiffersFromSource", "value": 80 },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.4.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" }
+}

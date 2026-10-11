@@ -1,0 +1,42 @@
+{
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.3.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
+  },
+  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
+  "plunges.high.cancelFrames": { "cause": "DiffersFromSource", "value": 24 },
+  "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.cancelFrames": { "cause": "DiffersFromSource", "value": 24 },
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
+  "skill.hits.0.element": { "cause": "Unclassified", "value": "Wind" },
+  "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 42 },
+  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4332 } },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+}

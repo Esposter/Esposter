@@ -1,0 +1,13 @@
+{
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 37 },
+  "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
+  "normalAttacks.0.cancelFrames": { "cause": "Unclassified", "value": 61 },
+  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
+  "normalAttacks.1.cancelFrames": { "cause": "Unclassified", "value": 66 },
+  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
+  "plungeCollision.element": { "cause": "Unclassified", "value": "Rock" },
+  "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
+  "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Rock" },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+}

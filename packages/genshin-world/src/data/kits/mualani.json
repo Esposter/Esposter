@@ -1,0 +1,31 @@
+{
+  "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 178 },
+  "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalBurst" },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 113 },
+  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.5 }
+  },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 84 },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ChargedAttack" },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "normalAttacks.0.hits.0.element": { "cause": "DiffersFromSource" },
+  "normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.element": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.element": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+}

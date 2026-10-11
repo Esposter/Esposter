@@ -1,0 +1,19 @@
+{
+  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
+  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
+  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+}

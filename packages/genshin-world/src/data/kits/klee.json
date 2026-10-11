@@ -1,0 +1,10 @@
+{
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.cancelFrames": { "cause": "DiffersFromSource", "value": 99 },
+  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
+  "skillCharges": { "cause": "Unclassified", "value": 2 }
+}
