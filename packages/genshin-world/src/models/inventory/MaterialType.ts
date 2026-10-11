@@ -1,7 +1,6 @@
 // A material's type, spelt as the game's material table spells it. The enemies' masks are character development
-// Materials, the type the bag files among its Character Development Items. The enhancement ores are weapon exp stones,
-// Which the bag files among its Materials, and the bench's potions and baits are food and fish bait. The gadgets the
-// Bench crafts are widgets, which the bag files among its Materials too
+// Materials and the enhancement ores weapon exp stones; the bench's potions and baits are food and fish bait, and the
+// Gadgets it crafts widgets. The tab each is filed in is `MaterialTypeItemCategoryMap`'s
 export enum MaterialType {
   CharacterDevelopmentMaterial = "MATERIAL_AVATAR_MATERIAL",
   Consume = "MATERIAL_CONSUME",
