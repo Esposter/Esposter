@@ -132,7 +132,7 @@ const [regularChecks, registryChecks, referenceChecks, supersession] = await Pro
   // So all of them run at once rather than queueing behind the npm registry's bound
   readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
   // A repository's rename or archive is GitHub's word rather than the registry's, so it is read beside them
-  readSupersededRepositories(catalogEntries),
+  readSupersededRepositories(catalogEntries, lockCatalogVersions),
 ]);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
 const { held, outdated } = partitionHeldDependencies(
