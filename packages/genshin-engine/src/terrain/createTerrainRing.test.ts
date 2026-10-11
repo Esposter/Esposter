@@ -61,6 +61,29 @@ describe(createTerrainRing, () => {
     expect(ring.mesh.visible).toBe(false);
   });
 
+  test("writes a tile added again into the slot its key holds, growing no further", () => {
+    expect.hasAssertions();
+
+    const ring = createRing();
+    const tiles = Array.from({ length: TERRAIN_RING_INITIAL_TILE_COUNT }, (_value, column) => createTile(column));
+    for (const tile of tiles) ring.add(tile);
+    const rewrittenTile = computeTerrainTile({
+      cellsPerSide: CELLS_PER_SIDE,
+      finestTileSize: FINEST_TILE_SIZE,
+      getHeight: () => -1,
+      key: getTerrainTileKey(0, 0, 0),
+      writeColor: writeNothing,
+    });
+    ring.add(rewrittenTile);
+    ring.draw([rewrittenTile.key]);
+    const { index } = ring.mesh.geometry;
+    const positions = ring.mesh.geometry.getAttribute("position");
+    const firstIndex = index?.getX(0) ?? 0;
+
+    expect(index?.count).toBe(TERRAIN_RING_INITIAL_TILE_COUNT * tileIndices.length);
+    expect(positions.getY(firstIndex)).toBe(-1);
+  });
+
   test("keeps what it holds as it grows past its slots, and bounds only the tiles held", () => {
     expect.hasAssertions();
 

@@ -1,5 +1,6 @@
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
+import type { RegionGround } from "#src/models/world/RegionGround";
 import type { Vector3 } from "three";
 
 import { REGION_REACH } from "#src/services/constants";
@@ -10,12 +11,13 @@ import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance } from "genshin-engine";
 
-// Each region's data, with the palettes its buildings are drawn in, is fetched when the camera comes within reach of
-// Any of its areas' outlines, and released when it leaves. It is fetched rather than imported because the browser keeps
-// An imported module for the life of the page, so an imported region could never be released. Reach is rechecked only once the camera has moved a stretch, and a
-// Region whose data fails its schema or does not arrive in time is logged and left undrawn while the rest of the world
-// Loads. The data is settled whenever every region in reach has arrived or failed, which the first view's settling
-// Marks as the world ready to be shown
+// Each region's data, with its ground and the palettes its buildings are drawn in, is fetched when the camera comes
+// Within reach of any of its areas' outlines, and released when it leaves, all but its ground, which is kept once it
+// Arrives, since the ground is drawn past the reach a region is released at. It is fetched rather than imported
+// Because the browser keeps an imported module for the life of the page, so an imported region could never be released.
+// Reach is rechecked only once the camera has moved a stretch, and a region whose data fails its schema or does not
+// Arrive in time is logged and left undrawn while the rest of the world loads. The data is settled whenever every region
+// In reach has arrived or failed, which the first view's settling marks as the world ready to be shown
 export const useRegionData = (
   origin: Vector3,
   regionDataBaseUrl: string,
@@ -25,6 +27,8 @@ export const useRegionData = (
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
   const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
+  // Each region's ground laid over Windrise's, by region, set once as its region first arrives
+  const regionGroundMap = shallowReactive(new Map<string, RegionGround>());
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
@@ -54,6 +58,7 @@ export const useRegionData = (
       getResultAsync(() => measureLoadStep("regions", readLoadedRegion(regionDataBaseUrl, gameDataBaseUrl, id))).match(
         (regionData) => {
           pendingRegionIds.delete(id);
+          if (regionData.ground && !regionGroundMap.has(id)) regionGroundMap.set(id, regionData.ground);
           // A region that left reach while it was fetching is not kept
           if (wantedRegionIds.has(id)) regionDataMap.set(id, regionData);
           settle();
@@ -69,5 +74,5 @@ export const useRegionData = (
     settle();
   });
 
-  return { isRegionDataSettled, regionDataMap };
+  return { isRegionDataSettled, regionDataMap, regionGroundMap };
 };

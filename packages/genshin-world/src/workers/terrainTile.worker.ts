@@ -1,7 +1,9 @@
 import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
 import type { TerrainTileRequest } from "#src/models/TerrainTileRequest";
+import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerContext } from "#src/models/world/TerrainWorkerContext";
 import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
+import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
@@ -16,10 +18,30 @@ import {
   getTerrainTileLevel,
 } from "genshin-engine/terrainWorker";
 
-// What the tiles are computed with, which the world's first message to the worker loads
+// What the tiles are computed with, which the world's first message to the worker loads, and the ground and the regions'
+// Grounds laid over it so far that it is built from, built again as each region's ground arrives
 let context: TerrainWorkerContext | undefined;
+let loadedGround: TerrainWorkerGround | undefined;
+let regionGrounds: RegionGround[] = [];
 // Tiles asked for before the ground loads, answered in the order they came once it does
 let queuedRequests: TerrainTileRequest[] = [];
+// The tiles' heights, paint and flowers over the loaded ground with the regions' grounds laid over it so far
+const createContext = ({
+  baseGround,
+  groundLayers,
+  surfaces,
+  waterLevel,
+}: TerrainWorkerGround): TerrainWorkerContext => {
+  const groundPaint = createWindriseGroundPaint(groundLayers, surfaces);
+  return {
+    plantsGround: {
+      getHeight: createWorldHeight(baseGround, regionGrounds),
+      getWeights: createGroundLayerWeights(groundPaint),
+      waterLevel,
+    },
+    writeColor: createGroundPaintColor(groundPaint, WINDRISE_SEED + 1),
+  };
+};
 // Builds a tile's heights and its plants over the ground
 const buildPlantedTerrainTile = (
   request: TerrainTileRequest,
@@ -64,20 +86,18 @@ const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: Ter
 };
 // Generates the world's ground a tile at a time off the main thread, the plants no record places scattered on each
 // Finest tile beside it, and hands each tile's arrays back without a copy. The worker lives as long as the world does,
-// So its ground is loaded once, ahead of any tile, and a tile costs its heights and its plants and nothing to start
+// So its ground is loaded once, ahead of any tile, and a tile costs its heights and its plants and nothing to start. A
+// Region's ground is laid over it as the region comes within reach, and every tile asked for after is raised by it
 self.addEventListener("message", async (event: MessageEvent<TerrainWorkerMessage>) => {
   const message = event.data;
+  if (message.kind === TerrainWorkerMessageKind.RegionGrounds) {
+    ({ regionGrounds } = message);
+    if (loadedGround) context = createContext(loadedGround);
+    return;
+  }
   if (message.kind === TerrainWorkerMessageKind.Load) {
-    const { baseGround, groundLayers, regionGrounds, surfaces, waterLevel } = message.ground;
-    const groundPaint = createWindriseGroundPaint(groundLayers, surfaces);
-    const loadedContext: TerrainWorkerContext = {
-      plantsGround: {
-        getHeight: createWorldHeight(baseGround, regionGrounds),
-        getWeights: createGroundLayerWeights(groundPaint),
-        waterLevel,
-      },
-      writeColor: createGroundPaintColor(groundPaint, WINDRISE_SEED + 1),
-    };
+    loadedGround = message.ground;
+    const loadedContext = createContext(loadedGround);
     context = loadedContext;
     // Each tile's build runs as it is called and posts in the order they were, so the queue is answered in order
     const pendingRequests = queuedRequests;

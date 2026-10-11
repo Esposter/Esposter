@@ -80,8 +80,10 @@ export const createTerrainRing = (
   mesh.visible = false;
   return {
     add: (tile) => {
-      if (freeSlots.length === 0) grow();
-      const slot = freeSlots.pop() ?? 0;
+      // A tile written again, built over a ground that changed, takes the slot it already holds
+      const heldSlot = slotKeyMap.get(tile.key);
+      if (heldSlot === undefined && freeSlots.length === 0) grow();
+      const slot = heldSlot ?? freeSlots.pop() ?? 0;
       const base = slot * tileVertexCount;
       slotKeyMap.set(tile.key, slot);
       writeTerrainRingTile(arrays, base, tile, finestTileSize);

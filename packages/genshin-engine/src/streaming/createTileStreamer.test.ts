@@ -124,6 +124,60 @@ describe(createTileStreamer, () => {
     });
   });
 
+  test("asks again for a held tile after a refresh, drawing it until its replacement arrives", () => {
+    expect.hasAssertions();
+
+    const disposeTile = vi.fn<(tile: number) => void>();
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({ disposeTile, maxCachedCount: 1, maxPendingCount: 1, requestTile });
+    tileStreamer.receive(fineKey, 0);
+    tileStreamer.refresh();
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    const whileRefreshing = { isSettled: tileStreamer.isSettled(fineKey), tile: tileStreamer.get(fineKey) };
+    tileStreamer.receive(fineKey, 1);
+
+    expect({
+      disposed: disposeTile.mock.calls,
+      isSettled: tileStreamer.isSettled(fineKey),
+      requested: requestTile.mock.calls,
+      tile: tileStreamer.get(fineKey),
+      whileRefreshing,
+    }).toStrictEqual({
+      disposed: [[0]],
+      isSettled: true,
+      requested: [[fineKey]],
+      tile: 1,
+      whileRefreshing: { isSettled: false, tile: 0 },
+    });
+  });
+
+  test("asks again for a tile generating when a refresh came, once it arrives", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 1,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.refresh();
+    tileStreamer.receive(fineKey, 0);
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+
+    expect({ isSettled: tileStreamer.isSettled(fineKey), requested: requestTile.mock.calls }).toStrictEqual({
+      isSettled: false,
+      requested: [[fineKey], [fineKey]],
+    });
+  });
+
   test("frees the slot of a failed tile so the next wanted tile is requested", () => {
     expect.hasAssertions();
 

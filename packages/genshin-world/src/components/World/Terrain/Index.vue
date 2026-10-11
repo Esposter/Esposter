@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
+import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerFailure } from "#src/models/world/TerrainWorkerFailure";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
@@ -54,6 +55,8 @@ interface Props {
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
   rampTexture: DataTexture;
+  // The regions' grounds laid over Windrise's so far, each as its region first comes within reach
+  regionGrounds: RegionGround[];
   // How far from the eye the sun's shadows reach, past which a ring's tiles are drawn into no shadow map
   shadowReach: number;
   terrainOptions: TerrainOptions;
@@ -71,6 +74,7 @@ const {
   lightUniforms,
   origin,
   rampTexture,
+  regionGrounds,
   shadowReach,
   terrainOptions,
   terrainWorkerGround,
@@ -141,6 +145,18 @@ const tileStreamer = createTileStreamer<Mesh | number>({
     requestCount++;
   },
 });
+// A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far ahead
+// Of any tile asked of it after, and every tile held or generating is asked for again over them, each held one drawn
+// Until its replacement arrives
+watch(
+  () => regionGrounds,
+  (grounds) => {
+    const message: TerrainWorkerMessage = { kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds: grounds };
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
+    for (const worker of workers) worker.postMessage(message);
+    tileStreamer.refresh();
+  },
+);
 // A tile that cannot be built is released, so it is asked for again or given up, and the world is not held on it
 const failTile = (key: number) => {
   if (tileStreamer.fail(key))
