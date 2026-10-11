@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/services/generateNonce.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0021209500000000637,
+              "name": "native — random bytes alone",
+              "p99": 0.011301000000005387,
+              "rme": 8.772495330437568,
+              "sampleCount": 2000
+            },
+            {
+              "mean": 0.0032958000000001147,
+              "name": "a CSP nonce",
+              "p99": 0.007399999999990144,
+              "rme": 6.564620138461335,
+              "sampleCount": 2000
+            }
+          ],
+          "fullName": "generateNonce > a nonce"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/nitro/plugins/nonce.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0018270000000001122,
+              "name": "native — a page's markup copied",
+              "p99": 0.008778000000004553,
+              "rme": 13.688188825726094,
+              "sampleCount": 200
+            },
+            {
+              "mean": 0.010299500000000699,
+              "name": "a page's markup rewritten",
+              "p99": 0.02152100000000301,
+              "rme": 3.8054012547344667,
+              "sampleCount": 200
+            }
+          ],
+          "fullName": "<anonymous> > a rendered page's nonce and SRI attributes"
+        }
+      ]
+    }
+  ]
+}

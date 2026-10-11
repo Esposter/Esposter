@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/services/getSecurityRules.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0023855499999999395,
+              "name": "native — matching the path alone",
+              "p99": 0.010401000000003931,
+              "rme": 21.986024550091194,
+              "sampleCount": 2000
+            },
+            {
+              "mean": 0.004610599999999994,
+              "name": "rules of a request's path",
+              "p99": 0.01480800000000783,
+              "rme": 12.023660534481545,
+              "sampleCount": 2000
+            }
+          ],
+          "fullName": "getSecurityRules > a request's route rules"
+        }
+      ]
+    }
+  ]
+}
