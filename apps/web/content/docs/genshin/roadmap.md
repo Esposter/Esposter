@@ -13,7 +13,7 @@ A screen's reference clips are replaced by the interface export once the screen'
 
 ## Manual verification
 
-The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity), Search before recording): approvals only an eye gives, and the agents' unsure values, each beside its source with a yes-or-no question. Every other call is made and built. The references still sought are the next section.
+The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity)): approvals only an eye gives, and the agents' unsure values, each on the page that holds its source. Every other call is made and built.
 
 - **Is the reputation reward page's list laid out as the 18-second frame shows it?** The rows, marks and sizes of `ReputationScreen` are provisional, read off `references/reputation-screen/18s.png` from `captures/yt-1SqmdXbIhLs-reputation-guide.mp4`: yes if the page reads the same beside the frame, no if the rows, sizes or marks differ.
 - **Is the desert clip a sandstorm?** `world-sandstorm.mkv` was found as `captures/yt-k_FKK0qcYHw-0-40.mp4` (0–40 s) and the wiki's `File:Desert of Hadramaveth.png`: yes if what blows across them is the sandstorm weather the haze and streaks are matched to, no if it is only a dust column.
@@ -52,7 +52,6 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does a resident's reply that begins a quest's talk read the quest's title, above their own replies?** [Dialogue](/docs/genshin/dialogue) offers each quest talk open to a resident on their standing talk's opening line, named by its quest's title and ahead of the talk's own replies and a duel, a best estimate no published source shows: yes if the game's reply reads the quest's title and comes first, no if it reads other words or sits below the resident's own replies.
 - **Does the world run on behind a talk?** A talk holds nothing of the world ([screens](/docs/genshin/screens)), so the clock, the sky and the residents behind the speaker go on as they were: yes if the game's sky, clouds and residents move during a talk, no if they hold still.
 - **Does auto-play hold a whole line with no voice-over for about a second and a half before the next begins?** [Dialogue](/docs/genshin/dialogue) holds every whole line for `TALK_AUTO_PLAY_HOLD_MS` under auto-play, a best estimate, since no published clip found shows a line with no voice-over under auto-play.
-
 - **Does Eula's charged attack land its spinning hit at half a second and its final hit at one second, in 1.5 seconds?** Provisional, as gcsim leaves the charged attack unimplemented: yes if a recording of it reads those seconds, no if it reads others, which the kit then takes.
 - **Does Eula's hold become a hold at half a second of holding?** Provisional, as gcsim takes any hold from the input alone: yes if a recording of the skill's input shows the hold starts at half a second, no if it starts at another length, which the kit then takes.
 - **Does Sayu's short hold begin at 0.5 seconds?** No table or wiki page gives the seconds a press must be held to become a hold, so her short hold and roll levels start at Venti's 0.5 seconds, as Kazuha's hold does: yes if a recording of her Skill held for half a second plays the short hold, no if it plays the press.
@@ -76,12 +75,10 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Do Yun Jin's strikes, charged attack, plunges and Opening Flourish's hits deal no poise?** Provisional, as gcsim gives none for them, so `yunjinKit.ts` sets each at 0 and her plunges' reaches and 0.4 seconds are the other kits' stand-ins: yes if a recording of them against a poised enemy shows none staggering it, no if one does.
 - **Do Opening Flourish's tap and Yun Jin's Geo burst each give 1U of Geo gauge?** Provisional, as gcsim gives no gauge, so `yunjinKit.ts` reads 1U as the other Cryo and Geo hits here do: yes if a recording shows 1U from each, no if it shows another amount.
 - **Does holding Opening Flourish for half a second give its level 1 charge, and a second its level 2?** Provisional, as gcsim takes the levels from the input alone, so `yunjinKit.ts` uses the thresholds Bennett's Charge Levels do: yes if the levels come at those held times, no if they differ.
-
 - **Does Kuki's burst strike twelve times while her HP is at 50% or less, and seven at more?** gcsim casts seven hits at her full HP and twelve at half or less, every 17 frames from 50. The kit builds the seven: yes if the game gives the twelve at half HP, no if it gives seven at every HP.
 - **Are Kuki's plunges' reaches 1, 3 and 5 metres, with poise 10, 50 and 100?** gcsim gives Kuki no plunge file, so the kit takes the generic plunges' reaches and poise: yes if the game's plunges match them, no if they differ.
 - **Does a Nilou plunge land 0.4 seconds after it starts, with poise 25, 100 and 150?** Her collision, low and high plunges are priced at the shared borrowed reaches, with Zhongli's poise, as gcsim gives her plunges no file: yes if a recording of her plunge clip lands at that point with those poise values, no with what the recording shows.
 - **Does Kamisato Art: Kyouka's water illusion explode 35 frames after the cast?** gcsim takes the illusion's least delay of 35 frames, which a player's parameter may only raise, so `ayatoKit.ts` takes it: yes if a recording of the explosion lands about 0.58 seconds after the cast, no if it lands at another time.
-
 - **Does the body move as the game's does where nothing of the game measures it?** [Character controller](/docs/genshin/character-controller) takes each of these as a best estimate every body type shares (`PROVISIONAL_LOCOMOTION`, and the engine's `STEEP_SLIDE_SPEED` and `SWIM_STROKE_STAMINA_COST`): yes to each if a recording of the Traveler shows it, no with what the recording shows, which the numbers then take.
   - Does a glide over level ground cover about 6 metres a second? A published clip (`captures/yt-kyXg-Hx3Xlo-glide-compare.mp4`) times a glide along Mondstadt's street at 15.0 seconds against a tall male's sprint at 11.9, but gives no distance.
   - Does a glide sink about 2.5 metres a second?
@@ -93,7 +90,6 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
   - Does a body start to swim where the water reaches about seven tenths of its height?
   - Does a body on ground too steep to stand on slide down it at about 4 metres a second?
   - Does a body treading still water spend stamina a stroke at a time, as a swimming one does?
-
 - **Are Nahida's plunges' hits at the frames and with the poise of Bennett's?** Her gcsim folder has no plunge file, so her collision, low and high plunge take Bennett's timings and poise (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `nahidaKit.ts` writes them: yes if her plunge lands the same, no if her animation shows otherwise.
 - **Does Faruzan's Dazzling Polyhedron stand 12.4 seconds, so its sixth Whirlwind Pulse lands at 13?** The burst's field is gcsim's 745 frames, where the game's table gives 12 seconds: yes if the polyhedron still stands for its sixth Pulse at 13 seconds, no if it ends at 12.
 - **Do Faruzan's poise values match the stand-ins her kit gives?** Her strikes, fully charged shot and plunges are given Yelan's and Ganyu's poise, as gcsim gives none: 20 for the fully charged shot, 50 for the low plunge and 100 for the high one, read beside a recording of each hit: yes if the game's poise for them match, no if they differ.
@@ -134,6 +130,81 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Do Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges deal poise?** gcsim gives him none of it, so `ororonKit.ts` stands every hit at 0: yes if the game gives them no poise, no if they deal some and the amounts are the ones to set.
 - **Do Ororon's plunges land as their action starts?** gcsim gives him no plunge file, so `ororonKit.ts` takes the shared plunge reach and lands each plunge at 0 seconds: yes if a recording of his plunges shows a landing at once with that reach, no if it lands later, with the frames it gives.
 - **Do Kinich's plunges deal the wiki's 100, 150 and 25 poise, and land as their action starts?** gcsim gives him no plunge file, so `kinichKit.ts` borrows the shared plunge reach, takes the wiki's standard poise and lands each plunge at its action's start, with a provisional 0.4 seconds: yes if a recording of his plunges shows that poise and that landing, no if it shows others, with the poise and frames it gives.
+- [ ] **Reputation reward page list** — [Reputation](/docs/genshin/reputation): the rows, marks and sizes sit as the 18-second reference frame shows them.
+- [ ] **Desert clip is a sandstorm** — [Weather](/docs/genshin/weather): what blows across the clip is the sandstorm the haze is matched to, not a dust column.
+- [ ] **Burst fill in the element's colour** — [HUD](/docs/genshin/hud): the game fills a charged burst in its element's colour, not gold.
+- [ ] **Keys' burst fills while uncharged** — [HUD](/docs/genshin/hud): an uncharged PC burst fills from its foot in the element's tone.
+- [ ] **Stamina pulse starts under an eighth** — [HUD](/docs/genshin/hud): the pulse starts with stamina left, not only from empty.
+- [ ] **Snezhnaya's flakes are falling snow** — [Weather](/docs/genshin/weather): the flakes in the wiki's frame are the snowfall, not a sky detail.
+- [ ] **Near teleport fades through the loading screen** — [Map](/docs/genshin/map): a near teleport within one region fades as a cross-region one does.
+- [ ] **Approve the visual-suite images** — [Visual suite](/docs/genshin/parity/visual-suite): the character menu, inventory, character, menu and world-level dialog images are untracked until `test:visual -u` approves them.
+- [ ] **Profile tab against its reference** — [Character profile](/docs/genshin/character-profile): the tab beside the English client's profile frame, in its sizes and colours.
+- [ ] **Eye on the provisional looks** — [Dialogue](/docs/genshin/dialogue), [HUD](/docs/genshin/hud), [Interaction](/docs/genshin/interaction): the prompt list's pill end and fill, the minimap disc, the drops' and residents' tints, a talk's lit reply, its band's fades and its Auto and Skip buttons.
+- [ ] **Oculi counts against the wiki** — [Spawned places](/docs/genshin/spawned-places): the game's counts for Fontaine, Natlan and Nod-Krai against the wiki's 271 each.
+- [ ] **Duel board layout and image** — [Duel board](/docs/genshin/genius-invokation/duel-board): the board's layout against the English client's tavern duel, then its image approved with `test:visual -u`.
+- [ ] **Held F repeats every 0.45 seconds** — [Interaction](/docs/genshin/interaction): a recording shows F held there, not tapped.
+- [ ] **Prompt list shows five rows at 2.5 metres** — [Interaction](/docs/genshin/interaction): a pile of more than five shows five rows, and a prompt first shows about 2.5 metres from the body.
+- [ ] **Chihayaburu's hold releases at 0.5 seconds** — [Kazuha](/docs/genshin/kits/kazuha): a recording of the hold releases at half a second, and his skill, burst and collision stagger no enemy.
+- [ ] **Yoimiya's plunge lands at 0.4 seconds** — [Yoimiya](/docs/genshin/kits/yoimiya): a recording of her plunge lands at that point.
+- [ ] **Thoma's plunge lands at 0.4 seconds** — [Thoma](/docs/genshin/kits/thoma): a recording of his plunge lands at that point.
+- [ ] **Trump-Card Kitty's leap ends at 6.3 seconds** — [Collei](/docs/genshin/kits/collei): a recording of the leap ends 6.3 seconds after its explosion.
+- [ ] **Collei's arrows, Floral Brush and Kitty stagger no enemy** — [Collei](/docs/genshin/kits/collei): no recording shows any of them staggering an enemy.
+- [ ] **Dori's charged attack hits at the spin's end** — [Dori](/docs/genshin/kits/dori): a recording's final hit lands when the spin ends.
+- [ ] **Connector ticks run past 12 seconds** — [Dori](/docs/genshin/kits/dori): a recording shows a tick after 12 seconds from the burst.
+- [ ] **Dori's shot, Connector and collision stagger no enemy** — [Dori](/docs/genshin/kits/dori): no recording shows any of the three staggering an enemy.
+- [ ] **Tighnari's arrows, mine and shaft stagger no enemy** — [Tighnari](/docs/genshin/kits/tighnari): no recording shows any of them staggering an enemy.
+- [ ] **Yanfei's charged attack hits at 63 frames** — [Yanfei](/docs/genshin/kits/yanfei): a standing charged attack's hit lands at 63 frames.
+- [ ] **Quest reply's mark has an exclamation mark in its ring** — [Dialogue](/docs/genshin/dialogue): the game's quest reply shows the mark inside its gold ring, and a story quest reply its inner diamonds.
+- [ ] **Black-screen narration sits centred** — [Dialogue](/docs/genshin/dialogue): the game's black-screen line is drawn at the screen's middle, with no name or title.
+- [ ] **PC reveal runs at the PlayStation's rate** — [Dialogue](/docs/genshin/dialogue): the PC client writes a character every 30 milliseconds, a space taking no time.
+- [ ] **Resident's quest-title reply comes first** — [Dialogue](/docs/genshin/dialogue): the game's reply reads the quest's title and sits above the resident's own replies.
+- [ ] **The world runs on behind a talk** — [Screens](/docs/genshin/screens): the sky, clouds and residents move during a talk.
+- [ ] **Auto-play holds a whole line about a second and a half** — [Dialogue](/docs/genshin/dialogue): a line with no voice-over holds about that long under auto-play before the next.
+- [ ] **Eula's charged attack lands at 0.5, 1 and 1.5 seconds** — [Eula](/docs/genshin/kits/eula): a recording reads the spin at half a second, the final hit at one, in 1.5 seconds.
+- [ ] **Eula's hold begins at half a second** — [Eula](/docs/genshin/kits/eula): a recording of the skill's input shows the hold starting at half a second.
+- [ ] **Sayu's short hold begins at 0.5 seconds** — [Sayu](/docs/genshin/kits/sayu): a recording of her Skill held for half a second plays the short hold.
+- [ ] **Sayu's charged attack and plunges** — [Sayu](/docs/genshin/kits/sayu): a recording of them matches the table's charged slots and the half-second plunges.
+- [ ] **Kokomi's plunges land at half a second** — [Kokomi](/docs/genshin/kits/kokomi): a recording of her plunge lands at that point.
+- [ ] **Raiden Shogun's hits deal no poise** — [Raiden Shogun](/docs/genshin/kits/raiden-shogun): a recording against a poised enemy shows none staggering it.
+- [ ] **Masatsu Zetsugi gives 2U of Geo gauge** — [Itto](/docs/genshin/kits/itto): a recording of the hit shows a Geo gauge of 2U, not 1U.
+- [ ] **Heartstopper's short hold gives fewer stacks** — [Heizou](/docs/genshin/kits/heizou): a hold released before three seconds gives its own stack count, not the press's.
+- [ ] **Electro-Charged arcs to the nearest Wet enemy** — [Combat](/docs/genshin/combat): among three Wet enemies within 5 metres the arc goes to the nearest.
+- [ ] **Crystallize shard flies in from 2 metres** — [Combat](/docs/genshin/combat): a shard flying to the character starts about 2 metres out.
+- [ ] **Normal attack rolls energy once per hit** — [Combat](/docs/genshin/combat): a sword's normal attacks through a group give no more energy than through one enemy.
+- [ ] **Dendro Core is struck where an enemy would be reached** — [Combat](/docs/genshin/combat): an Electro normal attack sets off a core only once its swing reaches an enemy standing on it.
+- [ ] **Yelan's first wave comes a second after the hit** — [Yelan](/docs/genshin/kits/yelan): a recording of the burst shows its first three throws a second after the hit.
+- [ ] **Kirara's hits deal no poise** — [Kirara](/docs/genshin/kits/kirara): none stagger a poised enemy in a recording.
+- [ ] **Aloy's hits deal no poise** — [Aloy](/docs/genshin/kits/aloy): none stagger a poised enemy in a recording.
+- [ ] **A Chillwater Bomblet across two enemies adds one coil stack** — [Aloy](/docs/genshin/kits/aloy): one bomblet striking two enemies gives one coil stack.
+- [ ] **Freeze Bomb and each bomblet give 1U of Cryo** — [Aloy](/docs/genshin/kits/aloy): a recording shows 1U from each.
+- [ ] **Shenhe's hits deal no poise** — [Shenhe](/docs/genshin/kits/shenhe): none stagger a poised enemy in a recording.
+- [ ] **Spring Spirit Summoning's hold begins at half a second** — [Shenhe](/docs/genshin/kits/shenhe): a shorter hold gives the press and a longer one the hold.
+- [ ] **Divine Maiden's RES Decrease holds between ticks** — [Shenhe](/docs/genshin/kits/shenhe): a recording shows the decrease unbroken between ticks.
+- [ ] **Yun Jin's hits deal no poise** — [Yun Jin](/docs/genshin/kits/yun-jin): none stagger a poised enemy in a recording.
+- [ ] **Opening Flourish's tap and Geo burst give 1U of Geo** — [Yun Jin](/docs/genshin/kits/yun-jin): a recording shows 1U from each.
+- [ ] **Opening Flourish's levels come at half a second and a second** — [Yun Jin](/docs/genshin/kits/yun-jin): the levels come at those held times.
+- [ ] **Kuki's burst strikes twelve times at half HP** — [Kuki](/docs/genshin/kits/kuki): the game's burst gives twelve hits below half HP and seven above.
+- [ ] **Kuki's plunges reach 1, 3 and 5 metres** — [Kuki](/docs/genshin/kits/kuki): the plunges match the reaches and poise of 10, 50 and 100.
+- [ ] **Nilou's plunge lands at 0.4 seconds** — [Nilou](/docs/genshin/kits/nilou): her plunge lands at that point with poise 25, 100 and 150.
+- [ ] **Kyouka's water illusion explodes 35 frames after the cast** — [Kamisato Ayato](/docs/genshin/kits/kamisato-ayato): a recording of the explosion lands about 0.58 seconds after the cast.
+- [ ] **The body moves as the game's does where nothing measures it** — [Character controller](/docs/genshin/character-controller): each best estimate below matches a recording of the Traveler, and the numbers in `PROVISIONAL_LOCOMOTION` are replaced where one does not.
+  - [ ] **Glide's forward speed** — a glide over level ground, against the published glide clip.
+  - [ ] **Glide's sink** — the glide's fall, against a recording.
+  - [ ] **Glider's opening height** — the height above the ground the glider opens at.
+  - [ ] **Plunge's fall speed** — a plunge's speed on the way down.
+  - [ ] **Step height** — the body walks up a step without jumping.
+  - [ ] **Steepest walkable slope** — the steepest slope the body walks up.
+  - [ ] **Capsule radius** — about as wide as the Traveler's shoulders.
+  - [ ] **Swim threshold** — where the body starts to swim, as a share of its height.
+  - [ ] **Slide on too-steep ground** — the speed of the slide down ground too steep to stand on.
+  - [ ] **Stroke stamina in still water** — a body treading water spends stamina a stroke at a time.
+- [ ] **Nahida's plunges match Bennett's** — [Nahida](/docs/genshin/kits/nahida): her plunge hits land at Bennett's frames with Bennett's poise, against her animation.
+- [ ] **Dazzling Polyhedron stands 13 seconds** — [Faruzan](/docs/genshin/kits/faruzan): the polyhedron still stands for its sixth Whirlwind Pulse at 13 seconds.
+- [ ] **Faruzan's poise matches her stand-ins** — [Faruzan](/docs/genshin/kits/faruzan): the game's poise for her fully charged shot and plunges matches 20, 50 and 100.
+- [ ] **Yaoyao's fourth strike reaches 2.7 metres** — [Yaoyao](/docs/genshin/kits/yaoyao): a recording hits an enemy 2.7 metres ahead, not 3.7.
+- [ ] **Yaoyao's plunge lands at 0.4 seconds** — [Yaoyao](/docs/genshin/kits/yaoyao): a recording of her plunge lands at that point.
+- [ ] **Layla's plunges match Bennett's** — [Layla](/docs/genshin/kits/layla): her plunge hits land at Bennett's frames with Bennett's poise.
+- [ ] **Wanderer's high plunge matches Bennett's** — [Wanderer](/docs/genshin/kits/wanderer): his high plunge lands at Bennett's frame with Bennett's poise.
 
 ## References sought
 
@@ -247,7 +318,6 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Atmosphere: each hour's sky.** [Recreation passes](/docs/proposals/genshin/recreation-passes) solves the dusk's sky under thin cloud and the cover at the horizon and overhead.
 - [ ] **Atmosphere: the clouds' kind.** [Recreation passes](/docs/proposals/genshin/recreation-passes) brightens and softens the clouds, solves the day's horizon and gives a cloud its lit crown and shade.
 - [ ] **Audio: the login's music, by its score.** [Recreation passes](/docs/proposals/genshin/recreation-passes) layers real instruments or an equaliser over the synthesizer, and separates its overtones from a doubled melody.
-- [ ] **Audio: the login's music, its noise, its ringing and the first piece's bass.** Each note reads its instrument's noise from one loop phase per band, so the notes sounding at once add their amplitudes where the noise solve adds their powers, and the first piece's noise reads back over what ships. Scattering each note's start on a whole sample frame closes most of it, and the second piece's top two bands then fall short, which points at the solve reading off-partial content that is not noise-like as too little. The upper octaves ring over the game's into a note's first half second, where one envelope holds every harmonic. The first piece's lowest band overfills, which no layering can take back, since a recording only adds energy. The rules are on [music](/docs/genshin/music) and [sampled instruments](/docs/genshin/sampled-instruments).
 - [ ] **Audio: the login's music, its noise, its ringing and the first piece's bass.** Each note reads its instrument's noise from one loop phase per band, so the notes sounding at once add their amplitudes where the noise solve adds their powers, and the first piece's noise reads back over what ships. Scattering each note's start on a whole sample frame closes most of it, and the second piece's top two bands then fall short, which points at the solve reading off-partial content that is not noise-like as too little. The upper octaves ring over the game's into a note's first half second, where one envelope holds every harmonic. The first piece's lowest band overfills, which no layering can take back, since a recording only adds energy. The rules are on [music](/docs/genshin/music) and [sampled instruments](/docs/genshin/sampled-instruments).
 - [ ] **Audio: every sound of the login.** [Recreation passes](/docs/proposals/genshin/recreation-passes) matches the button clicks, the door's assembly and the wind to the game's own sounds by their bands.
 
