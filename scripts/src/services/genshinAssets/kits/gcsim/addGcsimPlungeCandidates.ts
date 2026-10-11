@@ -3,10 +3,11 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { GCSIM_PLUNGE_FILE, NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES } from "#src/services/genshinAssets/kits/constants";
+import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
-import { createCircleReach, KitPlunge, STRIKE_TARGETING_AREA } from "genshin-world";
+import { KitPlunge, STRIKE_TARGETING_AREA } from "genshin-world";
 import { posix } from "node:path";
 
 // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
