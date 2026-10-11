@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
-import { socialSchema } from "#src/schema/social/socialSchema";
 import { createSenderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
+import { socialSchema } from "#src/schema/social/socialSchema";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { check, index, text } from "drizzle-orm/pg-core";
 

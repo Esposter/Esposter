@@ -26,12 +26,12 @@ export const pgTable: PgTable = <
 ) => {
   const columnsWithMetadata = { ...createMetadataSchema(), ...columns };
   return (
-    schema?.table<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>(
+    schema?.table<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>(
       name,
       columnsWithMetadata,
       extraConfig,
     ) ??
-    camelCase.table<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>(
+    camelCase.table<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>(
       name,
       columnsWithMetadata,
       extraConfig,

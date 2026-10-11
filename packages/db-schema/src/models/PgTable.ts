@@ -17,7 +17,7 @@ export interface PgTable {
       schema?: PgSchema<TSchema>;
     },
   ): PgTableWithColumns<{
-    columns: PgBuildColumns<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>;
+    columns: PgBuildColumns<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>;
     dialect: "pg";
     name: TTableName;
     schema: TSchema;
@@ -27,7 +27,7 @@ export interface PgTable {
     columns: TColumnsMap,
     config?: { extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[] },
   ): PgTableWithColumns<{
-    columns: PgBuildColumns<TTableName, TColumnsMap & ReturnType<typeof createMetadataSchema>>;
+    columns: PgBuildColumns<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>;
     dialect: "pg";
     name: TTableName;
     schema: undefined;
