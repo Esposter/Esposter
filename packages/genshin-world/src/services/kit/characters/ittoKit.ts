@@ -74,8 +74,9 @@ const SAICHIMONJI_FRAMES = 131;
 const SAICHIMONJI_HIT_AREA = createFanReach(360, 3);
 const SAICHIMONJI_CONVERTED_HIT_AREA = createFanReach(360, 4);
 const SAICHIMONJI_POISE_DAMAGE = 120;
-// Measured: gcsim v2.47.2 (MIT) itto/charge.go, the charged attack's stamina as ActionStam gives it, 20 with no stacks
-const CHARGED_ATTACK_STAMINA = 20;
+// Measured: gcsim v2.47.2 (MIT) itto/charge.go, the charged attack's stamina as ActionStam gives it, 20 with no stacks, which
+// The attack group's index 7 gives too
+const CHARGED_ATTACK_STAMINA_INDEX = 7;
 
 // Measured: gcsim v2.47.2 (MIT) itto/plunge.go, the collision at 31 frames as a circle of radius 1 round the body, and the
 // Low and high plunges at 37 and 40 frames, circles of radius 3 and 5 with their animations of 83 and 87 frames, and 4 and 6
@@ -154,7 +155,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     burstCooldownSeconds: burstTalentMultiplier(ITTO_BURST_COOLDOWN_INDEX),
     burstEnergyCost: burstTalentMultiplier(ITTO_BURST_ENERGY_COST_INDEX),
     chargedAttack: { hits: [saichimonjiHit], seconds: SAICHIMONJI_FRAMES / 60, targetingArea: STRIKE_TARGETING_AREA },
-    chargedAttackStamina: CHARGED_ATTACK_STAMINA,
+    chargedAttackStamina: attackTalentMultiplier(CHARGED_ATTACK_STAMINA_INDEX),
     // Royal Descent deals no damage. It adds Itto's ATK per DEF to his attacks, and infuses them with Geo as they are
     // Converted, with the burst's Normal ATK SPD, for its seconds from the cast
     elementalBurst: {

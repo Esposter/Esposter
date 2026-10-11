@@ -61,6 +61,7 @@ describe(createIttoKit, () => {
 
     expect(talentMultipliers).toStrictEqual([0.792318, 0.76368, 0.916416, 1.172249]);
     expect(ITTO_KIT.chargedAttack.hits[0]?.talentMultiplier).toBe(0.90472);
+    expect(ITTO_KIT.chargedAttackStamina).toBe(20);
     expect(ITTO_KIT.plungeCollision.talentMultiplier).toBe(0.818335);
     expect(ITTO_KIT.lowPlunge.hits[0]?.talentMultiplier).toBe(1.636323);
     expect(ITTO_KIT.highPlunge.hits[0]?.talentMultiplier).toBe(2.043855);
