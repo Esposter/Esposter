@@ -7,7 +7,7 @@ export const CI_RUN_FIELDS = "conclusion,createdAt,databaseId,headSha,status,wor
 export const BRANCH_RUN_LIMIT = 10;
 // A push's run appears within seconds of the push. GitHub sends no event for it, so its creation is waited for in
 // Short steps, a bounded number of times
-export const RUN_CREATION_WAIT = Temporal.Duration.from({ seconds: 5 });
+export const RUN_CREATION_WAIT: Temporal.Duration = Temporal.Duration.from({ seconds: 5 });
 export const RUN_CREATION_ATTEMPTS = 12;
 // The seconds between `gh run watch`'s own reads of a run in progress
 export const RUN_WATCH_INTERVAL_SECONDS = 30;
@@ -15,4 +15,5 @@ export const RUN_WATCH_INTERVAL_SECONDS = 30;
 export const MAX_ERROR_LINES_PER_JOB = 40;
 // The lines of a failed job's log that carry its verdict: a linter's or a compiler's error, a failed test, the runner's
 // Own error annotation
-export const ERROR_LINE_REGEX = /\berror\b|\bError:|✖|×|\bFAIL\b|##\[error\]/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would otherwise infer
+export const ERROR_LINE_REGEX: RegExp = /\berror\b|\bError:|✖|×|\bFAIL\b|##\[error\]/u;
