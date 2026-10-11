@@ -1,4 +1,5 @@
-import { EMPTY_TREE_SHA, FLEET_IDENTITY_ARGUMENTS } from "#src/services/fleet/constants";
+import { FLEET_IDENTITY_ARGUMENTS } from "#src/services/fleet/constants";
+import { EMPTY_TREE_SHA } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 
 // A parentless commit of the empty tree carrying `message` as JSON, so a claim or a heartbeat is a message and no content

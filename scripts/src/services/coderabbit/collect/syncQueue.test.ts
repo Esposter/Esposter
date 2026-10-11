@@ -15,11 +15,13 @@ import {
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { continueSettledPick } from "#src/services/coderabbit/collect/continueSettledPick";
 import { getHeldBranch } from "#src/services/coderabbit/collect/getHeldBranch";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
+import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -408,6 +410,76 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       "
     `);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // Two queue commits that each rewrite a line develop rewrote differently, so the replay stops on each in turn
+  const setupTwoConflicts = (): { developSha: string; firstSha: string; queueSha: string } => {
+    const rootSha = readSha("HEAD");
+    commitFiles([filePath, nestedPath], "");
+    const baseSha = publish(DEVELOP_BRANCH, "HEAD");
+    const firstSha = commitFile(filePath, queueContent);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, queueContent));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, commitFiles([filePath, nestedPath], fixContent));
+    switchTo(rootSha);
+    return { developSha, firstSha, queueSha };
+  };
+  // What one resolver does: the commit it stopped on resolved and continued once, which runs on to the next stop
+  const resolveStoppedCommit = (): void => {
+    const [path = ""] = readUnmergedPaths(getCwd());
+    writeFileSync(join(getCwd(), path), resolvedContent);
+    runGit(["add", path], getCwd());
+    continueSettledPick(getCwd());
+  };
+
+  test("gives each conflict a session of its own", async () => {
+    expect.hasAssertions();
+
+    const { developSha, firstSha, queueSha } = setupTwoConflicts();
+    vi.stubEnv("GIT_EDITOR", "true");
+    runSession.mockImplementation(() => {
+      resolveStoppedCommit();
+      return Promise.resolve({ isEnded: true });
+    });
+    const syncedSha = await syncQueue({ ...readBaseInput(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(runSession.mock.calls.map(([{ prompt }]) => prompt)).toStrictEqual([
+      getSyncPrompt({
+        branch: QUEUE_BRANCH,
+        conflictedPaths: [filePath],
+        conflictSha: firstSha,
+        targetBranch: DEVELOP_BRANCH,
+      }),
+      getSyncPrompt({
+        branch: QUEUE_BRANCH,
+        conflictedPaths: [nestedPath],
+        conflictSha: queueSha,
+        targetBranch: DEVELOP_BRANCH,
+      }),
+    ]);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // A whole replay once fell to one session's deadline, its failure counted on the first conflict however many it
+  // Had resolved, until that commit was parked with its resolution long landed
+  test("counts a resolver's failure on the commit it stopped on, past every conflict resolved before it", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupTwoConflicts();
+    vi.stubEnv("GIT_EDITOR", "true");
+    runSession
+      .mockImplementationOnce(() => {
+        resolveStoppedCommit();
+        return Promise.resolve({ isEnded: true });
+      })
+      .mockResolvedValueOnce({ isEnded: false });
+
+    await expect(syncQueue({ ...readBaseInput(), developSha, queueSha })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[AttemptFailedError: Invalid operation: Update, name: coderabbit, the resolver left 044a6cfb6dc51ee4ca4586589d777543ee407df1 unresolved (attempt 1 of 3)]`,
+    );
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
   // `--abort` is denied the resolver, and a session that ran it anyway exits clean over a clean tree with no

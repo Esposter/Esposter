@@ -30,6 +30,9 @@ export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
 export const LOCKFILE = "pnpm-lock.yaml";
+// The empty tree, the same in every repository: a commit pointing at it carries its message alone, and as an attribute
+// Source it reads no `.gitattributes`, so git writes and reads bytes as they are
+export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
 // Directory and how an npm-installed project is found beside its lockfile
 export const PACKAGE_JSON_FILENAME = "package.json";

@@ -12,8 +12,6 @@ export const MACHINE_REF_PREFIX = "refs/machines/";
 // Where `git fetch` mirrors the remote's refs locally, so a read names the local mirror and never the remote
 export const FLEET_LOCAL_CLAIM_PREFIX = "refs/fleet/claims/";
 export const FLEET_LOCAL_MACHINE_PREFIX = "refs/fleet/machines/";
-// The empty tree every claim and heartbeat commit points at, the same in every repository, so a commit carries its message alone
-export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // A fresh machine may have no commit identity configured, and nothing reads the identity of a claim or a heartbeat
 export const FLEET_IDENTITY_ARGUMENTS: readonly string[] = [
   "-c",

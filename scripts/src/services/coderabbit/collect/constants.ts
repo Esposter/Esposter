@@ -161,6 +161,9 @@ export const DRAINS_MARKER = "review-collector drains";
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
 // The commit is parked on its held branch and the replay goes on without it (`replayOwed`)
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
+// Where a replay's recorded resolutions outlive its run, one ref per branch it rewrites: outside `refs/heads`, so no
+// Push to it fires a workflow or reads as a branch (`saveResolutions`, `restoreResolutions`)
+export const RESOLUTIONS_REF_PREFIX = "refs/collector/resolutions/";
 // Keys the one issue a park opens (`parkCommits`), by the first commit it parks
 export const HELD_MARKER = "review-collector held";
 // A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
