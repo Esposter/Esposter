@@ -10,6 +10,14 @@ describe(setManifestNodeVersion, () => {
     );
   });
 
+  test("rewrites engines.node listed after another engine", () => {
+    expect.hasAssertions();
+
+    expect(setManifestNodeVersion('  "engines": {\n    "npm": ">=0.0.0",\n    "node": ">=0.0.0"\n  }', "1.0.0")).toBe(
+      '  "engines": {\n    "npm": ">=0.0.0",\n    "node": ">=1.0.0"\n  }',
+    );
+  });
+
   test("rewrites the node version of devEngines.runtime in object form", () => {
     expect.hasAssertions();
 
