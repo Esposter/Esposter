@@ -93,6 +93,9 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     if (options.headers) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/securityHeaders"));
     if (options.hidePoweredBy) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/hidePoweredBy"));
 
+    if (options.rateLimiter)
+      addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/rateLimiter"), middleware: true });
+
     if (options.requestSizeLimiter)
       addServerHandler({
         handler: resolver.resolve("./runtime/server/middleware/requestSizeLimiter"),

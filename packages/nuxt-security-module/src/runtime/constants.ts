@@ -22,6 +22,9 @@ export const SECURITY_HEADER_NAMES: Readonly<Record<keyof SecurityHeaders, strin
 };
 // The header that holds a route's Content-Security-Policy when the policy is reported rather than enforced
 export const CONTENT_SECURITY_POLICY_REPORT_ONLY_HEADER_NAME = "Content-Security-Policy-Report-Only";
+// The most keys the in-memory rate limiter counts at once, and the key every request with no address is counted under
+export const MAX_RATE_LIMIT_ENTRIES = 10_000;
+export const UNKNOWN_CLIENT_KEY = "unknown";
 // The number of random bytes behind a nonce, which base64 encodes to a value no guess reproduces
 export const NONCE_BYTE_LENGTH = 18;
 // The placeholder a policy writes where the request's nonce goes
