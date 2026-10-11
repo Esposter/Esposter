@@ -23,7 +23,7 @@ export const placeTerrainFeatures = <TFeature extends TerrainFeature>(
   const features: TFeature[] = [];
   const weightedShapes = shapes.map((shape) => ({
     ...shape,
-    weightSquares: shape.offsets.reduce((sum, [, , weight]) => sum + weight ** 2, 0),
+    weightSquares: shape.offsets.reduce((sum, offset) => sum + offset[2] ** 2, 0),
   }));
   while (features.length < MAX_FEATURES) {
     const squaresTotal = values.reduce((sum, value) => (Number.isFinite(value) ? sum + value ** 2 : sum), 0);
