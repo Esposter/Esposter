@@ -25,6 +25,8 @@ flowchart TD
 
 The city's tiers narrow by a fixed step each, every walkway ledge overhangs its tier, and the dome is a hemisphere stepped through a few rings, so the whole city is one lathe. The desert ruin's columns, obelisk and pyramid are lathe stacks too, the obelisk and pyramid faceted over four sides and turned a quarter so their faces sit on the axes. A hall is one box from below the sand to its roof.
 
+Sumeru City's houses, "Area_Xm_Build_" in the game's names, are what the rainforest city kit stands in for when [parity](/docs/genshin/parity) takes inventory of the city's witness, its terrain tiles the ground beside them; `SumeruUndrawnMeshRegexMap` names the rest, bridges, common buildings and plants among them, as not drawn yet.
+
 ## Key files
 
 | File                                                                         | Role                                                                              |
@@ -36,3 +38,5 @@ The city's tiers narrow by a fixed step each, every walkway ledge overhangs its 
 | `packages/genshin-engine/src/kits/architecture/createLatheStackGeometry.ts`  | The stacked lathe every tier, column, dome and pyramid is built on                |
 | `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`       | The boxes every post, floor, wall, roof and hall is built from                    |
 | `packages/genshin-world/src/data/regions/sumeru.json`                        | Sumeru's region data: Sumeru City's terraces, at a provisional place              |
+| `packages/genshin-world/src/services/sumeru/SumeruPartFamilyMeshRegexMap.ts` | The families Sumeru City's houses and terrain tiles fall to                       |
+| `packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`    | What else Sumeru City's export holds, by kind, not drawn yet                      |

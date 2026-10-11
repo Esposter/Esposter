@@ -11,6 +11,8 @@ import { NodKraiPartFamilyMeshRegexMap } from "#src/services/nod-krai/NodKraiPar
 import { NodKraiUndrawnMeshRegexMap } from "#src/services/nod-krai/NodKraiUndrawnMeshRegexMap";
 import { SnezhnayaPartFamilyMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap";
 import { SnezhnayaUndrawnMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap";
+import { SumeruPartFamilyMeshRegexMap } from "#src/services/sumeru/SumeruPartFamilyMeshRegexMap";
+import { SumeruUndrawnMeshRegexMap } from "#src/services/sumeru/SumeruUndrawnMeshRegexMap";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
 import TerrainTileWorker from "#src/workers/terrainTile.worker?worker";
 import { QualityTier } from "genshin-engine";
@@ -38,5 +40,6 @@ export const witnessComponents = {
   natlan: { witnessFamilies: NatlanPartFamilyMeshRegexMap, witnessUndrawn: NatlanUndrawnMeshRegexMap },
   "nod-krai": { witnessFamilies: NodKraiPartFamilyMeshRegexMap, witnessUndrawn: NodKraiUndrawnMeshRegexMap },
   snezhnaya: { witnessFamilies: SnezhnayaPartFamilyMeshRegexMap, witnessUndrawn: SnezhnayaUndrawnMeshRegexMap },
+  sumeru: { witnessFamilies: SumeruPartFamilyMeshRegexMap, witnessUndrawn: SumeruUndrawnMeshRegexMap },
 };
 export const witnessFamilies = WindrisePartFamilyMeshRegexMap;
