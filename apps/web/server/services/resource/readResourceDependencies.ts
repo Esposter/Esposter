@@ -2,6 +2,7 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { readLiveOwnedResourceSummaries } from "#server/services/resource/readLiveOwnedResourceSummaries";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 // What a resource's content references, read off its own links. The target id carries no foreign key, so the targets
@@ -20,11 +21,6 @@ export const readResourceDependencies = async (
   const targetIds = new Set(links.map(({ targetId }) => targetId));
   if (targetIds.size === 0) return { dependencies: [], missingDependencyCount: 0 };
 
-  const dependencies = await ctx.db.query.resourcesInResource.findMany({
-    columns: { id: true, name: true, type: true },
-    limit: MAX_READ_LIMIT,
-    orderBy: { name: "asc" },
-    where: { deletedAt: { isNull: true }, id: { in: [...targetIds] }, userId: { eq: ctx.getSessionPayload.user.id } },
-  });
+  const dependencies = await readLiveOwnedResourceSummaries(ctx, { id: { in: [...targetIds] } });
   return { dependencies, missingDependencyCount: targetIds.size - dependencies.length };
 };
