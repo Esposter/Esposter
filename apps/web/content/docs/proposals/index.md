@@ -23,6 +23,10 @@ A program too large for one area's roadmap indexes its own proposals:
 
 - [Genshin](/docs/proposals/genshin) — Genshin Impact's world rebuilt as the agent console's world, a walkable fan recreation with the engine first and each region after it.
 
+A standard every area will follow, not yet built, lives under `proposals/architecture/`, since the architecture section keeps no roadmap of its own:
+
+- [AI-native resources](/docs/proposals/architecture/ai-native-resources) — whatever a person can do in a resource editor, an agent can do through generic typed tools derived from each type's own declaration.
+
 Repo-wide refactor plans have no area roadmap and live here directly, under `proposals/refactors/`; none is open.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.
