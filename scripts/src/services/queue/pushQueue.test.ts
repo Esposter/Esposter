@@ -92,15 +92,16 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
   });
 
-  test("carries a commit that landed on the branch while the push ran onto the synced branch", async () => {
+  test("leaves a commit that landed while the push ran on the branch, for the push it queued", async () => {
     expect.hasAssertions();
 
     setupMovedRemote("a", "b");
+    const head = readSha("HEAD");
     writeFileSync(join(getCwd(), ".gitignore"), "a");
     landCommit("landed", "landed");
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
-    expect(readSha("HEAD~1")).toBe(readSha(remoteQueueRef));
+    expect(readSha("HEAD~1")).toBe(head);
     expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
     expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("a");
   });
@@ -165,19 +166,6 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
     expect(readFileSync(join(getCwd(), "roadmap"), "utf8")).toBe("one\n2\n3\n4\nfive\n");
     expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M roadmap\n");
-  });
-
-  test("stops carrying at a landed commit that does not apply, aborting it and keeping the tree clear", async () => {
-    expect.hasAssertions();
-
-    setupMovedRemote("a", "b");
-    writeFileSync(join(getCwd(), ".gitignore"), "dirty");
-    // The remote's `a` and the landed one both add the file, so the pick conflicts
-    landCommit("a", "x");
-
-    await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
-    expect(readSha("HEAD")).toBe(readSha(remoteQueueRef));
-    expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M .gitignore\n");
   });
 
   test("replays onto the remote over a clean tree, moving the branch onto the replay", async () => {

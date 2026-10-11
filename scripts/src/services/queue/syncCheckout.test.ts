@@ -58,6 +58,20 @@ describe(syncCheckout, () => {
     expect(readRoadmap()).toBe("1\0\n2\n3-local\n");
   });
 
+  test("waits while a commit landed during the push, leaving it on the branch for the push it queued", () => {
+    expect.hasAssertions();
+
+    const base = commitFile(ROADMAP, "1\n2\n3\n4\n5\n");
+    const pushed = commitFile(ROADMAP, "one\n2\n3\n4\n5\n");
+    switchTo(base);
+    const landed = commitFile("notes", "landed\n");
+
+    syncCheckout(pushed, base, getCwd());
+
+    expect(readSha("HEAD")).toBe(landed);
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+  });
+
   test("refuses an uncommitted edit when a commit that landed since the base touched the file", () => {
     expect.hasAssertions();
 
