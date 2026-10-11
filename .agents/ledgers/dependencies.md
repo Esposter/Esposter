@@ -196,6 +196,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `rxjs`                                  | —     | Keep — free       | grid-engine's own observables                                                                          |
 | `sax`                                   | —     | Keep — spec       | the XML tokenizer under parse-tmx's reader                                                             |
 | `sharp`                                 | —     | Keep — engine     | image processing                                                                                       |
+| `sirv`                                  | —     | Keep — tooling    | the static file server Vite's public middleware runs on, serving `public/` in dev                      |
 | `superjson`                             | —     | Keep — spec       | tRPC's wire transformer                                                                                |
 | `survey-core`                           | —     | Keep — engine     | the survey engine                                                                                      |
 | `survey-creator-core`                   | —     | Keep — engine     | the survey engine                                                                                      |

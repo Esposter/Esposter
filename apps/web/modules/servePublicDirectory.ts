@@ -1,47 +1,28 @@
 // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment Nuxt turns Vite's `publicDir` off and never mounts
 // The dev handler that keeps Vite's transform off a URL outside its base, so a script in `public/` comes back as a
 // Module exporting its own URL and a classic head script throws "Cannot use import statement outside a module"
-import { createReadStream, statSync } from "node:fs";
-import { extname, join, resolve, sep } from "node:path";
+import { resolve } from "node:path";
 import { defineNuxtModule } from "nuxt/kit";
+import sirv from "sirv";
 
-// Each file in `public/` is answered as it is, ahead of the transform, as Vite's own public middleware would. A request
-// Carrying Vite's `import` or `url` query is an asset import's, which stays Vite's; any other query, a cache buster's,
-// Still gets the file
+// Each file in `public/` is answered as it is, ahead of the transform, by the static server Vite's own public middleware
+// Is built on, which reads the type, the range and the path's bounds as Vite would. A request carrying Vite's `import`
+// Or `url` query is an asset import's, which stays Vite's; any other query, a cache buster's, still gets the file
 export default defineNuxtModule({
   meta: { name: "serve-public-directory" },
-  setup: async (_options, nuxt) => {
+  setup: (_options, nuxt) => {
     if (!nuxt.options.dev) return;
-    // Imported only once the server is a dev one: the install's `nuxt prepare` loads this module before any workspace
-    // Package is built, and `@esposter/shared` resolves to its build. `pnpm dev` builds the packages before it starts
-    const { contentType } = await import("@esposter/shared");
-    // Nuxt resolves its directories with forward slashes, which `join` would not match on Windows
-    const publicDirectory = resolve(nuxt.options.dir.public);
+    // Nuxt resolves its directories with forward slashes, which the server would not match on Windows
+    const servePublicFile = sirv(resolve(nuxt.options.dir.public), { dev: true, etag: true });
     nuxt.hook("vite:serverCreated", (viteServer, { isClient }) => {
       if (!isClient) return;
       viteServer.middlewares.use((req, res, next) => {
-        if ((req.method !== "GET" && req.method !== "HEAD") || !req.url) {
-          next();
-          return;
-        }
-        const { pathname, searchParams } = new URL(req.url, "http://localhost");
+        const { searchParams } = new URL(req.url ?? "", "http://localhost");
         if (searchParams.has("import") || searchParams.has("url")) {
           next();
           return;
         }
-        const path = join(publicDirectory, decodeURIComponent(pathname));
-        if (!path.startsWith(`${publicDirectory}${sep}`) || !statSync(path, { throwIfNoEntry: false })?.isFile()) {
-          next();
-          return;
-        }
-        res.setHeader("Content-Type", contentType(extname(path)) || "application/octet-stream");
-        if (req.method === "HEAD") {
-          res.end();
-          return;
-        }
-        const stream = createReadStream(path);
-        stream.once("error", next);
-        stream.pipe(res);
+        servePublicFile(req, res, next);
       });
     });
   },
