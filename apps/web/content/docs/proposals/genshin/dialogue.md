@@ -16,15 +16,14 @@ A talk runs over the world from F on a resident, with its words written out at t
 
 ## Still to build
 
-1. **Auto-play's hold off a public clip with auto-play on.** The frames from a line with no voice-over being whole to the next line's first character give `TALK_AUTO_PLAY_HOLD_MS`, written as a constant naming the clip, read the way the reveal was (`genshin:parity frames`, then the line's darkness frame by frame). Xinyan's talk at 60 frames a second waits between lines for a click, with auto-play off, so it shows no hold.
-2. **A resident's standing talk offered beside their quest talks**, once residents hold standing talks. None does yet (`components/World/Session/Index.vue` merges an empty `standingTalkMap`), so this waits on the [scene group](/docs/proposals/genshin/scene-groups) export, the residents' own talks being read from the scene groups the other machine is exporting.
+1. **A resident's standing talk offered beside their quest talks**, once residents hold standing talks. None does yet (`components/World/Session/Index.vue` merges an empty `standingTalkMap`), so this waits on the [scene group](/docs/proposals/genshin/scene-groups) export, the residents' own talks being read from the scene groups the other machine is exporting.
 
 ## Measures owed
 
 These need a recording of the English PC client's dialogue at 1080 high, found among published recordings first ([parity](/docs/genshin/parity)):
 
 - **Whether the world runs on around a talk**: the sky, the clouds and the residents behind the speaker moving or still, read by eye.
-- **Auto-play's hold**, read off the line's darkness frame by frame, into `TALK_AUTO_PLAY_HOLD_MS`.
+- **Auto-play's hold**: the frames from a line with no voice-over being whole to the next line's first character, read off the line's darkness frame by frame as the reveal was, into `TALK_AUTO_PLAY_HOLD_MS`. Xinyan's talk at 60 frames a second waits between lines for a click, with auto-play off, and no published clip found holds a line with no voice-over under auto-play (the roadmap's References sought).
 - **The band's gradient, the selected reply's look and the fades**: the speaker's name, the line and the replies are sized and placed off one published frame, and their fades are not yet read.
 - **A narration's place on its black screen**, which no published frame read so far shows, so the line's centre on the screen is an estimate.
 - **The marks' inner glyphs and colour**: the quest's exclamation mark inside its ring and the story quest's nested diamonds, split from the silhouettes the trace keeps, with the game's gold, and the auto-play and skip buttons' glyphs.
