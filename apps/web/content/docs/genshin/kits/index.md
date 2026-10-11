@@ -263,6 +263,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Kaveh](/docs/genshin/kits/kaveh)                   | Artistic Ingenuity and Painted Dome                                  |
 | [Kazuha](/docs/genshin/kits/kazuha)                 | Chihayaburu and Kazuha Slash's Autumn Whirlwind                      |
 | [Keqing](/docs/genshin/kits/keqing)                 | Stellar Restoration and Starward Sword                               |
+| [Kinich](/docs/genshin/kits/kinich)                 | Three strikes, charged attack and the burst's first hit              |
 | [Kirara](/docs/genshin/kits/kirara)                 | Tail-Flicking Flying Kick's shield and Secret Art: Surprise Dispatch |
 | [Klee](/docs/genshin/kits/klee)                     | Jumpy Dumpty, Sparks 'n' Splash and Sparkly Explosion                |
 | [Kokomi](/docs/genshin/kits/kokomi)                 | Bake-Kurage and Nereid's Ascension                                   |
