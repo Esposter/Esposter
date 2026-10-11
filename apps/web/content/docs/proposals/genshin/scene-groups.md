@@ -12,7 +12,7 @@ Teyvat's camps, chests, residents, benches, puzzles, viewpoints and quest trigge
 
 ## Decisions
 
-- **Reading the client's scene scripts waits on the user's decision.** No session searches the scene 3 group hashes or works on the client's Lua until the user decides, by their standing rule. Two probes ran before that rule reached this page, and found that the install's map names only 5 of the 10,735 `Lua/Scene/3` scripts the community index lists, three groups among them. So the client does not carry the main world's groups under those names. `scene3.lua` and `scene3_dummy_points.lua` are standard Lua 5.3 bytecode behind a length word ([game data formats](/docs/genshin/game-data-formats), Scripts). Which source the groups come from instead is the user's call.
+- **Reading the client's scene scripts was approved on 2026-10-11, and the first read refuses both non-group scripts at their header.** Two probes ran before that approval, and found that the install's map names only 5 of the 10,735 `Lua/Scene/3` scripts the community index lists, three groups among them. So the client does not carry the main world's groups under those names. `scene3.lua` and `scene3_dummy_points.lua` carry Lua 5.3's signature behind a length word, but not its header ([game data formats](/docs/genshin/game-data-formats), Scripts). Which source the groups come from instead, and which variant to read, is the user's call.
 - **Leaked server data is not a source.** The community's decoded scene scripts (the Grasscutter resource sets) come from a 3.6-era leak of the game's server data, carry no licence, and say themselves that publishing them is a rights risk. They are also three years of patches old. They are never read, not even as a cross-check.
 - **The current dump's NPC births stand in for the NPCs.** Dimbreath's `animegamedata2` dump publishes `BinOutput/Scene/SceneNpcBorn` for the current version: every NPC's birth place by scene and group. Resident schedules, the blacksmith's place and the crafting bench's keeper read their NPCs from it now, through the dump fetch `genshin:text fetch` already uses. They switch to the group record when it lands, since only the scripts hold the suites that move an NPC by time of day.
 
@@ -20,7 +20,7 @@ Teyvat's camps, chests, residents, benches, puzzles, viewpoints and quest trigge
 
 1. **Probe. Done, then stopped at the rule:** the counts and forms above, recorded on the game data formats page.
 2. **The NPC births from the dump.** Publish `SceneNpcBorn`'s scene 3 births as a hosted dataset, then hand resident schedules, forging and crafting their NPC places through it.
-3. **The groups' source.** Waits on the user's decision. Until then nothing reads the client's scene scripts.
+3. **The groups' source.** The reader for the client's Lua is built (`genshin:assets scene-scripts`), and it refuses both non-group scripts at their header, so the variant needs the user's decision before any group is read. `scene3_dummy_points.lua` is the file that gives names and positions: it is not read yet, and under an unverified opcode map it sets one global, `dummy_points`.
 4. **Publish and hand over.** Once a source is decided, publish the group records as hosted game data, keyed by group. Then the waiting units read their camps, chests, residents, gadgets and triggers from them, each unit on its own page.
 
 ## Sources

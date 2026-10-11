@@ -48,6 +48,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | Unknown                                      | Tool                                                                                                        |
 | :------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
 | Which assets a scene draws                   | `extract`: the closure of its roots by file, path ID                                                        |
+| A scene script's globals, as data            | `genshin:assets scene-scripts <file>`: Lua 5.3 bytecode as data, refused at its header                      |
 | The scene's hierarchy, and what it lost      | `genshin:assets tree`: flags anchors, lost fathers                                                          |
 | A script's, a camera's or a light's settings | `behaviours`: raw bytes scanned for shapes, built-ins past their header                                     |
 | A setting by the time of day at each hour    | `behaviours --at`: each curve and gradient read at the times given (the login's hours as shares of a day)   |
