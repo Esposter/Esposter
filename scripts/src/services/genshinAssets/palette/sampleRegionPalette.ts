@@ -12,8 +12,13 @@ import { toSrgb } from "#src/services/shared/toSrgb";
 import { GameDataset } from "genshin-world";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
-
-const CHANNEL_MAXIMUM = 255;
+import { PaletteFamilyMap } from "#src/services/genshinAssets/palette/PaletteFamilyMap";
+import { computeDominantColour } from "#src/services/genshinAssets/palette/computeDominantColour";
+import { matchFamilyTextures } from "#src/services/genshinAssets/palette/matchFamilyTextures";
+import { readFamilyTexels } from "#src/services/genshinAssets/palette/readFamilyTexels";
+import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { BYTE } from "#src/services/shared/constants";
+import { toSrgb } from "#src/services/shared/toSrgb";
 
 // Each kit field's colour sampled from the diffuse textures of the families that feed it, the region's palette as one record
 // Under its own key. Each colour is printed with its families, texel count and spread, the evidence it is kept on
@@ -42,7 +47,7 @@ export const sampleRegionPalette = async (region: PaletteRegion): Promise<GameDa
     const { linear, spread, texelCount } = computeDominantColour(texels);
     const hex = `#${linear
       .map((channel) =>
-        Math.round(toSrgb(channel) * CHANNEL_MAXIMUM)
+        Math.round(toSrgb(channel) * BYTE)
           .toString(16)
           .padStart(2, "0"),
       )
