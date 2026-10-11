@@ -153,6 +153,8 @@ export enum GameTextKey {
   Friends = "UI_FRIEND_TITLE",
   Friendship = "3501231455",
   FrostlampFlower = "1823058028",
+  // The Frostbearing Tree's name on its prompt, as the game's own main-interface title says it
+  FrostbearingTree = "UI_ELDERTREE_MAINUI_TITLE",
   // The game's own name, as its window's title says it
   GameTitle = "LANGUAGE_WINDOWS_TITLENAME",
   GcgActionPhase = "UI_GCG_PHASE_ACTION",
