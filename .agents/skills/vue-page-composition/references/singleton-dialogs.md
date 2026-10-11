@@ -5,7 +5,7 @@ Read when a list item needs a dialog, menu or other overlay opened from a row, o
 The pattern has three parts:
 
 1. **Target ref in a per-service dialog store** — `deletingId`, `editingColumnName`, a string defaulting to `""`; where that store lives is the `pinia` skill's (`references/dialog-stores.md`).
-2. **Action buttons write the target** — the per-item button is a dumb `UiIconButton` with `@click="deletingId = id"` (`apps/web/app/components/Message/Model/Room/Settings/Type/Webhook/DeleteButton.vue`). No activator slots, no emit plumbing up the tree.
+2. **Action buttons write the target** — the per-item button is a dumb `UiIconButton` with `@click="deletingId = id"` (`apps/web/app/components/Message/Model/Room/Settings/Type/Webhook/ActionButton.vue`). No activator slots, no emit plumbing up the tree.
 3. **One dialog instance mounted at list level** — a `ConfirmDeleteDialog.vue`/`EditDialog.vue` singleton mounted once (in the list/table/page component). It looks the full item up in the business store by target, guards with `v-if="item"`, and derives its model via `useSingletonDialog`:
 
 ```ts
