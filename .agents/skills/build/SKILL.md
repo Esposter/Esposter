@@ -11,7 +11,7 @@ The mechanism — what runs, in what order, and why — is `apps/web/content/doc
 
 Every line here is a direction a reader reaches for on meeting the rules below. Each was tried or considered; the argument is where the line points.
 
-- **Finishing the source split** — giving the app's Vite and Nitro builds, or its Vitest project, the `source` condition. The package whose stores rely on its own build's auto-import injection breaks outright; reach for `watch:packages` (`references/source-exports.md`).
+- **Finishing the source split** — giving the app's Vite and Nitro builds, or its Vitest project, the `source` condition. The package whose stores rely on its own build's auto-import injection breaks outright; reach for a rebuild of the package (`references/source-exports.md`).
 - **`devExports: true`** in place of the condition name. It points every condition at source, and Node's own loader reads no TypeScript (`references/source-exports.md`).
 - **A repo-namespaced condition** (`esposter-source`), to stop a stranger's resolver matching the arm. Nothing published carries a source arm at all (`references/source-exports.md`).
 - **A hand-maintained `onlyBundle` allowlist**, to answer tsdown's standing hint. `inlinedDependencies` already records every vendored package, and a new package's first build could never pass the check (`references/opt-outs.md`).
