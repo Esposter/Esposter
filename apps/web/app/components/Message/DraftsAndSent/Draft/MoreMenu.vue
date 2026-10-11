@@ -46,14 +46,12 @@ const items = computed<Item[]>(() => [
 
 <template>
   <UiOverflowMenu :items label="Draft actions" />
-  <UiConfirmDialog
+  <DraftsAndSentDeleteConfirmDialog
     v-if="isDeleteOpen"
     v-model="isDeleteOpen"
-    confirm-label="Delete"
     title="Delete draft"
-    is-optimistic
     :confirm="() => clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey })"
   >
     <p>Are you sure you want to delete this draft?</p>
-  </UiConfirmDialog>
+  </DraftsAndSentDeleteConfirmDialog>
 </template>
