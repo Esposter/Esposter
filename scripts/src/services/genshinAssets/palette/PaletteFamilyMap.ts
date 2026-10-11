@@ -2,9 +2,14 @@ import { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
 
 // Each region's kit fields and the texture families that feed them, a family named as its diffuse texture is without
 // Its suffix. A family is a texture a field's part tiles with, never an atlas whose largest cluster is another part's:
-// Mondstadt's and Inazuma's plaster is a panel in a trim atlas, and the extractions hold neither Mondstadt's roofs nor a
-// Building of Snezhnaya's, so those fields are left out and their provisional colours stay
+// Mondstadt's and Inazuma's plaster and Fontaine's gold and iron are trim in atlases, and the extractions hold neither
+// Mondstadt's roofs nor a building of Snezhnaya's, so those fields are left out and their provisional colours stay
 export const PaletteFamilyMap: Record<PaletteRegion, Record<string, string[]>> = {
+  [PaletteRegion.Fontaine]: {
+    awning: ["Area_Fd_Build_Common_ZhangPeng_A_01"],
+    slate: ["Area_Fd_Build_FDC_House_06_T2"],
+    stone: ["Area_Fd_Build_FDC_House_01_T2", "Area_Fd_Build_FDC_House_03_T4", "Area_Fd_Build_FDC_House_04_T4"],
+  },
   [PaletteRegion.Inazuma]: {
     roofTile: ["Area_Dq_Build_MS_TsgRoof_01_T2", "Area_Dq_Build_MS_CityHouse_01_T2"],
     // The castle town's frame timber, not the common planks of its boardwalks
