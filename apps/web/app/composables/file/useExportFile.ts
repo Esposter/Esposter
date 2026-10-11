@@ -1,9 +1,9 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { getFilePickerTypes } from "@/services/file/getFilePickerTypes";
+import { showSaveFilePicker } from "@/services/file/showSaveFilePicker";
 import { useNotificationStore } from "@/store/notification";
 import { getResultAsync, noop } from "@esposter/shared";
-import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
   const notificationStore = useNotificationStore();
