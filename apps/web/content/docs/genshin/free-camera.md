@@ -5,7 +5,7 @@ description: The free camera, flown over the continent with the keyboard, the mo
 
 # Free camera
 
-Photo mode's camera is the follow camera's orbit round the held character, as [follow camera](/docs/genshin/follow-camera) sets out. Under the tuning panel it is the free camera instead, the developer's flight: the player flies it over Windrise and beyond, while the character holds where it stood. In play the [follow camera](/docs/genshin/follow-camera) stands behind the [character](/docs/genshin/character-controller); under the tuning panel, choosing photo mode from the Paimon menu mounts the free camera, which flies from wherever the follow camera left the view, and leaving it unmounts it again. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
+Photo mode's camera is the follow camera's orbit round the held character, as [follow camera](/docs/genshin/follow-camera) sets out. Under the tuning panel, photo mode mounts the free camera instead: the developer's flight, which starts from wherever the follow camera left the view and flies over Windrise and beyond while the character holds where it stood. Leaving photo mode unmounts it. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
 
 ```mermaid
 sequenceDiagram

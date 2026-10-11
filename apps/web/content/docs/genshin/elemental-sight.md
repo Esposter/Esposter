@@ -5,7 +5,7 @@ description: Elemental Sight as the world plays it: a white range spreads from t
 
 # Elemental Sight
 
-Elemental Sight shows what can be acted on. Pressed, a range spreads out from the character, and inside it what cannot be acted on goes dark while the drops, the residents and the enemies stand lit. The [controls](/docs/genshin/controls) read its binding, and the world answers it here. Trails that lead to a bounty's target, a Seelie's court or a clue are not drawn yet: they come with the pages that place those things, as the [proposal](/docs/proposals/genshin/elemental-sight) records.
+Elemental Sight shows what can be acted on. Pressed, a range spreads out from the character, and inside it what cannot be acted on goes dark while the drops, the residents and the enemies stand lit. The [controls](/docs/genshin/controls) read its binding, and the world answers it here. Trails are not drawn yet; the notes say what they wait on.
 
 ## How it works
 
@@ -44,11 +44,7 @@ flowchart TD
 
 ## Decisions
 
-- **The range is centred where the sight was turned on.** The game's range is the reach from that point, and a walk ends the sight rather than moving the range with the character.
 - **White is the colour of what no element affects.** The wiki's colour key gives white to things with no element on them, which covers interactables and an enemy with no element.
-- **The element shown is the strongest aura naming one element.** Quicken names two, so it falls back to the innate element, and an enemy with neither is white.
-- **Only what the scene shows is lit.** The stand-ins are compared with the scene's depth, so a lit thing behind a wall is muted as the wall is.
-- **The sight is off wherever a screen covers the world.** A screen over the world ends it, so the menus and the talks never show it.
 
 ## Notes
 

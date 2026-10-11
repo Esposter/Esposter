@@ -39,7 +39,7 @@ flowchart TD
 
 ## Parity
 
-The overlay is scored against `map-overlay-jueyun`, the English client's map on M over Jueyun Karst at 1920 by 1080, over its interface layer alone: the pointer, the area names, the close button and the zoom slider, as rectangles of the reference's own pixels (`ParityReference.mask`), with the terrain the game paints masked out. As the build stands the masked score is a mean difference of 60.22% and a FLIP of 0.8864. The score is high because the names are not drawn: the region data gives no area a place, so each name box holds only the reference's terrain. The boxes also keep the terrain between a glyph's strokes, so the figure is an upper bound until the glyphs are traced, and the 2% bar is not yet reachable. The whole-frame 31.37% in the committed report no longer reproduces, since the page's fixture had no wallet for the top bar's Original Resin and crashed until it was given one.
+The overlay is scored against `map-overlay-jueyun`, the English client's map on M over Jueyun Karst at 1920 by 1080, over its interface layer alone: the pointer, the area names, the close button and the zoom slider, as rectangles of the reference's own pixels (`ParityReference.mask`), with the terrain the game paints masked out. The score is high because the names are not drawn: the region data gives no area a place, so each name box holds only the reference's terrain. The boxes also keep the terrain between a glyph's strokes, so the score is an upper bound until the glyphs are traced, and the bar it is judged against is not yet reachable.
 
 ## Key files
 
