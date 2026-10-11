@@ -5,7 +5,7 @@ import { addReplayWorktree } from "#src/services/queue/addReplayWorktree";
 import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { checkIsRetried } from "#src/services/queue/checkIsRetried";
 import { checkIsStaleRefusal } from "#src/services/queue/checkIsStaleRefusal";
-import { MAX_PUSH_ATTEMPTS } from "#src/services/queue/constants";
+import { MAX_PUSH_ATTEMPTS, REMOTE_QUEUE_REF } from "#src/services/queue/constants";
 import { getRetryDelayMilliseconds } from "#src/services/queue/getRetryDelayMilliseconds";
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
 import { removeReplayWorktree } from "#src/services/queue/removeReplayWorktree";
@@ -17,8 +17,6 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { setTimeout as sleep } from "node:timers/promises";
-
-const REMOTE_QUEUE_REF = `origin/${QUEUE_BRANCH}`;
 
 // `--fork-point` reads the remote's reflog, so it names where the branch last met the remote even after a rewrite.
 // Without that reflog entry the plain merge base is the fork point
