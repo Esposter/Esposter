@@ -1,6 +1,6 @@
 ---
 title: Expeditions
-description: Proposal — the expeditions Katheryne sends out from the Adventurers' Guild, their screen, the other nations' places as their statues are placed, and the expedition bonus and talents. The sending, return, claim and recall of Mondstadt's places are built, on the expeditions page.
+description: Proposal — the expeditions Katheryne sends out from the Adventurers' Guild, their screen, the other nations' places as their statues are placed, and the expedition bonus and talents.
 model: claude-haiku-5-5
 needs: [media-engine]
 touches:
@@ -12,21 +12,19 @@ touches:
 
 # Expeditions
 
-The sending, the return, the claim, the recall and the limit by rank are built, with Mondstadt's places ([expeditions](/docs/genshin/expeditions)). What remains is what a player meets: Katheryne's talk that sends a character, the expedition screen, the other nations' places, and what a character's expedition talent adds. The places open with the statues that cover them ([map unlocking](/docs/proposals/genshin/map-unlocking)), and the talents wait on the characters' kits ([character kits](/docs/proposals/genshin/character-kits)), so those two parts wait on them.
+The [expeditions](/docs/genshin/expeditions) page holds the sending, the return, the claim, the recall and the limit by rank, with Mondstadt's places. What remains is what a player meets: Katheryne's talk that sends a character, the expedition screen, the other nations' places, and what a character's expedition talent adds. The places open with the statues that cover them ([map unlocking](/docs/proposals/genshin/map-unlocking)), and the talents wait on the characters' kits ([character kits](/docs/proposals/genshin/character-kits)), so those two parts wait on them.
 
 ## Decisions
 
-- **Katheryne sends, at any branch of the Adventurers' Guild.** A talk with her opens the expedition screen, where a character, a place and one of its durations are chosen. The rules behind the screen are built: a send is refused where the expedition is not open, the character is the Traveler, down or already away, the limit is reached, or the place is closed or offers no such hours.
+- **Katheryne sends, at any branch of the Adventurers' Guild.** A talk with her opens the expedition screen, where a character, a place and one of its durations are chosen. A send is refused by the rules the [expeditions](/docs/genshin/expeditions) page holds.
 - **Any character but the Traveler stays usable in the party while away.** The game sends them in name only, so the party reads nothing from an expedition.
-- **The expedition bonus is a chance by level, not a talent.** `ExpeditionBonusExcelConfigData` gives a chance per level of the sent character: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table does not say what a bonus gives, so the payload is open, and the earlier reading of this table as the talent's bonus is withdrawn.
+- **The expedition bonus is a chance by level, not a talent.** `ExpeditionBonusExcelConfigData` gives a chance per level of the sent character: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table does not say what a bonus gives, so the payload is open.
 - **A character's expedition talent adds to a send or to a reward.** A passive that shortens an expedition or adds to its reward applies when its character is sent. Which passives do this is read from the characters' kits once the [character kits](/docs/proposals/genshin/character-kits) are built, not from the bonus table.
-- **The expedition screen is built now from a public clip.** Its layout is read off a published walkthrough of Katheryne's expedition screen, [How to Complete an Expedition and Send Characters Out on One](https://www.youtube.com/watch?v=fxIjhlV3vUA) (107 seconds), and its comparison is queued for the user's eyes. No recording is owed for it first; one of the English PC client re-measures it later without gating the build.
+- **The expedition screen is drawn from a public clip.** Its layout is read off a published walkthrough of Katheryne's expedition screen, [How to Complete an Expedition and Send Characters Out on One](https://www.youtube.com/watch?v=fxIjhlV3vUA) (107 seconds), and its comparison is queued for the user's eyes. No recording is owed for it first; one of the English PC client re-measures it later without gating the build.
 - **Until Katheryne stands in the world, the screen is reached through its fixture.** The game's menus hold no expeditions entry, so none is added. The residents' join writes no Katheryne into Mondstadt's region data, so her talk is wired once she is placed, as the forge's blacksmith waits on the scene group export.
-- **Other nations' places open by their statues.** `checkIsExpeditionPlaceOpen` checks that a place's named statue is resonated, against the scene points `computeUnlockedStatuePointIds` maps the unlocked landmarks to, and a nation's places join the slice once its statues are placed.
+- **Other nations' places open by their statues.** A place is open once its named statue is resonated, and a nation's places join the slice once its statues are placed.
 
 ## Scope and order
-
-**Built:** the sending, return, claim, recall, the limit by rank, and Mondstadt's places ([expeditions](/docs/genshin/expeditions)).
 
 **This adds, in order:**
 
