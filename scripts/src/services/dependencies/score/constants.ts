@@ -31,12 +31,12 @@ export const SELF_CONTAINMENT_BANDS: ScoreBand[] = [
   { below: 6, points: 5 },
   { below: Number.POSITIVE_INFINITY, points: 0 },
 ];
-export const FORMAT_POINTS = {
+export const FORMAT_POINTS: Readonly<Record<PackageFormat, number>> = {
   [PackageFormat.Commonjs]: 20,
   [PackageFormat.Dual]: 10,
   [PackageFormat.Esm]: 0,
   [PackageFormat.Types]: 0,
-} as const satisfies Record<PackageFormat, number>;
+};
 
 // The window a release is counted in for stability, and the score bounds the disagreements are read at
 export const STABILITY_WINDOW_MONTHS = 24;
@@ -54,7 +54,7 @@ export const TYPES_SCOPE = "@types/";
 export const NODE_MODULES_DIRECTORY = "node_modules";
 
 // One `git grep` finds every import of a package in the tracked source, matching `from "<name>"` and `import("<name>"`
-export const IMPORT_GREP_PATTERN = String.raw`(from|import\()\s*"[^"]+"`;
+export const IMPORT_GREP_PATTERN: string = String.raw`(from|import\()\s*"[^"]+"`;
 export const IMPORT_GREP_PATHSPECS: string[] = ["*.ts", "*.vue", "*.mjs", "*.js"];
 
 // The type workarounds a package forces on us, one `git grep` finding each of the three: a module declared over it, a
