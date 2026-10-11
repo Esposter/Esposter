@@ -12,15 +12,15 @@ import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
 // A rendered page's markup carrying its nonce and its integrity attributes: the nonce is generated for the request, then
-// the nonce and SRI plugins rewrite each section of the page, a fresh page and event per iteration.
+// The nonce and SRI plugins rewrite each section of the page, a fresh page and event per iteration.
 describe(nonce, () => {
-  test("a rendered page's nonce and SRI attributes", async ({ bench }) => {
+  test("a rendered page's nonce and SRI attributes", ({ bench }) => {
     const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     nonce(app.nitroApp);
     createSubresourceIntegrityPlugin(PAGE_SRI_HASHES)(app.nitroApp);
 
-    await bench.compare(
+    bench.compare(
       bench("native — a page's markup copied", () => createPageHtml()),
       bench("a page's markup rewritten", () => {
         const event = createPageEvent();

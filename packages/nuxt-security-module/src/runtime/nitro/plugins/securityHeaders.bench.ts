@@ -12,15 +12,15 @@ import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
 // A page's response from the nonce it is generated for through the headers that carry it, one fresh request event each
-// iteration so no rules or state are cached from an earlier request. The native baseline is the serialization alone.
+// Iteration so no rules or state are cached from an earlier request. The native baseline is the serialization alone.
 describe(securityHeaders, () => {
-  test("a page's response", async ({ bench }) => {
+  test("a page's response", ({ bench }) => {
     const app = createNitroApp();
-    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
     nonce(app.nitroApp);
     securityHeaders(app.nitroApp);
 
-    await bench.compare(
+    bench.compare(
       bench("native — serializing the page's headers", () => serializeSecurityHeaders(PAGE_HEADERS)),
       bench("headers applied to a response", () => app.run("render:route", {}, { event: createPageEvent() })),
       { ...BENCHMARK_RUN_OPTIONS, iterations: 500, warmupIterations: 50 },

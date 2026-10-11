@@ -1,11 +1,18 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 
 // The app's security options as its configuration file states them. Its environment-derived origins are placeholders of
-// the same shape, so the bench reads the same directive counts without the app's environment. Only the options that
-// decide the server chain and the route rules it matches are here. The rest take the module's defaults
+// The same shape, so the bench reads the same directive counts without the app's environment. Only the options that
+// Decide the server chain and the route rules it matches are here. The rest take the module's defaults
 export const APP_SECURITY_OPTIONS: Partial<ModuleOptions> = {
   headers: {
     contentSecurityPolicy: {
+      "connect-src": [
+        "'self'",
+        "https://storage.placeholder.invalid",
+        "https://livekit.placeholder.invalid",
+        "wss://*.webpubsub.placeholder.invalid",
+        "https://cdn.placeholder.invalid",
+      ],
       "img-src": [
         "'self'",
         "data:",
@@ -15,6 +22,7 @@ export const APP_SECURITY_OPTIONS: Partial<ModuleOptions> = {
         "https://storage.placeholder.invalid",
         "https://images.placeholder.invalid",
       ],
+      "media-src": ["'self'", "https://storage.placeholder.invalid", "blob:"],
       "script-src": ["'unsafe-eval'"],
       "script-src-elem": [
         "'unsafe-inline'",
@@ -26,14 +34,6 @@ export const APP_SECURITY_OPTIONS: Partial<ModuleOptions> = {
       ],
       "style-src-elem": ["'unsafe-inline'", "'self'", "https://styles.placeholder.invalid"],
       "worker-src": ["'self'", "blob:"],
-      "connect-src": [
-        "'self'",
-        "https://storage.placeholder.invalid",
-        "https://livekit.placeholder.invalid",
-        "wss://*.webpubsub.placeholder.invalid",
-        "https://cdn.placeholder.invalid",
-      ],
-      "media-src": ["'self'", "https://storage.placeholder.invalid", "blob:"],
     },
     permissionsPolicy: { camera: ["self"], "display-capture": ["self"], fullscreen: ["self"], microphone: ["self"] },
   },

@@ -1,3 +1,4 @@
+import { OptionParityVerdict } from "#src/models/OptionParityVerdict";
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
 import { OPTION_PARITY } from "#src/services/optionParity";
@@ -19,7 +20,7 @@ describe("option parity", () => {
       ...Object.keys(getDefaultSecurityHeaders(false, false)).map((header) => `headers.${header}`),
     ]);
     for (const { ours, verdict } of OPTION_PARITY) {
-      if (verdict === "dropped" || verdict === "outOfScope") continue;
+      if (verdict === OptionParityVerdict.Dropped || verdict === OptionParityVerdict.OutOfScope) continue;
 
       expect(ourOptions.has(ours ?? "")).toBe(true);
     }
