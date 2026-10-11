@@ -154,7 +154,7 @@ export const createWindowDriver = (
 
   const receive = (child: SessionChild, data: RawData) => {
     getResult(
-      // oxlint-disable-next-line no-restricted-properties -- the child message schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
+      // oxlint-disable-next-line no-restricted-properties -- the child message schema validates the payload and coerces its dates, the pair /docs/architecture/serialization names
       () => childMessageSchema.parse(JSON.parse(readMessageText(data))),
     ).match((childMessage) => {
       handleChildMessage(child, childMessage);

@@ -11,7 +11,7 @@ import { z } from "zod";
 export const readDevices = (stateDirectory: string): Device[] => {
   const devicesPath = join(stateDirectory, DEVICES_FILENAME);
   if (existsSync(devicesPath))
-    // oxlint-disable-next-line no-restricted-properties -- the device schema validates the file and coerces its dates, the pair /docs/architecture/serialization.md names
+    // oxlint-disable-next-line no-restricted-properties -- the device schema validates the file and coerces its dates, the pair /docs/architecture/serialization names
     return z.array(deviceSchema).parse(JSON.parse(readFileSync(devicesPath, "utf8")));
   else return [];
 };
