@@ -11,7 +11,7 @@ import { MENU_DIALOG_CORNER_SCALES } from "#src/services/menu/constants";
 import { MenuDialogGlyphMap } from "#src/services/menu/MenuDialogGlyphMap";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
 import { useIntervalFn, useNow, useResizeObserver } from "@vueuse/core";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -91,7 +91,12 @@ onMounted(() => {
         <MenuGlyph :glyph="MenuDialogGlyphMap[MenuDialogIcon.Corner]" class="corner-glyph" />
       </div>
       <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.WorldLevel] }}</p>
-      <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')" />
+      <GameButton
+        class="close"
+        :aria-label="gameText[GameTextKey.Back]"
+        :kind="GameButtonKind.Plain"
+        @click="emit('close')"
+      />
       <MenuGlyph :glyph="MenuDialogGlyphMap[MenuDialogIcon.Close]" class="close-glyph" />
       <svg
         v-for="top of dividerTops"
@@ -125,11 +130,11 @@ onMounted(() => {
       <MenuScrollTrack :offset="scrollThumb.offset" :share="scrollThumb.share" />
       <svg class="caret up" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
       <svg class="caret down" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 0.75 5 4.25 9 0.75" /></svg>
-      <button
+      <GameButton
         v-if="isWorldLevelAdjustable"
         class="adjust"
         :disabled="isCoolingDown"
-        type="button"
+        :kind="GameButtonKind.Pill"
         @click="emit('toggleWorldLevel')"
       >
         <span class="disc" />
@@ -141,7 +146,7 @@ onMounted(() => {
         <span class="label">{{
           gameText[isWorldLevelLowered ? GameTextKey.WorldLevelRevert : GameTextKey.WorldLevelLower]
         }}</span>
-      </button>
+      </GameButton>
     </div>
   </GameScreen>
 </template>
@@ -212,14 +217,6 @@ onMounted(() => {
   left: calc(var(--unit) * 988);
   width: calc(var(--unit) * 44);
   height: calc(var(--unit) * 42);
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: inherit;
-}
-
-.close:focus-visible {
-  outline: calc(var(--unit) * 2) solid #feeab0;
 }
 
 .close-glyph {
@@ -301,17 +298,7 @@ onMounted(() => {
   width: calc(var(--unit) * 370);
   height: calc(var(--unit) * 63);
   padding: 0 0 0 calc(var(--unit) * 34);
-  border: none;
-  border-radius: calc(var(--unit) * 31.5);
-  background: #e8e5d6;
-  color: #3d3f4f;
-  cursor: inherit;
   font: inherit;
-}
-
-.adjust:focus-visible {
-  outline: calc(var(--unit) * 3) solid #feeab0;
-  outline-offset: calc(var(--unit) * -3);
 }
 
 .adjust:disabled {

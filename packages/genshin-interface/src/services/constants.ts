@@ -89,3 +89,7 @@ export const INTERACTION_PRESS_MS = 167;
 // The game's ease in and out, Unity's default curve, a smoothstep: its clips' samples read 0.028, 0.104 and 0.216 at a
 // Tenth, a fifth and three tenths of the way, and a cubic bezier with its handles at the thirds is exactly that
 export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
+// The tints a rectangular row takes over its own box, hovered and pressed. Provisional: the game draws no state for a
+// Plain button, so no recording gives a row's tint: these are the jump list's hover tint, and a press a step stronger
+export const GAME_ROW_HOVER = "rgb(255 255 255 / 0.2)";
+export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";

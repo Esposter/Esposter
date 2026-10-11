@@ -163,27 +163,27 @@ onBeforeUnmount(() => {
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
         <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
         <div class="contents">
-          <button
+          <GameButton
             v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
             :key="screenKind"
             class="entry"
             :disabled="!checkIsBuilt(screenKind)"
-            type="button"
+            :kind="GameButtonKind.Row"
             @click="emit('open', screenKind)"
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-          </button>
-          <button
+          </GameButton>
+          <GameButton
             v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
             :key="labelKey"
             class="entry link"
             disabled
-            type="button"
+            :kind="GameButtonKind.Row"
           >
             <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
             <span class="label">{{ gameText[labelKey] }}</span>
-          </button>
+          </GameButton>
         </div>
       </div>
     </div>
@@ -456,14 +456,9 @@ onBeforeUnmount(() => {
 }
 
 .entry {
-  position: relative;
-  padding: 0;
-  border: none;
   border-radius: calc(var(--unit) * 2);
   background: #51596b;
   color: #ece5d7;
-  cursor: inherit;
-  font: inherit;
 }
 
 .label {
@@ -475,12 +470,6 @@ onBeforeUnmount(() => {
   font-weight: 600;
   line-height: 1.1;
   text-align: center;
-}
-
-.entry:hover:enabled,
-.entry:focus-visible {
-  outline: none;
-  background: #6c7588;
 }
 
 .entry:disabled:not(.link) {

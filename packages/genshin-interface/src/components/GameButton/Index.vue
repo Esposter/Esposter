@@ -5,6 +5,8 @@ import {
   GAME_CREAM,
   GAME_GOLD,
   GAME_INK,
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
   GAME_SMOOTHSTEP_EASING,
   INTERACTION_HOVER_MS,
   INTERACTION_PILL_REST_MS,
@@ -75,6 +77,11 @@ defineExpose({ focus: () => button.value?.focus() });
    Recording's and a 2024 one's (`yt-kIDee7nyD0w-menu-quit-prompt`) */
 .game-button[data-kind="Disc"] {
   isolation: isolate;
+}
+
+/* At zero specificity, so a parent sets the icon's colour at rest where it places the button, as the rest of the
+   Button yields */
+:where(.game-button[data-kind="Disc"]) {
   color: v-bind(GAME_GOLD);
 }
 
@@ -148,6 +155,34 @@ defineExpose({ focus: () => button.value?.focus() });
 }
 
 .game-button:enabled:is(:hover, :focus-visible, :active, [data-interaction-state] *) > .tip {
+  opacity: 1;
+}
+
+/* A row, the game's rectangle, lit by a tint laid over its own box and behind its words, as a disc is: hovered or focused,
+   pressed at once, or held selected by its parent's aria-selected at the hover's strength. Provisional, see the colours */
+.game-button[data-kind="Row"] {
+  isolation: isolate;
+}
+
+.game-button[data-kind="Row"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background-color: v-bind(GAME_ROW_HOVER);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--state-duration);
+}
+
+.game-button[data-kind="Row"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *)::before,
+.game-button[data-kind="Row"][aria-selected="true"]::before {
+  opacity: 1;
+}
+
+.game-button[data-kind="Row"]:enabled:is(:active, [data-interaction-state="Pressed"] *)::before {
+  background-color: v-bind(GAME_ROW_PRESS);
   opacity: 1;
 }
 
