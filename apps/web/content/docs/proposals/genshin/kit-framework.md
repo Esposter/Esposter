@@ -282,7 +282,7 @@ In total:
 
 ```mermaid
 flowchart LR
-  GC["gcsim at v2.47.2: config.yml hitboxes and talents, the action files' hitmark and frame literals, each AttackInfo's tags, element and durability, the talent file's parameter indices"] --> B["genshin:assets kits"]
+  GC["gcsim at v2.47.2: hitboxes, hitmarks, frames, tags, gauge and talent indices"] --> B["genshin:assets kits"]
   WK["the wiki's Advanced Properties at each page's revision: poise, gauge, ICD tag"] --> B
   TB["the published tables: proud skill groups, constellation rows"] --> B
   OV["the character's overlay in src/data/kits: what no source holds, each with its cause"] --> B
@@ -300,17 +300,17 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  BUILD["buildKit, once per member as it joins: record, multipliers and behaviour, each action given its slot and each hit its attack tag"]
-  IN["the frame's KitInput, read once by the world"] --> DRAIN["the outbox drained in order: HP changes and taunt strikes since the last step, each sent to every deployed kit as onKitEvent(event, context, combatant)"]
-  DRAIN --> EFFECTS["the team's effects stepped by index in today's order and compacted in place, noting the field member's stance and infusion, the live shield and each member's buffs"]
+  BUILD["buildKit, once per member as it joins: each action's slot, each hit's tag"]
+  IN["the frame's KitInput, read once by the world"] --> DRAIN["the outbox drained in order, each event sent to every deployed kit"]
+  DRAIN --> EFFECTS["the team's effects stepped in place, noting stance, infusion, shield and buffs"]
   EFFECTS --> ENEMIES["enemy statuses tick, elemental ticks strike, Dendro Cores burst"]
-  ENEMIES --> STEP["stepKit on the kit the stance gives: the action's cursor lands its hits, or the presses start the next action"]
+  ENEMIES --> STEP["stepKit on the stance's kit: the cursor lands hits, or presses start an action"]
   BUILD -.-> STEP
-  STEP -->|"an action starts"| START["the body turns to its target, BurstUsed is sent, then onStart(context, combatant, target)"]
-  STEP --> STRIKES["the strikes: the step's hits and what each summon's cursor reached, each hit's tag and slot read off the hit"]
+  STEP -->|"an action starts"| START["the body turns to its target, BurstUsed is sent, then onStart"]
+  STEP --> STRIKES["the strikes: the step's hits and each summon's, tag and slot read off the hit"]
   EFFECTS --> STRIKES
   START --> STRIKES
-  STRIKES --> PRICE["strikeKitEnemies: each priced from the noted buffs, its reactions, damage and particles sent as they happen"]
+  STRIKES --> PRICE["strikeKitEnemies: priced from the noted buffs, reactions and damage sent"]
   PRICE --> ENERGY["attack energy rolled for the strikes that struck"]
 ```
 

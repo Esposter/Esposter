@@ -15,7 +15,7 @@ flowchart TD
   DECODE["The text maps, decoded from the installed client"] --> READ
   READ --> FILES["quests/QuestId: one record a quest, checked by its schema"]
   READ --> WORDS["questText per language: the quests' words, one record each"]
-  FILES --> START["startQuests: the first Archon quest not finished starts,<br/>and a quest whose offering talk ended"]
+  FILES --> START["startQuests: the first unfinished Archon quest,<br/>and one whose offering talk ended"]
   START --> PROGRESS["Quests in progress, from step 0"]
   DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
   PROGRESS --> ADVANCE
