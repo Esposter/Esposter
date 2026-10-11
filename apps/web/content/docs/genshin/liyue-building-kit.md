@@ -27,7 +27,7 @@ flowchart TD
 - **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them. The bars stand flat to the wall, so the lattice reads as openwork from the street.
 - **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle, and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
 - **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height, so a building with three tiers stands three rises above its walls.
-- **The kit stands in for Liyue Harbor's houses.** When the [parity](/docs/genshin/parity) inventory claims the harbour's export, its buildings family is the meshes named by the region's code, `Area_Ly_Build_` and `Area_LY_Build_` both, beside its terrain tiles as its ground, and every other mesh of the export is claimed as not drawn yet, one entry a kind.
+- **The kit stands in for Liyue Harbor's houses.** When the [parity](/docs/genshin/parity) inventory claims the harbour's export, its buildings family is the meshes named by the region's code, `Area_Ly_Build_` and `Area_LY_Build_` both, with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
 
 ## Palette
 
