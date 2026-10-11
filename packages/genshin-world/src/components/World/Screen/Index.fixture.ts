@@ -1,6 +1,8 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { FontainePartFamilyMeshRegexMap } from "#src/services/fontaine/FontainePartFamilyMeshRegexMap";
 import { FontaineUndrawnMeshRegexMap } from "#src/services/fontaine/FontaineUndrawnMeshRegexMap";
+import { InazumaPartFamilyMeshRegexMap } from "#src/services/inazuma/InazumaPartFamilyMeshRegexMap";
+import { InazumaUndrawnMeshRegexMap } from "#src/services/inazuma/InazumaUndrawnMeshRegexMap";
 import { LiyuePartFamilyMeshRegexMap } from "#src/services/liyue/LiyuePartFamilyMeshRegexMap";
 import { LiyueUndrawnMeshRegexMap } from "#src/services/liyue/LiyueUndrawnMeshRegexMap";
 import { MondstadtPartFamilyMeshRegexMap } from "#src/services/mondstadt/MondstadtPartFamilyMeshRegexMap";
@@ -35,6 +37,7 @@ export const readyEvent = "ready";
 // Terrain tiles and common ruins their exports hold too
 export const witnessComponents = {
   fontaine: { witnessFamilies: FontainePartFamilyMeshRegexMap, witnessUndrawn: FontaineUndrawnMeshRegexMap },
+  inazuma: { witnessFamilies: InazumaPartFamilyMeshRegexMap, witnessUndrawn: InazumaUndrawnMeshRegexMap },
   liyue: { witnessFamilies: LiyuePartFamilyMeshRegexMap, witnessUndrawn: LiyueUndrawnMeshRegexMap },
   mondstadt: { witnessFamilies: MondstadtPartFamilyMeshRegexMap, witnessUndrawn: MondstadtUndrawnMeshRegexMap },
   natlan: { witnessFamilies: NatlanPartFamilyMeshRegexMap, witnessUndrawn: NatlanUndrawnMeshRegexMap },

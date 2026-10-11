@@ -3,15 +3,7 @@ title: Inazuma
 description: Proposal — Inazuma, the Electro archipelago of eternity. Islands under a permanent thunderstorm that can be lifted, sakura and red maples, a shrine on the sacred mountain and a castle over the capital, the bones of a fallen serpent god, the purple coral of Watatsumi, and Tsurumi Island's fog. Enkanomiya is a layer beneath the sea with its own artificial sun. A building kit of timber, shoji and tiled roofs builds its towns.
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
-touches:
-  [
-    "packages/genshin-world/src/models/inazuma/**",
-    "packages/genshin-world/src/services/inazuma/**",
-    "packages/genshin-world/src/components/World/Screen/Index.fixture.ts",
-    "packages/genshin-world/parity/main.ts",
-    "packages/genshin-world/parity/models/ScreenFixture.ts",
-    "scripts/src/services/genshinParity/shared/openParityPage.ts",
-  ]
+touches: ["packages/genshin-world/src/services/inazuma/**"]
 ---
 
 # Inazuma
@@ -35,7 +27,6 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
   Torii gates, stone lanterns, shrines and pagodas are kit pieces of their own. The Grand Narukami Shrine with its sacred sakura, and Tenshukaku above Inazuma City, are landmark-tier and matched pose by pose.
 
-- **A capital's witness claims are its region's own.** The `World/Screen` fixture's top-level claims stay Windrise's, and each capital world's claims sit in its `witnessComponents` under the derived-asset component the parity page draws, so no region's renderer falls to Windrise's families: their paving matches the common ruins Inazuma, Sumeru and Mondstadt hold too. A region's drawn families are the ground and the meshes its kit's building stands in for, found by the game's own code for the region in its mesh names (`Area_Dq_` here); the rest of the export is claimed as not drawn yet, one entry per kind. Each other region's first step builds its claims this way.
 - **Enkanomiya is a layer with its own sky.** It lies beneath Watatsumi Island, is entered at its gate, and is lit by an artificial sun, Dainichi Mikoshi, rather than by the [sky](/docs/genshin/sky-and-time)'s clock. Its white stone ruins are a kit of their own.
 
 ## How it works
@@ -75,12 +66,7 @@ Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Gran
 
 **Still to build, in order:**
 
-1. **Inazuma City's witness claims**, which the roadmap's `inazuma-every-renderer` item waits on.
-   - `models/inazuma/InazumaPartFamily.ts` (`Ground`, `Buildings`) and `services/inazuma/InazumaPartFamilyMeshRegexMap.ts`: `Ground` is `/^BigWorldTerrain_/u` and `Buildings` is `/^Area_Dq_Build_/u`, the city's houses the kit's building stands in for.
-   - `services/inazuma/InazumaUndrawnMeshRegexMap.ts`, one entry per kind of mesh the export holds (`~/Esposter/genshin-parity/extracted/inazuma/`): `props` `/^(?:Area_(?:Dq|Common)_Prop|Area_MdProps|Indoor_MdProps)_/u`, `lights` `/^Area_(?:Dq|Common)_Light_/u`, `cloth` `/^Area_Dq_Ecloth_/u`, `rocks` `/^Area_Dq_Rock_/u`, `commonBuildings` `/^Area_Common_Build_/u`, `plants` `/^(?:Stages_(?:Deadbush|Lvy|BeachShell)|Area_Dq_Lvy|Area_Ly_Grass)/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u`, `effects` `/^(?:Eff_|CloudPlane|Area_Common_Effect_)/u` and `plot` `/^Area_Dq_Plot_/u`. Together with the families they match every mesh today's export names.
-   - The `World/Screen` fixture's `witnessComponents` gains `inazuma`, with these two maps as its `witnessFamilies` and `witnessUndrawn`.
-   - Proved by `pnpm -C scripts genshin:parity passes inazuma --pass Inventory` printing 0 renderers unclaimed on today's witness. The maps are data, so no unit test is owed; a name the `inazuma-capital` re-extraction adds is reported by that item's own Inventory run.
-2. **The shrine, torii and Enkanomiya ruin generators**, in `packages/genshin-world/src/services/inazuma/`, each fitted against its exports when the passes reach its shape.
+1. **The shrine, torii and Enkanomiya ruin generators**, in `packages/genshin-world/src/services/inazuma/`, each fitted against its exports when the passes reach its shape.
 
 ## Sources
 
