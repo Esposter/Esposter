@@ -300,6 +300,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Thoma](/docs/genshin/kits/thoma)                   | Blazing Blessing and Crimson Ooyoroi's Fiery Collapse                |
 | [Tighnari](/docs/genshin/kits/tighnari)             | Vijnana-Phala Mine and Tanglevine Shaft with its secondary           |
 | [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                 |
+| [Varesa](/docs/genshin/kits/varesa)                 | Three strikes, Rush's press and Flying Kick, outside her blessing    |
 | [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                             |
 | [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays          |
 | [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                   |
