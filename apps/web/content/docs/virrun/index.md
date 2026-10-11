@@ -39,24 +39,25 @@ Correctness beats speed; a fast wrong answer is worthless.
 
 ## Pages
 
-| Page                                                    | Covers                                                                                  |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [Architecture](/docs/virrun/architecture)               | system overview, the five layers, the subprocess wall, where the speed comes from       |
-| [Execution backends](/docs/virrun/execution-backends)   | the `ExecBackend` seam, virtual-FS layer, `vfs` and `os` backends                       |
-| [Snapshot and fork](/docs/virrun/snapshot-and-fork)     | warm deps snapshot, source-keyed prepare layer, atomic publish                          |
-| [Write-back](/docs/virrun/write-back)                   | native-equivalent persistence of a mutation command's output                            |
-| [Task cache](/docs/virrun/task-cache)                   | content-keyed replay of unchanged persist runs, the two honesty guards                  |
-| [Task-cache eviction](/docs/virrun/task-cache-eviction) | age-prune the unbounded tasks directory, touch-on-hit recency, payload size in cache ls |
-| [WSL source mirror](/docs/virrun/wsl-source-mirror)     | win32 ext4 source mirror + host-side manifest delta sync                                |
-| [Subprocess timeouts](/docs/virrun/subprocess-timeouts) | which bound a spawned child gets, and the one case that gets none                       |
-| [Adoption](/docs/virrun/adoption)                       | the prefix-is-the-switch model, opt-in levels, auto-fallback, CLI subcommands           |
-| [Configuration](/docs/virrun/configuration)             | the committed `virrun.config.*` — backend selection + environment preset                |
-| [Cache](/docs/virrun/cache)                             | the gitignored `.virrun` layout, probe caches, cleanup & self-healing                   |
-| [Correctness](/docs/virrun/correctness)                 | the correctness gate — differential, equivalence, and property/fuzz layers              |
-| [Derived, not named](/docs/virrun/derived-not-named)    | no tool-specific knowledge — special cases come from structure, git excepted            |
-| [Benchmarking](/docs/virrun/benchmarking)               | the speed gate — committed bench artifacts, methodology, honest numbers                 |
-| [Orchestrator API](/docs/virrun/orchestrator-api)       | the public `createVirrun` TypeScript surface                                            |
-| [Prior art](/docs/virrun/prior-art)                     | surveyed landscape — what was adopted, studied, or ruled out                            |
+| Page                                                    | Covers                                                                                                |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Architecture](/docs/virrun/architecture)               | system overview, the five layers, the subprocess wall, where the speed comes from                     |
+| [Execution backends](/docs/virrun/execution-backends)   | the `ExecBackend` seam, virtual-FS layer, `vfs` and `os` backends                                     |
+| [Snapshot and fork](/docs/virrun/snapshot-and-fork)     | warm deps snapshot, source-keyed prepare layer, atomic publish                                        |
+| [Write-back](/docs/virrun/write-back)                   | native-equivalent persistence of a mutation command's output                                          |
+| [Task cache](/docs/virrun/task-cache)                   | content-keyed replay of unchanged persist runs, the two honesty guards                                |
+| [Task-cache eviction](/docs/virrun/task-cache-eviction) | age-prune the unbounded tasks directory, touch-on-hit recency, payload size in cache ls               |
+| [WSL source mirror](/docs/virrun/wsl-source-mirror)     | win32 ext4 source mirror + host-side manifest delta sync                                              |
+| [Subprocess timeouts](/docs/virrun/subprocess-timeouts) | which bound a spawned child gets, and the one case that gets none                                     |
+| [Win32 spawn](/docs/virrun/win32-spawn)                 | the win32 `.cmd` resolution, the cmd.exe escaping and its refusals, the upstream cross-spawn verdicts |
+| [Adoption](/docs/virrun/adoption)                       | the prefix-is-the-switch model, opt-in levels, auto-fallback, CLI subcommands                         |
+| [Configuration](/docs/virrun/configuration)             | the committed `virrun.config.*` — backend selection + environment preset                              |
+| [Cache](/docs/virrun/cache)                             | the gitignored `.virrun` layout, probe caches, cleanup & self-healing                                 |
+| [Correctness](/docs/virrun/correctness)                 | the correctness gate — differential, equivalence, and property/fuzz layers                            |
+| [Derived, not named](/docs/virrun/derived-not-named)    | no tool-specific knowledge — special cases come from structure, git excepted                          |
+| [Benchmarking](/docs/virrun/benchmarking)               | the speed gate — committed bench artifacts, methodology, honest numbers                               |
+| [Orchestrator API](/docs/virrun/orchestrator-api)       | the public `createVirrun` TypeScript surface                                                          |
+| [Prior art](/docs/virrun/prior-art)                     | surveyed landscape — what was adopted, studied, or ruled out                                          |
 
 Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virrun/deferred) (not yet, trigger-gated) · [rejected](/docs/virrun/rejected) (won't do) — grep both before proposing anything.
 

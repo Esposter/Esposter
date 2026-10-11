@@ -395,9 +395,6 @@ catalogs:
     '@tsdown/css':
       specifier: ^0.23.1
       version: 0.23.1
-    '@types/cross-spawn':
-      specifier: ^6.0.6
-      version: 6.0.6
     '@types/fs-extra':
       specifier: ^11.0.4
       version: 11.0.4
@@ -512,9 +509,6 @@ catalogs:
     codemirror:
       specifier: ^6.0.2
       version: 6.0.2
-    cross-spawn:
-      specifier: ^7.0.6
-      version: 7.0.6
     crossws:
       specifier: ^0.4.15
       version: 0.4.15
@@ -2446,18 +2440,12 @@ importers:
       '@platformatic/vfs':
         specifier: 'catalog:'
         version: 0.5.0
-      '@types/cross-spawn':
-        specifier: 'catalog:'
-        version: 6.0.6
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
       citty:
         specifier: 'catalog:'
         version: 0.2.2
-      cross-spawn:
-        specifier: 'catalog:'
-        version: 7.0.6
       fast-check:
         specifier: 'catalog:'
         version: 4.10.2
@@ -7888,9 +7876,6 @@ packages:
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
-
-  '@types/cross-spawn@6.0.6':
-    resolution: {integrity: sha512-fXRhhUkG4H3TQk5dBhQ7m/JDdSNHKwR2BBia62lhwEIq9xGiQKLxd6LymNhn47SjXhsUEPmxi+PKw2OkW4LLjA==}
 
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
@@ -21670,10 +21655,6 @@ snapshots:
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
-
-  '@types/cross-spawn@6.0.6':
-    dependencies:
-      '@types/node': 26.6.5
 
   '@types/d3-array@3.2.2': {}
 
