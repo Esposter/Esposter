@@ -116,6 +116,8 @@ const createFieldTick =
     gainPartyMemberEnergy(party, owner, LET_THE_WIND_LEAD_ENERGY_SHARE * owner.kit.burstEnergyCost);
   };
 
+export const JEAN_CHARACTER_ID = 10_000_003;
+
 // Jean's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Gale Blade's press
 // And its hold, and Dandelion Breeze with its field and its entering and exiting damage. Its multipliers are read from
 // Her proud skill groups

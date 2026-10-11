@@ -9,7 +9,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";

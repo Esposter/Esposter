@@ -229,6 +229,8 @@ const triggerLightfall = (
   addKitEffect(kitEffectState, createKitSummon(summon.body, summon.combatant, [hit]));
 };
 
+export const EULA_CHARACTER_ID = 10_000_051;
+
 // Eula's first kit, at talent level 1: five strikes, a charged attack, two plunges and a collision, Icetide Vortex's press
 // And its hold, which spends her Grimheart stacks, and Glacial Illumination, which lights the Lightfall Sword. Her Grimheart
 // Stacks come from the press, and her Lightfall Sword's stacks from her strikes. Her Ascension 1 Shattered Lightfall Sword,

@@ -3,7 +3,7 @@ import { Element } from "#src/models/Element";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { VENTI_CHARACTER_ID } from "#src/services/character/constants";
+import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";

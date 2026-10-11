@@ -6,11 +6,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { EULA_CHARACTER_ID } from "#src/services/character/constants";
+import { EULA_CHARACTER_ID } from "#src/services/kit/characters/eulaKit";
 import { createEulaKit } from "#src/services/kit/characters/eulaKit";
 import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const EULA_KIT = createEulaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [EULA_CHARACTER_ID]));
 
@@ -34,8 +35,8 @@ describe(createEulaKit, () => {
     const press = EULA_KIT.elementalSkill.hits[0];
     if (!press?.onStrike) throw new Error("Icetide Vortex's press has no Grimheart stack on hit");
 
-    press.onStrike({ body, combatant: createEulaCombatant(), kitEffectState });
-    press.onStrike({ body, combatant: createEulaCombatant(), kitEffectState });
+    press.onStrike(createKitStepContext(createEulaCombatant(), { body, kitEffectState }));
+    press.onStrike(createKitStepContext(createEulaCombatant(), { body, kitEffectState }));
     // The second strike falls inside the press's 0.3 seconds of ICD, so only the one stack is gained
     expect(
       kitEffectState.effects.filter(
@@ -45,7 +46,7 @@ describe(createEulaKit, () => {
 
     const hold = EULA_KIT.elementalSkillHolds?.[0];
     if (!hold?.action.onStart) throw new Error("Icetide Vortex's hold has no start");
-    hold.action.onStart({ body, combatant: createEulaCombatant(), kitEffectState });
+    hold.action.onStart(createKitStepContext(createEulaCombatant(), { body, kitEffectState }));
 
     const icewhirls = kitEffectState.effects.find((effect) => effect.kind === "summon");
     if (icewhirls?.kind !== "summon") throw new Error("the hold casts no Icewhirl summon");
@@ -58,7 +59,7 @@ describe(createEulaKit, () => {
   test("a swap of characters ends the Lightfall Sword early, its explosion landing 35 frames on", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    EULA_KIT.elementalBurst.onStart?.({ body, combatant: createEulaCombatant(), kitEffectState });
+    EULA_KIT.elementalBurst.onStart?.(createKitStepContext(createEulaCombatant(), { body, kitEffectState }));
 
     EULA_KIT.onKitEvent?.(
       { characterId: EULA_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: EULA_CHARACTER_ID },

@@ -96,6 +96,8 @@ const createDefenseScaledBonus =
   (combatant: Combatant): number =>
     talentMultiplier * combatant.attributes.defense;
 
+export const YUNJIN_CHARACTER_ID = 10_000_064;
+
 // Yun Jin's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Opening Flourish with
 // Its tap and its two charge levels, each with a shield of her Max HP and a flat share to its hit. Cliffbreaker's Banner's
 // initial hit is built, but not its DEF-scaled DMG Increase on each of the party's normal attacks, which the kit prices from

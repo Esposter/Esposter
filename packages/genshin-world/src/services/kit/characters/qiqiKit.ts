@@ -197,6 +197,8 @@ const createRegenerationOnHit = (talentMultiplierMap: TalentMultiplierMap): KitP
   isUnshielded: true,
 });
 
+export const QIQI_CHARACTER_ID = 10_000_035;
+
 // Qiqi's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Herald of Frost with
 // Its swipes and its regeneration, and Fortune-Preserving Talisman's damage and the Talisman it marks enemies with, whose
 // Heal, A Glimpse into Arcanum and the constellations answer the kit's events. Its multipliers are read from her proud

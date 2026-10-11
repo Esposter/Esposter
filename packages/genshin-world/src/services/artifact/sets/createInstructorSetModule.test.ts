@@ -14,9 +14,9 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
 import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -75,7 +75,7 @@ describe(createInstructorSetModule, () => {
   test.each([
     ["another member triggers", ally, wearer],
     ["its wearer triggers off the field", wearer, ally],
-  ])("gives nothing on a reaction %s", (_, striker, activeCombatant) => {
+  ])("gives nothing on a reaction %s", (_description, striker, activeCombatant) => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };

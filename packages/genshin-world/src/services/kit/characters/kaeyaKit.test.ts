@@ -4,7 +4,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KAEYA_CHARACTER_ID } from "#src/services/character/constants";
+import { KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";

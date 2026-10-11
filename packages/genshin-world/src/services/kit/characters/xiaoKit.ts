@@ -188,6 +188,8 @@ const HEAVEN_FALL_DAMAGE_BONUS = 0.15;
 const HEAVEN_FALL_MAX_STACKS = 3;
 const HEAVEN_FALL_SECONDS = (15 + 420) / 60;
 
+export const XIAO_CHARACTER_ID = 10_000_026;
+
 // Xiao's first kit, at talent level 1: six strikes, the first and fourth of two hits each, a charged attack, a collision
 // And two plunges, Lemniscatic Wind Cycling's dash, and Bane of All Evil's converted Anemo attacks with their DMG Bonus
 // And its drain of his HP. Its multipliers are read from his proud skill groups

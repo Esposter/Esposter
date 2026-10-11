@@ -186,6 +186,8 @@ const createChiliPepper = (owner: Combatant, centre: GroundPoint): KitField => {
   return chiliPepper;
 };
 
+export const XIANGLING_CHARACTER_ID = 10_000_023;
+
 // Xiangling's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Guoba Attack's
 // Guoba, and Pyronado's swings and the Pyronado. Its multipliers are read from her proud skill groups
 export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {

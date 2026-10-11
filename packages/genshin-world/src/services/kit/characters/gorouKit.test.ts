@@ -10,7 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { GOROU_CHARACTER_ID } from "#src/services/character/constants";
+import { GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
 import { createGorouKit } from "#src/services/kit/characters/gorouKit";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";

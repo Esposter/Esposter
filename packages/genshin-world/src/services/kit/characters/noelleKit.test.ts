@@ -6,7 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { NOELLE_CHARACTER_ID } from "#src/services/character/constants";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";

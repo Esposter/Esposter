@@ -94,6 +94,8 @@ const checkIsTargeStanding = (effect: KitEffect, characterId: number, seconds: n
   effect.combatant.characterId === characterId &&
   effect.secondsRemaining >= seconds;
 
+export const BEIDOU_CHARACTER_ID = 10_000_024;
+
 // Beidou's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Tidecaller's press
 // With its shield, and Stormbreaker with its Thunderbeast's Targe and the lightning it discharges. Its multipliers are
 // Read from her proud skill groups

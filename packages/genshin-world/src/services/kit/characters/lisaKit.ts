@@ -123,6 +123,8 @@ const createVioletArcHold = (talentMultiplierMap: TalentMultiplierMap): KitActio
   };
 };
 
+export const LISA_CHARACTER_ID = 10_000_006;
+
 export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({
   burstCooldownSeconds: 20,
   burstEnergyCost: 80,

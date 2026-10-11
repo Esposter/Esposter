@@ -219,6 +219,8 @@ const setShield = (
   addKitEffect(kitEffectState, dotField);
 };
 
+export const XINYAN_CHARACTER_ID = 10_000_044;
+
 // Xinyan's first kit, at talent level 1: four blunt strikes, a charged attack of two hits, a collision and two plunges,
 // Sweeping Fervor with its shield and Rave's DoT, and Riff Revolution with its initial hit and seven Pyro DoT hits. Her
 // Multipliers are read from her proud skill groups. Ascension 1 and Constellations 2 and 4 are built. Her Ascension 4 is
@@ -290,14 +292,12 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     poiseDamage: DOT_POISE_DAMAGE,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, XINYAN_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
   };
-  const riffDotHits: KitHit[] = BURST_DOT_HITMARK_FRAMES.map((frames) => ({
-    ...riffDotHit,
-    hitmarkSeconds: frames / 60,
-  }));
-  const constellationPulseHits: KitHit[] = CONSTELLATION_PULSE_HITMARK_FRAMES.map((frames) => ({
-    ...createShieldDotHit(talentMultiplierMap),
-    hitmarkSeconds: frames / 60,
-  }));
+  const riffDotHits: KitHit[] = BURST_DOT_HITMARK_FRAMES.map((frames) =>
+    Object.assign({}, riffDotHit, { hitmarkSeconds: frames / 60 }),
+  );
+  const constellationPulseHits: KitHit[] = CONSTELLATION_PULSE_HITMARK_FRAMES.map((frames) =>
+    Object.assign({}, createShieldDotHit(talentMultiplierMap), { hitmarkSeconds: frames / 60 }),
+  );
 
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, XINYAN_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

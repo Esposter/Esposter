@@ -101,6 +101,8 @@ const BURST_HIT_RADIUS = 4;
 const BURST_CONSTELLATION = 1;
 const BURST_CONSTELLATION_HIT_RADIUS = 6;
 
+export const KUKI_CHARACTER_ID = 10_000_065;
+
 // Kuki's first kit, at talent level 1: four strikes, a charged attack of two slashes, a collision and two plunges, Grass
 // Ring of Sanctification with its ring and the ring's Ascension 4 bonuses, and Gyoei Narukami Kariyama Rite's seven hits.
 // Constellations 1 and 2 are built. Her Ascension 1 healing bonus, and Constellations 4 and 6, are not, as each reads her HP

@@ -10,7 +10,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { GANYU_CHARACTER_ID } from "#src/services/character/constants";
+import { GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";

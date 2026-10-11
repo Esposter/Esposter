@@ -3,7 +3,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";

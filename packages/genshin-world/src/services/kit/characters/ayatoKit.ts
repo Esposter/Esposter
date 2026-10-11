@@ -129,6 +129,8 @@ const countNamisenStacks = (effects: readonly KitEffect[], characterId: number):
 const getNamisenStacksMax = (combatant: Combatant): number =>
   combatant.constellationCount >= CONSTELLATION_2 ? CONSTELLATION_2_NAMISEN_STACKS_MAX : NAMISEN_STACKS_MAX;
 
+export const AYATO_CHARACTER_ID = 10_000_066;
+
 // Ayato's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Kamisato Art: Kyouka with
 // Its water illusion and Soukai Kanka, whose Shunsuiken strikes take the Namisen stacks, and Kamisato Art: Suiyuu with its
 // Ticks. Ascension 1, Constellations 1, 2 and 6 are built. Ascension 4's energy off the field, Constellation 4's team attack

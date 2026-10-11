@@ -6,10 +6,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { ITTO_CHARACTER_ID } from "#src/services/character/constants";
+import { ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createIttoKit } from "#src/services/kit/characters/ittoKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const ITTO_KIT = createIttoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ITTO_CHARACTER_ID]));
 
@@ -30,11 +31,7 @@ describe(createIttoKit, () => {
     const combatant = createIttoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    ITTO_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-    });
+    ITTO_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
 
     expect(kitEffectState.effects).toStrictEqual([
       {

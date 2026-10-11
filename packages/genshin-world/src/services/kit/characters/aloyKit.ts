@@ -16,10 +16,10 @@ import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Aloy's proud skill groups, read at her talent level. The attack group holds the first strike's two hits at 0 and 1, the
-// next three strikes at 2 to 4, the fully charged shot at 6, and the plunges' collision, low and high at 7, 8 and 9. The
-// skill group holds Freeze Bomb's damage at 0, the Chillwater Bomblets' at 1, the Coil and Rushing Ice normal attack bonuses
-// at 4 to 8 and its cooldown at 9. The burst group holds Prophecies of Dawn's damage at 0, its cooldown at 1 and its energy
-// cost at 2
+// Next three strikes at 2 to 4, the fully charged shot at 6, and the plunges' collision, low and high at 7, 8 and 9. The
+// Skill group holds Freeze Bomb's damage at 0, the Chillwater Bomblets' at 1, the Coil and Rushing Ice normal attack bonuses
+// At 4 to 8 and its cooldown at 9. The burst group holds Prophecies of Dawn's damage at 0, its cooldown at 1 and its energy
+// Cost at 2
 const ALOY_ATTACK_GROUP_ID = 6231;
 const ALOY_SKILL_GROUP_ID = 6232;
 const ALOY_BURST_GROUP_ID = 6239;
@@ -64,7 +64,7 @@ const COIL_RUSHING_ICE_STACKS = 4;
 const COIL_STATUS_ID = "aloy-coil";
 const RUSHING_ICE_STATUS_ID = "aloy-rushing-ice";
 // Provisional: gcsim gives the coils no end while Aloy is on the field, so their status is held until Rushing Ice takes them,
-// which the kit model reads as a status with no seconds to run out
+// Which the kit model reads as a status with no seconds to run out
 const COIL_STATUS_SECONDS = Number.POSITIVE_INFINITY;
 
 // Measured: gcsim (MIT) aloy/burst.go, Prophecies of Dawn's circle of radius 6.5 centred 6.5 metres ahead of the body, its
@@ -77,10 +77,12 @@ const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2
 // Provisional: the plunges last 0.4 seconds as Ganyu's do, since gcsim gives Aloy's no frames for them
 const PLUNGE_SECONDS = 0.4;
 
+export const ALOY_CHARACTER_ID = 10_000_062;
+
 // Aloy's first kit, at talent level 1: four strikes, a fully charged shot, a collision and two plunges, Freeze Bomb with its
 // Two Chillwater Bomblets, which each add a coil stack, and Prophecies of Dawn. Four coil stacks give Cryo infusion for the
 // Table's ten seconds of Rushing Ice. Her Coil and Rushing Ice normal attack bonuses are not built, as no kit step reads a
-// normal attack's DMG bonus from the team's effects. Her constellations are not built, as the game cannot activate them
+// Normal attack's DMG bonus from the team's effects. Her constellations are not built, as the game cannot activate them
 export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, ALOY_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -91,7 +93,7 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const rushingIceSeconds = skillTalentMultiplier(8);
 
   // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more coils
-  // until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
+  // Until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
   const addCoilStack = ({ combatant, kitEffectState }: KitStepContext): void => {
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, RUSHING_ICE_STATUS_ID)) return;
     const coil = kitEffectState.effects.find(
@@ -178,7 +180,7 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       seconds: FULL_CHARGE_FRAMES / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     },
-    // gcsim charges no stamina for the fully charged shot, so none
+    // Gcsim charges no stamina for the fully charged shot, so none
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [

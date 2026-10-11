@@ -122,6 +122,8 @@ const NO_POISE_DAMAGE = 0;
 // Provisional: the plunges' frames are not fetched from gcsim, so they are provisional until the Mac measures them
 const PLUNGE_SECONDS = 0.4;
 
+export const HU_TAO_CHARACTER_ID = 10_000_046;
+
 // Hu Tao's first kit, at talent level 1: a six-strike string with its seventh hit, a charged attack, a collision and two
 // Plunges, and Guide to Afterlife's Paramita Papilio stance. It infuses her attacks with Pyro and adds ATK from her Max HP
 // It lasts its seconds, and Spirit Soother's hit with its half HP variant. Her multipliers are read from her proud skill

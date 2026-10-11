@@ -94,6 +94,8 @@ const createDefenseScaledBonus =
   (combatant: Combatant): number =>
     talentMultiplier * combatant.attributes.defense;
 
+export const ALBEDO_CHARACTER_ID = 10_000_038;
+
 // Albedo's first kit, at talent level 1: five strikes, a charged attack of two hits, a collision and two plunges, Abiogenesis:
 // Solar Isotoma with its hit and the Transient Blossoms it sets off, and Rite of Progeniture: Tectonic Tide with its Fatal
 // Blossoms. Its multipliers are read from his proud skill groups. His passives and constellations are not built, as their
