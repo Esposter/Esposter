@@ -28,7 +28,7 @@ export const isSandboxInstallSupported: boolean =
   getResult(() =>
     process.platform === "win32"
       ? execWsl(
-          ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node && node --version && corepack --version")],
+          ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node && node --version && pnpm --version")],
           { timeout: WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS },
         )
       : execFileHidden("sh", ["-lc", "command -v pnpm"], { timeout: PROBE_TIMEOUT_MS }),

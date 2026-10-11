@@ -5,7 +5,7 @@ import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { createCleanRepositoryCheckout } from "#src/services/exec/test/createCleanRepositoryCheckout.test";
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { isSandboxInstallSupported } from "#src/services/exec/test/isSandboxInstallSupported.test";
@@ -108,7 +108,7 @@ const run = async (home: string): Promise<void> => {
 // Setup for the whole file rather than for one test. Top-level await materializes the deps snapshot + warm store.
 if (isBenchable) {
   process.env[VIRRUN_CACHE_HOME_KEY] = SNAPSHOT_HOME;
-  await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(cleanSource, "pipe"));
+  await createSnapshot(createOsBackend(), SETUP_COMMAND, createOsInstallOptions(cleanSource, "pipe"));
   restoreCacheHome();
 }
 

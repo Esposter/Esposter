@@ -8,7 +8,7 @@ import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
 import { persistRun } from "#src/services/exec/snapshot/persistRun";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
@@ -20,7 +20,7 @@ import { afterAll, test } from "vitest";
 // Supports the os backend - the sandbox runs natively on Linux (os/linux) and bridged from win32 via WSL
 // (os/wsl) - so this is a `.platform.bench.ts`, writing one committed artifact per platform. Every os run goes
 // Through the same option builders createVirrun uses (createOsExecOptions / createOsInstallOptions): the store
-// Bind, the WSL login PATH, network, corepack home and CI=true. Routing through those builders keeps the bench from
+// Bind, the WSL login PATH, network and CI=true. Routing through those builders keeps the bench from
 // Drifting from production — hand-rolled options miss e.g. the WSL login PATH and die with `node: not found` (the
 // WSL bridge resolves the Windows pnpm shim instead).
 // Switched off, and this is the one switch for the whole file. Every task here forks a real sandbox over the whole
@@ -69,8 +69,7 @@ afterAll(() => {
 // Captured at module scope rather than in a hook: one snapshot backs every fork below, so it is the file's setup
 // Rather than any one test's. Top-level await materializes the upper layer first. Keyed by the lockfile hash (same
 // Lockfile - same cache entry).
-if (isOsSupported)
-  await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
+if (isOsSupported) await createSnapshot(createOsBackend(), SETUP_COMMAND, createOsInstallOptions(warmCorpus, "pipe"));
 
 test.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", async ({ bench }) => {
   const command = getSharedCommand("typecheck");

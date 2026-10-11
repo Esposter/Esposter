@@ -35,13 +35,11 @@ export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
   VIRRUN_SNAPSHOT_CAPTURE_WORK_TEMP_PREFIX,
 ];
 // The command captured into the warm snapshot to provision the sandbox's own dependency closure: a frozen
-// Install of the lockfile. On Windows the sandbox is a Linux (WSL) guest installing via corepack's pnpm
-// (the login PATH brings node + corepack, not necessarily a global pnpm); on Linux the caller's shell
-// Already exposes pnpm, so it is invoked directly. See resolveSetupCommand. The sandbox installs at pnpm's own
+// Install of the lockfile by the `pnpm` the sandbox's PATH resolves — the caller's own on Linux, the WSL login shell's
+// On Windows — whatever put it there (a version manager's shim or a global install). The sandbox installs at pnpm's own
 // Linux default virtual-store-directory length — the win32 host's `.nuxt` (which baked host-length `.pnpm` paths) is no
 // Longer read in-sandbox: the prepare layer regenerates a Linux `.nuxt` that shadows it.
-export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
-export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
+export const SETUP_COMMAND = "pnpm install --frozen-lockfile";
 // Linux-side fs primitives for write-back (apps/web/content/docs/virrun/write-back.md, "Execution locus");
 // Classification + ordering stay in tested TS. python3 over getfattr — it reads the opaque xattr and walks in one
 // Ubiquitous tool.

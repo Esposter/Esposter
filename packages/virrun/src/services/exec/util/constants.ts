@@ -6,7 +6,6 @@ export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";
 export const VIRRUN_GITIGNORE_ENTRY: string = `/${VIRRUN_CACHE_DIRECTORY_NAME}/`;
 export const VIRRUN_STORE_DIRECTORY_NAME = "store";
 export const VIRRUN_PNPM_STORE_DIRECTORY_NAME = "pnpm";
-export const VIRRUN_COREPACK_STORE_DIRECTORY_NAME = "corepack";
 export const PACKAGE_JSON_FILENAME = "package.json";
 export const PNPM_WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
@@ -50,7 +49,6 @@ export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema
 export const VIRRUN_ENV_KEY = "VIRRUN";
 export const VIRRUN_ENV_VALUE = "true";
 
-export const COREPACK_HOME_KEY = "COREPACK_HOME";
 // Lets CI and tests point the snapshot cache at a disposable directory instead of the real home.
 export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
@@ -105,9 +103,9 @@ export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30
 // Cap on the interactive-login capture (readWslLoginEnvironment) and the test gate that probes the same shell: a
 // Blocking rc/profile (a prompt, a hung version-manager hook) would otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into the empty
 // Environment, and the command falls back to the default PATH — which on win32 is the WSL Windows-interop PATH,
-// Where `corepack` resolves to the /mnt/c fnm shim that can't exec a Linux node (exit 127). So the timeout must
+// Where `pnpm` resolves to a /mnt/c Windows shim that can't exec a Linux node (exit 127). So the timeout must
 // Clear a *cold* WSL start: warm capture is ~1s, but a first-of-session run pays the WSL2 VM boot plus full rc
-// Sourcing (fnm + plugins + profile), which overshoots a few-second cap and fails the first `virrun` of the day with
+// Sourcing (version manager + plugins + profile), which overshoots a few-second cap and fails the first `virrun` of the day with
 // A spurious `node: not found`. One minute clears cold boot while still bounding a genuinely hung rc.
 export const WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an unlink

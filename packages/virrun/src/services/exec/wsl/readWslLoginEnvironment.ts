@@ -27,21 +27,20 @@ const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeDirectory: "", nodeVe
 // And puts node on PATH, invisible to the bare `wsl.exe --exec` the os backend uses. Capturing the resulting PATH lets
 // Virrun mirror the user's real terminal environment with zero config — no per-machine setup field.
 //
-// Before printing, prepend the *stable* directory that holds `node`: fnm activates by putting an ephemeral
-// `/run/user/<uid>/fnm_multishells/<pid>_<ts>/bin` (a per-shell symlink directory) on PATH, which fnm's exit hook
-// Deletes the instant this capture shell ends — so the raw captured entry is already dead by the time the sandbox (or a
-// Later process reading the persisted cache) runs the command, giving `corepack: command not found` (exit 127).
-// `readlink -f` dereferences that ephemeral symlink to its backing install directory
-// (`…/fnm/node-versions/vX/installation/bin`, which also carries corepack/npm/pnpm) and we lead PATH with it.
-// Idempotent for stable managers (nvm/volta):
-// `readlink -f` on an already-real path is a no-op and re-prepending a directory already on PATH is harmless.
+// Before printing, prepend the directory of the node binary itself, asked of node (`process.execPath`) rather than read
+// Off PATH. What PATH holds is a version manager's indirection, never the install: fnm's per-shell
+// `/run/user/<uid>/fnm_multishells/<pid>_<ts>/bin` is deleted by fnm's exit hook the instant this capture shell ends,
+// And a shim manager's (vp, Volta) `node` is a symlink to the manager's own binary, which the Windows side cannot follow
+// Over the 9p bridge. The real install directory survives both and holds a real `node` file, the one that
+// `checkHasSandboxNode` stats later; re-prepending a directory already on PATH (nvm) is harmless. `pnpm` is not looked
+// Up here: it resolves through the rest of the captured PATH, from whichever shim or install put it there.
 //
 // The same shell also reports that node's version, which is the version the sandbox actually runs — the host process's
 // Own `process.version` is the Windows node and says nothing about the guest toolchain.
 const CAPTURE_SCRIPT = buildWslLoginShellCommand(
   [
-    `nodeBin="$(command -v node 2>/dev/null)"`,
-    `[ -n "$nodeBin" ] && PATH="$(dirname "$(readlink -f "$nodeBin")"):$PATH"`,
+    `nodeBin="$(node -p process.execPath 2>/dev/null)"`,
+    `[ -n "$nodeBin" ] && PATH="$(dirname "$nodeBin"):$PATH"`,
     `nodeVersion="$(node --version 2>/dev/null)"`,
     `printf "${VIRRUN_LOGIN_PATH_BEGIN_MARKER}%s${VIRRUN_LOGIN_PATH_END_MARKER}${VIRRUN_LOGIN_NODE_BEGIN_MARKER}%s${VIRRUN_LOGIN_NODE_END_MARKER}" "$PATH" "$nodeVersion"`,
   ].join("; "),

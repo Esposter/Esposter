@@ -38,7 +38,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - `references/major-upgrades.md` — when a red row appears in `pnpm outdated:dependencies`, or Renovate opens a major PR.
 - `references/pnpm-bumps.md` — when `packageManager` moves.
 - `references/github-actions.md` — when bumping an action to a new release.
-- `references/updating-node.md` — when the node version moves, or a sandbox cannot find corepack after it did.
+- `references/updating-node.md` — when the node version moves, or a sandbox cannot run the new pin after it did.
 - `references/bump-follow-through.md` — when any bump lands, before committing it.
 - `references/holding-a-dependency.md` — when a bump has to be stopped, or a package is listed as held.
 - `references/caret-rules.md` — when adding, removing or questioning a catalog entry's `^`, `~` or exact pin.

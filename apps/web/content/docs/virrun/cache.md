@@ -12,7 +12,6 @@ Everything virrun materializes on disk to make sandboxed runs fast. Local, machi
 ```text
 <repo>/.virrun/        # repo-local, gitignored (virrun adds the ignore line on first write)
   store/pnpm/          # shared content-addressable pnpm dep store
-  store/corepack/      # corepack home — where the sandbox bootstraps the repo's pinned packageManager
 
 ~/.virrun/             # host-global (VIRRUN_CACHE_HOME override), shared across repos/CI
   snapshots/<hash>/    # warm post-install snapshots, keyed by environment (lockfile + sandbox node major)
@@ -29,7 +28,6 @@ Everything virrun materializes on disk to make sandboxed runs fast. Local, machi
 ```
 
 - **`store/pnpm/`** (repo-local) — deps download once; the `os` backend bind-mounts `<repo>/.virrun/store/pnpm` writable into each sandbox and exposes it through pnpm env. Repo-local is fine because it is a **bind** mount, and binds may overlap the working-directory overlay. Package imports use copy — hardlinks cannot cross from the on-disk store into the RAM overlay.
-- **`store/corepack/`** — bound writable into **every** sandboxed run as `COREPACK_HOME`. The sandbox mounts `/` read-only, so a command that shells out to `pnpm` runs the node manager's corepack shim, which downloads the repo's pinned `packageManager` version whenever the host's own corepack cache doesn't hold it — writing under `$HOME/.cache` and dying `EROFS`. Binding it here makes that bootstrap writable once and reused by every later run. On win32 it lives under the WSL-native ext4 root with the pnpm store, not on `/mnt/c`.
 - **`snapshots/`** and **`prepare/`** (host-global) — the warm-fork layers; keying, publish, and eviction are covered in [snapshot and fork](/docs/virrun/snapshot-and-fork). They live in `~/.virrun`, not the repo, because a fork stacks them as **overlay lowers** beside the source, and overlayfs rejects a lower that nests inside another.
 - **`tasks/`** (host-global) — the [task cache](/docs/virrun/task-cache).
 - **`sources/`** (host-global, win32) — the [WSL source mirrors](/docs/virrun/wsl-source-mirror).

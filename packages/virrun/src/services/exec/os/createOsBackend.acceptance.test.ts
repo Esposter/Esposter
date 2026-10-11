@@ -1,6 +1,6 @@
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import {
   ACCEPTANCE_TIMEOUT_MS,
   ESBUILD_VERSION_REGEX,
@@ -16,7 +16,7 @@ import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 // Heavy + networked, so it self-gates on sandbox support and a package-manager entrypoint inside that
-// Sandbox. On WSL, Corepack provides pnpm without mutating the distro; its cache is bind-mounted below. The install
+// Sandbox. On WSL, pnpm comes from the login shell's PATH, already installed by the user's version manager. The install
 // Costs tens of seconds of wall clock, too slow for the default suite. The body is kept intact; drop the `.todo` and
 // Restore the `describe.skipIf(!isSandboxInstallSupported)` gate to run it when the install path changes.
 describe.todo("createOsBackend - real workspace install (acceptance)", () => {
@@ -43,7 +43,7 @@ describe.todo("createOsBackend - real workspace install (acceptance)", () => {
       // The compound proves: the install succeeds, node_modules fully materialized in RAM (file count), and a native
       // Binary (esbuild's Go executable) actually runs inside the sandbox.
       const command = [
-        resolveSetupCommand(),
+        SETUP_COMMAND,
         `test "$(find . -path '*/${NODE_MODULES_DIRECTORY}/*' -type f | wc -l)" -gt ${minimumNodeModulesFileCount}`,
         FIND_ESBUILD_BINARY_COMMAND,
         RUN_ESBUILD_VERSION_COMMAND,

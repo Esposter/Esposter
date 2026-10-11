@@ -3,7 +3,7 @@ import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import {
   ACCEPTANCE_TIMEOUT_MS,
   ESBUILD_VERSION_REGEX,
@@ -24,7 +24,7 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const runWarmVsCold = async (command: string, warmOptions: ExecOptions, coldOptions: ExecOptions) => {
     const warmResult = await forkSnapshot(getBackend(), command, warmOptions);
-    const coldResult = await getBackend().exec(`${resolveSetupCommand()} > /dev/null 2>&1 && ${command}`, coldOptions);
+    const coldResult = await getBackend().exec(`${SETUP_COMMAND} > /dev/null 2>&1 && ${command}`, coldOptions);
     return { coldResult, warmResult };
   };
 
@@ -65,12 +65,11 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
     async () => {
       expect.hasAssertions();
 
-      // Corepack pnpm (not the raw binary find the case above uses) so the run actually traverses
-      // `verify-deps-before-run`, then `node --version` as the payload — a command pnpm exec always resolves off PATH, so
-      // A non-zero exit means the pre-run verification tripped an install, not a missing hoisted
-      // Bin. createOsInstallOptions binds the corepack home both sides need to resolve `corepack pnpm`.
+      // Pnpm (not the raw binary find the case above uses) so the run actually traverses `verify-deps-before-run`,
+      // Then `node --version` as the payload — a command pnpm exec always resolves off PATH, so a non-zero exit means
+      // The pre-run verification tripped an install, not a missing hoisted bin.
       // ESBUILD_VERSION_REGEX is a bare semver, so it matches node's `vX.Y.Z`.
-      const execCommand = "corepack pnpm exec node --version";
+      const execCommand = "pnpm exec node --version";
       const { coldResult, warmResult } = await runWarmVsCold(
         execCommand,
         createOsInstallOptions(getCorpus(), "pipe"),

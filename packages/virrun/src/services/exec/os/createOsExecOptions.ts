@@ -3,32 +3,21 @@ import type { ExecStdio } from "#src/models/exec/ExecStdio";
 
 import { getOsCacheRoot } from "#src/services/exec/os/getOsCacheRoot";
 import { createSharedPackageStoreOptions } from "#src/services/exec/store/createSharedPackageStoreOptions";
-import {
-  COREPACK_HOME_KEY,
-  NODE_MODULES_BIN_DIRECTORY,
-  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-  VIRRUN_ENV_KEY,
-  VIRRUN_ENV_VALUE,
-  VIRRUN_STORE_DIRECTORY_NAME,
-} from "#src/services/exec/util/constants";
+import { NODE_MODULES_BIN_DIRECTORY, VIRRUN_ENV_KEY, VIRRUN_ENV_VALUE } from "#src/services/exec/util/constants";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { WSL_PATH_DELIMITER } from "#src/services/exec/wsl/constants";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
 
-// The os backend's ExecOptions: bind the shared pnpm store and the corepack home writable, inject the VIRRUN presence
-// Signal, and re-enable network (the os backend isolates the filesystem, not the registry — pnpm must reach it to
-// Bootstrap). On win32 `wsl.exe --exec` skips the login + rc files, so a profile-bound node manager's node is off PATH;
-// Inject the PATH a real WSL login shell sees so node/corepack resolve ("" injects nothing, leaving the default PATH).
+// The os backend's ExecOptions: bind the shared pnpm store writable, inject the VIRRUN presence signal, and re-enable
+// Network (the os backend isolates the filesystem, not the registry — pnpm must reach it to install). On win32
+// `wsl.exe --exec` skips the login + rc files, so a profile-bound version manager's node and pnpm are off PATH; inject
+// The PATH a real WSL login shell sees so they resolve ("" injects nothing, leaving the default PATH).
 //
-// The corepack home belongs to every run, not just the capture install: the sandbox mounts `/` read-only, so a command
-// That shells out to `pnpm` resolves the node manager's corepack shim, which downloads the repo's pinned
-// `packageManager` version whenever the host's own corepack cache doesn't already hold it — writing under
-// `$HOME/.cache` and dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that
-// Bootstrap writable once and reused by every later run.
+// The sandbox mounts `/` read-only, so the node and pnpm the repo pins must already be installed in the distro: a
+// Version manager that would download one on first use fails EROFS inside the sandbox rather than silently writing to
+// The user's home. Installing the pin is the version manager's job, done once outside any run.
 //
 // The captured login PATH holds only the distro's own directories — getSandboxLoginPath drops the Windows drive
 // Mounts WSL interop appends to every login shell — so nothing on it can resolve the repo's own binaries (`oxlint`,
@@ -43,14 +32,12 @@ import { join } from "node:path";
 export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions => {
   const osCacheRoot = getOsCacheRoot(cwd);
   const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, osCacheRoot);
-  const corepackHome = join(osCacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
-  mkdirSync(corepackHome, { recursive: true });
   const isWindows = process.platform === "win32";
   const wslLoginPath = isWindows ? readWslLoginEnvironment().path : "";
   // On win32 the os backend REQUIRES the login-shell capture to place a Linux node on PATH; the support probe already
   // Proved WSL is present, so an empty capture is a *failed* capture (a cold-WSL login shell overrunning
   // WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS, or a blocking rc), not "no WSL". Proceeding would run the command under the
-  // Windows-interop PATH, where `corepack` resolves to the /mnt/c fnm shim and dies with a cryptic `node: not found`
+  // Windows-interop PATH, where `pnpm` resolves to a /mnt/c Windows shim and dies with a cryptic `node: not found`
   // (exit 127). Fail loud so the cause reads as a timeout to retry, not a real toolchain error.
   if (isWindows && !wslLoginPath)
     throw new InvalidOperationError(
@@ -63,14 +50,8 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
     : "";
   return {
     ...sharedPackageStoreOptions,
-    bindDirectories: [...(sharedPackageStoreOptions.bindDirectories ?? []), corepackHome],
     cwd,
-    env: {
-      ...(path ? { PATH: path } : {}),
-      ...sharedPackageStoreOptions.env,
-      [COREPACK_HOME_KEY]: corepackHome,
-      [VIRRUN_ENV_KEY]: VIRRUN_ENV_VALUE,
-    },
+    env: { ...(path ? { PATH: path } : {}), ...sharedPackageStoreOptions.env, [VIRRUN_ENV_KEY]: VIRRUN_ENV_VALUE },
     isNetworkEnabled: true,
     stdio,
   };

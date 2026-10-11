@@ -2,7 +2,7 @@ import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "#src/services/exec/snapshot/createSnapshot";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { describe } from "vitest";
 
@@ -12,7 +12,7 @@ import { describe } from "vitest";
 // Stay correct (the loser keeps the winner's layer) — only a redundant install, hence no cross-process lock.
 export const ensureWarmSnapshot = async (backend: ExecBackend, corpus: string): Promise<void> => {
   if (resolveSnapshotLocation(corpus).exists) return;
-  await createSnapshot(backend, resolveSetupCommand(), createOsInstallOptions(corpus, "pipe"));
+  await createSnapshot(backend, SETUP_COMMAND, createOsInstallOptions(corpus, "pipe"));
 };
 
 describe.todo("ensureWarmSnapshot");

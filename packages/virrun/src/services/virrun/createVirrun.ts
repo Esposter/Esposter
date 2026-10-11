@@ -19,7 +19,7 @@ import { pruneStalePrepareLayers } from "#src/services/exec/snapshot/pruneStaleP
 import { pruneStaleSnapshots } from "#src/services/exec/snapshot/pruneStaleSnapshots";
 import { reapStaleTemps } from "#src/services/exec/snapshot/reapStaleTemps";
 import { resolvePrepareLocation } from "#src/services/exec/snapshot/resolvePrepareLocation";
-import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
+import { SETUP_COMMAND } from "#src/services/exec/snapshot/constants";
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY, VIRRUN_ENV_VALUE } from "#src/services/exec/util/constants";
 import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
@@ -100,7 +100,7 @@ export const createVirrun = async ({
     claimLayerDirectory(directory, () => {
       pruneStaleSnapshots(hash);
     });
-    if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+    if (!exists) await createSnapshot(execBackend, SETUP_COMMAND, toInstallOptions(stdio));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
   // State, forked over the deps snapshot, and return the read-only lower(s) fork/persist stacks above the deps

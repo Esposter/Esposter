@@ -69,7 +69,7 @@ describe(createVirrun, () => {
 
   afterEach(() => {
     cleanup();
-    // The mocked WSL native cache root lands the os-path store/corepack mkdirs under temp on win32; clean it up.
+    // The mocked WSL native cache root lands the os-path store mkdirs under temp on win32; clean it up.
     rmSync(join(tmpdir(), TEST_WSL_CACHE_DIRECTORY_NAME), { force: true, recursive: true });
   });
 
