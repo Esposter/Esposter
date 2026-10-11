@@ -1,11 +1,11 @@
 ---
 title: Forging
-description: The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets once their diagrams are learned, the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's place and screen are not built yet.
+description: The blacksmith's recipes from the game's forge table — enhancement ores and four-star weapons forged from their billets once their diagrams are learned, the Mystic Enhancement Ore drawn from its random table, each order queued in a queue the Adventure Rank opens, its units finishing over real time and collected at any blacksmith, the enhancement ores' forge points held to 400,000 a game day, the forging talents of five characters, and the Serenitea Pot's refusal of Magical Crystal Chunks. The blacksmith's place is not built yet.
 ---
 
 # Forging
 
-The blacksmith's rules are over the game's own forge table: which recipes a player has open, how many queues they may run, what an order costs and when its units finish, what a unit yields, and how many forge points a game day may hold. This page is the build of the [forging](/docs/proposals/genshin/forging) proposal, covering its recipes, queues by rank, real-time orders, the daily cap, the weapons from billets, the drop-table Mystic, the forging talents and the Serenitea Pot's refusal. The blacksmith's place and screen stay in the proposal.
+The blacksmith's rules are over the game's own forge table: which recipes a player has open, how many queues they may run, what an order costs and when its units finish, what a unit yields, and how many forge points a game day may hold. This page is the build of the [forging](/docs/proposals/genshin/forging) proposal, covering its recipes, queues by rank, real-time orders, the daily cap, the weapons from billets, the drop-table Mystic, the forging talents and the Serenitea Pot's refusal. The blacksmith's place stays in the proposal.
 
 ## How it works
 
@@ -51,7 +51,7 @@ flowchart TD
   - **Extra result.** Bennett: each enhancement ore unit has a one-in-five chance to yield an extra copy of its result. Read when the unit is collected.
   - **Refund ore.** Diluc, Zhongli and Ganyu: each weapon of their type refunds fifteen per cent of the ores its units take, the ores being the forge's own, Normal to Mystic inputs. Refunded when the order starts, and a refund the bag has no room for is lost.
 - **The Serenitea Pot's refusal.** In the Serenitea Pot's realm, a recipe that takes a Magical Crystal Chunk is refused, and it is forged anywhere else. The realm is not built, so the refusal waits on it.
-- **Refusal words.** The three enhancement ores' refusals are the game's own lines, kept in `genshin-text` under one key for each ore, for the screen to show once it is built.
+- **Refusal words.** The three enhancement ores' refusals are the game's own lines, kept in `genshin-text` under one key for each ore, for the screen to show.
 
 ## Key files
 
@@ -83,12 +83,12 @@ flowchart TD
 
 ## Notes
 
-- **The blacksmith's place is not on the map.** The official map has no blacksmith label, so the forge's place is the Mondstadt scene's own NPC rather than a spawned place. It waits on the region's placements and on the screen. Every blacksmith is one forge, so the rules need no place.
-- **The screen is not built.** Nothing shows the forge yet, and the refusal words wait under their keys for it.
+- **The blacksmith's place is not on the map.** The official map has no blacksmith label, so the forge's place is the Mondstadt scene's own NPC rather than a spawned place. It waits on the region's placements. Every blacksmith is one forge, so the rules need no place.
+- **The screen shows the forge.** Its Materials and Forge Queues tabs read the forge state, and the refusal words show under their keys.
 - **The cap's moment is read, not seen.** The cap counts an order's points when the order is started, and a refused order spends nothing. Whether the game counts a queued order at its start or as its units are collected is a recording owed on the roadmap.
 - **The talents' parameters are read as the game's own.** Each talent's table row holds a first parameter, a second and a third. The first is the forge type a talent applies to, one for the enhancement ores and the weapon's type for the refund talents, read off the same field as the claymore, polearm and bow types (5, 7 and 4). The second is the chance in ten thousandths for the extra result, two thousand, and the ratio for the others. A refund's chance of ten thousand is certain, so it is applied each time.
 - **The Mystic's drop id names no table in the dump.** The row's drop id, 208001500, is in neither the dump nor the repository's other tables, so the writer maps it to the forge random table whose Mystic Enhancement Ore count is the row's own, six, which is the table 20001. The split between the two results is the table's weights. A game check of that split is not owed; it is read off the table.
-- **The Adventure EXP is granted.** `obtainForgeOrder` takes a finished queue in and gains the EXP its units yield at the Adventure Rank, as an Original Resin claim does: the EXP past rank 60 is paid in Mora into the wallet. The screen that calls it is not built.
+- **The Adventure EXP is granted.** `obtainForgeOrder` takes a finished queue in and gains the EXP its units yield at the Adventure Rank, as an Original Resin claim does: the EXP past rank 60 is paid in Mora into the wallet. The world's wiring of the screen that calls it is not built.
 - **The forge's items are in the items slice.** The bag takes a material result by its item definition, so `pnpm -C scripts genshin:assets items` publishes every item a recipe takes or yields, the enhancement ores, the Mystic ore, the Magical Crystal Chunk and the weapons' billets and ores among them, into the items slice beside the drop and expedition items. A weapon is no item: it is in the weapon table and reaches the bag as a weapon, which the save reads back from that table as it loads, so a forged weapon is still a weapon after a reload ([inventory](/docs/genshin/inventory)).
 - **Names of the forge's items are the name-text chunks'.** The billets and ores the weapons need name their text ids, which the game text has no key for, so `genshin:text names` writes them into the name-text chunks like the other names the world cites. A weapon's name is the same chunk's, read by its weapon's text id, and the bag reads a material's name the same way, so every item of the forge is named by its text id.
 - **The wallet's currencies are no items.** Mora, Primogems, the Genesis Crystal, the Fates and Stardust, Masterless Stella Fortuna and Original Resin are held by the wallet, and Adventure EXP is returned by the collection. The items writer leaves each of their ids out, so a result or a drop naming one is a wallet grant.
