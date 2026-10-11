@@ -78,13 +78,13 @@ const CELESTIAL_SHOWER_HIT_AREA = createTargetedHitArea(
   Object.freeze({ angle: 2 * Math.PI, height: 10, radius: CELESTIAL_SHOWER_RADIUS }),
   2.5,
 );
-// Measured: gcsim v2.47.2 (MIT) ganyu/passive.go and burst.go, Harmony between Heaven and Earth's 20% Cryo DMG Bonus for the
+// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, Harmony between Heaven and Earth's 20% Cryo DMG Bonus for the
 // Active character inside the field for 60 frames, from Ascension 4
 const HARMONY_ASCENSION = 4;
 const HARMONY_CRYO_DAMAGE_BONUS = 0.2;
 const HARMONY_SECONDS = 1;
 
-// Measured: gcsim v2.47.2 (MIT) ganyu/passive.go, Undivided Heart's 20% CRIT Rate for 300 frames on each later Frostflake
+// Measured: gcsim v2.47.2 (MIT) ganyu/aimed.go, Undivided Heart's 20% CRIT Rate for 300 frames on each later Frostflake
 // Arrow, from Ascension 1, which the first arrow of a charge does not get, as the buff comes after its strike
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/aimed.go
 const UNDIVIDED_HEART_ASCENSION = 1;
