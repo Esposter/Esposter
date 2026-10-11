@@ -12,13 +12,15 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
-import { GameDataset, QuestIds, QuestObjectiveKind, questSchema } from "genshin-world";
+import { GameDataset, QuestIds, QuestKind, QuestObjectiveKind, questSchema } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps from its
-// Binary output, the talks its steps end on from the dialog and talk tables, and every word they show, a language missing
-// A word taking English's and saying so. Each quest is checked against the world's own schema before it is published
+// Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps and the
+// Talks offering it from its binary output, the talks its steps end on and its offers from the dialog and talk tables,
+// And every word they show, a language missing a word taking English's and saying so. An Archon quest starts from the
+// Prologue's first rather than from a talk, so it has no offer. Each quest is checked against the world's own schema
+// Before it is published
 export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
@@ -37,19 +39,24 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     const questBinary = parseMachineJson<Record<string, unknown>>(
       readFileSync(join(QUEST_BINARY_DIRECTORY, `${questId}.json`), "utf8"),
     );
-    const { notes: stepNotes, steps } = readQuestSteps(questBinary, Number(questId), (hash) =>
-      englishTextMap.has(String(hash)),
-    );
+    const {
+      notes: stepNotes,
+      offerTalkIds: readOfferTalkIds,
+      steps,
+    } = readQuestSteps(questBinary, Number(questId), (hash) => englishTextMap.has(String(hash)));
     notes.push(...stepNotes);
-    const talkIds = new Set(
-      steps.flatMap(({ objectives }) =>
+    const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;
+    const talkIds = new Set([
+      ...offerTalkIds.map(Number),
+      ...steps.flatMap(({ objectives }) =>
         objectives.filter(({ kind }) => kind === QuestObjectiveKind.TalkTo).map(({ targetId }) => Number(targetId)),
       ),
-    );
+    ]);
     return questSchema.parse({
       descriptionTextId: String(mainQuest.descTextMapHash),
       id: questId,
       kind: questKind,
+      offerTalkIds,
       steps,
       talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkTables)),
       titleTextId: String(mainQuest.titleTextMapHash),

@@ -9,6 +9,7 @@ const createQuest = (id: string): Quest => ({
   descriptionTextId: "descriptionTextId",
   id,
   kind: QuestKind.Archon,
+  offerTalkIds: [],
   steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "textId" }],
   talks: [],
   titleTextId: "titleTextId",
@@ -35,5 +36,22 @@ describe(startQuests, () => {
         ["2", { objectiveCounts: [], stepIndex: 0 }],
       ]),
     );
+  });
+
+  test("starts a quest a talk offers once that talk ends, and only the once", () => {
+    expect.hasAssertions();
+
+    const offeredQuest: Quest = { ...createQuest("3"), kind: QuestKind.World, offerTalkIds: ["offer"] };
+    const talkEvent = { kind: QuestObjectiveKind.TalkTo, targetId: "offer" };
+    const started = startQuests([offeredQuest], new Map(), talkEvent);
+
+    expect(startQuests([offeredQuest], new Map())).toStrictEqual(new Map());
+    expect(startQuests([offeredQuest], new Map(), { ...talkEvent, kind: QuestObjectiveKind.Interact })).toStrictEqual(
+      new Map(),
+    );
+    expect(started).toStrictEqual(new Map([["3", { objectiveCounts: [], stepIndex: 0 }]]));
+    expect(
+      startQuests([offeredQuest], new Map([["3", { objectiveCounts: [], stepIndex: 1 }]]), talkEvent),
+    ).toStrictEqual(new Map([["3", { objectiveCounts: [], stepIndex: 1 }]]));
   });
 });

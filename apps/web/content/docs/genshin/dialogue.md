@@ -72,7 +72,7 @@ A resident's standing talk is the talk the game begins when the player presses F
 
 `genshin:text standing-talks` publishes every resident's standing talk as one record, `standingTalks/residents`, and their words in every language under `standingTalkText`. A dialog with no words in the English text map, which marks one that only plays an action, is skipped, and the talk goes on from the line before it to the line after it (`skipWordlessTalkLines`). A talk where that cannot be done is left out and counted: a reply with no words, a wordless line that branches, or a talk with no words at all. Its resident then holds no talk the world can begin.
 
-The world reads both records as the session starts (`useWorldTalks`). It holds the quests' talks and the standing talks in one map by id, the quest's winning an id both share, and one text map of their words.
+The world reads both records as the session starts (`useWorldTalks`). It holds the talks of the quests in progress, the talks offering each quest not yet started, and the standing talks in one map by id, the quest's winning an id both share, and one text map of their words.
 
 ```mermaid
 flowchart TD
@@ -85,10 +85,10 @@ flowchart TD
   OFFER -->|"yes"| REPLIES["The opening line offers each quest talk, then the talk's own replies, then a duel"]
   OFFER -->|"no"| RUN["The talk runs on"]
   REPLIES -->|"a quest's reply chosen"| QUEST
-  QUEST --> END["Its end advances the quest"]
+  QUEST --> END["Its end advances the quest, or starts the one it offers"]
 ```
 
-**The opening line offers the quest talks open to the resident.** `getTalkOffers` finds them: each talk-to objective of the step a quest in progress is on, not yet met, whose talk is begun on one of the characters the standing talk is begun on. Each is a reply with its quest's mark, a quest's or a story quest's, named by the quest's title. They are offered ahead of the talk's own replies and the card game's duel. Choosing one leaves the standing talk for the quest's, and its end advances the quest as any talk does. A quest's own talk offers none. A resident whose standing talk the world does not hold begins the first quest talk open to them instead, and one with neither is not listed.
+**The opening line offers the quest talks open to the resident.** `getTalkOffers` finds them: each talk offering a quest not yet started, and each talk-to objective of the step a quest in progress is on, not yet met, whose talk is begun on one of the characters the standing talk is begun on. Each is a reply with its quest's mark, a quest's or a story quest's, named by the quest's title. They are offered ahead of the talk's own replies and the card game's duel. Choosing one leaves the standing talk for the quest's, and its end advances the quest as any talk does, or starts the quest it offers ([quests](/docs/genshin/quests)). A quest's own talk offers none. A resident whose standing talk the world does not hold begins the first quest talk open to them instead, and one with neither is not listed.
 
 While the opening line offers a quest talk or a duel, auto-play and Skip stop there, as at any line offering replies. A click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
 

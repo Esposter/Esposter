@@ -8,5 +8,6 @@ import { z } from "zod";
 // Game data. Typed over every QuestId, so a quest carried without its loader does not typecheck
 export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promise<unknown>> = {
   [QuestIdValues.BirdsEyeView]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/352", z.unknown()),
+  [QuestIdValues.TheSeventhSamurai]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/72154", z.unknown()),
   [QuestIdValues.WanderersTrail]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/351", z.unknown()),
 };

@@ -14,8 +14,9 @@ import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTe
 import { getResultAsync } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
 
-// The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, and the
-// Residents hold their standing talks, read with their words as the world starts. A quest's talk wins a shared id
+// The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, the quests not
+// Yet started the talks offering them, and the residents their standing talks, read with their words as the world
+// Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   gameDataBaseUrl,
   getGroundHeight,
@@ -25,6 +26,7 @@ export const useWorldTalks = ({
   nameText,
   questProgressMap,
   questsInProgress,
+  questsOffered,
   questTextMap,
 }: {
   gameDataBaseUrl: string;
@@ -36,6 +38,7 @@ export const useWorldTalks = ({
   nameText: Readonly<Record<string, string>>;
   questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
   questsInProgress: ComputedRef<Quest[]>;
+  questsOffered: ComputedRef<Quest[]>;
   questTextMap: Ref<Readonly<Record<string, string>>>;
 }) => {
   const talk = shallowRef<Talk>();
@@ -64,17 +67,24 @@ export const useWorldTalks = ({
   );
   const talkMap = computed(() =>
     mergeTalks(
-      questsInProgress.value.flatMap(({ talks }) => talks),
+      [
+        ...questsInProgress.value.flatMap(({ talks }) => talks),
+        ...questsOffered.value.flatMap(({ offerTalkIds, talks }) =>
+          talks.filter(({ id }) => offerTalkIds.includes(id)),
+        ),
+      ],
       standingTalks.value,
     ),
   );
+  // The quests whose talks a resident may be offered: those in progress, and those a talk offers not yet started
+  const questsOpen = computed(() => [...questsInProgress.value, ...questsOffered.value]);
   // Every talk's words, the quests' and the standing talks', which name a standing talk's offers by their quest's title
   const talkTextMap = computed(() => ({ ...questTextMap.value, ...standingTalkTextMap.value }));
   // The quest talks the talk running offers on its first line: a standing talk offers each one open to the characters it
   // Is begun on, and a quest's talk offers none
   const talkOffers = computed(() =>
     talk.value && standingTalks.value.includes(talk.value)
-      ? getTalkOffers(questsInProgress.value, questProgressMap.value, talk.value.npcIds)
+      ? getTalkOffers(questsOpen.value, questProgressMap.value, talk.value.npcIds)
       : [],
   );
   // The card game's duel a resident offers from the talk it begins, if that resident offers one
@@ -87,7 +97,7 @@ export const useWorldTalks = ({
       const spot = getResidentSpot(id);
       const residentTalkId = talkMap.value.has(talkId)
         ? talkId
-        : (getTalkOffers(questsInProgress.value, questProgressMap.value, [id])[0]?.talkId ?? "");
+        : (getTalkOffers(questsOpen.value, questProgressMap.value, [id])[0]?.talkId ?? "");
       if (!spot || !residentTalkId) return [];
       const { x, z } = spot.position;
       return [

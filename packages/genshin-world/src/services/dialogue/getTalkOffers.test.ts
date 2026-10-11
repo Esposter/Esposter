@@ -14,6 +14,7 @@ describe(getTalkOffers, () => {
     descriptionTextId: "descriptionTextId",
     id: "id",
     kind: QuestKind.World,
+    offerTalkIds: [],
     steps: [
       { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: TALK.id }], textId: "textId" },
     ],
@@ -38,9 +39,23 @@ describe(getTalkOffers, () => {
     ]);
   });
 
+  test("offers the talk offering a quest until the quest starts, then its step's talk", () => {
+    expect.hasAssertions();
+
+    const offerTalk = { ...TALK, id: "offer", npcIds: [NPC_ID] };
+    const offeredQuest = { ...QUEST, offerTalkIds: [offerTalk.id], talks: [...QUEST.talks, offerTalk] };
+
+    expect(getTalkOffers([offeredQuest], new Map(), [NPC_ID])).toStrictEqual([
+      { icon: DialogueChoiceIcon.Quest, talkId: offerTalk.id, textId: QUEST.titleTextId },
+    ]);
+    expect(getTalkOffers([offeredQuest], STARTED_PROGRESS_MAP, [NPC_ID])).toStrictEqual([
+      { icon: DialogueChoiceIcon.Quest, talkId: TALK.id, textId: QUEST.titleTextId },
+    ]);
+  });
+
   test.each([
     ["a talk already had", new Map([[QUEST.id, { objectiveCounts: [1], stepIndex: 0 }]]), NPC_ID],
-    ["a quest not yet started", new Map(), NPC_ID],
+    ["a quest not yet started that no talk offers", new Map(), NPC_ID],
     ["a talk begun on another character", STARTED_PROGRESS_MAP, "1"],
   ])("offers nothing for %s", (_description, questProgressMap, npcId) => {
     expect.hasAssertions();

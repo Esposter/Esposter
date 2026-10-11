@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
+description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first and every other quest from the talk that offers it, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
 ---
 
 # Quests
@@ -15,7 +15,7 @@ flowchart TD
   DECODE["The text maps, decoded from the installed client"] --> READ
   READ --> FILES["quests/QuestId: one record a quest, checked by its schema"]
   READ --> WORDS["questText per language: the quests' words, one record each"]
-  FILES --> START["startQuests: the first Archon quest not finished starts"]
+  FILES --> START["startQuests: the first Archon quest not finished starts,<br/>and a quest whose offering talk ended"]
   START --> PROGRESS["Quests in progress, from step 0"]
   DOING["Traveler's doing: a talk ended, an item collected,<br/>an enemy defeated, a thing acted on"] --> ADVANCE["doQuestEvent: advanceQuest on each quest in progress"]
   PROGRESS --> ADVANCE
@@ -32,7 +32,7 @@ flowchart TD
 
 ### A quest
 
-A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, and the talks it runs. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, a target and a count:
+A `Quest` has the game's id, its kind, its title and description by text id, its steps in the order they are done, the talks it runs, and the talks that offer it, none for a quest that starts otherwise. A step has its id, its line by text id (the "Talk to Paimon" the quest screen shows) and its objectives. An objective has a kind, a target and a count:
 
 | Kind     | What it asks                    | Its target, as the game's own condition names it |
 | :------- | :------------------------------ | :----------------------------------------------- |
@@ -50,7 +50,7 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### Starting and finishing
 
-`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. The other kinds have no start yet, as the [quests proposal](/docs/proposals/genshin/quests) sets out, and the commissions are not yet dealt at the daily reset, as [commissions](/docs/genshin/commissions) notes. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
+`startQuests` starts the first Archon quest that is not finished, once the ones before it are, so the carried Archon quests run from the prologue's first. Every other quest starts at its first shown step when a talk offering it ends, the talk-to event the world records for it, and only the once. Until then each resident a talk offering it is begun on offers that talk as a reply, as an open talk-to step's is ([dialogue](/docs/genshin/dialogue)). The commissions are not yet dealt at the daily reset, as [commissions](/docs/genshin/commissions) notes. A finished quest stays in the progress map at its last step, and the quest screen lists only those started and not finished.
 
 `doQuestEvent` hands one doing to every quest in progress. Each step moved past finishes its sub-quest, which `getFinishedQuestEvents` turns into a `QuestFinished` for `advanceAchievements`, and a quest its last step finishes into a `ParentQuestFinished`. A finished main quest is added to the set the Archive opens by, and its Travel Log entry opens, the entries read off the Archive's table when first needed. The world records a talk's end as a talk-to, a dropped item or a gathering point picked as a collect, an enemy defeated as a defeat under its kind, and a waypoint or landmark unlocked as an interact.
 
@@ -66,9 +66,9 @@ The screen reads the quests in progress, their progress, their text map and the 
 
 ### The quests' content
 
-`QuestId` is the inventory of quests the world carries, the prologue's first two to begin with. `pnpm -C scripts genshin:text quests` publishes each one to the game data: its kind, title and description from the quest table, and its shown steps from its binary output. It also publishes the talks those steps end on, from the dialog table with each speaker named from the character table and titled from the manual text map, each with the characters the talk table begins it on, and every word they show in every language. A resident's standing talk offers each open talk-to step's talk begun on them as a reply ([dialogue](/docs/genshin/dialogue)). Each quest is checked against the world's own schema before it is published.
+`QuestId` is the inventory of quests the world carries: the prologue's first two, and The Seventh Samurai, a world quest Xavier offers on Narukami Island. `QuestIds` lists them in the order the world reads them, the Archon quests in the order they run, since the enum's members are sorted by name. `pnpm -C scripts genshin:text quests` publishes each one to the game data: its kind, title and description from the quest table, and its shown steps and the talks offering it from its binary output. A world or story quest a talk offers opens on a step with no words that finishes on that talk, so the talks it finishes on are the quest's offers; an Archon quest has none, starting from the prologue's first. It also publishes the talks those steps end on and the offers, from the dialog table with each speaker named from the character table and titled from the manual text map, each with the characters the talk table begins it on, and every word they show in every language. A resident's standing talk offers each open talk-to step's talk begun on them as a reply ([dialogue](/docs/genshin/dialogue)). Each quest is checked against the world's own schema before it is published.
 
-The dump scrambles the binary output's field names each patch, so the reader finds each field by its shape, as [game data formats](/docs/genshin/game-data-formats) describes. A step's objectives are every condition of its finish list that asks something, in the order the list gives them, and the step is done once all of them are met. So a step that finishes on an item and a talk both holds both, and one that finishes on two triggers holds both. A step with no words is the game's own bookkeeping and is left out. A shown step whose conditions ask nothing the Traveler does, such as a cutscene played, is left out and noted.
+The dump scrambles the binary output's field names each patch, so the reader finds each field by its shape, as [game data formats](/docs/genshin/game-data-formats) describes. A step's objectives are every condition of its finish list that asks something, in the order the list gives them, and the step is done once all of them are met. So a step that finishes on an item and a talk both holds both, and one that finishes on two triggers holds both. A step with no words is the game's own bookkeeping and is left out, past reading the first one's offers. A shown step whose conditions ask nothing the Traveler does, such as a cutscene played, is left out and noted.
 
 ## Parity
 
@@ -81,7 +81,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps and talks, with its schema              |
 | `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, target and count                |
 | `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step         |
-| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests started from the prologue's first                     |
+| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests run in turn, and a quest started by its offering talk |
 | `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events |
 | `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema |
 | `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened               |
@@ -97,18 +97,20 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 | `packages/genshin-world/src/services/quest/QuestCategoryGlyphMap.ts`     | Each list's traced mark, on its tab and by its heading                  |
 | `packages/genshin-world/src/services/quest/getQuestTargetId.ts`          | What a quest's current step sends the player to                         |
 | `packages/genshin-world/src/components/Quest/Beam/Index.vue`             | The beam over the navigated objective                                   |
-| `packages/genshin-world/src/models/quest/QuestId.ts`                     | The quests the world carries, the reader's inventory                    |
+| `packages/genshin-world/src/models/quest/QuestId.ts`                     | The quests the world carries, the reader's inventory, in reading order  |
 | `scripts/src/services/genshinText/buildQuests.ts`                        | The builder: every inventoried quest, its talks and words, published    |
-| `scripts/src/services/genshinText/readQuestSteps.ts`                     | A quest's shown steps read off its scrambled binary output by shape     |
+| `scripts/src/services/genshinText/readQuestSteps.ts`                     | A quest's shown steps and offers read off its binary output by shape    |
 | `scripts/src/services/genshinText/readTalk.ts`                           | A talk read off the dialog and talk tables                              |
 
 ## Notes
 
-- **Only the Archon quests start, and a go-to does not move.** The carried prologue starts at Wanderer's Trail's first step, which asks to reach a place. No region data places that trigger yet, so the step stays where it is until the [quests proposal](/docs/proposals/genshin/quests) places it, and the carried quests' other steps wait behind it.
+- **A go-to does not move.** The carried prologue starts at Wanderer's Trail's first step, which asks to reach a place. No region data places that trigger yet, so the step stays where it is until the [quests proposal](/docs/proposals/genshin/quests) places it, and the carried Archon quests' other steps wait behind it.
+- **An offered quest is offered from the start.** The game opens The Seventh Samurai only once Tatara Tales: The Last Act is finished, a quest the world does not carry, so Xavier offers it from the start. Its filming, a step whose finish the scene scripts report, is left out and noted, so the quest goes from its first talk to its next.
+- **About half of an offered quest's lines show no words.** The community dump, upstream as well, holds no words in any language for about half the dialog table's lines, The Seventh Samurai's offering talk among them, so those lines and replies publish empty until the text maps are the install's own ([game text](/docs/genshin/game-text)). Every carried quest is checked: no world quest a placed resident offers has its talks whole.
 - **Progress is kept in the save.** The carried quests' progress is a slice of the [save](/docs/genshin/save-data), so a reload resumes them as it does the bag and the wallet.
 - **Quests are read from the hosted game data, not the bundle.** Each carried quest and its words are fetched by their keys (`quests/<id>` and `questText/<language>`) through `QuestLoaderMap` and `QuestTextLoaderMap`, which a new carried quest adds a line to, from the base URL the world is given.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.
-- **The world's series are not carried yet.** The screen lists a series' quests under its row once it is handed the series, which no reader writes until the world and story quests are carried ([quests proposal](/docs/proposals/genshin/quests)), so the world hands none and only the fixture shows one. A quest whose target no region in reach places, an enemy or an item to collect among them, shows no distance.
+- **The world's series are not carried yet.** The screen lists a series' quests under its row once it is handed the series, which no reader writes yet, and The Seventh Samurai, the one world quest carried, belongs to none ([quests proposal](/docs/proposals/genshin/quests)), so the world hands none and only the fixture shows one. A quest whose target no region in reach places, an enemy or an item to collect among them, shows no distance.
 - **Some of the screen's words and looks are best estimates.** The install's text map holds no line named for the screen's In Progress or its distances, so the plainest In Progress and a minigame's "{0}m" stand in, and the rewards' caption is not drawn. The still shows no selected row, so the selected one is ringed in the game's cream. The region's art on a series' row, the journal's emblem, each reward's item and the UID are not drawn, and the screen's open, close and tab animations are not yet timed (the roadmap's References sought).
 
 ## Sources
@@ -117,4 +119,5 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 - [Quest/Menu](https://genshin-impact.fandom.com/wiki/Quest/Menu), Genshin Impact Wiki: the quest screen's list grouped by Archon quests, story quests, commissions and world quests, its tabs, and its quest information with its Navigate button.
 - [Event Quest](https://genshin-impact.fandom.com/wiki/Event_Quest), Genshin Impact Wiki: most event quests are world quests, and a flagship event's are story quests.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: J for the quest menu, V for quest navigation, and holding V to show the step's objective.
+- ["The Seventh Samurai"](https://genshin-impact.fandom.com/wiki/%22The_Seventh_Samurai%22), Genshin Impact Wiki: Xavier's world quest in Inazuma City, its steps, and its unlock after Tatara Tales: The Last Act.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the quest table's types and words, each quest's binary output of steps and conditions, and the dialog and character tables a talk is read from.

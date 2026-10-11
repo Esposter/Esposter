@@ -17,8 +17,8 @@ import { getResultAsync } from "@esposter/shared";
 
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
 // One stays in the progress map at its last step, so the quests in progress are those started and not yet finished. Each
-// Quest event the world records is handed to every quest in progress, and the steps and quests it finishes reach the
-// Achievements and the Travel Log
+// Quest event the world records is handed to every quest in progress, the steps and quests it finishes reach the
+// Achievements and the Travel Log, and a talk that ends starts each quest it offers
 export const useWorldQuests = ({
   events,
   gameDataBaseUrl,
@@ -37,6 +37,10 @@ export const useWorldQuests = ({
       const progress = questProgressMap.value.get(quest.id);
       return progress !== undefined && !checkIsQuestFinished(quest, progress);
     }),
+  );
+  // The quests a talk offers that have not started yet, whose offering talks the world holds until one of them ends
+  const questsOffered = computed(() =>
+    quests.value.filter(({ id, offerTalkIds }) => offerTalkIds.length > 0 && !questProgressMap.value.has(id)),
   );
   const questTextMap = shallowRef<Readonly<Record<string, string>>>({});
   // The main quests done, by id. The Archive opens once the quest it opens after is among them
@@ -89,7 +93,7 @@ export const useWorldQuests = ({
       nextProgressMap.set(quest.id, nextProgress);
       achievementEvents.push(...getFinishedQuestEvents(quest, progress, nextProgress));
     }
-    questProgressMap.value = startQuests(quests.value, nextProgressMap);
+    questProgressMap.value = startQuests(quests.value, nextProgressMap, questEvent);
     events.emit("achievementEvents", achievementEvents);
     if (achievementEvents.some(({ kind }) => kind === AchievementEventKind.ParentQuestFinished))
       events.emit("parentQuestFinish");
@@ -99,6 +103,7 @@ export const useWorldQuests = ({
     finishedMainQuestIds,
     questProgressMap,
     questsInProgress,
+    questsOffered,
     questTargetId,
     questTextMap,
     trackedQuestId,

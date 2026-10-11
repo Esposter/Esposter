@@ -10,6 +10,7 @@ const createQuest = (id: string, kind: QuestKind): Quest => ({
   descriptionTextId: id,
   id,
   kind,
+  offerTalkIds: [],
   steps: [{ id, objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: id }], textId: id }],
   talks: [],
   titleTextId: id,
@@ -68,6 +69,7 @@ export const props = {
       descriptionTextId: "eye-of-graeae",
       id: "an-ark-that-used-to-be-a-soul",
       kind: QuestKind.World,
+      offerTalkIds: [],
       steps: [
         {
           id: "collect-fragments",

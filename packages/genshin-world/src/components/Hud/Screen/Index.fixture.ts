@@ -64,6 +64,7 @@ export const props = {
     descriptionTextId: "albedo",
     id: ALBEDO_QUEST_ID,
     kind: QuestKind.World,
+    offerTalkIds: [],
     steps: [
       { id: "albedo", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "albedoStep" },
     ],
