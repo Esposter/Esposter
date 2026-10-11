@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Proposal — what remains of Genshin's quests: the go-to triggers placed in region data, the series a world quest belongs to, and the clues the quests leave for companionship and Elemental Sight.
+description: Proposal — what remains of Genshin's quests: the go-to places placed in region data, the series a world quest belongs to, and the clues the quests leave for companionship and Elemental Sight.
 model: claude-opus-5-5
 needs: [parity-page]
 touches:
@@ -18,12 +18,12 @@ The [quests](/docs/genshin/quests) page holds the quest model, its progression, 
 
 ## Decisions
 
-- **A go-to's place is its trigger's region in the scene groups.** A go-to step's condition is `QUEST_CONTENT_TRIGGER_FIRE` with a trigger id (`1053` for Wanderer's Trail's first step, read from `BinOutput/Quest/351.json`). AnimeGameData's `TriggerExcelConfigData` names each id's scene, group and trigger name, and the group's script places the trigger's region. The [scene group record](/docs/genshin/scene-groups) already holds each open-world trigger as a member of its group, read from that table, but with no place, so a trigger is placed only once the client's group scripts give its member one, never by hand.
-- **A place's trigger is placed in region data.** A go-to objective names the trigger the game fires, so a region's data places each trigger the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
+- **A go-to's place is its own location guide.** A go-to step's guide names where to go. In the dump's quest file (`BinOutput/Quest/<id>.json`, field names obfuscated), a sub-quest's guide of type `QUEST_GUIDE_LOCATION` carries a dummy point name as its parameter, such as `Q351ClimbEnd` for Wanderer's Trail's first step (quest 351). The client's `scene3_dummy_points.lua`, decoded by `pnpm -C scripts genshin:assets scene-scripts`, places that point, and it held all four such names checked on 2026-10-12. A `QUEST_GUIDE_NPC` guide places the step at that NPC. The go-to's radius is an estimate, marked provisional.
+- **A go-to's place is placed in region data.** A region's data places each go-to the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 
 ## What is left
 
-1. **The go-to triggers.** Waits on the trigger members' places in the scene group record. Then each carried go-to's trigger id is found among the record's trigger members, and its place is written into its region's data, reaching it being the go-to event.
+1. **The go-to places.** Each carried go-to's guide is read from its quest file: a dummy point is placed from the client's dummy points, and an NPC from the residents' places. Its place is written into its region's data with its provisional radius, reaching it being the go-to event.
 2. **The world quest series.** A carried world quest's series is the quest screen's `QuestChapter`, which the screen lists the quest under once the world hands it the series. The chapter table (`ChapterExcelConfigData`, added to `DUMP_TABLE_NAMES`) names each series by the main quest's `chapterId`: its title, its region by `cityId`, and its first quest. Its words are already in the community dump's English text maps for 399 of its 430 titles and 332 of its numbers (`chapterNumTextMapHash`), so a series' journal waits on nothing, and one with no words shows empty, as a dialog line does. The Seventh Samurai, the one world quest carried, belongs to none, so this step carries one series whole: the first whose first quest a placed resident offers, found by the check The Seventh Samurai was picked by ([quests](/docs/genshin/quests)). A series' quests unlock one after another, so `startQuests` gains that order, offering each once the one before it is finished.
 3. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once item 1 places them.
 
@@ -41,7 +41,7 @@ These need the English PC client at 1080 high, published screenshots and recordi
 | File                                                            | Role after the change                                                |
 | :-------------------------------------------------------------- | :------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/World/Session/Index.vue` | Starts the quests, hands each doing to them and reports the finishes |
-| `packages/genshin-world/src/models/world/RegionData.ts`         | Gains the triggers the carried quests name                           |
+| `packages/genshin-world/src/models/world/RegionData.ts`         | Gains the go-to places the carried quests name                       |
 | `packages/genshin-world/src/models/quest/QuestId.ts`            | Grows by a line for each quest carried                               |
 | `packages/genshin-world/src/services/quest/QuestLoaderMap.ts`   | Gains a line for each quest carried                                  |
 

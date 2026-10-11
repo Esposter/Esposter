@@ -13,7 +13,7 @@ The [Archive](/docs/genshin/archive) page holds the seven sections, their entrie
 
 - **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when picked up; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
 - **Living Beings counts kills.** Each enemy's entry shows how many have been defeated, and each animal's waits on the wildlife's strike, and its model turns on the screen as the game's does, drawn by the [characters](/docs/genshin/characters) reader once its model is built.
-- **A viewpoint is placed by the scene group record.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, and the [scene group record](/docs/genshin/scene-groups) holds it as a gadget member of that group, placed at the official map's Viewpoint point that bears its name. A viewpoint the record leaves without a place is not offered until the client's group scripts place it.
+- **A viewpoint is placed by the scene group record.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, and the [scene group record](/docs/genshin/scene-groups) holds it as a gadget member of that group, placed at the official map's Viewpoint point that bears its name. A viewpoint the record leaves without a place is not offered until its place is estimated from the wiki, marked provisional.
 - **A viewpoint is taken in where it stands.** Each viewpoint is a place in the world that, reached, offers to be viewed, which opens its entry with its picture as the game does; its picture is drawn by the world from its place, never the game's image.
 
 ## How it works

@@ -5,7 +5,7 @@ description: The open world's scene group record, `sceneGroups/scene3`, each gro
 
 # Scene groups
 
-The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are not read yet, so this page is the built part of the [scene groups](/docs/proposals/genshin/scene-groups) proposal: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](/docs/genshin/resident-schedules) are written from it; the Archive's viewpoints, the crafting bench and the stove read it on their own proposals.
+The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are the server's and never in the client, so this page is the record the repository can fill from its own sources: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](/docs/genshin/resident-schedules) are written from it; the Archive's viewpoints, the crafting bench and the stove read it on their own proposals.
 
 ## How it works
 

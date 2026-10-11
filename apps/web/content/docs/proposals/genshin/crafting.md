@@ -18,7 +18,7 @@ The as-built [crafting](/docs/genshin/crafting) page holds the recipes, their ru
 ## Decisions
 
 - **The bench stands where the scene group record places it.** The dump's births place each city's bench as an NPC of its own, invisible and named Craft: the bench's interaction, not a person. The [scene group record](/docs/genshin/scene-groups) holds it as an NPC member of its group, Mondstadt's NPC 10256 in group 133004082 within a unit of the scene's `Alchemy` building point, so the bench stands at that member's place and turn and is used through the [interaction](/docs/genshin/interaction) prompts. The official map marks no bench, so it places none.
-- **The keeper is a resident, not the bench.** Timaeus, who stands beside Mondstadt's bench, has no birth in the dump, so the record does not place him. The bench works without him, and he is placed with the other keepers once the client's group scripts fill the record ([scene groups](/docs/proposals/genshin/scene-groups)).
+- **The keeper is a resident, not the bench.** Timaeus, who stands beside Mondstadt's bench, has no birth in the dump, so the record does not place him. The bench works without him, and he is placed with the other keepers at the wiki's location for him, marked provisional.
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
 
 ## How it works

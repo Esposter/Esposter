@@ -57,14 +57,14 @@ flowchart TD
 3. **The locks by camps.** Waits on the reach a camp locks a chest within, measured.
 4. **Digging and seals**, once a recording settles what a dug or freed place holds and which seal each sealed place wears.
 5. **Locks by puzzles**, once the puzzles stand.
-6. **The join to the achievements and the exploration progress.** An opened chest moves the 66 chest achievements and its area's doings only once it is joined to the game's own chest records (below), which the [scene group record](/docs/genshin/scene-groups) carries once the client's group scripts fill its gadget members with each chest's gadget id and group. The area each chest counts toward is read from the same record, or from the region outlines the exploration progress reads.
+6. **The join to the achievements and the exploration progress.** An opened chest counts toward the 66 chest achievements and its area's progress through our own chest records, each one an official-map chest point with its tier. No join to the game's own chest records is owed. The area each chest counts toward is read from the region outlines the exploration progress reads.
 
 ## Data and measures
 
 - **Read from the wiki:** the drop pools: the weapons, artifact sets and Character EXP materials by star, encoded as provisional pools for the weapons and materials. The artifact pieces wait on an artifact drop model.
 - **Not on the wiki:** Luxurious's Mora.
 - **Read from the game's tables:** `GadgetExcelConfigData` names 270 gadgets of the `Chest` type, the chest templates such as `70210001`.
-- **The join is not made.** A placed chest has the map's point id and no game id, while the achievements' `TRIGGER_OPEN_WORLD_CHEST` lists its chests as `;`-joined template ids, with a second list of what appear to be region group ids, and the exploration doings name their chests by their own numbers. Joining a placed chest to its template and group needs the game's scene data, which the AnimeGameData dump carries per scene and is reachable from the build's network. Until that join exists no opened chest moves an achievement or an area's exploration, and a script that makes it is the next data step.
+- **The achievements count our own records.** A placed chest has the map's point id and its tier, and the achievements' `TRIGGER_OPEN_WORLD_CHEST` rows and the exploration doings name chests by the game's own numbers, which no placed chest carries. An opened chest is therefore counted through its own record, not joined to the game's, so no join is needed for an opened chest to move an achievement or an area's exploration.
 - **Measured:** the reach a camp or a puzzle locks within, against the chests the map marks beside them, how a chest opens, read off a recording of one, which seal each sealed place holds, what a dug or freed place gives, and the spread of each reward within its range.
 
 ## Key files

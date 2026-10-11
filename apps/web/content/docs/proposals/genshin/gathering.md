@@ -2,7 +2,6 @@
 title: Gathering
 description: Proposal — the mining outcrops of Magical Crystal Chunks drawn each day beside the ley line places, and the investigation spots that give artifacts, ingredients, ores or Mora. Both wait on the spawned places and on a measure.
 model: claude-haiku-5-5
-waiting: "the outcrops' and investigation spots' places, which the spawned places proposal gives once the client's group scripts fill the scene group record's gadget members"
 touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]
 ---
 
@@ -33,9 +32,9 @@ flowchart TD
 
 ## Data and measures
 
-- **Placed by the spawned places:** each outcrop and investigation spot from the official map's points, fitted as the [spawned places](/docs/genshin/spawned-places) page sets out.
+- **Placed by the official map:** each outcrop's place is a point of the map's Ores labels, and each investigation spot's is a point of its Investigation label, both fitted as the [spawned places](/docs/genshin/spawned-places) page sets out.
 - **Read from the game's tables:** the ores' categories of the official map, and the outcrops' item rows of `MaterialExcelConfigData`.
-- **Read from the wiki:** the daily outcrop places beside the ley line outcrops, and the investigation rewards ([Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), through the persona's wiki reader).
+- **Read from the wiki:** the investigation rewards ([Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), through the persona's wiki reader).
 
 ## Key files
 
