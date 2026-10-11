@@ -29,6 +29,22 @@ describe(getBasicAuthCredentials, () => {
     expect(getBasicAuthCredentials("Basic !!!")).toBeUndefined();
   });
 
+  test("padding short of a whole quantum is refused rather than thrown, so a malformed header answers 401", () => {
+    expect.hasAssertions();
+
+    expect(getBasicAuthCredentials("Basic QQ=")).toBeUndefined();
+    expect(getBasicAuthCredentials("Basic QUJDRA=")).toBeUndefined();
+  });
+
+  test("an unpadded value decodes as its padded form does", () => {
+    expect.hasAssertions();
+
+    expect(getBasicAuthCredentials(`Basic ${btoa("user:pa").replace(/=+$/u, "")}`)).toStrictEqual({
+      name: "user",
+      pass: "pa",
+    });
+  });
+
   test("another scheme is refused", () => {
     expect.hasAssertions();
 
