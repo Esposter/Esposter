@@ -13,7 +13,7 @@ export type KitValueSource =
   | { index: number; label: string; proudSkillGroupId: number; source: KitSource.Tables }
   | { page: string; revisionId: number; row: number; source: KitSource.Wiki };
 
-export const kitValueSourceSchema = z.discriminatedUnion("source", [
+export const kitValueSourceSchema: z.ZodType<KitValueSource> = z.discriminatedUnion("source", [
   z.object({
     cause: z.enum(KitProvisionalCause).optional(),
     file: z.string().min(1),
