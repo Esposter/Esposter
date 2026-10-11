@@ -16,7 +16,7 @@ import {
   PUBLISH_DIRECTORY_NAME,
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT, TOOL_CACHE_ROOT } from "#src/services/shared/constants";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
@@ -193,7 +193,7 @@ export const MUSIC_NOISE_SHARE = 0.01;
 export const MUSIC_DECIMALS = 3;
 // Where the sample libraries' files are cached, each at its pinned commit: only the mappings and the samples a piece's
 // Notes play are fetched, not the libraries' gigabytes
-export const SAMPLES_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "samples");
+export const SAMPLES_DIRECTORY: string = join(TOOL_CACHE_ROOT, "samples");
 // The combinations of one instrument a voice whose least-squares powers are refined against the score's own distance,
 // And the halvings of a refinement's step, from doubling a voice's power down to about a twentieth of a decibel
 export const SAMPLED_VOICE_REFINED_COUNT = 64;
@@ -261,17 +261,17 @@ export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
   { library: SampleLibrary.OsirisPiano, mapping: "Programs/01-natural.sfz" },
 ];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
-// FFmpeg is, into the scripts package's cache
+// FFmpeg is, into the shared tool cache
 export const VGMSTREAM_ARCHIVE_URL =
   "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-win64.zip";
 export const VGMSTREAM_ARCHIVE_SHA256 = "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c";
-export const VGMSTREAM_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "vgmstream");
+export const VGMSTREAM_DIRECTORY: string = join(TOOL_CACHE_ROOT, "vgmstream");
 // 3Dmigoto's command-line decompiler (github.com/bo3b/3Dmigoto), which writes a compiled DXBC program as HLSL: its last
-// Release to ship it on its own, pinned and checked as FFmpeg is, into the scripts package's cache
+// Release to ship it on its own, pinned and checked as FFmpeg is, into the shared tool cache
 export const DECOMPILER_ARCHIVE_URL =
   "https://github.com/bo3b/3Dmigoto/releases/download/1.3.16/cmd_Decompiler-1.3.16.zip";
 export const DECOMPILER_ARCHIVE_SHA256 = "5e72e067dfcb15c36f106efa74d805055eec5314dc84b8fca8e65d835683a1b2";
-export const DECOMPILER_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "3dmigoto");
+export const DECOMPILER_DIRECTORY: string = join(TOOL_CACHE_ROOT, "3dmigoto");
 // How many programs one run of the decompiler is handed, so their names stay well within Windows' command line
 export const DECOMPILER_BATCH_SIZE = 200;
 // Where `fit` writes the parameters it fits, as data of the world package's own, which its scenes read
