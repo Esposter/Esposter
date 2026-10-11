@@ -9,7 +9,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createShenheKit, SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -55,6 +54,9 @@ describe(createShenheKit, () => {
     return kitEffectState.effects;
   };
 
+  const tickSummon = (tickIndex: number): KitSummon | undefined =>
+    tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
+
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -97,8 +99,6 @@ describe(createShenheKit, () => {
     expect(field.nextTickSeconds).toBeCloseTo(82 / 60);
     expect(field.tickIntervalSeconds).toBeCloseTo(117 / 60);
     expect(field.radius).toBe(7);
-    const tickSummon = (tickIndex: number): KitSummon | undefined =>
-      tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
     expect(tickSummon(1)?.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60))).toStrictEqual([0, 32]);
   });
 

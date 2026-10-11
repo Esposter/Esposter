@@ -57,6 +57,11 @@ describe(createXinyanKit, () => {
     return kitEffectState.effects.find((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
   };
 
+  const shieldLevelAfter = (ascension: number, strikeCount: number): number | undefined =>
+    castSkill(createXinyanCombatant(ascension), strikeCount).effects.find(
+      (effect): effect is KitStatus => effect.kind === "status" && effect.id === "xinyan-shield-level",
+    )?.stacks;
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const burstDotSummon = castBurstSummon(createXinyanCombatant());
@@ -78,10 +83,6 @@ describe(createXinyanKit, () => {
 
   test("sweeping Fervor's shield steps up at the second and third enemy it strikes, one fewer from Ascension 1", () => {
     expect.hasAssertions();
-    const shieldLevelAfter = (ascension: number, strikeCount: number): number | undefined =>
-      castSkill(createXinyanCombatant(ascension), strikeCount).effects.find(
-        (effect): effect is KitStatus => effect.kind === "status" && effect.id === "xinyan-shield-level",
-      )?.stacks;
 
     expect([shieldLevelAfter(0, 1), shieldLevelAfter(0, 2), shieldLevelAfter(0, 3)]).toStrictEqual([1, 2, 3]);
     expect([shieldLevelAfter(1, 1), shieldLevelAfter(1, 2)]).toStrictEqual([2, 3]);
@@ -91,9 +92,7 @@ describe(createXinyanKit, () => {
     expect.hasAssertions();
     const combatant = createXinyanCombatant();
     // A recast shield ends the one it replaces without removing it yet, so the newest one is the standing shield
-    const shield = castSkill(combatant, 3)
-      .effects.filter((effect): effect is KitShield => effect.kind === "shield")
-      .at(-1);
+    const shield = castSkill(combatant, 3).effects.findLast((effect): effect is KitShield => effect.kind === "shield");
 
     expect(shield?.health).toBeCloseTo(692.8066 + 1.44 * combatant.attributes.defense);
   });

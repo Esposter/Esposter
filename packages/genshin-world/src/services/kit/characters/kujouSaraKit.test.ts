@@ -31,7 +31,7 @@ const createSaraCombatant = (ascension = 0, constellationCount = 0): Combatant =
   weaponType: WeaponType.Bow,
 });
 
-const isSummon = (effect: KitEffect): effect is KitSummon => effect.kind === "summon";
+const checkIsSummon = (effect: KitEffect): effect is KitSummon => effect.kind === "summon";
 
 describe(createKujouSaraKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
@@ -48,7 +48,7 @@ describe(createKujouSaraKit, () => {
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
-    const stormclusters = castEffects(SARA_KIT.elementalBurst).find((effect) => isSummon(effect));
+    const stormclusters = castEffects(SARA_KIT.elementalBurst).find((effect) => checkIsSummon(effect));
     const multipliers = [
       ...SARA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
       takeOne(SARA_KIT.chargedAttack.hits).talentMultiplier,
@@ -70,10 +70,10 @@ describe(createKujouSaraKit, () => {
     castEffects(SARA_KIT.elementalSkill, createSaraCombatant(1), kitEffectState);
     castEffects(SARA_KIT.chargedAttack, createSaraCombatant(0), kitEffectState);
 
-    expect(kitEffectState.effects.find((effect) => isSummon(effect))).toBeUndefined();
+    expect(kitEffectState.effects.find((effect) => checkIsSummon(effect))).toBeUndefined();
 
     castEffects(SARA_KIT.chargedAttack, createSaraCombatant(1), kitEffectState);
-    const ambush = kitEffectState.effects.find((effect) => isSummon(effect));
+    const ambush = kitEffectState.effects.find((effect) => checkIsSummon(effect));
     const cover = kitEffectState.effects.find((effect): effect is KitStatus => effect.kind === "status");
 
     expect(takeOne(ambush?.hits ?? []).hitmarkSeconds).toBeCloseTo(150 / 60);
@@ -83,10 +83,10 @@ describe(createKujouSaraKit, () => {
   test("subjugation's Stormclusters strike 24 times, and 36 from Constellation 4", () => {
     expect.hasAssertions();
     const constellationZeroHits = castEffects(SARA_KIT.elementalBurst, createSaraCombatant(0, 0)).find((effect) =>
-      isSummon(effect),
+      checkIsSummon(effect),
     )?.hits.length;
     const constellationFourHits = castEffects(SARA_KIT.elementalBurst, createSaraCombatant(0, 4)).find((effect) =>
-      isSummon(effect),
+      checkIsSummon(effect),
     )?.hits.length;
 
     expect(constellationZeroHits).toBe(24);

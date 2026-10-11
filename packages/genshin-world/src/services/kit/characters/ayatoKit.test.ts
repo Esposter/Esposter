@@ -50,6 +50,15 @@ const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit
 const readStacks = (hit: KitHit, combatant: Combatant): number =>
   Math.round((hit.additiveBaseDamageBonus?.(combatant) ?? 0) / (MAX_HEALTH * NAMISEN_SHARE));
 
+const stacksAfterStrikes = (constellationCount: number): number => {
+  const combatant = createAyatoCombatant(0, constellationCount);
+  const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
+  const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
+  for (let strike = 0; strike < 6; strike++)
+    shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([AYATO_CHARACTER_ID]) });
+  return readStacks(shunsuikenHit, combatant);
+};
+
 describe(createAyatoKit, () => {
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
@@ -110,19 +119,6 @@ describe(createAyatoKit, () => {
 
   test("namisen stacks stop at four, or five from Constellation 2", () => {
     expect.hasAssertions();
-    const stacksAfterStrikes = (constellationCount: number): number => {
-      const combatant = createAyatoCombatant(0, constellationCount);
-      const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
-      const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-      for (let strike = 0; strike < 6; strike++)
-        shunsuikenHit.onStrike?.({
-          body: kitBody,
-          combatant,
-          kitEffectState,
-          party: createParty([AYATO_CHARACTER_ID]),
-        });
-      return readStacks(shunsuikenHit, combatant);
-    };
 
     expect({ base: stacksAfterStrikes(0), constellation2: stacksAfterStrikes(2) }).toStrictEqual({
       base: 4,

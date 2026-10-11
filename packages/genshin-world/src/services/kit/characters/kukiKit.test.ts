@@ -10,7 +10,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKukiKit, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -43,6 +42,11 @@ describe(createKukiKit, () => {
   };
   const castSummon = (action: KitAction): KitSummon | undefined =>
     castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
+
+  const ringSeconds = (constellationCount: number): number =>
+    castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
+      .filter((effect): effect is KitField => effect.kind === "field")
+      .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
 
   test("reads the strikes', charged slashes' and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -84,10 +88,6 @@ describe(createKukiKit, () => {
 
   test("the Grass Ring lasts 12 seconds from its 23rd frame, and 15 from Constellation 2", () => {
     expect.hasAssertions();
-    const ringSeconds = (constellationCount: number): number =>
-      castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
-        .filter((effect): effect is KitField => effect.kind === "field")
-        .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
 
     expect(ringSeconds(1)).toBeCloseTo(23 / 60 + 12 + 0.1);
     expect(ringSeconds(2)).toBeCloseTo(23 / 60 + 15 + 0.1);
