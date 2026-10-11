@@ -24,4 +24,4 @@ Lisa's kit is one module, `createLisaKit`, on avatar 10000006: four strikes, a c
 ## Sources
 
 - [Lightning Touch](https://genshin-impact.fandom.com/wiki/Lightning_Touch), [Violet Arc](https://genshin-impact.fandom.com/wiki/Violet_Arc) and [Lightning Rose](https://genshin-impact.fandom.com/wiki/Lightning_Rose), Genshin Impact Wiki: Lisa's strikes', charged attack's and plunges' gauges and poise, Violet Arc's press gauge, poise and cooldown, and Lightning Rose's activation and discharge.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lisa), MIT: Lisa's strikes', charge's, skill's and burst's hitmarks, cancel frames and areas, and Lightning Rose's discharges.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lisa), MIT: the kit's hitmarks, cancel frames and areas, Lightning Rose's discharges.

@@ -23,4 +23,4 @@ Noelle's kit is one module, `createNoelleKit`, on avatar 10000034: four strikes,
 ## Sources
 
 - [Favonius Bladework - Maid](https://genshin-impact.fandom.com/wiki/Favonius_Bladework_-_Maid), [Breastplate](https://genshin-impact.fandom.com/wiki/Breastplate) and [Sweeping Time](https://genshin-impact.fandom.com/wiki/Sweeping_Time), Genshin Impact Wiki: Noelle's strikes', charged attack's and plunges' poise, Breastplate's gauge, poise and shield, and Sweeping Time's damage, poise and infusion.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/noelle), MIT: Noelle's strikes', charge's, skill's and burst's hitmarks, cancel frames and areas, the shield's size and duration, and Sweeping Time's buff length.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/noelle), MIT: the kit's hitmarks, cancel frames and areas, the shield's size and duration, and Sweeping Time's buff length.
