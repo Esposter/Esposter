@@ -48,7 +48,7 @@ const configuration: UserConfig = defineConfig({
         "packages/*/_tmp_*",
         "packages/*/src/components/index.ts",
         "packages/*/src/index.ts",
-        "packages/db-schema/src/generated/**",
+        "packages/*/src/generated/**",
       ]),
       lint: createTask(
         "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused lint:workflows",
