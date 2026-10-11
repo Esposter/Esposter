@@ -1,6 +1,8 @@
 import type { FunctionLike } from "#src/util/types/FunctionLike";
 import type { Primitive } from "type-fest";
 
+// Kept over type-fest PartialOnUndefinedDeep, which leaves a key typed unknown required, while this type makes it optional
+// (undefined extends unknown), and ToData relies on that: an unknown-typed field of an entity is optional in its data.
 export type DeepOptionalUndefined<T> = T extends Date | FunctionLike | Primitive
   ? T
   : T extends unknown[]
