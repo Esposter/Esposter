@@ -246,6 +246,7 @@ catalog:
   temporal-polyfill: ^1.0.5
   three: ^0.186.1
   three-globe: ^2.45.4
+  three-mesh-bvh: ^0.9.16
   tsdown: ^0.23.1
   tsx: ^4.23.15
   type-fest: ^5.10.0

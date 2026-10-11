@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "filepath": "src/collision/createLandmarkCollider.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 1.423219999999998,
+              "name": "one mesh",
+              "p99": 2.12903800000001,
+              "rme": 14.127855758833258,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.482620000000003,
+              "name": "100 parts",
+              "p99": 1.9938910000000152,
+              "rme": 15.17152618543447,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createLandmarkCollider > 4000 triangles, built"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 26.42979000000001,
+              "name": "100 parts",
+              "p99": 29.757243000000106,
+              "rme": 4.408079350761416,
+              "sampleCount": 10
+            },
+            {
+              "mean": 27.171249999999976,
+              "name": "one mesh",
+              "p99": 29.67007100000003,
+              "rme": 4.306171169063022,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createLandmarkCollider > 80000 triangles, built"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.13801999999998316,
+              "name": "push a capsule",
+              "p99": 0.18093600000005836,
+              "rme": 13.225989250128178,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.17965999999998986,
+              "name": "cast a sphere",
+              "p99": 0.21771699999994099,
+              "rme": 9.050373728437172,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createLandmarkCollider > 4000 triangles, queried"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.09429999999999836,
+              "name": "push a capsule",
+              "p99": 0.1271869999999899,
+              "rme": 17.40075777764602,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.10733999999999924,
+              "name": "cast a sphere",
+              "p99": 0.15981200000005175,
+              "rme": 23.084310061891454,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createLandmarkCollider > 80000 triangles, queried"
+        }
+      ]
+    }
+  ]
+}
