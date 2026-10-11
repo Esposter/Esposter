@@ -1,7 +1,7 @@
 import { DOCS_API_DIRECTORY } from "@esposter/configuration";
-import { config } from "dotenv";
+import { existsSync } from "node:fs";
 
-config({ path: "apps/web/.env" });
+if (existsSync("apps/web/.env")) process.loadEnvFile("apps/web/.env");
 /** @satisfies {import('typedoc').TypeDocOptions} */
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
