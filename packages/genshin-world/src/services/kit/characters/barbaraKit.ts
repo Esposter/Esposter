@@ -3,8 +3,8 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
@@ -112,7 +112,7 @@ const createNormalAttack = (
 // Two constellations, for the loop's seconds
 const createMelodyLoopTick =
   (owner: Combatant, regenerationHeal: number, loopSeconds: number) =>
-  ({ activeCombatant, kitEffectState, party, tickIndex }: KitFieldTick): void => {
+  ({ activeCombatant, kitEffectState, party }: KitContext, tickIndex: number): void => {
     healPartyMember(party, activeCombatant.characterId, regenerationHeal / activeCombatant.attributes.maxHealth);
     if (tickIndex > 0 || owner.constellationCount < VITALITY_BURST_CONSTELLATION) return;
     for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
@@ -193,7 +193,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Heal is a field cast where Barbara stands, ticking once, priced by her as she stood then
     elementalBurst: {
       hits: [],
-      onStart: ({ body: { position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
         const burstHeal = burstFlatHeal + burstHealthShare * combatant.attributes.maxHealth;
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
@@ -216,7 +216,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Melody Loop a field, both cast where Barbara stands and priced by her as she stood then
     elementalSkill: {
       hits: [],
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, dropletHits));
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
@@ -237,7 +237,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       seconds: 55 / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    getSkillCooldownMultiplier: ({ combatant }) =>
+    getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= VITALITY_BURST_CONSTELLATION ? VITALITY_BURST_COOLDOWN_MULTIPLIER : 1,
     // Measured: gcsim v2.47.2 (MIT) barbara/plunge.go, the low plunge at 44 frames and the high at 45, ending at 66 and
     // 68. The wiki's Whisper of Water gives each 1U of Hydro with no internal cooldown, and 50 and 100 poise

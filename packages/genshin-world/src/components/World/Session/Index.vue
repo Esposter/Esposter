@@ -277,18 +277,15 @@ const {
 });
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
-  characterIdCombatantMap,
   characters,
   clearKitEffects,
   defeatEnemy,
-  enemyMap,
   hudMember,
-  kitEffectState,
+  kitContext,
   locomotion,
   party,
   respawnParty,
   strikeParty,
-  worldRandom,
 } = useWorldCombat({
   enemyTables,
   events,
@@ -542,23 +539,18 @@ defineExpose({ jumpTo, readCameraPosition });
           v-if="!witness && locomotion"
           ref="character"
           :body="characterBody"
-          :character-id-combatant-map
-          :kit-effect-state
-          :enemy-map
-          :enemy-tables
           :get-ground-height
           :input-state
           :is-held="screenKind !== ScreenKind.World || undefined"
           :is-orbiting="(screenKind === ScreenKind.PhotoMode && !isTuning) || undefined"
+          :kit-context
           :landmark-collider
           :locomotion
           :origin
-          :party
-          :random="worldRandom"
           :water-level="windriseData.water.level"
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
-          @strike-ore="(body, hit) => strikeGatheringOres(body, hit, worldRandom)"
+          @strike-ore="(body, hit) => strikeGatheringOres(body, hit, kitContext.random)"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"
@@ -576,9 +568,9 @@ defineExpose({ jumpTo, readCameraPosition });
         :character-locomotion="locomotion"
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
-        :kit-effect-state
+        :kit-effect-state="kitContext.kitEffectState"
         :elemental-sight
-        :enemy-map
+        :enemy-map="kitContext.enemyMap"
         :enemy-tables
         :get-ground-height
         :held-minutes
@@ -604,7 +596,7 @@ defineExpose({ jumpTo, readCameraPosition });
     <WorldEnemyNameTags
       :elemental-sight
       :enemy-kind-map="enemyTables.enemyKindMap"
-      :enemy-map
+      :enemy-map="kitContext.enemyMap"
       :get-camera
       :get-ground-height
       :name-text

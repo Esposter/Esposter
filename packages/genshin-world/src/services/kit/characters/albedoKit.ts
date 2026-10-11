@@ -187,7 +187,7 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Blossom is cast with the Solar Isotoma as a summon, as its own clock runs past the animation
     elementalBurst: {
       hits: [tectonicTideHit],
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
         if (solarIsotoma)
           addKitEffect(kitEffectState, createKitSummon(solarIsotoma.body, solarIsotoma.combatant, fatalBlossomHits));
@@ -199,7 +199,7 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Standing, as Fischl's Oz does
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
         const solarIsotoma: KitSummon = {
@@ -222,7 +222,7 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     normalAttacks: NORMAL_ATTACK_STRIKES.map((strike, index) => createNormalAttack(strike, index)),
     // A hit that lands on an enemy inside the standing Solar Isotoma's field sets off a Transient Blossom at that enemy, once
     // Every 2 seconds, while the cooldown Albedo carries is not up
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { characterId } = combatant;
       const { effects } = kitEffectState;

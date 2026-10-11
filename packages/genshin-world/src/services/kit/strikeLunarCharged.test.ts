@@ -1,6 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -17,11 +17,12 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -50,15 +51,13 @@ describe(strikeLunarCharged, () => {
     health: STURDY_HEALTH,
     maxHealth: STURDY_HEALTH,
   });
-  const createContext = (enemy: Enemy): KitStrikeContext => ({
-    characterIdCombatantMap: new Map(members.map((member) => [member.characterId, member])),
-    emit: noop,
-    enemyMap: new Map([["", enemy]]),
-    enemyTables,
-    kitEffectState: { effects: [] },
-    party: createParty(members.map(({ characterId }) => characterId)),
-    random: () => 0,
-  });
+  const createContext = (enemy: Enemy): KitContext =>
+    createKitTestContext(takeOne(members), {
+      characterIdCombatantMap: new Map(members.map((member) => [member.characterId, member])),
+      enemyMap: new Map([["", enemy]]),
+      enemyTables,
+      party: createParty(members.map(({ characterId }) => characterId)),
+    });
 
   test("deals its contributors' damage, the largest weighted most, against Electro RES, taking 0.4U of each aura", () => {
     expect.hasAssertions();

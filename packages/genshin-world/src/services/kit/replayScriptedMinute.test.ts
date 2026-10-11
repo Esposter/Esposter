@@ -1,7 +1,7 @@
 import type { StatTables } from "#src/models/character/StatTables";
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { InputState } from "genshin-engine";
 
@@ -20,7 +20,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { noop } from "@esposter/shared";
+import { InvalidOperationError, noop, Operation } from "@esposter/shared";
 import {
   createCharacterController,
   createGroundQuery,
@@ -112,9 +112,21 @@ export const replayScriptedMinute = ({
     pressedActions: new Set(),
     zoomSteps: 0,
   };
-  const kitEffectState: KitEffectState = { effects: [] };
+  const startingCombatant = characterIdCombatantMap.get(getActiveCharacterId(party));
+  if (!startingCombatant)
+    throw new InvalidOperationError(Operation.Read, replayScriptedMinute.name, `${getActiveCharacterId(party)}`);
+  const context: KitContext = {
+    activeCombatant: startingCombatant,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    characterIdCombatantMap,
+    enemyMap,
+    enemyTables,
+    kitEffectState: { effects: [] },
+    outbox: [],
+    party,
+    random: createSeededRandom(WORLD_RANDOM_SEED),
+  };
   const landedHits: KitHit[] = [];
-  const random = createSeededRandom(WORLD_RANDOM_SEED);
   const turnStepCount = toStepCount(7.5);
   // Whether a step at this place in its turn falls in the script's span of seconds, which idle never does
   const checkIsInSpan = (turnStep: number, fromSeconds: number, toSeconds: number): boolean =>
@@ -149,19 +161,8 @@ export const replayScriptedMinute = ({
         locomotionState: phase.state,
       },
       FIXED_STEP_SECONDS,
-      {
-        aimYaw: 0,
-        characterController,
-        characterIdCombatantMap,
-        enemyMap,
-        enemyTables,
-        isAimHeld: false,
-        kitEffectState,
-        landedHits,
-        party,
-        random,
-        strikeOre: noop,
-      },
+      context,
+      { aimYaw: 0, characterController, isAimHeld: false, landedHits, strikeOre: noop },
     );
   }
 };

@@ -9,8 +9,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDoriKit, DORI_CHARACTER_ID } from "#src/services/kit/characters/doriKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -27,20 +27,13 @@ const createDoriCombatant = (): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-describe(createDoriKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const castEffects = (action: KitAction): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant: createDoriCombatant(),
-      kitEffectState,
-      party: createParty([DORI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
+const castEffects = (action: KitAction): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(createDoriCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
 
+describe(createDoriKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -1,7 +1,7 @@
 import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
@@ -28,7 +28,7 @@ export const strikeLunarReaction = (
   lunarReactionType: LunarReactionType,
   contributorIds: ReadonlySet<number>,
   owner: Combatant | undefined,
-  context: KitStrikeContext,
+  context: KitContext,
 ): boolean => {
   const { characterIdCombatantMap, enemyTables, kitEffectState, party, random } = context;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);

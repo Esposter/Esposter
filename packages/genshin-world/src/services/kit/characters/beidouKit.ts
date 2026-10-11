@@ -200,7 +200,8 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     const hits = [takeOne(strikeHits, index)];
     return {
       hits,
-      onStart: ({ body, combatant, kitEffectState }) => castDischarges(body, combatant, kitEffectState, hits),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+        castDischarges(body, combatant, kitEffectState, hits),
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     };
@@ -210,7 +211,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     burstEnergyCost: getTalentMultiplier(talentMultiplierMap, BEIDOU_BURST_GROUP_ID, TALENT_START_LEVEL, 5),
     chargedAttack: {
       hits: chargedAttackHits,
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castDischarges(body, combatant, kitEffectState, chargedAttackHits),
       // Provisional: it ends at a second and a fifth, as Diluc's and Razor's do
       seconds: 1.2,
@@ -234,7 +235,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, BEIDOU_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
         },
       ],
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           ...createKitSummon(
             { facing, height, position },
@@ -262,7 +263,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, BEIDOU_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
         },
       ],
-      onStart: ({ combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Electro,

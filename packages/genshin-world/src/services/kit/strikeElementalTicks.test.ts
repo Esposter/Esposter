@@ -1,7 +1,7 @@
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
@@ -15,11 +15,10 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
-import { noop } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -60,15 +59,11 @@ describe(strikeElementalTicks, () => {
     maxHealth: STURDY_HEALTH,
   });
 
-  const createContext = (enemies: Enemy[]): KitStrikeContext => ({
-    characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
-    emit: noop,
-    enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
-    enemyTables,
-    kitEffectState: { effects: [] },
-    party: createParty([combatant.characterId]),
-    random: () => 0,
-  });
+  const createContext = (enemies: Enemy[]): KitContext =>
+    createKitTestContext(combatant, {
+      enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
+      enemyTables,
+    });
 
   test("deals an Electro-Charged tick from the combatant that charged the enemy, arcing it to a Wet enemy beside it", () => {
     expect.hasAssertions();

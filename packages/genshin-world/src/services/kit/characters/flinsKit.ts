@@ -172,7 +172,7 @@ export const createFlinsKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Lasts the Manifest Flame's seconds, and whose strikes and charged attack are the Electro ones
     elementalSkill: {
       hits: [],
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const { characterId, kit } = combatant;
         const stance: KitStance = {
           // The Electro strikes are Normal Attack DMG and the charged attack Extra, gcsim's AttackTagNormal and

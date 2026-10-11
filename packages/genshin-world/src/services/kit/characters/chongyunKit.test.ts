@@ -18,8 +18,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHONGYUN_CHARACTER_ID, createChongyunKit } from "#src/services/kit/characters/chongyunKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
@@ -47,15 +47,9 @@ describe(createChongyunKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
+    const context = createKitTestContext(combatant);
+    action.onStart?.(context);
+    return context.kitEffectState.effects;
   };
   const castField = (combatant = createChongyunCombatant()): KitField | undefined =>
     castEffects(CHONGYUN_KIT.elementalSkill, combatant).find((effect): effect is KitField => effect.kind === "field");
@@ -98,14 +92,7 @@ describe(createChongyunKit, () => {
       (effect): effect is KitField => effect.kind === "field",
     );
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createChongyunCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(createChongyunCombatant(), { kitEffectState }), 0);
 
     expect(field?.nextTickSeconds).toBeCloseTo(36 / 60);
     expect(field?.radius).toBe(8);
@@ -137,23 +124,14 @@ describe(createChongyunKit, () => {
     const field = castField(createChongyunCombatant(1));
     const catalystEffectState: KitEffectState = { effects: [] };
     const claymoreEffectState: KitEffectState = { effects: [] };
-    const party = createParty([CHONGYUN_CHARACTER_ID]);
-    field?.onTick({
-      activeCombatant: { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState: catalystEffectState,
-      party,
-      tickIndex: 0,
-    });
-    field?.onTick({
-      activeCombatant: createChongyunCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState: claymoreEffectState,
-      party,
-      tickIndex: 0,
-    });
+    field?.onTick(
+      createKitTestContext(
+        { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
+        { kitEffectState: catalystEffectState },
+      ),
+      0,
+    );
+    field?.onTick(createKitTestContext(createChongyunCombatant(), { kitEffectState: claymoreEffectState }), 0);
 
     expect(catalystEffectState.effects).toStrictEqual([]);
     expect(claymoreEffectState.effects).toStrictEqual([
@@ -169,21 +147,17 @@ describe(createChongyunKit, () => {
 
   test("a swap brings the field's infusion on the character that comes on while it stands", () => {
     expect.hasAssertions();
+    const combatant = createChongyunCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant: createChongyunCombatant(),
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    CHONGYUN_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     CHONGYUN_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
         kind: KitEventKind.CharacterSwapped,
         previousCharacterId: CHONGYUN_CHARACTER_ID,
       },
-      createKitEventContext(createChongyunCombatant(), { activeCombatant: travelerCombatant, kitEffectState }),
+      createKitTestContext(combatant, { activeCombatant: travelerCombatant, kitEffectState }),
+      combatant,
     );
 
     expect(kitEffectState.effects.filter(({ kind }) => kind === "infusion")).toStrictEqual([
@@ -195,26 +169,15 @@ describe(createChongyunKit, () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(4);
     const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    CHONGYUN_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const [field] = kitEffectState.effects;
-    CHONGYUN_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    CHONGYUN_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -5 } };
     if (field)
       CHONGYUN_KIT.onKitEvent?.(
         { effect: field, kind: KitEventKind.EffectExpired },
-        createKitEventContext(combatant, { enemyMap: new Map([["", enemy]]), kitEffectState }),
+        createKitTestContext(combatant, { enemyMap: new Map([["", enemy]]), kitEffectState }),
+        combatant,
       );
     const blade = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     const [bladeHit] = blade?.hits ?? [];
@@ -227,10 +190,12 @@ describe(createChongyunKit, () => {
 
   test("one constellation's fourth strike releases three ice blades five frames apart", () => {
     expect.hasAssertions();
-    const context = createKitEventContext(createChongyunCombatant(0, 1));
+    const combatant = createChongyunCombatant(0, 1);
+    const context = createKitTestContext(combatant);
     CHONGYUN_KIT.onKitEvent?.(
       { action: takeOne(CHONGYUN_KIT.normalAttacks, 3), kind: KitEventKind.NormalAttackLanded },
       context,
+      combatant,
     );
     const blades = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
@@ -246,14 +211,8 @@ describe(createChongyunKit, () => {
   test("two constellations' field cuts the cooldown of a burst cast inside it by 15%", () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(0, 2);
-    const kitEffectState: KitEffectState = { effects: [] };
-    CHONGYUN_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CHONGYUN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant);
+    CHONGYUN_KIT.elementalSkill.onStart?.(context);
     const partyMember = { ...createPartyMember(), energy: 40 };
     stepKit(
       createKitState(),
@@ -271,7 +230,7 @@ describe(createChongyunKit, () => {
       createStamina(STAMINA_MAX),
       0.1,
       [],
-      { body: kitBody, combatant, kitEffectState, party: createParty([CHONGYUN_CHARACTER_ID]), random: () => 0 },
+      context,
     );
 
     expect(partyMember.burstCooldownSeconds).toBeCloseTo(12 * 0.85);
@@ -280,7 +239,7 @@ describe(createChongyunKit, () => {
   test("four constellations give him 1 energy as his hit lands on an enemy with Cryo on it, once in 2 seconds", () => {
     expect.hasAssertions();
     const combatant = createChongyunCombatant(0, 4);
-    const context = createKitEventContext(combatant);
+    const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     applyElement(enemy.elementalState, Element.Cryo, 1);
     const hitEnemy = (): void =>
@@ -295,6 +254,7 @@ describe(createChongyunKit, () => {
           striker: combatant,
         },
         context,
+        combatant,
       );
     hitEnemy();
     hitEnemy();

@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 export const createTravelingDoctorSetModule = ({ params }: ArtifactSetBonus): ArtifactSetModule => {
   const healedHealthShare = takeOne(params, 0);
   return {
-    onKitEvent: (event, { combatant, party }) => {
+    onKitEvent: (event, { party }, combatant) => {
       if (event.kind === KitEventKind.BurstUsed && event.characterId === combatant.characterId)
         healPartyMember(party, combatant.characterId, healedHealthShare);
     },

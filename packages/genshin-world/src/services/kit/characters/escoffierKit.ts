@@ -226,7 +226,7 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           talentMultiplier: burstMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createScoringCutsHealField(body, combatant));
         if (combatant.ascension >= REHAB_DIET_ASCENSION)
           addKitEffect(kitEffectState, createRehabDietField(body, combatant));
@@ -243,7 +243,7 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           talentMultiplier: skillMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon(body, combatant, skillTickHits));
         if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID)) return;
         addKitEffect(kitEffectState, {

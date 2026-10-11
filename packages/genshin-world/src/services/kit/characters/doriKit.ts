@@ -154,7 +154,7 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // The connector ticks in the circle five metres ahead of the body, where the burst was cast, and each tick strikes
         // From that spot whatever the body does after
         const spot = createAheadBody(body, CONNECTOR_AHEAD_METRES);

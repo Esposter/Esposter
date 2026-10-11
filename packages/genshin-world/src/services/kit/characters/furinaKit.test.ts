@@ -1,8 +1,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
-import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -14,12 +14,13 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createFurinaKit, FURINA_CHARACTER_ID } from "#src/services/kit/characters/furinaKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const FURINA_KIT = createFurinaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FURINA_CHARACTER_ID]));
@@ -33,27 +34,12 @@ const createEnemyAt = (x: number): Enemy => ({
 const getFieldIds = ({ effects }: KitEffectState): (string | undefined)[] =>
   effects.flatMap((effect) => (effect.kind === "field" ? [effect.id] : []));
 
-describe(createFurinaKit, () => {
-  // Runs the team's effects a frame at a time, Furina on the field and every combatant given in the deployed team
-  const stepFrames = (
-    frames: number,
-    kitEffectState: KitEffectState,
-    party: Party,
-    combatants: Combatant[],
-    enemies: Enemy[] = [],
-  ): void => {
-    const [activeCombatant] = combatants;
-    if (!activeCombatant) return;
-    for (let frame = 0; frame < frames; frame++)
-      stepKitEffects(kitEffectState, 1 / 60, {
-        activeCombatant,
-        body: body.position,
-        characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
-        enemyMap: new Map(enemies.map((enemy, index) => [`${index}`, enemy])),
-        party,
-      });
-  };
+// Runs the team's effects a frame at a time
+const stepFrames = (frames: number, context: KitContext): void => {
+  for (let frame = 0; frame < frames; frame++) stepKitEffects(1 / 60, context);
+};
 
+describe(createFurinaKit, () => {
   const createFurinaCombatant = (combatant: Partial<Combatant> = {}): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
@@ -72,19 +58,16 @@ describe(createFurinaKit, () => {
 
   const LOW_TEAMMATE_CHARACTER_ID = 2;
 
-  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   test("the charged attack turns her to Pneuma a frame after its hit, handing Salon Solitaire's members to the Singer", () => {
     expect.hasAssertions();
-    const combatant = createFurinaCombatant();
-    const party = createParty([FURINA_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
-    stepFrames(60, kitEffectState, party, [combatant]);
-    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
-    stepFrames(30, kitEffectState, party, [combatant]);
+    const context = createKitTestContext(createFurinaCombatant());
+    const { kitEffectState } = context;
+    FURINA_KIT.elementalSkill.onStart?.(context);
+    stepFrames(60, context);
+    FURINA_KIT.chargedAttack.onStart?.(context);
+    stepFrames(30, context);
     const beforeSwitch = getFieldIds(kitEffectState).filter(Boolean);
-    stepFrames(10, kitEffectState, party, [combatant]);
+    stepFrames(10, context);
 
     expect(beforeSwitch).toStrictEqual(["furina-salon-member", "furina-salon-member", "furina-salon-member"]);
     expect(getFieldIds(kitEffectState).filter(Boolean)).toStrictEqual(["furina-singer"]);
@@ -97,10 +80,19 @@ describe(createFurinaKit, () => {
     const lowTeammate = createFurinaCombatant({ characterId: LOW_TEAMMATE_CHARACTER_ID });
     const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID, LOW_TEAMMATE_CHARACTER_ID]);
     getPartyMember(party, LOW_TEAMMATE_CHARACTER_ID).healthShare = 0.4;
-    const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant: furina, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(furina, {
+      characterIdCombatantMap: new Map([
+        [FURINA_CHARACTER_ID, furina],
+        [LOW_TEAMMATE_CHARACTER_ID, lowTeammate],
+        [TEAMMATE_CHARACTER_ID, teammate],
+      ]),
+      enemyMap: new Map([["", createEnemyAt(3)]]),
+      party,
+    });
+    const { kitEffectState } = context;
+    FURINA_KIT.elementalSkill.onStart?.(context);
     // Mademoiselle Crabaletta attacks first, 18 frames for the bubble and 71.6 for its first tick
-    stepFrames(90, kitEffectState, party, [furina, teammate, lowTeammate], [createEnemyAt(3)]);
+    stepFrames(90, context);
     const attack = kitEffectState.effects.find(
       (effect) => effect.kind === "summon" && effect.id === "furina-salon-attack",
     );
@@ -117,29 +109,25 @@ describe(createFurinaKit, () => {
 
   test("the Salon drains no one and strikes nothing with no enemy in reach", () => {
     expect.hasAssertions();
-    const combatant = createFurinaCombatant();
-    const party = createParty([FURINA_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    FURINA_KIT.elementalSkill.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
-    stepFrames(300, kitEffectState, party, [combatant], [createEnemyAt(100)]);
+    const context = createKitTestContext(createFurinaCombatant(), { enemyMap: new Map([["", createEnemyAt(100)]]) });
+    FURINA_KIT.elementalSkill.onStart?.(context);
+    stepFrames(300, context);
 
-    expect(party.healthChanges).toStrictEqual([]);
+    expect(context.party.healthChanges).toStrictEqual([]);
   });
 
   test("the burst's Fanfare gains a point for each 1% of HP changed and gives every member its DMG Bonus, a change within the debounce landing as it closes", () => {
     expect.hasAssertions();
     const furina = createFurinaCombatant();
     const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
-    const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(furina, {
+    const context = createKitTestContext(furina, {
       characterIdCombatantMap: new Map([
         [FURINA_CHARACTER_ID, furina],
         [TEAMMATE_CHARACTER_ID, teammate],
       ]),
-      kitEffectState,
-      party,
+      party: createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
     });
+    const { kitEffectState } = context;
     const drain: KitHealthChangedEvent = {
       characterId: TEAMMATE_CHARACTER_ID,
       healthShare: -0.1,
@@ -148,15 +136,15 @@ describe(createFurinaKit, () => {
     };
     const readFanfare = (): number | undefined =>
       findKitStatus(kitEffectState.effects, FURINA_CHARACTER_ID, "furina-fanfare")?.stacks;
-    FURINA_KIT.elementalBurst.onStart?.({ body, combatant: furina, kitEffectState, party, random: () => 0 });
-    stepFrames(100, kitEffectState, party, [furina, teammate]);
-    FURINA_KIT.onKitEvent?.(drain, context);
-    stepFrames(10, kitEffectState, party, [furina, teammate]);
+    FURINA_KIT.elementalBurst.onStart?.(context);
+    stepFrames(100, context);
+    FURINA_KIT.onKitEvent?.(drain, context, furina);
+    stepFrames(10, context);
     const afterFirst = readFanfare();
-    FURINA_KIT.onKitEvent?.(drain, context);
-    stepFrames(20, kitEffectState, party, [furina, teammate]);
+    FURINA_KIT.onKitEvent?.(drain, context, furina);
+    stepFrames(20, context);
     const withinDebounce = readFanfare();
-    stepFrames(10, kitEffectState, party, [furina, teammate]);
+    stepFrames(10, context);
     const teammateHydroBonus = kitEffectState.effects.find(
       (effect) =>
         effect.kind === "buff" &&
@@ -174,13 +162,11 @@ describe(createFurinaKit, () => {
     const teammate = createFurinaCombatant({ characterId: TEAMMATE_CHARACTER_ID });
     const party = createParty([FURINA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]);
     getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare = 0.5;
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(furina, {
+    const context = createKitTestContext(furina, {
       characterIdCombatantMap: new Map([
         [FURINA_CHARACTER_ID, furina],
         [TEAMMATE_CHARACTER_ID, teammate],
       ]),
-      kitEffectState,
       party,
     });
     const overheal: KitHealthChangedEvent = {
@@ -190,11 +176,11 @@ describe(createFurinaKit, () => {
       overflowHealthShare: 0.1,
       sourceCharacterId: TEAMMATE_CHARACTER_ID,
     };
-    FURINA_KIT.onKitEvent?.(overheal, context);
-    stepFrames(60, kitEffectState, party, [furina, teammate]);
+    FURINA_KIT.onKitEvent?.(overheal, context, furina);
+    stepFrames(60, context);
     // A second overheal a second in keeps the regeneration's ticks at two and four seconds, and none at six
-    FURINA_KIT.onKitEvent?.(overheal, context);
-    stepFrames(360, kitEffectState, party, [furina, teammate]);
+    FURINA_KIT.onKitEvent?.(overheal, context, furina);
+    stepFrames(360, context);
 
     expect(getPartyMember(party, TEAMMATE_CHARACTER_ID).healthShare).toBeCloseTo(0.54);
   });
@@ -202,18 +188,18 @@ describe(createFurinaKit, () => {
   test("a strike that lands opens the Arkhe's hit as a normal attack, once within each Arkhe's cooldown", () => {
     expect.hasAssertions();
     const combatant = createFurinaCombatant();
-    const party = createParty([FURINA_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const strike = (): void =>
-      FURINA_KIT.normalAttacks[0]?.hits[0]?.onStrike?.({ body, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(combatant);
+    const { kitEffectState } = context;
+    const hit = takeOne(takeOne(FURINA_KIT.normalAttacks).hits);
+    const strike = (): void => hit.onStrike?.(context, { body: context.body, combatant, hit });
     const countArkheHits = (): number =>
       kitEffectState.effects.filter((effect) => effect.kind === "summon" && effect.attackTag === AttackTag.NormalAttack)
         .length;
     strike();
     strike();
     const inOusia = countArkheHits();
-    FURINA_KIT.chargedAttack.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
-    stepFrames(40, kitEffectState, party, [combatant]);
+    FURINA_KIT.chargedAttack.onStart?.(context);
+    stepFrames(40, context);
     strike();
 
     expect([inOusia, countArkheHits()]).toStrictEqual([1, 1]);

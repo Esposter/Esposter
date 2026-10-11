@@ -199,7 +199,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     gauge: 1,
     hitArea: SHUNSUIKEN_HIT_AREA,
     hitmarkSeconds: SHUNSUIKEN_HITMARK_FRAMES / 60,
-    onStrike: ({ body, kitEffectState: effectState }) => {
+    onStrike: ({ kitEffectState: effectState }, { body }) => {
       const { characterId } = combatant;
       const stacks = countNamisenStacks(effectState.effects, characterId);
       if (stacks < getNamisenStacksMax(combatant))
@@ -267,7 +267,8 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => addKitEffect(kitEffectState, createBurstField(body, combatant)),
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      addKitEffect(kitEffectState, createBurstField(body, combatant)),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };
@@ -283,7 +284,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: skillMultiplier(5),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId } = combatant;
       if (combatant.ascension >= ASCENSION_1) {
         addKitEffect(kitEffectState, {
@@ -386,7 +387,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     lowPlunge,
     normalAttacks,
     // Leaving the field ends Soukai Kanka and clears the Namisen stacks, as gcsim's swap does
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       const stance = kitEffectState.effects.find(
         (effect): effect is KitStance => effect.kind === "stance" && effect.characterId === combatant.characterId,

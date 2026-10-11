@@ -5,6 +5,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
@@ -48,7 +49,12 @@ describe(changeKitMemberHealth, () => {
     expect.hasAssertions();
     const party = createParty([SOURCE_ID, MEMBER_ID]);
     getPartyMember(party, MEMBER_ID).healthShare = 0.5;
-    changeKitMemberHealth({ characterIdCombatantMap, kitEffectState: { effects }, party }, source, MEMBER_ID, 2000);
+    changeKitMemberHealth(
+      createKitTestContext(source, { characterIdCombatantMap, kitEffectState: { effects }, party }),
+      source,
+      MEMBER_ID,
+      2000,
+    );
 
     expect(party.healthChanges).toStrictEqual([
       { characterId: MEMBER_ID, healthShare: 0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },
@@ -58,7 +64,12 @@ describe(changeKitMemberHealth, () => {
   test("drains a member by the HP as it is", () => {
     expect.hasAssertions();
     const party = createParty([SOURCE_ID, MEMBER_ID]);
-    changeKitMemberHealth({ characterIdCombatantMap, kitEffectState: { effects }, party }, source, MEMBER_ID, -4000);
+    changeKitMemberHealth(
+      createKitTestContext(source, { characterIdCombatantMap, kitEffectState: { effects }, party }),
+      source,
+      MEMBER_ID,
+      -4000,
+    );
 
     expect(party.healthChanges).toStrictEqual([
       { characterId: MEMBER_ID, healthShare: -0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },

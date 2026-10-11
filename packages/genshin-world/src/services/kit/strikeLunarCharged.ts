@@ -1,5 +1,5 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { AuraType } from "#src/models/combat/AuraType";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -12,7 +12,7 @@ import { strikeLunarReaction } from "#src/services/kit/strikeLunarReaction";
 // Auras contribute to it, owned by the member whose Electro or Hydro last charged it, and a hit that strikes takes 0.4U
 // From its Electro and its Hydro, as gcsim (MIT) pkg/reactable/lunarcharged.go deals it
 // Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
-export const strikeLunarCharged = (enemy: Enemy, context: KitStrikeContext): void => {
+export const strikeLunarCharged = (enemy: Enemy, context: KitContext): void => {
   const { elementalState } = enemy;
   const contributorIds = new Set([
     ...getAuraSourceIds(elementalState, AuraType.Electro),

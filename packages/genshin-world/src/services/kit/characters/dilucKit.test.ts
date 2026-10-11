@@ -10,10 +10,10 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDilucKit, DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
-import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -61,27 +61,14 @@ describe("diluc kit", () => {
 
   test("infuses Pyro for 8 seconds with the burst, and for 12 with A4, which also gives a 20% Pyro damage bonus", () => {
     expect.hasAssertions();
-    const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
     const kitEffectState: KitEffectState = { effects: [] };
-    DILUC_KIT.elementalBurst.onStart?.({
-      body,
-      combatant: createCombatant(3),
-      kitEffectState,
-      party: createParty([DILUC_CHARACTER_ID]),
-      random: () => 0,
-    });
+    DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(3), { kitEffectState }));
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 8 },
     ]);
 
     kitEffectState.effects = [];
-    DILUC_KIT.elementalBurst.onStart?.({
-      body,
-      combatant: createCombatant(4),
-      kitEffectState,
-      party: createParty([DILUC_CHARACTER_ID]),
-      random: () => 0,
-    });
+    DILUC_KIT.elementalBurst.onStart?.(createKitTestContext(createCombatant(4), { kitEffectState }));
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "summon")).toStrictEqual([
       { characterId: DILUC_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 12 },
       {
@@ -118,13 +105,7 @@ describe("diluc kit", () => {
         stamina,
         STEP_SECONDS,
         landedHits,
-        {
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-          combatant: DILUC_COMBATANT,
-          kitEffectState: { effects: [] },
-          party: createParty([DILUC_CHARACTER_ID]),
-          random: () => 0,
-        },
+        createKitTestContext(DILUC_COMBATANT),
       );
     };
     // Steps with no press until the action playing has run its seconds
@@ -167,15 +148,11 @@ describe("diluc kit", () => {
 
   test("dawn's phoenix launches at the slash, travels 14 metres a second from a metre ahead, and explodes 24.8 metres on", () => {
     expect.hasAssertions();
-    const kitEffectState: KitEffectState = { effects: [] };
-    DILUC_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: createCombatant(0),
-      kitEffectState,
-      party: createParty([DILUC_CHARACTER_ID]),
-      random: () => 0,
-    });
-    const phoenix = takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
+    const context = createKitTestContext(createCombatant(0));
+    DILUC_KIT.elementalBurst.onStart?.(context);
+    const phoenix = takeOne(
+      context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+    );
     expect(phoenix.body.position.z).toBeCloseTo(-1, 5);
 
     const FRAME_SECONDS = 1 / 60;

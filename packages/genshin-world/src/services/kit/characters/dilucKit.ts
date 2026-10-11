@@ -200,7 +200,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const hasA4 = combatant.ascension >= 4;
       const secondsRemaining = DILUC_INFUSION_SECONDS + (hasA4 ? DILUC_A4_EXTRA_INFUSION_SECONDS : 0);
       addKitEffect(kitEffectState, {

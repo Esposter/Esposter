@@ -1,8 +1,9 @@
-import type { ActiveKitStepContext } from "#src/models/kit/ActiveKitStepContext";
+import type { ActiveKitControls } from "#src/models/kit/ActiveKitControls";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -48,11 +49,28 @@ const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   level: 90,
 });
 
-// The context the kit on the field steps in, its party the characters given with the first on the field
-const createContext = (
-  combatants: Combatant[],
-  kitEffectState: KitEffectState = { effects: [] },
-): ActiveKitStepContext => ({
+// The combat state the kit on the field steps in, its party the characters given with the first on the field
+const createContext = (combatants: Combatant[], kitEffectState: KitEffectState = { effects: [] }): KitContext => ({
+  activeCombatant: takeOne(combatants),
+  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+  characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
+  enemyMap: new Map(),
+  enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
+  kitEffectState,
+  outbox: [],
+  party: createParty(combatants.map(({ characterId }) => characterId)),
+  random: () => 0,
+});
+
+// The combat state the kit on the field steps in with an enemy standing in its strikes' reach
+const createStrikeContext = (combatants: Combatant[], kitEffectState?: KitEffectState): KitContext => ({
+  ...createContext(combatants, kitEffectState),
+  enemyMap: new Map([["", { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -1 } }]]),
+  enemyTables,
+});
+
+// The controls of a body standing at the origin on flat ground, its camera aiming along no yaw
+const createControls = (): ActiveKitControls => ({
   aimYaw: 0,
   characterController: createCharacterController({
     ground: createGroundQuery(() => 0, -1),
@@ -60,22 +78,9 @@ const createContext = (
     position: new Vector3(),
     staminaMaximum: STAMINA_MAX,
   }),
-  characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
-  enemyMap: new Map(),
-  enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
   isAimHeld: false,
-  kitEffectState,
   landedHits: [],
-  party: createParty(combatants.map(({ characterId }) => characterId)),
-  random: () => 0,
   strikeOre: noop,
-});
-
-// The context the kit on the field steps in with an enemy standing in its strikes' reach
-const createStrikeContext = (combatants: Combatant[], kitEffectState?: KitEffectState): ActiveKitStepContext => ({
-  ...createContext(combatants, kitEffectState),
-  enemyMap: new Map([["", { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -1 } }]]),
-  enemyTables,
 });
 
 describe(stepActiveKit, () => {
@@ -92,10 +97,13 @@ describe(stepActiveKit, () => {
   test("plays no action while the character on the field has no combatant", () => {
     expect.hasAssertions();
     const kitState = createKitState();
-    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, {
-      ...createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]),
-      characterIdCombatantMap: new Map(),
-    });
+    stepActiveKit(
+      kitState,
+      { ...IDLE_INPUT, isAttackPressed: true },
+      0.1,
+      { ...createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]), characterIdCombatantMap: new Map() },
+      createControls(),
+    );
 
     expect(kitState).toStrictEqual(createKitState());
   });
@@ -110,8 +118,9 @@ describe(stepActiveKit, () => {
       fieldCharacterId: FISCHL_CHARACTER_ID,
     });
     const kitState = createKitState();
-    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context);
-    stepActiveKit(kitState, IDLE_INPUT, 1, context);
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, 1, context, controls);
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
       {
@@ -129,7 +138,8 @@ describe(stepActiveKit, () => {
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = TRAVELER_KIT.burstEnergyCost;
-    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context);
+    const controls = createControls();
+    stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context, controls);
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
       { characterId: TRAVELER_CHARACTER_ID, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
@@ -164,8 +174,9 @@ describe(stepActiveKit, () => {
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 0.25);
     const kitState = createKitState();
-    stepActiveKit(kitState, IDLE_INPUT, 0.1, context);
-    stepActiveKit(kitState, IDLE_INPUT, 0.1, context);
+    const controls = createControls();
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
       {
@@ -198,7 +209,8 @@ describe(stepActiveKit, () => {
       ],
     });
     const kitState = createKitState();
-    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context);
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context, controls);
 
     expect(kitState.action).toBe(stanceAttack);
   });
@@ -225,13 +237,14 @@ describe(stepActiveKit, () => {
         },
       );
     const kitState = createKitState();
-    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
-    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context, controls);
 
     expect(kitState.action).toBeUndefined();
     expect(readLandings()).toStrictEqual([]);
 
-    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context, controls);
 
     expect(readLandings()).toStrictEqual([
       { action: lateAttack, kind: KitEventKind.NormalAttackLanded },
@@ -249,10 +262,11 @@ describe(stepActiveKit, () => {
     });
     const context = createStrikeContext([lateCombatant, createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
     const kitState = createKitState();
-    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
-    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context, controls);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context, controls);
     context.party.activeIndex = 1;
-    stepActiveKit(createKitState(), IDLE_INPUT, lateAttack.seconds, context);
+    stepActiveKit(createKitState(), IDLE_INPUT, lateAttack.seconds, context, controls);
 
     expect(
       onKitEvent.mock.calls.flatMap(([event]) =>

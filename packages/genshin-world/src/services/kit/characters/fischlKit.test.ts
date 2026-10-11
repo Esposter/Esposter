@@ -14,11 +14,10 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createFischlKit, FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -43,37 +42,26 @@ const castHits = (kitEffectState: KitEffectState): number[] =>
     effect.kind === "summon" && effect.id === undefined ? effect.hits.map((hit) => hit.talentMultiplier) : [],
   );
 
+// The summons an action's start casts, as the kit's effects hold them
+const castSummons = (action: KitAction, combatant = createFischlCombatant()): KitSummon[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+};
+
+// The team's effects with the skill's Oz standing, spawned
+const castStandingOz = (combatant: Combatant): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  FISCHL_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  for (const effect of kitEffectState.effects) if (effect.kind === "summon") effect.elapsedSeconds = 1;
+  return kitEffectState;
+};
+
 describe(createFischlKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const travelerCombatant: Combatant = {
     ...createFischlCombatant(),
     characterId: TRAVELER_CHARACTER_ID,
     kit: TRAVELER_KIT,
-  };
-  // The summons an action's start casts, as the kit's effects hold them
-  const castSummons = (action: KitAction, combatant = createFischlCombatant()): KitSummon[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([FISCHL_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
-  };
-  // The team's effects with the skill's Oz standing, spawned
-  const castStandingOz = (combatant: Combatant): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([FISCHL_CHARACTER_ID]),
-      random: () => 0,
-    });
-    for (const effect of kitEffectState.effects) if (effect.kind === "summon") effect.elapsedSeconds = 1;
-    return kitEffectState;
   };
 
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
@@ -123,13 +111,7 @@ describe(createFischlKit, () => {
     const combatant = createFischlCombatant();
     const kitEffectState = castStandingOz(combatant);
     const [skillOz] = kitEffectState.effects;
-    FISCHL_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([FISCHL_CHARACTER_ID]),
-      random: () => 0,
-    });
+    FISCHL_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
     expect(skillOz?.secondsRemaining).toBe(0);
     expect(kitEffectState.effects).toHaveLength(2);
@@ -149,12 +131,13 @@ describe(createFischlKit, () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant(4);
     const kitEffectState = castStandingOz(combatant);
-    const context = createKitEventContext(combatant, { kitEffectState });
+    const context = createKitTestContext(combatant, { kitEffectState });
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const triggerReaction = (reactionType: ReactionType): void =>
       FISCHL_KIT.onKitEvent?.(
         { enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker: combatant },
         context,
+        combatant,
       );
     triggerReaction(ReactionType.Melt);
 
@@ -174,11 +157,11 @@ describe(createFischlKit, () => {
   test("one constellation's coordinated attack follows her normal attack while Oz is away", () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant(0, 1);
-    const context = createKitEventContext(combatant);
-    const standingOzContext = createKitEventContext(combatant, { kitEffectState: castStandingOz(combatant) });
+    const context = createKitTestContext(combatant);
+    const standingOzContext = createKitTestContext(combatant, { kitEffectState: castStandingOz(combatant) });
     const event = { action: takeOne(FISCHL_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded } as const;
-    FISCHL_KIT.onKitEvent?.(event, context);
-    FISCHL_KIT.onKitEvent?.(event, standingOzContext);
+    FISCHL_KIT.onKitEvent?.(event, context, combatant);
+    FISCHL_KIT.onKitEvent?.(event, standingOzContext, combatant);
 
     expect(castHits(context.kitEffectState)).toStrictEqual([0.22]);
     expect(castHits(standingOzContext.kitEffectState)).toStrictEqual([]);
@@ -190,7 +173,8 @@ describe(createFischlKit, () => {
     const kitEffectState = castStandingOz(combatant);
     FISCHL_KIT.onKitEvent?.(
       { action: takeOne(TRAVELER_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded },
-      createKitEventContext(combatant, { activeCombatant: travelerCombatant, kitEffectState }),
+      createKitTestContext(combatant, { activeCombatant: travelerCombatant, kitEffectState }),
+      combatant,
     );
 
     expect(castHits(kitEffectState)).toStrictEqual([0.3]);
@@ -200,20 +184,15 @@ describe(createFischlKit, () => {
     expect.hasAssertions();
     const combatant = createFischlCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([FISCHL_CHARACTER_ID]),
-      random: () => 0,
-    });
+    FISCHL_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     FISCHL_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
         kind: KitEventKind.CharacterSwapped,
         previousCharacterId: FISCHL_CHARACTER_ID,
       },
-      createKitEventContext(combatant, { activeCombatant: travelerCombatant, kitEffectState }),
+      createKitTestContext(combatant, { activeCombatant: travelerCombatant, kitEffectState }),
+      combatant,
     );
     const [burstOz, swapOz] = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
 
@@ -224,19 +203,13 @@ describe(createFischlKit, () => {
 
   test("four constellations add the burst's extra hit and heal her by 20% of her Max HP a frame after Oz spawns", () => {
     expect.hasAssertions();
-    const combatant = createFischlCombatant(0, 4);
-    const party = createParty([FISCHL_CHARACTER_ID]);
-    getPartyMember(party, FISCHL_CHARACTER_ID).healthShare = 0.5;
-    const kitEffectState: KitEffectState = { effects: [] };
-    FISCHL_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    const strikes = stepKitEffects(kitEffectState, 114 / 60, {
-      activeCombatant: combatant,
-      body: kitBody.position,
-      party,
-    });
+    const context = createKitTestContext(createFischlCombatant(0, 4));
+    getPartyMember(context.party, FISCHL_CHARACTER_ID).healthShare = 0.5;
+    FISCHL_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitEffects(114 / 60, context);
 
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([2.22]);
-    expect(getPartyMember(party, FISCHL_CHARACTER_ID).healthShare).toBeCloseTo(0.7);
+    expect(getPartyMember(context.party, FISCHL_CHARACTER_ID).healthShare).toBeCloseTo(0.7);
   });
 
   test("the skill's cooldown, the burst's cooldown and energy cost come from the dump's groups", () => {

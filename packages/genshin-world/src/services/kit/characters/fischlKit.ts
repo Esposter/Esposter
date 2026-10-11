@@ -284,7 +284,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // From four constellations its extra hit lands round the body first, and a frame after Oz spawns she heals
     elementalBurst: {
       hits: [midnightPhantasmagoria],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castOz(body, combatant, kitEffectState, {
           firstTickFrames: BURST_OZ_FIRST_TICK_FRAMES,
           hits: [],
@@ -312,7 +312,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Oz spawns at 18 frames from the press, lands its summon's hit at 38 and attacks from its first tick
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castOz(body, combatant, kitEffectState, {
           firstTickFrames: OZ_FIRST_TICK_FRAMES,
           hits: [
@@ -348,7 +348,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks: ARROW_FRAMES.map((frames, index) => createArrow(talentMultiplierMap, frames, index)),
-    onKitEvent: (event, { activeCombatant, body, combatant, kitEffectState }) => {
+    onKitEvent: (event, { activeCombatant, body, kitEffectState }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const { effects } = kitEffectState;
       // A swap during the burst spawns its Oz at once rather than at the full Oz's frame

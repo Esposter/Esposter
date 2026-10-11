@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID, createBarbaraKit } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -19,7 +20,6 @@ const BARBARA_KIT = createBarbaraKit(await readTalentMultipliers(GAME_DATA_LOCAL
 
 describe(createBarbaraKit, () => {
   const MAX_HEALTH = 10_000;
-  const body = { x: 0, z: 0 };
   const createBarbaraCombatant = (constellationCount: number): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
@@ -52,18 +52,12 @@ describe(createBarbaraKit, () => {
     const partyMember = getPartyMember(party, BARBARA_CHARACTER_ID);
     partyMember.healthShare = 0.1;
     const kitEffectState: KitEffectState = { effects: [] };
-    BARBARA_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    const context = { activeCombatant: combatant, body, party };
+    const context = createKitTestContext(combatant, { kitEffectState, party });
+    BARBARA_KIT.elementalSkill.onStart?.(context);
     const regenerationHealthShare = (385.18774 + 0.04 * MAX_HEALTH) / MAX_HEALTH;
 
     // Two seconds in, both droplets have landed and the loop has healed once as it started
-    const dropletStrikes = stepKitEffects(kitEffectState, 2, context);
+    const dropletStrikes = stepKitEffects(2, context);
 
     expect(dropletStrikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
       [Element.Hydro, 0.584],
@@ -72,7 +66,7 @@ describe(createBarbaraKit, () => {
     expect(partyMember.healthShare).toBeCloseTo(0.1 + regenerationHealthShare, 4);
 
     // Its three later heals fall 5, 10 and 15 seconds after the first, and the loop ends with the last
-    stepKitEffects(kitEffectState, 18, context);
+    stepKitEffects(18, context);
 
     expect(partyMember.healthShare).toBeCloseTo(0.1 + 4 * regenerationHealthShare, 4);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -92,13 +86,7 @@ describe(createBarbaraKit, () => {
 
     expect(healKitParty(party, characterIdCombatantMap, [], combatant, strike, () => 0)).toBe(false);
 
-    BARBARA_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    BARBARA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
     const isStrikeHealed = healKitParty(
       party,
       characterIdCombatantMap,
@@ -127,15 +115,9 @@ describe(createBarbaraKit, () => {
     const partyMember = getPartyMember(party, BARBARA_CHARACTER_ID);
     partyMember.healthShare = 0.1;
     const kitEffectState: KitEffectState = { effects: [] };
-    BARBARA_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    const context = { activeCombatant: combatant, body, party };
-    stepKitEffects(kitEffectState, 76 / 60, context);
+    const context = createKitTestContext(combatant, { kitEffectState, party });
+    BARBARA_KIT.elementalBurst.onStart?.(context);
+    stepKitEffects(76 / 60, context);
 
     expect(partyMember.healthShare).toBe(0.1);
     expect(
@@ -149,7 +131,7 @@ describe(createBarbaraKit, () => {
       ),
     ).toBe(false);
 
-    stepKitEffects(kitEffectState, 1, context);
+    stepKitEffects(1, context);
 
     expect(partyMember.healthShare).toBeCloseTo(0.1 + (1694.2819 + 0.176 * MAX_HEALTH) / MAX_HEALTH, 4);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -177,13 +159,11 @@ describe(createBarbaraKit, () => {
       const combatant = createBarbaraCombatant(constellationCount);
       const party = createParty([BARBARA_CHARACTER_ID, JEAN_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      const kitBody = { facing: 0, height: 0, position: body };
-      BARBARA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      stepKitEffects(kitEffectState, 3 / 60, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(combatant, { kitEffectState, party });
+      BARBARA_KIT.elementalSkill.onStart?.(context);
+      stepKitEffects(3 / 60, context);
 
-      expect(
-        BARBARA_KIT.getSkillCooldownMultiplier?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 }),
-      ).toBe(cooldownMultiplier);
+      expect(BARBARA_KIT.getSkillCooldownMultiplier?.(context)).toBe(cooldownMultiplier);
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(buffs);
     },
   );

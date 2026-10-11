@@ -14,7 +14,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -55,10 +55,10 @@ describe(createInstructorSetModule, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(wearer, { kitEffectState, party });
-    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context);
+    const context = createKitTestContext(wearer, { kitEffectState, party });
+    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context, wearer);
     for (const effect of kitEffectState.effects) effect.secondsRemaining = 1;
-    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context);
+    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context, wearer);
 
     expect(kitEffectState.effects).toStrictEqual(
       PARTY_CHARACTER_IDS.map((characterId) => ({
@@ -81,7 +81,8 @@ describe(createInstructorSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     instructorSetModule.onKitEvent?.(
       createReactionEvent(striker),
-      createKitEventContext(wearer, { activeCombatant, kitEffectState, party }),
+      createKitTestContext(wearer, { activeCombatant, kitEffectState, party }),
+      wearer,
     );
 
     expect(kitEffectState.effects).toStrictEqual([]);

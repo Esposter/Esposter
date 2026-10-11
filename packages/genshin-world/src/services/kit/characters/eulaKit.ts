@@ -265,7 +265,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       hits: hitmarkFrames.map((hitmark) => ({
         hitArea,
         hitmarkSeconds: hitmark / 60,
-        onStrike: ({ combatant, kitEffectState }) =>
+        onStrike: ({ kitEffectState }, { combatant }) =>
           gainLightfallStack(kitEffectState, combatant, explodeBase, explodePerStack),
         poiseDamage,
         talentMultiplier: attackMultiplier(index),
@@ -298,7 +298,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     chargedAttackStamina: attackMultiplier(7),
     elementalBurst: {
       hits: [burstInitialHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
         // A fresh cast takes the Sword's stacks from zero, as the cast resets them, Constellation 6 starting it with five
         kitEffectState.effects = kitEffectState.effects.filter(
@@ -334,7 +334,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, PRESS_RADIUS),
           hitmarkSeconds: PRESS_HITMARK_FRAMES / 60,
           isBlunt: true,
-          onStrike: ({ combatant, kitEffectState }) => {
+          onStrike: ({ kitEffectState }, { combatant }) => {
             if (checkHasStatus(kitEffectState.effects, combatant.characterId, GRIMHEART_ICD_ID)) return;
             addKitEffect(kitEffectState, {
               characterId: combatant.characterId,
@@ -362,13 +362,13 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
               hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, HOLD_RADIUS),
               hitmarkSeconds: HOLD_HITMARK_FRAMES / 60,
               isBlunt: true,
-              onStrike: ({ combatant, kitEffectState }) =>
+              onStrike: ({ kitEffectState }, { combatant }) =>
                 gainLightfallStack(kitEffectState, combatant, explodeBase, explodePerStack),
               poiseDamage: HOLD_POISE_DAMAGE,
               talentMultiplier: skillMultiplier(1),
             },
           ],
-          onStart: ({ body, combatant, kitEffectState }) => {
+          onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
             const { characterId } = combatant;
             const stacks = countGrimheartStacks(kitEffectState.effects, characterId);
             clearGrimheartStacks(kitEffectState, characterId);
@@ -387,7 +387,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
               gauge: 1,
               hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, ICEWHIRL_RADIUS),
               hitmarkSeconds: hitmark / 60,
-              onStrike: ({ combatant: striker, kitEffectState: strikeEffectState }) =>
+              onStrike: ({ kitEffectState: strikeEffectState }, { combatant: striker }) =>
                 gainLightfallStack(strikeEffectState, striker, explodeBase, explodePerStack),
               poiseDamage: 0,
               talentMultiplier: skillMultiplier(2),
@@ -456,7 +456,7 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind === KitEventKind.CharacterSwapped)
         triggerLightfall(kitEffectState, combatant.characterId, explodeBase, explodePerStack);
     },

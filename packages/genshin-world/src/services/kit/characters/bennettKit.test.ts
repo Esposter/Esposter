@@ -3,7 +3,6 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { GroundPoint } from "genshin-engine";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -14,6 +13,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { BENNETT_CHARACTER_ID, createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -32,22 +32,17 @@ const readFirstFieldTick = (
   fieldWeaponType: WeaponType,
   healthShare: number,
 ): KitEffect[] => {
-  const body = { x: 0, z: 0 };
   const party = createParty([BENNETT_CHARACTER_ID, MONA_CHARACTER_ID]);
   getPartyMember(party, fieldCharacterId).healthShare = healthShare;
   const kitEffectState: KitEffectState = { effects: [] };
-  BENNETT_KIT.elementalBurst.onStart?.({
-    body: { facing: 0, height: 0, position: body },
-    combatant,
-    kitEffectState,
-    party,
-    random: () => 0,
-  });
-  stepKitEffects(kitEffectState, 34 / 60, {
-    activeCombatant: { ...combatant, characterId: fieldCharacterId, weaponType: fieldWeaponType },
-    body,
-    party,
-  });
+  BENNETT_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
+  stepKitEffects(
+    34 / 60,
+    createKitTestContext(
+      { ...combatant, characterId: fieldCharacterId, weaponType: fieldWeaponType },
+      { kitEffectState, party },
+    ),
+  );
   return kitEffectState.effects.filter(({ kind }) => kind !== "field");
 };
 
@@ -89,13 +84,10 @@ describe("bennett kit", () => {
       isSkillPressed: false,
       locomotionState: LocomotionState.Idle,
     };
-    const context: KitStepContext = {
-      body: { facing: 0, height: 0, position: body },
-      combatant: { ...createBennettCombatant(), ascension },
-      kitEffectState: { effects },
-      party: createParty([BENNETT_CHARACTER_ID]),
-      random: () => 0,
-    };
+    const context = createKitTestContext(
+      { ...createBennettCombatant(), ascension },
+      { body: { facing: 0, height: 0, position: body }, kitEffectState: { effects } },
+    );
     for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
       stepKit(
         kitState,
@@ -136,20 +128,12 @@ describe("bennett kit", () => {
 
   test("its field gives the character on it an ATK bonus from its first tick and no infusion, and heals one under 70% from the second", () => {
     expect.hasAssertions();
-    const combatant = createBennettCombatant();
-    const party = createParty([BENNETT_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    BENNETT_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createBennettCombatant(), { kitEffectState });
+    BENNETT_KIT.elementalBurst.onStart?.(context);
 
     // The first tick, at 34 frames, gives the ATK bonus of 56% of Bennett's base ATK, and no heal
-    stepKitEffects(kitEffectState, 34 / 60, { activeCombatant: combatant, body, party });
+    stepKitEffects(34 / 60, context);
     expect(kitEffectState.effects.filter(({ kind }) => kind !== "field")).toStrictEqual([
       {
         amount: 0.56 * BASE_ATTACK,
@@ -161,9 +145,9 @@ describe("bennett kit", () => {
     ]);
 
     // The second tick, a second on, heals a character at half its HP by 577 plus 6% of Bennett's Max HP
-    const partyMember = getPartyMember(party, BENNETT_CHARACTER_ID);
+    const partyMember = getPartyMember(context.party, BENNETT_CHARACTER_ID);
     partyMember.healthShare = 0.5;
-    stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
+    stepKitEffects(1, context);
     expect(partyMember.healthShare).toBeCloseTo(0.5 + (577.3388 + 0.06 * MAX_HEALTH) / MAX_HEALTH, 4);
   });
 

@@ -143,7 +143,7 @@ export const createChioriKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Tamoto is cast where the body stands at the frame it is summoned, and stands until its duration from that frame ends
   const castTamoto =
     (castFrames: number): NonNullable<KitAction["onStart"]> =>
-    ({ body, combatant, kitEffectState }) => {
+    ({ activeCombatant: combatant, body, kitEffectState }) => {
       addKitEffect(
         kitEffectState,
         createKitSummon(

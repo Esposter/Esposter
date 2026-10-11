@@ -1,7 +1,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { AttackArea } from "#src/models/kit/AttackArea";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 // An action a kit plays: its hits in the order their hitmarks fall, how long it lasts, the zone the body turns to its
 // Target within when it starts, and what it sets going when it starts, if anything: the effects it adds to the party's,
@@ -10,7 +10,8 @@ export interface KitAction {
   hits: KitHit[];
   // Whether the action is an aimed shot, which turns the body to the camera's aim while the aim is held, not to a target
   isAimed?: true;
-  onStart?: (start: KitStepContext & { target?: Enemy }) => void;
+  // Run as the action starts, played by the character on the field at the enemy it targets, if it targets one
+  onStart?: (context: KitContext, target?: Enemy) => void;
   seconds: number;
   // The stamina the action drains each second it plays, if it drains any
   staminaPerSecond?: number;

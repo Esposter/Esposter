@@ -1,7 +1,7 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,6 +14,7 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
@@ -30,8 +31,8 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 // Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
 // Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow
 // In turn. It returns the strikes that struck an enemy
-export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStrikeContext): KitStrike[] => {
-  const { characterIdCombatantMap, emit, enemyMap, enemyTables, kitEffectState, party, random } = context;
+export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitContext): KitStrike[] => {
+  const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, party, random } = context;
   const struckStrikes: KitStrike[] = [];
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
   for (const strike of strikes) {
@@ -69,7 +70,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
-      hit.onStrike?.({ body, combatant, kitEffectState, party, random });
+      hit.onStrike?.(context, strike);
       if (!isPartyHealed)
         isPartyHealed = healKitParty(
           party,
@@ -79,16 +80,20 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
           hit,
           random,
         );
-      if (reactions.length > 0) emit({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant });
-      emit({
-        attackTag,
-        enemy,
-        hit,
-        isCritical,
-        isDefeated: enemy.state === EnemyState.Dead,
-        kind: KitEventKind.DamageTaken,
-        striker: combatant,
-      });
+      if (reactions.length > 0)
+        emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
+      emitKitEvent(
+        {
+          attackTag,
+          enemy,
+          hit,
+          isCritical,
+          isDefeated: enemy.state === EnemyState.Dead,
+          kind: KitEventKind.DamageTaken,
+          striker: combatant,
+        },
+        context,
+      );
     }
 
     landKitReactionReaches(reaches, pricedCombatant, context);
