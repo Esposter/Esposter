@@ -157,6 +157,7 @@
     "livekit-server-sdk": "catalog:",
     "lodash-omitdeep": "catalog:",
     "lowlight": "catalog:",
+    "lru-cache": "catalog:",
     "marked": "catalog:",
     "mathjs": "catalog:",
     "mermaid": "catalog:",
