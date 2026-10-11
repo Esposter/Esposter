@@ -9,11 +9,12 @@ import { readAccountCharacterPackFile } from "#server/services/genshin/accountCh
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { genshinRouter } from "#server/trpc/routers/genshin";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, storageLedgerInStorage } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { createHash } from "node:crypto";
 import { zstdCompressSync } from "node:zlib";
+import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("genshinRouter", () => {
@@ -144,14 +145,50 @@ describe("genshinRouter character packs", () => {
   const characterId = 1;
   const bytes = new TextEncoder().encode("model");
   const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const stagingBlobName = getAccountCharacterPackStagingBlobName(authMocks.user.id, sha256);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     genshinCaller = createCallerFactory(genshinRouter)(mockContext);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     MockContainerDatabase.clear();
+    await mockContext.db.delete(storageLedgerInStorage);
+  });
+
+  test("grants each file's upload against the player's quota for its declared size", async () => {
+    expect.hasAssertions();
+
+    const sasUrls = await genshinCaller.generateCharacterPackUploadSasUrls({ files: [{ sha256, size: bytes.length }] });
+
+    expect(sasUrls).toHaveLength(1);
+    await expect(
+      mockContext.db
+        .select({ blobName: storageLedgerInStorage.blobName, declaredBytes: storageLedgerInStorage.declaredBytes })
+        .from(storageLedgerInStorage)
+        .where(eq(storageLedgerInStorage.blobName, stagingBlobName)),
+    ).resolves.toStrictEqual([{ blobName: stagingBlobName, declaredBytes: bytes.length }]);
+  });
+
+  test("refuses a pack whose staged file differs in size from the one it declares, and deletes the staged file", async () => {
+    expect.hasAssertions();
+
+    const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+    await containerClient.getBlockBlobClient(stagingBlobName).upload(bytes, bytes.length);
+
+    await expect(
+      genshinCaller.keepCharacterPack({
+        characterId,
+        files: [{ path: "model.pmx", sha256, size: bytes.length + 1 }],
+        modelName: "a",
+        packHash: sha256,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Create, name: 1, holds a file not uploaded as 9372c470eeadd5ecd9c3c74c2b3cb633f8e2f2fad799250a0f70d652b6b825e4]`,
+    );
+    expect(MockContainerDatabase.get(AzureContainer.GenshinAssets)?.has(stagingBlobName)).toBe(false);
+    await expect(genshinCaller.readCharacterPacks()).resolves.toStrictEqual([]);
   });
 
   test("lists a pack once its files are uploaded under their hashes, and no longer once it is removed", async () => {

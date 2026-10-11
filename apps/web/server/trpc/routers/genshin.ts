@@ -22,12 +22,12 @@ export const genshinRouter = router({
   generateCharacterPackUploadSasUrls: standardAuthedProcedure
     .input(generateCharacterPackUploadSasUrlsInputSchema)
     .mutation<string[]>(({ ctx, input }) =>
-      generateAccountCharacterPackUploadSasUrls(ctx.getSessionPayload.user.id, input),
+      generateAccountCharacterPackUploadSasUrls(ctx.db, ctx.getSessionPayload.user.id, input),
     ),
   keepCharacterPack: standardAuthedProcedure
     .input(keepCharacterPackInputSchema)
     .mutation<void>(async ({ ctx, input }) => {
-      await keepAccountCharacterPack(ctx.getSessionPayload.user.id, input);
+      await keepAccountCharacterPack(ctx.db, ctx.getSessionPayload.user.id, input);
     }),
   onSessionReplaced: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
