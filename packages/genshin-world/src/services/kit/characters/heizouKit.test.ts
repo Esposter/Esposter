@@ -1,10 +1,39 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
-import { createHeizouKit } from "#src/services/kit/characters/heizouKit";
+import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { applyElement } from "#src/services/combat/aura/applyElement";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createHeizouKit, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
+import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const HEIZOU_KIT = createHeizouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [HEIZOU_CHARACTER_ID]));
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+const createHeizouCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 100 }]),
+  characterId: HEIZOU_CHARACTER_ID,
+  constellationCount: 0,
+  element: Element.Anemo,
+  elementalResonances: [],
+  kit: HEIZOU_KIT,
+  level: 90,
+  weaponType: WeaponType.Catalyst,
+});
 
 describe(createHeizouKit, () => {
   test("the strikes, the fourth's three hits, the charged attack and the plunges read their table indexes at talent level 1", () => {
@@ -34,6 +63,68 @@ describe(createHeizouKit, () => {
     expect(hold?.minimumHeldSeconds).toBe(3);
     expect(hold?.action.hits[0]?.talentMultiplier).toBeCloseTo(2.2752 + 4 * 0.5688 + 1.1376, 10);
     expect(HEIZOU_KIT.elementalSkill.hits[0]?.talentMultiplier).toBe(2.2752);
+  });
+
+  test("every hit of his deals Anemo, 2U from the skill, 1U from the rest and none from the plunge collision", () => {
+    expect.hasAssertions();
+    const oneUnitHits: KitHit[] = [
+      ...HEIZOU_KIT.normalAttacks.flatMap(({ hits }) => hits),
+      ...HEIZOU_KIT.chargedAttack.hits,
+      ...HEIZOU_KIT.lowPlunge.hits,
+      ...HEIZOU_KIT.highPlunge.hits,
+      ...HEIZOU_KIT.elementalBurst.hits.slice(1),
+    ];
+
+    expect(new Set(oneUnitHits.map(({ element, gauge }) => `${element} ${gauge}`))).toStrictEqual(
+      new Set([`${Element.Anemo} 1`]),
+    );
+    expect(HEIZOU_KIT.elementalSkill.hits.map(({ element, gauge }) => [element, gauge])).toStrictEqual([
+      [Element.Anemo, 2],
+    ]);
+    expect([HEIZOU_KIT.plungeCollision.element, HEIZOU_KIT.plungeCollision.gauge]).toStrictEqual([
+      Element.Anemo,
+      undefined,
+    ]);
+  });
+
+  test("the burst's Windmuster Iris explodes 40 frames on where an enemy the burst tags stands, in the first aura it holds, for 4 at most", () => {
+    expect.hasAssertions();
+    const combatant = createHeizouCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    HEIZOU_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    const auraElements = [[Element.Electro, Element.Hydro], [], [Element.Pyro], [Element.Cryo], [Element.Pyro]];
+    for (const elements of auraElements) {
+      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      for (const element of elements) applyElement(enemy.elementalState, element, 1);
+      HEIZOU_KIT.onKitEvent?.(
+        {
+          attackTag: AttackTag.ElementalBurst,
+          enemy,
+          hit: takeOne(HEIZOU_KIT.elementalBurst.hits),
+          isCritical: false,
+          isDefeated: false,
+          kind: KitEventKind.DamageTaken,
+          striker: combatant,
+        },
+        createKitEventContext(combatant, { kitEffectState }),
+      );
+    }
+
+    expect(
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "summon"
+          ? effect.hits.map(({ element, hitmarkSeconds, talentMultiplier }) => [
+              element,
+              hitmarkSeconds,
+              talentMultiplier,
+            ])
+          : [],
+      ),
+    ).toStrictEqual([
+      [Element.Hydro, 40 / 60, 0.21456],
+      [Element.Pyro, 40 / 60, 0.21456],
+      [Element.Cryo, 40 / 60, 0.21456],
+    ]);
   });
 
   test("the skill, burst and burst's energy read their cooldowns and cost from the proud skill groups", () => {

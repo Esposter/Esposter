@@ -2,13 +2,19 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStatus } from "#src/models/kit/KitStatus";
 
+import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
+import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -17,15 +23,22 @@ import { takeOne } from "@esposter/shared";
 // The fourth's three hits at 3, 4 and 5, the fifth at 6, the charged attack at 7 and its stamina at 8, and the plunges'
 // Collision, low and high at 9, 10 and 11. The skill group holds Heartstopper Strike's damage at 0, the Declension DMG
 // Bonus per stack at 1, the Conviction DMG Bonus at 2 and its cooldown at 3. The burst group holds Fudou Style Vacuum
-// Slugger's damage at 0, its cooldown at 2 and its energy cost at 3
+// Slugger's damage at 0, Windmuster Iris's at 1, its cooldown at 2 and its energy cost at 3
 const HEIZOU_ATTACK_GROUP_ID = 5931;
 const HEIZOU_SKILL_GROUP_ID = 5932;
 const HEIZOU_BURST_GROUP_ID = 5939;
 const HEIZOU_SKILL_DECLENSION_INDEX = 1;
 const HEIZOU_SKILL_CONVICTION_INDEX = 2;
 const HEIZOU_SKILL_COOLDOWN_INDEX = 3;
+const HEIZOU_BURST_IRIS_INDEX = 1;
 const HEIZOU_BURST_COOLDOWN_INDEX = 2;
 const HEIZOU_BURST_ENERGY_COST_INDEX = 3;
+
+// Measured: gcsim v2.47.2 (MIT) heizou, the Anemo every hit of his deals, at a Durability of 25, 1U, for his strikes,
+// Charged attack, plunges, burst and Windmuster Iris, 50, 2U, for Heartstopper Strike, and none for the plunge collision
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/heizou/attack.go
+const ANEMO_GAUGE = 1;
+const SKILL_GAUGE = 2;
 
 // Measured: gcsim v2.47.2 (MIT) heizou/attack.go, each strike's hitmarks and the cancel frame its action has, its box or
 // Circle as priced from the body, a box to its far corner and a circle as its offset plus its radius. gcsim gives no poise
@@ -73,12 +86,26 @@ const BURST_HITMARK_FRAMES = 34;
 const BURST_FRAMES = 72;
 const BURST_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 6);
 
+// Measured: gcsim v2.47.2 (MIT) heizou/burst.go, Windmuster Iris: the burst checks the auras of the first 4 enemies it
+// Strikes before its Anemo lands, and on each holding Pyro, Hydro, Electro or Cryo, the first of them in that order, an
+// Iris explodes 40 frames on in that element, 1U, a circle of radius 2.5 round the enemy as the check found it
+const IRIS_TAG_STATUS_ID = "heizou-windmuster-iris-tags";
+const IRIS_MAX_TAGS = 4;
+const IRIS_DELAY_FRAMES = 40;
+const IRIS_HIT_AREA = createFanReach(360, 2.5);
+const IRIS_AURAS: readonly (readonly [Element, AuraType])[] = [
+  [Element.Pyro, AuraType.Pyro],
+  [Element.Hydro, AuraType.Hydro],
+  [Element.Electro, AuraType.Electro],
+  [Element.Cryo, AuraType.Cryo],
+];
+
 export const HEIZOU_CHARACTER_ID = 10_000_059;
 
 // Heizou's first kit, at talent level 1: five strikes with the fourth's three hits, a charged attack, a collision and two
 // Plunges, Heartstopper Strike's press and its full hold with the Declension stacks it gains, and Fudou Style Vacuum
-// Slugger. His multipliers are read from his proud skill groups. Windmuster Iris, which reads the enemy's aura, and his
-// Passives and constellations are not built
+// Slugger with its Windmuster Iris. His multipliers are read from his proud skill groups. His passives and
+// Constellations are not built
 export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, HEIZOU_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -143,13 +170,20 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     ],
   ];
   const normalAttacks: KitAction[] = normalAttackHits.map((hits, index): KitAction => ({
-    hits: hits.map((hit): KitHit => ({ ...hit, internalCooldownTag: InternalCooldownTag.NormalAttack })),
+    hits: hits.map((hit): KitHit => ({
+      ...hit,
+      element: Element.Anemo,
+      gauge: ANEMO_GAUGE,
+      internalCooldownTag: InternalCooldownTag.NormalAttack,
+    })),
     seconds: takeOne(NORMAL_ATTACK_CANCEL_FRAMES, index) / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   }));
 
   // A press strikes with no Declension stack, and the full hold with four, its Conviction bonus added
   const pressHit: KitHit = {
+    element: Element.Anemo,
+    gauge: SKILL_GAUGE,
     hitArea: PRESS_HIT_AREA,
     hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
     internalCooldownTag: InternalCooldownTag.ElementalSkill,
@@ -157,6 +191,8 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     talentMultiplier: skillTalentMultiplier(0),
   };
   const fullHoldHit: KitHit = {
+    element: Element.Anemo,
+    gauge: SKILL_GAUGE,
     hitArea: HOLD_HIT_AREA,
     hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
     internalCooldownTag: InternalCooldownTag.ElementalSkill,
@@ -168,12 +204,38 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   };
   const skillCooldownSeconds = skillTalentMultiplier(HEIZOU_SKILL_COOLDOWN_INDEX);
 
+  // The burst's aura check strikes the enemies its hit reaches just before the hit, with no damage, element or poise
+  const irisCheckHit: KitHit = {
+    hitArea: BURST_HIT_AREA,
+    hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
+    poiseDamage: 0,
+    talentMultiplier: 0,
+  };
+  const burstHit: KitHit = {
+    element: Element.Anemo,
+    gauge: ANEMO_GAUGE,
+    hitArea: BURST_HIT_AREA,
+    hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
+    poiseDamage: 0,
+    talentMultiplier: burstTalentMultiplier(0),
+  };
+  const createIrisHit = (element: Element): KitHit => ({
+    element,
+    gauge: ANEMO_GAUGE,
+    hitArea: IRIS_HIT_AREA,
+    hitmarkSeconds: IRIS_DELAY_FRAMES / 60,
+    poiseDamage: 0,
+    talentMultiplier: burstTalentMultiplier(HEIZOU_BURST_IRIS_INDEX),
+  });
+
   return {
     burstCooldownSeconds: burstTalentMultiplier(HEIZOU_BURST_COOLDOWN_INDEX),
     burstEnergyCost: burstTalentMultiplier(HEIZOU_BURST_ENERGY_COST_INDEX),
     chargedAttack: {
       hits: [
         {
+          element: Element.Anemo,
+          gauge: ANEMO_GAUGE,
           hitArea: CHARGED_ATTACK_HIT_AREA,
           hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
           poiseDamage: 0,
@@ -184,15 +246,17 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: attackTalentMultiplier(CHARGED_ATTACK_STAMINA_INDEX),
+    // The burst counts the enemies its aura check tags afresh each cast
     elementalBurst: {
-      hits: [
-        {
-          hitArea: BURST_HIT_AREA,
-          hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
-          poiseDamage: 0,
-          talentMultiplier: burstTalentMultiplier(0),
-        },
-      ],
+      hits: [irisCheckHit, burstHit],
+      onStart: ({ combatant, kitEffectState }) =>
+        addKitEffect(kitEffectState, {
+          characterId: combatant.characterId,
+          id: IRIS_TAG_STATUS_ID,
+          kind: "status",
+          secondsRemaining: BURST_FRAMES / 60,
+          stacks: 0,
+        }),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -208,6 +272,8 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     highPlunge: {
       hits: [
         {
+          element: Element.Anemo,
+          gauge: ANEMO_GAUGE,
           hitArea: HIGH_PLUNGE_HIT_AREA,
           hitmarkSeconds: HIGH_PLUNGE_HITMARK_FRAMES / 60,
           poiseDamage: 0,
@@ -220,6 +286,8 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     lowPlunge: {
       hits: [
         {
+          element: Element.Anemo,
+          gauge: ANEMO_GAUGE,
           hitArea: LOW_PLUNGE_HIT_AREA,
           hitmarkSeconds: LOW_PLUNGE_HITMARK_FRAMES / 60,
           poiseDamage: 0,
@@ -230,7 +298,26 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
+    // Each enemy the aura check strikes, up to 4 a cast, is tagged, and one holding an aura the Iris takes has an Iris
+    // Cast where it stands, in the first of the four elements it holds
+    onKitEvent: (event, { kitEffectState }) => {
+      if (event.kind !== KitEventKind.DamageTaken || event.hit !== irisCheckHit) return;
+      const { enemy, striker } = event;
+      const tags = kitEffectState.effects.find(
+        (effect): effect is KitStatus =>
+          effect.kind === "status" && effect.characterId === striker.characterId && effect.id === IRIS_TAG_STATUS_ID,
+      );
+      if (!tags || (tags.stacks ?? 0) >= IRIS_MAX_TAGS) return;
+      tags.stacks = (tags.stacks ?? 0) + 1;
+      const element = IRIS_AURAS.find(([, aura]) => enemy.elementalState.auras.has(aura))?.[0];
+      if (element === undefined) return;
+      addKitEffect(
+        kitEffectState,
+        createKitSummon({ facing: 0, height: 0, position: enemy.position }, striker, [createIrisHit(element)]),
+      );
+    },
     plungeCollision: {
+      element: Element.Anemo,
       hitArea: COLLISION_HIT_AREA,
       hitmarkSeconds: COLLISION_HITMARK_FRAMES / 60,
       poiseDamage: 0,
