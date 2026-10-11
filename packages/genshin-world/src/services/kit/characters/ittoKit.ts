@@ -263,19 +263,22 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     targetingArea: SKILL_TARGETING_AREA,
   };
   // Royal Descent deals no damage. It adds Itto's ATK per DEF to his attacks, and infuses them with Geo as they are
-  // Converted, with the burst's Normal ATK SPD, for its seconds from the cast
+  // Converted, with the burst's Normal ATK SPD, for its seconds from the cast or until he leaves the field, as gcsim's
+  // Exit deletes the burst's ATK and ATK SPD
   const elementalBurst: KitAction = {
     hits: [],
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       buffKitMember(kitEffectState, combatant.characterId, {
         amount: burstTalentMultiplier(ITTO_BURST_DEFENSE_BONUS_INDEX) * combatant.attributes.defense,
         attribute: Attribute.Attack,
+        isEndedOnSwap: true,
         secondsRemaining: BURST_SECONDS,
       });
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Geo,
         isConverted: true,
+        isEndedOnSwap: true,
         kind: "infusion",
         normalAttackSpeedBonus: BURST_NORMAL_ATTACK_SPEED_BONUS,
         secondsRemaining: BURST_SECONDS,
