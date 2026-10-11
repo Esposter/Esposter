@@ -124,13 +124,13 @@ The server's clock answers every start and save, and the page keeps its offset f
 
 Each cause of a write, per player-hour of play:
 
-- **The autosave interval:** one save per interval, and only when the save differs from the last one stored. Idle play sends nothing, and a player who changes something every interval sends about one a minute, so about sixty an hour at the current interval.
+- **The autosave interval:** one save per interval, and only when the save differs from the last one stored. Idle play sends nothing, and a player who changes something every interval sends one save per interval.
 - **A grant:** one save at once, through the same single-flight. A grant made while a save is in flight is sent once after it settles, so a burst of pickups costs one save per round trip rather than one each.
 - **Leaving:** one save when the page is hidden or left, written after the journal.
 - **A start:** one read and one write per page load. A failed attempt whose write had not landed is one more read and one more write, and one whose write had landed is one more read, answered as that start.
 - **A refused save:** one more read and one more write, and only when another write landed under the same blob.
 
-The cost basis is the operations: each write is one billed write operation on the `genshin-assets` container, and each read is one read. A write carries the save's own JSON, which at its ceiling is about 1.4 MB before the blob-state's zstd compression. The page restates no price, since the Azure pricing page gives it. The per-save CPU cost on the client and the server is measured by `saveGenshin.bench.ts`, whose committed report is the number to quote.
+The cost basis is the operations: each write is one billed write operation on the `genshin-assets` container, and each read is one read. A write carries the save's own JSON, held under the request limit at its ceiling, before the blob-state's zstd compression. The page restates no price, since the Azure pricing page gives it. The per-save CPU cost on the client and the server is measured by `saveGenshin.bench.ts`, whose committed report is the number to quote.
 
 ## Decisions
 
@@ -139,7 +139,7 @@ The cost basis is the operations: each write is one billed write operation on th
 - **The ETag is the lease.** A save under the ETag its session last got is one write, and a refused one is read once. Only the session's own earlier write is written over, and any other session's envelope is a replacement. A changed blob is never merged, and a refused write of the session's own is a replacement too. A start that loses a race with another start is replaced the same way, since the other start holds the lease.
 - **Every blob-state save goes through the shared path, and the Genshin lease is one caller of it.** The Clicker and Dungeons save the same way, as the [conditional writes](/docs/architecture/conditional-writes) page describes. The Genshin start and save write through the same service, with the lease's own rules in front of it.
 - **Saves are by value, one at a time.** Each save is the world's whole state, so the newest save supersedes the ones before it and a lost save costs nothing the next one does not carry. Sending one at a time keeps every save built on the ETag the last acknowledgement returned.
-- **The save fits one request.** The request size limiter admits 2 MB for a body that is not multipart (`MAX_REQUEST_SIZE`), and a save at its ceiling is about 1.4 MB, so a save is never refused for its size on the way in.
+- **The save fits one request.** The request size limiter admits 2 MB for a body that is not multipart (`MAX_REQUEST_SIZE`), and the save's ceiling is held under it, so a save is never refused for its size on the way in.
 - **A start is idempotent across its page's retries.** The page generates one session id and sends it with every attempt. A blob already under that id answers the start its first write took, from the session that write replaced, which the envelope keeps, so a lost response is never read as a replacement of the page's own lease, and a guest's save is never uploaded over an account that the first attempt already created.
 - **A replaced session is told by the in-process real-time layer, and by the refused write as the fallback.** A start that replaces a session emits the replacing session's id on the per-user `replaceSession` event, which the `onSessionReplaced` subscription yields to the user's subscribers. The emitter is in-process, so a session on another server instance hears nothing and is replaced by its next refused save.
 - **A signed-in start that fails blocks the page.** The browser's copy is a guest's save or a new player's, so a signed-in player whose start fails must not play it. The page waits on its loading screen with a Retry, and the retries back off so an outage is not hammered.

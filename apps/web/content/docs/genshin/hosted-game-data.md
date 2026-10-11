@@ -211,66 +211,18 @@ flowchart TD
 
 There is no client-side hash check: TLS, the immutable keys and the schema parse already cover what one would catch, and nothing would act on a mismatch.
 
-## Measurements
-
-Each phase was measured before its change and after it, with the same commands, each build run through the machine's run slots. Wall times move with the machine's load, so the median of three is the steadier figure.
-
-The first phase, the profiles and book bodies, measured at HEAD `38b9ece57a` before:
-
-| Measure                                          | Before                  | After                         |
-| :----------------------------------------------- | :---------------------- | :---------------------------- |
-| `genshin-world` dist, files                      | 6,539                   | 268                           |
-| `genshin-world` dist, bytes                      | 114,016,946 (108.7 MiB) | 19,283,033 (18.4 MiB)         |
-| `index.js`                                       | 3,918,672 bytes         | 3,899,950 bytes               |
-| `index.d.ts`                                     | 96,709 bytes            | 97,653 bytes                  |
-| Clean build, wall time                           | 64.03 s                 | 13.97 s                       |
-| Clean build, peak memory                         | 4,320,608,256 bytes     | 2,973,122,560 bytes           |
-| No-clean build, median of three, wall time       | 63.74 s                 | 14.36 s (14.14, 14.61, 14.36) |
-| No-clean build, median of three, peak memory     | 4,514,201,600 bytes     | 2,969,731,072 bytes           |
-| Declaration program, `tsc --listFilesOnly` files | 3,100 (394 generated)   | 2,726 (3 generated)           |
-| Tracked generated files, count                   | 6,698                   | 427 after the removal commit  |
-| Tracked generated files, bytes                   | 108,387,082             | 17,539,228                    |
-| Published objects per account                    | 0                       | 5,765                         |
-| Published bytes per account, compressed          | 0                       | 31,348,117                    |
-
-The second phase, every other dataset, measured at HEAD `3ee1c42c1f` before and on the removal's tree after:
-
-| Measure                                      | Before                                | After                                                                   |
-| :------------------------------------------- | :------------------------------------ | :---------------------------------------------------------------------- |
-| `genshin-world` dist, files                  | 267                                   | 14                                                                      |
-| `genshin-world` dist, bytes                  | 19,927,685                            | 2,101,284                                                               |
-| `index.js`                                   | 4,896,071 bytes                       | 1,311,854 bytes                                                         |
-| `index.js`, gzip -9                          | 778,072 bytes                         | 303,095 bytes                                                           |
-| `index.js`, brotli -q 11                     | 542,345 bytes                         | 227,004 bytes                                                           |
-| `index.js`, JSON against code                | 3,407,768 of 4,896,105 bytes          | none of 1,311,888 bytes                                                 |
-| `index.js`'s static closure                  | 5,484,286 bytes, 3,959,186 of it JSON | 1,390,438 bytes, the lock's 23,690 and achievementCount's 85 of it JSON |
-| `index.d.ts`                                 | 98,342 bytes                          | 104,881 bytes                                                           |
-| `save.js` and its static chunks              | 89,183 bytes                          | 25,462 bytes                                                            |
-| `terrainTileWorker.js` and its static chunks | 500,332 bytes                         | 11,545 bytes                                                            |
-| Clean build, wall time                       | 14.25 s                               | 10.44 s                                                                 |
-| Clean build, peak memory                     | 2,954,690,560 bytes                   | 2,261,483,520 bytes                                                     |
-| No-clean build, median of three, wall time   | 13.78 s (13.73, 13.78, 13.85)         | 10.37 s (11.19, 10.37, 10.32)                                           |
-| No-clean build, median of three, peak memory | 3,228,303,360 bytes                   | 2,380,103,680 bytes                                                     |
-| Declaration program, files                   | 2,745 (3 generated, 32 data)          | 2,850 (18 generated, 1 data)                                            |
-| Tracked generated files                      | 427 files, 17,539,228 bytes           | 2 files, 31,218 bytes                                                   |
-| Tracked data JSON                            | 58 files, 43 of them bundled          | 25 files, achievementCount bundled                                      |
-| Objects the lock reaches per account         | 5,765                                 | 6,228                                                                   |
-| Stored objects and bytes per account         | 5,765, 31,348,117 bytes               | 6,253, 36,126,129 bytes                                                 |
-
-The declaration program's generated files after are the lock, the talent loader map, and `genshin-text`'s loader map and its language chunks, which the program reaches through that package's source; it emits none of them. The stored objects outnumber the lock's by the versions the last republish replaced, which a prune takes once they pass the window. The `index.d.ts` growth is the barrel's own exports, the character packs' among them. Neither phase timed the world's mount to the door: it needs a signed-in save in a browser, so the gate's wait is the owner's to read.
-
 ## Decisions
 
 - **Azure serves the objects directly, with no CDN.** Immutable caching already answers a repeat visit without a request, and [a CDN in front of Blob storage](/docs/infra/rejected/cdn-in-front-of-blob-storage) would change only the base URL.
 - **Nothing is served through the app.** No Nitro route carries the data, so no build compresses it, and [static data in public assets](/docs/genshin/rejected/static-data-in-public-assets) stays rejected.
-- **Each language is one index,** not one object per entity. The largest index is about 20 KB raw, so a 2 KB book never pulls a 300 KB index.
+- **Each language is one index,** not one object per entity, so a reader fetches the one index of its language rather than an object for each entry it shows.
 - **The keys are `profile/<Language>` and `bookBody/<Language>`,** with the entity id as the entry key, in decimal.
 - **Each dataset is one builder that returns records.** A step hands its records to the publisher, scoped to the dataset it replaces, and a code-named record takes a key of its own (`stats/weapons`, `gcg/standardRule`), each deck `gcg/deck<id>`.
 - **The lock imports statically,** through the package's own `#src/*.json` import, as achievementCount does, and nothing else the package imports is data.
 - **The base is a required prop, passed down from the world.** `WorldScreen` and `GameOpening` take `gameDataBaseUrl`, the Session hands it to every screen that reads, and the lint rule bans `provide` and `inject` because they hide an input from a component's signature, so a screen mounted without the base is a type error rather than a silent fetch from a guessed address.
 - **Prune runs on demand, not at the end of each publish.**
 - **The Amber profile test fetches through a stub.** The stub answers the index from the lock's real hash and a stub record, because the test asserts the namecard rule, and a test that copies game data is what the rules forbid.
-- **The chunk suffix is removed.** Its `.chunk.ts` files were all `genshin-world`'s generated chunks, and with their loader maps gone no module carries the suffix.
+- **Generated chunks carry no `.chunk.ts` suffix.** The only modules that carried it were `genshin-world`'s generated chunks, and with their loader maps gone no module does.
 - **Publishing goes to both accounts in one call.** A dry run stores nothing, so there is no per-account dry run.
 - **A key scope sits under a dataset.** A bare dataset passed as a key is refused, since it would replace its whole dataset with one record.
 - **The lock's keys type the readers' keys,** `keyof` over the committed lock, though the declarations then carry the lock's key names.
