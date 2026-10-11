@@ -133,6 +133,8 @@ interface Props {
   interactables: Interactable[];
   // Whether a screen over the world holds its clock, as the game's menus pause its time
   isHeld?: true;
+  // Whether the world is paused under a cover, its canvas drawing only the frames it is asked for
+  isPaused?: true;
   // Whether the development tuning panel is shown, which the app decides
   isTuning: boolean;
   // The effects on the team, whose live taunts the enemies strike instead of the character within their aggro range
@@ -171,6 +173,7 @@ const {
   heldMinutes,
   interactables,
   isHeld,
+  isPaused,
   isTuning,
   kitEffectState,
   landmarkCollider,
@@ -342,8 +345,8 @@ whenever(
       if (!postPipeline.value) return;
       const compiled = postPipeline.value.compileAsync();
       // The compile waits on the next frame, and a world paused under the opening draws only the frames it is asked for,
-      // So that frame is asked for here; a running world draws one more frame than it would have, behind the cover
-      advance();
+      // So a paused world asks for that frame; a running world draws it anyway, and its canvas refuses `advance`
+      if (isPaused) advance();
       await measureLoadStep("compile", compiled);
     }).match(noop, (error) => {
       console.error("The Windrise post pipeline failed to compile", error);
