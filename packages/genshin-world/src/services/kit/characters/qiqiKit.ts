@@ -19,6 +19,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -41,21 +42,21 @@ const QIQI_BURST_GROUP_ID = 3539;
 // Plus its radius, and a box spawns on its near edge, so it is priced as the circle to its far corner. The third strike's
 // First hit is a fan of 30 degrees
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/attack.go
-const FIRST_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 1.2 });
+const FIRST_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.8, 1.2);
 const SECOND_STRIKE_HIT_AREA: AttackArea = Object.freeze({
   angle: 2 * Math.PI,
   height: 2,
   radius: Math.hypot(2.2, 1.4 / 2),
 });
 const THIRD_STRIKE_FAN_HIT_AREA: AttackArea = Object.freeze({ angle: Math.PI / 6, height: 2, radius: 1 + 1.6 });
-const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.6 });
-const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.6 });
-const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2.2 });
+const THIRD_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.6);
+const FOURTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.6);
+const FIFTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(1, 2.2);
 // Measured: gcsim v2.47.2 (MIT) qiqi/charge.go, the first slash of radius 2 half a metre ahead and the second of radius
 // 2.8 a metre ahead, each priced as its offset plus its radius
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/charge.go
-const CHARGED_FIRST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.5 + 2 });
-const CHARGED_SECOND_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2.8 });
+const CHARGED_FIRST_HIT_AREA: AttackArea = createCircleReach(0.5, 2);
+const CHARGED_SECOND_HIT_AREA: AttackArea = createCircleReach(1, 2.8);
 // Measured: gcsim v2.47.2 (MIT) qiqi/skill.go, Herald of Frost's initial damage and its swipes, each a circle of radius 2.5
 // Round the body, the swipes following it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/skill.go
@@ -66,9 +67,9 @@ const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2
 // Measured: gcsim v2.47.2 (MIT) qiqi/plunge.go, the collision's circle of radius 1 a metre ahead, and the low and high
 // Plunges' of 3 and 5 a metre ahead, each priced as its offset plus its radius
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 
 // Measured: gcsim v2.47.2 (MIT) qiqi/attack.go, each strike's hitmarks and animation at 60 fps. The wiki's Ancient Sword Art
 // Advanced properties give each hit's poise, as gcsim gives none. Each strike's hits are physical slashes

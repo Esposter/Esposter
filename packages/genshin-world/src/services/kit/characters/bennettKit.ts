@@ -10,7 +10,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import {
+  MELEE_WEAPON_TYPES,
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -36,11 +41,6 @@ const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, he
 // Measured: gcsim v2.47.2 (MIT) bennett/charge.go, the charged attack's two circles of radius 2.2
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/charge.go
 const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 2.2 });
-// Measured: gcsim v2.47.2 (MIT) bennett/plunge.go, the collision a circle of radius 1, the low plunge's 3 and the high's 5
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) bennett/skill.go, the press as a fan of 270 degrees and radius 2.5
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/skill.go
 const PRESS_HIT_AREA: AttackArea = Object.freeze({ angle: (3 * Math.PI) / 2, height: 2, radius: 2.5 });
@@ -343,7 +343,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   highPlunge: {
     hits: [
       {
-        hitArea: HIGH_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.high,
         hitmarkSeconds: 38 / 60,
         isBlunt: true,
         poiseDamage: 150,
@@ -356,7 +356,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   lowPlunge: {
     hits: [
       {
-        hitArea: LOW_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.low,
         hitmarkSeconds: 36 / 60,
         isBlunt: true,
         poiseDamage: 100,
@@ -406,7 +406,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // The collision's poise is the wiki's 25, and it applies no gauge of its own, 0U, as the wiki's table gives
   plungeCollision: {
     gauge: 0,
-    hitArea: PLUNGE_COLLISION_HIT_AREA,
+    hitArea: PLUNGE_HIT_AREAS.collision,
     hitmarkSeconds: 0,
     poiseDamage: 25,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),

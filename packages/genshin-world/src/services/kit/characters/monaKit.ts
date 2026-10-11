@@ -12,7 +12,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  SUMMON_LINGER_SECONDS,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -43,10 +48,6 @@ const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, h
 // Measured: gcsim v2.47.2 (MIT) mona/charge.go, the charged attack's circle of radius 3, centred on the target
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/charge.go
 const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-// Provisional: gcsim has no plunge file for Mona, so the plunges' reach is Bennett's and Diluc's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) mona/skill.go, Mirror Reflection's phantom is a circle of radius 5 for both its tick and
 // Its explosion. Its height is provisional
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/mona/skill.go
@@ -246,7 +247,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       {
         element: Element.Hydro,
         gauge: 1,
-        hitArea: HIGH_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.high,
         hitmarkSeconds: 0,
         poiseDamage: 100,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
@@ -260,7 +261,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       {
         element: Element.Hydro,
         gauge: 1,
-        hitArea: LOW_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.low,
         hitmarkSeconds: 0,
         poiseDamage: 50,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),
@@ -318,7 +319,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   plungeCollision: {
     element: Element.Hydro,
     gauge: 0,
-    hitArea: PLUNGE_COLLISION_HIT_AREA,
+    hitArea: PLUNGE_HIT_AREAS.collision,
     hitmarkSeconds: 0,
     poiseDamage: 5,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, MONA_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),

@@ -11,6 +11,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -29,11 +30,11 @@ const DIONA_BURST_GROUP_ID = 3939;
 // Provisional: gcsim v2.47.2 (MIT) diona/attack.go gives each strike's box as a 0.1 reach half a metre ahead, which the
 // Area prices as its offset plus its reach. The charged aimed shot and the plunges are not fetched from gcsim, so their
 // Reaches are provisional, as the strikes' are, until the Mac measures them
-const STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.5 + 0.1 });
+const STRIKE_HIT_AREA: AttackArea = createCircleReach(0.5, 0.1);
 const AIMED_SHOT_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Provisional: gcsim v2.47.2 (MIT) diona/skill.go gives each paw a circle of radius 0.5 on the primary target, which an
 // Area does not hold, so a paw reaches the 5 metres an attack targets within, as Xingqiu's sword rain does
 const PAW_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });

@@ -13,6 +13,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -36,7 +37,7 @@ const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, h
 // Measured: gcsim v2.47.2 (MIT) barbara/charge.go, the charged attack's circle of radius 3 centred 5 metres ahead,
 // Priced as its offset plus its radius
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/charge.go
-const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 + 3 });
+const CHARGED_HIT_AREA: AttackArea = createCircleReach(5, 3);
 // Measured: gcsim v2.47.2 (MIT) barbara/plunge.go, the collision a circle of radius 1.5, and the low and high plunges'
 // Of 3 and 3.5, each round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/plunge.go

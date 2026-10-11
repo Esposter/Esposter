@@ -8,6 +8,8 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createBoxReach } from "#src/services/kit/createBoxReach";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -23,10 +25,6 @@ const KEQING_BURST_GROUP_ID = 4239;
 // Offset plus its radius, and a box is priced to its far corner. The fifth strike is a bullet on the primary target, which
 // An area does not hold, so it is provisional at the reach the targeting reads
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/keqing/attack.go
-const createCircleReach = (offset: number, radius: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: offset + radius });
-const createBoxReach = (offset: number, width: number, length: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(offset + length, width / 2) });
 const FIRST_STRIKE_HIT_AREA = createBoxReach(0, 1.5, 2.2);
 const SECOND_STRIKE_HIT_AREA = createCircleReach(0.5, 1.5);
 const THIRD_STRIKE_HIT_AREA = createCircleReach(1, 1.8);
@@ -35,9 +33,9 @@ const FOURTH_STRIKE_HIT_AREA = createCircleReach(0.6, 1.5);
 const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Provisional: the plunges' reaches are the collision, low and high plunges' of 1, 3 and 5 metres ahead, as gcsim gives
 // Them for Chongyun, each priced as its offset plus its radius, until the Mac measures Keqing's
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Provisional: the charged attack's two slashes reach the 5 metres an attack targets within, as Chongyun's charged attack
 const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) keqing/skill.go, Stellar Restoration's and its recast's circles of radius 1.6 and 3 on the

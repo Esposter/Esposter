@@ -15,6 +15,8 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createBoxReach } from "#src/services/kit/createBoxReach";
+import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -35,10 +37,6 @@ const XIAO_BURST_GROUP_ID = 2639;
 // Body, priced as the circle to its far corner, until an area holds an offset. Each reaches further under Bane of All
 // Evil, the attacks it converts
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xiao/attack.go
-const createFanReach = (degrees: number, radius: number): AttackArea =>
-  Object.freeze({ angle: (degrees * Math.PI) / 180, height: 2, radius });
-const createBoxReach = (width: number, length: number): AttackArea =>
-  Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(length, width / 2) });
 // The charged attack's fan of 200 degrees round the body, of radius 3 and 3.2 converted, and the plunges' circles round
 // The body, the collision's of radius 1, and the low and high plunges' of 3 and 5, 4 and 6 converted
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xiao/plunge.go
@@ -70,10 +68,10 @@ const XIAO_STRIKES = [
         poiseDamage: 25.08,
       },
       {
-        convertedHitArea: createBoxReach(1.6, 3),
+        convertedHitArea: createBoxReach(0, 1.6, 3),
         convertedPoiseDamage: 37.62,
         groupIndex: 1,
-        hitArea: createBoxReach(1.4, 2.7),
+        hitArea: createBoxReach(0, 1.4, 2.7),
         hitmarkFrames: 17,
         poiseDamage: 25.08,
       },
@@ -130,10 +128,10 @@ const XIAO_STRIKES = [
     frames: 30,
     hits: [
       {
-        convertedHitArea: createBoxReach(1.7, 3.2),
+        convertedHitArea: createBoxReach(0, 1.7, 3.2),
         convertedPoiseDamage: 97.56,
         groupIndex: 6,
-        hitArea: createBoxReach(1.5, 3),
+        hitArea: createBoxReach(0, 1.5, 3),
         hitmarkFrames: 16,
         poiseDamage: 65.04,
       },

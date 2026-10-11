@@ -12,7 +12,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -39,17 +40,13 @@ const BOX_STRIKE_HIT_AREA: AttackArea = Object.freeze({
   height: 2,
   radius: Math.hypot(2.5, 2 / 2),
 });
-const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2 });
+const THIRD_STRIKE_HIT_AREA: AttackArea = createCircleReach(1, 2);
 const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: (3 * Math.PI) / 2, height: 2, radius: 1 + 2 });
 // Measured: gcsim v2.47.2 (MIT) beidou/config.yml, the charged attack's spinning circle of radius 3 centred 0.3 metres
 // Ahead and its final circle of radius 3.5, both marked not yet implemented there
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/config.yml
-const CHARGED_CYCLIC_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 3 });
+const CHARGED_CYCLIC_HIT_AREA: AttackArea = createCircleReach(0.3, 3);
 const CHARGED_FINAL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
-// Provisional: gcsim has no plunge file for Beidou, so the plunges' reach is Jean's and Mona's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) beidou/skill.go, Tidecaller's base circle of radius 6 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/beidou/skill.go
 const TIDECALLER_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 6 });
@@ -282,7 +279,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     highPlunge: {
       hits: [
         {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 200,
@@ -295,7 +292,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 150,
@@ -309,7 +306,7 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // The collision's poise is the wiki's 35, and it applies no gauge of its own, 0U, as the wiki's table gives
     plungeCollision: {
       gauge: 0,
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: 35,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, BEIDOU_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),

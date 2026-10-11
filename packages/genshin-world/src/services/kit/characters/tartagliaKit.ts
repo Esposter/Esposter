@@ -16,7 +16,12 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -60,9 +65,6 @@ const PLUNGE_SECONDS = 0.4;
 const PLUNGE_COLLISION_POISE_DAMAGE = 10;
 const LOW_PLUNGE_POISE_DAMAGE = 50;
 const HIGH_PLUNGE_POISE_DAMAGE = 100;
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 
 // Measured: gcsim v2.47.2 (MIT) tartaglia/skill.go, the stance change's circle of radius 3 round the body at 16 frames of
 // 39, and the 18 frames of the press back to the Ranged Stance. The wiki's Foul Legacy: Raging Tide gives the change 2U,
@@ -389,7 +391,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     highPlunge: {
       hits: [
         {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           poiseDamage: HIGH_PLUNGE_POISE_DAMAGE,
           talentMultiplier: attackTalentMultiplier(12),
@@ -401,7 +403,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           poiseDamage: LOW_PLUNGE_POISE_DAMAGE,
           talentMultiplier: attackTalentMultiplier(11),
@@ -520,7 +522,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       if (constellationCount >= UNDERSTREAM_CONSTELLATION) gainPartyMemberEnergy(party, combatant, UNDERSTREAM_ENERGY);
     },
     plungeCollision: {
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: PLUNGE_COLLISION_POISE_DAMAGE,
       talentMultiplier: attackTalentMultiplier(10),
