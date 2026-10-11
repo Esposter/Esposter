@@ -20,7 +20,9 @@ const endKitEffect = (effect: KitEffect, { body }: KitContext): KitStrike | unde
 // The effects on the team run on by a step, written in place in three walks: each effect's seconds run down and a
 // Stance's held seconds run up, then each field's schedule runs on, then the summons land their hits and the taunts,
 // Bubbles and shields that end explode. A field's tick reads the world's combat state, and an effect a tick adds starts
-// At its full seconds and is stepped by the last walk. The last walk also drops the effects that have run out from the
+// At its full seconds and is stepped by the last walk. A summon its kit or a swap ended before the step lands nothing in
+// It, as gcsim's ticks check that their summon still stands: Durin's Dragon recast over (durin/burst.go:111), Yae Miko's
+// Totems destroyed (yaemiko/kitsune.go:55) and Klee's sparks on a swap (klee/burst.go:59, 131), at v2.47.2 (MIT). The last walk also drops the effects that have run out from the
 // List in place. The step's lists start here: the strikes the summons land and the explosions go into the context's
 // Strikes, and the effects that ran out into its expired effects
 export const stepKitEffects = (stepSeconds: number, context: KitContext): void => {
@@ -36,11 +38,12 @@ export const stepKitEffects = (stepSeconds: number, context: KitContext): void =
   const { effects } = kitEffectState;
   let keptCount = 0;
   for (const effect of effects) {
-    if (effect.kind === "summon") stepKitSummon(effect, stepSeconds, body.position, strikes);
-    else {
+    if (effect.kind !== "summon") {
       const strike = endKitEffect(effect, context);
       if (strike) strikes.push(strike);
     }
+    // A summon whose seconds had run out before the step, ended by its kit or a swap, lands nothing more
+    else if (effect.secondsRemaining + stepSeconds > 0) stepKitSummon(effect, stepSeconds, body.position, strikes);
     if (effect.secondsRemaining > 0) effects[keptCount++] = effect;
     else expiredEffects.push(effect);
   }
