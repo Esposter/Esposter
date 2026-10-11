@@ -5,13 +5,16 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 describe(damagePartyMember, () => {
-  test("takes the share from its HP and leaves it standing", () => {
+  test("takes the share from its HP, leaves it standing and records the loss", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
     damagePartyMember(party, 1, 0.25);
 
-    expect(getPartyMember(party, 1)).toStrictEqual({ ...createPartyMember(), healthShare: 0.75 });
+    expect({ healthChanges: party.healthChanges, partyMember: getPartyMember(party, 1) }).toStrictEqual({
+      healthChanges: [{ characterId: 1, healthShare: -0.25, overflowHealthShare: 0 }],
+      partyMember: { ...createPartyMember(), healthShare: 0.75 },
+    });
   });
 
   test("downs a member whose HP runs out, empties its energy and brings on the next member standing after it", () => {

@@ -36,8 +36,9 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Elements brought since are struck and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
 // As its stance, if it holds one, plays them, an action that starts turns the body to the enemy it targets, or to the
 // Camera's aim for an aimed shot, and every hit the step lands strikes the ores, the Dendro Cores and the enemies in its
-// Area, a normal or charged attack's that struck an enemy rolling for its energy. A character whose combatant is not
-// Built yet, its talent multipliers still in flight, plays nothing until they arrive
+// Area, a normal or charged attack's that struck an enemy rolling for its energy, and the changes to the members' HP are
+// Sent last. A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until
+// They arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -145,4 +146,7 @@ export const stepActiveKit = (
   ];
   landedHits.length = 0;
   gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, strikeContext), party, random);
+  // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
+  // And a change a kit makes as it hears one is sent at the next step
+  for (const healthChange of party.healthChanges.splice(0)) emit({ ...healthChange, kind: KitEventKind.HealthChanged });
 };

@@ -14,7 +14,7 @@ Not built yet:
 - **Framing's hold and Focused Impression.** Its hit falls a held duration after the press, and a skill's hold levels are fixed, so it waits on a hold whose hitmark follows the seconds held.
 - **Ascension 1**, which cuts the press's cooldown when a marked enemy dies, waits on an enemy-death kit event.
 - **Ascension 4**, the team's Healing Bonus and Cryo DMG Bonus by region, waits on a passive that reads each member's region, as a passive reads the combatant alone.
-- **Constellation 1**, the ATK regeneration on each heal, waits on a heal kit event.
+- **Constellation 1**, the ATK regeneration on each heal, is not built, though its event is: `HealthChanged` carries each heal with its healer once her heals name her through `changeKitMemberHealth`.
 - **Constellation 2**, the ATK stacks from the press's hits, waits on a passive that reads the team's effects, as a passive reads the combatant alone.
 - **Constellation 4**, the extra DMG and energy on the burst's hits against marked enemies, waits on a count kept over a kit's own hits within a window and on the energy one of them gives.
 - **Constellation 6**, the summation strike and heal on hold-marked enemies, waits on Focused Impression's mark.

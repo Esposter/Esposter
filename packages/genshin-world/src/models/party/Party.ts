@@ -1,3 +1,4 @@
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { PartyTeam } from "#src/models/party/PartyTeam";
 
@@ -7,6 +8,8 @@ export interface Party {
   activeIndex: number;
   characterIdMemberMap: Map<number, PartyMember>;
   deployedTeamIndex: number;
+  // The changes to its members' HP not yet sent to the deployed team's kits, which the step on the field sends and empties
+  healthChanges: PartyHealthChange[];
   switchedSeconds: number;
   teams: PartyTeam[];
 }

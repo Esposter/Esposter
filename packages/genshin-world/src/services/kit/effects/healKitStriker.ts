@@ -13,5 +13,6 @@ export const healKitStriker = (party: Party, combatant: Combatant, kitHit: KitHi
       party,
       combatant.characterId,
       (healAttackShare * combatant.attributes.attack) / combatant.attributes.maxHealth,
+      combatant.characterId,
     );
 };

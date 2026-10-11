@@ -22,6 +22,7 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
+import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop, takeOne } from "@esposter/shared";
 import {
@@ -155,6 +156,25 @@ describe(stepActiveKit, () => {
     position.x += 10;
 
     expect(startBodies[0]?.position.x).toBe(castX);
+  });
+
+  test("sends the team's kits each change to a member's HP since the last step, once", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 0.25);
+    const kitState = createKitState();
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context);
+    stepActiveKit(kitState, IDLE_INPUT, 0.1, context);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare: -0.25,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+    ]);
   });
 
   test("plays a stance's actions in place of the kit's while the stance holds", () => {

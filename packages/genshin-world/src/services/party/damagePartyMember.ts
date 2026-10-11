@@ -3,13 +3,26 @@ import type { Party } from "#src/models/party/Party";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
-// Takes a share of a character's Max HP from it, never below none. A character whose HP runs out is down and loses its
+// Takes a share of a character's Max HP from it, never below none, and records the change for the kits with the character
+// Whose kit took it as its source, none for an enemy's strike. A character whose HP runs out is down and loses its
 // Energy, and if it was on the field, the next member of the deployed team standing after it takes the field, as the
 // Game brings the next character on. A character already down takes nothing
-export const damagePartyMember = (party: Party, characterId: number, lostHealthShare: number): void => {
+export const damagePartyMember = (
+  party: Party,
+  characterId: number,
+  lostHealthShare: number,
+  sourceCharacterId?: number,
+): void => {
   const partyMember = getPartyMember(party, characterId);
-  if (partyMember.healthShare === 0) return;
-  partyMember.healthShare = Math.max(0, partyMember.healthShare - lostHealthShare);
+  if (partyMember.healthShare === 0 || lostHealthShare <= 0) return;
+  const previousHealthShare = partyMember.healthShare;
+  partyMember.healthShare = Math.max(0, previousHealthShare - lostHealthShare);
+  party.healthChanges.push({
+    characterId,
+    healthShare: partyMember.healthShare - previousHealthShare,
+    overflowHealthShare: 0,
+    ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
+  });
   if (partyMember.healthShare > 0) return;
   partyMember.energy = 0;
   const characterIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
