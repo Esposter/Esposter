@@ -571,6 +571,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         excludedGlobs: [],
         fileCap: REVIEW_FILE_CAP,
         fileCount: REVIEW_FILE_CAP + 1,
+        includedGlobs: [],
         roomFileCount: REVIEW_FILE_CAP,
         sha: oversizedSha,
       }),
@@ -616,6 +617,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         excludedGlobs: [],
         fileCap: REVIEW_FILE_CAP,
         fileCount: REVIEW_FILE_CAP,
+        includedGlobs: [],
         roomFileCount: REVIEW_FILE_CAP - 1,
         sha: fittingSha,
       }),
@@ -656,7 +658,14 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).toHaveBeenCalledExactlyOnceWith({
       cwd: getCwd(),
       model: SessionRoleModelMap[SessionRole.Reshape],
-      prompt: getReshapePrompt({ excludedGlobs: [], fileCap: 1, fileCount: 2, roomFileCount: 1, sha: oversizedSha }),
+      prompt: getReshapePrompt({
+        excludedGlobs: [],
+        fileCap: 1,
+        fileCount: 2,
+        includedGlobs: [],
+        roomFileCount: 1,
+        sha: oversizedSha,
+      }),
     });
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);

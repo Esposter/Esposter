@@ -14,9 +14,9 @@ import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePro
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
 import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkippingStops";
 import { readCommitAttempts } from "#src/services/coderabbit/collect/readCommitAttempts";
-import { readExcludedGlobs } from "#src/services/coderabbit/collect/readExcludedGlobs";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readHeldShas } from "#src/services/coderabbit/collect/readHeldShas";
+import { readPathFilterGlobs } from "#src/services/coderabbit/collect/readPathFilterGlobs";
 import { readReshapeFailure } from "#src/services/coderabbit/collect/readReshapeFailure";
 import { readReviewedFilePaths } from "#src/services/coderabbit/collect/readReviewedFilePaths";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
@@ -101,13 +101,7 @@ export const reshapeQueue = async ({
   const tipSha = readHeadSha(cwd);
   console.info(`reshape: ${sha} changes ${fileCount} files alone against a room of ${roomFileCount}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
-  const prompt = getReshapePrompt({
-    excludedGlobs: readExcludedGlobs(baseSha, cwd),
-    fileCap,
-    fileCount,
-    roomFileCount,
-    sha,
-  });
+  const prompt = getReshapePrompt({ ...readPathFilterGlobs(baseSha, cwd), fileCap, fileCount, roomFileCount, sha });
   const { isEnded } = await runSession({ cwd, model: SessionRoleModelMap[SessionRole.Reshape], prompt });
   const failure = isEnded ? readReshapeFailure(sha, roomFileCount, baseSha, cwd) : "exited non-zero";
   // The final tree equals the original's, so what followed the commit applies as it did — a stop here is a
