@@ -9,7 +9,7 @@ import {
 import { createFollowCamera } from "#src/camera/createFollowCamera";
 import { createGroundQuery } from "#src/collision/createGroundQuery";
 import { createLandmarkCollider } from "#src/collision/createLandmarkCollider";
-import { PerspectiveCamera, Vector3 } from "three";
+import { Euler, PerspectiveCamera, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(createFollowCamera, () => {
@@ -120,6 +120,22 @@ describe(createFollowCamera, () => {
     followCamera.follow(pivot, new Vector3(), FRAME_SECONDS);
 
     expect(camera.position.distanceTo(pivot)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE);
+  });
+
+  test("starts level, whatever pose the camera it takes over was looking at", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    camera.quaternion.setFromEuler(new Euler(Math.PI / 2, 0, 0, "YXZ"));
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: FOLLOW_CAMERA_DEFAULT_SETTINGS,
+    });
+    followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(camera.position.y).toBeCloseTo(PIVOT_HEIGHT);
   });
 
   test("resets its eye to the settings' default distance after a zoom", () => {

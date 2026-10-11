@@ -29,7 +29,9 @@ export const createFollowCamera = ({
   const euler = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
   const armDirection = new Vector3();
   let yaw = euler.y;
-  let pitch = euler.x;
+  // The camera the world hands over may look straight up, as its default pose does, so the follow camera starts level as
+  // A reset does, its look clamped from there rather than from that pose
+  let pitch = 0;
   let distance = settings.defaultDistance;
   let armLength = distance;
   camera.fov = FOLLOW_CAMERA_FOV;
