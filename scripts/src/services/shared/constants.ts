@@ -1,8 +1,8 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 import { KIBIBYTE } from "@esposter/configuration";
 import { join } from "node:path";
-import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
@@ -18,7 +18,7 @@ export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");
 export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, "oxfmt.config.ts");
-// How long any request a script makes may take (`fetchJson`) — the npm registry and nodejs.org alike
+// How long any request a script makes may take (`fetchJson`) — the npm registry and the GitHub API alike
 export const FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
