@@ -377,7 +377,7 @@ flowchart TD
 
 ### Keeping both machines building
 
-- **The migration is a sweep with a ledger.** `.agents/ledgers/genshin/kit-records.md` has one row per kit, ticked by each commit's `Ledger:` trailer. A machine claims its rows through the fleet before converting them, and neither machine edits a kit the other has claimed.
+- **The migration is a sweep with a ledger.** the kit-records ledger has one row per kit, ticked by each commit's `Ledger:` trailer. A machine claims its rows through the fleet before converting them, and neither machine edits a kit the other has claimed.
 - **From phase 1's framework commit, a new kit is written in the new shape**, as the index's template shows. A kit not yet converted still takes edits in today's shape, a passive or a hook, and its conversion carries them over. Its replay digest moves only in a commit that means to change its behaviour.
 - **A conversion publishes nothing.**
   - Phase 1 publishes every record once, with the same values as today's modules.
