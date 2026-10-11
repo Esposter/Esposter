@@ -1,10 +1,10 @@
 ---
 title: Resident schedules
-description: Proposal — the residents' data that is still to come. The world's clock already picks each resident's day or night spot and holds a change while they are in view; what remains is the other regions' residents and the night spots, from the scene group export, and a vendor selling only in their hours once the shops sell.
+description: Proposal — the residents' data that is still to come. The world's clock already picks each resident's day or night spot and holds a change while they are in view; what remains is Nod-Krai's residents and the night spots, from the NPC members the client's group scripts fill into the scene group record, and a vendor selling only in their hours once the shops sell.
 model: claude-opus-5-5
 needs: [game-exports]
 touches: ["scripts/src/services/genshinAssets/residents/**", "packages/genshin-world/src/data/regions/**"]
-waiting: "the scene group export (the other machine), for the other regions' residents and the night spots"
+waiting: "the scene group record's NPC members past the births, Nod-Krai's and each one's suites by the hour, which only the client's group scripts fill"
 ---
 
 # Resident schedules
@@ -14,17 +14,17 @@ The game's people keep hours. A hunter sells meat in Springvale by day and goes 
 ## Decisions
 
 - **Day and night, at the game's hours.** A resident's day runs from 06:00 to 19:00 and their night from 19:00 to 06:00, the hours the wiki's resident pages give, such as Draff selling in Springvale during the day. A resident has a day spot and, where the game places them differently, a night spot. What a resident with no night spot keeps is on [resident schedules](/docs/genshin/resident-schedules). Absence at night is an explicit `absentAtNight` in the data, set only where the game shows the resident by day alone; no record sets it yet, so no resident is absent at night. Most of the game's NPCs stand in the same place day and night, so a resident is not absent at night unless the data says so.
-- **Their spots are the game's own records.** The hosted `sceneNpcBorn/scene3` dataset, published from the dump's `BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`, places every open-world resident of the regions it holds, up to Sumeru's: its config id, its place and its turn. The NPC places read from that dataset; `genshin:assets residents` still reads the dump's file until its own unit moves it. How a resident the records place twice is read is on [resident schedules](/docs/genshin/resident-schedules); no night spot is matched until one is.
+- **Their spots are the game's own records.** `genshin:assets residents` reads the NPC members the [scene group record](/docs/genshin/scene-groups) places, each filled from the dump's NPC births with its place and its turn. How a resident placed twice is read is on [resident schedules](/docs/genshin/resident-schedules); no night spot is matched until a member's suites tell one.
 - **Moved out of sight.** At the turn of the hour, a resident in view stays until out of view and then stands at their new spot, so nobody is seen to jump.
-- **The scene groups are the one source left.** AnimeGameData's `scene3_npcborn.json` is the same file the dump holds, byte for byte, and its records stop at Sumeru's groups (`1333xxxxx`), so no public dump places Fontaine's, Natlan's or Nod-Krai's residents. The other machine's scene group export (`Lua/Scene/3`, each group's NPCs with their suites) places them, and its suites tell a resident's day place from its night one, which the birth records cannot.
+- **The group scripts are the one source left.** The births reach Natlan's groups and none of Nod-Krai's, and give each NPC a single spot, so the record holds no Nod-Krai resident and no second suite to tell a day place from a night one. Both are the client's group scripts' to fill, once the [scene groups](/docs/proposals/genshin/scene-groups) proposal reads them, and the residents' writer then reads them from the same record.
 - **A vendor sells in their hours.** A resident who sells does so only in the hours their page gives, and offers no shop outside them, once the [shops](/docs/proposals/genshin/shops) sell.
 - **Read by the world's clock.** Where a resident stands is read from the world's clock each frame, so a jump in time from the Time screen moves them as the hours do.
 
 ## What is left
 
-Nothing is built until the scene group export lands; then, in order:
+Nothing is built until the client's group scripts refill the scene group record; then, in order:
 
-1. **The other regions' residents and the night spots from the groups.** `scripts/src/services/genshinAssets/residents/joinResidents.ts` reads each NPC's group from the export beside the birth records: an NPC of Fontaine's, Natlan's or Nod-Krai's groups becomes a resident as the others are, and an NPC placed in two suites of one group, the group switching between them by the hour, takes its night suite's place as its night spot. `pnpm -C scripts genshin:assets residents` rewrites the regions' data, and `joinResidents.test.ts` asserts a two-suite NPC gains a night spot and a one-suite NPC keeps its day spot through the night.
+1. **Nod-Krai's residents and the night spots from the groups.** `scripts/src/services/genshinAssets/residents/joinResidents.ts` reads each NPC member's suites from the record: an NPC of Nod-Krai's groups becomes a resident as the others are, and an NPC placed in two suites of one group, the group switching between them by the hour, takes its night suite's place as its night spot. `pnpm -C scripts genshin:assets residents` rewrites the regions' data, and `joinResidents.test.ts` asserts a two-suite NPC gains a night spot and a one-suite NPC keeps its day spot through the night.
 2. **Vendors' hours**, with the [shops](/docs/proposals/genshin/shops)' vendors: a vendor sells while they stand at their spot, as Blanche's shop is open at all hours by the wiki and Draff's by day.
 
 - **Not covered by the groups.** Snezhnaya has no residents, since its fit matched no statue or waypoint, and the wiki's daytime and nighttime gallery pictures are not read, the groups' suites read in their place as data.
@@ -45,4 +45,4 @@ Nothing is built until the scene group export lands; then, in order:
 - [NPC](https://genshin-impact.fandom.com/wiki/NPC), Genshin Impact Wiki: the open-world residents whose night spots this proposal matches.
 - [Draff](https://genshin-impact.fandom.com/wiki/Draff), Genshin Impact Wiki: a vendor selling during the day, 06:00 to 19:00, with a daytime and a nighttime location.
 - [Exploration](https://genshin-impact.fandom.com/wiki/Exploration), Genshin Impact Wiki: residents found only at certain times of day, or in other places.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the open world's NPC birth records with each resident's places, groups and suites.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the open world's NPC birth records the scene group record's NPC members are filled from.

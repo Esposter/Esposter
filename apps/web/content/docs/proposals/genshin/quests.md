@@ -18,12 +18,12 @@ The [quests](/docs/genshin/quests) page holds the quest model, its progression, 
 
 ## Decisions
 
-- **A go-to's place is its trigger's region in the scene groups.** A go-to step's condition is `QUEST_CONTENT_TRIGGER_FIRE` with a trigger id (`1053` for Wanderer's Trail's first step, read from `BinOutput/Quest/351.json`). AnimeGameData's `TriggerExcelConfigData` names each id's scene, group and trigger name, and the group's script places the trigger's region, so a trigger is placed only from the scene group export, never by hand.
+- **A go-to's place is its trigger's region in the scene groups.** A go-to step's condition is `QUEST_CONTENT_TRIGGER_FIRE` with a trigger id (`1053` for Wanderer's Trail's first step, read from `BinOutput/Quest/351.json`). AnimeGameData's `TriggerExcelConfigData` names each id's scene, group and trigger name, and the group's script places the trigger's region. The [scene group record](/docs/genshin/scene-groups) already holds each open-world trigger as a member of its group, read from that table, but with no place, so a trigger is placed only once the client's group scripts give its member one, never by hand.
 - **A place's trigger is placed in region data.** A go-to objective names the trigger the game fires, so a region's data places each trigger the carried quests name, and reaching it is the go-to event. Navigation then finds it as it finds a resident.
 
 ## What is left
 
-1. **The go-to triggers.** Waits on the scene group export the other machine is making. Then `TriggerExcelConfigData` (added to `DUMP_TABLE_NAMES` and fetched with `genshin:text fetch`) joins each carried go-to's trigger id to its group, and the group's region is placed in its region's data, reaching it being the go-to event.
+1. **The go-to triggers.** Waits on the trigger members' places in the scene group record. Then each carried go-to's trigger id is found among the record's trigger members, and its place is written into its region's data, reaching it being the go-to event.
 2. **The world quest series.** A carried world quest's series is the quest screen's `QuestChapter`, which the screen lists the quest under once the world hands it the series. The chapter table (`ChapterExcelConfigData`, added to `DUMP_TABLE_NAMES`) names each series by the main quest's `chapterId`: its title, its region by `cityId`, and its first quest. The Seventh Samurai, the one world quest carried, belongs to none, so this waits on a series' quests being carried. Those unlock one after another, each after the one before it, which `startQuests` does not yet hold, and the community dump has no words for a series' journal (`chapterNumTextMapHash`) until the text is the install's own.
 3. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once item 1 places them.
 

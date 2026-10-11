@@ -2,7 +2,7 @@
 title: Gathering
 description: Proposal — the mining outcrops of Magical Crystal Chunks drawn each day beside the ley line places, and the investigation spots that give artifacts, ingredients, ores or Mora. Both wait on the spawned places and on a measure.
 model: claude-haiku-5-5
-waiting: "the outcrops' and investigation spots' places, which the spawned places proposal gives once the scene group export lands (the other machine)"
+waiting: "the outcrops' and investigation spots' places, which the spawned places proposal gives once the client's group scripts fill the scene group record's gadget members"
 touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]
 ---
 

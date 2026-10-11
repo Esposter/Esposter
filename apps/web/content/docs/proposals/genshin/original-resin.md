@@ -2,7 +2,7 @@
 title: Original Resin
 description: Proposal — the claim's offer on F for the blossom a resin challenge leaves, once a challenge places one. The resin's count, regeneration, refills, the claim's price and rewards, and Condensed Resin are built, as the as-built page records.
 model: claude-haiku-5-5
-waiting: "the ley line outcrops' challenge and blossom, placed on the scene group export another machine is making"
+waiting: "the ley line outcrops' challenge and blossom, placed on the scene group record's gadget members, which only the client's group scripts fill"
 touches:
   [
     "packages/genshin-world/src/services/originalResin/**",

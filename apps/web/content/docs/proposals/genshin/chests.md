@@ -57,7 +57,7 @@ flowchart TD
 3. **The locks by camps.** Waits on the reach a camp locks a chest within, measured.
 4. **Digging and seals**, once a recording settles what a dug or freed place holds and which seal each sealed place wears.
 5. **Locks by puzzles**, once the puzzles stand.
-6. **The join to the achievements and the exploration progress.** An opened chest moves the 66 chest achievements and its area's doings only once it is joined to the game's own chest records (below), which the scene group export the other machine is making carries with each chest's gadget id and group. The area each chest counts toward is read from the same export, or from the region outlines the exploration progress reads.
+6. **The join to the achievements and the exploration progress.** An opened chest moves the 66 chest achievements and its area's doings only once it is joined to the game's own chest records (below), which the [scene group record](/docs/genshin/scene-groups) carries once the client's group scripts fill its gadget members with each chest's gadget id and group. The area each chest counts toward is read from the same record, or from the region outlines the exploration progress reads.
 
 ## Data and measures
 

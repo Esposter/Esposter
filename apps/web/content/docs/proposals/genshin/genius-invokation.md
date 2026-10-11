@@ -3,7 +3,7 @@ title: Genius Invokation TCG
 description: Proposal — the card game against its residents, past its rules engine, its decks and its duel board, which are built: the board opens from a resident's talk, and what follows is a resident's talk held in the world, the game's own decks, each further card's module, and invitationals, tavern challengers, the Card Shop and the Player Level.
 model: claude-opus-5-5
 needs: [game-exports]
-waiting: "the Player Level's slice is published through the hosted game data, not yet built, and the seated challengers wait on the scene group export and the talks system's split"
+waiting: "the Player Level's slice is published through the hosted game data, not yet built, and the seated challengers wait on the scene group record's NPC members past the births and the talks system's split"
 touches:
   [
     "scripts/src/services/genshinAssets/gcg/**",
@@ -29,7 +29,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 - **Duels are against the game's opponents.** The residents the game seats for an Invitational and the tavern's challengers play the decks `GCGDeckExcelConfigData` gives them. Winning earns their cards and Lucky Coins, the Card Shop sells cards for Lucky Coins, and the player's Player Level grows by duels, as the game earns each.
 - **Opened at Adventure Rank 32 with its tutorial quest**, as the wiki gives it.
 - **The Player Level is the game's level table.** `GCGLevelExcelConfigData` holds ten levels, each with the EXP that passes it (the tenth passes none) and its reward id. A player who has finished the tutorial quest holds level one at no EXP. A challenger's games open by the level its week row names: Marjorie's `levelCondList` opens game 1021 at level 1 and the next four at levels 3, 5, 7 and 10, so a challenger offers each game once the Player Level reaches its level. The ladder is read as the Friendship Levels' is, by one shared rule, never a twin of it.
-- **Seating waits on the scene groups.** The challengers are absent from the dump's NPC birth records: neither NPC 9701 nor 9704 is among the 893 the open world places there, so their places are the `Lua/Scene/3` groups' that the scene group export reads.
+- **Seating waits on the scene groups.** The challengers are absent from the dump's NPC birth records: neither NPC 9701 nor 9704 is among the NPCs the open world places there, so the [scene group record](/docs/genshin/scene-groups) holds no member for either until the client's group scripts fill it.
 - **A further deck is a record of the hosted game data.** Each is a `gcg/deck<id>` record and more card text in every language, published by `genshin:assets gcg` and `genshin:text gcg`, with an entry of `GcgDeckLoaderMap` reading it by key. Its card modules are code and are written with the deck they serve.
 - **No duel against another player.** Duels with friends need other players, which [co-op](/docs/genshin/deferred/co-op) defers; the game gives them no reward either.
 - **The Player Level and the Friendship Level read one rule.** `computeLevelReached` counts the levels an EXP total has reached over any table of `{ exp }` rows, so the card game's level and the companionship level are the same function.
@@ -43,7 +43,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](/docs/genshin/
 
 1. **The Player Level and the games it opens.** Left: `genshin:assets gcg` writing the slice from `toGcgLevels.ts`, and `services/gcg/readGcgLevels.ts` reading it with its schemas. Both wait on the hosted game data, since the slice is published to Blob storage and never written into `generated/`. **Publish, for the Mac:** once the hosted game data is built, the slice goes through `publishGameDataStep` with its `writeGcgLevels` dry run.
 
-2. **Seating the challengers**, once the scene group export the other machine is making places NPCs 9701 and 9704. Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated challenger's talk is their standing talk, published with every resident's by `genshin:text standing-talks`, and its opening line offers the duel reply `191219274`, so no talk is written for a seat.
+2. **Seating the challengers**, once the scene group record holds NPC members for 9701 and 9704. Marjorie (NPC 9701, game 1021 with deck 11005) and Ellin (NPC 9704, game 1031 with deck 11002) are seated on their NPCs once the region that holds their residents is written. Each seated challenger's talk is their standing talk, published with every resident's by `genshin:text standing-talks`, and its opening line offers the duel reply `191219274`, so no talk is written for a seat.
 3. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them. Each is published as its `gcg/deck<id>` record and read through `GcgDeckLoaderMap`.
 4. **Invitationals, tavern challengers, the Card Shop, and the EXP the duels pay into the Player Level.**
 

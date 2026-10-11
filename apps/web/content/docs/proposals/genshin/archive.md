@@ -3,7 +3,6 @@ title: Archive
 description: Proposal — what remains of the Archive once its built part stands: the wildlife's Living Beings kills, Tutorials as their tips land, and the Geography's viewpoints taken in where they stand.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/archive/**"]
-waiting: "the wildlife's strike, a shown tip and the scene group export each belong to another unit"
 ---
 
 # Archive
@@ -14,7 +13,7 @@ The [Archive](/docs/genshin/archive) page holds the seven sections, their entrie
 
 - **An entry opens when its thing is first met.** A tutorial when shown; a viewpoint when taken in; a quest when finished; a book when picked up; an enemy or an animal when first defeated; an artifact set once all its pieces have been held. Opened entries are kept with the player's progress.
 - **Living Beings counts kills.** Each enemy's entry shows how many have been defeated, and each animal's waits on the wildlife's strike, and its model turns on the screen as the game's does, drawn by the [characters](/docs/genshin/characters) reader once its model is built.
-- **A viewpoint is placed by its scene group.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, which only the scene group export places; the official map's Viewpoint label (85) places 224 points with no name to join them by, so it is not used.
+- **A viewpoint is placed by the scene group record.** Each `ViewCodexExcelConfigData` row names its viewpoint by `groupId` and `configId`, and the [scene group record](/docs/genshin/scene-groups) holds it as a gadget member of that group, placed at the official map's Viewpoint point that bears its name. A viewpoint the record leaves without a place is not offered until the client's group scripts place it.
 - **A viewpoint is taken in where it stands.** Each viewpoint is a place in the world that, reached, offers to be viewed, which opens its entry with its picture as the game does; its picture is drawn by the world from its place, never the game's image.
 
 ## How it works
@@ -32,17 +31,17 @@ flowchart LR
 
 **This adds, in order:**
 
-1. **Wildlife's Living Beings**, once an animal is struck and its kills count.
-2. **Tutorials' opening**, once a tip is shown.
-3. **Geography's viewpoints**, at their places, once the scene group export the other machine is making places each view codex row's group.
+1. **Geography's viewpoints**, at the places the scene group record gives each view codex row's gadget member, read from the hosted `sceneGroups/scene3` record.
+2. **Wildlife's Living Beings**, once an animal is struck and its kills count.
+3. **Tutorials' opening**, once a tip is shown.
 
-Each of the three waits on the blocker in the frontmatter, so none is buildable yet.
+The viewpoints are buildable now; the other two wait on another unit each, the wildlife's strike and a shown tip.
 
 The artifact sets' caller is wherever the player's artifacts change, which the first artifact drop brings.
 
 ## Data and measures
 
-- **Each viewpoint's place:** from the scene points where it is one, or the spawned places' fit where it is not.
+- **Each viewpoint's place:** the record's place on its gadget member, a ground point the official map's fit carried into the game's axes with no height, so the viewpoint stands on the ground where it is read.
 - **Books placed in the world:** no world drop is a volume's material yet, so a volume is picked up only once the world places the books.
 
 ## Key files
@@ -55,4 +54,4 @@ The artifact sets' caller is wherever the player's artifacts change, which the f
 ## Sources
 
 - [Archive](https://genshin-impact.fandom.com/wiki/Archive), Genshin Impact Wiki: entries opened when first obtained or defeated, artifact sets once every piece is held, kill counts and turning models, and Geography's viewpoints.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the codex tables the built sections read, and the view codex whose places the viewpoints are placed by.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the codex tables the built sections read, and the view codex naming each viewpoint's group.

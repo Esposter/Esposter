@@ -18,13 +18,13 @@ The [forging](/docs/genshin/forging) page holds the recipes, queues, orders, dai
 ## Decisions
 
 - **The forge screen's layout is measured like the other screens.** Its layout and its queues' look are re-measured off a recording of the game's blacksmith, through the [recreation passes](/docs/proposals/genshin/recreation-passes). Its words come from the refusal keys the [forging](/docs/genshin/forging) page names, and it changes no number the rules set.
-- **The blacksmith's place is an NPC of the Mondstadt scene.** The official map has no blacksmith label, so the place is read from the NPC places the hosted `sceneNpcBorn/scene3` dataset holds, not from the spawned places. Every blacksmith is one forge, so the place is a screen's concern only.
+- **The blacksmith's place is the scene's own mark.** The official map has no blacksmith label, and the dump's births hold no Wagner, so the forge stands at the `Blacksmith` building point of the [scene group record](/docs/genshin/scene-groups), the scene's mark of the city's forge (`Blacksmith_liyue` and the like for the others). Every blacksmith is one forge, so the place is a screen's concern only.
 
 ## Scope and order
 
 **Still to build, in order:**
 
-1. **The blacksmith's place.** To build: read from the hosted `sceneNpcBorn/scene3` dataset, which holds the NPC's place from the dump and has no caller yet; the screen is reached through its fixture, since the game's menus hold no forge.
+1. **The blacksmith's place.** Reads Mondstadt's `Blacksmith` building point from the hosted `sceneGroups/scene3` record; the screen is reached through its fixture, since the game's menus hold no forge.
 2. **The screen's wiring component.** The forge screen's container in `genshin-world`, as the crafting bench's is: the recipe and queue cells from the forge state, and each queue's Obtain through `obtainForgeOrder`, which already gains the Adventure EXP at the Adventure Rank. Its words are the forge page's own, under the manual ids `find --id "^UI_FORGE_PAGE_"` lists: `UI_FORGE_PAGE_OK_BUTTON` (Start), `UI_FORGE_PAGE_FORMULA_BUTTON` (Materials), `UI_FORGE_PAGE_ITEM_GET` (Obtained), the queue's `UI_FORGE_PAGE_QUEUE_*` and the rest.
 
 ## Data and measures
