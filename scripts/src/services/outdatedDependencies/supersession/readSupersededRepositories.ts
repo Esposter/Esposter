@@ -25,7 +25,7 @@ const readPackageSupersession = async (packageName: string): Promise<SupersededR
     packageName,
     renamedTo: isRenamed ? fullName : "",
     repository: githubRepository,
-    successor: isRenamed ? await readPackageName(fullName) : "",
+    successor: isRenamed ? await readPackageName(fullName, repository?.directory ?? "") : "",
   };
 };
 
