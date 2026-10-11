@@ -6,7 +6,7 @@ import type { GameText } from "genshin-text";
 import { HandbookTab } from "#src/models/handbook/HandbookTab";
 import { COMMISSION_STEP, HANDBOOK_TABS } from "#src/services/handbook/constants";
 import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGameTextKeyMap";
-import { GameScreen } from "genshin-interface";
+import { CHECK_MARK_PATH, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -105,11 +105,7 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             <span class="reward-count">{{ reward.count }}</span>
           </span>
           <svg class="commission-check" viewBox="0 0 252 228" aria-hidden="true">
-            <path
-              fill="#5aa02c"
-              fill-rule="evenodd"
-              d="M 237.5 26 Q 242.75 24.25 241 29.5 L 235 40.5 L 230 45.5 L 226 52.5 L 222 56.5 L 213 70.5 L 210 73.5 L 209 76.5 L 205 80.5 L 204 83.5 L 192 100.5 L 185 112.5 L 176 123.5 L 171 132.5 L 157 151.5 L 156 154.5 L 152 158.5 L 145 170.5 L 137 180.5 L 136 183.5 L 132 187.5 L 130 192.5 L 127 195.5 L 127 197.5 L 123.5 202 L 117.5 204 L 106.5 198 L 104 195.5 L 100.5 191 L 84.5 180 L 71 167.5 Q 69.75 161.75 65.5 159 L 58.5 157 L 53.5 154 L 40.5 142 L 32.5 139 L 26.5 139 L 23.5 138 L 21 135.5 L 21 133.5 L 24 127.5 L 50.5 91 L 55.5 88 L 60.5 88 L 66 92.5 Q 65.25 94.75 67.5 94 L 84 111.5 L 85 114.5 L 98 127.5 L 103.5 137 L 110.5 138 L 128.5 125 L 140.5 113 L 161.5 95 L 171.5 85 L 179.5 79 L 199 60.5 L 201.5 57 L 213.5 48 Q 224.35 35.85 237.5 26 Z"
-            />
+            <path fill="#5aa02c" fill-rule="evenodd" :d="CHECK_MARK_PATH" />
           </svg>
         </li>
       </ol>
