@@ -74,7 +74,13 @@ const readFailedJobLog = async (jobId: string): Promise<string> => {
       return undefined;
     },
   );
-  return failedStepsLog ?? runToolAsync("gh", ["api", `repos/{owner}/{repo}/actions/jobs/${jobId}/logs`]);
+  if (failedStepsLog !== undefined) return failedStepsLog;
+  // A job's whole log can outgrow the read too, a coverage shard's among them, so a log neither read returns is said in
+  // One line in its place, and the run's verdict and its other jobs are printed all the same
+  return getResultAsync(() => runToolAsync("gh", ["api", `repos/{owner}/{repo}/actions/jobs/${jobId}/logs`])).match(
+    (log) => log,
+    (error) => `error: job ${jobId}'s log could not be read (${error.message}); open it on GitHub`,
+  );
 };
 
 // Waits for the run until it completes, `--exit-status` left off so the watch ends whatever the conclusion, then reads it
