@@ -10,18 +10,19 @@ import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
-const COMBATANT: KitSummon["combatant"] = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 90,
-};
-const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
 
 describe(stepKitSummon, () => {
+  const COMBATANT: KitSummon["combatant"] = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  };
+  const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
+
   test("lands a hit at its cast in its first step, and only then", () => {
     expect.hasAssertions();
     const summon: KitSummon = {

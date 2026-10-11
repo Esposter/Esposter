@@ -12,8 +12,9 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -126,14 +127,18 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // Icy Paws' paws are Cryo, each giving 1U, and each hits at its travel from its press's hitmark, less the tap's
   const createPaws = (count: number, pressHitmarkFrames: number): KitHit[] =>
-    Array.from({ length: count }, (_paw, index) => ({
-      element: Element.Cryo,
-      gauge: 1,
-      hitArea: PAW_HIT_AREA,
-      hitmarkSeconds: (PAW_TRAVEL_FRAMES + (pressHitmarkFrames - TAP_HITMARK_FRAMES) + index) / 60,
-      poiseDamage: PAW_POISE_DAMAGE,
-      talentMultiplier: skillTalentMultiplier(0),
-    }));
+    createPeriodicKitHits(
+      {
+        element: Element.Cryo,
+        gauge: 1,
+        hitArea: PAW_HIT_AREA,
+        poiseDamage: PAW_POISE_DAMAGE,
+        talentMultiplier: skillTalentMultiplier(0),
+      },
+      count,
+      PAW_TRAVEL_FRAMES + (pressHitmarkFrames - TAP_HITMARK_FRAMES),
+      1,
+    );
 
   // Constellation 2 raises every shield by 15%
   const createShield = (combatant: Combatant, strengthBonus: number): KitShield => ({
@@ -206,7 +211,7 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           tickIntervalSeconds: SIGNATURE_MIX_TICK_SECONDS,
         };
         addKitEffect(kitEffectState, field);
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, signatureMixTickHits, signatureMixSeconds));
+        castKitSummon(kitEffectState, body, combatant, signatureMixTickHits, { secondsRemaining: signatureMixSeconds });
       },
       seconds: SIGNATURE_MIX_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

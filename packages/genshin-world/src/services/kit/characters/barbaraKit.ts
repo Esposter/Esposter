@@ -15,7 +15,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -217,7 +217,7 @@ export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, dropletHits));
+        castKitSummon(kitEffectState, { facing, height, position }, combatant, dropletHits);
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,

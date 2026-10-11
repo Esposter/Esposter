@@ -8,9 +8,9 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 export const SIGEWINNE_CHARACTER_ID = 10_000_095;
@@ -71,26 +71,34 @@ export const createSigewinneKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   const bubbleShare = getTalentMultiplier(talentMultiplierMap, SIGEWINNE_SKILL_GROUP_ID, TALENT_START_LEVEL, 0);
   const burstShare = getTalentMultiplier(talentMultiplierMap, SIGEWINNE_BURST_GROUP_ID, TALENT_START_LEVEL, 0);
   // Each bubble's hit is a share of its striker's Max HP as flat damage, priced as the hit is made
-  const bubbleHits: KitHit[] = Array.from({ length: BUBBLE_HIT_COUNT }, (_value, index) => ({
-    additiveBaseDamageBonus: ({ attributes }) => bubbleShare * attributes.maxHealth,
-    element: Element.Hydro,
-    gauge: 1,
-    hitArea: BUBBLE_HIT_AREA,
-    hitmarkSeconds: (SKILL_PRESS_HITMARK_FRAMES + BUBBLE_HIT_INTERVAL_FRAMES * index) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalSkill,
-    poiseDamage: 0,
-    talentMultiplier: 0,
-  }));
-  const burstWaveHits: KitHit[] = Array.from({ length: BURST_WAVE_COUNT }, (_value, index) => ({
-    additiveBaseDamageBonus: ({ attributes }) => burstShare * attributes.maxHealth,
-    element: Element.Hydro,
-    gauge: 1,
-    hitArea: BURST_WAVE_HIT_AREA,
-    hitmarkSeconds: (BURST_FIRST_WAVE_FRAMES + BURST_WAVE_INTERVAL_FRAMES * index) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    poiseDamage: 0,
-    talentMultiplier: 0,
-  }));
+  const bubbleHits: KitHit[] = createPeriodicKitHits(
+    {
+      additiveBaseDamageBonus: ({ attributes }) => bubbleShare * attributes.maxHealth,
+      element: Element.Hydro,
+      gauge: 1,
+      hitArea: BUBBLE_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalSkill,
+      poiseDamage: 0,
+      talentMultiplier: 0,
+    },
+    BUBBLE_HIT_COUNT,
+    SKILL_PRESS_HITMARK_FRAMES,
+    BUBBLE_HIT_INTERVAL_FRAMES,
+  );
+  const burstWaveHits: KitHit[] = createPeriodicKitHits(
+    {
+      additiveBaseDamageBonus: ({ attributes }) => burstShare * attributes.maxHealth,
+      element: Element.Hydro,
+      gauge: 1,
+      hitArea: BURST_WAVE_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      poiseDamage: 0,
+      talentMultiplier: 0,
+    },
+    BURST_WAVE_COUNT,
+    BURST_FIRST_WAVE_FRAMES,
+    BURST_WAVE_INTERVAL_FRAMES,
+  );
   const normalAttacks: KitAction[] = NORMAL_ATTACKS.map(({ frames, groupIndex, hitArea, hitmarkFrames }) => ({
     hits: [
       {
@@ -131,7 +139,7 @@ export const createSigewinneKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, bubbleHits));
+        castKitSummon(kitEffectState, body, combatant, bubbleHits);
       },
       seconds: SKILL_PRESS_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

@@ -12,8 +12,8 @@ import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -278,10 +278,13 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         poiseDamage: 0,
         talentMultiplier,
       }));
-      addKitEffect(kitEffectState, {
-        ...createKitSummon(target ? { facing: 0, height: 0, position: target.position } : body, combatant, hits),
-        id: DRAGON_SUMMON_ID,
-      });
+      castKitSummon(
+        kitEffectState,
+        target ? { facing: 0, height: 0, position: target.position } : body,
+        combatant,
+        hits,
+        { id: DRAGON_SUMMON_ID },
+      );
     },
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

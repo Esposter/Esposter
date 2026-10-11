@@ -21,10 +21,11 @@ import {
   STRIKE_TARGETING_AREA,
   UNBOUNDED_FIELD_RADIUS,
 } from "#src/services/kit/constants";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -226,15 +227,19 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   };
   // Oz's attacks from its spawn at the frame given: one every 59 frames, each 10 frames after its tick, while Oz stands
   const createOzAttackHits = (spawnFrames: number, firstTickFrames: number, durationFrames: number): KitHit[] =>
-    Array.from({ length: Math.ceil((durationFrames - firstTickFrames) / OZ_TICK_INTERVAL_FRAMES) }, (_tick, index) => ({
-      element: Element.Electro,
-      gauge: 1,
-      hitArea: OZ_ATTACK_HIT_AREA,
-      hitmarkSeconds: (spawnFrames + firstTickFrames + index * OZ_TICK_INTERVAL_FRAMES + ARROW_TRAVEL_FRAMES) / 60,
-      internalCooldownTag: InternalCooldownTag.ElementalSkill,
-      poiseDamage: OZ_POISE_DAMAGE,
-      talentMultiplier: ozAttackTalentMultiplier,
-    }));
+    createPeriodicKitHits(
+      {
+        element: Element.Electro,
+        gauge: 1,
+        hitArea: OZ_ATTACK_HIT_AREA,
+        internalCooldownTag: InternalCooldownTag.ElementalSkill,
+        poiseDamage: OZ_POISE_DAMAGE,
+        talentMultiplier: ozAttackTalentMultiplier,
+      },
+      Math.ceil((durationFrames - firstTickFrames) / OZ_TICK_INTERVAL_FRAMES),
+      spawnFrames + firstTickFrames + ARROW_TRAVEL_FRAMES,
+      OZ_TICK_INTERVAL_FRAMES,
+    );
   // Oz cast where the body stands, spawning at the frame given and landing the hits given before its attacks. It ends
   // The Oz standing, and stands 2 seconds longer from six constellations
   const castOz = (
@@ -248,14 +253,13 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     const durationFrames =
       OZ_DURATION_FRAMES +
       (combatant.constellationCount >= EVERNIGHT_RAVEN_CONSTELLATION ? EVERNIGHT_RAVEN_EXTRA_FRAMES : 0);
-    addKitEffect(kitEffectState, {
-      ...createKitSummon(body, combatant, [
-        ...hits,
-        ...createOzAttackHits(spawnFrames, firstTickFrames, durationFrames),
-      ]),
-      id: OZ_SUMMON_ID,
-      spawnSeconds: spawnFrames / 60,
-    });
+    castKitSummon(
+      kitEffectState,
+      body,
+      combatant,
+      [...hits, ...createOzAttackHits(spawnFrames, firstTickFrames, durationFrames)],
+      { id: OZ_SUMMON_ID, spawnSeconds: spawnFrames / 60 },
+    );
   };
 
   return {
@@ -291,7 +295,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           spawnFrames: BURST_OZ_SPAWN_FRAMES,
         });
         if (combatant.constellationCount < HER_PILGRIMAGE_OF_BLEAK_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [HER_PILGRIMAGE_OF_BLEAK_HIT]));
+        castKitSummon(kitEffectState, body, combatant, [HER_PILGRIMAGE_OF_BLEAK_HIT]);
         const healSeconds = (BURST_OZ_SPAWN_FRAMES + 1) / 60;
         addKitEffect(kitEffectState, {
           centre: { x: body.position.x, z: body.position.z },
@@ -385,36 +389,34 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           kind: "status",
           secondsRemaining: THUNDERING_RETRIBUTION_COOLDOWN_SECONDS,
         });
-        addKitEffect(kitEffectState, {
-          ...createKitSummon({ facing: 0, height: 0, position: enemy.position }, oz.combatant, [
-            THUNDERING_RETRIBUTION_HIT,
-          ]),
-          attackTag: AttackTag.ElementalSkill,
-        });
+        castKitSummon(
+          kitEffectState,
+          { facing: 0, height: 0, position: enemy.position },
+          oz.combatant,
+          [THUNDERING_RETRIBUTION_HIT],
+          { attackTag: AttackTag.ElementalSkill },
+        );
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
         const [normalAttackHit] = event.action.hits;
         if (oz && normalAttackHit && constellationCount >= EVERNIGHT_RAVEN_CONSTELLATION)
-          addKitEffect(
-            kitEffectState,
-            createKitSummon(body, oz.combatant, [
-              {
-                element: Element.Electro,
-                gauge: 1,
-                hitArea: normalAttackHit.hitArea,
-                hitmarkSeconds: ARROW_TRAVEL_FRAMES / 60,
-                internalCooldownTag: InternalCooldownTag.ElementalSkill,
-                poiseDamage: EVERNIGHT_RAVEN_POISE_DAMAGE,
-                talentMultiplier: EVERNIGHT_RAVEN_TALENT_MULTIPLIER,
-              },
-            ]),
-          );
+          castKitSummon(kitEffectState, body, oz.combatant, [
+            {
+              element: Element.Electro,
+              gauge: 1,
+              hitArea: normalAttackHit.hitArea,
+              hitmarkSeconds: ARROW_TRAVEL_FRAMES / 60,
+              internalCooldownTag: InternalCooldownTag.ElementalSkill,
+              poiseDamage: EVERNIGHT_RAVEN_POISE_DAMAGE,
+              talentMultiplier: EVERNIGHT_RAVEN_TALENT_MULTIPLIER,
+            },
+          ]);
         else if (
           !oz &&
           activeCombatant.characterId === characterId &&
           constellationCount >= GAZE_OF_THE_DEEP_CONSTELLATION
         )
-          addKitEffect(kitEffectState, createKitSummon(body, combatant, [GAZE_OF_THE_DEEP_HIT]));
+          castKitSummon(kitEffectState, body, combatant, [GAZE_OF_THE_DEEP_HIT]);
       }
     },
     plungeCollision: {

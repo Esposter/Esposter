@@ -14,7 +14,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -243,10 +243,9 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           tickIndex: 0,
           tickIntervalSeconds: DANDELION_FIELD_TICK_INTERVAL_SECONDS,
         });
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing, height, position }, combatant, fieldDamageHits, DANDELION_FIELD_SECONDS),
-        );
+        castKitSummon(kitEffectState, { facing, height, position }, combatant, fieldDamageHits, {
+          secondsRemaining: DANDELION_FIELD_SECONDS,
+        });
       },
       seconds: 90 / 60,
       targetingArea: SKILL_TARGETING_AREA,

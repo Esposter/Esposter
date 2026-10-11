@@ -13,8 +13,8 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -261,10 +261,13 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         id: AUROUS_BLAZE_COOLDOWN_STATUS_ID,
         secondsRemaining: burstTalentMultiplier(YOIMIYA_BURST_EXPLOSION_COOLDOWN_INDEX),
       });
-      addKitEffect(kitEffectState, {
-        ...createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, [aurousBlazeExplosion]),
-        attackTag: AttackTag.ElementalBurst,
-      });
+      castKitSummon(
+        kitEffectState,
+        { facing: 0, height: 0, position: enemy.position },
+        combatant,
+        [aurousBlazeExplosion],
+        { attackTag: AttackTag.ElementalBurst },
+      );
     },
     plungeCollision: {
       hitArea: createFanReach(360, 1),

@@ -17,7 +17,7 @@ import {
   SUMMON_LINGER_SECONDS,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Amber's proud skill groups, read at her talent level. The attack group holds the five arrows at 0 to 4, the aimed shot at
@@ -139,14 +139,12 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   elementalBurst: {
     hits: [],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
+      castKitSummon(
         kitEffectState,
-        createKitSummon(
-          body,
-          getFieryRainCombatant(combatant),
-          createFieryRainHits(talentMultiplierMap, combatant.ascension),
-          Math.max(...FIERY_RAIN_HITMARK_FRAMES) / 60 + SUMMON_LINGER_SECONDS,
-        ),
+        body,
+        getFieryRainCombatant(combatant),
+        createFieryRainHits(talentMultiplierMap, combatant.ascension),
+        { secondsRemaining: Math.max(...FIERY_RAIN_HITMARK_FRAMES) / 60 + SUMMON_LINGER_SECONDS },
       ),
     seconds: BURST_SECONDS,
     targetingArea: SKILL_TARGETING_AREA,

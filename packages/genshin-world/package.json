@@ -93,6 +93,7 @@
     "@types/three": "catalog:",
     "@webgpu/types": "catalog:",
     "tsdown": "catalog:",
+    "type-fest": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vitest-browser-vue": "catalog:",
@@ -109,5 +110,8 @@
     "three": "catalog:",
     "vue": "catalog:",
     "zod": "catalog:"
+  },
+  "inlinedDependencies": {
+    "type-fest": "5.10.0"
   }
 }

@@ -16,8 +16,8 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -262,19 +262,16 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         kind: "status",
         secondsRemaining: arkheIcdSeconds,
       });
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
-          {
-            element: Element.Geo,
-            gauge: 0,
-            hitArea: SURGING_BLADE_HIT_AREA,
-            hitmarkSeconds: (firingFrames + SURGING_BLADE_FRAMES) / 60,
-            poiseDamage: 0,
-            talentMultiplier: skillMultiplier(4),
-          },
-        ]),
-      );
+      castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
+        {
+          element: Element.Geo,
+          gauge: 0,
+          hitArea: SURGING_BLADE_HIT_AREA,
+          hitmarkSeconds: (firingFrames + SURGING_BLADE_FRAMES) / 60,
+          poiseDamage: 0,
+          talentMultiplier: skillMultiplier(4),
+        },
+      ]);
     };
 
   const elementalSkill: KitAction = {
@@ -349,7 +346,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const elementalBurst: KitAction = {
     hits: [blastHit],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(kitEffectState, createKitSummon(body, combatant, cannonHits)),
+      castKitSummon(kitEffectState, body, combatant, cannonHits),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

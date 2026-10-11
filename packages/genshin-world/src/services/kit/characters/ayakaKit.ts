@@ -8,8 +8,9 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kamisato Ayaka's proud skill groups, read at her talent level. The attack group holds the first three strikes at 0 to 2,
@@ -92,16 +93,20 @@ const createFrostflakeHits = (
   cutHitArea: AttackArea,
   bloomHitArea: AttackArea,
 ): KitHit[] => [
-  ...Array.from({ length: FROSTFLAKE_CUT_COUNT }, (_value, index): KitHit => ({
-    element: Element.Cryo,
-    gauge: 1,
-    hitArea: cutHitArea,
-    hitmarkSeconds: (FROSTFLAKE_FIRST_CUT_FRAMES + FROSTFLAKE_CUT_INTERVAL_FRAMES * index) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    poiseDamage: 30,
-    talentMultiplier:
-      damageShare * getTalentMultiplier(talentMultiplierMap, AYAKA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
-  })),
+  ...createPeriodicKitHits(
+    {
+      element: Element.Cryo,
+      gauge: 1,
+      hitArea: cutHitArea,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      poiseDamage: 30,
+      talentMultiplier:
+        damageShare * getTalentMultiplier(talentMultiplierMap, AYAKA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+    },
+    FROSTFLAKE_CUT_COUNT,
+    FROSTFLAKE_FIRST_CUT_FRAMES,
+    FROSTFLAKE_CUT_INTERVAL_FRAMES,
+  ),
   {
     element: Element.Cryo,
     gauge: 1,
@@ -153,10 +158,10 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, frostflakeHits));
+        castKitSummon(kitEffectState, body, combatant, frostflakeHits);
         if (combatant.constellationCount < BLIZZARD_BLADE_SEKI_NO_TO_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, smallFrostflakeHits));
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, smallFrostflakeHits));
+        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
+        castKitSummon(kitEffectState, body, combatant, smallFrostflakeHits);
       },
       seconds: 125 / 60,
       targetingArea: SKILL_TARGETING_AREA,

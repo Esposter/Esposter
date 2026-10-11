@@ -10,7 +10,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Rosaria's proud skill groups, read at her talent level. The attack group holds the strikes at 0 to 5, the first of N3 and
@@ -179,7 +179,7 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           kind: "field",
           nextTickSeconds: RITES_LANCE_HITMARK_FRAMES / 60 + RITES_TICK_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) =>
-            addKitEffect(tickEffectState, createKitSummon({ facing, height, position }, combatant, [ritesTickHit])),
+            castKitSummon(tickEffectState, { facing, height, position }, combatant, [ritesTickHit]),
           radius: RITES_TICK_HIT_AREA.radius,
           secondsRemaining:
             burstTalentMultiplier(3) +

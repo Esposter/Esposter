@@ -10,9 +10,9 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Chiori's proud skill groups, read at her talent level. The attack group holds the four strikes at 0, 1, 2 and 3 for the
@@ -111,17 +111,20 @@ const BURST_POISE_DAMAGE = 200;
 const createTamotoHits = (castFrames: number, talentMultiplierMap: TalentMultiplierMap): KitHit[] => {
   const attackShare = getTalentMultiplier(talentMultiplierMap, CHIORI_SKILL_GROUP_ID, TALENT_START_LEVEL, 0);
   const defenseShare = getTalentMultiplier(talentMultiplierMap, CHIORI_SKILL_GROUP_ID, TALENT_START_LEVEL, 1);
-  return Array.from({ length: TAMOTO_ATTACK_COUNT }, (_value, index): KitHit => ({
-    additiveBaseDamageBonus: ({ attributes }) => defenseShare * attributes.defense,
-    element: Element.Geo,
-    gauge: 1,
-    hitArea: TAMOTO_HIT_AREA,
-    hitmarkSeconds:
-      (castFrames + TAMOTO_START_DELAY_FRAMES + TAMOTO_ATTACK_DELAY_FRAMES + TAMOTO_INTERVAL_FRAMES * index) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalSkill,
-    poiseDamage: 0,
-    talentMultiplier: attackShare,
-  }));
+  return createPeriodicKitHits(
+    {
+      additiveBaseDamageBonus: ({ attributes }) => defenseShare * attributes.defense,
+      element: Element.Geo,
+      gauge: 1,
+      hitArea: TAMOTO_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalSkill,
+      poiseDamage: 0,
+      talentMultiplier: attackShare,
+    },
+    TAMOTO_ATTACK_COUNT,
+    castFrames + TAMOTO_START_DELAY_FRAMES + TAMOTO_ATTACK_DELAY_FRAMES,
+    TAMOTO_INTERVAL_FRAMES,
+  );
 };
 
 export const createChioriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
@@ -144,15 +147,9 @@ export const createChioriKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   const castTamoto =
     (castFrames: number): NonNullable<KitAction["onStart"]> =>
     ({ activeCombatant: combatant, body, kitEffectState }) => {
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(
-          body,
-          combatant,
-          createTamotoHits(castFrames, talentMultiplierMap),
-          (castFrames + TAMOTO_DURATION_SECONDS * 60) / 60,
-        ),
-      );
+      castKitSummon(kitEffectState, body, combatant, createTamotoHits(castFrames, talentMultiplierMap), {
+        secondsRemaining: (castFrames + TAMOTO_DURATION_SECONDS * 60) / 60,
+      });
     };
   const castPressTamoto = castTamoto(PRESS_TAMOTO_CAST_FRAMES);
   const castHoldTamoto = castTamoto(HOLD_TAMOTO_CAST_FRAMES);

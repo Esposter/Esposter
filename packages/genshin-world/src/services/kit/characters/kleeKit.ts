@@ -15,6 +15,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -110,7 +111,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     return {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [bomb])),
+        castKitSummon(kitEffectState, body, combatant, [bomb]),
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     };
@@ -180,7 +181,10 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
     const centre = { x: body.position.x, z: body.position.z };
-    const sparks: KitSummon = { ...createKitSummon(body, combatant, sparkHits, burstSeconds), isFollowing: true };
+    const sparks: KitSummon = createKitSummon(body, combatant, sparkHits, {
+      isFollowing: true,
+      secondsRemaining: burstSeconds,
+    });
     const exit: KitField = {
       centre,
       characterId,
@@ -192,7 +196,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           (effect) => effect !== sparks && effect !== exit,
         );
         if (constellationCount >= SPARKLY_EXPLOSION_CONSTELLATION)
-          addKitEffect(tickKitEffectState, createKitSummon(sparks.body, combatant, [sparklyExplosion]));
+          castKitSummon(tickKitEffectState, sparks.body, combatant, [sparklyExplosion]);
       },
       radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: burstSeconds,
@@ -231,7 +235,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     chargedAttack: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [chargedAttackBomb])),
+        castKitSummon(kitEffectState, body, combatant, [chargedAttackBomb]),
       seconds: (CHARGED_ATTACK_FRAMES - CHARGED_ATTACK_WINDUP_FRAMES) / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     },
@@ -247,7 +251,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, jumpyDumptyHits)),
+        castKitSummon(kitEffectState, body, combatant, jumpyDumptyHits),
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

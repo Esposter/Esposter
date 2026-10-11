@@ -11,8 +11,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -151,8 +150,7 @@ export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) =>
-        addKitEffect(kitEffectState, {
-          ...createKitSummon(body, combatant, createDragonBreathHits(random)),
+        castKitSummon(kitEffectState, body, combatant, createDragonBreathHits(random), {
           attackTag: AttackTag.ElementalBurst,
         }),
       seconds: BURST_FRAMES / 60,

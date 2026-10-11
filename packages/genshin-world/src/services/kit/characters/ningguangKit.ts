@@ -21,7 +21,7 @@ import {
 } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -191,13 +191,11 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
               );
           },
         };
-        addKitEffect(
+        castKitSummon(
           kitEffectState,
-          createKitSummon(
-            body,
-            combatant,
-            Array.from({ length: STRIKE_GEM_COUNT }, () => strikeGem),
-          ),
+          body,
+          combatant,
+          Array.from({ length: STRIKE_GEM_COUNT }, () => strikeGem),
         );
       },
       seconds: frames / 60,
@@ -236,7 +234,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     const starJades = kitEffectState.effects.filter((effect) => checkIsStarJade(effect, combatant.characterId));
     kitEffectState.effects = kitEffectState.effects.filter((effect) => !starJades.includes(effect));
     const shot = starJades.length === GRANDEUR_STAR_JADE_COUNT ? grandeurStarJadeShot : starJadeShot;
-    addKitEffect(kitEffectState, createKitSummon(body, combatant, [chargedAttackGem, ...starJades.map(() => shot)]));
+    castKitSummon(kitEffectState, body, combatant, [chargedAttackGem, ...starJades.map(() => shot)]);
   };
   // The wiki's Jade Screen gives the skill's hit 1U of Geo with no internal cooldown, 133.2 poise and blunt
   const jadeScreenHit: KitHit = {
@@ -285,7 +283,9 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         z: position.z - Math.cos(facing) * JADE_SCREEN_OFFSET,
       },
     };
-    addKitEffect(kitEffectState, createKitSummon(screenBody, combatant, [jadeScreenHit], JADE_SCREEN_FRAMES / 60));
+    castKitSummon(kitEffectState, screenBody, combatant, [jadeScreenHit], {
+      secondsRemaining: JADE_SCREEN_FRAMES / 60,
+    });
   };
   // The wiki's Starshatter gives each gem 1U of Geo under the Elemental Burst internal cooldown, 30 poise and blunt, where
   // Gcsim gives 2U
@@ -307,10 +307,9 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   // Star Jades she holds with 7, which her strikes add none to
   const castStarshatter = (context: KitContext): void => {
     const { activeCombatant: combatant, body, kitEffectState } = context;
-    addKitEffect(kitEffectState, createKitSummon(body, combatant, burstGemHits));
+    castKitSummon(kitEffectState, body, combatant, burstGemHits);
     const jadeScreen = shatterJadeScreen(context);
-    if (jadeScreen !== undefined)
-      addKitEffect(kitEffectState, createKitSummon(body, jadeScreen.combatant, jadeScreenGemHits));
+    if (jadeScreen !== undefined) castKitSummon(kitEffectState, body, jadeScreen.combatant, jadeScreenGemHits);
     if (combatant.constellationCount < GRANDEUR_CONSTELLATION) return;
     kitEffectState.effects = kitEffectState.effects.filter((effect) => !checkIsStarJade(effect, combatant.characterId));
     for (let index = 0; index < GRANDEUR_STAR_JADE_COUNT; index++)

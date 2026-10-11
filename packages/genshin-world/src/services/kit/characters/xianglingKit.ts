@@ -15,8 +15,9 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Xiangling's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the third
@@ -211,7 +212,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       })),
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         if (index < XIANGLING_STRIKES.length - 1 || combatant.constellationCount < OIL_MEETS_FIRE_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, [IMPLODE_HIT]));
+        castKitSummon(kitEffectState, { facing, height, position }, combatant, [IMPLODE_HIT]);
       },
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -226,31 +227,39 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     0,
   );
   const createGuobaBreaths = (hitArea: AttackArea): KitHit[] =>
-    Array.from({ length: GUOBA_BREATH_COUNT }, (_value, index): KitHit => ({
-      element: Element.Pyro,
-      enemyStatus: (combatant) =>
-        combatant.constellationCount >= CRISPY_OUTSIDE_TENDER_INSIDE_CONSTELLATION
-          ? CRISPY_OUTSIDE_TENDER_INSIDE_STATUS
-          : undefined,
-      gauge: 1,
-      hitArea,
-      hitmarkSeconds: (GUOBA_FIRST_BREATH_FRAMES + GUOBA_BREATH_INTERVAL_FRAMES * index) / 60,
-      poiseDamage: 32,
-      talentMultiplier: guobaFlameMultiplier,
-    }));
+    createPeriodicKitHits(
+      {
+        element: Element.Pyro,
+        enemyStatus: (combatant) =>
+          combatant.constellationCount >= CRISPY_OUTSIDE_TENDER_INSIDE_CONSTELLATION
+            ? CRISPY_OUTSIDE_TENDER_INSIDE_STATUS
+            : undefined,
+        gauge: 1,
+        hitArea,
+        poiseDamage: 32,
+        talentMultiplier: guobaFlameMultiplier,
+      },
+      GUOBA_BREATH_COUNT,
+      GUOBA_FIRST_BREATH_FRAMES,
+      GUOBA_BREATH_INTERVAL_FRAMES,
+    );
   const guobaBreaths = createGuobaBreaths(GUOBA_FLAME_HIT_AREA);
   const crossfireGuobaBreaths = createGuobaBreaths(CROSSFIRE_GUOBA_FLAME_HIT_AREA);
   // The wiki's Pyronado gives each tick 1U of Pyro with no internal cooldown and 30 poise, ticking for its seconds
   const pyronadoMultiplier = getTalentMultiplier(talentMultiplierMap, XIANGLING_BURST_GROUP_ID, TALENT_START_LEVEL, 3);
   const createPyronadoTicks = (seconds: number): KitHit[] =>
-    Array.from({ length: Math.floor((seconds * 60) / PYRONADO_TICK_INTERVAL_FRAMES) + 1 }, (_value, index): KitHit => ({
-      element: Element.Pyro,
-      gauge: 1,
-      hitArea: PYRONADO_HIT_AREA,
-      hitmarkSeconds: (PYRONADO_START_FRAMES + PYRONADO_TICK_INTERVAL_FRAMES * index) / 60,
-      poiseDamage: 30,
-      talentMultiplier: pyronadoMultiplier,
-    }));
+    createPeriodicKitHits(
+      {
+        element: Element.Pyro,
+        gauge: 1,
+        hitArea: PYRONADO_HIT_AREA,
+        poiseDamage: 30,
+        talentMultiplier: pyronadoMultiplier,
+      },
+      Math.floor((seconds * 60) / PYRONADO_TICK_INTERVAL_FRAMES) + 1,
+      PYRONADO_START_FRAMES,
+      PYRONADO_TICK_INTERVAL_FRAMES,
+    );
   const pyronadoTicks = createPyronadoTicks(pyronadoSeconds);
   const slowbakePyronadoTicks = createPyronadoTicks(SLOWBAKE_DURATION_MULTIPLIER * pyronadoSeconds);
   return {
@@ -291,15 +300,13 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         const isSlowbake = combatant.constellationCount >= SLOWBAKE_CONSTELLATION;
         const seconds = isSlowbake ? SLOWBAKE_DURATION_MULTIPLIER * pyronadoSeconds : pyronadoSeconds;
-        addKitEffect(kitEffectState, {
-          ...createKitSummon(
-            { facing, height, position },
-            combatant,
-            isSlowbake ? slowbakePyronadoTicks : pyronadoTicks,
-            PYRONADO_START_FRAMES / 60 + seconds,
-          ),
-          isFollowing: true,
-        });
+        castKitSummon(
+          kitEffectState,
+          { facing, height, position },
+          combatant,
+          isSlowbake ? slowbakePyronadoTicks : pyronadoTicks,
+          { isFollowing: true, secondsRemaining: PYRONADO_START_FRAMES / 60 + seconds },
+        );
         if (combatant.constellationCount < CONDENSED_PYRONADO_CONSTELLATION) return;
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
@@ -337,14 +344,12 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           x: position.x - Math.sin(facing) * GUOBA_OFFSET,
           z: position.z - Math.cos(facing) * GUOBA_OFFSET,
         };
-        addKitEffect(
+        castKitSummon(
           kitEffectState,
-          createKitSummon(
-            { facing, height, position: guobaPosition },
-            combatant,
-            combatant.ascension >= CROSSFIRE_ASCENSION ? crossfireGuobaBreaths : guobaBreaths,
-            GUOBA_FRAMES / 60,
-          ),
+          { facing, height, position: guobaPosition },
+          combatant,
+          combatant.ascension >= CROSSFIRE_ASCENSION ? crossfireGuobaBreaths : guobaBreaths,
+          { secondsRemaining: GUOBA_FRAMES / 60 },
         );
         if (combatant.ascension < BEWARE_ITS_SUPER_HOT_ASCENSION) return;
         addKitEffect(kitEffectState, createChiliPepper(combatant, { x: guobaPosition.x, z: guobaPosition.z }));

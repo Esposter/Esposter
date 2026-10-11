@@ -11,7 +11,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -157,7 +157,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { maxHealth } = combatant.attributes;
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits, SKILL_DURATION_SECONDS));
+        castKitSummon(kitEffectState, body, combatant, tickHits, { secondsRemaining: SKILL_DURATION_SECONDS });
         const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
         addKitEffect(kitEffectState, {
           centre: { x: centre.x, z: centre.z },

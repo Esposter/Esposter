@@ -16,6 +16,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -192,7 +193,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
             kind: "status",
             secondsRemaining: attackMultiplier(9),
           });
-          addKitEffect(effectState, createKitSummon(thornBody, combatant, [thornHit]));
+          castKitSummon(effectState, thornBody, combatant, [thornHit]);
         }),
       );
     },
@@ -268,7 +269,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
       const { characterId } = combatant;
       const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
-      addKitEffect(kitEffectState, createKitSummon(body, combatant, kameraHits));
+      castKitSummon(kitEffectState, body, combatant, kameraHits);
       addKitEffect(
         kitEffectState,
         // The cast heal reaches the whole party wherever it stands, whatever the burst strikes

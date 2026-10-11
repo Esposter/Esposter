@@ -14,8 +14,9 @@ import {
   STRIKE_TARGETING_AREA,
   UNBOUNDED_FIELD_RADIUS,
 } from "#src/services/kit/constants";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -164,17 +165,21 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const stormeyeSeconds = getTalentMultiplier(talentMultiplierMap, VENTI_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
   // The wiki's Wind's Grand Ode gives each tick 1U of Anemo under the Elemental Burst internal cooldown and 4 poise, and
   // From six constellations each takes Storm of Defiance's Anemo RES
-  const stormeyeHits = Array.from({ length: STORMEYE_TICK_COUNT }, (_value, index): KitHit => ({
-    element: Element.Anemo,
-    enemyStatus: (combatant) =>
-      combatant.constellationCount >= STORM_OF_DEFIANCE_CONSTELLATION ? STORM_OF_DEFIANCE_STATUS : undefined,
-    gauge: 1,
-    hitArea: STORMEYE_HIT_AREA,
-    hitmarkSeconds: (STORMEYE_FIRST_TICK_FRAMES + STORMEYE_TICK_INTERVAL_FRAMES * index) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    poiseDamage: 4,
-    talentMultiplier: getTalentMultiplier(talentMultiplierMap, VENTI_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
-  }));
+  const stormeyeHits = createPeriodicKitHits(
+    {
+      element: Element.Anemo,
+      enemyStatus: (combatant) =>
+        combatant.constellationCount >= STORM_OF_DEFIANCE_CONSTELLATION ? STORM_OF_DEFIANCE_STATUS : undefined,
+      gauge: 1,
+      hitArea: STORMEYE_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      poiseDamage: 4,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, VENTI_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+    },
+    STORMEYE_TICK_COUNT,
+    STORMEYE_FIRST_TICK_FRAMES,
+    STORMEYE_TICK_INTERVAL_FRAMES,
+  );
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, VENTI_BURST_GROUP_ID, TALENT_START_LEVEL, 3),
     burstEnergyCost: getTalentMultiplier(talentMultiplierMap, VENTI_BURST_GROUP_ID, TALENT_START_LEVEL, 4),
@@ -184,7 +189,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       isAimed: true,
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount < SPLITTING_GALES_CONSTELLATION) return;
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, splittingGalesHits));
+        castKitSummon(kitEffectState, body, combatant, splittingGalesHits);
       },
       seconds: FULL_AIM_FRAMES / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -201,10 +206,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           x: position.x - Math.sin(facing) * STORMEYE_OFFSET,
           z: position.z - Math.cos(facing) * STORMEYE_OFFSET,
         };
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing, height, position: stormeyePosition }, combatant, stormeyeHits),
-        );
+        castKitSummon(kitEffectState, { facing, height, position: stormeyePosition }, combatant, stormeyeHits);
         if (combatant.ascension < STORMEYE_PASSIVE_ASCENSION) return;
         const passiveSeconds = STORMEYE_START_FRAMES / 60 + stormeyeSeconds;
         addKitEffect(kitEffectState, {

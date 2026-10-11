@@ -14,7 +14,9 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -146,16 +148,20 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     poiseDamage: TECTONIC_TIDE_POISE_DAMAGE,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, ALBEDO_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
   };
-  const fatalBlossomHits: KitHit[] = Array.from({ length: FATAL_BLOSSOM_COUNT }, (_blossom, index) => ({
-    element: Element.Geo,
-    gauge: 1,
-    hitArea: FATAL_BLOSSOM_HIT_AREA,
-    hitmarkSeconds: (FATAL_BLOSSOM_FIRST_FRAMES + index * FATAL_BLOSSOM_INTERVAL_FRAMES) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    isBlunt: true,
-    poiseDamage: FATAL_BLOSSOM_POISE_DAMAGE,
-    talentMultiplier: getTalentMultiplier(talentMultiplierMap, ALBEDO_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
-  }));
+  const fatalBlossomHits: KitHit[] = createPeriodicKitHits(
+    {
+      element: Element.Geo,
+      gauge: 1,
+      hitArea: FATAL_BLOSSOM_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      isBlunt: true,
+      poiseDamage: FATAL_BLOSSOM_POISE_DAMAGE,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, ALBEDO_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
+    },
+    FATAL_BLOSSOM_COUNT,
+    FATAL_BLOSSOM_FIRST_FRAMES,
+    FATAL_BLOSSOM_INTERVAL_FRAMES,
+  );
   const plungeAction = (hitArea: AttackArea, poiseDamage: number, index: number): KitAction => ({
     hits: [
       {
@@ -189,8 +195,7 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hits: [tectonicTideHit],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
-        if (solarIsotoma)
-          addKitEffect(kitEffectState, createKitSummon(solarIsotoma.body, solarIsotoma.combatant, fatalBlossomHits));
+        if (solarIsotoma) castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, fatalBlossomHits);
       },
       seconds: TECTONIC_TIDE_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -202,16 +207,16 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
-        const solarIsotoma: KitSummon = {
-          ...createKitSummon(
-            createAheadBody(body, SOLAR_ISOTOMA_AHEAD_METRES),
-            combatant,
-            [solarIsotomaHit],
-            getTalentMultiplier(talentMultiplierMap, ALBEDO_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
-          ),
-          id: SOLAR_ISOTOMA_ID,
-          spawnSeconds: SOLAR_ISOTOMA_HITMARK_FRAMES / 60,
-        };
+        const solarIsotoma: KitSummon = createKitSummon(
+          createAheadBody(body, SOLAR_ISOTOMA_AHEAD_METRES),
+          combatant,
+          [solarIsotomaHit],
+          {
+            id: SOLAR_ISOTOMA_ID,
+            secondsRemaining: getTalentMultiplier(talentMultiplierMap, ALBEDO_SKILL_GROUP_ID, TALENT_START_LEVEL, 2),
+            spawnSeconds: SOLAR_ISOTOMA_HITMARK_FRAMES / 60,
+          },
+        );
         addKitEffect(kitEffectState, solarIsotoma);
       },
       seconds: SOLAR_ISOTOMA_FRAMES / 60,
@@ -240,10 +245,9 @@ export const createAlbedoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         kind: "status",
         secondsRemaining: TRANSIENT_BLOSSOM_COOLDOWN_SECONDS,
       });
-      addKitEffect(
-        kitEffectState,
-        createKitSummon({ facing: 0, height: 0, position }, solarIsotoma.combatant, [createTransientBlossomHit()]),
-      );
+      castKitSummon(kitEffectState, { facing: 0, height: 0, position }, solarIsotoma.combatant, [
+        createTransientBlossomHit(),
+      ]);
     },
     plungeCollision: {
       hitArea: createFanReach(360, 1),

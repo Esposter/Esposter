@@ -15,7 +15,7 @@ import {
   UNBOUNDED_FIELD_RADIUS,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Collei's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the fully
@@ -157,7 +157,7 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           kind: "field",
           nextTickSeconds: LEAP_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            addKitEffect(tickEffectState, createKitSummon({ facing, height, position }, combatant, [leapHit]));
+            castKitSummon(tickEffectState, { facing, height, position }, combatant, [leapHit]);
           },
           radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: EXPLOSION_HITMARK_FRAMES / 60 + TRUMP_CARD_KITTY_SECONDS,

@@ -15,7 +15,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Aino's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -181,10 +181,7 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       kind: "field",
       nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState }) =>
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing, height, position: burstField.centre }, combatant, [burstHit]),
-        ),
+        castKitSummon(kitEffectState, { facing, height, position: burstField.centre }, combatant, [burstHit]),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + BURST_SECONDS,
       tickIndex: 0,

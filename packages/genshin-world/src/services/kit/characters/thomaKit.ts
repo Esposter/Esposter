@@ -15,6 +15,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -163,7 +164,7 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       kind: "status",
       secondsRemaining: burstTalentMultiplier(THOMA_BURST_FIERY_COLLAPSE_INTERVAL_INDEX),
     });
-    addKitEffect(kitEffectState, createKitSummon(body, combatant, [createFieryCollapseHit()]));
+    castKitSummon(kitEffectState, body, combatant, [createFieryCollapseHit()]);
   };
 
   return {
@@ -195,10 +196,10 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       ],
       // The burst stands the Ooyoroi for its seconds, which the normal attacks of the character on the field set off
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        const ooyoroi: KitSummon = {
-          ...createKitSummon(body, combatant, [], burstTalentMultiplier(THOMA_BURST_SECONDS_INDEX)),
+        const ooyoroi: KitSummon = createKitSummon(body, combatant, [], {
           onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
-        };
+          secondsRemaining: burstTalentMultiplier(THOMA_BURST_SECONDS_INDEX),
+        });
         addKitEffect(kitEffectState, ooyoroi);
       },
       seconds: BURST_FRAMES / 60,

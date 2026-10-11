@@ -18,8 +18,7 @@ import {
   STRIKE_TARGETING_AREA,
   SUMMON_LINGER_SECONDS,
 } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Mona's proud skill groups, read at its talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -231,15 +230,9 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   elementalSkill: {
     hits: [],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(
-          body,
-          combatant,
-          createMirrorReflectionHits(talentMultiplierMap),
-          PHANTOM_EXPLOSION_HITMARK_FRAMES / 60 + SUMMON_LINGER_SECONDS,
-        ),
-      ),
+      castKitSummon(kitEffectState, body, combatant, createMirrorReflectionHits(talentMultiplierMap), {
+        secondsRemaining: PHANTOM_EXPLOSION_HITMARK_FRAMES / 60 + SUMMON_LINGER_SECONDS,
+      }),
     seconds: 50 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },
@@ -306,15 +299,9 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   onSprint: ({ activeCombatant: combatant, body, kitEffectState }: KitContext, kitState: KitState): void => {
     if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
     kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
-    addKitEffect(
-      kitEffectState,
-      createKitSummon(
-        body,
-        combatant,
-        createA1PhantomHits(talentMultiplierMap),
-        A1_PHANTOM_SECONDS + SUMMON_LINGER_SECONDS,
-      ),
-    );
+    castKitSummon(kitEffectState, body, combatant, createA1PhantomHits(talentMultiplierMap), {
+      secondsRemaining: A1_PHANTOM_SECONDS + SUMMON_LINGER_SECONDS,
+    });
   },
   // The collision's poise is the wiki's 5, and it applies no gauge of its own, 0U, as the wiki's table gives. The plunges
   // Are Hydro, as the catalyst's attacks are

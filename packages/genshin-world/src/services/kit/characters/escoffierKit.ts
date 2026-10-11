@@ -13,8 +13,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -244,7 +244,7 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         },
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, skillTickHits));
+        castKitSummon(kitEffectState, body, combatant, skillTickHits);
         if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID)) return;
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
@@ -252,17 +252,14 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           kind: "status",
           secondsRemaining: skillMultiplier(SKILL_ALIGNED_INTERVAL_INDEX),
         });
-        addKitEffect(
-          kitEffectState,
-          createKitSummon(body, combatant, [
-            {
-              hitArea: SURGING_BLADE_HIT_AREA,
-              hitmarkSeconds: SURGING_BLADE_HITMARK_FRAMES / 60,
-              poiseDamage: 0,
-              talentMultiplier: skillMultiplier(SKILL_SURGING_BLADE_INDEX),
-            },
-          ]),
-        );
+        castKitSummon(kitEffectState, body, combatant, [
+          {
+            hitArea: SURGING_BLADE_HIT_AREA,
+            hitmarkSeconds: SURGING_BLADE_HITMARK_FRAMES / 60,
+            poiseDamage: 0,
+            talentMultiplier: skillMultiplier(SKILL_SURGING_BLADE_INDEX),
+          },
+        ]);
       },
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

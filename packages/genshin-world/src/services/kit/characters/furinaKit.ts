@@ -26,11 +26,11 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -336,10 +336,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       kind: "status",
       secondsRemaining: attackMultiplier(isPneuma ? 11 : 10),
     });
-    addKitEffect(kitEffectState, {
-      ...createKitSummon(body, combatant, [arkheHit]),
-      attackTag: AttackTag.NormalAttack,
-    });
+    castKitSummon(kitEffectState, body, combatant, [arkheHit], { attackTag: AttackTag.NormalAttack });
   };
 
   // A Salon member's attack on the enemy nearest its centre: it drains every member above half HP, then strikes the circle
@@ -378,8 +375,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       poiseDamage: 0,
       talentMultiplier: 0,
     };
-    addKitEffect(tick.kitEffectState, {
-      ...createKitSummon({ facing: 0, height: 0, position: target.position }, combatant, [hit]),
+    castKitSummon(tick.kitEffectState, { facing: 0, height: 0, position: target.position }, combatant, [hit], {
       attackTag: AttackTag.ElementalSkill,
       id: SALON_ATTACK_SUMMON_ID,
     });
@@ -615,10 +611,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       const secondsRemaining = (SALON_FRAMES + delayFrames) / 60;
       addKitEffect(kitEffectState, { characterId, id: SALON_STATUS_ID, kind: "status", secondsRemaining });
       if (!isPneuma)
-        addKitEffect(kitEffectState, {
-          ...createKitSummon(body, combatant, [ousiaBubbleHit]),
-          attackTag: AttackTag.ElementalSkill,
-        });
+        castKitSummon(kitEffectState, body, combatant, [ousiaBubbleHit], { attackTag: AttackTag.ElementalSkill });
       summonSalon(kitEffectState, combatant, body.position, delayFrames, secondsRemaining);
     },
     seconds: SKILL_FRAMES / 60,

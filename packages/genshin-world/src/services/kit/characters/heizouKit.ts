@@ -13,7 +13,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
@@ -305,10 +305,9 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       tags.stacks = (tags.stacks ?? 0) + 1;
       const element = findAbsorbedElement([enemy]);
       if (element === undefined) return;
-      addKitEffect(
-        kitEffectState,
-        createKitSummon({ facing: 0, height: 0, position: enemy.position }, striker, [createIrisHit(element)]),
-      );
+      castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, striker, [
+        createIrisHit(element),
+      ]);
     },
     plungeCollision: {
       element: Element.Anemo,

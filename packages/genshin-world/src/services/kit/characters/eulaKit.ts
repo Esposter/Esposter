@@ -17,6 +17,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -226,7 +227,7 @@ const triggerLightfall = (
       effect !== summon &&
       !(effect.kind === "status" && effect.characterId === characterId && LIGHTFALL_STACK_IDS.includes(effect.id)),
   );
-  addKitEffect(kitEffectState, createKitSummon(summon.body, summon.combatant, [hit]));
+  castKitSummon(kitEffectState, summon.body, summon.combatant, [hit]);
 };
 
 export const EULA_CHARACTER_ID = 10_000_051;
@@ -315,12 +316,12 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         const startingStacks = combatant.constellationCount >= 6 ? CONSTELLATION_6_STARTING_STACKS : 0;
         for (const id of LIGHTFALL_STACK_IDS.slice(0, startingStacks))
           addKitEffect(kitEffectState, { characterId, id, kind: "status", secondsRemaining: Infinity });
-        const lightfall: KitSummon = {
-          ...createKitSummon(body, combatant, [
-            createLightfallExplosion(explodeBase, explodePerStack, startingStacks, LIGHTFALL_EXPLOSION_FRAMES / 60),
-          ]),
-          id: LIGHTFALL_SUMMON_ID,
-        };
+        const lightfall: KitSummon = createKitSummon(
+          body,
+          combatant,
+          [createLightfallExplosion(explodeBase, explodePerStack, startingStacks, LIGHTFALL_EXPLOSION_FRAMES / 60)],
+          { id: LIGHTFALL_SUMMON_ID },
+        );
         addKitEffect(kitEffectState, lightfall);
       },
       seconds: BURST_FRAMES / 60,
@@ -392,21 +393,18 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
               poiseDamage: 0,
               talentMultiplier: skillMultiplier(2),
             }));
-            addKitEffect(kitEffectState, createKitSummon(body, combatant, icewhirls));
+            castKitSummon(kitEffectState, body, combatant, icewhirls);
             // Two stacks raise a Shattered Lightfall Sword at Ascension 1, which explodes on its own once the hold has begun
             if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= 1)
-              addKitEffect(
-                kitEffectState,
-                createKitSummon(body, combatant, [
-                  {
-                    hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, SHATTERED_LIGHTFALL_RADIUS),
-                    hitmarkSeconds: SHATTERED_LIGHTFALL_HITMARK_FRAMES / 60,
-                    isBlunt: true,
-                    poiseDamage: SHATTERED_LIGHTFALL_POISE_DAMAGE,
-                    talentMultiplier: explodeBase * SHATTERED_LIGHTFALL_MULTIPLIER_FRACTION,
-                  },
-                ]),
-              );
+              castKitSummon(kitEffectState, body, combatant, [
+                {
+                  hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, SHATTERED_LIGHTFALL_RADIUS),
+                  hitmarkSeconds: SHATTERED_LIGHTFALL_HITMARK_FRAMES / 60,
+                  isBlunt: true,
+                  poiseDamage: SHATTERED_LIGHTFALL_POISE_DAMAGE,
+                  talentMultiplier: explodeBase * SHATTERED_LIGHTFALL_MULTIPLIER_FRACTION,
+                },
+              ]);
             // Constellation 1's bonus lasts six seconds plus six for each stack consumed
             if (combatant.constellationCount >= 1)
               addKitEffect(kitEffectState, {

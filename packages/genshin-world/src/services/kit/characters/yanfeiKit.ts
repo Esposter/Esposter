@@ -13,7 +13,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Yanfei's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
@@ -209,7 +209,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           poiseDamage: 80,
           talentMultiplier: attackMultiplier(3 + seals),
         };
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [hit]));
+        castKitSummon(kitEffectState, body, combatant, [hit]);
         kitEffectState.effects = kitEffectState.effects.filter(
           (effect) => !checkIsSealStatus(effect, combatant.characterId),
         );

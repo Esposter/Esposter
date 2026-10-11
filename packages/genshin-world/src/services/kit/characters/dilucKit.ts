@@ -127,28 +127,26 @@ const createDawnPhoenix = (
     ),
   );
   const explosionSeconds = DILUC_BURST_HITMARK_SECONDS + DAWN_EXPLOSION_SECONDS;
-  return {
-    ...createKitSummon(
-      {
-        facing,
-        height,
-        position: {
-          x: position.x - Math.sin(facing) * DAWN_SPAWN_METRES,
-          z: position.z - Math.cos(facing) * DAWN_SPAWN_METRES,
-        },
+  return createKitSummon(
+    {
+      facing,
+      height,
+      position: {
+        x: position.x - Math.sin(facing) * DAWN_SPAWN_METRES,
+        z: position.z - Math.cos(facing) * DAWN_SPAWN_METRES,
       },
-      combatant,
-      [
-        ...tickHits,
-        createDawnPhoenixHit(
-          DAWN_EXPLOSION_HIT_AREA,
-          explosionSeconds,
-          getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
-        ),
-      ],
-    ),
-    travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: DILUC_BURST_HITMARK_SECONDS },
-  };
+    },
+    combatant,
+    [
+      ...tickHits,
+      createDawnPhoenixHit(
+        DAWN_EXPLOSION_HIT_AREA,
+        explosionSeconds,
+        getTalentMultiplier(talentMultiplierMap, DILUC_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
+      ),
+    ],
+    { travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: DILUC_BURST_HITMARK_SECONDS } },
+  );
 };
 
 export const DILUC_CHARACTER_ID = 10_000_016;

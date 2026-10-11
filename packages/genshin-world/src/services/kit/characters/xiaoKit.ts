@@ -17,7 +17,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -237,13 +237,13 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Stands as long as its Heaven Fall stack, so a dash reads its stacks off those standing and restarts them
   const castDash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     if (combatant.ascension < HEAVEN_FALL_ASCENSION) {
-      addKitEffect(kitEffectState, createKitSummon(body, combatant, [dashHit]));
+      castKitSummon(kitEffectState, body, combatant, [dashHit]);
       return;
     }
     const dashes = kitEffectState.effects.filter((effect) => checkIsDash(effect, combatant.characterId));
     for (const dash of dashes) dash.secondsRemaining = HEAVEN_FALL_SECONDS;
     const hit = takeOne(dashHits, Math.min(dashes.length, HEAVEN_FALL_MAX_STACKS));
-    addKitEffect(kitEffectState, createKitSummon(body, combatant, [hit], HEAVEN_FALL_SECONDS));
+    castKitSummon(kitEffectState, body, combatant, [hit], { secondsRemaining: HEAVEN_FALL_SECONDS });
   };
   // Bane of All Evil: an Anemo infusion converting Xiao's attacks, each carrying the group's DMG Bonus, until the burst
   // Ends. A field checks each step that he is on the field and ends the burst's effects once he is not, ahead of the
