@@ -53,17 +53,17 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## Load is read, not reported
 
-- **Each machine's watcher is kept running by the pulse mod, not by a Monitor in each session.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform.
+- **Each machine's watcher runs as a child of the session the pulse mod starts, not as a Monitor in each session.** `pnpm ai:machine:watch` is the same command on every OS, and it pushes `refs/machines/<id>` every ten minutes with the machine's CPU, GPU, free memory and platform.
 - **`pnpm ai:fleet:status` is the coordinator's whole view:** every machine's last sample, and every claim with its holder and age.
 - **A machine messages the coordinator only for a miss, a failure, or a call it cannot make.** Its idle lines are its own signal to claim.
 
 ## Sync
 
 - **A machine's own checkout** runs `git pull --rebase` before each entry and before each push. It pushes through `pnpm ai:queue:push` after each coherent chunk, never once at the end of a long entry. With many machines a push loses its race routinely, and the script retries with jittered backoff.
-- **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session runs `pnpm ai:queue:push` after every agent report. The script replays the session commits onto origin in a throwaway worktree, pushes, and moves the checkout's branch when no dirty file conflicts.
-- **A checkout syncs on the pulse's timer and on every push.** The genshin-mods pulse runs `pnpm ai:queue:push` every ten minutes outside a turn, so a checkout nothing else pushes still lands on origin. Each push records itself, and each machine's heartbeat carries that record, so the `pushed` column of `pnpm ai:fleet:status` is how a machine sees another's progress, with no message needed.
+- **A shared checkout**, the one a machine's agents all edit, is always dirty, so it never pulls. Its session pushes after every agent report, by the `review-queue` skill's replay.
+- **A checkout syncs on every commit to `ai/queue` and at each turn's end, never on a timer.** The `post-commit` hook starts `pnpm ai:queue:push` detached, and the genshin-mods pulse runs it when a turn ends, so a checkout nothing else pushes still lands on origin. The push holds a lock, so a trigger that finds one running only queues one more pass. Each push records itself, and each machine's heartbeat carries that record, so the `pushed` column of `pnpm ai:fleet:status` is how a machine sees another's progress, with no message needed.
 - **A replay merges text, not meaning.** A change to a shared signature is typechecked once more after the rebase onto origin, right before its push, so callers another machine added meanwhile are migrated too. On 2026-10-09, `getTalentMultiplier` gained a parameter on the PC while the MacBook added seven kits calling it the old way. Both replays were clean, and 12 test files broke.
-- **Never stash, never `git add -A`, never a bare `--force-with-lease`**, on any machine (the `review-queue` skill).
+- **The `git` skill's rules hold on every machine**, the queue's own included (the `review-queue` skill).
 
 ## Game data stays on the machines that hold it
 
