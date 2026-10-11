@@ -208,7 +208,6 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
-  h3: ^2.0.2
   happy-dom: ^20.14.6
   howler: ^2.2.4
   html-element-attributes: ^3.5.0
@@ -309,7 +308,6 @@ catalog:
   xss: ^1.0.15
   zod: ^4.6.5
   lru-cache: ^11.5.3
-
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
