@@ -323,6 +323,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Liyue Harbor.png",
   },
+  // The City Reputation's reward page of Mondstadt at 1080 high from the public City Reputation Guide, 18 seconds in: the
+  // Level list down the right at level 3, the levels' rewards and each one's achieved mark, clear of the clip's own
+  // Recording timer and its UID. Scored over the list's panel only, since the nation's art on the left is not drawn yet
+  "reputation-screen": {
+    capture: "yt-1SqmdXbIhLs-reputation-guide.mp4",
+    region: { height: 872, width: 1220, x: 652, y: 145 },
+    screen: "ReputationScreen",
+    seconds: 18,
+  },
   "loading-startup": { screen: "LoadingStartup", wikiTitle: "File:Loading Screen Startup.png" },
   // The title at dawn, day and night: frames of public recordings of older builds of the PC client idling on it with no
   // Interface, drawn at the current build's camera, each at the moment of the glide's loop its towers and walkway stand at

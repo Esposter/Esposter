@@ -29,6 +29,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.PartySetup]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.PhotoMode]: { isHeld: false, isHudHidden: true, isPointerReleased: false },
   [ScreenKind.Quests]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.Reputation]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Settings]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Shop]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Time]: MENU_SCREEN_BEHAVIOUR,
