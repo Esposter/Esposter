@@ -1,0 +1,25 @@
+---
+title: Collei
+description: Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with her passives and constellations left unbuilt.
+---
+
+# Collei
+
+Collei's kit is one module, `createColleiKit`, avatar 10000067: four strikes, a fully charged shot, a collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion with its leap field. Her multipliers are read from proud skill groups 6731, 6732 and 6739; Floral Brush's cooldown and Trump-Card Kitty's cooldown and energy cost come from the same groups. The particles are not built.
+
+Not yet built: Sprout (Ascension 1) and the Cuilein-Anbar Zone's extension (Ascension 4) both react to a reaction another party member triggers, which no passive can read yet. Constellation 1's Energy Recharge, Constellation 2's Sprout extension, Constellation 4's Elemental Mastery for the other members and Constellation 6's Forest of Falling Arrows wait on a passive's hook, which the kit does not yet offer.
+
+## Decisions
+
+- **Trump-Card Kitty's leap runs 378 frames from its explosion, as gcsim gives it.** The table's duration reads 6 seconds, and gcsim's 6.3 is shipped until a recording settles it. The field is the leap's circle of radius 4 round the spot the kitty was cast at, and its ticks land from there, at 68 frames and every 30 after it.
+- **The leap's ticks are priced by the kitty's combatant as it stood at the cast.** gcsim snapshots the explosion's attack for each tick, so a tick reads the same stats as the cast.
+
+## Key files
+
+| File                                                              | Role                                                                                               |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/colleiKit.ts` | `createColleiKit`, Collei's kit with Floral Brush, Trump-Card Kitty's explosion and its leap field |
+
+## Sources
+
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/collei), MIT: Collei's strikes' hitmarks and cancels, the fully charged shot's frames, Floral Brush's hitmarks, and Trump-Card Kitty's explosion, leap ticks and status.

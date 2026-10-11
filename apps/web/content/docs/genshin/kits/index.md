@@ -208,6 +208,7 @@ flowchart TD
 | [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                     |
 | [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field        |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
+| [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                           |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                   |
 | [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                 |
