@@ -75,11 +75,7 @@ export const readWitnessTargets = async (
   names: readonly WitnessTargetName[],
   isScene = false,
   lightDirection?: Readonly<Vector>,
-): Promise<
-  Pick<WitnessGbuffer, "families" | "height" | "parts" | "width"> & {
-    targets: Partial<Record<WitnessTargetName, Float32Array>>;
-  }
-> => {
+) => {
   const { families, height, parts, width } = await readWitnessTargetsInCall(page, [], isScene, lightDirection);
   const targets: Partial<Record<WitnessTargetName, Float32Array>> = {};
   for (const name of names) {

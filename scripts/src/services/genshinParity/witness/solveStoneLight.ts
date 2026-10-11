@@ -1,6 +1,7 @@
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
 import type { StoneLight } from "genshin-engine";
 
+import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { computeSkyLobeHarmonics } from "#src/services/genshinParity/witness/computeSkyLobeHarmonics";
@@ -105,15 +106,7 @@ export const solveStoneLight = (
         weight: binSamples.length,
       };
     });
-    const gram = Array.from({ length: unknownCount }, () => Array.from({ length: unknownCount }, () => 0));
-    const right = Array.from({ length: unknownCount }, () => 0);
-    for (const { row, target, weight } of rows)
-      for (const [first, firstValue] of row.entries()) {
-        right[first] = (right[first] ?? 0) + weight * firstValue * target;
-        const gramRow = gram[first] ?? [];
-        for (const [second, secondValue] of row.entries())
-          gramRow[second] = (gramRow[second] ?? 0) + weight * firstValue * secondValue;
-      }
+    const { gram, right } = accumulateNormalEquations(rows, unknownCount);
     for (const [unknown, gramRow] of gram.entries()) gramRow[unknown] = (gramRow[unknown] ?? 0) + RIDGE * total;
     // Each bend of the ramp, the change between two neighbouring steps, held toward none
     for (let step = 0; step < stepCount - 1; step++)

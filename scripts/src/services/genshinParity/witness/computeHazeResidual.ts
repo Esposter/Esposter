@@ -1,5 +1,6 @@
 import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLightSample";
 
+import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { RIDGE } from "#src/services/genshinParity/witness/constants";
@@ -46,16 +47,10 @@ export const computeHazeResidual = (
         weight: binSamples.length,
       };
     });
-    const gram = Array.from({ length: unknownCount }, () => Array.from({ length: unknownCount }, () => 0));
-    const right = Array.from({ length: unknownCount }, () => 0);
-    for (const { glow, row, target, weight } of rows)
-      for (const [first, firstValue] of row.entries()) {
-        if (firstValue === 0) continue;
-        right[first] = (right[first] ?? 0) + weight * firstValue * (target - glow);
-        const gramRow = gram[first] ?? [];
-        for (const [second, secondValue] of row.entries())
-          gramRow[second] = (gramRow[second] ?? 0) + weight * firstValue * secondValue;
-      }
+    const { gram, right } = accumulateNormalEquations(
+      rows.map(({ glow, row, target, weight }) => ({ row, target: target - glow, weight })),
+      unknownCount,
+    );
     for (const [unknown, gramRow] of gram.entries()) gramRow[unknown] = (gramRow[unknown] ?? 0) + RIDGE * total;
     const solution = solveNonNegativeSystem(gram, right);
     for (const [binIndex, { glow, row }] of rows.entries()) {
