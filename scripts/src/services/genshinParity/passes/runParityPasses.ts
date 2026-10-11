@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
@@ -7,10 +8,14 @@ import { ParityPassMeasureMap } from "#src/services/genshinParity/passes/ParityP
 
 // A component's passes in their order, each measured and held against its gates, up to and including the first that
 // Fails one, measures nothing, or has no measure yet: the next work, since a pass begun over a failing one absorbs its
-// Error into its own answer. A pass the scene is not owed is printed and passed over, since it has nothing to absorb
-export const runParityPasses = async (component: DerivedAssetComponent): Promise<ParityPassResult[]> => {
+// Error into its own answer. A pass the scene is not owed is printed and passed over, since it has nothing to absorb.
+// Given one pass, that pass alone, taken up ahead of one before it that still fails
+export const runParityPasses = async (
+  component: DerivedAssetComponent,
+  passAlone?: ParityPass,
+): Promise<ParityPassResult[]> => {
   const results: ParityPassResult[] = [];
-  for (const pass of PARITY_PASS_ORDER) {
+  for (const pass of passAlone ? [passAlone] : PARITY_PASS_ORDER) {
     const measurePass = ParityPassMeasureMap[pass];
     if (!measurePass) {
       results.push({ isHeld: false, measure: { notes: ["no measure yet"], readings: [] }, pass });
