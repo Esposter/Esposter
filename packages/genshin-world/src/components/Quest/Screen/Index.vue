@@ -4,6 +4,7 @@ import type { QuestCategory } from "#src/models/quest/QuestCategory";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { GameText } from "genshin-text";
 
+import MenuListScreen from "#src/components/Menu/ListScreen/Index.vue";
 import { QUEST_CATEGORIES, QUEST_TAB_NEXT_CODE, QUEST_TAB_PREVIOUS_CODE } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { QuestCategoryGameTextKeyMap } from "#src/services/quest/QuestCategoryGameTextKeyMap";
@@ -11,7 +12,6 @@ import { QuestKindCategoryMap } from "#src/services/quest/QuestKindCategoryMap";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
-import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -72,78 +72,78 @@ useEventListener("keydown", (event) => {
        Navigates to it. The game lays it over the world, blurred, so the parity page draws the reference's frame behind
        It and scores only what the screen draws. Not yet built: the tabs' glyphs (a diamond stands in for each until
        Traced), the quest kind and place marks, each quest's distance, the rewards row, the overview button and the UID -->
-  <GameScreen class="quest-screen">
-    <p class="header-title">{{ gameText[GameTextKey.Quests] }}</p>
-    <div class="tabs" role="tablist">
-      <button
-        class="tab"
-        :aria-label="gameText[GameTextKey.Quests]"
-        :aria-selected="!category"
-        role="tab"
-        type="button"
-        @click="category = undefined"
-      >
-        <span class="glyph" />
-      </button>
-      <button
-        v-for="questCategory of QUEST_CATEGORIES"
-        :key="questCategory"
-        class="tab"
-        :aria-label="gameText[QuestCategoryGameTextKeyMap[questCategory]]"
-        :aria-selected="category === questCategory"
-        role="tab"
-        type="button"
-        @click="category = questCategory"
-      >
-        <span class="glyph" />
-      </button>
-    </div>
-    <span class="key previous">Q</span>
-    <span class="key next">E</span>
-    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
-    <div
-      class="list"
-      :aria-label="gameText[category ? QuestCategoryGameTextKeyMap[category] : GameTextKey.Quests]"
-      role="tabpanel"
-    >
-      <section v-for="{ categoryQuests, questCategory } of questGroups" :key="questCategory">
-        <p class="heading" role="heading" aria-level="2">{{ gameText[QuestCategoryGameTextKeyMap[questCategory]] }}</p>
+  <MenuListScreen :game-text :title="gameText[GameTextKey.Quests]" @close="emit('close')">
+    <template #tabs>
+      <div class="tabs" role="tablist">
         <button
-          v-for="{ id, titleTextId } of categoryQuests"
-          :key="id"
-          class="quest"
-          :class="{ selected: id === selectedQuestId, tracked: id === trackedQuestId }"
+          class="tab"
+          :aria-label="gameText[GameTextKey.Quests]"
+          :aria-selected="!category"
+          role="tab"
           type="button"
-          @click="selectedQuestId = id"
+          @click="category = undefined"
         >
-          {{ textMap[titleTextId] }}
+          <span class="glyph" />
         </button>
-      </section>
-    </div>
-    <div v-if="selectedQuest" class="details">
-      <p class="title" role="heading" aria-level="1">{{ textMap[selectedQuest.titleTextId] }}</p>
-      <p v-if="questStep" class="step">
-        <span>{{ textMap[questStep.textId] }}</span>
-        <span>{{ questStep.counter }}</span>
-      </p>
-      <p class="description">{{ textMap[selectedQuest.descriptionTextId] }}</p>
-      <button class="navigate" type="button" @click="navigate(selectedQuest.id)">
-        {{
-          gameText[selectedQuest.id === trackedQuestId ? GameTextKey.QuestCancelNavigation : GameTextKey.QuestNavigate]
-        }}
-      </button>
-    </div>
-  </GameScreen>
+        <button
+          v-for="questCategory of QUEST_CATEGORIES"
+          :key="questCategory"
+          class="tab"
+          :aria-label="gameText[QuestCategoryGameTextKeyMap[questCategory]]"
+          :aria-selected="category === questCategory"
+          role="tab"
+          type="button"
+          @click="category = questCategory"
+        >
+          <span class="glyph" />
+        </button>
+      </div>
+    </template>
+    <template #list>
+      <div
+        class="list"
+        role="tabpanel"
+        :aria-label="gameText[category ? QuestCategoryGameTextKeyMap[category] : GameTextKey.Quests]"
+      >
+        <section v-for="{ categoryQuests, questCategory } of questGroups" :key="questCategory">
+          <p class="heading" role="heading" aria-level="2">
+            {{ gameText[QuestCategoryGameTextKeyMap[questCategory]] }}
+          </p>
+          <button
+            v-for="{ id, titleTextId } of categoryQuests"
+            :key="id"
+            class="quest"
+            :class="{ selected: id === selectedQuestId, tracked: id === trackedQuestId }"
+            type="button"
+            @click="selectedQuestId = id"
+          >
+            {{ textMap[titleTextId] }}
+          </button>
+        </section>
+      </div>
+    </template>
+    <template #detail>
+      <div v-if="selectedQuest" class="details">
+        <p class="title" role="heading" aria-level="1">{{ textMap[selectedQuest.titleTextId] }}</p>
+        <p v-if="questStep" class="step">
+          <span>{{ textMap[questStep.textId] }}</span>
+          <span>{{ questStep.counter }}</span>
+        </p>
+        <p class="description">{{ textMap[selectedQuest.descriptionTextId] }}</p>
+        <button class="navigate" type="button" @click="navigate(selectedQuest.id)">
+          {{
+            gameText[
+              selectedQuest.id === trackedQuestId ? GameTextKey.QuestCancelNavigation : GameTextKey.QuestNavigate
+            ]
+          }}
+        </button>
+      </div>
+    </template>
+  </MenuListScreen>
 </template>
 
 <style scoped>
-.quest-screen {
-  color: #fff;
-}
-
-.header-title,
 .tab,
-.close,
 .quest,
 .navigate {
   margin: 0;
@@ -151,16 +151,6 @@ useEventListener("keydown", (event) => {
   cursor: inherit;
   font: inherit;
   font-weight: 600;
-}
-
-.header-title {
-  position: absolute;
-  top: 0;
-  left: calc(var(--unit) * 144);
-  height: calc(var(--unit) * 95);
-  color: #d7c28f;
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 95);
 }
 
 .tabs {
@@ -199,51 +189,6 @@ useEventListener("keydown", (event) => {
 
 .tab[aria-selected="true"] .glyph {
   border-color: #ece5d8;
-}
-
-.key {
-  position: absolute;
-  top: calc(var(--unit) * 33);
-  display: grid;
-  width: calc(var(--unit) * 32);
-  height: calc(var(--unit) * 28);
-  background: #ece5d8;
-  color: #000;
-  font-size: calc(var(--unit) * 20);
-  place-items: center;
-}
-
-.key.previous {
-  left: calc(var(--unit) * 675);
-}
-
-.key.next {
-  left: calc(var(--unit) * 1213);
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 50);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(236 229 216 / 0.85);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 40);
-  line-height: 1;
-}
-
-.list {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  bottom: calc(var(--unit) * 125);
-  left: calc(var(--unit) * 150);
-  display: flex;
-  width: calc(var(--unit) * 666);
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
 .heading {
