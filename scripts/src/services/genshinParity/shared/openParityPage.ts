@@ -8,7 +8,7 @@ import {
   INTERFACE_HEIGHT,
   PARITY_BACKDROP_FILE,
   PARITY_FRAME_MS,
-  PARITY_PAGE_URL,
+  PARITY_PAGE_ROOT,
   PARITY_READY_TIMEOUT_MS,
   RESOURCE_TIMING_BUFFER_SIZE,
   WITNESS_LAYOUT_PATH,
@@ -31,6 +31,7 @@ export const openParityPage = async ({
   isClockFaked,
   isFrameRateUnlimited,
   motion,
+  pageRoot,
   props,
   screen,
   width,
@@ -92,9 +93,10 @@ export const openParityPage = async ({
     }
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
     if (isClockFaked) await page.clock.install({ time: 0 });
-    await page.goto(`${PARITY_PAGE_URL}${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`, {
-      waitUntil: "networkidle",
-    });
+    await page.goto(
+      `${pageRoot ?? PARITY_PAGE_ROOT}?screen=${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`,
+      { waitUntil: "networkidle" },
+    );
     // The page is drawn once it is ready, or never once a failure nothing caught has stopped it
     const readPageState = () =>
       page.evaluate(() => {
