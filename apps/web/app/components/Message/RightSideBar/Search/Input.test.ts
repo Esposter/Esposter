@@ -2,9 +2,9 @@
 import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import type { z } from "zod";
 
+import { CREATED_AT_DESCENDING_SORT_ITEM, DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
-import { CREATED_AT_DESCENDING_SORT_ITEM, DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { FilterType } from "@esposter/db-schema";

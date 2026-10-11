@@ -91,6 +91,13 @@ describe("unoConfig", () => {
             },
           ],
           [
+            "ui-popover-motion",
+            {
+              "opacity": 0,
+              "transition": "opacity var(--ui-motion-short), transform var(--ui-motion-short), display var(--ui-motion-short) allow-discrete, overlay var(--ui-motion-short) allow-discrete",
+            },
+          ],
+          [
             "ui-raised",
             [
               {

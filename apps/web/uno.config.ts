@@ -81,12 +81,6 @@ const uiSurfaceUtilities = {
     },
     FORCED_COLORS_EDGE,
   ],
-  // A popover is closed until it opens, and steps in over the motion short; the transform it steps from is its own
-  "ui-popover-motion": {
-    opacity: 0,
-    transition:
-      "opacity var(--ui-motion-short), transform var(--ui-motion-short), display var(--ui-motion-short) allow-discrete, overlay var(--ui-motion-short) allow-discrete",
-  },
   "ui-popover": {
     "background-color": "transparent",
     border: "none",
@@ -94,6 +88,12 @@ const uiSurfaceUtilities = {
     "min-width": "anchor-size(width)",
     overflow: "visible",
     padding: "calc(var(--ui-step) * 2)",
+  },
+  // A popover is closed until it opens, and steps in over the motion short; the transform it steps from is its own
+  "ui-popover-motion": {
+    opacity: 0,
+    transition:
+      "opacity var(--ui-motion-short), transform var(--ui-motion-short), display var(--ui-motion-short) allow-discrete, overlay var(--ui-motion-short) allow-discrete",
   },
   "ui-raised": [
     {
