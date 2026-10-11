@@ -5,11 +5,11 @@ import { SURFACE_STATISTICS_PARTIAL_COUNT } from "#parity/surfaceStatistics/cons
 import { createRecorder } from "#parity/surfaceStatistics/createRecorder";
 import { createStorageBuffer } from "#parity/surfaceStatistics/createStorageBuffer";
 import { destroyBuffers } from "#parity/surfaceStatistics/destroyBuffers";
-import { getBlurWeights } from "#parity/surfaceStatistics/getBlurWeights";
 import { getSlotSum } from "#parity/surfaceStatistics/getSlotSum";
 import { getSurfaceStatisticsDevice } from "#parity/surfaceStatistics/getSurfaceStatisticsDevice";
 import { submitAndReadBuffers } from "#parity/surfaceStatistics/submitAndReadBuffers";
 import { uploadStorageBuffer } from "#parity/surfaceStatistics/uploadStorageBuffer";
+import { getBlurWeights } from "#src/services/shared/getBlurWeights";
 import { takeOne } from "@esposter/shared";
 
 // The reductions a surface reads in its first submit, each a slot of the partial sums
