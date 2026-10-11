@@ -1,8 +1,8 @@
-import type { CabMapRecord } from "#src/models/genshinAssets/shared/CabMapRecord";
+import type { CabMapRecord } from "#src/models/recreation/animeStudio/CabMapRecord";
 
 import { mergeCabMaps } from "#src/services/genshinAssets/blocks/mergeCabMaps";
-import { readCabMap } from "#src/services/genshinAssets/shared/readCabMap";
-import { writeCabMap } from "#src/services/genshinAssets/shared/writeCabMap";
+import { readCabMap } from "#src/services/recreation/animeStudio/readCabMap";
+import { writeCabMap } from "#src/services/recreation/animeStudio/writeCabMap";
 import { describe, expect, test } from "vitest";
 
 const writeRecords = (baseFolder: string, records: CabMapRecord[]): Buffer => writeCabMap({ baseFolder, records });

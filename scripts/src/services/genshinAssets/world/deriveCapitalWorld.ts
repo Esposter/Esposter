@@ -1,13 +1,12 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
 import type { ComponentDirectory } from "#src/models/genshinAssets/shared/ComponentDirectory";
 import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
+import { GENSHIN_ANIMESTUDIO_OPTIONS, TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import {
   ARCHITECTURE_VIEW_METRES,
@@ -33,6 +32,7 @@ import { readStreamPlacements } from "#src/services/genshinAssets/world/readStre
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectCityAreasInView";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
@@ -67,7 +67,7 @@ export const deriveCapitalWorld = async (
   const streamAssetNames = new Set(
     streamNames.flatMap((streamName) => [getStreamBlobName(streamName), `${streamName}${STREAM_INDEX_SUFFIX}`]),
   );
-  const streamAssets = await readIndexedAssets(({ name }) => streamAssetNames.has(name));
+  const streamAssets = await readIndexedAssets(({ name }) => streamAssetNames.has(name), GENSHIN_ANIMESTUDIO_OPTIONS);
   const streams: WorldOptions["streams"] = [];
   for (const streamName of streamNames) {
     const blobName = getStreamBlobName(streamName);
@@ -123,7 +123,10 @@ export const deriveCapitalWorld = async (
   // Found through the meshes of its name: an animator or a material named as a prefab can lie in a block of hundreds
   // Of thousands of layout files (Inazuma City's `00/15424869` and `00/02666572`)
   const indexedNames = new Set(prefabNames.values());
-  const prefabMeshes = await readIndexedAssets(({ name, type }) => type === AssetType.Mesh && indexedNames.has(name));
+  const prefabMeshes = await readIndexedAssets(
+    ({ name, type }) => type === AssetType.Mesh && indexedNames.has(name),
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const nameBlocksMap = await readPrefabBlocks(prefabMeshes, cabMap);
   const dumpedBlocks = [...new Set([...nameBlocksMap.values()].flat())];
   const meshBlocks = new Set(prefabMeshes.map(({ block }) => block));
@@ -154,7 +157,10 @@ export const deriveCapitalWorld = async (
   // The 2x2 of terrain tiles from the capital's own tile, each TerrainData found in the blocks naming a terrain tile
   const capitalTile = { column: Math.floor(place.x / TERRAIN_TILE_SIZE), row: Math.floor(place.z / TERRAIN_TILE_SIZE) };
   const terrainNames = getTerrainTileNames(capitalTile);
-  const terrainAssets = await readIndexedAssets(({ name }) => name.startsWith(TERRAIN_NAME_PREFIX));
+  const terrainAssets = await readIndexedAssets(
+    ({ name }) => name.startsWith(TERRAIN_NAME_PREFIX),
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   // The blocks holding a tile's own textures are searched first, since a tile is often exported beside them, then every
   // Other terrain block, since the index names no TerrainData: a tile in none of them is reported
   const nearTerrainBlocks = terrainAssets

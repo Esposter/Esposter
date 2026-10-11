@@ -12,11 +12,12 @@ import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
   DEFERRED_SHADING_BLOCK,
   GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { getResultAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -34,7 +35,10 @@ const SUMMARY_PROPERTY_COUNT = 4;
 export const extractComponentShaders = async (component: DerivedAssetComponent): Promise<string[]> => {
   const materials = await readComponentMaterials(component);
   const shaderPathIds = new Set(materials.map(({ shaderPathId }) => shaderPathId));
-  const shaders = await readIndexedAssets(({ pathId, type }) => type === "Shader" && shaderPathIds.has(pathId));
+  const shaders = await readIndexedAssets(
+    ({ pathId, type }) => type === "Shader" && shaderPathIds.has(pathId),
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const blocks = [...new Set([...shaders.map(({ block }) => block), DEFERRED_SHADING_BLOCK])].toSorted();
   const { shaders: directory } = getComponentDirectory(component);
   await rm(directory, { force: true, recursive: true });
@@ -42,14 +46,17 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
   for (const block of blocks) {
     const blockName = basename(block, ".blk");
     const rawDirectory = join(directory, "raw", blockName);
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      rawDirectory,
-      "--types",
-      `${AssetType.Shader}${ANIMESTUDIO_UNPARSED_SUFFIX}`,
-      "--export_type",
-      AnimeStudioExportType.Raw,
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        rawDirectory,
+        "--types",
+        `${AssetType.Shader}${ANIMESTUDIO_UNPARSED_SUFFIX}`,
+        "--export_type",
+        AnimeStudioExportType.Raw,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
     const shaderDirectory = join(rawDirectory, AssetType.Shader);
     if (!existsSync(shaderDirectory)) {
       summary.push(`${blockName}: no shader AnimeStudio could read`);

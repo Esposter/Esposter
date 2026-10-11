@@ -1,4 +1,4 @@
-import type { CabMap } from "#src/models/genshinAssets/shared/CabMap";
+import type { CabMap } from "#src/models/recreation/animeStudio/CabMap";
 
 // A length in seven-bit groups, the high bit set on every byte but the last, as .NET's BinaryWriter writes it
 const encodeLength = (length: number): number[] => {

@@ -8,14 +8,14 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
 import { parseRectTransformLayout } from "#src/services/genshinAssets/interface/parseRectTransformLayout";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { toGameObjectComponentsMap } from "#src/services/genshinAssets/shared/toGameObjectComponentsMap";
 import { toGameObjectTransformIdMap } from "#src/services/genshinAssets/shared/toGameObjectTransformIdMap";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -34,23 +34,22 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
   const directory = join(getComponentDirectory(component).root, "interface");
   await rm(directory, { force: true, recursive: true });
   const blockPath = join(GAME_BLOCKS_DIRECTORY, block);
-  runAnimeStudio([
-    blockPath,
-    join(directory, "json"),
-    "--types",
-    AssetType.RectTransform,
-    AssetType.GameObject,
-    "--export_type",
-    AnimeStudioExportType.Json,
-  ]);
-  runAnimeStudio([
-    blockPath,
-    join(directory, "raw"),
-    "--types",
-    AssetType.RectTransform,
-    "--export_type",
-    AnimeStudioExportType.Raw,
-  ]);
+  runAnimeStudio(
+    [
+      blockPath,
+      join(directory, "json"),
+      "--types",
+      AssetType.RectTransform,
+      AssetType.GameObject,
+      "--export_type",
+      AnimeStudioExportType.Json,
+    ],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
+  runAnimeStudio(
+    [blockPath, join(directory, "raw"), "--types", AssetType.RectTransform, "--export_type", AnimeStudioExportType.Raw],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const rectDirectory = join(directory, "json", AssetType.RectTransform);
   const gameObjectDirectory = join(directory, "json", AssetType.GameObject);
   const [rectNames, gameObjectNames] = await Promise.all([readdir(rectDirectory), readdir(gameObjectDirectory)]);

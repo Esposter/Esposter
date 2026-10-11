@@ -1,7 +1,7 @@
-import type { CabMapRecord } from "#src/models/genshinAssets/shared/CabMapRecord";
+import type { CabMapRecord } from "#src/models/recreation/animeStudio/CabMapRecord";
 
-import { readCabMap } from "#src/services/genshinAssets/shared/readCabMap";
-import { writeCabMap } from "#src/services/genshinAssets/shared/writeCabMap";
+import { readCabMap } from "#src/services/recreation/animeStudio/readCabMap";
+import { writeCabMap } from "#src/services/recreation/animeStudio/writeCabMap";
 
 // The CAB maps of several runs over the blocks, merged into one over the base folder they all are relative to. As
 // AnimeStudio keeps the first file it finds of a name, a CAB two runs both hold keeps the record of the earlier map,

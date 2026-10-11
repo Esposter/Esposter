@@ -1,5 +1,8 @@
-import { MEMORY_WAIT_MILLISECONDS, MIN_AVAILABLE_MEMORY_GIGABYTES } from "#src/services/genshinAssets/world/constants";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
+import {
+  MEMORY_WAIT_MILLISECONDS,
+  MIN_AVAILABLE_MEMORY_GIGABYTES,
+} from "#src/services/recreation/animeStudio/constants";
 import { setTimeout as sleep } from "node:timers/promises";
 
 // Waits while the available memory is under the floor, so a run starts only with room for its blocks. Available, not

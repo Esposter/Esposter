@@ -2,12 +2,13 @@ import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { CityAreaCandidate } from "#src/models/genshinAssets/world/CityAreaCandidate";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getNamedRawArgs } from "#src/services/genshinAssets/shared/getNamedRawArgs";
-import { runAnimeStudioBelowNormal } from "#src/services/genshinAssets/shared/runAnimeStudioBelowNormal";
 import { CITY_AREA_EXPORTS_DIRECTORY } from "#src/services/genshinAssets/world/constants";
 import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
 import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { toCityArea } from "#src/services/genshinAssets/world/toCityArea";
+import { runAnimeStudioBelowNormal } from "#src/services/recreation/animeStudio/runAnimeStudioBelowNormal";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -35,7 +36,10 @@ export const extractCityAreas = async (candidates: readonly CityAreaCandidate[])
   await rm(CITY_AREA_EXPORTS_DIRECTORY, { force: true, recursive: true });
   for (const { block, names, type } of requests.values())
     // oxlint-disable-next-line no-await-in-loop -- One export at a time: each run waits for the free memory the last one left
-    await runAnimeStudioBelowNormal(getNamedRawArgs(block, type, [...names], CITY_AREA_EXPORTS_DIRECTORY));
+    await runAnimeStudioBelowNormal(
+      getNamedRawArgs(block, type, [...names], CITY_AREA_EXPORTS_DIRECTORY),
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
   const areas: CityArea[] = [];
   for (const { blob, code, index } of candidates) {
     // oxlint-disable-next-line no-await-in-loop -- One area at a time: each one's bytes are parsed and dropped before the next is read

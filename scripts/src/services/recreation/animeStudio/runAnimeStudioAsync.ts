@@ -1,18 +1,25 @@
-import { assertAnimeStudioReady } from "#src/services/genshinAssets/shared/assertAnimeStudioReady";
-import { ANIMESTUDIO_CLI_PATH } from "#src/services/genshinAssets/shared/constants";
-import { getAnimeStudioArgs } from "#src/services/genshinAssets/shared/getAnimeStudioArgs";
-import { judgeAnimeStudioRun } from "#src/services/genshinAssets/shared/judgeAnimeStudioRun";
+import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
+
 import { getUtilityClampedCommand } from "#src/services/machine/getUtilityClampedCommand";
+import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
+import { getAnimeStudioArgs } from "#src/services/recreation/animeStudio/getAnimeStudioArgs";
+import { judgeAnimeStudioRun } from "#src/services/recreation/animeStudio/judgeAnimeStudioRun";
 import { spawn } from "node:child_process";
 import { dirname } from "node:path";
 
 // Runs AnimeStudio as `runAnimeStudio` does, with the same verdict on its run, but without blocking, so the shards of
 // A map run as processes of their own at once. Each run's output is held until it exits, which a map's warnings keep small
-export const runAnimeStudioAsync = (args: string[]): Promise<void> => {
-  assertAnimeStudioReady();
-  const { args: spawnArgs, command } = getUtilityClampedCommand(ANIMESTUDIO_CLI_PATH, getAnimeStudioArgs(args));
+export const runAnimeStudioAsync = (args: string[], options: AnimeStudioOptions): Promise<void> => {
+  assertAnimeStudioReady(options);
+  const { args: spawnArgs, command } = getUtilityClampedCommand(
+    options.executablePath,
+    getAnimeStudioArgs(args, options.game),
+  );
   return new Promise<void>((resolve, reject) => {
-    const child = spawn(command, spawnArgs, { cwd: dirname(ANIMESTUDIO_CLI_PATH), stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(command, spawnArgs, {
+      cwd: dirname(options.executablePath),
+      stdio: ["ignore", "pipe", "pipe"],
+    });
     const stdoutChunks: Buffer[] = [];
     const stderrChunks: Buffer[] = [];
     child.stdout.on("data", (chunk: Buffer) => stdoutChunks.push(chunk));

@@ -1,4 +1,4 @@
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { NAMECARD_ART_PREFIX, NAMECARD_ICON_PREFIX } from "#src/services/genshinAssets/namecards/constants";

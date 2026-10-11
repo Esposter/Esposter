@@ -1,7 +1,7 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { mkdir } from "node:fs/promises";
 import { basename, join } from "node:path";
 
@@ -14,14 +14,17 @@ export const exportClipBlocks = async (
   // Made here, since AnimeStudio makes it only for a block holding a clip it exports
   await mkdir(directory, { recursive: true });
   for (const block of blocks)
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      join(directory, basename(block, ".blk")),
-      "--types",
-      AssetType.AnimationClip,
-      "--names",
-      clipPattern,
-      "--export_type",
-      AnimeStudioExportType.Json,
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        join(directory, basename(block, ".blk")),
+        "--types",
+        AssetType.AnimationClip,
+        "--names",
+        clipPattern,
+        "--export_type",
+        AnimeStudioExportType.Json,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
 };

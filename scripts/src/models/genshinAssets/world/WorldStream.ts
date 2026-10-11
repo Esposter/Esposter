@@ -1,5 +1,5 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 // One StreamGen blob of the world's, by its block and the name AnimeStudio exports it under (its path's PathHashLast in
 // Hex), with the index of its chunks by block and name, each prefab of its placements laid out, by the world's 32-bit

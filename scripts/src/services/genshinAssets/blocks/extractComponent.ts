@@ -1,7 +1,7 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
@@ -12,18 +12,16 @@ import {
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
   GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
   LAYOUT_ASSET_TYPES,
 } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { parseCabMap } from "#src/services/genshinAssets/shared/parseCabMap";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { toMaterialValues } from "#src/services/genshinAssets/shared/toMaterialValues";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
@@ -32,6 +30,9 @@ import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
 import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
+import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -52,6 +53,7 @@ const exportResolvedAssets = async (
     await readIndexedAssets(
       ({ block, pathId, type }) =>
         types.some((assetType) => assetType === type) && keyObjectsMap.has(toObjectKey(block, pathId)),
+      GENSHIN_ANIMESTUDIO_OPTIONS,
     ),
     ({ block, pathId }) => toObjectKey(block, pathId),
   );
@@ -76,16 +78,19 @@ const exportResolvedAssets = async (
   }
   for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block)) {
     const names = [...new Set(blockAssets.map(({ name }) => RegExp.escape(name)))];
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      assetsDirectory,
-      "--names",
-      `^(${names.join("|")})$`,
-      "--types",
-      ...types,
-      ...GROUP_BY_TYPE,
-      ...(exportType ? ["--export_type", exportType] : []),
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        assetsDirectory,
+        "--names",
+        `^(${names.join("|")})$`,
+        "--types",
+        ...types,
+        ...GROUP_BY_TYPE,
+        ...(exportType ? ["--export_type", exportType] : []),
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
   }
   return { assets, unresolved };
 };
@@ -162,15 +167,18 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   const sampled = await exportResolvedAssets(textures, [AssetType.Texture2D], directory.assets);
   if (namePattern)
     for (const block of await readAssetBlocks(namePattern))
-      runAnimeStudio([
-        join(GAME_BLOCKS_DIRECTORY, block),
-        directory.assets,
-        "--names",
-        namePattern,
-        "--types",
-        ...EXPORTED_ASSET_TYPES,
-        ...GROUP_BY_TYPE,
-      ]);
+      runAnimeStudio(
+        [
+          join(GAME_BLOCKS_DIRECTORY, block),
+          directory.assets,
+          "--names",
+          namePattern,
+          "--types",
+          ...EXPORTED_ASSET_TYPES,
+          ...GROUP_BY_TYPE,
+        ],
+        GENSHIN_ANIMESTUDIO_OPTIONS,
+      );
   // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
   if (options.world) await exportWorld(options.world, directory.world);
   const worldLines = world ? await extractWorld(world, directory) : [];
