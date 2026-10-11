@@ -1,5 +1,6 @@
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
 import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
@@ -38,6 +39,9 @@ const mergeQuestProgress = (
 // Mondstadt's Reputation is the further of the two, by its level and then by the EXP toward the next
 const checkIsFurtherReputation = (reputation: ReputationProgress, than: ReputationProgress): boolean =>
   reputation.level === than.level ? reputation.exp > than.exp : reputation.level > than.level;
+// The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
+const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
+  progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
   adjustment: WorldLevelAdjustmentSave,
@@ -51,14 +55,15 @@ const checkIsLaterWorldLevelAdjustment = (
 };
 
 // A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
-// Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A quest keeps the further of the two steps, since a step is never
-// Undone, and on the same step each objective's count takes the larger. Each character's Companionship EXP and the
-// Adventure EXP keep the larger, as a counter only grows. Each kind of
-// Wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's and never mixed.
-// The Reputation keeps the further. The bag and the wallet are the account's copy, except that a Primogem refill count
-// From the same game day takes the larger, as a count of refills within a day only grows. The World Level adjustment is
-// The copy changed later, since the one change of it the player made last is the one they still stand by. The Traveler's
-// Name is the account's, or the guest's while the account has chosen none
+// Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A
+// Quest keeps the further of the two steps, since a step is never undone, and on the same step each objective's count
+// Takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows.
+// Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's
+// And never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag and the wallet are the
+// Account's copy, except that a Primogem refill count from the same game day takes the larger, as a count of refills
+// Within a day only grows. The World Level adjustment is the copy changed later, since the one change of it the player
+// Made last is the one they still stand by. The Traveler's name is the account's, or the guest's while the account has
+// Chosen none
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -83,7 +88,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;
-  const isFurtherFrostbearingTree = guest.offerings.frostbearingTree.level > account.offerings.frostbearingTree.level;
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
@@ -94,7 +98,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     },
     inventory: account.inventory,
     offerings: {
-      frostbearingTree: isFurtherFrostbearingTree
+      frostbearingTree: checkIsFurtherOffering(guest.offerings.frostbearingTree, account.offerings.frostbearingTree)
         ? guest.offerings.frostbearingTree
         : account.offerings.frostbearingTree,
     },
