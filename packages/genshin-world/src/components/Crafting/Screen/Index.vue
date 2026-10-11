@@ -4,7 +4,7 @@ import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { CraftingCell } from "genshin-interface";
+import type { CraftingCell, CraftingMaterial } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import { Currency } from "#src/models/inventory/Currency";
@@ -13,9 +13,12 @@ import { CombineTypeGameTextKeyMap } from "#src/services/crafting/CombineTypeGam
 import { computeCraftableCount } from "#src/services/crafting/computeCraftableCount";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
 import { rollCraftingTalent } from "#src/services/crafting/rollCraftingTalent";
+import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
+import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { getItemName } from "#src/services/inventory/getItemName";
+import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 import { takeOne } from "@esposter/shared";
 import { CraftingScreen, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -84,6 +87,18 @@ const amountMaximum = computed(() => {
 // The amount the player picked, kept to the most the bag and wallet still pay for once a craft has spent them
 const pickedAmount = computed(() => Math.min(amount.value, amountMaximum.value));
 const requiredCoins = computed(() => (pickedRecipe.value?.mora ?? 0) * pickedAmount.value);
+// The picked recipe's materials, each with the count the bag holds (Original Resin from the wallet, regenerated to now)
+// And the count one craft takes
+const materials = computed<CraftingMaterial[]>(() =>
+  (pickedRecipe.value?.materials ?? []).map((material) => ({
+    id: material.id,
+    owned:
+      material.id === ORIGINAL_RESIN_ITEM_ID
+        ? regenerateOriginalResin(wallet.value, Temporal.Now.instant())[Currency.OriginalResin]
+        : countInventoryItem(inventory.value.items, material.id),
+    required: material.count,
+  })),
+);
 const craftedLabel = computed(() =>
   fillGameTextValues(
     gameText[GameTextKey.CraftingCrafted],
@@ -127,6 +142,7 @@ const craft = () => {
       :coins="wallet[Currency.Mora]"
       :crafted-label
       :crafting-materials-label="gameText[GameTextKey.CraftingMaterials]"
+      :materials
       :craft-label="gameText[GameTextKey.CraftingTitle]"
       :crafters
       :recipe-id="pickedRecipe?.id ?? 0"
