@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/nitro/plugins/securityHeaders.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.008264600000000144,
+              "name": "native — serializing the page's headers",
+              "p99": 0.019505999999993542,
+              "rme": 26.8106118543535,
+              "sampleCount": 500
+            },
+            {
+              "mean": 0.009622799999999813,
+              "name": "headers applied to a response",
+              "p99": 0.034591000000008226,
+              "rme": 5.70285487497244,
+              "sampleCount": 500
+            }
+          ],
+          "fullName": "<anonymous> > a page's response"
+        }
+      ]
+    }
+  ]
+}
