@@ -416,9 +416,6 @@ catalogs:
     '@types/sax':
       specifier: ^1.2.7
       version: 1.2.7
-    '@types/semver':
-      specifier: ^7.8.0
-      version: 7.8.0
     '@types/three':
       specifier: ^0.186.0
       version: 0.186.0
@@ -755,9 +752,6 @@ catalogs:
     sax:
       specifier: ^1.6.1
       version: 1.6.1
-    semver:
-      specifier: ^7.8.5
-      version: 7.8.5
     sharp:
       specifier: ^0.35.5
       version: 0.35.5
@@ -2614,9 +2608,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
-      '@types/semver':
-        specifier: 'catalog:'
-        version: 7.8.0
       '@types/three':
         specifier: 'catalog:'
         version: 0.186.0
@@ -2656,9 +2647,6 @@ importers:
       playwright:
         specifier: 'catalog:'
         version: 1.64.0
-      semver:
-        specifier: 'catalog:'
-        version: 7.8.5
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.5)
