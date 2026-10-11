@@ -19,7 +19,8 @@ export const WEEKLY_WINDOW_MS: number = Temporal.Duration.from({ hours: 168 }).t
 // The only model an agent may launch on under a reserve, the one cleanup and a settled compute runner need
 export const RESERVE_AGENT_MODEL = "haiku";
 // What a refusal tells the session to do instead, after the reserve's summary
-export const RESERVE_REFUSAL_INSTRUCTION = `Launch only an agent with model "${RESERVE_AGENT_MODEL}", for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const RESERVE_REFUSAL_INSTRUCTION: string = `Launch only an agent with model "${RESERVE_AGENT_MODEL}", for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`
@@ -50,10 +51,10 @@ export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetc
 export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
 export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
-export const LEADING_SEGMENT_REGEX = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
+export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
 // The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what
 // It runs may write as readily as read; PowerShell's cmdlets are matched in any case, as PowerShell matches them
-export const LOOKUP_COMMAND_REGEX =
+export const LOOKUP_COMMAND_REGEX: RegExp =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question
 export const DELEGATION_NUDGE_EVERY = 3;
