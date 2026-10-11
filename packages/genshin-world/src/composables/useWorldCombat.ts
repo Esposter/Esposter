@@ -93,19 +93,21 @@ export const useWorldCombat = ({
   });
   // How the character on the field moves, its body type's
   const locomotion = computed(() => getCharacterLocomotion(getActiveCharacterId(party), statTables.characterDataMap));
-  // Each character's combat once its kit is built from its loaded multipliers, a character whose chunk has not arrived
-  // Having none yet. The character on the field's combat and its party member are what the HUD's Health and skills read
+  // Each deployed member's combat once its kit is built from its loaded multipliers, a member whose chunk has not arrived
+  // Having none yet. A kit stays loaded past a team change, so only the deployed team is held, as a field counting its
+  // Members' elements reads every combatant here. The character on the field's combat and its party member are what the
+  // HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
     const combatantMap = new Map<number, Combatant>();
     // The deployed team's resonances, read off its members' elements in the roster, which hold on every member
     const { characterDataMap } = statTables;
     const elementalResonances = getElementalResonances(
-      (party.teams[party.deployedTeamIndex]?.characterIds ?? []).flatMap((characterId) => {
+      deployedCharacterIds.value.flatMap((characterId) => {
         const element = characterDataMap.get(characterId)?.element;
         return element ? [element] : [];
       }),
     );
-    for (const character of characters.value) {
+    for (const character of characters.value.filter(({ id }) => deployedCharacterIds.value.includes(id))) {
       const kit = characterIdKitMap.value.get(character.id);
       if (kit) combatantMap.set(character.id, createCombatant(character, kit, elementalResonances, statTables));
     }
