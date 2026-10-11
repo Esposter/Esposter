@@ -148,7 +148,7 @@ describe(createNilouKit, () => {
     const getBonus = (action: KitAction, constellationCount: number): number | undefined =>
       NILOU_KIT.getStrikeDamageBonus?.(
         {
-          attackTag: AttackTag.ElementalArt,
+          attackTag: AttackTag.NormalAttack,
           body: kitBody,
           combatant: createNilouCombatant(constellationCount),
           hit: takeOne(action.hits),
