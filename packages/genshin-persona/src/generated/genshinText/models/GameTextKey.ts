@@ -310,9 +310,17 @@ export enum GameTextKey {
   QuestCategoryCommission = "TASK_TYPE_WORLD",
   QuestCategoryStory = "TASK_TYPE_BRANCH",
   QuestCategoryWorld = "TASK_TYPE_OTHERS",
+  // Provisional: how far a quest in the quest screen's list stands, "{0}m". The text map holds no line of the quest
+  // Screen's own for it, so this is the minigame's "{0}m", the same words in English
+  QuestDistance = "UI_ACTIVITY_LOLIGOLF_DISTANCE",
   // The same button on any other quest
   QuestNavigate = "TASK_TRACK_ENSURE",
+  // The quest screen's button opening the overview of every quest
+  QuestOverview = "UI_QUESTHUB_BUTTON_NAME",
   Quests = "UI_STC_GAMEENTRYPAGE_QUEST",
+  // Provisional: the quest screen's title over its first tab, which lists every quest in progress. The text map holds
+  // Several lines reading "In Progress" and none of them is named for the quest screen, so this is the plainest one
+  QuestsInProgress = "UI_TEXT_DOING",
   QuitGame = "UI_STC_GAMEENTRYPAGE_EXIT_TIPS",
   Radish = "1137755308",
   RainbowdropCrystal = "3831100636",

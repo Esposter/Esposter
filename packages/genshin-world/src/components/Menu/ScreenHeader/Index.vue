@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
+import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import { MENU_LIST_CLOSE_GLYPH } from "#src/services/menu/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -36,21 +38,24 @@ const emit = defineEmits<{ close: [] }>();
   top: 0;
   left: calc(var(--unit) * 144);
   height: calc(var(--unit) * 95);
-  color: #d7c28f;
-  font-size: calc(var(--unit) * 24);
+  color: #d0bf9f;
+  font-size: calc(var(--unit) * 27);
   line-height: calc(var(--unit) * 95);
 }
 
+/* A cream disc in a grey ring, its X the disc's dark hole, traced off the quest screen's still at 1920 by 1080 with one
+   Of its pixels a unit */
 .close {
+  --reference-pixel: var(--unit);
   position: absolute;
   top: calc(var(--unit) * 19);
-  right: calc(var(--unit) * 50);
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border-radius: calc(var(--unit) * 6);
-  background: rgb(236 229 216 / 0.85);
-  color: #3b4255;
-  font-size: calc(var(--unit) * 40);
-  line-height: 1;
+  right: calc(var(--unit) * 48);
+  width: calc(var(--unit) * 58);
+  height: calc(var(--unit) * 58);
+  padding: 0;
+  border-radius: 50%;
+  background: #ece5d7;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #878789;
+  color: #3a4050;
 }
 </style>

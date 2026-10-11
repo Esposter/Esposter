@@ -51,6 +51,8 @@ import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
+import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
@@ -417,6 +419,20 @@ useRafFn(() => {
   hudFrame.pivotX = (pivot.x + 1) / 2;
   hudFrame.pivotY = (1 - pivot.y) / 2;
 });
+// How far each quest in progress's objective stands from the character's ground point, in metres, which the quest
+// Screen lists. It is read only while that screen is drawn, and a quest whose target no region in reach places has none
+const questDistanceMap = computed(() => {
+  const distanceMap = new Map<string, number>();
+  if (!windrise.value) return distanceMap;
+  const { regionDataMap, residentSpots } = windrise.value;
+  const { x, z } = mapCamera.value;
+  for (const quest of questsInProgress.value) {
+    const targetId = getQuestTargetId(quest, questProgressMap.value.get(quest.id));
+    const position = targetId ? findQuestTargetPosition(regionDataMap, residentSpots, targetId) : undefined;
+    if (position) distanceMap.set(quest.id, Math.hypot(position.x - x, position.z - z));
+  }
+  return distanceMap;
+});
 // Where the camera stands in world metres, which its host reads to know where a player is
 const readCameraPosition = (): Vector3 => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
@@ -682,6 +698,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Quests]>
         <QuestScreen
           :game-text
+          :quest-distance-map
           :quest-progress-map
           :quests="questsInProgress"
           :text-map="questTextMap"
