@@ -1,27 +1,18 @@
 import type { Vector } from "#src/models/shared/Vector";
 
-import { KIBIBYTE, WORKSPACE_FILE } from "@esposter/configuration";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { KIBIBYTE } from "@esposter/configuration";
+import { join } from "node:path";
+import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
 
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
 export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
-// Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
-// Was, and it is wrong the first time the file counting it moves a directory — which it has done once already,
-// One folder deeper, silently rooting every script at `scripts/`. The workspace manifest only ever sits at the
-// Root, so walking up to it is an answer that survives the next move.
-const findRepositoryRoot = (directory: string): string => {
-  if (existsSync(join(directory, WORKSPACE_FILE))) return directory;
-  const parent = dirname(directory);
-  if (parent === directory)
-    throw new InvalidOperationError(Operation.Read, "scripts", "no pnpm-workspace.yaml above this file");
-  return findRepositoryRoot(parent);
-};
 
+// Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
+// Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives
+// That move.
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 // The repository's own formatter, run as its binary over each JSON file a script writes. Its configuration is the root's,
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.

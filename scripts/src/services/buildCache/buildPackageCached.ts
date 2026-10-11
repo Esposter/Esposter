@@ -2,7 +2,6 @@ import { BuildCacheOutcome } from "#src/models/buildCache/BuildCacheOutcome";
 import { computeBuildKey } from "#src/services/buildCache/computeBuildKey";
 import {
   BUILD_CACHE_DIRECTORY,
-  BUILD_CACHE_RUN_IN_SLOT_PATH,
   BUILD_CACHE_TSDOWN_FLAGS,
   BUILD_OUTPUT_DIRECTORY,
   BUILD_STAMP_FILE,
@@ -12,10 +11,10 @@ import { readGeneratedSourcePaths } from "#src/services/buildCache/readGenerated
 import { readPackageName } from "#src/services/buildCache/readPackageName";
 import { readWorkspaceDependencyDirectories } from "#src/services/buildCache/readWorkspaceDependencyDirectories";
 import { restoreBuildOutput, restoreGeneratedPaths } from "#src/services/buildCache/restoreBuildOutput";
+import { runTsdown } from "#src/services/buildCache/runTsdown";
 import { storeBuildOutput } from "#src/services/buildCache/storeBuildOutput";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -65,13 +64,9 @@ export const buildPackageCached = (
   else {
     // A stale `dist` left by an earlier commit would be stored with this build's output, so the build starts from none
     rmSync(outputDirectory, { force: true, recursive: true });
-    const build = spawnSync(
-      "bash",
-      [join(REPOSITORY_ROOT, BUILD_CACHE_RUN_IN_SLOT_PATH), "pnpm", "exec", "tsdown", ...BUILD_CACHE_TSDOWN_FLAGS],
-      { cwd: packageDirectory, stdio: "inherit" },
-    );
-    if (build.status !== 0)
-      throw new InvalidOperationError(Operation.Create, packageDirectory, `its build exited with ${build.status}`);
+    const buildStatus = runTsdown(packageDirectory, BUILD_CACHE_TSDOWN_FLAGS);
+    if (buildStatus !== 0)
+      throw new InvalidOperationError(Operation.Create, packageDirectory, `its build exited with ${buildStatus}`);
 
     storeBuildOutput(packageDirectory, keyDirectory, readGeneratedSourcePaths(packageDirectory));
     pruneBuildCache(join(BUILD_CACHE_DIRECTORY, name));

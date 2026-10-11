@@ -1,17 +1,5 @@
 #!/usr/bin/env bash
-# Brings a workspace package and every workspace package it links up to date through the content-addressed build cache:
-# a dist stamped with its key is left alone, a hit restores it, a miss builds it in a slot and stores it. Usage:
-# bash .agents/skills/throughput/scripts/build-cached.sh <package directory>
-set -euo pipefail
-root="$(cd "$(dirname "$0")/../../../.." && pwd)"
-# The physical path, as the cache tool's own root resolves through any symlink: a worktree reached through a symlinked
-# Folder otherwise names no lockfile importer, so none of its workspace dependencies is built
-packageDirectory="$(cd "$1" && pwd -P)"
-# The cache tool loads configuration and shared from their dist, which a fresh worktree lacks, so those two are built
-# Plainly once; the tool then restores or rebuilds them through the cache like any other package
-for bootstrapPackage in configuration shared; do
-  if [ ! -d "$root/packages/$bootstrapPackage/dist" ]; then
-    (cd "$root/packages/$bootstrapPackage" && bash "$root/.agents/skills/throughput/scripts/run-in-slot.sh" pnpm exec tsdown --no-clean)
-  fi
-done
-pnpm -s -C "$root/scripts" build:fresh "$packageDirectory"
+# Brings a workspace package and every workspace package it links up to date through the content-addressed build cache.
+# Usage: bash .agents/skills/throughput/scripts/build-cached.sh <package directory>, the same entry the dev server runs with node
+# (scripts/src/buildCache/index.ts, which owns the rules: a hit restores, a miss builds and stores).
+exec node --conditions=source "$(dirname "$0")/../../../../scripts/node_modules/tsx/dist/cli.mjs" "$(dirname "$0")/../../../../scripts/src/buildCache/index.ts" "$@"
