@@ -35,6 +35,12 @@ const createSucroseCombatant = (ascension = 0, constellationCount = 0, elemental
   level: 90,
 });
 
+const findTickField = (effects: KitEffect[]): KitField => {
+  const field = effects.find((effect): effect is KitField => effect.kind === "field");
+  if (!field) throw new Error("The burst casts no field");
+  return field;
+};
+
 describe(createSucroseKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const castEffects = (combatant: Combatant): KitEffect[] => {
@@ -57,13 +63,8 @@ describe(createSucroseKit, () => {
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
-  test("Constellation 2 lengthens the burst's field by 2 seconds, and its Anemo tick lands from the first", () => {
+  test("constellation 2 lengthens the burst's field by 2 seconds, and its Anemo tick lands from the first", () => {
     expect.hasAssertions();
-    const findTickField = (effects: KitEffect[]): KitField => {
-      const field = effects.find((effect): effect is KitField => effect.kind === "field");
-      if (!field) throw new Error("The burst casts no field");
-      return field;
-    };
     const baseField = findTickField(castEffects(createSucroseCombatant(0, 0)));
     const constellationField = findTickField(castEffects(createSucroseCombatant(0, 2)));
 
@@ -108,7 +109,7 @@ describe(createSucroseKit, () => {
     ]);
   });
 
-  test("Ascension 4 gives the rest of the team a fifth of her Elemental Mastery on each skill hit", () => {
+  test("ascension 4 gives the rest of the team a fifth of her Elemental Mastery on each skill hit", () => {
     expect.hasAssertions();
     const sucrose = createSucroseCombatant(4, 0, 400);
     const ganyu = { ...createSucroseCombatant(), characterId: GANYU_CHARACTER_ID, element: Element.Cryo };

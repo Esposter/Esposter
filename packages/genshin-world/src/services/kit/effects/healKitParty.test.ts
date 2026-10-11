@@ -70,7 +70,7 @@ describe(healKitParty, () => {
     expect(getPartyMember(party, MEMBER_ID).healthShare).toBeCloseTo(0.5 + healedHp / member.attributes.maxHealth, 5);
   });
 
-  test("neither rolls nor heals without a shield, nor on a failing roll", () => {
+  test("neither rolls nor heals without a shield the striker cast, a Crystallize shield being none, nor on a failing roll", () => {
     expect.hasAssertions();
     const noelle = createCombatant(NOELLE_CHARACTER_ID, 10_000);
     const party = createParty([NOELLE_CHARACTER_ID]);
@@ -78,6 +78,7 @@ describe(healKitParty, () => {
     const hit = { ...NOELLE_HIT, healParty: { chance: () => 0.5, defenseShare: 0.2128, flatHealth: 102.7 } };
 
     expect(healKitParty(party, combatants, [], noelle, hit, () => 0)).toBe(false);
+    expect(healKitParty(party, combatants, [{ ...SHIELD, isCrystallize: true }], noelle, hit, () => 0)).toBe(false);
     expect(healKitParty(party, combatants, [SHIELD], noelle, hit, () => 0.9)).toBe(false);
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).healthShare).toBe(1);
   });

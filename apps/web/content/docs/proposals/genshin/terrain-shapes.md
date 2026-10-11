@@ -4,8 +4,8 @@ description: Proposal — the continent's ground fitted to the game's own terrai
 model: claude-opus-5-5
 touches:
   [
-    "scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts",
-    "scripts/src/services/genshinAssets/fit/fitTerrainCliffs.test.ts",
+    "scripts/src/services/genshinAssets/fit/fitTerrainRidges.ts",
+    "scripts/src/services/genshinAssets/fit/fitTerrainRidges.test.ts",
   ]
 ---
 
@@ -24,7 +24,7 @@ This page builds on the [terrain](/docs/genshin/terrain), whose quadtree, worker
 - **The fit's data follows reach.** A region's fitted parameters load with its region data, so the ground's data grows with what is in reach, never with the continent.
 - **The first slice's calls.** Plateaus come first, placed greedily: each round takes the disc, of 96, 48 or 24 metres' radius on a centre every half radius, whose mean residual takes the most squared error off, its falloff a quarter of its radius; a disc counts only where every sample is fitted ground, and the fit stops at 16 plateaus or when the next takes under 1% of what is left. The residual's noise takes the scale among 8 to 256 metres whose own correlation length is nearest the residual's, and the amplitude that makes its root-mean-square over the same grid the residual's, with three octaves and a fixed seed.
 - **The residual is faded out where the ground above it holds, and the fade is fitted.** Noise matched by its statistics adds its own error wherever it is drawn, so the fit draws it only where the hills and features miss: on nodes 64 metres apart covering the tiles the fit reads, each weighs smoothstep from the gate to twice the gate of the root-mean-square left after the hills and features in the cell round it, then the weights are averaged once over each node's three by three so the fade's edges are soft, and kept to two decimals. The gate is the hills' bar, 0.62 metres (`GROUND_RESIDUAL_GATE_METRES`), and a cell with no sample weighs one. The residual is drawn only where it reaches, as every layer is: none past the fade's grid, where nothing was fitted; none within the radius the hills' bar is read over, its fade's clearing ramping it in across the next fade cell; none on a place the world stands something on, each landmark and capital a region file sets inside the fitted extent cleared the same way across its footprint; and none under a feature, the composed height taking it times one less the features' blend. A capital's footprint is its city, the farthest corner of its city area's placements from its place, since the capital's whole architecture stands on that ground; another building's is the half diagonal its kit's width and depth give, and any other place's the bar's radius; the fit prints each with its source. The places are clearings on the fade, held at none point by point, rather than weights stamped into its grid: nodes 64 metres apart cannot hold a footprint smaller than a cell at none between them. The noise's amplitude and scale are fitted to the leftover weighted by that fade, so they match the ground the noise is drawn on rather than the whole extent. A ground's bar is read on the composed ground, hills, features and faded residual together: its RMS within 60 metres of the centre, and the landmark gate [scene derivation](/docs/genshin/scene-derivation) states. Past the bar's radius the residual is judged by its statistics, the fit printing its change over each octave's scale beside the faded leftover's for the record.
-- **Cliffs and ridges are placed as the plateaus are, their direction tried rather than solved.** After the plateaus, each round tries a segment 96, 48 or 24 metres long, centred every half its length, at sixteen headings 22.5 degrees apart round the full turn, so the side its left normal raises covers both sides of every line. A cliff's band reaches half its length across the line, its falloff a quarter of that, and its height is the band's mean residual where every sample is fitted ground. The round takes the segment that takes the most squared error off and subtracts it before the next, under the plateaus' limits: 16 at most, and none taking under 1% of what is left. Ridges follow the cliffs the same way through `getRidgeBlend`, their width a quarter of their length. A heading tried at 22.5 degrees is as fine as a 24 metre segment can tell at the 6 metre grid.
+- **Ridges are placed as the cliffs are.** After the cliffs ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground"), each round tries the same segments at the same headings through `getRidgeBlend`, a ridge's width a quarter of its length and its height the mean residual within that width of its segment where every sample is fitted ground, under the same limits.
 
 ## How it works
 
@@ -44,32 +44,33 @@ flowchart TD
 
 ## Scope
 
-**Today:** the terrain's tiles are generated from a region's height function and painted by its layers' rules, in vertex colours ([ground paint](/docs/genshin/ground-paint)). Windrise's is Gaussian hills fitted to the game's own terrain tiles, its layers its fitted field's, each painted its class's colour. The layers the composition sums (hills, cliff, ridge and plateau features, and the residual's noise with its fade) are built as [terrain shape height](/docs/genshin/terrain-shape-height); the fit now places each region's plateaus and its residual's fade and noise, and Windrise's ground carries its residual.
+**Today:** the terrain's tiles are generated from a region's height function and painted by its layers' rules, in vertex colours ([ground paint](/docs/genshin/ground-paint)). Windrise's is Gaussian hills fitted to the game's own terrain tiles, its layers its fitted field's, each painted its class's colour. The layers the composition sums (hills, cliff, ridge and plateau features, and the residual's noise with its fade) are built as [terrain shape height](/docs/genshin/terrain-shape-height); the fit now places each region's plateaus and cliffs and its residual's fade and noise, and Windrise's ground carries three cliffs and its residual.
 
 **This adds:**
 
-1. **The cliffs, fitted next.** A new `fitTerrainCliffs.ts` places them on the grid `fitTerrainPlateaus` leaves, as the Decisions set out, returning the cliffs and the residual they leave. `fitRegionGround` runs it after the plateaus and before `fitTerrainResidual`, writes the cliffs into `features` beside the plateaus, and reports their count. Its test, `fitTerrainCliffs.test.ts`, draws one 48 metre cliff 10 metres high with `getCliffBlend` on a grid and reads back one cliff within 22.5 degrees of its heading and a metre of its height, and a flat grid back with none. The region runs queued on the roadmap write it.
-2. **Then ridges and coastlines**: ridges as the Decisions set out, in `fitTerrainRidges.ts` after the cliffs, then coastlines where the residual after both is largest, and the gate each region is held to once its features are run. The plateaus, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
-3. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
-4. **The heights kept for collision**, when exploring's camera asks for them.
-5. **Each area's outline** in the [world map](/docs/genshin/world-map)'s catalogue, read from the game's own area data where the inventory finds it and otherwise drawn round the tiles its placements stand on, in place of Galesong Hill's provisional one.
+1. **Ridges and coastlines**: ridges as the Decisions set out, in `fitTerrainRidges.ts` after the cliffs through `placeTerrainFeatures`, then coastlines where the residual after both is largest, and the gate each region is held to once its features are run. The plateaus, the cliffs, the residual's noise and the fit for any set of tiles are built in `fitRegionGround`.
+2. **The ground layers fitted**: the weights the game's tiles hold read by the inventory and written in place of the rules', each layer's colours fitted to the game's, and the paths read from its path layer.
+3. **The heights kept for collision**, when exploring's camera asks for them.
+4. **Each area's outline** in the [world map](/docs/genshin/world-map)'s catalogue, read from the game's own area data where the inventory finds it and otherwise drawn round the tiles its placements stand on, in place of Galesong Hill's provisional one.
 
 ## Key files
 
-| File                                                               | Role after the change                                                             |
-| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`        | Each region's hills, plateaus and residual, built; cliffs and ridges still to fit |
-| `scripts/src/services/genshinAssets/fit/fitTerrainPlateaus.ts`     | The plateaus placed greedily where the residual after the hills is largest        |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`     | The residual's noise, its scale and amplitude matched to its statistics           |
-| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts` | The residual's fade, each cell's leftover against the gate, softened              |
-| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`       | The first rung of the fit, its error deciding whether features follow             |
-| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`        | The tile generator, which samples the fitted features and noise                   |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`         | The worker, which reads a region's fitted data in place of its code               |
+| File                                                               | Role after the change                                                          |
+| :----------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/fit/fitRegionGround.ts`        | Each region's hills, plateaus, cliffs and residual, built; ridges still to fit |
+| `scripts/src/services/genshinAssets/fit/placeTerrainFeatures.ts`   | The greedy placement each kind of feature's fit shares, the ridges' too        |
+| `scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts`       | The cliffs' segments and headings, which the ridges' follow                    |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidual.ts`     | The residual's noise, its scale and amplitude matched to its statistics        |
+| `scripts/src/services/genshinAssets/fit/fitTerrainResidualFade.ts` | The residual's fade, each cell's leftover against the gate, softened           |
+| `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts`       | The first rung of the fit, its error deciding whether features follow          |
+| `packages/genshin-engine/src/terrain/computeTerrainTile.ts`        | The tile generator, which samples the fitted features and noise                |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`         | The worker, which reads a region's fitted data in place of its code            |
+| `packages/genshin-world/src/models/windrise/WindriseBaseGround.ts` | The base ground's schema, which takes each kind of feature the fits draw       |
 
 New files:
 
 ```text
-scripts/src/services/genshinAssets/fit/fitTerrainCliffs.ts
+scripts/src/services/genshinAssets/fit/fitTerrainRidges.ts
 packages/genshin-engine/src/terrain/   ← the features' and the residual noise's generators
 ```
 

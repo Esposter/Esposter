@@ -32,7 +32,7 @@ committed.
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `hud-stamina-climb` | `HudScreen` | 1.97% | 0.724 | 2.17% | 0.1411 |
-| `hud-world-pickup` | `HudScreen` | 10.06% | 0.341 | 9.20% | 0.4285 |
+| `hud-world-pickup` | `HudScreen` | 9.95% | 0.374 | 9.10% | 0.4266 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 8.93% | 0.848 | 5.11% | 0.3793 |
 | `inventory-food` | `InventoryScreen` | 3.44% | 0.873 | 2.31% | 0.1928 |
 | `inventory-weapons` | `InventoryScreen` | 16.34% | 0.523 | 12.38% | 0.4942 |

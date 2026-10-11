@@ -12,6 +12,9 @@ import { BannerKind } from "genshin-interface/save";
 
 // A save's ids are the game's own, short and fixed, so one bound serves every id a slice holds
 export const MAX_SAVE_ID_LENGTH = 64;
+// The longest name a save holds for the Traveler. The game's own limit on the name is unread, so this only bounds a
+// Crafted save
+export const MAX_TRAVELER_NAME_LENGTH = 32;
 // The most of each list a save may hold: a landmark or quest is unique, and a player holds fewer characters
 // Than the bound
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
@@ -50,6 +53,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
+  travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
   wallet: {
     currencies: Object.fromEntries(Object.values(Currency).map((currency) => [currency, MAX_SAVE_NUMBER])),
@@ -110,6 +114,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
+  travelerName: "",
   unlockedLandmarks: [],
   wallet: {
     currencies: { ...EMPTY_CURRENCIES },

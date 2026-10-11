@@ -28,7 +28,7 @@ const KOKOMI_BURST_GROUP_ID = 5439;
 // Measured: gcsim (MIT) kokomi/attack.go, each strike's cancel frames, and its hit at its hitmark plus the ten frames its
 // Projectile travels. gcsim gives the strikes no poise, and each is a circle on the primary target, so its reach is the
 // Targeting's, as the other targeted strikes' are
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/attack.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/attack.go
 const PROJECTILE_TRAVEL_FRAMES = 10;
 const NORMAL_ATTACKS = [
   { cancelFrames: 30, hitmarkFrames: 2, talentIndex: 0 },
@@ -38,7 +38,7 @@ const NORMAL_ATTACKS = [
 
 // Measured: gcsim (MIT) kokomi/charge.go, the charged attack's hit at 48 frames of its 76-frame animation, on the primary
 // Target, which the garment widens. Its reach is the targeting's too
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/charge.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/charge.go
 const CHARGED_ATTACK_FRAMES = 76;
 const CHARGED_ATTACK_HITMARK_FRAMES = 48;
 
@@ -51,9 +51,9 @@ const PLUNGE_HITMARK_SECONDS = 0.5;
 const PLUNGE_SECONDS = 1;
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's seven ticks, the first at 24 frames and the rest every 120 frames
-// from 150, on a circle of radius 6 whose centre lies 3 metres ahead, which is the reach of each ripple. Its heal lands on
+// From 150, on a circle of radius 6 whose centre lies 3 metres ahead, which is the reach of each ripple. Its heal lands on
 // The active character while it stands within that circle, every tick, for 12.5 seconds, on a cooldown of 20 seconds
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/skill.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/skill.go
 const SKILL_FRAMES = 61;
 const SKILL_FIRST_TICK_FRAMES = 24;
 const SKILL_SECOND_TICK_FRAMES = 150;
@@ -67,15 +67,15 @@ const SKILL_REACH = createFanReach(360, SKILL_CENTRE_METRES + SKILL_RADIUS);
 // Measured: gcsim (MIT) kokomi/burst.go, Nereid's Ascension's hit at 49 frames of its 78-frame animation, a circle of radius
 // 5 round the body. Ceremonial Garment lasts ten seconds, and the kit plays its garment actions in place of its own while it
 // Lasts, which carry the Max HP bonuses and the heal on each normal and charged attack
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/burst.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/burst.go
 const BURST_FRAMES = 78;
 const BURST_HITMARK_FRAMES = 49;
 const BURST_REACH = createFanReach(360, 5);
 const BURST_GAUGE = 2;
 const GARMENT_SECONDS = 10;
 
-// Provisional: gcsim's burst consumes 57 energy where its own EnergyMax and the table's cost are 70, so the table's 70 is
-// Read until the Mac measures it. The charged attack's stamina is the table's flat value in its slot, until it is measured
+// The burst's energy cost is the table's 70, which gcsim's EnergyMax gives too, and the charged attack's stamina is the
+// Table's flat value in its slot
 export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, KOKOMI_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -135,7 +135,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   });
 
   // Bake-Kurage is a summon of its seven ripples where Kokomi casts it, and a field of its heal over the circle they reach,
-  // which heals the active character from the cast's Max HP while it stands in the circle. In the garment its ripples gain
+  // Which heals the active character from the cast's Max HP while it stands in the circle. In the garment its ripples gain
   // The Max HP bonus as well
   const createSkill = (isInGarment: boolean): KitAction => {
     const tickHits = Array.from({ length: SKILL_TICK_COUNT }, (_tick, index): KitHit => {

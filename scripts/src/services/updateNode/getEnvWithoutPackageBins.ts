@@ -8,7 +8,7 @@ const PATH_KEY_REGEX = /^path$/iu;
 // That installs node. Windows names the variable `Path`, so the key is matched in any case
 export const getEnvWithoutPackageBins = (env: NodeJS.ProcessEnv): NodeJS.ProcessEnv =>
   Object.fromEntries(
-    Object.entries(env).map(([key, value]) => [
+    Object.entries<string | undefined>(env).map(([key, value]) => [
       key,
       PATH_KEY_REGEX.test(key) && value !== undefined
         ? value

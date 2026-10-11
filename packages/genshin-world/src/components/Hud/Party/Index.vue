@@ -4,6 +4,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Party } from "#src/models/party/Party";
 import type { Input } from "genshin-engine";
 
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { PARTY_MEMBER_INPUT_ACTIONS, PARTY_SWITCH_COOLDOWN_SECONDS } from "#src/services/party/constants";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -18,14 +19,18 @@ interface Props {
   // The names the text ids cite in the reader's language, which stay blank until they load
   nameTextMap?: Readonly<Record<string, string>>;
   party: Party;
+  // The name the player chose for the Traveler, shown on the Traveler's row as the game shows it, the game's own name
+  // While none is chosen
+  travelerName: string;
 }
 
-const { characterDataMap, frame, input, nameTextMap, party } = defineProps<Props>();
+const { characterDataMap, frame, input, nameTextMap, party, travelerName } = defineProps<Props>();
 // The share of the switch's cooldown left, which darkens every row but the one on the field
 const switchCooldownShare = computed(() =>
   Math.max(0, 1 - (frame.seconds - party.switchedSeconds) / PARTY_SWITCH_COOLDOWN_SECONDS),
 );
 const getName = (characterId: number): string => {
+  if (characterId === TRAVELER_CHARACTER_ID && travelerName) return travelerName;
   const nameTextId = characterDataMap.get(characterId)?.nameTextId ?? "";
   return nameTextMap?.[nameTextId] || "";
 };

@@ -4,12 +4,13 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 
+import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 
-// A character's combat once its kit is built: its attributes summed under the deployed team's resonances, and its element
-// And the kind of weapon it wields read off its row of the roster, which the gauge a hit applies and the energy a drop
-// Gives it read
+// A character's combat once its kit is built: its attributes summed under the deployed team's resonances, its kit with
+// The modules of the sets it wears answering beside it, and its element and the kind of weapon it wields read off its
+// Row of the roster, which the gauge a hit applies and the energy a drop gives it read
 export const createCombatant = (
   character: Character,
   kit: Kit,
@@ -24,7 +25,7 @@ export const createCombatant = (
     constellationCount: character.constellationCount,
     element: characterData?.element,
     elementalResonances,
-    kit,
+    kit: getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),
     level: character.level,
     weaponType: characterData?.weaponType,
   };

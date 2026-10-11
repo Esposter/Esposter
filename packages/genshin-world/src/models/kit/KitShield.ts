@@ -6,10 +6,13 @@ import type { KitHit } from "#src/models/kit/KitHit";
 // For the seconds left of it, until its health is spent. It is a combat shield, so its element and its health are absorbed
 // By the combat rules
 export interface KitShield extends Shield {
-  // The character that cast it, which a recast over it and Breastplate's heal are keyed on
+  // The character that cast it, which a recast over it and Breastplate's heal are keyed on, or that crystallized the shard
+  // It came from
   characterId: number;
   // The explosion it goes off into as it ends, if it has one: its hit, and its caster as the caster stood when it was cast
   explosion?: { combatant: Combatant; hit: KitHit };
+  // Whether it is the one Crystallize shield a shard grants, which only the next one overwrites, whoever crystallized it
+  isCrystallize?: boolean;
   kind: "shield";
   secondsRemaining: number;
 }

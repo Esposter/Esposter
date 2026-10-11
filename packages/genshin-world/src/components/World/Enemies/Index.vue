@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
-import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -34,20 +33,12 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
+import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
 import { watchImmediate } from "@vueuse/core";
 import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
-import {
-  CapsuleGeometry,
-  Color,
-  InstancedMesh,
-  Matrix4,
-  MeshBasicMaterial,
-  Quaternion,
-  SphereGeometry,
-  Vector3,
-} from "three";
+import { CapsuleGeometry, Color, InstancedMesh, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 interface Props {
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
@@ -97,8 +88,6 @@ const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARAT
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
 const loadedCampIds = new Set<string>();
-// The reactions an enemy's elements bring on their own as they age, which no hit deals, read into this and dropped
-const elementalReactions: Reaction[] = [];
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
 let spawnedWorldLevel = worldLevel;
@@ -134,8 +123,8 @@ watchImmediate(
 const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   let isAnyDefeated = false;
   for (const enemy of enemyMap.values()) {
-    advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, elementalReactions);
-    elementalReactions.length = 0;
+    // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
+    advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
     const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
     const enemyEvent = stepEnemy(enemy, taunt ? taunt.body.position : target, ENEMY_STEP_SECONDS);
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
@@ -178,9 +167,6 @@ const color = new Color();
 const sightColor = new Color();
 const matrix = new Matrix4();
 const point = new Vector3();
-const rotation = new Quaternion();
-const scale = new Vector3(1, 1, 1);
-const up = new Vector3(0, 1, 0);
 // The tint is written for every instance up front, so the material is built reading it
 for (let index = 0; index < ENEMY_CAPACITY; index += 1) {
   enemyMesh.setColorAt(index, color);
@@ -194,7 +180,7 @@ onBeforeRender(({ delta }) => {
   for (const { elementalState, enemyKindId, heading, hitSeconds, position, state } of enemyMap.values()) {
     if (count === ENEMY_CAPACITY) break;
     point.set(position.x, getGroundHeight(position.x, position.z) + ENEMY_CAPSULE_HEIGHT / 2, position.z);
-    enemyMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
+    enemyMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
     enemyMesh.setColorAt(
       count,
       color.setHex(hitSeconds < ENEMY_HIT_TINT_SECONDS ? HIT_TINT_COLOR : EnemyStateColorMap[state]),

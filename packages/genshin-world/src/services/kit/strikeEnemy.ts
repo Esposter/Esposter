@@ -6,41 +6,29 @@ import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
 import { AuraType } from "#src/models/combat/AuraType";
-import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
-import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
-import { applyElement } from "#src/services/combat/aura/applyElement";
-import {
-  SUPERCONDUCT_PHYSICAL_RESISTANCE_REDUCTION,
-  SUPERCONDUCT_SECONDS,
-  SUPERCONDUCT_STATUS_ID,
-} from "#src/services/combat/damage/constants";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
-import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
-import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
 import { getDamage } from "#src/services/combat/damage/getDamage";
-import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyKeyedInternalCooldown } from "#src/services/combat/internalCooldown/applyKeyedInternalCooldown";
-import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCooldown/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
+import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
+import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
-// Is applied at the gauge its internal cooldown leaves of it, and a Superconduct takes the enemy's Physical RES down.
-// The hit's damage takes its own additive base DMG Bonus and what its reactions amplify, catalyze or add, with each
-// Transformative reaction's damage added to it at the share the reaction's internal cooldown on the enemy deals, before
-// The enemy takes it through damageEnemy. The enemy's RES to an element, or its Physical RES, is its own less each
-// Status's reduction of it, for the hit and its reactions alike. It returns the energy the hit dropped, whether it was
-// A CRIT hit and the reactions it triggered
+// Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
+// And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it
+// Through damageEnemy, against the enemy's RES as its statuses leave it. It returns the energy the hit dropped, whether
+// It was a CRIT hit, the reactions it triggered and those of them that landed and reach round the enemy
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -71,61 +59,19 @@ export const strikeEnemy = (
         DEFAULT_INTERNAL_COOLDOWN_GROUP,
         elementalState.seconds,
       );
-    reactions.push(...applyElement(elementalState, element, gauge * share));
+    reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant));
   }
 
-  if (reactions.some(({ reactionType }) => reactionType === TransformativeReactionType.Superconduct))
-    addEnemyStatus(enemy, {
-      damageTakenBonus: 0,
-      id: SUPERCONDUCT_STATUS_ID,
-      physicalResistanceReduction: SUPERCONDUCT_PHYSICAL_RESISTANCE_REDUCTION,
-      secondsRemaining: SUPERCONDUCT_SECONDS,
-    });
-
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
-  const getResistance = (resistanceElement: Element | undefined): number =>
-    resistanceElement === undefined
-      ? kind.physicalResistance -
-        enemy.statuses.reduce((total, { physicalResistanceReduction }) => total + (physicalResistanceReduction ?? 0), 0)
-      : kind.elementResistances[resistanceElement] -
-        enemy.statuses.reduce(
-          (total, { resistanceReduction }) => total + (resistanceReduction?.[resistanceElement] ?? 0),
-          0,
-        );
   const { defense } = computeEnemyStats(enemyLevelCurves, kind, enemy.level);
-  const elementalMastery = attributeTotalMap[Attribute.ElementalMastery];
-  let amplifyingMultiplier = 1;
-  let additiveBaseDamageBonus = kitHit.additiveBaseDamageBonus?.(combatant) ?? 0;
-  let transformativeDamage = 0;
-  for (const { element: reactionElement, reactionType } of reactions)
-    if (
-      (reactionType === AmplifyingReactionType.Melt || reactionType === AmplifyingReactionType.Vaporize) &&
-      element !== undefined
-    )
-      amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery);
-    else if (reactionType === CatalyzeReactionType.Aggravate || reactionType === CatalyzeReactionType.Spread)
-      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, combatant.level, elementalMastery);
-    else if (
-      reactionType === TransformativeReactionType.Overloaded ||
-      reactionType === TransformativeReactionType.Superconduct ||
-      reactionType === TransformativeReactionType.ElectroCharged ||
-      reactionType === TransformativeReactionType.Swirl ||
-      reactionType === TransformativeReactionType.Shattered
-    )
-      transformativeDamage +=
-        applyReactionInternalCooldown(
-          enemy.internalCooldownMap,
-          combatant.characterId,
-          reactionType,
-          reactionElement,
-          elementalState.seconds,
-        ) * getTransformativeDamage(reactionType, combatant.level, elementalMastery, getResistance(reactionElement));
+  const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =
+    priceEnemyReactions(kind, enemy, reactions, combatant, element);
 
   const isCritical =
     random() <
     attributeTotalMap[Attribute.CriticalRate] + (isShatteringIceTarget ? SHATTERING_ICE_CRITICAL_RATE_BONUS : 0);
   const damage = getDamage({
-    additiveBaseDamageBonus,
+    additiveBaseDamageBonus: additiveBaseDamageBonus + (kitHit.additiveBaseDamageBonus?.(combatant) ?? 0),
     amplifyingMultiplier,
     attackerLevel: combatant.level,
     criticalDamage: attributeTotalMap[Attribute.CriticalDamage],
@@ -138,13 +84,14 @@ export const strikeEnemy = (
       enemy.statuses.reduce((total, { damageTakenBonus }) => total + damageTakenBonus, 0),
     defense,
     isCritical,
-    resistance: getResistance(element),
+    resistance: getEnemyResistance(kind, enemy, element),
     stat: attack,
     talentMultiplier,
   });
   return {
     energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }),
     isCritical,
+    reachingReactions,
     reactions,
   };
 };

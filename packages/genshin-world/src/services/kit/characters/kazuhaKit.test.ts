@@ -25,7 +25,7 @@ const createKazuhaCombatant = (constellationCount = 0): Combatant => ({
 });
 
 describe(createKazuhaKit, () => {
-  test("Constellation 1 takes a tenth off Chihayaburu's cooldown", () => {
+  test("constellation 1 takes a tenth off Chihayaburu's cooldown", () => {
     expect.hasAssertions();
     const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
     const cooldown = (constellationCount: number) =>
@@ -40,7 +40,7 @@ describe(createKazuhaKit, () => {
     expect(cooldown(1)).toBeCloseTo(5.4);
   });
 
-  test("Constellation 6 gives Anemo to Kazuha's attacks as Chihayaburu is cast", () => {
+  test("constellation 6 gives Anemo to Kazuha's attacks as Chihayaburu is cast", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 

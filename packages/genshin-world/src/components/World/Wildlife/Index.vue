@@ -13,9 +13,10 @@ import {
 } from "#src/services/wildlife/constants";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
+import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { useLoop } from "@tresjs/core";
 import { createFixedStepLoop, createToonMaterial } from "genshin-engine";
-import { CapsuleGeometry, InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
+import { CapsuleGeometry, InstancedMesh, Matrix4, Vector3 } from "three";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each animal stands on
@@ -47,9 +48,6 @@ const wildlifeMesh = new InstancedMesh(
 wildlifeMesh.frustumCulled = false;
 const matrix = new Matrix4();
 const point = new Vector3();
-const rotation = new Quaternion();
-const scale = new Vector3(1, 1, 1);
-const up = new Vector3(0, 1, 0);
 
 onBeforeRender(({ delta }) => {
   if (!isHeld) fixedStepLoop.advance(delta);
@@ -57,7 +55,7 @@ onBeforeRender(({ delta }) => {
   for (const { heading, position } of wildlifeList) {
     if (count === WILDLIFE_CAPACITY) break;
     point.set(position.x, getGroundHeight(position.x, position.z) + WILDLIFE_CAPSULE_HEIGHT / 2, position.z);
-    wildlifeMesh.setMatrixAt(count, matrix.compose(point, rotation.setFromAxisAngle(up, heading), scale));
+    wildlifeMesh.setMatrixAt(count, composeHeadingMatrix(matrix, point, heading));
     count += 1;
   }
 

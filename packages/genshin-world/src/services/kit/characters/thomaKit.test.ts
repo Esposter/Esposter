@@ -25,7 +25,7 @@ const createThomaCombatant = (): Combatant => ({
 });
 
 describe(createThomaKit, () => {
-  test("Blazing Blessing sets a shield of the table's share of Max HP and flat HP, and infuses Thoma with Pyro", () => {
+  test("blazing Blessing sets a shield of the table's share of Max HP and flat HP, and infuses Thoma with Pyro", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 

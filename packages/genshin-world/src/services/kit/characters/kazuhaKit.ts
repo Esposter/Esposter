@@ -106,6 +106,16 @@ const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 // 5 seconds, which infuses his normal, charged and plunging attacks
 const INFUSION_CONSTELLATION = 6;
 const INFUSION_SECONDS = 5;
+// Kazuha's Anemo infusion from Constellation 6 lasts for the seconds after each press, hold or slash that gives it
+const addInfusion = ({ combatant, kitEffectState }: Parameters<NonNullable<KitAction["onStart"]>>[0]) => {
+  if (combatant.constellationCount < INFUSION_CONSTELLATION) return;
+  addKitEffect(kitEffectState, {
+    characterId: combatant.characterId,
+    element: Element.Anemo,
+    kind: "infusion",
+    secondsRemaining: INFUSION_SECONDS,
+  });
+};
 
 // Kazuha's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Chihayaburu's press and
 // Hold, and Kazuha Slash with its Autumn Whirlwind. Constellation 1 shortens his skill cooldowns and Constellation 6 gives
@@ -128,16 +138,6 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     seconds: cancelFrames / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   }));
-  // Kazuha's Anemo infusion from Constellation 6 lasts for the seconds after each press, hold or slash that gives it
-  const addInfusion = ({ combatant, kitEffectState }: Parameters<NonNullable<KitAction["onStart"]>>[0]) => {
-    if (combatant.constellationCount < INFUSION_CONSTELLATION) return;
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
-      element: Element.Anemo,
-      kind: "infusion",
-      secondsRemaining: INFUSION_SECONDS,
-    });
-  };
   const chargedAttackHit = (talentIndex: number): KitHit => ({
     hitArea: createFanReach(360, CHARGED_ATTACK_REACH),
     hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
@@ -195,7 +195,7 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalBurst: {
       hits: [slashHit],
       onStart: ({ body, combatant, kitEffectState }) => {
-        addInfusion({ combatant, kitEffectState });
+        addInfusion({ body, combatant, kitEffectState });
         addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits));
       },
       seconds: BURST_FRAMES / 60,

@@ -1,11 +1,11 @@
 ---
 title: Artifact enhancement
-description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe.
+description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's four-piece the first.
 ---
 
 # Artifact enhancement
 
-An artifact's attributes were already summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. The four-piece bonuses that wait on combat are not here yet: each is a module as its set is carried, over the [character kits](/docs/proposals/genshin/character-kits).
+An artifact's attributes were already summed by [character attributes](/docs/genshin/character-attributes): its main affix at its rarity and level, its minor affixes and its set's unconditional bonuses. This page is how an artifact comes to have them, and what a set's bonus that waits on combat does. A drop is rolled by the game's pools, an enhancement feeds it EXP and Mora, and a lock keeps a piece from being fed away. A bonus that waits on combat, such as a four-piece effect a reaction sets off, is a module of its set's answering the [character kits](/docs/genshin/character-kits)' events. Instructor's is built; the other sets the world carries in its chests' pools wait on the kits for what their bonuses rest on, as the [proposal](/docs/proposals/genshin/artifact-enhancement) lists.
 
 ## How it works
 
@@ -33,38 +33,64 @@ flowchart TD
 - **Every fourth level adds or raises a minor affix.** At each affix level it passes, an artifact holding fewer than four minor affixes gains one from the rarity's pool, by weight from those it lacks. One holding four raises one of them, chosen evenly, by a tier of its value.
 - **A locked artifact is never fodder.** A fodder's lock is refused by `getFodderEnhancement`, and an artifact worn by a character is not a bag entry, so the bag's fodder list never holds one.
 
+## Set bonuses in combat
+
+A set's bonus that is only attributes is summed with the rest of a character's lines. A bonus that waits on combat adds no line: it is a module of its set's, an `ArtifactSetModule`, which answers the events of combat as a kit's passive does, read as its wearer's own.
+
+```mermaid
+flowchart TD
+  WORN["A character's artifacts, grouped by set"] --> REACH{"A bonus the worn pieces reach, with numbers?"}
+  REACH -->|"no"| LINES["Its attributes only, summed"]
+  REACH -->|"yes, and its set has a module"| MODULE["The set's module, built from the bonus's numbers"]
+  MODULE --> KIT["getArtifactSetKit: the kit answers first, then each module"]
+  KIT --> EMIT["emitKitEvent: every deployed member's kit"]
+  EMIT --> EFFECT["The module's effect on the team"]
+```
+
+- **A combatant's kit carries its sets' modules.** `createCombatant` builds each character's kit through `getArtifactSetKit`. Each set the character wears that `ArtifactSetIdCreateModuleMap` names, and each of its bonuses the worn pieces reach whose numbers the set table fills, becomes a module built from that bonus. The kit answers each event first and each module after it, and a character whose sets build none keeps its kit as it is.
+- **A module reads its numbers from the set table.** Each bonus carries its affix's numbers as `params`, in the table's order, so a module reads its seconds and amounts from the row rather than restating them.
+- **Instructor's four-piece gives the team Elemental Mastery on a reaction.** A reaction its wearer triggers while on the field gives every member of the deployed team the bonus's Elemental Mastery for its seconds, as a buff another restarts rather than stacks. A reaction its wearer's summon triggers once the wearer has left the field gives none, as the wiki notes.
+
 ## Where the tables come from
 
-`pnpm -C scripts genshin:assets stats` publishes three of the tables this page reads from the dump the [game text](/docs/genshin/game-text) is read from, each checked against the world's schema as it is built:
+`pnpm -C scripts genshin:assets stats` publishes four of the tables this page reads from the dump the [game text](/docs/genshin/game-text) is read from, each checked against the world's schema as it is built:
 
 - `stats/artifactRarities`: per rarity, its highest level (the reliquary table's highest row less one), its base EXP as fodder, each level's cost from `ReliquaryLevelExcelConfigData`, the levels a minor affix is due at, and the minor affix groups of its standard minor affix depot from `ReliquaryAffixExcelConfigData`, each group's tiers sorted lowest first.
 - `stats/artifactMainAffixPools`: per slot, the attributes of its standard main affix depot in `ReliquaryMainPropExcelConfigData`.
 - `stats/artifactExpMaterials`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
+- `stats/artifactSets`: per set in `ReliquarySetExcelConfigData`, each bonus's piece count, the attributes its affix adds, and the numbers its effect reads, the affix's `paramList` in `EquipAffixExcelConfigData` with its trailing zeros cut.
 
 The weights are not in the tables. They are the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
 
 ## Key files
 
-| File                                                                     | Role                                                              |
-| :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `packages/genshin-world/src/models/artifact/Artifact.ts`                 | Gains its EXP and its lock                                        |
-| `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`       | A rarity's levels, costs, fodder base, affix levels and groups    |
-| `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`    | A slot's main affix pool                                          |
-| `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`      | An item's EXP                                                     |
-| `packages/genshin-world/src/services/artifact/constants.ts`              | The recovery rate, the EXP bonus and the wiki's weights           |
-| `packages/genshin-world/src/services/artifact/rollArtifact.ts`           | A drop's artifact: main affix and minor affixes                   |
-| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`        | Feeding EXP, the bonus, levels and the affix levels passed        |
-| `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`    | The minor affix added or raised at an affix level                 |
-| `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`   | A fodder's EXP and Mora, refusing a locked artifact               |
-| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts` | The Mora an enhancement costs                                     |
-| `packages/genshin-world/src/services/shared/drawWeightedValue.ts`        | One draw in proportion to weights, from a seeded random source    |
-| `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`     | Writes the rarity tables from the reliquary, level and affix rows |
-| `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`  | Writes the main affix pools                                       |
-| `scripts/src/services/genshinAssets/stats/getArtifactExpMaterials.ts`    | Writes the EXP items                                              |
+| File                                                                             | Role                                                              |
+| :------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `packages/genshin-world/src/models/artifact/Artifact.ts`                         | Gains its EXP and its lock                                        |
+| `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`               | A rarity's levels, costs, fodder base, affix levels and groups    |
+| `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`            | A slot's main affix pool                                          |
+| `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`              | An item's EXP                                                     |
+| `packages/genshin-world/src/services/artifact/constants.ts`                      | The recovery rate, the EXP bonus and the wiki's weights           |
+| `packages/genshin-world/src/services/artifact/rollArtifact.ts`                   | A drop's artifact: main affix and minor affixes                   |
+| `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`                | Feeding EXP, the bonus, levels and the affix levels passed        |
+| `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`            | The minor affix added or raised at an affix level                 |
+| `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`           | A fodder's EXP and Mora, refusing a locked artifact               |
+| `packages/genshin-world/src/services/artifact/getEnhancementMoraCost.ts`         | The Mora an enhancement costs                                     |
+| `packages/genshin-world/src/models/artifact/ArtifactSetBonus.ts`                 | A set's bonus: its attributes, its numbers and its piece count    |
+| `packages/genshin-world/src/models/artifact/ArtifactSetModule.ts`                | The events a set's bonus that waits on combat answers             |
+| `packages/genshin-world/src/services/artifact/ArtifactSetIdCreateModuleMap.ts`   | Each set with a module, by its id                                 |
+| `packages/genshin-world/src/services/artifact/getArtifactSetKit.ts`              | A character's kit with its sets' modules answering after it       |
+| `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts` | Instructor's four-piece                                           |
+| `packages/genshin-world/src/services/shared/drawWeightedValue.ts`                | One draw in proportion to weights, from a seeded random source    |
+| `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`             | Writes the rarity tables from the reliquary, level and affix rows |
+| `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`          | Writes the main affix pools                                       |
+| `scripts/src/services/genshinAssets/stats/getArtifactExpMaterials.ts`            | Writes the EXP items                                              |
+| `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`                | Writes each set's bonuses and their numbers                       |
 
 ## Notes
 
 - **A drop's starting count is the drop's.** A piece's variant row says how many minor affixes it starts with, and the drop tables that choose a variant are the domains', bosses' and chests' pages. The wiki's drop distribution gives each source's split: a domain's five-star starts with three at 80% and four at 20%, and a boss's at 66% and 34%.
+- **The reaction that sets a bonus off is priced without it.** A module answers an event only after the hit that sent it is priced, so Instructor's Elemental Mastery reaches the reactions after the one that gave it, as the wiki notes the game does.
 - **Mora is charged before the bonus.** The Mora counts the EXP the player feeds, so a bonus of five multiplies the EXP the artifact gains by five, not the Mora it costs.
 
 ## Sources
@@ -73,4 +99,5 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 - [Artifact](https://genshin-impact.fandom.com/wiki/Artifact), Genshin Impact Wiki: a main affix and up to four minor affixes, enhancing with Artifact EXP and Mora, and the next tier every fourth level.
 - [Artifact: Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution), Genshin Impact Wiki: each slot's main affix chances and the minor affixes' weights, the pool without the main affix and those drawn, and values drawn evenly.
 - [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP), Genshin Impact Wiki: a Mora a point, a fodder's base plus 80% of its own, and the bonus of two or five times.
+- [Instructor](https://genshin-impact.fandom.com/wiki/Instructor), Genshin Impact Wiki: the four-piece bonus, and its gameplay notes that the wearer triggers the reaction on the field and that the bonus refreshes rather than stacks.
 - [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.

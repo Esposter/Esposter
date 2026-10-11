@@ -1,8 +1,10 @@
 import type { ElementalState } from "#src/models/combat/ElementalState";
 import type { InternalCooldown } from "#src/models/combat/InternalCooldown";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { GroundPoint } from "genshin-engine";
 
 // One enemy in the world as its AI moves it, written in place each step: its kind and level, its camp and spawn,
@@ -14,6 +16,11 @@ export interface Enemy {
   attackCooldownSeconds: number;
   campId: string;
   droppedThresholdCount: number;
+  // The combatant whose Electro or Hydro last left it Electro-Charged, as its hit priced it, which the ticks are priced
+  // From, none until one has
+  electroChargedCombatant?: Combatant;
+  // The reactions its elements brought on their own as they aged, held until the kit on the field prices them
+  elementalReactions: Reaction[];
   elementalState: ElementalState;
   enemyKindId: EnemyKindId;
   heading: number;

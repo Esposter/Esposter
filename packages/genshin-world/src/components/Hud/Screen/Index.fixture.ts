@@ -1,7 +1,9 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { VENTI_CHARACTER_ID } from "#src/services/character/constants";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
@@ -14,9 +16,9 @@ const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_
 
 // The English mobile client's world HUD on a 1920 by 935 screen, from the public recording of a session at 70 seconds,
 // Letterboxed, so cropped to the game's screen and scored over the part clear of its subtitles. Its touch layout is drawn,
-// As the recording plays on a phone. Mona, Klee and the Traveler are the party's rows it shows, and Venti, a bow's
-// Wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no meter shows, and the quest
-// Tracked is the one the recording shows: its title, with its altitude line not built yet
+// As the recording plays on a phone. Mona, Klee and the Traveler, named Tabibito by its player, are the party's rows it
+// Shows, and Venti, a bow's wielder, is on the field at Lv. 90 with 17286 of 17400 HP. Its stamina stands full, so no
+// Meter shows, and the quest tracked is the one the recording shows: its title, with its altitude line not built yet
 const PARTY_CHARACTER_IDS = [10000041, 10000029, 10000007];
 const FIELD_MEMBER_INDEX = 2;
 const characterDataMap = new Map(
@@ -43,6 +45,8 @@ export const props = {
   member: {
     burstCooldown: 0,
     burstCooldownSeconds: 0,
+    characterId: VENTI_CHARACTER_ID,
+    element: Element.Anemo,
     energy: 14.2,
     energyCost: 60,
     health: 17286,
@@ -66,4 +70,6 @@ export const props = {
     talks: [],
     titleTextId: "albedo",
   },
+  // The name the recording's player chose for the Traveler, which its third row shows
+  travelerName: "Tabibito",
 };

@@ -25,7 +25,7 @@ const createYoimiyaCombatant = (): Combatant => ({
 });
 
 describe(createYoimiyaKit, () => {
-  test("Niwabi Fire-Dance infuses Yoimiya with Pyro as it starts, for the table's seconds", () => {
+  test("niwabi Fire-Dance infuses Yoimiya with Pyro as it starts, for the table's seconds", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 

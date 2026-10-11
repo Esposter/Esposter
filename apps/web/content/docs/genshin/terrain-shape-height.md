@@ -43,24 +43,24 @@ The features keep the residual off their own ground too: the composed height mul
 
 ## Key files
 
-| File                                                                 | Role                                                                      |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`    | The three layers summed into one ground's height                          |
-| `packages/genshin-engine/src/terrain/createGaussianHillsHeight.ts`   | The hills layer: a base plus every hill whose reach covers the point      |
-| `packages/genshin-engine/src/terrain/getGaussianHillBlend.ts`        | One hill's share at a point, cut at its reach, the kernel the fit reads   |
-| `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts` | The features layer, each feature read only in the cells it reaches        |
-| `packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`     | The rectangle each feature's height reaches past zero within              |
-| `packages/genshin-engine/src/terrain/TerrainFeatureKindBlendMap.ts`  | Each kind's share of its height at a point, the one blend both read       |
-| `packages/genshin-engine/src/terrain/getCliffBlend.ts`               | A cliff's terrace, blended across its falloff and past its ends           |
-| `packages/genshin-engine/src/terrain/getRidgeBlend.ts`               | A ridge's Gaussian profile over its distance from the segment             |
-| `packages/genshin-engine/src/terrain/getPlateauBlend.ts`             | A plateau's flat top and blended edge                                     |
-| `packages/genshin-engine/src/terrain/createTerrainFeaturesBlend.ts`  | The largest blend any feature stands at, which the residual is kept off   |
-| `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise, scaled by its fade's weight      |
-| `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`   | The fade's weight at a point, bilinear in its grid, none outside it       |
-| `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point           |
-| `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground, Windrise's fitted ground with every region's plateaus |
+| File                                                                 | Role                                                                                   |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`    | The three layers summed into one ground's height                                       |
+| `packages/genshin-engine/src/terrain/createGaussianHillsHeight.ts`   | The hills layer: a base plus every hill whose reach covers the point                   |
+| `packages/genshin-engine/src/terrain/getGaussianHillBlend.ts`        | One hill's share at a point, cut at its reach, the kernel the fit reads                |
+| `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts` | The features layer, each feature read only in the cells it reaches                     |
+| `packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`     | The rectangle each feature's height reaches past zero within                           |
+| `packages/genshin-engine/src/terrain/TerrainFeatureKindBlendMap.ts`  | Each kind's share of its height at a point, the one blend both read                    |
+| `packages/genshin-engine/src/terrain/getCliffBlend.ts`               | A cliff's terrace, blended across its falloff and past its ends                        |
+| `packages/genshin-engine/src/terrain/getRidgeBlend.ts`               | A ridge's Gaussian profile over its distance from the segment                          |
+| `packages/genshin-engine/src/terrain/getPlateauBlend.ts`             | A plateau's flat top and blended edge                                                  |
+| `packages/genshin-engine/src/terrain/createTerrainFeaturesBlend.ts`  | The largest blend any feature stands at, which the residual is kept off                |
+| `packages/genshin-engine/src/terrain/createResidualHeight.ts`        | The residual's octaves of simplex noise, scaled by its fade's weight                   |
+| `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`   | The fade's weight at a point, bilinear in its grid, none outside it                    |
+| `packages/genshin-engine/src/terrain/fileByCell.ts`                  | Items filed under the cells their bounds cover, read by a point                        |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`     | The world's ground, Windrise's fitted ground and features with every region's plateaus |
 
 ## Notes
 
-- **Windrise's ground is hills and a faded residual.** Its data is the fitted hills, no plateau and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent ([terrain shapes](/docs/proposals/genshin/terrain-shapes)). The world's features are the other regions' provisional plateaus, each raised under its capital ([region buildings](/docs/genshin/region-buildings)), and past the fitted extent no residual is drawn; cliffs, ridges and the world's merge of Windrise's own features are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
+- **Windrise's ground is hills, cliffs and a faded residual.** Its data is the fitted hills, no plateau, the three cliffs its fit places ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground") and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent ([terrain shapes](/docs/proposals/genshin/terrain-shapes)). The world's features are Windrise's own beside the other regions' provisional plateaus, each raised under its capital ([region buildings](/docs/genshin/region-buildings)), and past the fitted extent no residual is drawn; ridges are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
 - **A feature's falloff is positive.** The blends divide by their falloff, so a sharp edge is a falloff of a small positive length rather than zero.

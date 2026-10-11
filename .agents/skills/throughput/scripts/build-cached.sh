@@ -4,7 +4,9 @@
 # bash .agents/skills/throughput/scripts/build-cached.sh <package directory>
 set -euo pipefail
 root="$(cd "$(dirname "$0")/../../../.." && pwd)"
-packageDirectory="$(cd "$1" && pwd)"
+# The physical path, as the cache tool's own root resolves through any symlink: a worktree reached through a symlinked
+# Folder otherwise names no lockfile importer, so none of its workspace dependencies is built
+packageDirectory="$(cd "$1" && pwd -P)"
 # The cache tool loads configuration and shared from their dist, which a fresh worktree lacks, so those two are built
 # Plainly once; the tool then restores or rebuilds them through the cache like any other package
 for bootstrapPackage in configuration shared; do

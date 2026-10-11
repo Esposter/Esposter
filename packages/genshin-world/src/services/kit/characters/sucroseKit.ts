@@ -11,7 +11,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
@@ -33,8 +32,8 @@ const SUCROSE_ATTACK_GROUP_ID = 4331;
 const SUCROSE_SKILL_GROUP_ID = 4332;
 const SUCROSE_BURST_GROUP_ID = 4339;
 
-// Measured: gcsim v2.47.2 (MIT) sucrose/attack.go, each strike's hitmark, its cancel frame and its circle's radius round
-// the body, which is the reach priced as the far one
+// Measured: gcsim v2.47.2 (MIT) sucrose/attack.go, each strike's hitmark, its cancel frame and its circle's radius.
+// The circle is round the body and priced as the far one of the reach.
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sucrose/attack.go
 const NORMAL_ATTACK_STRIKES: { cancelFrames: number; hitArea: AttackArea; hitmarkFrames: number }[] = [
   { cancelFrames: 28, hitArea: createFanReach(360, 1), hitmarkFrames: 17 },
@@ -119,6 +118,14 @@ const ABSORBED_ELEMENT_DAMAGE_BONUS = 0.2;
 const ABSORBED_ELEMENT_SECONDS = 10;
 const ABSORBED_ELEMENT_SOURCE = "sucrose-absorbed-element";
 
+// The element the field absorbs, from the first of the four an enemy within its reach carries, in the game's order
+const findAbsorbedElement = (enemyMap: Map<string, Enemy>, absorbBody: KitBody): Element | undefined => {
+  const reachedEnemies = [...enemyMap.values()].filter((enemy) =>
+    checkIsInAttackArea(ABSORB_CHECK_AREA, absorbBody, enemy),
+  );
+  return ABSORBABLE_AURAS.find(([, aura]) => reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)))?.[0];
+};
+
 // Sucrose's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Astable Anemohypostasis
 // Creation-6308 with its Swirl, and Forbidden Creation-Isomer 75 / Type II with its field and absorbed hits. Her multipliers
 // Are read from her proud skill groups. Her passives and Constellation 2 and 6 are built. The skill's pull is not, as no
@@ -146,16 +153,6 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     element,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, SUCROSE_BURST_GROUP_ID, TALENT_START_LEVEL, 1),
   });
-
-  // The element the field absorbs, from the first of the four an enemy within its reach carries, in the game's order
-  const findAbsorbedElement = (enemyMap: Map<string, Enemy>, absorbBody: KitBody): Element | undefined => {
-    const reachedEnemies = [...enemyMap.values()].filter((enemy) =>
-      checkIsInAttackArea(ABSORB_CHECK_AREA, absorbBody, enemy),
-    );
-    return ABSORBABLE_AURAS.find(([, aura]) =>
-      reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)),
-    )?.[0];
-  };
 
   const createNormalAttack = (
     { cancelFrames, hitArea, hitmarkFrames }: (typeof NORMAL_ATTACK_STRIKES)[number],

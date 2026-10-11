@@ -1,3 +1,4 @@
+import type { Element } from "#src/models/Element";
 import type { WeaponType } from "#src/models/weapon/WeaponType";
 
 // The field member's figures the HUD's health and skill buttons show, read off the world each frame: the HP and level
@@ -7,6 +8,10 @@ import type { WeaponType } from "#src/models/weapon/WeaponType";
 export interface HudMember {
   burstCooldown: number;
   burstCooldownSeconds: number;
+  // Whose skill and burst icons its buttons carry
+  characterId: number;
+  // The element its burst's button is coloured in, none for a character the roster's table gives none
+  element?: Element;
   energy: number;
   energyCost: number;
   health: number;
