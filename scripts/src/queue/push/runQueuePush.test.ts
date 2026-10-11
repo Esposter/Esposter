@@ -62,6 +62,15 @@ describe(runQueuePush, () => {
     expect(existsSync(pendingPath)).toBe(true);
   });
 
+  test("lets go of the lock and throws on when the push rejects", async () => {
+    expect.hasAssertions();
+
+    const push = vi.fn<() => Promise<QueuePushOutcome>>().mockRejectedValue(new Error("push failed"));
+
+    await expect(runQueuePush(push, lockPath, pendingPath)).rejects.toThrow("push failed");
+    expect(acquireProcessLock(lockPath)).toBe(true);
+  });
+
   test("takes over a lock whose process is gone", async () => {
     expect.hasAssertions();
 

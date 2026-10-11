@@ -4,6 +4,7 @@ import { markPushPending } from "#src/queue/push/markPushPending";
 import { takePushPending } from "#src/queue/push/takePushPending";
 import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { releaseProcessLock } from "#src/services/shared/releaseProcessLock";
+import { getResultAsync } from "@esposter/shared";
 import { existsSync } from "node:fs";
 
 // Runs one push under the lock, shared by the post-commit hook and a manual call. A commit that lands while a push holds
@@ -20,14 +21,19 @@ export const runQueuePush = async (
       if (!acquireProcessLock(lockPath)) return QueuePushOutcome.Queued;
     }
 
-    let outcome: QueuePushOutcome;
-    try {
+    // oxlint-disable-next-line no-await-in-loop -- Each pass starts only once the one before it has pushed and let go of the lock
+    const result = await getResultAsync(() => {
       takePushPending(pendingPath);
-      // eslint-disable-next-line no-await-in-loop -- Each pass starts only once the one before it has pushed and let go of the lock
-      outcome = await push();
-    } finally {
-      releaseProcessLock(lockPath);
-    }
+      return push();
+    });
+    // The lock is let go whether the push resolved or rejected, and a rejection is thrown on once it is
+    releaseProcessLock(lockPath);
+    const outcome = result.match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
 
     if (!existsSync(pendingPath)) return outcome;
   }
