@@ -1,7 +1,7 @@
 import { prettify } from "@/util/text/prettify";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-describe("prettify type", () => {
+describe("spaceWordBoundaries type", () => {
   test("single character should be the same", () => {
     expect.hasAssertions();
 
@@ -30,5 +30,12 @@ describe("prettify type", () => {
 
     expectTypeOf(prettify("0a")).toEqualTypeOf<"0 a">();
     expectTypeOf(prettify("0A")).toEqualTypeOf<"0 A">();
+  });
+
+  test("an uppercase run and a separator are not word boundaries, the runtime regex splits neither", () => {
+    expect.hasAssertions();
+
+    expectTypeOf(prettify("ABCDef")).toEqualTypeOf<"ABCDef">();
+    expectTypeOf(prettify("a-b")).toEqualTypeOf<"a-b">();
   });
 });
