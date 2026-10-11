@@ -1,6 +1,7 @@
 import type { VideoSite } from "#src/models/genshinParity/VideoSite";
 import type { SearchCandidate } from "#src/services/genshinParity/shared/parseSearchCandidates";
 
+import { SEARCH_MAX_BUFFER_BYTES } from "#src/services/genshinParity/shared/constants";
 import { getSearchArguments } from "#src/services/genshinParity/shared/getSearchArguments";
 import { parseSearchCandidates } from "#src/services/genshinParity/shared/parseSearchCandidates";
 import { resolveYtDlp } from "#src/services/genshinParity/shared/resolveYtDlp";
@@ -13,6 +14,7 @@ export const searchVideos = async (site: VideoSite, count: number, query: string
   const ytDlpPath = await resolveYtDlp();
   const { error, status, stdout } = spawnSync(ytDlpPath, searchArguments, {
     encoding: "utf8",
+    maxBuffer: SEARCH_MAX_BUFFER_BYTES,
     stdio: ["ignore", "pipe", "inherit"],
   });
   if (status !== 0) throw new InvalidOperationError(Operation.Read, query, error?.message ?? `exited with ${status}`);

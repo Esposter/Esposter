@@ -35,6 +35,7 @@ import { polarCommand } from "#src/services/genshinParity/commands/polarCommand"
 import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
+import { screensCommand } from "#src/services/genshinParity/commands/screensCommand";
 import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
 import { searchCommand } from "#src/services/genshinParity/commands/searchCommand";
 import { shadowsCommand } from "#src/services/genshinParity/commands/shadowsCommand";
@@ -99,6 +100,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     record: recordCommand,
     clip: clipCommand,
     search: searchCommand,
+    screens: screensCommand,
     frame: frameCommand,
   },
 });

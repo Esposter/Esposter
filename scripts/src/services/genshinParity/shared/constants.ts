@@ -56,6 +56,12 @@ export const YT_DLP_PINNED_TOOL: PinnedTool = {
   executablePattern: "yt-dlp.exe",
   isArchive: false,
 };
+// A whole-screen screenshot is at least this wide, and a 16:9 or 16:10 screen's aspect ratio sits between these two
+export const WHOLE_SCREEN_MIN_WIDTH = 1280;
+export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
+export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
+// The most a search's output may run to: the fields it prints for each result, read whole as one string
+export const SEARCH_MAX_BUFFER_BYTES = 64 * 1024 * 1024;
 // A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;

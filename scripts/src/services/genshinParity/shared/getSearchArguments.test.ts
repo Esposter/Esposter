@@ -3,11 +3,12 @@ import { getSearchArguments } from "#src/services/genshinParity/shared/getSearch
 import { describe, expect, test } from "vitest";
 
 describe(getSearchArguments, () => {
-  test("searches YouTube for the count of results, with the full JSON and nothing downloaded", () => {
+  test("searches YouTube for the count of results, printing only the fields a candidate reads, nothing downloaded", () => {
     expect.hasAssertions();
 
     expect(getSearchArguments(VideoSite.Youtube, 10, "pick up items")).toStrictEqual([
-      "--dump-json",
+      "--print",
+      "%(.{webpage_url,title,uploader,duration,height,fps,upload_date,chapters})j",
       "--skip-download",
       "--no-warnings",
       "ytsearch10:pick up items",
@@ -18,7 +19,8 @@ describe(getSearchArguments, () => {
     expect.hasAssertions();
 
     expect(getSearchArguments(VideoSite.Bilibili, 3, "pick up items")).toStrictEqual([
-      "--dump-json",
+      "--print",
+      "%(.{webpage_url,title,uploader,duration,height,fps,upload_date,chapters})j",
       "--skip-download",
       "--no-warnings",
       "bilisearch3:pick up items",
