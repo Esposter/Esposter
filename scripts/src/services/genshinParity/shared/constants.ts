@@ -1,3 +1,5 @@
+import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
+import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
@@ -111,6 +113,8 @@ export const COMPARISON_HEIGHT = 540;
 // Match the game at 0.001 to 0.05 (the loading, the publisher's splash, the login's interface), most other references
 // At 0.14 or more, and the settings' graphics rows at 0.10, so the bar sits under the lowest of the rest
 export const APPROVAL_FLIP_BAR = 0.05;
+// The approval a screen gets when its reference records none
+export const DEFAULT_APPROVAL: ParityApproval = { bar: APPROVAL_FLIP_BAR, measure: ParityApprovalMeasure.Flip };
 // The separator between a screen's name and a fixture variant's in its visual test's title and its image's name, as
 // The interface's `FIXTURE_VARIANT_SEPARATOR` spells it
 export const VISUAL_VARIANT_SEPARATOR = "-";

@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 import type { ParityPlacement } from "#src/models/genshinParity/shared/ParityPlacement";
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
@@ -12,6 +13,9 @@ export type ParityReference = ParityReferenceBase &
     | { capture?: never; crop?: never; placement?: ParityPlacement; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
+  // The measure and bar the screen's image is approved by, where the screen records its own; one that records none is
+  // Approved by the global FLIP bar
+  approval?: ParityApproval;
   // The component whose witness the passes judge the reference by: a screen several components share is measured by
   // Each over the references naming it alone, and a reference naming none is read by no component's passes
   component?: DerivedAssetComponent;

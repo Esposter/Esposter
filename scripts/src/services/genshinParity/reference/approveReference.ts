@@ -1,11 +1,12 @@
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 
 import { ApprovalOutcome } from "#src/models/genshinParity/reference/ApprovalOutcome";
+import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { decideApproval } from "#src/services/genshinParity/reference/decideApproval";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import {
-  APPROVAL_FLIP_BAR,
+  DEFAULT_APPROVAL,
   GENSHIN_WORLD_DIRECTORY,
   REFERENCES_DIRECTORY,
   VISUAL_VARIANT_SEPARATOR,
@@ -18,9 +19,8 @@ import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// The visual suite's file and its describe, whose tests are titled by their screen's name
+// The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
-const VISUAL_SUITE_TITLE = "interface screens";
 
 const readScore = async (referenceId: string): Promise<ParityScore | undefined> =>
   (await getResultAsync(() => compareScreen(referenceId))).match(
@@ -51,9 +51,20 @@ export const approveReference = async (referenceId: string, variant?: string): P
   const score = hasReference && isWholeScreen ? await readScore(referenceId) : undefined;
   // The committed report takes the compare's row whether or not it clears the bar, as `compare` writes it
   if (score) await writeParityScores({ [referenceId]: score });
-  const outcome = decideApproval(hasReference, isWholeScreen, score, APPROVAL_FLIP_BAR);
+  const approval = reference.approval ?? DEFAULT_APPROVAL;
+  const outcome = decideApproval(hasReference, isWholeScreen, score, approval);
+  const value =
+    score === undefined
+      ? undefined
+      : approval.measure === ParityApprovalMeasure.Flip
+        ? score.flip
+        : score.meanDifference;
+  const barSource =
+    reference.approval === undefined
+      ? "the global default, no bar recorded for this screen"
+      : "recorded for this screen";
   console.log(
-    `${referenceId}: ${score ? `FLIP ${score.flip.toFixed(4)}` : "no score"} against the bar ${APPROVAL_FLIP_BAR}`,
+    `${referenceId}: ${value === undefined ? "no score" : `${approval.measure} ${value.toFixed(4)}`} against the bar ${approval.bar} (${barSource})`,
   );
   if (outcome !== ApprovalOutcome.Approved)
     throw new InvalidOperationError(Operation.Update, referenceId, `not approved: ${outcome}`);
@@ -62,7 +73,8 @@ export const approveReference = async (referenceId: string, variant?: string): P
   // The suite's `-u` writes only the tests the filter selects, so no other screen's image moves
   const { status } = spawnSync(
     PNPM_FILE,
-    [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `^${VISUAL_SUITE_TITLE} ${testName}$`],
+    // The filter is one token ending the title: pnpm hands its arguments to cmd, which splits a space and eats a caret
+    [...PNPM_ARGS, "test:visual", "--run", "-u", VISUAL_SUITE_FILE, "-t", `${testName}$`],
     { cwd: GENSHIN_WORLD_DIRECTORY, stdio: "inherit" },
   );
   if (status !== 0) throw new InvalidOperationError(Operation.Update, testName, `the visual suite exited ${status}`);
