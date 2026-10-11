@@ -241,7 +241,7 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const field = createKitField(combatant.characterId, position, {
           nextTickSeconds: tickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            castKitSummon(tickEffectState, { facing, height, position }, combatant, [soundwaveHit]);
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [soundwaveHit]);
           },
           radius: FIELD_RADIUS,
           secondsRemaining: getTalentMultiplier(talentMultiplierMap, ORORON_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

@@ -97,4 +97,16 @@ describe(createColleiKit, () => {
 
     expect(Math.round((field?.secondsRemaining ?? 0) * 60)).toBe(403);
   });
+
+  test("each leap lands where the kitty was cast, whatever the body does after", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createColleiCombatant());
+    COLLEI_KIT.elementalBurst.onStart?.(context);
+    const field = context.kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+    context.body.position.x = 1;
+    field?.onTick(context, 0);
+    const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
+  });
 });
