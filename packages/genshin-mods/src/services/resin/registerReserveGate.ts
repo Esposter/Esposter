@@ -2,8 +2,9 @@ import type { EngineInterface, On } from "claude-code";
 
 import { atom, read } from "claude-code";
 
+import { RESERVE_REFUSAL_INSTRUCTION } from "../constants";
 import { InitialState } from "../InitialState";
-import { getReserveRefusal } from "./getReserveRefusal";
+import { getReserveSummary } from "./getReserveSummary";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const reserveWindowAtom = atom({ key: "reserveWindow", plugin: "genshin-mods" } as const, InitialState.reserveWindow);
@@ -13,14 +14,14 @@ const reserveWindowAtom = atom({ key: "reserveWindow", plugin: "genshin-mods" } 
 const letLaunchThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerReserveGate = (on: On): void => {
-  // The section only describes the reserve, and an agent or a workflow already launched never reads it, so the launch
-  // Itself is refused while the reserve holds, past the window's reset too, which the next measurement is yet to read
+  // The section only describes the reserve, and a workflow already launched never reads it, so the launch itself is
+  // Refused while the reserve holds, past the window's reset too, which the next measurement is yet to read. An agent
+  // Launch is the delegation guard's, which refuses one on any model but haiku whether or not a reserve holds
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
-  on("tool.call", { tool: ["Agent", "Workflow"] }, async ($, e, next) => {
+  on("tool.call", { tool: ["Workflow"] }, async ($, e, next) => {
     if (!(await read($, enabledModsAtom)).resin) return next(e);
     const reserveWindow = await read($, reserveWindowAtom);
-    if (Date.parse(reserveWindow.resetsAt) <= (await $.clock.now())) return next(e);
-    const refusal = getReserveRefusal(e.tool, e.tool === "Agent" ? e : {}, reserveWindow);
-    return refusal === undefined ? next(e) : { deny: refusal };
+    if (!reserveWindow.name || Date.parse(reserveWindow.resetsAt) <= (await $.clock.now())) return next(e);
+    return { deny: `${getReserveSummary(reserveWindow)}. ${RESERVE_REFUSAL_INSTRUCTION}` };
   }).catch(letLaunchThrough);
 };

@@ -15,11 +15,14 @@ export const PACE_FLOOR_PERCENTAGE = 50;
 // Each window's length, which its reset time is counted back from
 export const FIVE_HOUR_WINDOW_MS: number = Temporal.Duration.from({ hours: 5 }).total("milliseconds");
 export const WEEKLY_WINDOW_MS: number = Temporal.Duration.from({ hours: 168 }).total("milliseconds");
-// The only model an agent may launch on under a reserve, the one cleanup and a settled compute runner need
-export const RESERVE_AGENT_MODEL = "haiku";
-// What a refusal tells the session to do instead, after the reserve's summary
+// The only model a subagent launches on: the main session thinks, and everything it delegates runs on haiku
+export const AGENT_MODEL = "haiku";
+// What a launch on any other model, or a fork, is told instead
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const RESERVE_REFUSAL_INSTRUCTION: string = `Launch only an agent with model "${RESERVE_AGENT_MODEL}", for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
+export const AGENT_MODEL_REFUSAL: string = `A subagent runs on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}", and never a fork, which runs on the session's own model. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
+// What a workflow refused under a reserve is told to do instead, after the reserve's summary
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const RESERVE_REFUSAL_INSTRUCTION: string = `Launch an agent with model "${AGENT_MODEL}" instead, for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`

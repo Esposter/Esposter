@@ -43,15 +43,13 @@ flowchart TD
   Q -->|yes, maintenance raised to wind-down| UP["Section switches to wind-down<br/>and the toast names it again"]
   P -->|no, reserve on| OFF["Reserve lifts<br/>the section stops being sent and the gate opens"]
   P -->|no, reserve off| NONE["Nothing shown"]
-  ON --> G["Launch gate on Agent and Workflow"]
-  G --> L{"The launch"}
-  L -->|Workflow, a fork, or an Agent not on haiku| D["Denied with the reserve's summary and what to do"]
-  L -->|Agent on haiku, SendMessage| A["Passes"]
+  ON --> G["Launch gate on Workflow"]
+  G --> D["Denied with the reserve's summary and what to do"]
 ```
 
 - **What starts it** — each measurement the engine pushes reads the limit windows. A window starts the reserve past its maintenance line, or with half its allowance spent ahead of an even pace, and a wind-down names the reserve over a maintenance tier, and when both windows are at the same tier the five-hour one is named. A toast names it with its reset time in local time, once as it starts and again as its maintenance tier rises to wind-down. Nothing is shown when the reserve ends.
 - **What the session is told** — one system section naming the window, the line it has passed and its reset time, then the instruction of its tier: the maintenance tier spends the rest of the window on cleanup agents, the wind-down stops new work and has each running agent commit and hand off. The throughput skill's "The usage reserve" section spells out both. The text holds still while its tier lasts, so it does not break the prompt cache; a rise to wind-down changes it once. It is sent only while the resin mod is on.
-- **What is refused at launch** — the section only describes the reserve, and an agent or a workflow already launched never reads it, so while a reserve holds and the resin mod is on, a `tool.call` hook on `Agent` and `Workflow` decides each launch with `getReserveRefusal`. A workflow is denied; an agent is denied unless its `model` is `haiku`, and a `subagent_type` of `fork` always is, since a fork runs on the parent's model. Everything else passes, `SendMessage` included so a wrap-up reaches the agents still running. The denial opens with the reserve's summary sentence, then says to pass model `haiku` for cleanup or a compute runner whose judgement is settled, and otherwise to write the unit down as a follow-up and leave it for after the reset. The gate stops at the window's reset time without waiting for the next measurement, and a failure of the hook lets the launch through, as the ward's does.
+- **What is refused at launch** — the section only describes the reserve, and a workflow already launched never reads it, so while a reserve holds and the resin mod is on, a `tool.call` hook on `Workflow` denies the launch. The denial opens with the reserve's summary sentence, then says to launch a `haiku` agent instead for cleanup or a compute runner whose judgement is settled, and otherwise to write the unit down as a follow-up and leave it for after the reset. An agent launch is the [delegation guard](/docs/infra/claude-interface/genshin-mods/delegation)'s, which refuses one not on `haiku` whether or not a reserve holds, so a haiku agent and `SendMessage` pass and a wrap-up reaches the agents still running. The gate stops at the window's reset time without waiting for the next measurement, and a failure of the hook lets the launch through, as the ward's does.
 - **What lifts it** — the window's reset drops its reading under the line, and the next measurement clears the reserve, so the section simply stops being sent. No button or command does this.
 
 The steps a session follows under a reserve are the repository's own, in the [throughput](https://github.com/Esposter/Esposter/blob/main/.agents/skills/throughput/SKILL.md) skill's "The usage reserve" section.
@@ -66,8 +64,7 @@ The steps a session follows under a reserve are the repository's own, in the [th
 | `packages/genshin-mods/src/services/resin/getReserveWindow.ts`            | The window whose tier names the reserve, with its reset time                   |
 | `packages/genshin-mods/src/services/resin/getReserveSummary.ts`           | The sentence the reserve's section and its toast open with                     |
 | `packages/genshin-mods/src/services/resin/reserveText.ts`                 | The reserve's system section                                                   |
-| `packages/genshin-mods/src/services/resin/getReserveRefusal.ts`           | Whether a launch is refused under the reserve, and the text it is told         |
-| `packages/genshin-mods/src/services/resin/registerReserveGate.ts`         | The `tool.call` hook on `Agent` and `Workflow` that denies the launch          |
+| `packages/genshin-mods/src/services/resin/registerReserveGate.ts`         | The `tool.call` hook on `Workflow` that denies the launch under a reserve      |
 | `packages/genshin-mods/src/services/resin/formatResetsAt.ts`              | The reset time in local time, for the toast and the section                    |
 | `packages/genshin-mods/src/services/registerLifecycle.ts`                 | The warning timer armed at each turn's end, the renewal, the reserve's reading |
 | `packages/genshin-mods/src/services/band/registerBand.ts`                 | The row and the warm, compact and handoff actions                              |

@@ -1,11 +1,15 @@
 ---
 title: Delegation guard
-description: A nudge after every third lookup in a row the main session makes with no decision between them, telling the model that the chain goes to a haiku agent as one bounded question, rather than reading it one hop at a time in the main context.
+description: A refusal of every subagent launch not on haiku, and a nudge after every third lookup in a row the main session makes with no decision between them, telling the model that the chain goes to a haiku agent as one bounded question, rather than reading it one hop at a time in the main context.
 ---
 
 # Delegation guard
 
-Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The main session is the expensive reader in this repository: a lookup it makes costs the family that thinks, and its result stays in the context of every later turn. The delegation rule says a chain of lookups whose next step is a lookup too belongs to a haiku subagent, which reads the chain and returns its conclusion. The rule is easy to state and easy to break one read at a time, so the guard counts the main session's lookups and says so when a run of them gets long.
+Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The main session is the expensive reader in this repository: a lookup it makes costs the family that thinks, and its result stays in the context of every later turn. The delegation rule says a chain of lookups whose next step is a lookup too belongs to a haiku subagent, which reads the chain and returns its conclusion. The rule is easy to state and easy to break one read at a time, so the guard counts the main session's lookups and says so when a run of them gets long. The rule's other half, that every subagent runs on haiku, it enforces outright: a launch on any other model is refused.
+
+## The launch gate
+
+Every `Agent` call is decided before it runs. It passes only when its `model` is `haiku`. A launch naming another model is denied, and so is one naming none, which inherits the session's model, and any `fork`, which runs on the session's model whatever it names. The denial says what to do instead: pass model `haiku`, keep work too judged for haiku in the main session, and treat a spec haiku cannot carry as one with a call still open. The gate runs in every session, with or without a usage reserve, and a refused launch is not counted. A workflow's agents are not read by the gate. Their `model` is the `llm-delegation` skill's rule alone, and a workflow is refused outright only under the [reserve](/docs/infra/claude-interface/genshin-mods/resin).
 
 ## How it works
 
@@ -35,17 +39,19 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role                                                                  |
-| :---------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/delegation/registerDelegation.ts`   | The call hook: counts each call and adds the note to its result       |
-| `packages/genshin-mods/src/services/delegation/getCallStep.ts`          | Whether a call is a lookup, a reset or neither                        |
-| `packages/genshin-mods/src/services/delegation/checkIsLookupCommand.ts` | Whether a shell command only reads, after its leading segments        |
-| `packages/genshin-mods/src/services/delegation/getNextStreak.ts`        | The count after one call                                              |
-| `packages/genshin-mods/src/services/delegation/getNudge.ts`             | Whether a count owes the note                                         |
-| `packages/genshin-mods/src/services/constants.ts`                       | The tool lists, the command patterns, the nudge interval and its text |
+| File                                                                    | Role                                                                                                       |
+| :---------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/delegation/registerDelegation.ts`   | The call hook: refuses an agent launch not on haiku, counts each call and adds the note to its result      |
+| `packages/genshin-mods/src/services/delegation/getLaunchRefusal.ts`     | Whether an agent launch is refused, and the text it is told                                                |
+| `packages/genshin-mods/src/services/delegation/getCallStep.ts`          | Whether a call is a lookup, a reset or neither                                                             |
+| `packages/genshin-mods/src/services/delegation/checkIsLookupCommand.ts` | Whether a shell command only reads, after its leading segments                                             |
+| `packages/genshin-mods/src/services/delegation/getNextStreak.ts`        | The count after one call                                                                                   |
+| `packages/genshin-mods/src/services/delegation/getNudge.ts`             | Whether a count owes the note                                                                              |
+| `packages/genshin-mods/src/services/constants.ts`                       | The tool lists, the command patterns, the nudge interval and its text, the one agent model and its refusal |
 
 ## Notes
 
 - The count judges a command by its first word after the leading segments, so a read reached another way (`pnpm exec cat`, a script that greps) is a reset. The guard errs toward asking less, since a note on a call that was not a lookup would be noise.
 - The count lives in the session's state and is cleared by each prompt, so a run of lookups spanning two prompts is two runs.
 - The mod has no command and no switch: it runs in every session, where the other mods are switched by their own command.
+- The launch gate went in on 2026-10-12. That day a session briefed about twenty lanes on opus and then sonnet against the `llm-delegation` skill's two tiers, while its haiku runners landed their units for a fraction of the tokens. A rule the session could read past was not enough, so the user banned every model but haiku for a subagent.

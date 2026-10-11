@@ -7,6 +7,7 @@ import type { DelegationCall } from "../../models/DelegationCall";
 import { DelegationStep } from "../../models/DelegationStep";
 import { InitialState } from "../InitialState";
 import { getCallStep } from "./getCallStep";
+import { getLaunchRefusal } from "./getLaunchRefusal";
 import { getNextStreak } from "./getNextStreak";
 import { getNudge } from "./getNudge";
 
@@ -26,12 +27,15 @@ const countCall = async ($: EngineInterface, call: DelegationCall): Promise<stri
 const letCallThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerDelegation = (on: On): void => {
-  // A nudge rides on the call's own result as context the model reads after it, and never blocks the call
+  // An agent launch on any model but haiku is refused before it counts. A nudge rides on the call's own result as
+  // Context the model reads after it, and never blocks the call
   // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on(
     "tool.call",
     { tool: ["Agent", "Bash", "Edit", "Glob", "Grep", "NotebookEdit", "PowerShell", "Read", "WebFetch", "Write"] },
     async ($, e, next) => {
+      const refusal = e.tool === "Agent" ? getLaunchRefusal(e) : undefined;
+      if (refusal !== undefined) return { deny: refusal };
       const nudge = await countCall($, e);
       const result = await next(e);
       return nudge !== undefined && result.deny === undefined
