@@ -3,5 +3,5 @@ import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRo
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
 
 // The game's skills by their IDs
-export const readSkillMap = () =>
+export const readSkillMap = (): Map<ExcelSkillRow["id"], ExcelSkillRow> =>
   new Map(readExcelTable<ExcelSkillRow>("AvatarSkillExcelConfigData").map((row) => [row.id, row]));

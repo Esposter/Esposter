@@ -39,7 +39,7 @@ export const readSupersededRepositories = async (
   const packageNames = [...new Set(entries.map((entry) => getRegistryPackageName(entry)))];
 
   // Batches of the registry's own bound, since an unbounded burst of requests times out most of them
-  for (let index = 0; index < packageNames.length; index += REGISTRY_CONCURRENCY) {
+  for (let index = 0; index < packageNames.length; index += REGISTRY_CONCURRENCY)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each batch settles before the next one starts
     await Promise.all(
       packageNames.slice(index, index + REGISTRY_CONCURRENCY).map((packageName) =>
@@ -53,7 +53,6 @@ export const readSupersededRepositories = async (
         ),
       ),
     );
-  }
 
   return { errors, repositories };
 };

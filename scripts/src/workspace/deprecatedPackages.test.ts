@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// npm marks a version deprecated, and pnpm records that on the lockfile's `packages:` entry. A catalog entry is ours to
+// Npm marks a version deprecated, and pnpm records that on the lockfile's `packages:` entry. A catalog entry is ours to
 // Replace, so a deprecated resolution of one fails here with npm's own message. A deprecated transitive dependency is
 // Not ours to fix and is not checked.
 describe("deprecatedPackages", () => {
