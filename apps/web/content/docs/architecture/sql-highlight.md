@@ -30,7 +30,7 @@ flowchart TD
 
 ## Colours
 
-The colour map is a constant in `highlightSql.ts`, the one place the colours live. It follows the code viewer's token mapping in `uiHighlightSpecs`, which replaced the One Dark theme, so a query reads the same in the log as in the app's editors, each token kind in the colour [the design language](/docs/architecture/design-language) gives highlighted code, with a parameter coloured as a number. The palette uses only the sixteen named ANSI colours `styleText` accepts, so the terminal's theme chooses the shades.
+The colour map, `HighlightStyleMap` in the db constants, is the one place the colours live, and the suite reads its colours from it, so a test asserts which kind a token is and never which colour that kind has. The palette is chosen to read on a dark terminal's default colours rather than to match the app's editors: plain blue is too dark there, so a quoted name, a table or a column, is green as the log showed it before, a function call bright blue, a string cyan, keywords magenta, numbers and parameters yellow, and comments a grey italic. Only the named ANSI colours `styleText` accepts are used, so the terminal's theme still chooses the shades.
 
 | Token kind                  | Style                         |
 | :-------------------------- | :---------------------------- |
@@ -86,13 +86,12 @@ Verdict counts: 4 in-scope defects, 1 in-scope feature, 13 fixed upstream and pi
 
 ## Key files
 
-| Path                                                   | Role                                                 |
-| :----------------------------------------------------- | :--------------------------------------------------- |
-| `apps/web/server/services/db/highlightSql.ts`          | The tokenizer, the colour map and `highlightSql`     |
-| `apps/web/server/services/db/constants.ts`             | `POSTGRES_KEYWORDS`, the keyword list the scan reads |
-| `apps/web/server/db/logger.ts`                         | The Drizzle logger that passes each query through it |
-| `apps/web/server/services/db/highlightSql.test.ts`     | The suite, with the regression tests named by issue  |
-| `apps/web/app/services/codemirror/uiHighlightSpecs.ts` | The app's token mapping the colour map follows       |
+| Path                                               | Role                                                 |
+| :------------------------------------------------- | :--------------------------------------------------- |
+| `apps/web/server/services/db/highlightSql.ts`      | The tokenizer and `highlightSql`                     |
+| `apps/web/server/services/db/constants.ts`         | `POSTGRES_KEYWORDS` and the colour map               |
+| `apps/web/server/db/logger.ts`                     | The Drizzle logger that passes each query through it |
+| `apps/web/server/services/db/highlightSql.test.ts` | The suite, with the regression tests named by issue  |
 
 ## Sources
 

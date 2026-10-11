@@ -1,20 +1,5 @@
-import { POSTGRES_KEYWORDS } from "#server/services/db/constants";
+import { HighlightStyleMap, POSTGRES_KEYWORDS } from "#server/services/db/constants";
 import { styleText } from "node:util";
-
-type StyleTextFormat = Parameters<typeof styleText>[0];
-
-// Each token kind's colour follows the code viewer's mapping (uiHighlightSpecs): keywords the accent, strings success,
-// Names info, numbers and parameters warning, comments muted. Brackets and operators are left plain.
-// Named ANSI colours only, so the terminal's own theme decides the shades
-const HighlightStyleMap = {
-  comment: ["gray", "dim", "italic"],
-  function: "blue",
-  identifier: "blue",
-  keyword: "magenta",
-  number: "yellow",
-  parameter: "yellow",
-  string: "green",
-} as const satisfies Record<string, StyleTextFormat>;
 
 type HighlightKind = keyof typeof HighlightStyleMap;
 
