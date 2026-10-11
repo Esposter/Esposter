@@ -11,7 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -36,12 +36,6 @@ const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, h
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/config.yml
 const CHARGED_CYCLIC_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
 const CHARGED_FINAL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
-// Measured: gcsim v2.47.2 (MIT) diluc/plunge.go, the collision a circle of radius 1, the low plunge's 3 and the high's 5,
-// Each one metre above the feet. Their height is provisional
-// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Provisional: the Searing Onslaught's box, 3 wide and 3.5 long, to its far corner, until the area holds boxes
 const SKILL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 2.3 });
 // Measured: gcsim v2.47.2 (MIT) diluc/skill.go, the second press's fan of 300 degrees and radius 2.2, offset 1.2 metres
@@ -286,7 +280,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   highPlunge: {
     hits: [
       {
-        hitArea: HIGH_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.high,
         hitmarkSeconds: 40 / 60,
         isBlunt: true,
         poiseDamage: 200,
@@ -299,7 +293,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   lowPlunge: {
     hits: [
       {
-        hitArea: LOW_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.low,
         hitmarkSeconds: 36 / 60,
         isBlunt: true,
         poiseDamage: 150,
@@ -342,7 +336,7 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // The collision's poise is the wiki's 35, and it applies no gauge of its own, 0U, as the wiki's table gives
   plungeCollision: {
     gauge: 0,
-    hitArea: PLUNGE_COLLISION_HIT_AREA,
+    hitArea: PLUNGE_HIT_AREAS.collision,
     hitmarkSeconds: 0,
     poiseDamage: 35,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, DILUC_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),

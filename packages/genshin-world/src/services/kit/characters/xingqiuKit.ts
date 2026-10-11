@@ -15,7 +15,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -37,22 +43,18 @@ const XINGQIU_BURST_GROUP_ID = 2539;
 // Priced as its offset plus its radius. The fourth's box and the fifth's first, 1 wide and 2 long from the body, which
 // Gcsim spawns on its near edge, are each priced as the circle to its far corner
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/attack.go
-const FIRST_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 1.5 });
-const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.5 });
+const FIRST_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.8, 1.5);
+const THIRD_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.5);
 const BOX_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(2, 1 / 2) });
-const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 2 });
+const FIFTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.8, 2);
 // Measured: gcsim v2.47.2 (MIT) xingqiu/charge.go, both slashes a circle of radius 2.2 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/charge.go
 const CHARGED_ATTACK_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 2.2 });
-// Provisional: gcsim has no plunge file for Xingqiu, so the plunges' reach is Jean's and Beidou's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) xingqiu/skill.go, Fatal Rainscreen's first circle of radius 3 centred 0.8 metres ahead, and
 // Its second box 3.5 wide and 4.5 long from 1.5 metres behind, priced as the circle to its far corner. The Rain Swords'
 // Hydro is orbital.go's circle of radius 1.2 round the body on the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/skill.go
-const FIRST_RAINSCREEN_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 3 });
+const FIRST_RAINSCREEN_HIT_AREA: AttackArea = createCircleReach(0.8, 3);
 const SECOND_RAINSCREEN_HIT_AREA: AttackArea = Object.freeze({
   angle: 2 * Math.PI,
   height: 2,
@@ -390,7 +392,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     highPlunge: {
       hits: [
         {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 150,
@@ -403,7 +405,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 100,
@@ -417,7 +419,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // The collision's poise is the wiki's 25, and it applies no gauge of its own, 0U, as the wiki's table gives
     plungeCollision: {
       gauge: 0,
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: 25,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, XINGQIU_ATTACK_GROUP_ID, TALENT_START_LEVEL, 10),

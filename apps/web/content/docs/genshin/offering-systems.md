@@ -1,6 +1,6 @@
 ---
 title: Offering systems
-description: The offering rule built and tested as rules, not yet on a screen. Every offering item the bag holds is offered at once and its rewards paid in, each level its items cover is reached and its reward paid once, the Frostbearing Tree's levels are read from the game's offering table, and its place in Mondstadt is published from the official map.
+description: The offering rule on the world. Every offering item the bag holds is offered at once and its rewards paid in, each level its items cover is reached and its reward paid once. The Frostbearing Tree stands in Dragonspine, its prompt offers on F, and its held count and level are saved.
 ---
 
 # Offering systems
@@ -36,6 +36,9 @@ flowchart TD
 | `packages/genshin-world/src/services/offering/readFrostbearingTreeLevels.ts`  | Fetches the tree's levels by key and checks them against its schema       |
 | `packages/genshin-world/src/models/offering/OfferingLevel.ts`                 | One level: the items it takes, the item they are, its rewards             |
 | `packages/genshin-world/src/models/offering/OfferingProgress.ts`              | The held count, the level reached and the levels, shared with the statues |
+| `packages/genshin-world/src/models/offering/OfferingProgressSave.ts`          | The held count and level the save holds for an offering                   |
+| `packages/genshin-world/src/composables/useWorldOfferings.ts`                 | Offers the bag to the Frostbearing Tree and keeps its progress            |
+| `packages/genshin-world/src/components/World/FrostbearingTree/Index.vue`      | The tree's stand-in at its place                                          |
 | `packages/genshin-world/src/models/offering/OfferingOffer.ts`                 | What an offer leaves: the bag, the wallet, the progress and the overflow  |
 | `packages/genshin-world/src/models/offering/OfferingReward.ts`                | One item a level pays                                                     |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreeLevels.ts` | Builds the tree's levels, each reward joined from the reward table        |
@@ -45,7 +48,9 @@ flowchart TD
 
 ## Notes
 
-- **Not yet wired.** No tree is drawn in the world and no prompt offers to it, so nothing calls `offerBagItems` on a screen. The tree's name is `GameTextKey.FrostbearingTree` (`UI_ELDERTREE_MAINUI_TITLE`), written into every language's chunk, and its items and their names are in the published materials, which `buildItems`'s test checks. The tree's landmark and its ground, the prompt row and the taking on F wait on Mondstadt's region page.
+- **Stood in, not modelled.** The tree is drawn as one capsule of one instanced draw with one shared material, at its place in the `frostbearingTreePlaces/mondstadt` record, the way the animals and the drops are stood in until their models land. Its model and landmark wait on Mondstadt's region page.
+- **The offer is on F.** Its prompt row is an `Activate` named by `GameTextKey.FrostbearingTree` while the character is in reach, and pressing F offers the bag through `offerBagItems`. The tree's rewards the bag has no room for come back as the offer's overflow, which nothing places yet, so they are not kept.
+- **The save holds its progress.** Its held count and level are the `offerings.frostbearingTree` slice of the save, with no default: a save that predates it is refused until backfilled. A guest's save keeps the further level and its held count when it merges into an account.
 - **The bag has no definition for the tree's item yet.** The offering item 107010 and most of the levels' reward items are not in the materials table the bag reads, so `getItemDefinition` cannot name them until their definitions are added from the game's item table.
 - **One rule with the statues.** The statues' offerOculus became `offerItems`, which takes the count offered rather than one Oculus, and the level shape they share is `itemCount` and `itemId`, in place of oculusCount and oculusItemId. The statue slice was rewritten under those names.
 - **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page answered HTTP 402 when this was built, so the calls above rest on the game's table and the official map alone, and the wiki's wording of each is still to be checked.

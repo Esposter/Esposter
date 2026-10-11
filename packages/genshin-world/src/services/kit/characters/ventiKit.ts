@@ -8,7 +8,12 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -27,10 +32,6 @@ const VENTI_BURST_GROUP_ID = 2239;
 // A box a metre long and a tenth wide, so they are priced as a circle of a metre round the body, as Amber's are
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/venti/aimed.go
 const ARROW_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-// Provisional: gcsim models only the high plunge that follows a held Skyward Sonnet, so the collision's and the low
-// Plunge's reach are Amber's until one measures them
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
 // Measured: gcsim v2.47.2 (MIT) venti/plunge.go, the high plunge's circle of radius 3.5 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/venti/plunge.go
 const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
@@ -257,7 +258,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           poiseDamage: 50,
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, VENTI_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
@@ -269,7 +270,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     normalAttacks,
     // The collision's poise is the wiki's 10, and it applies no gauge, as the wiki's table gives
     plungeCollision: {
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: 10,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, VENTI_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),

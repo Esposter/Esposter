@@ -16,6 +16,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -36,24 +37,24 @@ const RAZOR_BURST_GROUP_ID = 2039;
 // The second's box 3.2 wide and 3 long from half a metre ahead, and the fourth's circle of radius 2 centred 1.8 metres
 // Ahead, each priced as its far reach from the body until an area holds an offset
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/attack.go
-const STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2 });
+const STRIKE_HIT_AREA: AttackArea = createCircleReach(1, 2);
 const SECOND_STRIKE_HIT_AREA: AttackArea = Object.freeze({
   angle: 2 * Math.PI,
   height: 2,
   radius: Math.hypot(0.5 + 3, 3.2 / 2),
 });
-const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1.8 + 2 });
+const FOURTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(1.8, 2);
 // Measured: gcsim v2.47.2 (MIT) razor/config.yml, the charged attack's spinning circle of radius 3 centred 0.3 metres
 // Ahead and its final circle of radius 3.5, both marked not yet implemented there
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/config.yml
-const CHARGED_CYCLIC_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 3 });
+const CHARGED_CYCLIC_HIT_AREA: AttackArea = createCircleReach(0.3, 3);
 const CHARGED_FINAL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
 // Measured: gcsim v2.47.2 (MIT) razor/plunge.go, the collision's circle of radius 1 and the low and high plunges' of 3
 // And 5, each centred a metre ahead
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Measured: gcsim v2.47.2 (MIT) razor/skill.go, the press's fan of 240 degrees and radius 2.4 centred a metre ahead, and
 // The hold's circle of radius 5 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/skill.go
@@ -64,13 +65,13 @@ const HOLD_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2,
 // Long from half a metre ahead for the second, and a circle of radius 2.4 centred 1.8 metres ahead for the fourth
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/razor/burst.go
 const LIGHTNING_FANG_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-const SOUL_COMPANION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2.4 });
+const SOUL_COMPANION_HIT_AREA: AttackArea = createCircleReach(1, 2.4);
 const SECOND_SOUL_COMPANION_HIT_AREA: AttackArea = Object.freeze({
   angle: 2 * Math.PI,
   height: 2,
   radius: Math.hypot(0.5 + 3.4, 3.4 / 2),
 });
-const FOURTH_SOUL_COMPANION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1.8 + 2.4 });
+const FOURTH_SOUL_COMPANION_HIT_AREA: AttackArea = createCircleReach(1.8, 2.4);
 
 // Measured: gcsim v2.47.2 (MIT) razor/attack.go, each strike's hitmark and the animation that ends it at 60 fps, with its
 // Reach and its Soul Companion's. Each strike's poise is the wiki's Steel Fang advanced properties, and its Soul

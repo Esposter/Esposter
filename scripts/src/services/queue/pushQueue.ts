@@ -8,6 +8,7 @@ import { getRetryDelayMilliseconds } from "#src/services/queue/getRetryDelayMill
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
 import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
+import { writeLastPush } from "#src/services/queue/writeLastPush";
 import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
@@ -28,11 +29,19 @@ const readForkPoint = (head: string, cwd: string): string =>
     () => runGit(["merge-base", REMOTE_QUEUE_REF, head], cwd).trim(),
   );
 
-// Pushes `sha` onto the remote's queue branch. Only the refusal as stale is returned as false: the remote moved since
-// The fetch, and nothing landed. Any other failure, such as an unreachable remote, is thrown as it always was
-const pushQueueHead = (sha: string, cwd: string): boolean =>
+// Pushes `sha`, which carries `count` commits, onto the remote's queue branch. Only the refusal as stale is returned as
+// False: the remote moved since the fetch, and nothing landed. Any other failure, such as an unreachable remote, is thrown
+// As it always was. A push that landed is recorded for the heartbeat, and a record that fails to write is only reported,
+// Since the push has already landed
+const pushQueueHead = (sha: string, count: number, cwd: string): boolean =>
   getResult(() => runGit(["push", "--quiet", "origin", `${sha}:refs/heads/${QUEUE_BRANCH}`], cwd)).match(
-    () => true,
+    () => {
+      if (count > 0)
+        getResult(() => writeLastPush(sha, count)).match(noop, (error) =>
+          console.warn(`the push landed but was not recorded: ${error.message}`),
+        );
+      return true;
+    },
     (error) => {
       if (!checkIsStaleRefusal(error.message)) throw error;
       return false;
@@ -58,7 +67,8 @@ const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
   runGit(["fetch", "--quiet", "origin", QUEUE_BRANCH], cwd);
   const head = runGit(["rev-parse", "HEAD"], cwd).trim();
   if (checkIsAncestor(REMOTE_QUEUE_REF, head, cwd)) {
-    if (!pushQueueHead(head, cwd)) return QueuePushOutcome.Refused;
+    const carriedCount = readQueueCommits(`${REMOTE_QUEUE_REF}..${head}`, cwd).length;
+    if (!pushQueueHead(head, carriedCount, cwd)) return QueuePushOutcome.Refused;
     syncCheckout(head, head, cwd);
     return QueuePushOutcome.Pushed;
   }
@@ -83,7 +93,7 @@ const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
       if (!(await carryReplayCommit(commit.sha, replayCwd))) return QueuePushOutcome.Waiting;
 
     const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
-    if (!pushQueueHead(replayed, cwd)) return QueuePushOutcome.Refused;
+    if (!pushQueueHead(replayed, replayCommits.length, cwd)) return QueuePushOutcome.Refused;
     syncCheckout(replayed, head, cwd);
     return QueuePushOutcome.Pushed;
   });

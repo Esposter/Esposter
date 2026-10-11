@@ -52,7 +52,10 @@ packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
    - A Crystallize drops a shard by its enemy, a `KitCrystallizeShard` among the team's effects, at gcsim's place and times (`addCrystallizeShards`), and the body on the field picks it up within 2 metres, a provisional reach asked in the roadmap's manual verification (`pickUpCrystallizeShards`). Its shield is a `KitShield` marked `isCrystallize`, which overwrites only the last Crystallize shield and is no character's own for a heal that wants one.
    - Tests: a shard of the Crystallize's element at its place holding its shield, the shards past the newest three going in two seconds, a shard left before it may be picked up or out of reach, a pickup overwriting the last Crystallize shield beside a character's own, and a Crystallize shield rolling no Breastplate heal.
    - Left: Burning's ticks and Pyro, the Dendro Core's burst and Hyperbloom's homing, once a kit applies Dendro.
-5. Energy from attacks.
+5. **Energy from attacks.** Shipped: as-built on the [combat](/docs/genshin/combat) page.
+   - `WeaponTypeAttackEnergyChanceMap` holds each weapon's base and rise, and `rollKitAttackEnergy` rolls a hit's chance from the world's random source, counting the misses on the `KitState`, which a swap starts afresh as gcsim assumes.
+   - `strikeKitEnemies` returns the strikes that struck an enemy, and `gainKitAttackEnergy` gives a normal or charged attack's 1 energy on a pass, up to the burst's cost. One roll a hit, however many enemies it strikes, is a provisional choice asked in the roadmap's manual verification.
+   - Tests: each weapon's chance taking the wiki's average hits, a sword's chance rising a miss and falling back on a pass, and only a normal or charged attack giving energy, up to the burst's cost.
 6. The Lunar and Stellar Glimmer reactions, with the first character whose kit triggers them.
 
 ## What this does not propose

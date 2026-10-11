@@ -7,6 +7,7 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -23,10 +24,10 @@ const AYAKA_BURST_GROUP_ID = 239;
 // Each is priced as its offset plus its radius until an area holds an offset. The fifth strike's circle of radius 0.8 is
 // Centred on the primary target, which an area does not hold, so it is priced round the body, as Mona's strikes are
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/attack.go
-const FIRST_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 1.6 });
-const SECOND_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 + 1.2 });
+const FIRST_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.8, 1.6);
+const SECOND_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.8, 1.2);
 const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: Math.PI / 3, height: 2, radius: 2.8 - 0.5 });
-const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.6 });
+const FOURTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.6);
 const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.8 });
 // Measured: gcsim v2.47.2 (MIT) ayaka/charge.go, the charged attack strikes each enemy its search finds within 5 metres of
 // The body, so it is priced as that circle
@@ -35,9 +36,9 @@ const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height:
 // Measured: gcsim v2.47.2 (MIT) ayaka/plunge.go, the collision a circle of radius 1, the low plunge's 3 and the high's 5,
 // Each a metre ahead of the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Measured: gcsim v2.47.2 (MIT) ayaka/skill.go, Hyouka's circle of radius 4.5 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/skill.go
 const HYOUKA_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4.5 });
@@ -45,9 +46,9 @@ const HYOUKA_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 
 // Radius 5, and Blizzard Blade Seki no To's smaller storms' 1.5 and 3. gcsim centres each on the primary target, which an
 // Area does not hold, so each is priced round the place Ayaka cast the storm
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/burst.go
-const FROSTFLAKE_CUT_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 3 });
+const FROSTFLAKE_CUT_HIT_AREA: AttackArea = createCircleReach(0.3, 3);
 const FROSTFLAKE_BLOOM_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-const SMALL_FROSTFLAKE_CUT_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 1.5 });
+const SMALL_FROSTFLAKE_CUT_HIT_AREA: AttackArea = createCircleReach(0.3, 1.5);
 const SMALL_FROSTFLAKE_BLOOM_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
 
 // Measured: gcsim v2.47.2 (MIT) ayaka/burst.go, the storm's nineteen cuts every 15 frames from 104 frames and its bloom

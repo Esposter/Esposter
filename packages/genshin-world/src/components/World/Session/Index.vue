@@ -37,6 +37,7 @@ import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldMap } from "#src/composables/useWorldMap";
+import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
@@ -84,6 +85,8 @@ const {
   characterPackBaseUrl,
   createTerrainWorker,
   enemyTables,
+  frostbearingTreeLevels,
+  frostbearingTreePlaces,
   gameDataBaseUrl,
   gameText,
   heldMinutes,
@@ -126,12 +129,24 @@ const {
   achievementProgressMap,
   craftedCountMap,
   craftingProgress,
+  frostbearingTreeProgress,
   inventory,
   setInventory,
   setWallet,
   wallet,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table
+const { offerFrostbearingTree } = useWorldOfferings({
+  frostbearingTreeLevels,
+  frostbearingTreeProgress,
+  inventory,
+  materialDataMap,
+  nameText,
+  setInventory,
+  setWallet,
+  wallet,
+});
 // A destroy's bag and wallet are applied together, since what it returns may be currency
 const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
   setInventory(nextInventory);
@@ -325,7 +340,7 @@ useWorldSaveSync({
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
-    frostbearingTreeProgress: savedState.frostbearingTreeProgress,
+    frostbearingTreeProgress: frostbearingTreeProgress.value,
     inventory: inventory.value,
     quests: questProgressMap.value,
     reputation: savedState.reputation,
@@ -341,6 +356,13 @@ useWorldSaveSync({
 // Stands on the ground beneath its point
 const interactables = computed<Interactable[]>(() => {
   // A jump landmark is a Statue of The Seven until waypoints join the jumps, so each locked one is named by the statue
+  // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
+  const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
+    id,
+    kind: InteractionKind.Activate,
+    name: gameText[GameTextKey.FrostbearingTree],
+    position: { x, y: getGroundHeight(x, z), z },
+  }));
   const statues = jumpLandmarks.value
     .filter(({ id }) => !unlockedLandmarkIds.value.has(id))
     .map(({ id, position: { x, z } }) => ({
@@ -349,7 +371,7 @@ const interactables = computed<Interactable[]>(() => {
       name: gameText[GameTextKey.StatueOfTheSeven],
       position: { x, y: getGroundHeight(x, z), z },
     }));
-  return [...pickUpInteractables.value, ...residentInteractables.value, ...statues];
+  return [...pickUpInteractables.value, ...residentInteractables.value, ...frostbearingTrees, ...statues];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // A talk that ends is a talk-to for the quests in progress, and the world is back under the Traveler
@@ -460,6 +482,11 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
+            else if (
+              interactable?.kind === InteractionKind.Activate &&
+              frostbearingTreePlaces.some(({ id }) => id === interactable.id)
+            )
+              offerFrostbearingTree();
             else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
             } else if (interactable?.kind === InteractionKind.Talk) {
@@ -536,6 +563,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        :frostbearing-tree-places
         :wildlife-places
         :windrise-data
         :world-level

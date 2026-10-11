@@ -14,6 +14,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -49,9 +50,9 @@ const NARROW_STRIKE_HIT_AREA: AttackArea = Object.freeze({
 // Measured: gcsim v2.47.2 (MIT) xiangling/plunge.go, the collision's circle of radius 1 and the low and high plunges' of 3
 // And 5, each centred a metre ahead, so each reach is its offset plus its radius
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xiangling/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Measured: gcsim v2.47.2 (MIT) xiangling/guoba.go, Guoba placed 1.3 metres ahead of the body, breathing a 60 degree fan
 // Of radius 5, which Crossfire widens by 20%. gcsim turns Guoba to its closest enemy before each breath, which a summon
 // Cannot, so the fan is priced as its whole circle round Guoba

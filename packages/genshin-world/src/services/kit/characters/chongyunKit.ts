@@ -14,6 +14,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -34,9 +35,9 @@ const CHONGYUN_BURST_GROUP_ID = 3639;
 // Offset plus its radius, a fan keeps its angle, and a box spawns on its near edge, so it is priced as the circle to its far
 // Corner. The fourth strike's box is 2 wide and 3 long from half a metre behind
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/attack.go
-const FIRST_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2 });
+const FIRST_STRIKE_HIT_AREA: AttackArea = createCircleReach(1, 2);
 const SECOND_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: (3 * Math.PI) / 2, height: 2, radius: 1 + 2 });
-const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 2 });
+const THIRD_STRIKE_HIT_AREA: AttackArea = createCircleReach(1, 2);
 const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({
   angle: 2 * Math.PI,
   height: 2,
@@ -45,18 +46,18 @@ const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({
 // Measured: gcsim v2.47.2 (MIT) chongyun/config.yml, the charged attack's spinning circle of radius 3 a third of a metre
 // Ahead and its final circle of radius 3.5, both marked not yet implemented there
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/config.yml
-const CHARGED_CYCLIC_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.3 + 3 });
+const CHARGED_CYCLIC_HIT_AREA: AttackArea = createCircleReach(0.3, 3);
 const CHARGED_FINAL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3.5 });
 // Measured: gcsim v2.47.2 (MIT) chongyun/plunge.go, the collision's circle of radius 1 a metre ahead, and the low and high
 // Plunges' of 3 and 5 a metre ahead, each priced as its offset plus its radius
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/plunge.go
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 + 5 });
+const PLUNGE_COLLISION_HIT_AREA: AttackArea = createCircleReach(1, 1);
+const LOW_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 3);
+const HIGH_PLUNGE_HIT_AREA: AttackArea = createCircleReach(1, 5);
 // Measured: gcsim v2.47.2 (MIT) chongyun/skill.go, Layered Frost's circle of radius 2.5 centred 1.5 metres ahead, priced
 // As its offset plus its radius, and the field it leaves, a circle of radius 8 round the body
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/chongyun/skill.go
-const SKILL_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1.5 + 2.5 });
+const SKILL_HIT_AREA: AttackArea = createCircleReach(1.5, 2.5);
 const FIELD_RADIUS = 8;
 const FIELD_OFFSET_METRES = 1.5;
 // Provisional: gcsim v2.47.2 (MIT) chongyun/burst.go drops each blade as a circle of radius 3.5 on the primary target, which

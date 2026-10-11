@@ -19,6 +19,8 @@ describe(readGenshinSave, () => {
   const RECIPE_ID = 22_007;
   const CRAFTED_COUNT = 4;
   const REPUTATION = { exp: 150, level: 2 };
+  // The Frostbearing Tree offered to: the items held toward its next level and the level it has reached
+  const FROSTBEARING_TREE_PROGRESS = { heldCount: 3, level: 2 };
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const FORGED_WEAPON_ID = 13_401;
   const FORGED_NAME_TEXT_ID = "1";
@@ -77,6 +79,7 @@ describe(readGenshinSave, () => {
       ],
       nextId: 2,
     },
+    offerings: { frostbearingTree: FROSTBEARING_TREE_PROGRESS },
     quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 1 } },
     reputation: REPUTATION,
     unlockedLandmarks: [LANDMARK_ID],

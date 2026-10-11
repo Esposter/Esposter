@@ -13,7 +13,12 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -41,10 +46,6 @@ const CHARGED_ATTACK_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 1.5
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ningguang/skill.go
 const JADE_SCREEN_OFFSET = 3;
 const JADE_SCREEN_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
-// Provisional: gcsim has no plunge file for Ningguang, so the plunges' reach is Mona's and Jean's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 
 // Measured: gcsim v2.47.2 (MIT) ningguang/attack.go, the Left and Twirl strikes' two gems at 29 and 27 frames and their
 // Animations of 61 and 66, each gem landing past gcsim's default travel of 10 frames. gcsim draws each strike at random
@@ -344,7 +345,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         {
           element: Element.Geo,
           gauge: 1,
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           poiseDamage: 100,
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, NINGGUANG_ATTACK_GROUP_ID, TALENT_START_LEVEL, 6),
@@ -358,7 +359,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         {
           element: Element.Geo,
           gauge: 1,
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           poiseDamage: 50,
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, NINGGUANG_ATTACK_GROUP_ID, TALENT_START_LEVEL, 5),
@@ -372,7 +373,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     plungeCollision: {
       element: Element.Geo,
       gauge: 0,
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: 5,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, NINGGUANG_ATTACK_GROUP_ID, TALENT_START_LEVEL, 4),

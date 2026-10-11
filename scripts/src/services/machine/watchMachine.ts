@@ -16,6 +16,7 @@ import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
 import { writeMachineState } from "#src/services/machine/writeMachineState";
+import { readLastPush } from "#src/services/queue/readLastPush";
 import { getResult } from "@esposter/shared";
 import { cpus } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -74,6 +75,7 @@ export const watchMachine = async (): Promise<void> => {
       lastHeartbeatMilliseconds = now;
       // A failed push is one line, and forgets the last commit, so the next push leases from the remote's own commit
       const heartbeatParentSha = lastHeartbeatSha;
+      const lastPush = readLastPush();
       lastHeartbeatSha = getResult(() =>
         pushMachineHeartbeat(
           {
@@ -81,6 +83,7 @@ export const watchMachine = async (): Promise<void> => {
             cpu: cpuAveragePercentage,
             freeMemory: freeGigabytes,
             ...(gpuPercentage === undefined ? {} : { gpu: gpuPercentage }),
+            ...(lastPush === undefined ? {} : { lastPush }),
             machine: profile.id,
             platform: process.platform,
           },

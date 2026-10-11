@@ -7,3 +7,6 @@ export const ORB_PARTICLE_COUNT = 3;
 // A party member off the field takes 80%, 70% or 60% of it in a party of two, three or four, a tenth less for each
 // Member
 export const INACTIVE_ENERGY_LOSS_PER_PARTY_MEMBER = 0.1;
+// A normal or charged attack's hit on an enemy that gives its character energy gives 1, which Energy Recharge does not
+// Raise
+export const ATTACK_ENERGY = 1;

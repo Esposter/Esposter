@@ -10,7 +10,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  SUMMON_LINGER_SECONDS,
+} from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -26,10 +31,6 @@ const AMBER_BURST_GROUP_ID = 2139;
 // Box a metre long and a tenth wide, so they are priced as a circle of a metre round the body until an area holds the aim.
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/aimed.go
 const ARROW_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-// Provisional: gcsim has no plunge file for Amber, so her plunges' reach is Mona's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) amber/bunny.go, the explosion is a circle of radius 3 round the bunny
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/bunny.go
 const BUNNY_EXPLOSION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
@@ -181,7 +182,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   highPlunge: {
     hits: [
       {
-        hitArea: HIGH_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.high,
         hitmarkSeconds: 0,
         poiseDamage: 100,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, AMBER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
@@ -193,7 +194,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   lowPlunge: {
     hits: [
       {
-        hitArea: LOW_PLUNGE_HIT_AREA,
+        hitArea: PLUNGE_HIT_AREAS.low,
         hitmarkSeconds: 0,
         poiseDamage: 50,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, AMBER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
@@ -211,7 +212,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   ],
   // The collision's poise is the wiki's 10, and it applies no gauge, as the wiki's table gives
   plungeCollision: {
-    hitArea: PLUNGE_COLLISION_HIT_AREA,
+    hitArea: PLUNGE_HIT_AREAS.collision,
     hitmarkSeconds: 0,
     poiseDamage: 10,
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, AMBER_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),

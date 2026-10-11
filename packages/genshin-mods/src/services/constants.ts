@@ -68,5 +68,12 @@ export const IDLE_WAKE_REPEAT_MINUTES = 15;
 export const IDLE_WAKE_REPEAT_MILLISECONDS: number = Temporal.Duration.from({
   minutes: IDLE_WAKE_REPEAT_MINUTES,
 }).total("milliseconds");
+// The queue is synced on the pulse's tick once this long after the last sync started, outside a turn; a failed sync's
+// Toast is shown at most once this long apart
+export const QUEUE_SYNC_MINUTES = 10;
+export const QUEUE_SYNC_MILLISECONDS: number = Temporal.Duration.from({ minutes: QUEUE_SYNC_MINUTES }).total(
+  "milliseconds",
+);
+export const QUEUE_SYNC_TOAST_MILLISECONDS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const IDLE_WAKE_PROMPT: string = `This machine has run under ${UTILIZATION_LINE_PERCENTAGE}% CPU and GPU for ${IDLE_WAKE_MINUTES} minutes. Run \`pnpm ai:fleet:fill\`, then launch one background haiku agent per brief it printed, the brief as the prompt, then report what started. If it printed "nothing ready", report that and stop.`;

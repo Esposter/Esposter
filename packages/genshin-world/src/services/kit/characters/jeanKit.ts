@@ -11,7 +11,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -30,18 +31,14 @@ const JEAN_BURST_GROUP_ID = 339;
 // Measured: gcsim v2.47.2 (MIT) jean/attack.go, each strike a circle or a fan centred ahead of or behind the body, so each
 // Is priced as its offset plus its radius, or a fan centred behind as its radius less the offset, as Ayaka's are
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/attack.go
-const FIRST_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1.5 + 1.5 });
+const FIRST_STRIKE_HIT_AREA: AttackArea = createCircleReach(1.5, 1.5);
 const SECOND_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: (5 * Math.PI) / 6, height: 2, radius: 2.2 - 0.5 });
 const THIRD_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: Math.PI / 6, height: 2, radius: 2.8 - 1 });
-const FOURTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.6 });
-const FIFTH_STRIKE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.6 + 1.6 });
+const FOURTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.6);
+const FIFTH_STRIKE_HIT_AREA: AttackArea = createCircleReach(0.6, 1.6);
 // Measured: gcsim v2.47.2 (MIT) jean/charge.go, a fan of 160 degrees and radius 1.8 centred a metre ahead
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/charge.go
 const CHARGED_HIT_AREA: AttackArea = Object.freeze({ angle: (8 * Math.PI) / 9, height: 2, radius: 1 + 1.8 });
-// Provisional: gcsim has no plunge file for Jean, so the plunges' reach is Bennett's and Mona's until one measures it
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 // Measured: gcsim v2.47.2 (MIT) jean/skill.go, Gale Blade's box 4 wide and 4.1 long, whose near edge gcsim's rectangle
 // Spawns on the body, so it is priced as the circle to its far corner
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jean/skill.go
@@ -288,7 +285,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     highPlunge: {
       hits: [
         {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 150,
@@ -301,7 +298,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           isBlunt: true,
           poiseDamage: 100,
@@ -315,7 +312,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // The collision's poise is the wiki's 25, and it applies no gauge of its own, 0U, as the wiki's table gives
     plungeCollision: {
       gauge: 0,
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: 25,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, JEAN_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),

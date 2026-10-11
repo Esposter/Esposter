@@ -14,7 +14,12 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
+import {
+  PLUNGE_HIT_AREAS,
+  SKILL_TARGETING_AREA,
+  STRIKE_TARGETING_AREA,
+  UNBOUNDED_FIELD_RADIUS,
+} from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -83,9 +88,6 @@ const FULL_AIM_POISE_DAMAGE = 20;
 const PLUNGE_COLLISION_POISE_DAMAGE = 10;
 const LOW_PLUNGE_POISE_DAMAGE = 50;
 const HIGH_PLUNGE_POISE_DAMAGE = 100;
-const PLUNGE_COLLISION_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
-const LOW_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 3 });
-const HIGH_PLUNGE_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 5 });
 
 // Measured: gcsim v2.47.2 (MIT) fischl/burst.go, Midnight Phantasmagoria's circle on the body of radius 0.5
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 0.5 });
@@ -321,7 +323,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     highPlunge: {
       hits: [
         {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.high,
           hitmarkSeconds: 0,
           poiseDamage: HIGH_PLUNGE_POISE_DAMAGE,
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, FISCHL_ATTACK_GROUP_ID, TALENT_START_LEVEL, 9),
@@ -333,7 +335,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     lowPlunge: {
       hits: [
         {
-          hitArea: LOW_PLUNGE_HIT_AREA,
+          hitArea: PLUNGE_HIT_AREAS.low,
           hitmarkSeconds: 0,
           poiseDamage: LOW_PLUNGE_POISE_DAMAGE,
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, FISCHL_ATTACK_GROUP_ID, TALENT_START_LEVEL, 8),
@@ -413,7 +415,7 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       }
     },
     plungeCollision: {
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
+      hitArea: PLUNGE_HIT_AREAS.collision,
       hitmarkSeconds: 0,
       poiseDamage: PLUNGE_COLLISION_POISE_DAMAGE,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, FISCHL_ATTACK_GROUP_ID, TALENT_START_LEVEL, 7),

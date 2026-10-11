@@ -21,6 +21,7 @@ import {
   TILE_SELECTION_CAPACITY,
 } from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
@@ -41,7 +42,7 @@ import {
   selectTerrainTiles,
   TERRAIN_LAYER,
 } from "genshin-engine";
-import { Box3, BufferAttribute, Frustum, Group, Matrix4, Mesh, Vector3 } from "three";
+import { Box3, BufferAttribute, Frustum, Group, Mesh, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
 interface Props {
@@ -219,9 +220,8 @@ const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The tiles the view draws, which the far rings draw by: the wanted ones resolved, so only what the camera sees is indexed
 const viewDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const eye = new Vector3();
-const originMatrix = new Matrix4();
-const viewProjection = new Matrix4();
 const frustum = new Frustum();
+const setFrustum = createFrustumSetter();
 let isReady = false;
 // The terrain's first settled tiles, measured from its mount to the frame it is ready
 const { promise: isTerrainReady, resolve: resolveTerrainReady } = Promise.withResolvers<void>();
@@ -240,14 +240,9 @@ measureLoadStep("terrain", isTerrainReady);
 onBeforeRender(() => {
   const activeCamera = camera.value;
   if (!activeCamera) return;
-  activeCamera.updateMatrixWorld();
+  setFrustum(frustum, activeCamera, origin);
   morphEye.value.setFromMatrixPosition(activeCamera.matrixWorld);
   eye.copy(activeCamera.position).add(origin);
-  originMatrix.makeTranslation(-origin.x, -origin.y, -origin.z);
-  viewProjection
-    .multiplyMatrices(activeCamera.projectionMatrix, activeCamera.matrixWorldInverse)
-    .multiply(originMatrix);
-  frustum.setFromProjectionMatrix(viewProjection, activeCamera.coordinateSystem);
   selectTerrainTiles(terrainOptions, eye, frustum, wanted);
   selectTerrainTiles(terrainOptions, eye, undefined, surrounding);
   resolveTerrainDraws(terrainOptions, surrounding, checkTileLoaded, draws);

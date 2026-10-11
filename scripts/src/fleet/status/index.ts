@@ -3,6 +3,7 @@ import { formatAge } from "#src/services/fleet/formatAge";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { formatFleetTable } from "#src/services/fleet/formatFleetTable";
 import { formatMachineLoad } from "#src/services/fleet/formatMachineLoad";
+import { formatPushed } from "#src/services/fleet/formatPushed";
 import { getClaimStatus } from "#src/services/fleet/getClaimStatus";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { readFleetEntries } from "#src/services/fleet/readFleetEntries";
@@ -23,6 +24,7 @@ await runMain(
         id,
         formatMachineLoad(heartbeat.cpu, heartbeat.gpu, heartbeat.freeMemory, heartbeat.platform),
         formatAge(now - Temporal.Instant.from(heartbeat.at).epochMilliseconds),
+        formatPushed(heartbeat.lastPush, now),
       ]);
       const claims = Array.from(readClaimedRefs(), ([entry, { message }]) => {
         const status = getClaimStatus(message, now);
@@ -38,7 +40,7 @@ await runMain(
         .entries.filter(({ waiting: blocker }) => blocker !== "")
         .map(({ id, waiting: blocker }) => [id, blocker]);
       console.info("machines");
-      for (const line of formatFleetTable(["id", "last sample", "age"], machines)) console.info(line);
+      for (const line of formatFleetTable(["id", "last sample", "age", "pushed"], machines)) console.info(line);
       console.info("\nclaims");
       for (const line of formatFleetTable(["entry", "holder", "age", "state"], claims)) console.info(line);
       console.info("\nwaiting");

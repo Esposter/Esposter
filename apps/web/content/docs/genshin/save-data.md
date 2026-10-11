@@ -12,6 +12,7 @@ A signed-in player's Genshin save is one blob, `{userId}/save.json` in the `gens
 A system the world holds is saved only when its slice is in the save's schema (`packages/genshin-world/src/models/save/GenshinSave.ts`). Anything else is held in memory for the session, and a reload starts it fresh. The save holds:
 
 - the wallet: the currencies, the instant Original Resin last changed, and the Primogem refill count and day;
+- the Frostbearing Tree's offering: the items held toward its next level and the level it has reached ([offering systems](/docs/genshin/offering-systems));
 - the bag: each entry by its item id, with its bag id, its count and a weapon's or an artifact's level, and the id the next entry takes;
 - the carried quests' progress, by quest id, and the unlocked landmarks, by id;
 - each achievement's count and the moment it finished, by achievement id;

@@ -69,12 +69,14 @@ The second is [trpc-nuxt-module](/docs/trpc-nuxt-module), the shape an absorptio
 
 The third is [pitch-transcription](/docs/pitch-transcription), the shape an absorption takes around a trained model. `@spotify/basic-pitch` held every consumer to an old TensorFlow.js major because it loaded and ran its network through its own copy; the replacement keeps the engine as a peer and the weights as shipped data, and takes back only the layer between them — the windows, the model call and the note creation — following the model repository wherever the port had drifted from it.
 
+The fourth, in progress, is [nuxt-security-module](/docs/nuxt-security-module), the first security-shaped package absorbed under the exception the stop list below now carries. Its upstream audit is complete and its code is the next phase.
+
 ## The stop list
 
 Four kinds of package are never absorbed, whatever their size or call-site count. These exist so the initiative cannot talk itself into the expensive mistake later:
 
 - **Spec-tracking.** Anything whose correctness is defined by a document that changes without us — PDF, OOXML, Unicode, XML, SQL dialects, the cloud REST surfaces. Absorbing one converts a version bump into a standing obligation.
-- **Security-shaped.** Anything where a bug is a hole rather than a glitch — HTML sanitisation, auth, push encryption, rate limiting, the cloud SDKs. A hand-rolled version is not smaller, it is unaudited.
+- **Security-shaped.** Anything where a bug is a hole rather than a glitch — HTML sanitisation, auth, push encryption, rate limiting, the cloud SDKs. A hand-rolled version is not smaller, it is unaudited. The exception: a security-shaped package is absorbed only when the absorption carries the full upstream audit, a regression test for every in-scope defect, and a security review of the result. The first is [nuxt-security-module](/docs/nuxt-security-module), which replaces `nuxt-security`.
 - **Accessibility-shaped.** Anything whose real surface is focus management, ARIA and keyboard semantics — the component framework, the rich text and code editors. Our own version reliably ships worse here, because the part we would reimplement is the part we would not think to test.
 - **Engines.** Anything implementing a large algorithm as its product — the game, 3D, diagram, page-builder and survey runtimes. The plugins around an engine are a separate question from the engine.
 

@@ -2,9 +2,11 @@ import type { KitState } from "#src/models/kit/KitState";
 
 import { LocomotionState } from "genshin-engine";
 
-// A kit at rest: no action playing, the string at its first strike, and the body on its feet
+// A kit at rest: no action playing, no miss toward its attacks' energy, the string at its first strike, and the body on
+// Its feet
 export const createKitState = (): KitState => ({
   actionSeconds: 0,
+  attackEnergyMissCount: 0,
   attackHeldSeconds: 0,
   comboIndex: 0,
   comboSeconds: 0,
