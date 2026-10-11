@@ -12,6 +12,7 @@ import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
@@ -86,11 +87,19 @@ const leafMaterial = createLeafMaterial(
 leafMaterial.maskNode = treeMeshMask;
 const treeImpostorMap = new Map<TreeSpecies, TreeImpostor>();
 
-onMounted(() => {
+// Gives the collider the landmarks that arrived since the last sync, whose colliders it builds on the main thread, timed
+// As the load step `landmark-colliders`. The build is synchronous, so the measure is written as it returns
+const syncLandmarkColliders = (): void => {
+  const start = performance.now();
   landmarkCollider.syncLandmarks(landmarksGroup);
+  performance.measure(`${LOAD_STEP_MEASURE_PREFIX}landmark-colliders`, { start });
+};
+
+onMounted(() => {
+  syncLandmarkColliders();
 });
 
-watch(regionLandmarks, () => landmarkCollider.syncLandmarks(landmarksGroup), { flush: "post" });
+watch(regionLandmarks, () => syncLandmarkColliders(), { flush: "post" });
 
 onUnmounted(() => {
   partMaterial.dispose();
