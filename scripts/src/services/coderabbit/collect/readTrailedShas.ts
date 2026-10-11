@@ -8,11 +8,12 @@ import { runGit } from "#src/services/shared/runGit";
 // Caller asks it of a whole set, and a read per commit is a git spawn per commit — most expensive exactly when
 // The queue is deepest, which is the case the reshaper exists to clear. A basis narrows it to the commits whose
 // Trailer names that sha, since a trailer recording an attempt is counted only against the code that made it
-// (`getBasisText`); without one, any value the trailer carries answers.
+// (`getBasisText`); without one, any value the trailer carries answers. The shas go in on stdin, since a deep queue's
+// List outgrows the Windows command line
 export const readTrailedShas = (shas: string[], trailer: string, cwd?: string, basisSha?: string): Set<string> => {
   if (shas.length === 0) return new Set();
   const basisText = basisSha === undefined ? "" : getBasisText([basisSha]);
-  const log = runGit(["log", "--no-walk", `--format=${COMMIT_BODY_FORMAT}`, ...shas], cwd);
+  const log = runGit(["log", "--no-walk", "--stdin", `--format=${COMMIT_BODY_FORMAT}`], cwd, shas.join("\n"));
   return new Set(
     getGitRecords(log)
       .filter(([, body = ""]) => getTrailerValues(body, trailer).some((value) => value.endsWith(basisText)))
