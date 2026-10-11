@@ -7,7 +7,7 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { INSTRUCTOR_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { BERSERKER_ARTIFACT_SET_ID, INSTRUCTOR_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -24,7 +24,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
 
-const createInstructorArtifacts = (count: number): Artifact[] =>
+const createSetArtifacts = (setId: number, count: number): Artifact[] =>
   Array.from({ length: count }, () => ({
     experience: 0,
     isLocked: false,
@@ -32,7 +32,7 @@ const createInstructorArtifacts = (count: number): Artifact[] =>
     mainAffix: Attribute.Health,
     minorAffixes: [],
     rarity: 4,
-    setId: INSTRUCTOR_ARTIFACT_SET_ID,
+    setId,
     slot: ArtifactSlot.FlowerOfLife,
   }));
 
@@ -40,15 +40,19 @@ describe(getArtifactSetKit, () => {
   test("keeps the kit as it is for a set worn short of its bonus that waits on combat", () => {
     expect.hasAssertions();
 
-    expect(getArtifactSetKit(TRAVELER_KIT, createInstructorArtifacts(2), statTables.artifactSetDataMap)).toBe(
-      TRAVELER_KIT,
-    );
+    expect(
+      getArtifactSetKit(TRAVELER_KIT, createSetArtifacts(INSTRUCTOR_ARTIFACT_SET_ID, 2), statTables.artifactSetDataMap),
+    ).toBe(TRAVELER_KIT);
   });
 
   test("answers a reaction with the set's module once the pieces worn reach its bonus", () => {
     expect.hasAssertions();
 
-    const kit = getArtifactSetKit(TRAVELER_KIT, createInstructorArtifacts(4), statTables.artifactSetDataMap);
+    const kit = getArtifactSetKit(
+      TRAVELER_KIT,
+      createSetArtifacts(INSTRUCTOR_ARTIFACT_SET_ID, 4),
+      statTables.artifactSetDataMap,
+    );
     const combatant: Combatant = {
       ascension: 0,
       attributes: computeCharacterAttributes([]),
@@ -78,6 +82,30 @@ describe(getArtifactSetKit, () => {
         secondsRemaining: 8,
         source: "Instructor",
       },
+    ]);
+  });
+
+  test("prices its wearer with its sets' modules' bonuses after the kit's own, at the HP it stands at", () => {
+    expect.hasAssertions();
+
+    const kit = getArtifactSetKit(
+      { ...TRAVELER_KIT, getPassiveBonuses: () => [{ amount: 1, attribute: Attribute.Attack }] },
+      createSetArtifacts(BERSERKER_ARTIFACT_SET_ID, 4),
+      statTables.artifactSetDataMap,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit,
+      level: 1,
+    };
+
+    expect(kit.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([
+      { amount: 1, attribute: Attribute.Attack },
+      { amount: 0.24, attribute: Attribute.CriticalRate },
     ]);
   });
 });

@@ -43,7 +43,7 @@ describe(createTravelingDoctorSetModule, () => {
 
     const party = createParty(PARTY_CHARACTER_IDS);
     getPartyMember(party, wearer.characterId).healthShare = 0.5;
-    travelingDoctorSetModule.onKitEvent(
+    travelingDoctorSetModule.onKitEvent?.(
       { characterId, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
       createKitEventContext(wearer, { party }),
     );

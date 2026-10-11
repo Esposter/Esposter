@@ -56,9 +56,9 @@ describe(createInstructorSetModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitEventContext(wearer, { kitEffectState, party });
-    instructorSetModule.onKitEvent(createReactionEvent(wearer), context);
+    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context);
     for (const effect of kitEffectState.effects) effect.secondsRemaining = 1;
-    instructorSetModule.onKitEvent(createReactionEvent(wearer), context);
+    instructorSetModule.onKitEvent?.(createReactionEvent(wearer), context);
 
     expect(kitEffectState.effects).toStrictEqual(
       PARTY_CHARACTER_IDS.map((characterId) => ({
@@ -79,7 +79,7 @@ describe(createInstructorSetModule, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    instructorSetModule.onKitEvent(
+    instructorSetModule.onKitEvent?.(
       createReactionEvent(striker),
       createKitEventContext(wearer, { activeCombatant, kitEffectState, party }),
     );
