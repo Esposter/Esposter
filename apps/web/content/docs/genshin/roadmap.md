@@ -173,6 +173,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does a Thoma plunge land 0.4 seconds after it starts?** His collision, low and high plunges are priced as Ganyu's, with their landing at 0.4 seconds, as gcsim gives his plunges no timing: yes if a recording of his plunge clip lands at that point, no if it lands elsewhere.
 - **Does Thoma's charged attack cost 25 stamina?** The kit reads the charged attack's stamina from the table's attack group, and gcsim gives the charged attack no stamina: yes if the game's charged attack costs 25 stamina, no if it costs another amount.
 - **Does Crimson Ooyoroi cost 80 energy?** The table gives 80 for the burst's energy cost, which the kit reads, while gcsim's burst consumes 7: yes if the game's burst costs 80 energy, no if it costs another amount.
+- **Does Yanfei's charged attack land 63 frames after a standing start?** gcsim adds a 16-frame windup to a start from a run, which the kit does not read, so every start lands at 63 frames: yes if a recording of a standing charged attack shows its hit at 63 frames, no if it shows another.
 
 ## References sought
 
