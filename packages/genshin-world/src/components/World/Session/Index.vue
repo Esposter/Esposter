@@ -710,7 +710,15 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <template #[ScreenKind.AdventurerHandbook]>
-        <HandbookScreen :game-text @close="screenKind = ScreenKind.World" />
+        <!-- The world keeps no investigations yet, so the Experience page opens on an empty panel -->
+        <HandbookScreen
+          :commissions="[]"
+          :completed-count="0"
+          :game-text
+          :investigation-rewards="[]"
+          :total-count="0"
+          @close="screenKind = ScreenKind.World"
+        />
       </template>
       <template #[ScreenKind.Character]>
         <CharacterScreen
