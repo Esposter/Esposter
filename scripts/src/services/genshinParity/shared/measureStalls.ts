@@ -2,6 +2,7 @@
 import type { CpuCapture } from "#src/models/genshinParity/shared/CpuCapture";
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
+import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
@@ -11,6 +12,7 @@ import type { BrowserContext, Page } from "playwright";
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
 import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
+import { TRACE_GPU_PASSES_SCRIPT } from "#src/services/genshinParity/shared/traceGpuPassesScript";
 import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScript";
 import { TRACE_NODES_SCRIPT } from "#src/services/genshinParity/shared/traceNodesScript";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
@@ -34,6 +36,8 @@ declare global {
     __fakeLock: boolean;
     __frameTimes: FrameSample[];
     __gpuCalls?: GpuCall[];
+    __gpuPasses?: GpuPass[];
+    __hasGpuTimestamps?: boolean;
     __hooked: boolean;
     __renderer?: StallRenderer;
     __traceTimes?: number[];
@@ -175,10 +179,16 @@ const startCpuProfile = async (context: BrowserContext, page: Page) => {
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
 // And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,
 // Each GPU call the page makes is recorded too, with each node material three builds and each program it adds once the
-// Renderer is handed over, and the slow frames are named by the calls they made
+// Renderer is handed over, and each pass timed on the GPU where the adapter has timestamp queries, read at full
+// Precision through the browser's developer features, and the slow frames are named by the calls they made and the
+// GPU's time on the frames before them
 export const measureStalls = async ({ height, scale, screen, trace, width }: StallOptions): Promise<string> => {
   const browser = await chromium.launch({
-    args: ["--disable-gpu-vsync", "--disable-frame-rate-limit"],
+    args: [
+      "--disable-gpu-vsync",
+      "--disable-frame-rate-limit",
+      ...(trace ? ["--enable-webgpu-developer-features"] : []),
+    ],
     channel: "msedge",
   });
   const errors: string[] = [];
@@ -186,7 +196,10 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
   const { gpuTrace, loadMs, measured } = await getResultAsync(async () => {
     const context = await browser.newContext({ deviceScaleFactor: scale, viewport: { height, width } });
     await context.addInitScript({ content: RECORD_FRAMES_SCRIPT });
-    if (trace) await context.addInitScript({ content: TRACE_GPU_SCRIPT });
+    if (trace) {
+      await context.addInitScript({ content: TRACE_GPU_PASSES_SCRIPT });
+      await context.addInitScript({ content: TRACE_GPU_SCRIPT });
+    }
 
     const page = await context.newPage();
     page.on("pageerror", (error) => errors.push(String(error)));
@@ -209,7 +222,11 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
     const cpuCapture = cpu ? await cpu.stop() : undefined;
     const tracedGpu: GpuTrace | undefined = trace
       ? {
-          ...(await page.evaluate(() => ({ calls: window.__gpuCalls ?? [], times: window.__traceTimes ?? [] }))),
+          ...(await page.evaluate(() => ({
+            calls: window.__gpuCalls ?? [],
+            passes: window.__hasGpuTimestamps ? (window.__gpuPasses ?? []) : undefined,
+            times: window.__traceTimes ?? [],
+          }))),
           cpu: cpuCapture,
         }
       : undefined;

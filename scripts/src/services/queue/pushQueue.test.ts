@@ -203,10 +203,9 @@ git -C ../clone commit --quiet --message ${path}`);
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
     expect(runSession).toHaveBeenCalledTimes(1);
 
-    const [{ cwd, signal, ...options }] = takeOne(runSession.mock.calls);
+    const [{ cwd, ...options }] = takeOne(runSession.mock.calls);
 
     expect(cwd).not.toBe(getCwd());
-    expect(signal).toBeInstanceOf(AbortSignal);
     expect(options).toStrictEqual({
       model: SessionRoleModelMap[SessionRole.Carry],
       prompt: getCarryPrompt(local, ["a"]),

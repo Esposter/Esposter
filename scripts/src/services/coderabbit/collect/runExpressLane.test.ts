@@ -48,6 +48,7 @@ describe(runExpressLane, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
                   createdAt: updated_at,
                   databaseId: id,
                 })),
+                pageInfo: { hasPreviousPage: false, startCursor: null },
               },
             },
           },

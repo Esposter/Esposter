@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/terrain/writeTerrainRingTile.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.013349999999995532,
+              "name": "32 cells a side",
+              "p99": 0.019932690000004385,
+              "rme": 15.08817713950458,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.04470440000000053,
+              "name": "64 cells a side",
+              "p99": 0.05274572000000347,
+              "rme": 6.578575106021139,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeTerrainRingTile > a ring of 8 tiles"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.011900099999999726,
+              "name": "32 cells a side",
+              "p99": 0.013232529999996672,
+              "rme": 3.1307808535359367,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.044974900000002545,
+              "name": "64 cells a side",
+              "p99": 0.04653122000000479,
+              "rme": 1.111100205833608,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "writeTerrainRingTile > a ring of 64 tiles"
+        }
+      ]
+    }
+  ]
+}

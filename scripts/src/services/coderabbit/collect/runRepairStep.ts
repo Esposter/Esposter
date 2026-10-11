@@ -16,7 +16,7 @@ import { repairMain } from "#src/services/coderabbit/collect/repairMain";
 // That proved itself green before committing is not put through the same suite again, one that fails it counts
 // Against its signature and the run retries a minute later, and one pushed counts too, so a repair that lands and
 // Leaves the same jobs red is paid for once rather than on every head it makes. Nothing pushed leaves the pass's own
-// Verdict standing, with the wake a signature past its repairs states.
+// Verdict standing, with the wake a held red or a signature past its repairs states.
 export const runRepairStep = async (repairStepInput: RepairStepInput): Promise<RepairStepResult> => {
   const { cwd, isDryRun } = repairStepInput;
   const { mainSha } = readBranchShas(cwd);

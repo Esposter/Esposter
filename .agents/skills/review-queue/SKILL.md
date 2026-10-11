@@ -48,6 +48,6 @@ Nothing is owed by the session; a red `main` is the collector's repair, and a me
 
 - `references/pull-conflicts.md` — when `git pull --rebase` stops on a conflict.
 - `references/answering-findings.md` — when the session fixes a CodeRabbit finding itself.
-- `references/held-commits.md` — when the collector opens an issue for parked commits or deferred findings, or a collector run is red.
+- `references/held-commits.md` — when the collector opens an issue for parked commits, deferred findings or a red `main` past its repairs, or a collector run is red.
 - `references/after-a-release.md` — when a release has merged, `main` is red, or a merge got into the queue.
 - `references/running-by-hand.md` — when the collector's workflow is off, the cycle is run from a checkout, or a change to the collector is about to land.

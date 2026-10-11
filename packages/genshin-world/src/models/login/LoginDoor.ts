@@ -59,13 +59,13 @@ const loginDoorReliefSchema = z.object({
 }) satisfies z.ZodType<LoginDoorRelief>;
 const loginDoorPieceSchema = z.object({
   frame: z.array(loginDoorLayerSchema),
-  lift: z.array(z.array(z.number()).length(7)),
+  lift: z.array(z.array(z.number()).length(7)).min(1),
   panel: z.array(loginDoorLayerSchema),
 }) satisfies z.ZodType<LoginDoorPiece>;
 
 export const loginDoorSchema = z.object({
   liftRate: z.number().positive(),
-  pieces: z.array(loginDoorPieceSchema),
+  pieces: z.array(loginDoorPieceSchema).min(1),
   position: z.array(z.number()).length(3),
   relief: loginDoorReliefSchema,
   size: z.array(z.number()).length(3),

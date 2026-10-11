@@ -3,9 +3,13 @@
 // That CSS pixels follow on a phone, and the radians a pixel of a drag across the right half turns the look by
 export const TOUCH_STICK_REACH = 60;
 export const TOUCH_LOOK_RADIANS_PER_PIXEL = 0.005;
-// Provisional: the share of the pool under which the stamina meter flashes, measured off a recording of the English PC
-// Client's meter draining
-export const STAMINA_METER_LOW_SHARE = 0.25;
+// The touch layout's action buttons' discs, a dark blue at a sixth over the world: inside the jump's, sprint's, skill's
+// And attack's discs on `hud-world-pickup` the scene reads 0.84, 0.88 and 0.91 of itself just outside them, red to blue
+export const ACTION_BUTTON_BACKGROUND = "rgb(0 27 61 / 0.16)";
+// The share of the pool under which the stamina meter flashes red: on the climb `hud-stamina-climb` is taken from, its
+// Fill is still yellow at a sixth of the arc and at an eighth (the clip's 32.75 and 32.83 seconds) and red from the next
+// Frame on, as the pool empties
+export const STAMINA_METER_LOW_SHARE = 0.125;
 
 // Provisional: Paimon's mark on the HUD button, traced by `genshin:parity trace` from the English PC client's world HUD
 // (the 90 pixel box at 100, 10), its path in that box's own pixels, the measure of its place still to come

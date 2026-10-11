@@ -48,9 +48,15 @@ export const CI_FAILURE_CONCLUSION = "failure";
 export const CI_SUCCESS_CONCLUSION = "success";
 
 export const CI_COMPLETED_STATUS = "completed";
-// How many of a workflow's newest runs are read for the queue's newest verdict (`readQueueCheck`). Every branch's runs
-// Share the list, and each bump's branch reruns its own on every move of `main`, so the queue's are a small share of it
-// And a hundred reach back a couple of hours
+// The fields every read of a workflow run asks `gh run list` for (`MainCheck`)
+export const CHECK_RUN_FIELDS =
+  "attempt,conclusion,createdAt,databaseId,headBranch,headSha,status,updatedAt,url,workflowDatabaseId";
+// How many of a commit's runs of one workflow are read for the newest on one branch (`readCommitCheck`): each branch a
+// Push moved onto the commit runs the workflow over it once, and a pull request's event once more, so a handful
+export const COMMIT_CHECK_RUN_LIST_LIMIT = 20;
+// How many of one branch's newest runs of a workflow are read for its newest verdict (`readQueueCheck`). The branch
+// Narrows the list on GitHub's side, and the only runs passed over are the pending ones a newer push superseded, which
+// Come a handful at a time
 export const QUEUE_CHECK_RUN_LIST_LIMIT = 100;
 // How much of each failing job's log the repairer is handed: the summary a check prints sits at its end, and a
 // Job's whole log is every test it ran
@@ -168,8 +174,14 @@ export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
 // Never waits on it
 export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
 // On a red `main` head whose failing jobs the queue passes, against the queue commit whose run said so: a transit gap
-// The queued windows heal, recorded so a later pass reads it here rather than both runs' jobs (`checkIsTransitGap`)
+// The queued windows heal, recorded so a later pass reads it here rather than both runs' jobs (`settleTransitGap`)
 export const TRANSIT_GAP_MARKER = "review-collector transit-gap";
+// On a red `main` head whose failing jobs the queue passes over the very same tree, once its failed jobs are run again:
+// No transit gap but a flake or a red of its own, re-run once per head and repaired once still red (`rerunRedCheck`)
+export const RERUN_MARKER = "review-collector rerun";
+// On the `main` head a repair was owed at when the run's budget could no longer hold it, keyed by its failure signature:
+// The run after it starts with the repair, ahead of the walk (`markRepairFirst`, `checkIsRepairFirst`)
+export const REPAIR_FIRST_MARKER = "review-collector repair-first";
 // The collector's own `@coderabbitai review` on a window whose review the bot owes: skipped, check-less, dropped, or
 // Refused by a rate limit whose deadline has passed. Only these are counted, so an ask a person wrote spends nothing of
 // The window's asks
@@ -185,10 +197,17 @@ export const COLLECTOR_ISSUE_LABEL = "ready-for-agent";
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;
 // On a held commit: one with no head once a run has found it held, and one naming each `main` head a re-land of it was
-// Tried at, so a re-land is tried once per head (`relandHeldCommits`)
+// Tried at, so a head is tried again only once the wait after its last try passes (`relandHeldCommits`)
 export const RELAND_MARKER = "review-collector reland";
-// A held commit's failed re-land, counted against the cap on the held commit itself like the sync's marker
+// A held commit's re-land, counted against the cap on the held commit itself like the sync's marker: a pick that failed,
+// Or a return to the owed set of a commit its branch still carries, which the paths that parked it try again
 export const RELAND_FAILED_MARKER = "review-collector reland-failed";
+// The wait after the first and the second re-land of a held commit at one `main` head, before that head is tried again:
+// A quiet `main` may not move for hours, and the attempts are spent all the same. Its length is one short of the cap,
+// Since no try follows the last
+export const RELAND_RETRY_WAITS_MS: number[] = [30, 120].map((minutes) =>
+  Temporal.Duration.from({ minutes }).total("milliseconds"),
+);
 
 // How long the carry session in `pnpm ai:queue:push` may run, sooner than every session's `SESSION_TIMEOUT_MS`: one
 // Haiku session settling one conflict takes minutes, so past this it has lost its way and the push waits
@@ -286,11 +305,17 @@ export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }
 export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How soon a counted attempt that failed is retried (`AttemptFailedError`): no event may follow it for hours, and
 // A step failing for good should reach its cap and be routed around in minutes rather than on the next push. A held
-// Commit's re-land a run left for the next is woken for the same way (`relandHeldCommits`)
+// Commit's re-land a run left for the next, and one returned to the owed set, are woken for the same way
+// (`relandHeldCommits`)
 export const ATTEMPT_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
-// How soon a run GitHub failed with a server error is retried (`GITHUB_OUTAGE_REGEX`): an outage is minutes to
-// Hours, so a run a minute apart would spend a runner per minute learning it is still down
+// How soon a run GitHub failed with a server error, or with a rate limit that states no wait, is retried
+// (`GITHUB_OUTAGE_REGEX`): an outage is minutes to hours, so a run a minute apart would spend a runner per minute
+// Learning it is still down
 export const OUTAGE_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
+// How soon a run GitHub's content-creation limit refused is retried when nothing states a wait
+// (`GITHUB_CONTENT_CREATION_LIMIT_REGEX`): the limit counts creations per minute, and GitHub's own advice for a
+// Secondary limit stating no wait is at least a minute
+export const CONTENT_CREATION_RETRY_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("seconds");
 // How soon a window whose ask the re-read check withheld is read again (`settleReviewAsk`): a check that moved under
 // The run may have sent its status event while the run held the group, and one that could not be read sends none
 export const CHECK_REREAD_DELAY_SECONDS: number = Temporal.Duration.from({ minutes: 5 }).total("seconds");
@@ -308,6 +333,9 @@ export const MISSING_CHECK_WAIT_MS: number = Temporal.Duration.from({ minutes: 1
 // The bot dropped and asked for like a skipped one. A window's review completes in about a quarter of an hour, so a
 // Check pending four times that long is not a review still running
 export const PENDING_CHECK_WAIT_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// How long a repair-first mark holds, and how often one signature may be marked: a run that starts with the repair
+// Holds the walk behind it, so a red the repairer could not answer leaves the walk first again for the rest of the span
+export const REPAIR_FIRST_SPAN_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // How far back a failure signature's repair attempts are counted. Without a span, a signature as common as one test
 // Job would stay exhausted for good after its third failure in any week
 export const REPAIR_SIGNATURE_SPAN_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");

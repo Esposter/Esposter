@@ -7,6 +7,5 @@ export enum HudInterfaceRectName {
   MapInfo = "GrpMainPage/MapInfo",
   MiniMap = "GrpMainPage/MapInfo/GrpMiniMap",
   PlayerProfileButton = "GrpMainPage/MapInfo/BtnPlayerProfile",
-  StaminaBar = "GrpMainPage/GameInfo/SPBar",
   TeamButtonContainer = "GrpMainPage/TeamBtnContainer",
 }

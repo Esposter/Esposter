@@ -4,6 +4,7 @@ import type { RelandAttemptInput } from "#src/models/coderabbit/collect/RelandAt
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsLockfileOnly } from "#src/services/coderabbit/collect/checkIsLockfileOnly";
+import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import { RELANDED_TRAILER, SessionRoleModelMap } from "#src/services/coderabbit/collect/constants";
 import { getRelandMessage } from "#src/services/coderabbit/collect/getRelandMessage";
@@ -14,6 +15,7 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getGitRecords } from "#src/services/shared/getGitRecords";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, takeOne } from "@esposter/shared";
 
@@ -23,15 +25,24 @@ import { getResult, takeOne } from "@esposter/shared";
 // Word. The collector commits it under a message of its own (`getRelandMessage`) with the held commit's author and
 // Date, and a `Relanded:` trailer naming the held commit beside the ones it already carries — the count its line of
 // Copies has been through (`relandHeldCommits`). A commit the queue already carries whole stages nothing and commits
-// Nothing, leaving HEAD on the queue's head. A failure puts the tree back there.
-export const relandHeldCommit = async ({ branch, cwd, queueSha, sha }: RelandAttemptInput): Promise<RelandAttempt> => {
+// Nothing, leaving HEAD on the queue's head. One that takes its own place is picked onto its parent instead, and what
+// Followed it replayed onto the copy, each commit onto the tree it was written against, so nothing in it conflicts. A
+// Failure puts the tree back on the queue's head.
+export const relandHeldCommit = async ({
+  branch,
+  cwd,
+  isInPlace,
+  queueSha,
+  sha,
+}: RelandAttemptInput): Promise<RelandAttempt> => {
   const fail = (failure: string, isSessionRun: boolean): RelandAttempt => {
     abortSequencing(cwd);
     runGit(["reset", "--hard", queueSha], cwd);
     runGit(["clean", "--force", "-d"], cwd);
     return { failure, isSessionRun };
   };
-  runGit(["switch", "--detach", queueSha], cwd);
+  runGit(["switch", "--detach", isInPlace ? `${sha}^` : queueSha], cwd);
+  const ontoSha = readHeadSha(cwd);
   const isPicked = getResult(() => runGit(["cherry-pick", "--no-commit", sha], cwd)).match(
     () => true,
     () => false,
@@ -47,7 +58,7 @@ export const relandHeldCommit = async ({ branch, cwd, queueSha, sha }: RelandAtt
       prompt: getRelandPrompt({ branch, conflictedPaths, sha }),
     });
     if (!isEnded) return fail("the session exited non-zero", isSessionRun);
-    else if (readUnmergedPaths(cwd).length > 0 || checkIsSequencing(cwd) || readHeadSha(cwd) !== queueSha)
+    else if (readUnmergedPaths(cwd).length > 0 || checkIsSequencing(cwd) || readHeadSha(cwd) !== ontoSha)
       return fail("the session left the pick unresolved", isSessionRun);
   }
   // `--quiet` exits non-zero when something is staged
@@ -77,5 +88,10 @@ export const relandHeldCommit = async ({ branch, cwd, queueSha, sha }: RelandAtt
       cwd,
     );
   }
-  return readDirtyPaths(cwd).length > 0 ? fail("the pick left the tree dirty", isSessionRun) : { isSessionRun };
+  const relandedSha = isStaged ? readHeadSha(cwd) : undefined;
+  if (isInPlace && !checkIsPicked(getNonEmptyLines(runGit(["rev-list", "--reverse", `${sha}..${queueSha}`], cwd)), cwd))
+    return fail("the queue after it did not replay onto the copy", isSessionRun);
+  return readDirtyPaths(cwd).length > 0
+    ? fail("the pick left the tree dirty", isSessionRun)
+    : { isSessionRun, relandedSha };
 };

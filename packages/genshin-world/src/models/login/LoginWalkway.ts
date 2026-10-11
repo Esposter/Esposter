@@ -24,13 +24,13 @@ const loginWalkwayRaisedPartSchema = z.object({
   top: z.number(),
 }) satisfies z.ZodType<LoginWalkwayRaisedPart>;
 const loginWalkwayPieceDataSchema = z.object({
-  outline: z.array(z.array(z.number()).length(2)),
+  outline: z.array(z.array(z.number()).length(2)).min(3),
   raised: z.array(loginWalkwayRaisedPartSchema),
   top: z.number(),
 }) satisfies z.ZodType<LoginWalkwayPieceData>;
 
 export const loginWalkwaySchema = z.object({
   bottom: z.number(),
-  pieces: z.array(loginWalkwayPieceDataSchema),
+  pieces: z.array(loginWalkwayPieceDataSchema).min(1),
   top: z.number(),
 }) satisfies z.ZodType<LoginWalkway>;

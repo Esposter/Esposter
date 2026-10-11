@@ -2,6 +2,8 @@ import type { ReshapePromptInput } from "#src/models/coderabbit/collect/ReshapeP
 
 import { EXPRESS_TRAILER, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
 
+const formatGlobs = (globs: string[]): string => globs.map((glob) => `\`${glob}\``).join(", ");
+
 // A commit alone over the window's room can never ride one, and what in it deserves a reviewer's eye is a judgement —
 // A rename, a one-rule substitution a lint rule now enforces, generated output and a format pass are not, the
 // Rule that made them and the hand-written change beside them are. The session repackages; it never edits. The
@@ -12,13 +14,14 @@ export const getReshapePrompt = ({
   excludedGlobs,
   fileCap,
   fileCount,
+  includedGlobs,
   roomFileCount,
   sha,
 }: ReshapePromptInput): string =>
   [
     `You are the review collector's reshaper. This checkout is detached at the parent of ${sha}, a commit on \`ai/queue\` that changes ${fileCount} files the review counts — more than the ${roomFileCount} a review window has room for beside the fixes it carries ahead of the queue (the cap is ${fileCap}), so no window can take it whole. ${SESSION_DENIALS}`,
     "",
-    `Every file count here — the commit's, the room and each part's — is taken after the path filters of the base's \`.coderabbit.yaml\`, as the review counts its own: a file matching one of these globs costs a window nothing, so split on the rest. ${excludedGlobs.length === 0 ? "The base excludes no path." : `The globs: ${excludedGlobs.map((glob) => `\`${glob}\``).join(", ")}.`}`,
+    `Every file count here — the commit's, the room and each part's — is taken after the path filters of the base's \`.coderabbit.yaml\`, as the review counts its own: a file they leave out costs a window nothing, so split on the rest. ${includedGlobs.length === 0 ? "The base keeps every path" : `The base keeps only the paths matching ${formatGlobs(includedGlobs)}`}, ${excludedGlobs.length === 0 ? "and excludes none." : `less those matching ${formatGlobs(excludedGlobs)}.`}`,
     "",
     `Rewrite it as an ordered sequence of commits on this detached HEAD whose final tree is byte-for-byte the tree of ${sha} — repackage its changes, never edit them, never add or drop one. Read \`git show --stat ${sha}\` and the diff, then stage subsets with \`git checkout ${sha} -- <paths>\` (and \`git rm\` for its deletions) and commit each part:`,
     "",
