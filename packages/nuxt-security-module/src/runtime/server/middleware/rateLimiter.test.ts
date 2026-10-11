@@ -4,7 +4,9 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import rateLimiter from "#src/runtime/server/middleware/rateLimiter";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 
-vi.mock("#src/runtime/services/getSecurityRules", () => ({ getSecurityRules: vi.fn() }));
+vi.mock(import("#src/runtime/services/getSecurityRules"), () => ({
+  getSecurityRules: vi.fn<typeof getSecurityRules>(),
+}));
 
 describe(rateLimiter, () => {
   const INTERVAL_IN_MILLISECONDS = 60_000;
@@ -22,7 +24,7 @@ describe(rateLimiter, () => {
     vi.mocked(getSecurityRules).mockReturnValue({
       enabled: true,
       rateLimiter: { intervalInMilliseconds: INTERVAL_IN_MILLISECONDS, tokensPerInterval: TOKENS_PER_INTERVAL },
-    } as ReturnType<typeof getSecurityRules>);
+    });
   });
 
   test("#83 #196 a forwarded address the client writes does not change its key, so it cannot spend a fresh count", async () => {

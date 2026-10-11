@@ -2,6 +2,6 @@ import type { AllowedMethodsRestricterOptions } from "#src/models/AllowedMethods
 
 import * as z from "zod";
 
-export const allowedMethodsRestricterOptionsSchema = z.strictObject({
+export const allowedMethodsRestricterOptionsSchema: z.ZodType<AllowedMethodsRestricterOptions> = z.strictObject({
   methods: z.array(z.string().min(1)).min(1),
-}) satisfies z.ZodType<AllowedMethodsRestricterOptions>;
+});

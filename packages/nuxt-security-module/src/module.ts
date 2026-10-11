@@ -2,6 +2,7 @@
 // A module outside a Nuxt app does not load that augmentation.
 /// <reference types="@nuxt/nitro-server" />
 import type { ModuleOptions } from "#src/models/ModuleOptions";
+import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
 import type { NuxtModule } from "@nuxt/schema";
 
 import { MODULE_NAME } from "#src/runtime/constants";
@@ -10,6 +11,7 @@ import { computeSubresourceIntegrityHashes } from "#src/services/computeSubresou
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getPluginTemplate } from "#src/services/getPluginTemplate";
 import { getRouteRulesTemplate } from "#src/services/getRouteRulesTemplate";
+import { getRouteSecurityRules } from "#src/services/getRouteSecurityRules";
 import { getStaticResourceHeaders } from "#src/services/getStaticResourceHeaders";
 import { getTypeTemplate } from "#src/services/getTypeTemplate";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
@@ -32,6 +34,13 @@ declare module "@nuxt/schema" {
   }
 }
 
+// A route rule's `security` key, which the module reads when the rules are resolved at build time
+declare module "nitro/types" {
+  interface RouteRuleConfig {
+    security?: SecurityRouteRules;
+  }
+}
+
 const ROUTE_RULES_TEMPLATE_FILENAME = `#${MODULE_NAME}/route-rules.mjs`;
 const SRI_HASHES_TEMPLATE_FILENAME = `#${MODULE_NAME}/sri-hashes.mjs`;
 const ROUTE_RULES_PLUGIN_FILENAME = `#${MODULE_NAME}/route-rules-plugin.mjs`;
@@ -41,7 +50,10 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "security", name: MODULE_NAME },
   setup(userOptions, nuxt) {
     const options = parseModuleOptions(
-      mergeModuleOptions(getDefaultModuleOptions(nuxt.options.dev, nuxt.options.devServer.url), userOptions),
+      mergeModuleOptions(
+        getDefaultModuleOptions(nuxt.options.dev, nuxt.options.devServer.url, userOptions.strict === true),
+        userOptions,
+      ),
     );
     if (!options.enabled) return;
 
@@ -53,9 +65,11 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     nuxt.options.runtimeConfig.private = defu(checkIsRecord(privateRuntimeConfig) ? privateRuntimeConfig : {}, {
       basicAuth,
     });
+    // Validated here, at build time, so a bad route rule stops the build before any request is served
+    const routeSecurityRules = getRouteSecurityRules(nuxt.options.routeRules ?? {}, options);
     addServerTemplate({
       filename: ROUTE_RULES_TEMPLATE_FILENAME,
-      getContents: () => getRouteRulesTemplate({ "/**": publicOptions }),
+      getContents: () => getRouteRulesTemplate({ "/**": publicOptions, ...routeSecurityRules }),
     });
     addServerTemplate({
       filename: ROUTE_RULES_PLUGIN_FILENAME,
@@ -92,6 +106,9 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     if (options.ssg) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/ssgHashes"));
     if (options.headers) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/securityHeaders"));
     if (options.hidePoweredBy) addNitroPlugin(resolver.resolve("./runtime/nitro/plugins/hidePoweredBy"));
+
+    if (options.csrf)
+      addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/csrf"), middleware: true });
 
     if (options.rateLimiter)
       addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/rateLimiter"), middleware: true });

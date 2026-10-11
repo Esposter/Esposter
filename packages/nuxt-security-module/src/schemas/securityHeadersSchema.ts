@@ -10,7 +10,7 @@ import * as z from "zod";
 // A header sent as a string is written as given, so its value is any non-empty string
 const headerValueSchema = z.string().min(1);
 
-export const securityHeadersSchema = z.strictObject({
+export const securityHeadersSchema: z.ZodType<SecurityHeaders> = z.strictObject({
   contentSecurityPolicy: z.union([contentSecurityPolicySchema, z.literal(false)]).optional(),
   crossOriginEmbedderPolicy: z.union([z.enum(CrossOriginEmbedderPolicy), z.literal(false)]).optional(),
   crossOriginOpenerPolicy: z.union([headerValueSchema, z.literal(false)]).optional(),
@@ -24,4 +24,4 @@ export const securityHeadersSchema = z.strictObject({
   xDownloadOptions: z.union([headerValueSchema, z.literal(false)]).optional(),
   xFrameOptions: z.union([z.enum(XFrameOptions), z.literal(false)]).optional(),
   xPermittedCrossDomainPolicies: z.union([headerValueSchema, z.literal(false)]).optional(),
-}) satisfies z.ZodType<SecurityHeaders>;
+});

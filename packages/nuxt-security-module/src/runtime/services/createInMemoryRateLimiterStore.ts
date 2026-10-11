@@ -8,7 +8,7 @@ export const createInMemoryRateLimiterStore = (maxEntries: number): RateLimiterS
   const windows = new Map<string, RateLimitWindow>();
 
   return {
-    increment: async (key, intervalInMilliseconds) => {
+    increment: (key, intervalInMilliseconds) => {
       const now = Date.now();
       const current = windows.get(key);
       const window: RateLimitWindow =
@@ -22,7 +22,7 @@ export const createInMemoryRateLimiterStore = (maxEntries: number): RateLimiterS
       const [oldestKey] = windows.keys();
       if (windows.size > maxEntries && oldestKey !== undefined) windows.delete(oldestKey);
 
-      return window;
+      return Promise.resolve(window);
     },
   };
 };

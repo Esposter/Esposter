@@ -1,6 +1,7 @@
 import type { AllowedMethodsRestricterOptions } from "#src/models/AllowedMethodsRestricterOptions";
 import type { BasicAuthOptions } from "#src/models/BasicAuthOptions";
 import type { CorsHandlerOptions } from "#src/models/CorsHandlerOptions";
+import type { CsrfOptions } from "#src/models/CsrfOptions";
 import type { RateLimiterOptions } from "#src/models/RateLimiterOptions";
 import type { RequestSizeLimiterOptions } from "#src/models/RequestSizeLimiterOptions";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
@@ -12,6 +13,7 @@ export interface ModuleOptions {
   // The whole module switched off, which registers no handler, plugin or header
   enabled: boolean;
   corsHandler: CorsHandlerOptions | false;
+  csrf: CsrfOptions | false;
   contentSecurityPolicyReportOnly: boolean;
   headers: SecurityHeaders | false;
   hidePoweredBy: boolean;
@@ -19,5 +21,7 @@ export interface ModuleOptions {
   rateLimiter: RateLimiterOptions | false;
   requestSizeLimiter: RequestSizeLimiterOptions | false;
   sri: boolean;
+  // Selects the stricter default policy, which the headers default from when it is set
+  strict: boolean;
   ssg: SsgOptions | false;
 }

@@ -4,7 +4,7 @@ import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeade
 import { serializeSecurityHeaders } from "#src/runtime/services/serializeSecurityHeaders";
 
 describe(serializeSecurityHeaders, () => {
-  const DEFAULT_HEADERS = getDefaultSecurityHeaders(false);
+  const DEFAULT_HEADERS = getDefaultSecurityHeaders(false, false);
 
   test("#587 a header set to false is not sent at all", () => {
     expect.hasAssertions();

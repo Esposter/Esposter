@@ -25,6 +25,9 @@ export const CONTENT_SECURITY_POLICY_REPORT_ONLY_HEADER_NAME = "Content-Security
 // The most keys the in-memory rate limiter counts at once, and the key every request with no address is counted under
 export const MAX_RATE_LIMIT_ENTRIES = 10_000;
 export const UNKNOWN_CLIENT_KEY = "unknown";
+// The methods that change state, which a CSRF check guards, and the random bytes behind a CSRF token
+export const CSRF_UNSAFE_METHODS: readonly string[] = ["DELETE", "PATCH", "POST", "PUT"];
+export const CSRF_TOKEN_BYTE_LENGTH = 32;
 // The number of random bytes behind a nonce, which base64 encodes to a value no guess reproduces
 export const NONCE_BYTE_LENGTH = 18;
 // The placeholder a policy writes where the request's nonce goes

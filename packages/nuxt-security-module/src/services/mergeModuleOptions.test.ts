@@ -5,18 +5,18 @@ import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeade
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
 
 describe(mergeModuleOptions, () => {
-  const DEFAULTS = getDefaultModuleOptions(false, "http://localhost:3000");
+  const DEFAULTS = getDefaultModuleOptions(false, "http://localhost:3000", false);
 
   test("a consumer's sources are appended to the default directive, and false removes a directive", () => {
     expect.hasAssertions();
 
     const { headers } = mergeModuleOptions(DEFAULTS, {
       headers: {
-        ...getDefaultSecurityHeaders(false),
+        ...getDefaultSecurityHeaders(false, false),
         contentSecurityPolicy: { "img-src": false, "script-src": ["'unsafe-eval'"] },
       },
     });
-    const { contentSecurityPolicy: defaultPolicy } = getDefaultSecurityHeaders(false);
+    const { contentSecurityPolicy: defaultPolicy } = getDefaultSecurityHeaders(false, false);
     if (!headers || !headers.contentSecurityPolicy || !defaultPolicy) assert.fail("the policy is disabled");
     const defaultScriptSources = Array.isArray(defaultPolicy["script-src"]) ? defaultPolicy["script-src"] : [];
 

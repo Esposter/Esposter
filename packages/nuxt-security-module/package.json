@@ -62,6 +62,10 @@
       "source": "./src/runtime/server/middleware/corsHandler.ts",
       "default": "./dist/runtime/server/middleware/corsHandler.js"
     },
+    "./runtime/server/middleware/csrf": {
+      "source": "./src/runtime/server/middleware/csrf.ts",
+      "default": "./dist/runtime/server/middleware/csrf.js"
+    },
     "./runtime/server/middleware/rateLimiter": {
       "source": "./src/runtime/server/middleware/rateLimiter.ts",
       "default": "./dist/runtime/server/middleware/rateLimiter.js"
@@ -85,6 +89,7 @@
       "./runtime/server/middleware/allowedMethodsRestricter": "./dist/runtime/server/middleware/allowedMethodsRestricter.js",
       "./runtime/server/middleware/basicAuth": "./dist/runtime/server/middleware/basicAuth.js",
       "./runtime/server/middleware/corsHandler": "./dist/runtime/server/middleware/corsHandler.js",
+      "./runtime/server/middleware/csrf": "./dist/runtime/server/middleware/csrf.js",
       "./runtime/server/middleware/rateLimiter": "./dist/runtime/server/middleware/rateLimiter.js",
       "./runtime/server/middleware/requestSizeLimiter": "./dist/runtime/server/middleware/requestSizeLimiter.js",
       "./package.json": "./package.json"

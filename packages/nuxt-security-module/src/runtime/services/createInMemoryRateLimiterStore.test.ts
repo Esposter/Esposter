@@ -19,18 +19,18 @@ describe(createInMemoryRateLimiterStore, () => {
 
     const store = createInMemoryRateLimiterStore(MAX_ENTRIES);
 
-    expect(await store.increment(KEY, INTERVAL_IN_MILLISECONDS)).toStrictEqual({
+    await expect(store.increment(KEY, INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 1,
       resetAt: INTERVAL_IN_MILLISECONDS,
     });
-    expect(await store.increment(KEY, INTERVAL_IN_MILLISECONDS)).toStrictEqual({
+    await expect(store.increment(KEY, INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 2,
       resetAt: INTERVAL_IN_MILLISECONDS,
     });
 
     vi.setSystemTime(INTERVAL_IN_MILLISECONDS);
 
-    expect(await store.increment(KEY, INTERVAL_IN_MILLISECONDS)).toStrictEqual({
+    await expect(store.increment(KEY, INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 1,
       resetAt: 2 * INTERVAL_IN_MILLISECONDS,
     });
@@ -59,11 +59,11 @@ describe(createInMemoryRateLimiterStore, () => {
     await store.increment("first", INTERVAL_IN_MILLISECONDS);
     await store.increment("third", INTERVAL_IN_MILLISECONDS);
 
-    expect(await store.increment("first", INTERVAL_IN_MILLISECONDS)).toStrictEqual({
+    await expect(store.increment("first", INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 3,
       resetAt: INTERVAL_IN_MILLISECONDS,
     });
-    expect(await store.increment("second", INTERVAL_IN_MILLISECONDS)).toStrictEqual({
+    await expect(store.increment("second", INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 1,
       resetAt: INTERVAL_IN_MILLISECONDS,
     });

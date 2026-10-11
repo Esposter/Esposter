@@ -20,7 +20,9 @@ describe(getRetryAfterSeconds, () => {
     expect.hasAssertions();
 
     const store: RateLimiterStore = {
-      increment: vi.fn(async () => ({ count: TOKENS_PER_INTERVAL, resetAt: INTERVAL_IN_MILLISECONDS })),
+      increment: vi.fn<RateLimiterStore["increment"]>(() =>
+        Promise.resolve({ count: TOKENS_PER_INTERVAL, resetAt: INTERVAL_IN_MILLISECONDS }),
+      ),
     };
 
     await expect(
@@ -35,7 +37,9 @@ describe(getRetryAfterSeconds, () => {
     expect.hasAssertions();
 
     const store: RateLimiterStore = {
-      increment: vi.fn(async () => ({ count: TOKENS_PER_INTERVAL + 1, resetAt: INTERVAL_IN_MILLISECONDS })),
+      increment: vi.fn<RateLimiterStore["increment"]>(() =>
+        Promise.resolve({ count: TOKENS_PER_INTERVAL + 1, resetAt: INTERVAL_IN_MILLISECONDS }),
+      ),
     };
 
     await expect(
@@ -49,7 +53,11 @@ describe(getRetryAfterSeconds, () => {
   test("a refused request is told to wait at least one second, as Retry-After is never zero", async () => {
     expect.hasAssertions();
 
-    const store: RateLimiterStore = { increment: vi.fn(async () => ({ count: TOKENS_PER_INTERVAL + 1, resetAt: 0 })) };
+    const store: RateLimiterStore = {
+      increment: vi.fn<RateLimiterStore["increment"]>(() =>
+        Promise.resolve({ count: TOKENS_PER_INTERVAL + 1, resetAt: 0 }),
+      ),
+    };
 
     await expect(
       getRetryAfterSeconds(store, KEY, {
