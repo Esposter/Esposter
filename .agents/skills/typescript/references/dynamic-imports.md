@@ -10,6 +10,6 @@ discovery until first use, which can trigger a mid-session re-optimization leavi
 Only touch `optimizeDeps` when the dependency's own docs instruct it.
 
 Two exceptions: a library-mandated lazy-loader contract, and a heavy dependency whose only entry point is a
-module the app always loads — a codec behind a format map, a devtool behind a settings panel. Per-component
+module the app always loads — a codec behind a format map, a devtool behind a settings panel, a character's kit behind the kit map. Per-component
 chunking has no boundary to split those at, so the dynamic import _is_ the split, and it says in a comment what it
 is keeping out of the eager graph.

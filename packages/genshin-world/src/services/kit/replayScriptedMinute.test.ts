@@ -1,6 +1,6 @@
 import type { StatTables } from "#src/models/character/StatTables";
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { InputState } from "genshin-engine";
@@ -9,7 +9,6 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { FIXED_STEP_SECONDS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
-import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
@@ -46,19 +45,18 @@ const toStepCount = (seconds: number): number => Math.round(seconds / FIXED_STEP
 // To 4.75, and presses an attack at 5 and holds it for a second and a half, into a charged attack. Idle, no enemy
 // Stands near, nothing is pressed and no one is switched in
 export const replayScriptedMinute = ({
-  characterIds,
+  characterIdKitMap,
   enemyTables,
   isInCombat,
   statTables,
-  talentMultiplierMap,
 }: {
-  characterIds: number[];
+  characterIdKitMap: ReadonlyMap<number, Kit>;
   enemyTables: EnemyTables;
   isInCombat: boolean;
   statTables: StatTables;
-  talentMultiplierMap: TalentMultiplierMap;
 }): void => {
   const { characterDataMap } = statTables;
+  const characterIds = [...characterIdKitMap.keys()];
   const elementalResonances = getElementalResonances(
     characterIds.flatMap((characterId) => {
       const element = characterDataMap.get(characterId)?.element;
@@ -66,14 +64,9 @@ export const replayScriptedMinute = ({
     }),
   );
   const characterIdCombatantMap = new Map(
-    characterIds.map((characterId) => [
+    Array.from(characterIdKitMap, ([characterId, kit]) => [
       characterId,
-      createCombatant(
-        createCharacter(characterId, characterDataMap),
-        createCharacterKit(characterId, talentMultiplierMap),
-        elementalResonances,
-        statTables,
-      ),
+      createCombatant(createCharacter(characterId, characterDataMap), kit, elementalResonances, statTables),
     ]),
   );
   const party = reactive(createParty(characterIds));

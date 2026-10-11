@@ -1,5 +1,6 @@
 import type { UserConfig } from "tsdown";
 
+import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
 import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
 import { generateExports, getTsdownConfigurationVue } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
@@ -10,7 +11,8 @@ import { mergeConfig } from "tsdown";
 // Are what the tooling in `scripts` reads back off the page, so the workspace resolves them from source under
 // `./parity/*`, and the published map, which ships no page, never carries the arm
 // The `build:prepare` hook replaces the base's rather than joining it, so it writes the barrels the base writes, and
-// Writes the kit map first, so the barrel lists it on a fresh clone too
+// Writes the kit map first, so the barrel lists it on a fresh clone too. The barrel leaves the kit modules out, since
+// The kit map loads each through an `import()` of its own as its character joins the party
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(templateCompilerOptions), {
   entry: {
     characterPack: "src/characterPack.ts",
@@ -25,7 +27,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(te
   hooks: {
     "build:prepare": ({ options: { cwd } }) => {
       generateCharacterKitMap(cwd);
-      generateExports(cwd, "vue");
+      generateExports(cwd, "vue", [KIT_MODULE_DIRECTORY]);
     },
   },
 });

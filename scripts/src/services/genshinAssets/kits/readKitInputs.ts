@@ -49,15 +49,18 @@ export const readKitInputs = async ({
   const tablesMap = await readKitTables(characterIds);
   const inputs: KitInput[] = [];
   for (const [characterId, tables] of tablesMap) {
-    const createKit = CharacterIdCreateKitMap[characterId];
-    if (createKit === undefined)
+    const loadCreateKit = CharacterIdCreateKitMap[characterId];
+    if (loadCreateKit === undefined)
       throw new InvalidOperationError(Operation.Read, String(characterId), "has no kit module");
     const notes: string[] = [];
     const gcsimFolder = findGcsimFolder(tagCharacterMap, tables.name);
     const gcsim = gcsimFolder === undefined ? undefined : tagCharacterMap.get(gcsimFolder);
     if (gcsim === undefined) notes.push(`no gcsim folder at ${GCSIM_TAG}`);
     // oxlint-disable-next-line no-await-in-loop -- one category request at a time, which the wiki asks of a client
-    const pages = await readWikiTalentPages(tables.name, wikiCacheDirectory);
+    const [pages, createKit] = await Promise.all([
+      readWikiTalentPages(tables.name, wikiCacheDirectory),
+      loadCreateKit(),
+    ]);
     if (pages.length === 0) notes.push("no wiki talent pages");
     const gcsimCandidateMap: Map<string, KitCandidate[]> =
       gcsim === undefined ? new Map() : getGcsimKitCandidates(gcsim, tables, plungeFallback);

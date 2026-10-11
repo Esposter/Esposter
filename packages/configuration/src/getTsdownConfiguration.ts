@@ -22,7 +22,6 @@ import { mergeConfig } from "tsdown";
 // The whole of what a package may vary here.
 export const getTsdownConfiguration = ({
   exportsGeneration = "typescript",
-  lazyDirectories = [],
 }: TsdownConfigurationOptions = {}): UserConfig => {
   const {
     dependencies,
@@ -83,7 +82,7 @@ export const getTsdownConfiguration = ({
     // Instead of the same command repeated in every manifest.
     hooks: {
       "build:prepare": ({ options: { cwd } }) => {
-        generateExports(cwd, exportsGeneration, lazyDirectories);
+        generateExports(cwd, exportsGeneration);
       },
     },
     platform: "neutral",

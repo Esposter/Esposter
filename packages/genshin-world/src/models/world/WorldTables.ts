@@ -1,9 +1,9 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { StatTables } from "#src/models/character/StatTables";
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
@@ -32,8 +32,8 @@ export interface WorldTables {
   nameText: Readonly<Record<string, string>>;
   // The building colours each region's palette record samples, which its kit draws its buildings in
   regionPalettes: RegionPaletteMap;
-  // The combat talent multipliers of the team the world starts with, so its first frame has each member's combatant
-  startingTalentMultipliers: TalentMultiplierMap;
+  // The kits of the team the world starts with, by character id, so its first frame has each member's combatant
+  startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from
   statTables: StatTables;
   // The Mondstadt animals the official map marks

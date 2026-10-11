@@ -221,13 +221,14 @@ What it does after:
 
 - **A kit loads when its character joins.**
   - `readCharacterKits(gameDataBaseUrl, characterIds)` reads each member's multipliers entry, its `kits` record and its behaviour module together, then builds its kit once.
-  - It runs where `readTalentMultipliers` is awaited today, with the same retry: at the world's gate for the starting team, and as the team changes. The load budget's `talent-multipliers` step becomes `character-kits`.
-  - The generated `CharacterIdCreateKitMap` becomes a loader map of `import()` calls, still generated at build from each module's declared id.
+  - It runs where `readTalentMultipliers` was awaited, with the same retry: at the world's gate for the starting team, and as the team changes. The load budget's `talent-multipliers` step became `character-kits`.
+  - Step 8 landed its loading half, the module and the multipliers read together and the kit built from them; step 7 adds the `kits` record and `buildKit` to it.
+  - The generated `CharacterIdCreateKitMap` becomes a loader map of `import()` calls, still generated at build from each module's declared id, written as the literal the module declares, since importing the constant would load the module. A map elsewhere keyed by a kit's id writes the literal too (`CharacterIdSkillGlyphsMap`).
   - A character with no module still falls back to the Traveler's kit.
 - **The barrel leaves the kit modules out.**
   - The source barrel lists every module and the entry re-exports it, so a dynamic import alone would load nothing lazily.
-  - `generateExports` gains an option naming the directories a package loads on demand, and leaves them out of its barrel.
-  - Rolldown should then split each `import()` into its own chunk. genshin-world has no dynamic-import chunk yet (its only extra chunk is shared between two entries), so the loader map's commit confirms the split in the `dist` listing.
+  - `generateExports` gains an option naming the directories a package loads on demand, and leaves them out of its barrel. genshin-world passes it from its own `build:prepare` hook, which replaces the base's rather than joining it, so the tsdown factories carry no such option.
+  - Rolldown splits each `import()` into its own chunk: the build emits one a kit module, 106 of them from about 7 KB to 20 KB.
 - **The entry has a ceiling.**
   - The loader map's commit lands genshin-world's `index.js` size snapshot at or under 1,350,000 bytes, down from about 2 MB. The kit modules, about a third of the entry's code, leave it; the loader map and the primitives come in. The snapshot holds the figure after that.
   - A record is a hosted read of a few kilobytes, fetched alongside the multipliers; the builder's dry run reports its size.
@@ -335,7 +336,9 @@ flowchart TD
 5. **The cursors.** Landed. An action (`KitState.nextHitIndex`) and a summon (`KitSummon.nextHitIndex`) each keep the index of their next hit, and `queueKitHits` queues the hits from it on. A fix landed ahead of it, in a commit of its own: a summon's hit at its cast never landed, since its first step read hits after nought, and eight kits' digests move by the field ticks that now strike (Collei, Columbina, Dori, Faruzan, Lynette, Ororon, Rosaria and Shenhe).
 6. **The effects stepped in place,** in today's order and compacted in place, the expired and strike lists held on the context.
 7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
-8. **The loader map on `lazyDirectories`.** `CharacterIdCreateKitMap` becomes a map of `import()` calls, the barrel leaves the kit modules out, and the entry's size snapshot lands at or under its ceiling.
+8. **The loader map on `lazyDirectories`.** Landed, over its ceiling. `CharacterIdCreateKitMap` is a map of `import()` calls, the barrel leaves the kit modules out, and `readCharacterKits` reads a member's module and multipliers together, at the gate and as the team changes.
+   - The entry fell from 2,153,111 bytes to 1,386,245, 36,245 over the ceiling: the modules took about 767 KB with them, a little less than the ceiling assumed, and the loader map came in at about 9 KB.
+   - What holds the rest up is none of the kits': the hand-traced glyph path maps (about 312 KB over sixteen files, `ElementMarkPathMap` alone 98,658 bytes), the components (about 345 KB) and the framework (about 61 KB). The ceiling stands.
 9. **The guard and the bench's entry for today's path deleted,** once nothing moves anymore, with the bench re-run on the same machine for the before against after. The zero test turns on.
 
 **Per kit, after the tree has moved.** What no whole-tree commit can do is a sweep: classifying each overlay's `Unclassified` entries from its module's own comments, and rendering each page's Provisional and Sources sections. The kit-records ledger is opened for it, in the `sweeps` skill's shape, only if such work remains.
@@ -378,21 +381,21 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                                           |
-| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved  |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                             |
-| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                           |
-| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                               |
-| `packages/genshin-world/src/services/kit/createCharacterKit.ts`     | Replaced by `buildKit` and `readCharacterKits`                                                 |
-| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                       |
-| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                  |
-| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes        |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `talent-multipliers` step becomes `character-kits`                              |
-| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                        |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels |
-| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                       |
-| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`               |
+| File                                                                | Role                                                                                                                  |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved                         |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                                                    |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                                                  |
+| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                                                      |
+| `packages/genshin-world/src/services/kit/readCharacterKits.ts`      | A joining member's module and multipliers read together and its kit built once; step 7 adds the record and `buildKit` |
+| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                                              |
+| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                                         |
+| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes                               |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `character-kits` step reads the starting team's kits                                                   |
+| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                                               |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels                        |
+| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                                              |
+| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`                                      |
 
 ## Sources
 

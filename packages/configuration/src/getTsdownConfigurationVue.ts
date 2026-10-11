@@ -1,4 +1,3 @@
-import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 import type { Options } from "unplugin-vue/api";
 
@@ -22,12 +21,8 @@ import Vue from "unplugin-vue/rolldown";
 // Package's `tsconfig.build.json` adds `tsconfig.build.base.json`'s excludes, so the tests stay out of the program —
 // The declarations come out the same either way, and the build takes a good deal longer with them in.
 // A private package keeps the base's `dts: false`, for the reason the base gives: nothing types against its `dist`.
-// `lazyDirectories` takes the same option the barrel does, for a Vue package that loads some of its modules on demand.
-export const getTsdownConfigurationVue = (
-  vueOptions: Options = {},
-  { lazyDirectories }: Pick<TsdownConfigurationOptions, "lazyDirectories"> = {},
-): UserConfig =>
-  mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue", lazyDirectories }), {
+export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig =>
+  mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
     ...(readPackageManifest().private ? {} : { dts: { eager: true, tsconfig: "tsconfig.build.json", vue: true } }),
     plugins: [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vue({ ...vueOptions, isProduction: true })],
   });

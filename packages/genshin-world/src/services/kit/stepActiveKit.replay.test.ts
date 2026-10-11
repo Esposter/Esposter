@@ -6,7 +6,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { PROOF_PARTY_CHARACTER_IDS } from "#src/services/kit/constants.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.test";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
@@ -34,27 +34,27 @@ const toReplayDigest = (strikes: KitStrike[]): string => {
   ].join("\n");
 };
 
+// Every kit module's character, its digest beside its module, the Traveler, whose kit is the fallback, and the proof
+// Party, whose digest is beside this test. One test a team, so each stays a minute of one team's steps, and each team's
+// Kits are built for its own test, so no kit carries one minute's state into another's
+const teams: [string, number[], string][] = [
+  ...(await Promise.all(
+    Object.entries(CharacterIdCreateKitMap).map(async ([characterId, loadCreateKit]) => {
+      const { name } = await loadCreateKit();
+      return [
+        name,
+        // oxlint-disable-next-line typescript/no-unnecessary-type-conversion -- Object.entries keys are strings at runtime, though the record types them as numbers
+        [Number(characterId)],
+        `characters/${uncapitalize(name.replace(/^create/u, ""))}.replay.snapshot.md`,
+      ] satisfies [string, number[], string];
+    }),
+  )),
+  [createTravelerKit.name, [TRAVELER_CHARACTER_ID], "travelerKit.replay.snapshot.md"],
+  ["the proof party", PROOF_PARTY_CHARACTER_IDS, "stepActiveKit.replay.snapshot.md"],
+];
+
 describe(stepActiveKit, () => {
-  // Every kit module's character, its digest beside its module, the Traveler, whose kit is the fallback, and the proof
-  // Party, whose digest is beside this test. One test a team, so each stays a minute of one team's steps
-  const teams: [string, number[], string][] = [
-    ...Object.entries(CharacterIdCreateKitMap).flatMap(([characterId, createKit]) =>
-      createKit
-        ? [
-            [
-              createKit.name,
-              // oxlint-disable-next-line typescript/no-unnecessary-type-conversion -- Object.entries keys are strings at runtime, though the record types them as numbers
-              [Number(characterId)],
-              `characters/${uncapitalize(createKit.name.replace(/^create/u, ""))}.replay.snapshot.md`,
-            ] satisfies [string, number[], string],
-          ]
-        : [],
-    ),
-    [createTravelerKit.name, [TRAVELER_CHARACTER_ID], "travelerKit.replay.snapshot.md"],
-    ["the proof party", PROOF_PARTY_CHARACTER_IDS, "stepActiveKit.replay.snapshot.md"],
-  ];
   const tablesPromise = Promise.all([
-    readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [...new Set(teams.flatMap(([, characterIds]) => characterIds))]),
     readStatTables(GAME_DATA_LOCAL_BASE_URL),
     readEnemyTables(GAME_DATA_LOCAL_BASE_URL),
   ]);
@@ -64,8 +64,11 @@ describe(stepActiveKit, () => {
     async (_name, characterIds, snapshotPath) => {
       expect.hasAssertions();
 
-      const [talentMultiplierMap, statTables, enemyTables] = await tablesPromise;
-      replayScriptedMinute({ characterIds, enemyTables, isInCombat: true, statTables, talentMultiplierMap });
+      const [[statTables, enemyTables], characterIdKitMap] = await Promise.all([
+        tablesPromise,
+        readCharacterKits(GAME_DATA_LOCAL_BASE_URL, characterIds),
+      ]);
+      replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat: true, statTables });
 
       await expect(
         toReplayDigest(vi.mocked(strikeKitEnemies).mock.calls.flatMap(([stepStrikes]) => stepStrikes)),
