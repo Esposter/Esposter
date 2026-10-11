@@ -8,7 +8,7 @@ Compiler: `typescript@6.0.3-bridge.18.tsgo.7.0.2`
 
 | case                 | types | instantiations |
 | -------------------- | ----- | -------------- |
-| GetPropertiesFixture | 290   | 2918           |
 | GetPathsFixture      | 382   | 3647           |
-| TypeFestPathsFixture | 2307  | 9296           |
+| GetPropertiesFixture | 290   | 2918           |
 | TypeFestGetFixture   | 3683  | 23078          |
+| TypeFestPathsFixture | 2307  | 9296           |

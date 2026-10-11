@@ -15,12 +15,12 @@ export interface Database<TSchema extends DatabaseSchema = DatabaseSchema> {
   ) => Promise<TSchema[TStoreName]["value"] | undefined>;
   getAll: <TStoreName extends DatabaseStoreName<TSchema>>(
     storeName: TStoreName,
-    query?: IDBKeyRange | TSchema[TStoreName]["key"] | null,
+    query?: IDBKeyRange | null | TSchema[TStoreName]["key"],
     count?: number,
   ) => Promise<TSchema[TStoreName]["value"][]>;
   getAllKeys: <TStoreName extends DatabaseStoreName<TSchema>>(
     storeName: TStoreName,
-    query?: IDBKeyRange | TSchema[TStoreName]["key"] | null,
+    query?: IDBKeyRange | null | TSchema[TStoreName]["key"],
     count?: number,
   ) => Promise<TSchema[TStoreName]["key"][]>;
   readonly name: string;
@@ -30,7 +30,7 @@ export interface Database<TSchema extends DatabaseSchema = DatabaseSchema> {
     key?: TSchema[TStoreName]["key"],
   ) => Promise<TSchema[TStoreName]["key"]>;
   transaction: <TStoreName extends DatabaseStoreName<TSchema>, TMode extends IDBTransactionMode = "readonly">(
-    storeNames: TStoreName | readonly TStoreName[],
+    storeNames: readonly TStoreName[] | TStoreName,
     mode?: TMode,
     options?: IDBTransactionOptions,
   ) => DatabaseTransaction<TSchema, TStoreName, TMode>;

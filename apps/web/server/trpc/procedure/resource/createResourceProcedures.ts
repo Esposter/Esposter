@@ -14,6 +14,7 @@ import type {
   ResourceType,
 } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
+import type { z } from "zod";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
@@ -80,7 +81,6 @@ import {
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
-import type { z } from "zod";
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,

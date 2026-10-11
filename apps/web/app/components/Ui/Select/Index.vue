@@ -2,8 +2,8 @@
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { Select } from "@vuetify/v0";
 import { checkIsDeepEqual } from "@esposter/shared";
+import { Select } from "@vuetify/v0";
 
 interface Props {
   items: UiSelectItem<T>[];

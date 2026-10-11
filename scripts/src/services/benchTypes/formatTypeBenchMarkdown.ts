@@ -8,7 +8,9 @@ const HEADER_CELLS = ["case", "types", "instantiations"];
 export const formatTypeBenchMarkdown = (rows: TypeBenchRow[], typescriptVersion: string): string => {
   const bodyCells = rows.map((row) => [row.name, String(row.types), String(row.instantiations)]);
   const allCells = [HEADER_CELLS, ...bodyCells];
-  const widths = HEADER_CELLS.map((_, column) => Math.max(...allCells.map((cells) => cells[column]?.length ?? 0)));
+  const widths = HEADER_CELLS.map((_header, column) =>
+    Math.max(...allCells.map((cells) => cells[column]?.length ?? 0)),
+  );
   const formatRow = (cells: string[]): string =>
     `| ${cells.map((cell, column) => cell.padEnd(widths[column] ?? 0)).join(" | ")} |`;
   const separator = `| ${widths.map((width) => "-".repeat(width)).join(" | ")} |`;

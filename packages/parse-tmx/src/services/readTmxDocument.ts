@@ -3,8 +3,8 @@ import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
 import type { QualifiedAttribute } from "sax";
 
-import { openTmxFrame } from "#src/services/openTmxFrame";
 import { closeTmxFrame } from "#src/services/closeTmxFrame";
+import { openTmxFrame } from "#src/services/openTmxFrame";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sax from "sax";
 

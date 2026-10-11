@@ -64,9 +64,6 @@ const openTmxDataChild = (
 ): TMXFrame | undefined => {
   const source = parent.target;
   switch (tag) {
-    case TMXTagName.Tile:
-      source.gids.push(readTmxAttributes(attributes, gidAttributeKindMap).gid);
-      return undefined;
     case TMXTagName.Chunk: {
       if (parent.tag !== TMXTagName.Data) return undefined;
       const chunk = readTmxAttributes(attributes, chunkAttributeKindMap);
@@ -83,6 +80,9 @@ const openTmxDataChild = (
       context.pending.push({ owner: chunk, source: chunkSource });
       return { tag, target: chunkSource, text: "" };
     }
+    case TMXTagName.Tile:
+      source.gids.push(readTmxAttributes(attributes, gidAttributeKindMap).gid);
+      return undefined;
     default:
       return undefined;
   }
@@ -99,21 +99,21 @@ export const openTmxLayerChild = (
     return openTmxDataChild(parent, tag, attributes, context);
 
   switch (tag) {
-    case TMXTagName.Properties:
-      return openTmxProperties(parent.target);
     case TMXTagName.Data:
       if (parent.tag !== TMXTagName.Layer) return undefined;
       return openTileData(parent.target, attributes, context);
-    case TMXTagName.Image:
-      if (parent.tag !== TMXTagName.ImageLayer) return undefined;
-      parent.target.image = createTmxImage(attributes);
-      return { tag, target: parent.target.image, text: "" };
     case TMXTagName.Group:
     case TMXTagName.ImageLayer:
     case TMXTagName.Layer:
     case TMXTagName.Objectgroup:
       if (parent.tag !== TMXTagName.Group) return undefined;
       return openTmxLayer(parent.target.layers, tag, attributes);
+    case TMXTagName.Image:
+      if (parent.tag !== TMXTagName.ImageLayer) return undefined;
+      parent.target.image = createTmxImage(attributes);
+      return { tag, target: parent.target.image, text: "" };
+    case TMXTagName.Properties:
+      return openTmxProperties(parent.target);
     default:
       return undefined;
   }

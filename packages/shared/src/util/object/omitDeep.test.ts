@@ -1,6 +1,6 @@
 import { omitDeep } from "#src/util/object/omitDeep";
-import { reactive } from "vue";
 import { describe, expect, test } from "vitest";
+import { reactive } from "vue";
 
 describe(omitDeep, () => {
   // Mirrors the clicker's in-memory state: a class whose fields are its save fields and its ticking counters
@@ -19,10 +19,10 @@ describe(omitDeep, () => {
     expect(
       omitDeep(
         {
+          boughtBuildings: [{ amount: 5, producedValue: 6 }],
           id: "1",
           nested: [[{ pointCount: 2, value: 3 }]],
           pointCount: 4,
-          boughtBuildings: [{ amount: 5, producedValue: 6 }],
         },
         "pointCount",
         "producedValue",

@@ -10,7 +10,7 @@ export interface TMXEmbeddedTilesetParsed {
   name: string;
   spacing?: number;
   tilecount: number;
-  tiles: TMXTileParsed[];
   tileheight: number;
+  tiles: TMXTileParsed[];
   tilewidth: number;
 }

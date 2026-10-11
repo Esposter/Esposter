@@ -1,18 +1,18 @@
-import type { Database } from "@esposter/shared";
-import {
-  InvalidOperationError,
-  Operation,
-  SITE_NAME,
-  getResultAsync,
-  getSynchronizedFunction,
-  noop,
-  openDatabase,
-} from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { Database } from "@esposter/shared";
 
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import {
+  getResultAsync,
+  getSynchronizedFunction,
+  InvalidOperationError,
+  noop,
+  openDatabase,
+  Operation,
+  SITE_NAME,
+} from "@esposter/shared";
 
 const DATABASE_NAME = SITE_NAME.toLowerCase();
 const DATABASE_VERSION = 1;

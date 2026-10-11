@@ -1,5 +1,5 @@
-import type { ChildProcess, spawn as baseSpawn } from "node:child_process";
 import type { resolveCmdCommand as baseResolveCmdCommand } from "#src/services/exec/spawn/resolveCmdCommand";
+import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import { CommandNotFoundError } from "#src/models/exec/spawn/CommandNotFoundError";
 import { spawnResolved } from "#src/services/exec/spawn/spawnResolved";

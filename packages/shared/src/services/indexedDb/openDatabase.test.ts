@@ -8,7 +8,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import "fake-indexeddb/auto";
 
 interface Schema extends DatabaseSchema {
-  users: { indexes: { byName: string }; key: number; value: { id: number; name: string } };
+  users: { indexes: { name: string }; key: number; value: { id: number; name: string } };
 }
 
 // Each test opens its own database, since a connection a failed test left open would block the next one's upgrade
@@ -16,7 +16,7 @@ const openTestDatabase = (databaseName: string) =>
   openDatabase<Schema>(databaseName, 1, {
     upgrade: (database) => {
       const store = database.createObjectStore("users", { keyPath: "id" });
-      store.createIndex("byName", "name");
+      store.createIndex("name", "name");
     },
   });
 
@@ -46,8 +46,8 @@ describe(openDatabase, () => {
     await expect(database.getAll("users", null)).resolves.toHaveLength(2);
     await expect(database.getAllKeys("users")).resolves.toStrictEqual([1, 2]);
     const store = database.transaction("users").objectStore("users");
-    await expect(store.index("byName").getAllKeys("a")).resolves.toStrictEqual([1, 2]);
-    await expect(store.index("byName").getAll("a")).resolves.toStrictEqual([
+    await expect(store.index("name").getAllKeys("a")).resolves.toStrictEqual([1, 2]);
+    await expect(store.index("name").getAll("a")).resolves.toStrictEqual([
       { id: 1, name: "a" },
       { id: 2, name: "a" },
     ]);
@@ -71,7 +71,7 @@ describe(openDatabase, () => {
     const database = await openDatabase<Schema>("aborts", 1, {
       upgrade: (upgradeDatabase) => {
         const store = upgradeDatabase.createObjectStore("users", { keyPath: "id" });
-        store.createIndex("byName", "name", { unique: true });
+        store.createIndex("name", "name", { unique: true });
       },
     });
     await database.put("users", { id: 1, name: "a" });
@@ -106,7 +106,7 @@ describe(openDatabase, () => {
     const database = await openDatabase<Schema>("shortcutFails", 1, {
       upgrade: (upgradeDatabase) => {
         const store = upgradeDatabase.createObjectStore("users", { keyPath: "id" });
-        store.createIndex("byName", "name", { unique: true });
+        store.createIndex("name", "name", { unique: true });
       },
     });
     await database.put("users", { id: 1, name: "a" });
@@ -178,7 +178,7 @@ describe(openDatabase, () => {
   test("calls blocking, and the connection it names closes so the upgrade can run", async () => {
     expect.hasAssertions();
 
-    const blocking = vi.fn<(currentVersion: number, blockedVersion: number | null) => void>(() => {
+    const blocking = vi.fn<(currentVersion: number, blockedVersion: null | number) => void>(() => {
       database.close();
     });
     const database = await openDatabase<Schema>("blocks", 1, {

@@ -18,10 +18,11 @@ import type { TMXTagName } from "#src/models/tmx/TMXTagName";
 // An element the reader is inside of. Each frame holds the model it is filling, which is attached to its parent when
 // The element opens, so the model is complete as the document is read and no intermediate copy is built. `text` is the
 // Element's character data, which only some elements read.
-export type TMXFrame = { text: string } & (
+export type TMXFrame = (
+  | { owner: TMXLayerParsed; tag: TMXTagName.Data; target: TMXDataSource }
+  | { propertyType: PropertyType; tag: TMXTagName.Property; target: TMXPropertyParsed; valueAttribute?: string }
   | { tag: TMXTagName.Animation; target: TMXAnimationParsed }
   | { tag: TMXTagName.Chunk; target: TMXDataSource }
-  | { owner: TMXLayerParsed; tag: TMXTagName.Data; target: TMXDataSource }
   | { tag: TMXTagName.EditorSettings; target: TMXEditorSettingsParsed }
   | { tag: TMXTagName.Ellipse | TMXTagName.Point | TMXTagName.Polygon | TMXTagName.Polyline; target: TMXObjectParsed }
   | { tag: TMXTagName.Export; target: TMXExportParsed }
@@ -29,13 +30,12 @@ export type TMXFrame = { text: string } & (
   | { tag: TMXTagName.Group; target: TMXGroupLayerParsed }
   | { tag: TMXTagName.Image; target: TMXImageParsed }
   | { tag: TMXTagName.ImageLayer | TMXTagName.Layer; target: TMXLayerParsed }
-  | { tag: TMXTagName.Objectgroup; target: TMXLayerParsed }
   | { tag: TMXTagName.Map; target: TMXMapParsed }
   | { tag: TMXTagName.Object; target: TMXObjectParsed }
+  | { tag: TMXTagName.Objectgroup; target: TMXLayerParsed }
   | { tag: TMXTagName.Objectgroup; target: TMXTileParsed }
   | { tag: TMXTagName.Properties; target: TMXPropertiesParsed }
-  | { propertyType: PropertyType; tag: TMXTagName.Property; target: TMXPropertyParsed; valueAttribute?: string }
   | { tag: TMXTagName.Text; target: TMXObjectParsed }
   | { tag: TMXTagName.Tile; target: TMXTileParsed }
   | { tag: TMXTagName.Tileset; target: TMXEmbeddedTilesetParsed }
-);
+) & { text: string };

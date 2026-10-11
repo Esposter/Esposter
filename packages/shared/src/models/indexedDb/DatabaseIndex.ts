@@ -9,11 +9,11 @@ export interface DatabaseIndex<
   TIndexName extends DatabaseIndexName<TSchema, TStoreName>,
 > {
   getAll: (
-    query?: IDBKeyRange | DatabaseIndexKey<TSchema, TStoreName, TIndexName> | null,
+    query?: DatabaseIndexKey<TSchema, TStoreName, TIndexName> | IDBKeyRange | null,
     count?: number,
   ) => Promise<TSchema[TStoreName]["value"][]>;
   getAllKeys: (
-    query?: IDBKeyRange | DatabaseIndexKey<TSchema, TStoreName, TIndexName> | null,
+    query?: DatabaseIndexKey<TSchema, TStoreName, TIndexName> | IDBKeyRange | null,
     count?: number,
   ) => Promise<TSchema[TStoreName]["key"][]>;
 }

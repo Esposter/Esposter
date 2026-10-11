@@ -1,8 +1,8 @@
 import type { ChildProcess, SpawnOptions } from "node:child_process";
 
 import { WIN32_EXECUTABLE_REGEX } from "#src/services/exec/spawn/constants";
-import { escapeCmdCommand } from "#src/services/exec/spawn/escapeCmdCommand";
 import { escapeCmdArgument } from "#src/services/exec/spawn/escapeCmdArgument";
+import { escapeCmdCommand } from "#src/services/exec/spawn/escapeCmdCommand";
 import { hookCmdNotFound } from "#src/services/exec/spawn/hookCmdNotFound";
 import { resolveCmdCommand } from "#src/services/exec/spawn/resolveCmdCommand";
 import { spawn } from "node:child_process";

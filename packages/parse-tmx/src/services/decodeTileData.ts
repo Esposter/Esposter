@@ -6,9 +6,9 @@ import { getDecompressedBytes } from "#src/services/getDecompressedBytes";
 import { unpackTileBytes } from "#src/services/unpackTileBytes";
 import { exhaustiveGuard, InvalidOperationError, normalizeString, Operation } from "@esposter/shared";
 
-const CSV_SEPARATOR_CHAR_CODE = ",".charCodeAt(0);
-const ZERO_CHAR_CODE = "0".charCodeAt(0);
-const NINE_CHAR_CODE = "9".charCodeAt(0);
+const CSV_SEPARATOR_CODE_POINT = ",".codePointAt(0) ?? 0;
+const ZERO_CODE_POINT = "0".codePointAt(0) ?? 0;
+const NINE_CODE_POINT = "9".codePointAt(0) ?? 0;
 const WHITESPACE_REGEX = /\s/u;
 
 // A CSV layer writes one unsigned gid per cell, separated by commas, and reads the characters once, the way the
@@ -20,15 +20,16 @@ const decodeCsv = (text: string): number[] => {
   let hasDigit = false;
   let isEnded = false;
   for (let index = 0; index <= text.length; index++) {
-    const charCode = text.charCodeAt(index);
-    if (index === text.length || charCode === CSV_SEPARATOR_CHAR_CODE) {
+    // Past the last character there is no code point, which closes the last cell as a separator would
+    const codePoint = text.codePointAt(index) ?? CSV_SEPARATOR_CODE_POINT;
+    if (codePoint === CSV_SEPARATOR_CODE_POINT) {
       tiles.push(tile);
       tile = 0;
       hasDigit = false;
       isEnded = false;
-    } else if (charCode >= ZERO_CHAR_CODE && charCode <= NINE_CHAR_CODE) {
+    } else if (codePoint >= ZERO_CODE_POINT && codePoint <= NINE_CODE_POINT) {
       if (isEnded) throw new InvalidOperationError(Operation.Read, decodeCsv.name, "has a cell with two numbers");
-      tile = tile * 10 + charCode - ZERO_CHAR_CODE;
+      tile = tile * 10 + codePoint - ZERO_CODE_POINT;
       hasDigit = true;
     } else if (WHITESPACE_REGEX.test(text.charAt(index))) isEnded ||= hasDigit;
     else throw new InvalidOperationError(Operation.Read, decodeCsv.name, `${text.charAt(index)} is not a tile gid`);

@@ -1,9 +1,9 @@
 import type { AnimationConfiguration } from "#src/models/configuration/shared/AnimationConfiguration";
 import type { SpriteEventEmitsOptions } from "#src/models/emit/SpriteEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
-import { ANIMATION_COMPLETE_EVENT_PREFIX } from "#src/services/shared/constants";
 import type { GameObjects } from "phaser";
 
+import { ANIMATION_COMPLETE_EVENT_PREFIX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // This setter's own completion listener, per sprite and per event. `off(event)` with no callback would take the

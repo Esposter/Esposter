@@ -1,5 +1,5 @@
 import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
-import { isTypeBenchDrifted } from "#src/services/benchTypes/isTypeBenchDrifted";
+import { checkIsTypeBenchDrifted } from "#src/services/benchTypes/checkIsTypeBenchDrifted";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { describe, expect, test } from "vitest";
 
@@ -18,7 +18,7 @@ describe("typeBenchResults", () => {
     () => {
       expect.hasAssertions();
 
-      const driftedPaths = sourcePaths.filter((sourcePath) => isTypeBenchDrifted(sourcePath));
+      const driftedPaths = sourcePaths.filter((sourcePath) => checkIsTypeBenchDrifted(sourcePath));
 
       expect(driftedPaths).toStrictEqual([]);
     },

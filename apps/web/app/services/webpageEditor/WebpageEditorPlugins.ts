@@ -1,11 +1,11 @@
 // @unocss-include
 import type { Editor, EditorConfig } from "grapesjs";
 
-import { usePlugin } from "grapesjs";
 import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
 import { customCodePlugin } from "@/services/webpageEditor/plugins/customCodePlugin";
 import { formsPlugin } from "@/services/webpageEditor/plugins/formsPlugin";
+import { usePlugin } from "grapesjs";
 import grapesJSParserPostcss from "grapesjs-parser-postcss";
 import grapesJSPluginExport from "grapesjs-plugin-export";
 import grapesJSPresetWebpage from "grapesjs-preset-webpage";

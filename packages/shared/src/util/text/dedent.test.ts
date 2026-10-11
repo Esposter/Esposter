@@ -73,27 +73,25 @@ describe(dedent, () => {
     expect(dedent("\t\tfirst\n\t\t\tsecond\n\t\t\t\tthird")).toBe("first\n\tsecond\n\t\tthird");
   });
 
-  describe("single line input", () => {
-    test("works with single line input", () => {
-      expect.hasAssertions();
+  test("single line input: works with single line input", () => {
+    expect.hasAssertions();
 
-      expect(dedent`A single line of input.`).toBe("A single line of input.");
-    });
+    expect(dedent`A single line of input.`).toBe("A single line of input.");
+  });
 
-    test("works with single line and closing backtick on newline", () => {
-      expect.hasAssertions();
+  test("single line input: works with single line and closing backtick on newline", () => {
+    expect.hasAssertions();
 
-      expect(dedent`
-        A single line of input.
-      `).toBe("A single line of input.");
-    });
+    expect(dedent`
+      A single line of input.
+    `).toBe("A single line of input.");
+  });
 
-    test("works with single line and inline closing backtick", () => {
-      expect.hasAssertions();
+  test("single line input: works with single line and inline closing backtick", () => {
+    expect.hasAssertions();
 
-      expect(dedent`
-        A single line of input.`).toBe("A single line of input.");
-    });
+    expect(dedent`
+      A single line of input.`).toBe("A single line of input.");
   });
 
   test("can be used as a function", () => {
@@ -120,50 +118,51 @@ describe(dedent, () => {
     expect(dedent(String.raw`\u{1F60A}`)).toBe(String.raw`\u{1F60A}`);
   });
 
-  describe("function character escapes", () => {
-    test("does not escape backticks", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape backticks", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`\``)).toBe("`");
-    });
+    expect(dedent(`\``)).toBe("`");
+  });
 
-    test("does not escape dollar signs", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape dollar signs", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`$`)).toBe("$");
-    });
+    expect(dedent(`$`)).toBe("$");
+  });
 
-    test("does not escape opening braces", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape opening braces", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`{`)).toBe("{");
-    });
+    expect(dedent(`{`)).toBe("{");
+  });
 
-    test("does not escape double-escaped backticks", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape double-escaped backticks", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`\\\``)).toBe(String.raw`\``);
-    });
+    expect(dedent(`\\\``)).toBe(String.raw`\``);
+  });
 
-    test("does not escape double-escaped dollar signs", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape double-escaped dollar signs", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`\\$`)).toBe(String.raw`\$`);
-    });
+    expect(dedent(`\\$`)).toBe(String.raw`\$`);
+  });
 
-    test("does not escape double-escaped opening braces", () => {
-      expect.hasAssertions();
+  test("function character escapes: does not escape double-escaped opening braces", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`\\{`)).toBe(String.raw`\{`);
-    });
+    expect(dedent(`\\{`)).toBe(String.raw`\{`);
+  });
 
-    test("ignores closing braces", () => {
-      expect.hasAssertions();
+  test("function character escapes: ignores closing braces", () => {
+    expect.hasAssertions();
 
-      expect(dedent(`}`)).toBe("}");
-    });
+    expect(dedent(`}`)).toBe("}");
+  });
 
-    describe.each([undefined, false, true])("with escapeSpecialCharacters %s", (escapeSpecialCharacters) => {
+  describe.each([undefined, false, true])(
+    "function character escapes: with escapeSpecialCharacters %s",
+    (escapeSpecialCharacters) => {
       const isEscaping = escapeSpecialCharacters === true;
       const dedenter = dedent.withOptions({ escapeSpecialCharacters });
 
@@ -202,8 +201,8 @@ describe(dedent, () => {
 
         expect(dedenter(`\\{`)).toBe(isEscaping ? "{" : String.raw`\{`);
       });
-    });
-  });
+    },
+  );
 
   describe.each([undefined, false, true])("with trimWhitespace %s", (trimWhitespace) => {
     test("with trailing whitespace", () => {
@@ -223,32 +222,33 @@ describe(dedent, () => {
     });
   });
 
-  describe("string tag character escapes", () => {
-    test("escapes backticks", () => {
-      expect.hasAssertions();
+  test("string tag character escapes: escapes backticks", () => {
+    expect.hasAssertions();
 
-      expect(dedent`\``).toBe("`");
-    });
+    expect(dedent`\``).toBe("`");
+  });
 
-    test("escapes dollar signs", () => {
-      expect.hasAssertions();
+  test("string tag character escapes: escapes dollar signs", () => {
+    expect.hasAssertions();
 
-      expect(dedent`\$`).toBe("$");
-    });
+    expect(dedent`\$`).toBe("$");
+  });
 
-    test("escapes opening braces", () => {
-      expect.hasAssertions();
+  test("string tag character escapes: escapes opening braces", () => {
+    expect.hasAssertions();
 
-      expect(dedent`\{`).toBe("{");
-    });
+    expect(dedent`\{`).toBe("{");
+  });
 
-    test("ignores closing braces", () => {
-      expect.hasAssertions();
+  test("string tag character escapes: ignores closing braces", () => {
+    expect.hasAssertions();
 
-      expect(dedent`\}`).toBe(String.raw`\}`);
-    });
+    expect(dedent`\}`).toBe(String.raw`\}`);
+  });
 
-    describe.each([undefined, false, true])("with escapeSpecialCharacters %s", (escapeSpecialCharacters) => {
+  describe.each([undefined, false, true])(
+    "string tag character escapes: with escapeSpecialCharacters %s",
+    (escapeSpecialCharacters) => {
       test("backticks", () => {
         expect.hasAssertions();
 
@@ -272,8 +272,8 @@ describe(dedent, () => {
           escapeSpecialCharacters === false ? String.raw`\{` : "{",
         );
       });
-    });
-  });
+    },
+  );
 
   test("doesn't strip explicit newlines", () => {
     expect.hasAssertions();
@@ -293,103 +293,97 @@ describe(dedent, () => {
     `).toBe("<p>\n  Hello world!\n</p>\n");
   });
 
-  describe("escape sequences", () => {
-    test("passes through a hex escape", () => {
-      expect.hasAssertions();
+  test("escape sequences: passes through a hex escape", () => {
+    expect.hasAssertions();
 
-      // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
-      expect(dedent`\xa0\t`).toBe(" \t");
-    });
-
-    test("passes through a fixed-length Unicode escape", () => {
-      expect.hasAssertions();
-
-      expect(dedent`\u5F1F`).toBe("\u5F1F");
-    });
-
-    test("passes through a Unicode code point escape", () => {
-      expect.hasAssertions();
-
-      expect(dedent`\u{1F60A}`).toBe("\u{1F60A}");
-    });
-
-    test("keeps an out-of-range code point escape as typed instead of throwing", () => {
-      expect.hasAssertions();
-
-      expect(dedent`\u{110000}`).toBe(String.raw`\u{110000}`);
-    });
+    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
+    expect(dedent`\xa0\t`).toBe(" \t");
   });
 
-  describe("escape sequences when escapeSpecialCharacters is false", () => {
-    const dedenter = dedent.withOptions({ escapeSpecialCharacters: false });
+  test("escape sequences: passes through a fixed-length Unicode escape", () => {
+    expect.hasAssertions();
 
-    test("keeps a hex escape", () => {
-      expect.hasAssertions();
-
-      // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
-      expect(dedenter`\xa0\t`).toBe(String.raw`\xa0\t`);
-    });
-
-    test("keeps a fixed-length Unicode escape", () => {
-      expect.hasAssertions();
-
-      expect(dedenter`\u5F1F`).toBe(String.raw`\u5F1F`);
-    });
-
-    test("keeps a Unicode code point escape", () => {
-      expect.hasAssertions();
-
-      expect(dedenter`\u{1F60A}`).toBe(String.raw`\u{1F60A}`);
-    });
+    expect(dedent`\u5F1F`).toBe("\u5F1F");
   });
 
-  describe("escapes in interpolated values", () => {
-    test("should escape when called with template strings (hex escape)", () => {
-      expect.hasAssertions();
+  test("escape sequences: passes through a Unicode code point escape", () => {
+    expect.hasAssertions();
 
-      // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
-      expect(dedent`a\xa0b`).toBe("a b");
-    });
+    expect(dedent`\u{1F60A}`).toBe("\u{1F60A}");
+  });
 
-    test("should escape when called with template strings (escaped interpolation)", () => {
-      expect.hasAssertions();
+  test("escape sequences: keeps an out-of-range code point escape as typed instead of throwing", () => {
+    expect.hasAssertions();
 
-      expect(dedent`\${hi}`).toBe(`\${hi}`);
-    });
+    expect(dedent`\u{110000}`).toBe(String.raw`\u{110000}`);
+  });
 
-    test("should escape when called with template strings (multiline)", () => {
-      expect.hasAssertions();
+  const dedenter = dedent.withOptions({ escapeSpecialCharacters: false });
 
-      expect(dedent`
-        \${hi}
-        name
-      `).toBe(`\${hi}\nname`);
-    });
+  test("escape sequences when escapeSpecialCharacters is false: keeps a hex escape", () => {
+    expect.hasAssertions();
 
-    // Regressions: the escape pass ran over the whole result, so a backslash sequence inside a value was unescaped too
-    test("#109 #110 #112 keeps a backslash sequence in an interpolated value as typed", () => {
-      expect.hasAssertions();
+    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
+    expect(dedenter`\xa0\t`).toBe(String.raw`\xa0\t`);
+  });
 
-      expect(dedent`x: ${String.raw`a\tb`}`).toBe(String.raw`x: a\tb`);
-    });
+  test("escape sequences when escapeSpecialCharacters is false: keeps a fixed-length Unicode escape", () => {
+    expect.hasAssertions();
 
-    test("#113 keeps a Windows-style path in an interpolated value as typed", () => {
-      expect.hasAssertions();
+    expect(dedenter`\u5F1F`).toBe(String.raw`\u5F1F`);
+  });
 
-      expect(dedent`path: ${String.raw`C:\new\table`}`).toBe(String.raw`path: C:\new\table`);
-    });
+  test("escape sequences when escapeSpecialCharacters is false: keeps a Unicode code point escape", () => {
+    expect.hasAssertions();
 
-    test("#95 keeps an escaped backslash from escaping the escape after it", () => {
-      expect.hasAssertions();
+    expect(dedenter`\u{1F60A}`).toBe(String.raw`\u{1F60A}`);
+  });
 
-      expect(dedent`\\\$`).toBe(String.raw`\$`);
-    });
+  test("escapes in interpolated values: should escape when called with template strings (hex escape)", () => {
+    expect.hasAssertions();
 
-    test("#34 #90 keeps an escaped backslash before an n as a backslash and an n", () => {
-      expect.hasAssertions();
+    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
+    expect(dedent`a\xa0b`).toBe("a b");
+  });
 
-      expect(dedent`\\n`).toBe(String.raw`\n`);
-    });
+  test("escapes in interpolated values: should escape when called with template strings (escaped interpolation)", () => {
+    expect.hasAssertions();
+
+    expect(dedent`\${hi}`).toBe(`\${hi}`);
+  });
+
+  test("escapes in interpolated values: should escape when called with template strings (multiline)", () => {
+    expect.hasAssertions();
+
+    expect(dedent`
+      \${hi}
+      name
+    `).toBe(`\${hi}\nname`);
+  });
+
+  // Regressions: the escape pass ran over the whole result, so a backslash sequence inside a value was unescaped too
+  test("escapes in interpolated values: #109 #110 #112 keeps a backslash sequence in an interpolated value as typed", () => {
+    expect.hasAssertions();
+
+    expect(dedent`x: ${String.raw`a\tb`}`).toBe(String.raw`x: a\tb`);
+  });
+
+  test("escapes in interpolated values: #113 keeps a Windows-style path in an interpolated value as typed", () => {
+    expect.hasAssertions();
+
+    expect(dedent`path: ${String.raw`C:\new\table`}`).toBe(String.raw`path: C:\new\table`);
+  });
+
+  test("escapes in interpolated values: #95 keeps an escaped backslash from escaping the escape after it", () => {
+    expect.hasAssertions();
+
+    expect(dedent`\\\$`).toBe(String.raw`\$`);
+  });
+
+  test("escapes in interpolated values: #34 #90 keeps an escaped backslash before an n as a backslash and an n", () => {
+    expect.hasAssertions();
+
+    expect(dedent`\\n`).toBe(String.raw`\n`);
   });
 
   test("#94 turns a carriage return escape into a carriage return", () => {

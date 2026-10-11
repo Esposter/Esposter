@@ -1,5 +1,5 @@
-import { isAllowedUrl } from "#src/services/sanitizeHtml/isAllowedUrl";
-import { isWhitespaceCharacter } from "#src/services/sanitizeHtml/isWhitespaceCharacter";
+import { checkIsAllowedUrl } from "#src/services/sanitizeHtml/checkIsAllowedUrl";
+import { checkIsWhitespaceCharacter } from "#src/services/sanitizeHtml/checkIsWhitespaceCharacter";
 import { SRCSET_DESCRIPTOR_REGEX } from "#src/services/sanitizeHtml/constants";
 
 const COMMA = ",";
@@ -15,12 +15,12 @@ export const filterSrcset = (value: string, allowedSchemes: string[]): string | 
   while (position < value.length) {
     while (
       position < value.length &&
-      (isWhitespaceCharacter(value.charAt(position)) || value.charAt(position) === COMMA)
+      (checkIsWhitespaceCharacter(value.charAt(position)) || value.charAt(position) === COMMA)
     )
       position++;
 
     const urlStart = position;
-    while (position < value.length && !isWhitespaceCharacter(value.charAt(position))) position++;
+    while (position < value.length && !checkIsWhitespaceCharacter(value.charAt(position))) position++;
     let url = value.slice(urlStart, position);
     let descriptorText = "";
     if (url.endsWith(COMMA)) url = url.replace(/,+$/u, "");
@@ -37,7 +37,7 @@ export const filterSrcset = (value: string, allowedSchemes: string[]): string | 
     }
 
     const descriptors = descriptorText.trim().split(/\s+/u).filter(Boolean);
-    if (!url || !isAllowedUrl(url, allowedSchemes)) continue;
+    if (!url || !checkIsAllowedUrl(url, allowedSchemes)) continue;
     if (descriptors.length > 1 || descriptors.some((descriptor) => !SRCSET_DESCRIPTOR_REGEX.test(descriptor))) continue;
 
     candidates.push([url, ...descriptors].join(" "));

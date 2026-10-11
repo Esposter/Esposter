@@ -18,8 +18,8 @@ import { getPackageFormat } from "#src/services/dependencies/score/getPackageFor
 import { getSelfContainmentPoints } from "#src/services/dependencies/score/getSelfContainmentPoints";
 import { getSizePoints } from "#src/services/dependencies/score/getSizePoints";
 import { getStabilityPoints } from "#src/services/dependencies/score/getStabilityPoints";
-import { readClientBundleReport } from "#src/services/dependencies/score/readClientBundleReport";
 import { getWorkspacePackages } from "#src/services/dependencies/score/getWorkspacePackages";
+import { readClientBundleReport } from "#src/services/dependencies/score/readClientBundleReport";
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
 import { readInstallCosts } from "#src/services/dependencies/score/readInstallCosts";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";

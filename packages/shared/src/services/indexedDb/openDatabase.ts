@@ -3,12 +3,11 @@ import type { DatabaseOpenOptions } from "#src/models/indexedDb/DatabaseOpenOpti
 import type { DatabaseSchema } from "#src/models/indexedDb/DatabaseSchema";
 
 import { getResult } from "#src/services/error/getResult";
-import { noop } from "#src/util/function/noop";
-
 import { getRequestError } from "#src/services/indexedDb/getRequestError";
 import { wrapDatabase } from "#src/services/indexedDb/wrapDatabase";
-import { wrapUpgradeTransaction } from "#src/services/indexedDb/wrapUpgradeTransaction";
 import { wrapUpgradeDatabase } from "#src/services/indexedDb/wrapUpgradeDatabase";
+import { wrapUpgradeTransaction } from "#src/services/indexedDb/wrapUpgradeTransaction";
+import { noop } from "#src/util/function/noop";
 
 // Reads `indexedDB` only when called, so importing this module on the server or in a test without the global is harmless
 export const openDatabase = <TSchema extends DatabaseSchema = DatabaseSchema>(

@@ -19,7 +19,7 @@ export const wrapDatabase = <TSchema extends DatabaseSchema = DatabaseSchema>(
       database.transaction(storeName, "readwrite").objectStore(storeName),
     );
   const transaction = <TStoreName extends DatabaseStoreName<TSchema>, TMode extends IDBTransactionMode = "readonly">(
-    storeNames: TStoreName | readonly TStoreName[],
+    storeNames: readonly TStoreName[] | TStoreName,
     mode?: TMode,
     options?: IDBTransactionOptions,
   ): DatabaseTransaction<TSchema, TStoreName, TMode> => {

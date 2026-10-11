@@ -1,8 +1,8 @@
 import type { TMXPendingTileData } from "#src/models/tmx/TMXPendingTileData";
 
+import { decodeTileData } from "#src/services/decodeTileData";
 import { parseFlips } from "#src/services/parseFlips";
 import { parseTileId } from "#src/services/parseTileId";
-import { decodeTileData } from "#src/services/decodeTileData";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every queued layer and chunk takes its decoded cells. Chunked data is skipped, since its cells are in its chunks.

@@ -1,10 +1,11 @@
-import { DEFAULT_ALLOWED_TAGS, HTML_NAMESPACE } from "#src/services/sanitizeHtml/constants";
-import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
 import type { DefaultTreeAdapterTypes } from "parse5";
 
-import { defaultTreeAdapter, parseFragment } from "parse5";
+import { DEFAULT_ALLOWED_TAGS, HTML_NAMESPACE } from "#src/services/sanitizeHtml/constants";
+import { sanitizeHtml } from "#src/services/sanitizeHtml/sanitizeHtml";
+import { jsonDateParse } from "#src/util/object/jsonDateParse";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { defaultTreeAdapter, parseFragment } from "parse5";
 import { describe, expect, test } from "vitest";
 
 // Every element of the output, read back the way a browser would read it, with its attributes
@@ -24,7 +25,7 @@ const getOutputElements = (output: string): DefaultTreeAdapterTypes.Element[] =>
 };
 
 describe(sanitizeHtml, () => {
-  const DOMPURIFY_VECTORS: { payload: string; title: string }[] = JSON.parse(
+  const DOMPURIFY_VECTORS = jsonDateParse<{ payload: string; title: string }[]>(
     readFileSync(resolve(import.meta.dirname, "../../test/domPurifyVectors.json"), "utf8"),
   );
   const ALLOWED_ATTRIBUTE_NAMES = new Set(["href", "name", "rel", "style", "target"]);

@@ -1,5 +1,5 @@
-import type { DefaultTreeAdapterTypes } from "parse5";
 import type { SanitizePolicy } from "#src/models/sanitizeHtml/SanitizePolicy";
+import type { DefaultTreeAdapterTypes } from "parse5";
 
 import { HTML_NAMESPACE, MAX_NESTING_DEPTH, NON_TEXT_TAGS, VOID_TAGS } from "#src/services/sanitizeHtml/constants";
 import { escapeAttribute } from "#src/services/sanitizeHtml/escapeAttribute";

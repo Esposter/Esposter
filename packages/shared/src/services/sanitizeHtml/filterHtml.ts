@@ -1,10 +1,10 @@
 import type { SanitizePolicy } from "#src/models/sanitizeHtml/SanitizePolicy";
 
-import { defaultTreeAdapter, parseFragment } from "parse5";
-import { HTML_NAMESPACE } from "#src/services/sanitizeHtml/constants";
 import { collectText } from "#src/services/sanitizeHtml/collectText";
+import { HTML_NAMESPACE } from "#src/services/sanitizeHtml/constants";
 import { escapeText } from "#src/services/sanitizeHtml/escapeText";
 import { renderNode } from "#src/services/sanitizeHtml/renderNode";
+import { defaultTreeAdapter, parseFragment } from "parse5";
 
 // The fragment is parsed as a body's would be, the context a rich-text container renders into, so the tree a browser
 // Builds from the output is the tree this filter read. The output is then parsed and filtered again: markup that does

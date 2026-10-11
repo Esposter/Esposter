@@ -1,5 +1,5 @@
-import type { spawn as baseSpawn } from "node:child_process";
 import type { spawnResolved as baseSpawnResolved } from "#src/services/exec/spawn/spawnResolved";
+import type { spawn as baseSpawn } from "node:child_process";
 
 import { spawnHidden } from "#src/services/exec/spawn/spawnHidden";
 import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";

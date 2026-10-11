@@ -140,8 +140,8 @@ describe(sanitizeHtml, () => {
 
     expect(
       sanitizeHtml(`<span class="hljs-keyword not-allowed"></span>`, {
-        allowedClasses: { span: ["hljs*"] },
         allowedAttributes: { span: ["class"] },
+        allowedClasses: { span: ["hljs*"] },
         allowedTags: ["span"],
       }),
     ).toBe(`<span class="hljs-keyword"></span>`);

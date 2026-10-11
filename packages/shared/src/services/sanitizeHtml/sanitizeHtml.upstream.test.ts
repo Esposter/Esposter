@@ -173,13 +173,13 @@ describe(sanitizeHtml, () => {
     [
       "should allow specific classes when allowlisted with allowedClasses for a single tag",
       '<p class="nifty simple dippy">whee</p>',
-      { allowedTags: ["p"], allowedClasses: { p: ["nifty"] } },
+      { allowedClasses: { p: ["nifty"] }, allowedTags: ["p"] },
       '<p class="nifty">whee</p>',
     ],
     [
       "should not act weird when the class attribute is empty",
       '<p class="">whee</p>',
-      { allowedTags: ["p"], allowedClasses: { p: ["nifty"] } },
+      { allowedClasses: { p: ["nifty"] }, allowedTags: ["p"] },
       "<p>whee</p>",
     ],
     ["should not crash on bad markup", "<p a", undefined, ""],
@@ -210,7 +210,7 @@ describe(sanitizeHtml, () => {
     [
       'Should encode &, <, > and where necessary, "',
       '"< & >" <span class="&#34;test&#34;">cool</span>',
-      { allowedTags: ["span"], allowedAttributes: { span: ["class"] } },
+      { allowedAttributes: { span: ["class"] }, allowedTags: ["span"] },
       '"&lt; &amp; &gt;" <span>cool</span>',
     ],
     [
