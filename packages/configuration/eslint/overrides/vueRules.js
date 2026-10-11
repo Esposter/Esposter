@@ -12,7 +12,7 @@ export default {
   // Deliberately keeps unused-vars rules enabled there, so this off is still load-bearing.
   "@typescript-eslint/no-unused-vars": "off",
   // `<script setup>` is the only component authoring style here. The Options API runtime is compiled out of the
-  // Bundle entirely (`future.compatibilityVersion: 5` defaults `vue.optionsApi` off), so an options component of
+  // Bundle entirely (Nuxt 5 defaults `vue.optionsApi` off), so an options component of
   // Ours would mount against a runtime that cannot apply it and fail at render rather than at build. Plain
   // `defineComponent(...)` composition is banned with it: it buys nothing script setup does not, and leaving it
   // Allowed is what lets an options block back in one property at a time.
