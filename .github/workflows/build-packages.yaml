@@ -64,8 +64,9 @@ jobs:
         if: steps.game-data-mirror.outputs.cache-hit != 'true'
         working-directory: packages/genshin-world
         run: pnpm game-data:mirror
-      # `*/dist` is the build output, and the generated barrels and kit map (gitignored) sit beside the sources; libraries only,
-      # so their common ancestor `packages` is where the artifact unpacks
+      # `*/dist` is the build output, and the generated barrels and the `src/generated` files a build hook writes
+      # (gitignored) sit beside the sources; libraries only, so their common ancestor `packages` is where the artifact
+      # unpacks
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -73,5 +74,5 @@ jobs:
           path: |
             packages/*/dist
             packages/*/src/**/index.ts
-            packages/genshin-world/src/generated/characterKitMap
+            packages/*/src/generated/**
           if-no-files-found: error
