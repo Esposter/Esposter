@@ -232,6 +232,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | Page                                                | Covers                                                                            |
 | :-------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Aino](/docs/genshin/kits/aino)                     | Three strikes, a provisional charged attack, Musecatcher and Cool Your Jets Ducky |
+| [Aino](/docs/genshin/kits/aino)                     | Three strikes, a charged attack, Musecatcher and Water Balls                      |
 | [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms                          |
 | [Alhaitham](/docs/genshin/kits/alhaitham)           | Universality's tap and hold, Particular Field and Projection Attacks              |
 | [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                                       |
