@@ -65,6 +65,7 @@ A name that is still **accurate** is not churn to be renamed for symmetry with i
 - Keeping a stale identifier because renaming it "touches infra" — preview it and read the plan.
 - Shipping a rename with a re-export of the old path "for now", which makes the old name permanent by making nothing fail.
 - A schema that accepts the previous shape alongside the current one.
+- A migration plan that runs the old shape beside the new behind an adapter until a later phase deletes it. Each commit moves every caller and deletes what it replaced, a behaviour guard proving it.
 - Version-suffixed anything (`useFooV2`, `fooNew`) as a way of avoiding the rename.
 - A comment explaining that a name is historical. If it is wrong, change it; the explanation is the cost.
 - Hand-rolling what the runtime already provides so the code keeps running below the floor the manifest declares.
