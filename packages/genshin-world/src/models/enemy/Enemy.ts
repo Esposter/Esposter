@@ -4,6 +4,7 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { EnemyState } from "#src/models/enemy/EnemyState";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { MoondriftHarmonyHit } from "#src/models/enemy/MoondriftHarmonyHit";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { GroundPoint } from "genshin-engine";
 
@@ -11,7 +12,8 @@ import type { GroundPoint } from "genshin-engine";
 // Where it stands and faces, in radians about the vertical from south, its health and poise, its state and how long it
 // Has held it, how long until it may attack again, how long its broken poise has left, which patrol point it walks to,
 // How many of its energy thresholds it has dropped, its elements and the internal cooldowns each attacker's tags and
-// Reactions keep on it, beside the ones each reaction keeps whatever its source, and the seconds since it was last hit
+// Reactions keep on it, beside the ones each reaction keeps whatever its source, the seconds since it was last hit, and
+// The Moondrift Harmony hits on their way to it
 export interface Enemy {
   attackCooldownSeconds: number;
   // The combatant whose Pyro or Dendro last lit or fed its Burning, as its hit priced it, which the Burning ticks are
@@ -34,6 +36,7 @@ export interface Enemy {
   internalCooldownMap: Map<string, InternalCooldown>;
   level: number;
   maxHealth: number;
+  moondriftHarmonyHits: MoondriftHarmonyHit[];
   patrol: GroundPoint[];
   patrolIndex: number;
   poise: number;

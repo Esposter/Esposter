@@ -82,7 +82,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Menu Time](/docs/proposals/genshin/menu-time)               | the Time screen the side bar opens, setting the world's held hour                                                                         |
 | [Menu Settings](/docs/proposals/genshin/menu-settings)       | the Settings screen's body: its Graphics quality, Audio and language rows                                                                 |
 | [Menu quit prompt](/docs/proposals/genshin/menu-quit-prompt) | the exit prompt Quit Game opens, scaled to its whole frame                                                                                |
-| [Combat](/docs/proposals/genshin/combat)                     | the Lunar and Stellar Glimmer reactions                                                                                                   |
+| [Combat](/docs/proposals/genshin/combat)                     | the Stellar Glimmer reactions, waiting on the Cryo Traveler's or Odette's kit                                                             |
 | [Inventory](/docs/proposals/genshin/inventory)               | using food on the party, and the destroy mode on the bag's screen                                                                         |
 | [Load budget](/docs/proposals/genshin/load-budget)           | the trims that load only the first frame's needs before a screen shows, each held to its measured budget                                  |
 | [Wish](/docs/proposals/genshin/wish)                         | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |

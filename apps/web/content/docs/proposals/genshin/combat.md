@@ -1,6 +1,6 @@
 ---
 title: Combat
-description: Proposal — the Lunar and Stellar Glimmer reactions of the game's newest characters, each dealt its own damage formula from the community's documented mechanics, on the combat rules the built ones already run.
+description: Proposal — the Stellar Glimmer reactions of the game's newest characters, each dealt its own damage formula from the community's documented mechanics, on the combat rules the built ones already run.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/combat/**"]
 ---
@@ -15,22 +15,22 @@ This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by
 
 ## Scope and order
 
-**Today:** auras, reactions and their damage on one target, the internal cooldown, shields and energy from particles and orbs, and the Traveler's kit's hits through them, as the [combat](/docs/genshin/combat) page describes. The deployed team's Moonsign, Nascent and Ascendant Gleam, the Lunar formula for a direct Lunar hit, Lunar-Bloom with the party's Verdant Dew, and Lunar-Charged with the party's cloud and its contributors' weighted hit are built, with Lauma's Benediction and Hymn of Eternal Rest the first to trigger and spend Lunar-Bloom and Ineffa's Benediction the first to trigger Lunar-Charged ([combat](/docs/genshin/combat#lunar-reactions)).
+**Today:** auras, reactions and their damage on one target, the internal cooldown, shields and energy from particles and orbs, and the Traveler's kit's hits through them, as the [combat](/docs/genshin/combat) page describes. The deployed team's Moonsign, Nascent and Ascendant Gleam, the Lunar formula for a direct Lunar hit, Lunar-Bloom with the party's Verdant Dew, Lunar-Charged with the party's cloud and its contributors' weighted hit, and Lunar-Crystallize with its Moondrifts and Moondrift Harmony are built, with Lauma's Benediction and Hymn of Eternal Rest the first to trigger and spend Lunar-Bloom and Ineffa's Benediction the first to trigger Lunar-Charged ([combat](/docs/genshin/combat#lunar-reactions)).
 
 **This adds:**
 
-1. **The Lunar and Stellar Glimmer reactions**, with the first character whose kit triggers them.
+1. **The Stellar Glimmer reactions**, Stellar-Conduct and Stellar Swirl, with the first character whose kit triggers them. gcsim deals both (`pkg/reactable/stellarconduct.go`, `stellarswirl.go`), but each starts from a gadget a kit places, the Polestar field or the vortex, and only the Cryo Traveler's and Odette's kits place them. Neither is built, so this step waits on one of them.
 
 ## What this does not propose
 
-- **Characters' kits.** Talent multipliers, each ability's gauge, internal cooldown tag and particles are a character's data, added with the [characters](/docs/genshin/characters) that use them.
+- **Characters' kits.** Talent multipliers, each ability's gauge, internal cooldown tag and particles are a character's data, added with the [characters](/docs/genshin/characters) that use them. The Lunar reactions leave these kit lines waiting on nothing but their kit's next pass: Flins's Lunar-Charged hits, Aino's Moonsign, Columbina's Benediction, the first to trigger Lunar-Crystallize, Ineffa's passives and constellations, and Lauma's Pale Hymn, Moon Song and passives, with each kit's Lunar flat-damage and elevation bonuses, High Voltage's particle on Lunar-Charged and Enduring Rock's clause for Moondrifts.
 - **Anything drawn.** A reaction's text, an aura's icon over its target and a shield's bar belong to the HUD and the enemies.
 
 ## Key files
 
 | File                                                                           | Role                                                          |
 | :----------------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`              | Reads the party's Moonsign                                    |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`              | Turns a Swirl Stellar where a kit's gadget stands             |
 | `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts` | Gains the Glimmer formula beside the transformative reactions |
 
 ## Sources
