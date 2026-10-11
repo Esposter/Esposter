@@ -8,7 +8,7 @@ describe(parseModuleOptions, () => {
   test("the defaults parse to themselves, so the schema and the defaults cannot drift apart", () => {
     expect.hasAssertions();
 
-    const defaults = getDefaultModuleOptions(true, DEV_SERVER_URL);
+    const defaults = getDefaultModuleOptions(true, DEV_SERVER_URL, false);
 
     expect(parseModuleOptions(defaults)).toStrictEqual(defaults);
   });
@@ -17,7 +17,7 @@ describe(parseModuleOptions, () => {
     expect.hasAssertions();
 
     expect(() =>
-      parseModuleOptions({ ...getDefaultModuleOptions(true, DEV_SERVER_URL), enabeld: true }),
+      parseModuleOptions({ ...getDefaultModuleOptions(true, DEV_SERVER_URL, false), enabeld: true }),
     ).toThrowErrorMatchingInlineSnapshot(`[TypeError: nuxt-security-module: (options): Unrecognized key: "enabeld"]`);
   });
 
@@ -27,7 +27,7 @@ describe(parseModuleOptions, () => {
     const requestSizeLimiter = { maxRequestSizeInBytes: 1.5, maxUploadFileRequestInBytes: 8_000_000 };
 
     expect(() =>
-      parseModuleOptions({ ...getDefaultModuleOptions(true, DEV_SERVER_URL), requestSizeLimiter }),
+      parseModuleOptions({ ...getDefaultModuleOptions(true, DEV_SERVER_URL, false), requestSizeLimiter }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[TypeError: nuxt-security-module: requestSizeLimiter.maxRequestSizeInBytes: must be a whole number of bytes]`,
     );

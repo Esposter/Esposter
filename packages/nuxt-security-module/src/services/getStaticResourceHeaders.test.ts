@@ -6,7 +6,7 @@ describe(getStaticResourceHeaders, () => {
   test("a static resource carries the headers that are not page-only, and no page policy", () => {
     expect.hasAssertions();
 
-    expect(getStaticResourceHeaders(getDefaultSecurityHeaders(false))).toStrictEqual({
+    expect(getStaticResourceHeaders(getDefaultSecurityHeaders(false, false))).toStrictEqual({
       "Referrer-Policy": "no-referrer",
       "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
       "X-Content-Type-Options": "nosniff",

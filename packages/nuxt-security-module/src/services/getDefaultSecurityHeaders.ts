@@ -7,7 +7,7 @@ import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
 // Each reviewed default has its source in the defaults review page,
 // `apps/web/content/docs/nuxt-security-module/defaults-review.md`.
 // The `Permissions-Policy` denials are OWASP's `ci/headers_add.json`, and the HSTS `max-age` is OWASP's two-year value
-export const getDefaultSecurityHeaders = (isDevelopment: boolean): SecurityHeaders => ({
+export const getDefaultSecurityHeaders = (isDevelopment: boolean, isStrict: boolean): SecurityHeaders => ({
   contentSecurityPolicy: {
     "base-uri": ["'none'"],
     "default-src": ["'self'"],
@@ -16,7 +16,10 @@ export const getDefaultSecurityHeaders = (isDevelopment: boolean): SecurityHeade
     "frame-ancestors": ["'self'"],
     "img-src": ["'self'", "data:"],
     "object-src": ["'none'"],
-    "script-src": ["'self'", "https:", "'unsafe-inline'", "'strict-dynamic'", NONCE_PLACEHOLDER],
+    // Strict drops the host and `'unsafe-inline'` fallbacks, which only a browser without nonce support reads
+    "script-src": isStrict
+      ? ["'self'", "'strict-dynamic'", NONCE_PLACEHOLDER]
+      : ["'self'", "https:", "'unsafe-inline'", "'strict-dynamic'", NONCE_PLACEHOLDER],
     "script-src-attr": ["'none'"],
     "style-src": ["'self'", "https:", "'unsafe-inline'"],
     "upgrade-insecure-requests": true,
