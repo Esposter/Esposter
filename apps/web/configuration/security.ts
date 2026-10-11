@@ -61,12 +61,21 @@ export const security: NuxtConfig["security"] = {
         "blob:",
       ],
     },
+    // The module denies every powerful feature by default, so each one the app calls is opened here by name
     permissionsPolicy: {
+      // The Genshin world's music, the game sounds and the call's media, each a `play()`
+      autoplay: ["self"],
       // `livekit-client`
       camera: ["self"],
+      // The sheet's paste
+      "clipboard-read": ["self"],
+      // Every copy button, the sheet's copy and a resource's link
+      "clipboard-write": ["self"],
       "display-capture": ["self"],
       // @vue-pdf-viewer/viewer
       fullscreen: ["self"],
+      // The Genshin world's controller input, `navigator.getGamepads`
+      gamepad: ["self"],
       microphone: ["self"],
     },
   },
