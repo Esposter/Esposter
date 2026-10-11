@@ -26,7 +26,7 @@ func (c *char) Skill(p map[string]int) (action.Info, error) {
 }
 `;
 
-    expect(readGcsimTravels([{ name: "aimed.go", source }])).toStrictEqual(
+    expect(readGcsimTravels([{ path: "aimed.go", source }])).toStrictEqual(
       new Map([
         ["aimedHitmarks", { file: "aimed.go", frames: 10, line: 6 }],
         ["skillRelease", { file: "aimed.go", frames: 20, line: 16 }],

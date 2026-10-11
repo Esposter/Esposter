@@ -2,15 +2,16 @@ import type { KitModuleAnalysis } from "#src/models/genshinAssets/kits/module/Ki
 import type { KitModuleBags } from "#src/models/genshinAssets/kits/module/KitModuleBags";
 import type { KitModuleBuild } from "#src/models/genshinAssets/kits/module/KitModuleBuild";
 import type { KitRecordConverter } from "#src/models/genshinAssets/kits/module/KitRecordConverter";
-import type { KitRecord, KitStanceActions, KitStanceRecord } from "genshin-world";
+import type { KitStanceActions, KitStanceRecord } from "genshin-world";
 
 import { KitBag } from "#src/models/genshinAssets/kits/module/KitBag";
+import { KIT_CREATE_PREFIX_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { toKitSiteEntries } from "#src/services/genshinAssets/kits/module/toKitSiteEntries";
+import { toKitStanceActionsRecord } from "#src/services/genshinAssets/kits/module/toKitStanceActionsRecord";
 import { uncapitalize } from "@esposter/shared";
 import { basename } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 
-const CREATE_PREFIX_REGEX = /^create(?=[A-Z])/u;
 // The words a name of each field's values ends in that the field already says
 const KitBagNameSuffixesMap = {
   [KitBag.ActionFields]: ["Action"],
@@ -24,7 +25,7 @@ const KitBagNameSuffixesMap = {
 } as const satisfies Record<KitBag, readonly string[]>;
 
 const toBagName = (bag: KitBag, name: string): string => {
-  const baseName = uncapitalize(name.replace(CREATE_PREFIX_REGEX, ""));
+  const baseName = uncapitalize(name.replace(KIT_CREATE_PREFIX_REGEX, ""));
   const suffix = KitBagNameSuffixesMap[bag].find(
     (bagSuffix: string) => baseName.endsWith(bagSuffix) && baseName.length > bagSuffix.length,
   );
@@ -40,21 +41,17 @@ export const toKitModuleBags = (
   build: KitModuleBuild,
   encodedBuild: KitModuleBuild,
   converter: KitRecordConverter,
-  mainRecord: Pick<KitRecord, "burst" | "chargedAttack" | "chargedAttackStamina" | "normalAttacks" | "skill">,
+  mainRecord: Required<KitStanceRecord>,
 ): KitModuleBags => {
   const mainActions = [mainRecord.burst, mainRecord.chargedAttack, ...mainRecord.normalAttacks, mainRecord.skill];
   const mainValues = [mainRecord.normalAttacks, ...mainActions, ...mainActions.map(({ hits }) => hits)];
+  // A stance's actions, less those it plays as its kit does
   const toStance = (stance: KitStanceActions, encodedStance: KitStanceActions | undefined): KitStanceRecord => {
-    const burst = converter.toAction(stance.elementalBurst, encodedStance?.elementalBurst);
-    const chargedAttack = converter.toAction(stance.chargedAttack, encodedStance?.chargedAttack);
-    const chargedAttackStamina = converter.toParameter(
-      stance.chargedAttackStamina,
-      encodedStance?.chargedAttackStamina,
+    const { burst, chargedAttack, chargedAttackStamina, normalAttacks, skill } = toKitStanceActionsRecord(
+      converter,
+      stance,
+      encodedStance,
     );
-    const normalAttacks = stance.normalAttacks.map((action, index) =>
-      converter.toAction(action, encodedStance?.normalAttacks[index]),
-    );
-    const skill = converter.toAction(stance.elementalSkill, encodedStance?.elementalSkill);
     return {
       ...(!isDeepStrictEqual(burst, mainRecord.burst) && { burst }),
       ...(!isDeepStrictEqual(chargedAttack, mainRecord.chargedAttack) && { chargedAttack }),

@@ -10,7 +10,7 @@ describe(readGcsimAttacks, () => {
     expect.hasAssertions();
 
     const name = "attack.go";
-    const sources = [{ name, source: readFileSync(join(GCSIM_FIXTURE_DIRECTORY, name), "utf8") }];
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_FIXTURE_DIRECTORY, name), "utf8") }];
 
     expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
       {

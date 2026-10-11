@@ -3,15 +3,13 @@ import type { KitModule } from "#src/models/genshinAssets/kits/module/KitModule"
 import {
   KIT_MODULE_DIRECTORY,
   KIT_MODULE_FILE_SUFFIX,
-  KIT_MODULE_PACKAGE_DIRECTORY,
   TRAVELER_KIT_MODULE_PATH,
 } from "#src/services/genshinAssets/kits/constants";
 import { analyseKitModule } from "#src/services/genshinAssets/kits/module/analyseKitModule";
+import { createKitModuleProgram } from "#src/services/genshinAssets/kits/module/createKitModuleProgram";
 import { loadKitModule } from "#src/services/genshinAssets/kits/module/loadKitModule";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import ts from "typescript";
 
 // Every kit module in the world package, each character's and the Traveler's, analysed in one program under the
 // Package's own configuration and loaded with its sites probed
@@ -22,21 +20,6 @@ export const readKitModules = (): Promise<KitModule[]> => {
       .map((file) => join(KIT_MODULE_DIRECTORY, file)),
     TRAVELER_KIT_MODULE_PATH,
   ];
-  const configurationPath = join(KIT_MODULE_PACKAGE_DIRECTORY, "tsconfig.json");
-  const configuration = ts.getParsedCommandLineOfConfigFile(
-    configurationPath,
-    {},
-    {
-      ...ts.sys,
-      onUnRecoverableConfigFileDiagnostic: (diagnostic) => {
-        throw new InvalidOperationError(
-          Operation.Read,
-          configurationPath,
-          ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
-        );
-      },
-    },
-  );
-  const program = ts.createProgram(files, { ...configuration?.options, noEmit: true });
+  const program = createKitModuleProgram(files);
   return Promise.all(files.map((file) => loadKitModule(analyseKitModule(program, file))));
 };

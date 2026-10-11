@@ -11,7 +11,7 @@ describe(evaluateGoConstants, () => {
     const name = "attack.go";
     const source = readFileSync(join(GCSIM_FIXTURE_DIRECTORY, name), "utf8");
 
-    expect(evaluateGoConstants([{ name, source }])).toStrictEqual(
+    expect(evaluateGoConstants([{ path: name, source }])).toStrictEqual(
       new Map([
         [
           "attackFrames",

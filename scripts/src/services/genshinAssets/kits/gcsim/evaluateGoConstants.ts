@@ -103,7 +103,7 @@ export const evaluateGoConstants = (sources: readonly GoSource[]): Map<string, G
     }
     return end;
   };
-  for (const { name: file, source } of sources) {
+  for (const { path: file, source } of sources) {
     const tokens = tokenizeGo(source);
     let position = 0;
     while (position < tokens.length) {

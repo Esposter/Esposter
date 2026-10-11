@@ -1,7 +1,6 @@
-import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
-import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentLeaf";
+import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
+import type { GcsimHoldSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHoldSource";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
@@ -49,21 +48,6 @@ const GcsimTalentTypeCombatTalentMap: Record<GcsimTalentType, CombatTalent> = {
   [GcsimTalentType.Skill]: CombatTalent.ElementalSkill,
 };
 
-interface HitSource {
-  areaHitbox?: GcsimHitbox;
-  attack?: GcsimAttack;
-  hitmark?: { file: string; line: number; value: number };
-  // The poise the attack's poise variable gives this hit, by its place in its string
-  poiseDamage?: { line: number; value: number };
-  talentLeaf?: GcsimTalentLeaf;
-}
-
-// A hold of the skill: the constant its frames are in, and its hitmarks where gcsim gives them as numbers
-interface HoldSource {
-  framesName?: string;
-  hitmarks?: { file: string; line: number; name: string; values?: number[] };
-}
-
 const checkIsPathEqual = (left: readonly number[], right: readonly number[]): boolean =>
   left.length === right.length && left.every((value, index) => value === right[index]);
 
@@ -84,7 +68,7 @@ export const getGcsimKitCandidates = (
   plungeFallback: GcsimCharacter,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
-  const { attacks, config, configFile, constantMap, fileNames, folder, talentFile, talentParameterMap, travelMap } =
+  const { attacks, config, configFile, constantMap, filePaths, folder, talentFile, talentParameterMap, travelMap } =
     gcsim;
   const toFile = (name: string, from = folder) => `${GCSIM_CHARACTERS_PATH}/${from}/${name}`;
   const add = (path: string, value: unknown, file: string, line: number, cause?: KitProvisionalCause) =>
@@ -132,7 +116,7 @@ export const getGcsimKitCandidates = (
   };
   const addHit = (
     path: string,
-    { areaHitbox, attack, hitmark, poiseDamage, talentLeaf }: HitSource,
+    { areaHitbox, attack, hitmark, poiseDamage, talentLeaf }: GcsimHitSource,
     targetingArea: AttackArea,
   ) => {
     if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
@@ -301,7 +285,7 @@ export const getGcsimKitCandidates = (
   // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
   // Its area from the `Low_Plunge` or `High_Plunge` hitbox, and the collision's from `Plunge`. With no plunge file, the
   // Shared rule
-  const plungeFile = fileNames.find((name) => posix.basename(name) === GCSIM_PLUNGE_FILE);
+  const plungeFile = filePaths.find((path) => posix.basename(path) === GCSIM_PLUNGE_FILE);
   const hasPlungeFile = plungeFile !== undefined;
   const plungeSource = hasPlungeFile ? gcsim : plungeFallback;
   const plungeCause = hasPlungeFile ? undefined : KitProvisionalCause.NoActionFile;
@@ -411,7 +395,7 @@ export const getGcsimKitCandidates = (
   // The skill's holds: one for each of the short hold and the hold gcsim gives frames or hitmarks for, the shorter first,
   // Or one for each level its hitmarks list, each with its frames from `<hold>Frames`, its hits from `<hold>Hitmark` or
   // `<hold>Hitmarks`, and a hit's area from the `E-Hold` hitbox where the hold has one hit
-  const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): HoldSource[] => {
+  const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): GcsimHoldSource[] => {
     const hitmarks = readConstant(`${prefix}Hitmarks`, `${prefix}Hitmark`);
     const framesName = `${prefix}Frames`;
     const levelHitmarks = Array.isArray(hitmarks?.value) ? hitmarks.value.filter((level) => Array.isArray(level)) : [];

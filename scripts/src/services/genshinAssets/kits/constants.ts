@@ -86,3 +86,6 @@ export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] =
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES = 72;
 // Each character's authored overlay, `<character>.json` by its English name in kebab case
 export const KIT_OVERLAY_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "kits");
+// The word a kit module's factory names start with, which a name read from one leaves off
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
+export const KIT_CREATE_PREFIX_REGEX: RegExp = /^create(?=[A-Z])/u;

@@ -3,13 +3,12 @@ import type { KitModuleSource } from "#src/models/genshinAssets/kits/module/KitM
 
 import { checkIsKitModuleFunction } from "#src/services/genshinAssets/kits/module/checkIsKitModuleFunction";
 import { getEnclosingKitModuleFunction } from "#src/services/genshinAssets/kits/module/getEnclosingKitModuleFunction";
+import { getOrCreate } from "@esposter/shared";
 import ts from "typescript";
 
 // A callee that runs the function it is handed as it is called: an array's iteration, or `Array.from`'s map
 const ITERATION_CALLEE_REGEX =
   /^(?:Array\.from|.*\.(?:every|filter|find|findIndex|findLast|flatMap|map|reduce|some|toSorted))$/u;
-// Enough passes for a helper called only from helpers to settle, the deepest chain in the kits being a few long
-const CLASSIFICATION_PASSES = 12;
 
 // The functions of a kit module a behaviour runs after the kit is built, rather than while it is built: every function
 // But the create function, one it calls or iterates with at once, and a helper only ever called while the kit is built
@@ -21,15 +20,21 @@ export const findKitRuntimeFunctions = (source: KitModuleSource): Set<KitModuleF
     ts.forEachChild(node, collectFunctions);
   };
   collectFunctions(sourceFile);
+  const symbolIdentifiersMap = new Map<ts.Symbol, ts.Identifier[]>();
+  const collectIdentifiers = (node: ts.Node) => {
+    if (ts.isIdentifier(node)) {
+      const symbol = checker.getSymbolAtLocation(node);
+      if (symbol !== undefined) getOrCreate(symbolIdentifiersMap, symbol, () => []).push(node);
+    }
+
+    ts.forEachChild(node, collectIdentifiers);
+  };
+  collectIdentifiers(sourceFile);
   const findReferences = (name: ts.Identifier): ts.Identifier[] => {
     const symbol = checker.getSymbolAtLocation(name);
-    const references: ts.Identifier[] = [];
-    const visit = (node: ts.Node) => {
-      if (ts.isIdentifier(node) && node !== name && checker.getSymbolAtLocation(node) === symbol) references.push(node);
-      ts.forEachChild(node, visit);
-    };
-    visit(sourceFile);
-    return references;
+    return symbol === undefined
+      ? []
+      : (symbolIdentifiersMap.get(symbol) ?? []).filter((identifier) => identifier !== name);
   };
   const helperReferenceMap = new Map<KitModuleFunction, ts.Identifier[]>();
   for (const moduleFunction of functions)
@@ -68,12 +73,17 @@ export const findKitRuntimeFunctions = (source: KitModuleSource): Set<KitModuleF
     else if (referenceRuntimes.has(undefined)) return undefined;
     return false;
   };
-  for (let pass = 0; pass < CLASSIFICATION_PASSES; pass++)
+  // Passes until one settles nothing, as a helper called only from helpers settles after its callers
+  for (let isSettling = true; isSettling;) {
+    isSettling = false;
     for (const moduleFunction of functions) {
       if (isRuntimeMap.has(moduleFunction)) continue;
       const isRuntime = classify(moduleFunction);
-      if (isRuntime !== undefined) isRuntimeMap.set(moduleFunction, isRuntime);
+      if (isRuntime === undefined) continue;
+      isRuntimeMap.set(moduleFunction, isRuntime);
+      isSettling = true;
     }
+  }
   // A function still unsettled hangs on a cycle of helpers no build reaches, so it runs only after the kit is built
   return new Set(functions.filter((moduleFunction) => isRuntimeMap.get(moduleFunction) !== false));
 };
