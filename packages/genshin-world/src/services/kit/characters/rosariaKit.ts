@@ -83,6 +83,8 @@ const NO_POISE_DAMAGE = 0;
 // Provisional: the plunges' frames are not fetched from gcsim, so they are provisional until the Mac measures them
 const PLUNGE_SECONDS = 0.4;
 
+export const ROSARIA_CHARACTER_ID = 10_000_045;
+
 // Rosaria's first kit, at talent level 1: a seven-hit string, a charged attack, a collision and two plunges, Ravaging
 // Confession's two hits and cooldown, and Rites of Termination's slash, lance and field of ticks. Her multipliers are read
 // From her proud skill groups. Her passives, her constellations other than 2, and her teleport behind the target are not

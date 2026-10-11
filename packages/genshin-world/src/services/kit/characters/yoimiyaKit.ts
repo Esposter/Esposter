@@ -60,6 +60,8 @@ const BURST_GAUGE = 2;
 // Her own plunge clips are not in the sources fetched. The table's multipliers for them are read as the rest are
 const PLUNGE_SECONDS = 0.4;
 
+export const YOIMIYA_CHARACTER_ID = 10_000_049;
+
 // Yoimiya's first kit, at talent level 1: five strikes, a fully charged shot, a collision and two plunges, Niwabi
 // Fire-Dance's Pyro infusion for the table's seconds, and Naganohara Meteor Swarm's initial hit.
 // Her multipliers are read from her proud skill groups. Aurous Blaze's explosion, her passives and her constellations

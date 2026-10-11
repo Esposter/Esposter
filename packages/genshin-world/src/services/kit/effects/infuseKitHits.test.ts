@@ -2,7 +2,9 @@ import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { DILUC_CHARACTER_ID, NOELLE_CHARACTER_ID, XIAO_CHARACTER_ID } from "#src/services/character/constants";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";

@@ -96,6 +96,8 @@ const SHIELD_CONSTELLATION_MULTIPLIER = 1.15;
 const SIGNATURE_MIX_CONSTELLATION = 1;
 const SIGNATURE_MIX_CONSTELLATION_ENERGY = 15;
 
+export const DIONA_CHARACTER_ID = 10_000_039;
+
 // Diona's first kit, at talent level 1: five strikes, a charged aimed shot, a collision and two plunges, Icy Paws with its
 // Tap and hold, and Signature Mix with its field that ticks damage and heals. Its multipliers are read from her proud skill
 // Groups. Her shield's strength is set at the press from her Max HP, and her first and second constellations are built,

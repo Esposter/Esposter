@@ -89,6 +89,8 @@ const CHARGED_ATTACK_SECONDS = 1.2;
 const PLUNGE_HITMARK_SECONDS = 0.5;
 const PLUNGE_SECONDS = 1;
 
+export const KEQING_CHARACTER_ID = 10_000_042;
+
 // Keqing's first kit, at talent level 1: five strikes, a charged attack of two slashes, a collision and two plunges,
 // Stellar Restoration with its Lightning Stiletto's recast and the Electro infusion the recast gives, and Starward Sword's
 // Slashes and final strike. Its multipliers are read from her proud skill groups. Her passives and constellations are not

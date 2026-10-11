@@ -7,11 +7,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KIRARA_CHARACTER_ID } from "#src/services/character/constants";
+import { KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
 import { createKiraraKit } from "#src/services/kit/characters/kiraraKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KIRARA_KIT = createKiraraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KIRARA_CHARACTER_ID]));
 
@@ -64,11 +65,9 @@ describe(createKiraraKit, () => {
   test("the shield is the share of Max HP and flat amount, capped at the maximum", () => {
     expect.hasAssertions();
     const effectState: KitEffectState = { effects: [] };
-    KIRARA_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant: createKiraraCombatant(),
-      kitEffectState: effectState,
-    });
+    KIRARA_KIT.elementalSkill.onStart?.(
+      createKitStepContext(createKiraraCombatant(), { body: kitBody, kitEffectState: effectState }),
+    );
     const shield = effectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
 
     expect(shield?.health).toBeCloseTo(0.1 * 10_000 + 962.2313);
@@ -78,11 +77,9 @@ describe(createKiraraKit, () => {
   test("Secret Art: Surprise Dispatch sets six Cat Grass Cardamoms, two detonating at 180 frames and four at expiry", () => {
     expect.hasAssertions();
     const effectState: KitEffectState = { effects: [] };
-    KIRARA_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant: createKiraraCombatant(),
-      kitEffectState: effectState,
-    });
+    KIRARA_KIT.elementalBurst.onStart?.(
+      createKitStepContext(createKiraraCombatant(), { body: kitBody, kitEffectState: effectState }),
+    );
     const mines = effectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(mines?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([

@@ -6,7 +6,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { ALOY_CHARACTER_ID } from "#src/services/character/constants";
+import { ALOY_CHARACTER_ID } from "#src/services/kit/characters/aloyKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createAloyKit } from "#src/services/kit/characters/aloyKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";

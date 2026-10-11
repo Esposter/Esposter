@@ -249,6 +249,8 @@ const createFieldTick =
     }
   };
 
+export const BENNETT_CHARACTER_ID = 10_000_032;
+
 // Bennett's kit at talent level 1: five strikes, a charged attack, a collision and two plunges, Passion Overload's press
 // And its two Charge Levels, and Fantastic Voyage. Its multipliers are read from its proud skill groups
 export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({

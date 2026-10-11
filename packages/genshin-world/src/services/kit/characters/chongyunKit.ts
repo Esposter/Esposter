@@ -158,6 +158,8 @@ const LOW_PLUNGE_POISE_DAMAGE = 150;
 const HIGH_PLUNGE_POISE_DAMAGE = 200;
 const PLUNGE_COLLISION_POISE_DAMAGE = 35;
 
+export const CHONGYUN_CHARACTER_ID = 10_000_036;
+
 // Chongyun's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Spirit Blade:
 // Chonghua's Layered Frost with its field that infuses the active character, and the character a swap brings on while it
 // Stands, a press replacing the field standing, and Spirit Blade: Cloud-Parting Star. Rimechaser Blade, Ice Unleashed

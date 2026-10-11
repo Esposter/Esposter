@@ -86,6 +86,8 @@ const TENGU_SOURCE = "sara-tengu-stormcall";
 const C2_CONSTELLATION = 2;
 const C4_CONSTELLATION = 4;
 
+export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
+
 // Kujou Sara's first kit, at talent level 1: five strikes, a fully charged shot that drops a crowfeather under the Cover, a
 // Collision and two plunges, Tengu Stormcall's Cover and crowfeather with its Ambush and Constellation 2's weaker one, and
 // Subjugation: Koukou Sendou with Titanbreaker and its Stormclusters, four bouts or six from Constellation 4. Her ATK Bonus

@@ -114,6 +114,8 @@ const PLUNGE_COLLISION_POISE_DAMAGE = 10;
 const LOW_PLUNGE_POISE_DAMAGE = 50;
 const HIGH_PLUNGE_POISE_DAMAGE = 100;
 
+export const GANYU_CHARACTER_ID = 10_000_037;
+
 // Ganyu's first kit, at talent level 1: six strikes, a fully charged shot with its Frostflake Arrow and Bloom, a collision and
 // Two plunges, Ice Lotus with its taunt and explosion, and Celestial Shower with its field. Undivided Heart, Harmony between
 // Heaven and Earth, and Constellations 1 are built. Her multipliers are read from her proud skill groups

@@ -74,6 +74,8 @@ const BURST_REACH = createFanReach(360, 5);
 const BURST_GAUGE = 2;
 const GARMENT_SECONDS = 10;
 
+export const KOKOMI_CHARACTER_ID = 10_000_054;
+
 // The burst's energy cost is the table's 70, which gcsim's EnergyMax gives too, and the charged attack's stamina is the
 // Table's flat value in its slot
 export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {

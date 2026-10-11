@@ -10,9 +10,10 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { takeOne } from "@esposter/shared";
 
 // Heizou's proud skill groups, read at his talent level, as the game's tables give them and gcsim v2.47.2 (MIT)
-// zz_shikanoinheizou.dm.go labels them. The attack group holds the first strike at 0, the second at 1, the third at 2,
+// Zz_shikanoinheizou.dm.go labels them. The attack group holds the first strike at 0, the second at 1, the third at 2,
 // The fourth's three hits at 3, 4 and 5, the fifth at 6, the charged attack at 7 and its stamina at 8, and the plunges'
 // Collision, low and high at 9, 10 and 11. The skill group holds Heartstopper Strike's damage at 0, the Declension DMG
 // Bonus per stack at 1, the Conviction DMG Bonus at 2 and its cooldown at 3. The burst group holds Fudou Style Vacuum
@@ -71,6 +72,8 @@ const FULL_HOLD_SECONDS = 180 / 60;
 const BURST_HITMARK_FRAMES = 34;
 const BURST_FRAMES = 72;
 const BURST_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 6);
+
+export const HEIZOU_CHARACTER_ID = 10_000_059;
 
 // Heizou's first kit, at talent level 1: five strikes with the fourth's three hits, a charged attack, a collision and two
 // Plunges, Heartstopper Strike's press and its full hold with the Declension stacks it gains, and Fudou Style Vacuum
@@ -141,7 +144,7 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   ];
   const normalAttacks: KitAction[] = normalAttackHits.map((hits, index): KitAction => ({
     hits: hits.map((hit): KitHit => ({ ...hit, internalCooldownTag: InternalCooldownTag.NormalAttack })),
-    seconds: NORMAL_ATTACK_CANCEL_FRAMES[index] / 60,
+    seconds: takeOne(NORMAL_ATTACK_CANCEL_FRAMES, index) / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   }));
 

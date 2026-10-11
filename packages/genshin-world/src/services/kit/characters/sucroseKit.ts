@@ -126,6 +126,8 @@ const findAbsorbedElement = (enemyMap: Map<string, Enemy>, absorbBody: KitBody):
   return ABSORBABLE_AURAS.find(([, aura]) => reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)))?.[0];
 };
 
+export const SUCROSE_CHARACTER_ID = 10_000_043;
+
 // Sucrose's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Astable Anemohypostasis
 // Creation-6308 with its Swirl, and Forbidden Creation-Isomer 75 / Type II with its field and absorbed hits. Her multipliers
 // Are read from her proud skill groups. Her passives and Constellation 2 and 6 are built. The skill's pull is not, as no

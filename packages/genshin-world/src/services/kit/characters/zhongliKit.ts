@@ -134,6 +134,8 @@ const createDominanceOfEarthBonus =
 const getMaxSteleCount = ({ constellationCount }: Combatant): number =>
   constellationCount >= ROCK_THE_BACKBONE_OF_EARTH_CONSTELLATION ? ROCK_THE_BACKBONE_OF_EARTH_STELE_COUNT : STELE_COUNT;
 
+export const ZHONGLI_CHARACTER_ID = 10_000_030;
+
 // Zhongli's first kit, at talent level 1: six strikes, the fifth of four hits, a charged attack, a collision and two
 // Plunges, Dominus Lapidis' press and its hold with their Stone Steles and the hold's Jade Shield, and Planet Befall's
 // Meteor. Its multipliers are read from his proud skill groups

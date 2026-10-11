@@ -176,6 +176,8 @@ const findMeleeStance = (effects: readonly KitEffect[], characterId: number): Ki
 const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void =>
   addKitEffect(kitEffectState, createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, hits));
 
+export const TARTAGLIA_CHARACTER_ID = 10_000_033;
+
 // Tartaglia's first kit, at talent level 1: six arrows, a fully charged aimed shot, a collision and two plunges in the
 // Ranged Stance, Foul Legacy: Raging Tide's change into the Melee Stance, its six Hydro strikes, its charged attack and its
 // Press back, and Havoc: Obliteration in either stance. The stance ends on a press, at its longest or as he leaves the

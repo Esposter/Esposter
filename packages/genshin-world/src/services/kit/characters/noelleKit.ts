@@ -100,6 +100,8 @@ const createBreastplateHeal = (talentMultiplierMap: TalentMultiplierMap): KitPar
   };
 };
 
+export const NOELLE_CHARACTER_ID = 10_000_034;
+
 // Noelle's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Breastplate and
 // Sweeping Time. Its multipliers are read from its proud skill groups. Breastplate's heal and its C1 and C4 are built,
 // Gated on the constellations the combatant holds, and A1's and A4's effects are not, so the charged attack is one cycle

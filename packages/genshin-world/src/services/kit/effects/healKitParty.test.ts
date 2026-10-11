@@ -4,7 +4,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { NOELLE_CHARACTER_ID } from "#src/services/character/constants";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";

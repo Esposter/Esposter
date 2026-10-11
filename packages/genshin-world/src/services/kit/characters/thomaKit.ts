@@ -62,6 +62,8 @@ const BURST_GAUGE = 2;
 // His own plunge clips are not in the sources fetched. The table's multipliers for them are read as the rest are
 const PLUNGE_SECONDS = 0.4;
 
+export const THOMA_CHARACTER_ID = 10_000_050;
+
 // Thoma's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Blazing Blessing's hit
 // With its Pyro infusion and shield, and Crimson Ooyoroi's hit. His multipliers are read from his proud skill groups. Fiery
 // Collapse, his passives and his constellations are not built yet

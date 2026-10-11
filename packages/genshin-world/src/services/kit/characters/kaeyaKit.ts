@@ -72,6 +72,8 @@ const createIcicleHits = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, KAEYA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
   }));
 
+export const KAEYA_CHARACTER_ID = 10_000_015;
+
 // Kaeya's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Frostgnaw and Glacial
 // Waltz. Its multipliers are read from its proud skill groups. Frostgnaw's damage against Water, A4's particles and
 // Glacial Waltz's activation knockback are not built

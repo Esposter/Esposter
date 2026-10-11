@@ -27,7 +27,7 @@ const YELAN_SKILL_GROUP_ID = 6032;
 const YELAN_BURST_GROUP_ID = 6039;
 
 // Measured: gcsim (MIT, main) yelan/attack.go, each arrow's hitmarks and the frame its animation cancels at, each arrow
-// travelling 10 frames to its target. Each arrow lands on the primary target through a box, priced as a circle of a metre
+// Travelling 10 frames to its target. Each arrow lands on the primary target through a box, priced as a circle of a metre
 // Round the body, as Ganyu's arrows are
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yelan/attack.go
 const ARROW_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
@@ -55,7 +55,7 @@ const LIFELINE_HITMARK_FRAMES = 36;
 
 // Measured: gcsim (MIT, main) yelan/burst.go, Depth-Clarion Dice's animation at 93 frames and its initial hit at 76 frames,
 // A circle of radius 6 offset from the primary target, which is priced round the body as the targeting reach plus its own
-// radius and the offset's length. The burst's field lasts its seconds from the hit, and waves Exquisite Throws each second
+// Radius and the offset's length. The burst's field lasts its seconds from the hit, and waves Exquisite Throws each second
 // Of it, and one on each Lingering Lifeline hit within it. Each Exquisite Throw is three hits, at 20, 26 and 32 frames after
 // Its wave, a circle of radius 0.5 on the primary target
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yelan/burst.go
@@ -79,6 +79,14 @@ const HIGH_PLUNGE_POISE_DAMAGE = 100;
 // Provisional: the plunges' seconds and reaches are the collision, low and high plunges' of 1, 3 and 5 metres, as Ganyu's
 const PLUNGE_SECONDS = 0.4;
 
+export const YELAN_CHARACTER_ID = 10_000_060;
+
+// A hit whose base damage is a share of its striker's Max HP rather than of its ATK, as gcsim's flat damage hits are
+const createMaxHealthScaledBonus =
+  (talentMultiplier: number) =>
+  (combatant: Combatant): number =>
+    talentMultiplier * combatant.attributes.maxHealth;
+
 // Yelan's first kit, at talent level 1: four strikes, a fully charged shot with its arrow, a collision and two plunges,
 // Lingering Lifeline with its hit, and Depth-Clarion Dice with its field and the Exquisite Throws it waves and throws on each
 // Lifeline hit. Her multipliers are read from her proud skill groups. Breakthrough Barb, her passives and constellations are
@@ -90,12 +98,6 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     getTalentMultiplier(talentMultiplierMap, YELAN_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
   const burstTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, YELAN_BURST_GROUP_ID, TALENT_START_LEVEL, index);
-
-  // A hit whose base damage is a share of its striker's Max HP rather than of its ATK, as gcsim's flat damage hits are
-  const createMaxHealthScaledBonus =
-    (talentMultiplier: number) =>
-    (combatant: Combatant): number =>
-      talentMultiplier * combatant.attributes.maxHealth;
 
   // An Exquisite Throw is three hits cast from the body that waved or struck it, priced by its caster's Max HP
   const createExquisiteThrowSummon = ({ facing, height, position }: KitBody, combatant: Combatant): KitSummon => {
@@ -211,7 +213,7 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalSkill: { hits: [lifelineHit], seconds: LIFELINE_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     highPlunge: createPlunge(5, HIGH_PLUNGE_POISE_DAMAGE, 9),
     lowPlunge: createPlunge(3, LOW_PLUNGE_POISE_DAMAGE, 8),
-    normalAttacks: YELAN_STRIKES.map(createNormalAttack),
+    normalAttacks: YELAN_STRIKES.map((strike) => createNormalAttack(strike)),
     plungeCollision: {
       hitArea: createFanReach(360, 1),
       hitmarkSeconds: 0,

@@ -72,6 +72,8 @@ const PLUNGE_SECONDS = 0.4;
 const isStandingTotem = (effect: KitEffect, characterId: number): effect is KitSummon =>
   effect.kind === "summon" && effect.id === SESSHOU_SAKURA_ID && effect.combatant.characterId === characterId;
 
+export const YAE_MIKO_CHARACTER_ID = 10_000_058;
+
 // Yae Miko's first kit, at talent level 1: a three-hit string, a charged attack, a collision and two plunges, Sesshou
 // Sakura's totems, which strike on their own schedule at a level by how many stand, and Great Secret Art: Tenko Kenshin,
 // Which destroys the totems for a Tenko Thunderbolt each. Her multipliers are read from her proud skill groups. Her

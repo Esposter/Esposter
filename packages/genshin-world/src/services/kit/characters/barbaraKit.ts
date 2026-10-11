@@ -126,6 +126,8 @@ const createMelodyLoopTick =
         });
   };
 
+export const BARBARA_CHARACTER_ID = 10_000_014;
+
 // Barbara's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Let the Show
 // Begin♪'s droplets and Melody Loop, and Shining Miracle♪'s heal. Its multipliers are read from her proud skill groups
 export const createBarbaraKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {

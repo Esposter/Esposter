@@ -233,6 +233,8 @@ const standRainSwords = (
   });
 };
 
+export const XINGQIU_CHARACTER_ID = 10_000_025;
+
 // Xingqiu's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Fatal Rainscreen's
 // Two hits and its Rain Swords, and Raincutter's sword rain on the normal attacks of the character on the field. Its
 // Multipliers are read from his proud skill groups

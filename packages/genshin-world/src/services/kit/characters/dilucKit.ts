@@ -151,6 +151,8 @@ const createDawnPhoenix = (
   };
 };
 
+export const DILUC_CHARACTER_ID = 10_000_016;
+
 // Diluc's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Searing Onslaught's
 // Three presses and Dawn. Its multipliers are read from its proud skill groups and match the wiki's to two decimal places
 export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit => ({

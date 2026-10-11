@@ -8,7 +8,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { DILUC_CHARACTER_ID } from "#src/services/character/constants";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";

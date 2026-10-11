@@ -22,15 +22,15 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 // Kirara's proud skill groups, read at her talent level. The attack group holds her strikes at 0, 1 and 4, the third's two
 // Hits at 2 and 3, the charged attack's three hits at 5 to 7, its stamina at 8, and the plunges' collision, low and high at 9,
 // 10 and 11. The skill group holds Tail-Flicking Flying Kick's damage at 0, the shield's share and flat amount at 1 and 2, its
-// maximum's at 3 and 4, Urgent Neko Parcel's cat at 6, the longest hold's seconds at 7, Flipclaw Strike's damage at 8 and the
-// press's cooldown at 9. The burst group holds Secret Art: Surprise Dispatch's damage at 0, each Cat Grass Cardamom's at 1,
-// the mines' seconds at 2, its cooldown at 3 and its energy cost at 4
+// Maximum's at 3 and 4, Urgent Neko Parcel's cat at 6, the longest hold's seconds at 7, Flipclaw Strike's damage at 8 and the
+// Press's cooldown at 9. The burst group holds Secret Art: Surprise Dispatch's damage at 0, each Cat Grass Cardamom's at 1,
+// The mines' seconds at 2, its cooldown at 3 and its energy cost at 4
 const KIRARA_ATTACK_GROUP_ID = 6131;
 const KIRARA_SKILL_GROUP_ID = 6132;
 const KIRARA_BURST_GROUP_ID = 6139;
 
 // Measured: gcsim (MIT, main) kirara/attack.go, each strike's hitmarks, its cancel frames, and its circles and box round the
-// body, each reach priced as its offset plus its radius, and the box as the circle to its far corner. The third strike
+// Body, each reach priced as its offset plus its radius, and the box as the circle to its far corner. The third strike
 // Hits at 17 and 39 frames, and its animation cancels at 39 to 61 frames
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/attack.go
 const createCircleReach = (offset: number, radius: number) => createFanReach(360, offset + radius);
@@ -48,7 +48,7 @@ const KIRARA_STRIKES = [
 ];
 
 // Measured: gcsim (MIT, main) kirara/charge.go, the charged attack's three circles of radius 2.8 offset 1, 1 and 1.5 metres
-// ahead at 20, 27 and 37 frames, and its animation at 52 frames
+// Ahead at 20, 27 and 37 frames, and its animation at 52 frames
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/charge.go
 const CHARGED_ATTACK_FRAMES = 52;
 const CHARGED_ATTACK_HITS = [
@@ -103,6 +103,8 @@ const CARDAMOM_DETONATED_COUNT = 2;
 // Provisional: gcsim gives Kirara's strikes, charged attack, skill and burst no poise, so these deal none, as Keqing's do
 // Provisional: gcsim gives Kirara no plunge timing either, so her plunges are the reaches the other kits' plunges use, at
 // 0.4 seconds, until the Mac measures them
+
+export const KIRARA_CHARACTER_ID = 10_000_061;
 
 // Kirara's first kit, at talent level 1: four strikes with a charged attack of three hits, a collision and two plunges,
 // Tail-Flicking Flying Kick with its shield, its short hold and its holds of up to ten seconds with Urgent Neko Parcel and

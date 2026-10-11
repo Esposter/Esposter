@@ -179,6 +179,8 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
         },
       ];
 
+export const RAIDEN_CHARACTER_ID = 10_000_052;
+
 // The Raiden Shogun's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Eye of
 // Stormy Judgment with its Eye and coordinated attacks, and Musou Shinsetsu, whose Musou Isshin stance plays her Electro
 // Strikes and charged attack. The burst spends her Resolve stacks into Musou no Hitotachi and every Musou Isshin attack,

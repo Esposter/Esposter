@@ -144,6 +144,8 @@ const LUPUS_FULGURIS_RECHARGE_SECONDS = 10;
 const checkIsRazorBuff = (effect: KitEffect, characterId: number, source: string): effect is KitBuff =>
   effect.kind === "buff" && effect.characterId === characterId && effect.source === source;
 
+export const RAZOR_CHARACTER_ID = 10_000_020;
+
 // Razor's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Claw and Thunder's
 // Press and hold with their Electro Sigils, and Lightning Fang with its Wolf Within. Its multipliers are read from his
 // Proud skill groups

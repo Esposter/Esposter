@@ -6,10 +6,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YOIMIYA_CHARACTER_ID } from "#src/services/character/constants";
+import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
+import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const YOIMIYA_KIT = createYoimiyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YOIMIYA_CHARACTER_ID]));
 
@@ -29,11 +30,7 @@ describe(createYoimiyaKit, () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    YOIMIYA_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: createYoimiyaCombatant(),
-      kitEffectState,
-    });
+    YOIMIYA_KIT.elementalSkill.onStart?.(createKitStepContext(createYoimiyaCombatant(), { kitEffectState }));
 
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: YOIMIYA_CHARACTER_ID, element: Element.Pyro, kind: "infusion", secondsRemaining: 10 },

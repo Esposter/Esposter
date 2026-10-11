@@ -108,6 +108,8 @@ const BURST_FRAMES = 91;
 const BURST_SECONDS = (660 + 90 + 45) / 60;
 const BURST_NORMAL_ATTACK_SPEED_BONUS = 0.1;
 
+export const ITTO_CHARACTER_ID = 10_000_057;
+
 // Itto's first kit, at talent level 1: four strikes, the Saichimonji Slash, a collision and two plunges, Masatsu Zetsugi's
 // Hit, and Royal Descent's Geo conversion with its ATK bonus per DEF and Normal ATK SPD. His multipliers are read from his
 // Proud skill groups. Superlative Superstrength, Ushi and his passives and constellations are not built, so the charged
