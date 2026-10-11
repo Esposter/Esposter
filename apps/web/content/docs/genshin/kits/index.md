@@ -231,7 +231,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Freminet](/docs/genshin/kits/freminet)             | Pressurized Floe's Upward Thrust and Shadowhunter's Ambush           |
 | [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                     |
 | [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                            |
-| [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike and Fudou Style Vacuum Slugger                   |
+| [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris              |
 | [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance  |
 | [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                       |
 | [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                              |
