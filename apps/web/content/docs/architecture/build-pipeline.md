@@ -136,5 +136,5 @@ The declaration build seeds its program from the entry files and follows imports
 | `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from                         |
 | `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                                |
 | `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program                             |
-| `packages/configuration/src/generateExports.ts`        | Writes the barrels                                                      |
+| `packages/configuration/src/generateExports.ts`        | Writes the barrels, leaving out a package's on-demand directories       |
 | `apps/web/modules/buildPackages.ts`                    | Starts the package build at `nuxt dev` setup, awaited at `build:before` |
