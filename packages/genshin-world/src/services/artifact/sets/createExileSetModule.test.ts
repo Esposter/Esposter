@@ -33,6 +33,12 @@ const createPartyCombatant = (characterId: number): Combatant => ({
   level: 1,
 });
 
+const createBurstUsedEvent = (characterId: number): KitBurstUsedEvent => ({
+  characterId,
+  energyCost: TRAVELER_KIT.burstEnergyCost,
+  kind: KitEventKind.BurstUsed,
+});
+
 describe(createExileSetModule, () => {
   const exileSetData = statTables.artifactSetDataMap.get(EXILE_ARTIFACT_SET_ID);
   assert.exists(exileSetData);
@@ -40,11 +46,6 @@ describe(createExileSetModule, () => {
   const PARTY_CHARACTER_IDS = [1, 2];
   const wearer = createPartyCombatant(takeOne(PARTY_CHARACTER_IDS, 0));
   const ally = createPartyCombatant(takeOne(PARTY_CHARACTER_IDS, 1));
-  const createBurstUsedEvent = (characterId: number): KitBurstUsedEvent => ({
-    characterId,
-    energyCost: TRAVELER_KIT.burstEnergyCost,
-    kind: KitEventKind.BurstUsed,
-  });
   // The energy the wearer and the other member hold after each of the given seconds, the team's effects stepped through
   // Them at the world's fixed step
   const stepEnergies = (kitEffectState: KitEffectState, party: Party, secondsList: number[]) =>
@@ -54,8 +55,8 @@ describe(createExileSetModule, () => {
           activeCombatant: wearer,
           body: { x: 0, z: 0 },
           characterIdCombatantMap: new Map([
-            [wearer.characterId, wearer],
             [ally.characterId, ally],
+            [wearer.characterId, wearer],
           ]),
           party,
         });

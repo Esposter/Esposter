@@ -13,8 +13,6 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
-import { takeOne } from "@esposter/shared";
-
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
@@ -33,6 +31,7 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { takeOne } from "@esposter/shared";
 
 // Alhaitham's proud skill groups, read at his talent level. The attack group holds the five strikes at 0, 1, 2 with its
 // Second hit at 3, 4 and 5, the charged attack's two hits at 6 and 7 and its stamina at 8, and the plunges' collision, low

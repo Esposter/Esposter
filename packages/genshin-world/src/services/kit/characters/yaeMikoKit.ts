@@ -69,7 +69,7 @@ const NO_POISE_DAMAGE = 0;
 // Provisional: the plunges' frames are not fetched from gcsim, so they are provisional until the Mac measures them
 const PLUNGE_SECONDS = 0.4;
 
-const isStandingTotem = (effect: KitEffect, characterId: number): effect is KitSummon =>
+const checkIsStandingTotem = (effect: KitEffect, characterId: number): effect is KitSummon =>
   effect.kind === "summon" && effect.id === SESSHOU_SAKURA_ID && effect.combatant.characterId === characterId;
 
 export const YAE_MIKO_CHARACTER_ID = 10_000_058;
@@ -135,7 +135,8 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     hits: [],
     onStart: ({ body, combatant, kitEffectState }) => {
       const standingTotems = kitEffectState.effects.filter(
-        (effect): effect is KitSummon => isStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,
+        (effect): effect is KitSummon =>
+          checkIsStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,
       );
       // A fourth totem pops the oldest, the effects being kept in the order they were added
       for (const oldestTotem of standingTotems.slice(0, Math.max(0, standingTotems.length - MAXIMUM_TOTEMS + 1)))
@@ -164,11 +165,12 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Destroys every totem standing, each one a Tenko Thunderbolt that strikes from the burst's own clock
     onStart: ({ body, combatant, kitEffectState }) => {
       const standingTotems = kitEffectState.effects.filter(
-        (effect): effect is KitSummon => isStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,
+        (effect): effect is KitSummon =>
+          checkIsStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,
       );
       for (const totem of standingTotems) totem.secondsRemaining = 0;
       if (standingTotems.length === 0) return;
-      const thunderbolts: KitHit[] = standingTotems.map((_, index) => ({
+      const thunderbolts: KitHit[] = standingTotems.map((_value, index) => ({
         hitArea: BURST_HIT_AREA,
         hitmarkSeconds: (THUNDERBOLT_FIRST_HITMARK_FRAMES + index * THUNDERBOLT_INTERVAL_FRAMES) / 60,
         poiseDamage: NO_POISE_DAMAGE,

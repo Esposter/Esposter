@@ -1,5 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { GAMING_CHARACTER_ID, createGamingKit } from "#src/services/kit/characters/gamingKit";
+import { createGamingKit, GAMING_CHARACTER_ID } from "#src/services/kit/characters/gamingKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

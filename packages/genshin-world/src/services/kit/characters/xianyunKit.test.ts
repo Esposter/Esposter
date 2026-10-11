@@ -1,5 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { XIANYUN_CHARACTER_ID, createXianyunKit } from "#src/services/kit/characters/xianyunKit";
+import { createXianyunKit, XIANYUN_CHARACTER_ID } from "#src/services/kit/characters/xianyunKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

@@ -124,7 +124,7 @@ const findKitStatus = (effects: readonly KitEffect[], characterId: number, id: s
     (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
   );
 // Whether an internal cooldown of an id still runs on the character's status
-const isCooldownActive = (effects: readonly KitEffect[], characterId: number, id: string): boolean =>
+const checkIsCooldownActive = (effects: readonly KitEffect[], characterId: number, id: string): boolean =>
   (findKitStatus(effects, characterId, id)?.secondsRemaining ?? 0) > 0;
 const countShrapnel = (kitEffectState: KitEffectState, characterId: number): number =>
   findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
@@ -263,7 +263,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         shrapnel.stacks = keptShrapnel;
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
       }
-      if (isCooldownActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
+      if (checkIsCooldownActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
       addKitEffect(kitEffectState, {
         characterId,
         id: ARKHE_ICD_STATUS_ID,
@@ -301,7 +301,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
   const onCannonStrike = ({ combatant, kitEffectState }: KitStepContext): void => {
     const { characterId } = combatant;
-    if (isCooldownActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
+    if (checkIsCooldownActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
     addKitEffect(kitEffectState, {
       characterId,
       id: BURST_SHRAPNEL_ICD_STATUS_ID,

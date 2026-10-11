@@ -150,5 +150,7 @@ export const stepActiveKit = (
   gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, strikeContext), party, random);
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
   // And a change a kit makes as it hears one is sent at the next step
-  for (const healthChange of party.healthChanges.splice(0)) emit({ ...healthChange, kind: KitEventKind.HealthChanged });
+  const { healthChanges } = party;
+  party.healthChanges = [];
+  for (const healthChange of healthChanges) emit({ ...healthChange, kind: KitEventKind.HealthChanged });
 };

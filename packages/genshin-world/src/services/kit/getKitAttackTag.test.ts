@@ -1,6 +1,7 @@
+import type { KitStance } from "#src/models/kit/KitStance";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import type { KitStance } from "#src/models/kit/KitStance";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID, createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
