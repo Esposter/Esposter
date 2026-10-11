@@ -35,7 +35,7 @@ flowchart TD
 
 ## Surface
 
-The API is one function, `checkContainsProfanity(text, { isWholeWord })`. It is English only, has no list mutation (`addWords`, `removeWords`, a whitelist), no censoring and no language argument. Each of those is in the upstream package and out of this surface because no caller reads it.
+The API is one function, `checkContainsProfanity(text, { isWholeWord })`. It is English only, has no list mutation (`addWords`, "removeWords", a whitelist), no censoring and no language argument. Each of those is in the upstream package and out of this surface because no caller reads it.
 
 ## Upstream
 
