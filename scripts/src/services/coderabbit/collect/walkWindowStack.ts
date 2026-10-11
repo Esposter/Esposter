@@ -23,13 +23,15 @@ import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // One pass over the open stack, bottom up. Only the bottom window merges, and only once its review completes: a window
-// Whose review completes above an unmerged one waits for its turn. Any window a rate limit refused is asked for its
-// Review once the stated deadline passes, any window the bot skipped is asked a wait apart, and a bottom window with no
-// Check, or one whose review has stayed pending past the time a review takes, is asked the same way once that wait
-// Ends; the run sleeps to the soonest of every wait, so a status event that never comes strands nothing. A window whose
-// Review is still not run past its last ask is cut again with every window above it — a skipped one at half the cap it
-// Was cut under, and the release from `develop` closed for its commits to be cut into windows — which ends the walk:
-// The opener cuts the replacement in the same run. Nothing here fails the run, and the walk never opens anything.
+// Whose review completes above an unmerged one waits for its turn. Only the window next to merge is asked for a review
+// The bot owes it: once a rate limit's stated deadline passes, a wait apart for a skip, and once its wait ends for a
+// Missing check or one pending past the time a review takes; the run sleeps to the soonest of those waits, so a status
+// Event that never comes strands nothing. A window above it is asked once every window below it has merged, since a
+// Review it got first would merge it no sooner and spend a slot of the allowance the next window's own review is then
+// Refused. A window whose review is still not run past its last ask is cut again with every window above it — a skipped
+// One at half the cap it was cut under, and the release from `develop` closed for its commits to be cut into windows —
+// Which ends the walk: the opener cuts the replacement in the same run. Nothing here fails the run, and the walk never
+// Opens anything.
 export const walkWindowStack = async ({
   collectorSha,
   cwd,
@@ -78,10 +80,18 @@ export const walkWindowStack = async ({
 
     const isNextToMerge = isBottom;
     isBottom = false;
-    // Read per window, since a drain below it can run for most of an hour
+    // A window above the one next to merge waits its turn and is asked for nothing
+    if (!isNextToMerge) {
+      blockReasons.push(
+        gate.kind === GateDecisionKind.Proceed
+          ? `pull request #${number} — its review is complete and waits for the windows below it`
+          : `pull request #${number} — ${gate.reason}`,
+      );
+      continue;
+    }
+    // Read here, since a drain below it can run for most of an hour
     const nowMs = Date.now();
-    // Only the window next to merge waits on a missing or pending check and is then asked; one above it waits its turn
-    const checkWaitEndsAtMs = isNextToMerge ? readCheckWaitEndsAtMs(gate.kind, window, nowMs) : undefined;
+    const checkWaitEndsAtMs = readCheckWaitEndsAtMs(gate.kind, window, nowMs);
     let settlement: ReviewAskSettlement | undefined;
     if (gate.kind === GateDecisionKind.RateLimited)
       settlement = settleRateLimit({
@@ -108,8 +118,6 @@ export const walkWindowStack = async ({
         pullRequest: number,
         viewerLogin,
       });
-    else if (gate.kind === GateDecisionKind.Proceed)
-      blockReasons.push(`pull request #${number} — its review is complete and waits for the windows below it`);
     else blockReasons.push(`pull request #${number} — ${gate.reason}`);
     if (settlement === undefined) continue;
 

@@ -42,11 +42,11 @@ Then the cycle cuts every queue commit that claims it needs no review onto `main
 
 | Mechanism                                                                      | What it decides                                                                                                                                         |
 | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [Gate and merge](/docs/infra/review-collector/collection-cycle/gate-and-merge) | The walk over the open windows: each review's gate, the bottom window's merge, its fold and its drain                                                   |
+| [Gate and merge](/docs/infra/review-collector/collection-cycle/gate-and-merge) | The walk over the open windows: the next window's gate and asks, its merge, its fold and its drain                                                      |
 | [Re-cut](/docs/infra/review-collector/collection-cycle/re-cut)                 | A window the bot keeps skipping, a rate limit it leaves unanswered, a window off the chain, or the release, given back to the opener in smaller windows |
 | [Queue sync](/docs/infra/review-collector/collection-cycle/sync)               | The queue rewritten onto the tree the next window is built on, its conflicts resolved and its oversized commits reshaped                                |
 | [Window port](/docs/infra/review-collector/collection-cycle/port)              | The next window built from the fixes and the queue's owed commits, and when it goes out                                                                 |
-| [Opening a window](/docs/infra/review-collector/collection-cycle/opening)      | The hourly ceiling, the stacking guard, and the push, reply and pull request that open a window                                                         |
+| [Opening a window](/docs/infra/review-collector/collection-cycle/opening)      | The hourly ceiling, the open-window cap, the stacking guard, and the push, reply and pull request that open a window                                    |
 | [Re-land](/docs/infra/review-collector/collection-cycle/re-land)               | The held commits tried again as `main` moves                                                                                                            |
 
 ## Why a re-run is a no-op

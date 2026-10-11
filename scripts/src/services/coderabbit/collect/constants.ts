@@ -352,3 +352,13 @@ export const REPAIR_SIGNATURE_SPAN_MS: number = Temporal.Duration.from({ hours: 
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
 // The span the hourly ceiling counts openings over, by the creation time of each window pull request
 export const WINDOW_OPENING_WINDOW_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// The most windows the stack holds open at once. Only the bottom one merges, once its review completes, and the next
+// Merges only after the drain session that follows — a review takes about a quarter of an hour
+// (`OPENED_WINDOW_READ_DELAY_SECONDS`) and a drain up to `SESSION_TIMEOUT_MS` — so a window opened third waits out
+// Two merges and their drains, most of an hour or more, however soon its review completes. CodeRabbit's allowance is
+// Rolling and adaptive, and its limit block states it below the plan's hourly figure (`REVIEWS_PER_HOUR`) once the
+// Windows spend it, so a review given to that third window spends a slot the bottom window's own review is then
+// Refused. Two keeps the window above the bottom reviewed while the bottom one drains, so a merge never waits on a
+// Review, and holds the stack's reviews to the allowance the bot states; a cycle that finds the stack full cuts
+// Nothing, and the queue waits on `ai/queue` for one larger window once the bottom merges
+export const OPEN_WINDOW_CAP = 2;
