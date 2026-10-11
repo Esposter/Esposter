@@ -19,4 +19,4 @@ Ayato's kit is one module, `createAyatoKit`, on avatar 10000066: five strikes, a
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato), MIT: Ayato's strikes' hitmarks, cancel frames and reaches, the charged attack's slash, the collision and the low and high plunges' frames, reaches and poise, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slash, the collision and the low and high plunges' frames, reaches and poise, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.

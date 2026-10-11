@@ -21,7 +21,7 @@ Bennett's kit is one module, `createBennettKit`, avatar 10000032: five strikes, 
 
 ## Not built
 
-- **Bennett's self infusion is left.** "ApplySelfInfusion" puts a 1U Pyro aura on the character on the field each tick, [gcsim v2.47.2](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go) (MIT), an elemental aura and not a weapon infusion. A party member holds no elemental state in this package, only an enemy does, so there is nothing to hold the aura, and it is not built. The wiki's Fire Ventures With Me page says the C6 infusion and bonus also apply when the field heals a character under 70%, where gcsim applies them on the ATK bonus alone; the kit follows gcsim, and the two differ on that case.
+- **Bennett's self infusion is left.** "ApplySelfInfusion" puts a 1U Pyro aura on the character on the field each tick, [gcsim v2.47.2](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/burst.go) (MIT), an elemental aura and not a weapon infusion. Its aura on Bennett is not built. The wiki's Fire Ventures With Me page says the C6 infusion and bonus also apply when the field heals a character under 70%, where gcsim applies them on the ATK bonus alone; the kit follows gcsim, and the two differ on that case.
 
 ## Key files
 
@@ -32,5 +32,5 @@ Bennett's kit is one module, `createBennettKit`, avatar 10000032: five strikes, 
 ## Sources
 
 - [Strike of Fortune](https://genshin-impact.fandom.com/wiki/Strike_of_Fortune), [Passion Overload](https://genshin-impact.fandom.com/wiki/Passion_Overload) and [Fantastic Voyage](https://genshin-impact.fandom.com/wiki/Fantastic_Voyage), Genshin Impact Wiki: Bennett's advanced properties, gauges, poise and the field's heal and ATK bonus.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett), MIT: Bennett's hitmarks, cancel frames, areas and the field's ticks.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett), MIT: the kit's hitmarks, cancel frames and areas, areas and the field's ticks.
 - [Grand Expectation](https://genshin-impact.fandom.com/wiki/Grand_Expectation) and [Fire Ventures With Me](https://genshin-impact.fandom.com/wiki/Fire_Ventures_With_Me), Genshin Impact Wiki: Bennett's C1 and C6, and the C6 page's note on which wielders the bonus and the infusion reach, and when they apply.

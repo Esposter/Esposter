@@ -15,4 +15,4 @@ Yelan's kit is one module, `createYelanKit`, on avatar 10000060: four strikes, a
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yelan), MIT: Yelan's strikes' hitmarks and cancel frames, the fully charged shot's frames, Lingering Lifeline's frames and hit, Depth-Clarion Dice's initial hit, its Exquisite Throws' travel and interval, and the wave's ticker.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yelan), MIT: the kit's hitmarks, cancel frames and areas, the shot's frames, Lingering Lifeline's frames and hit, Depth-Clarion Dice's initial hit, its Exquisite Throws' travel and interval, and the wave's ticker.

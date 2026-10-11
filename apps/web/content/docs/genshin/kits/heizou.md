@@ -19,4 +19,4 @@ Heizou's kit is one module, `createHeizouKit`, avatar 10000059: five strikes wit
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/heizou), MIT: Heizou's strikes' hitmarks, reaches and cancel frames, the charged attack's frames and box, the plunges' frames and circles, Heartstopper Strike's hit, box and frames, its full hold's 180 frames and Declension and Conviction bonuses, and Fudou Style Vacuum Slugger's circle and hitmark.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/heizou), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames and box, the plunges' frames and circles, Heartstopper Strike's hit, box and frames, its full hold's 180 frames and Declension and Conviction bonuses, and Fudou Style Vacuum Slugger's circle and hitmark.

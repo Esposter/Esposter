@@ -19,4 +19,4 @@ Itto's kit is one module, `createIttoKit`, on avatar 10000057: four strikes, the
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/itto), MIT: Itto's strikes' hitmarks, reaches and cancel frames, the Saichimonji Slash's frames, circle and poise, the plunges' frames, reaches and poise, Masatsu Zetsugi's hit and its frames, Royal Descent's duration, ATK bonus and Normal ATK SPD, and the table indexes its data-mined file annotates.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/itto), MIT: the kit's hitmarks, cancel frames and areas, the Saichimonji Slash's frames, circle and poise, the plunges' frames, reaches and poise, Masatsu Zetsugi's hit and its frames, Royal Descent's duration, ATK bonus and Normal ATK SPD, and the table indexes its data-mined file annotates.
