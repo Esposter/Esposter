@@ -1,3 +1,4 @@
+import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
@@ -8,6 +9,8 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 // Seconds left of it. It is priced by the combatant that cast it, as it stood then. A summon that travels moves its body
 // Forward at its speed from its start on its clock, and its hits are reached from where it is then
 export interface KitSummon {
+  // The kind of attack its hits are dealt as, if they are an action's own, queued past its end by queueKitHits
+  attackTag?: AttackTag;
   body: KitBody;
   combatant: Combatant;
   elapsedSeconds: number;
