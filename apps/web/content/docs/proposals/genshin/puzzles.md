@@ -15,7 +15,7 @@ touches:
 
 # Puzzles
 
-Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](/docs/proposals/genshin/spawned-places), they are struck by the [character kits](/docs/proposals/genshin/character-kits), and they unlock the [chests](/docs/proposals/genshin/chests) beside them, so this page waits on all three. Its places and the state machines of the monument, the Seelie and the Time Trial Challenge are built, as the [as-built page](/docs/genshin/puzzles) records; what follows is what remains.
+Much of the game's exploration is puzzles: monuments lit by an element, Seelies led to their courts, timed challenges, sealed shrines, and every region's own devices. Solving one opens a door, raises a platform or spawns a chest. The mechanisms stand at the [spawned places](/docs/proposals/genshin/spawned-places), they are struck by the [character kits](/docs/proposals/genshin/character-kits), and they unlock the [chests](/docs/proposals/genshin/chests) beside them, so this page waits on all three. The [as-built page](/docs/genshin/puzzles) holds its places and the state machines of the monument, the Seelie and the Time Trial Challenge; what follows is what remains.
 
 ## Decisions
 
@@ -63,7 +63,6 @@ scripts/src/services/genshinAssets/puzzles/toMonumentPlace.ts
 
 - **Read from the wiki:** each mechanism kind's states, and each puzzle's effect where its group leaves it open.
 - **Read from the scene groups:** each puzzle's wiring, each monument's element and whether it stays lit once lit, each Seelie's court and each challenge's limit and targets, once the export lands.
-- **Placed by the spawned places:** built, the writer's slices by kind from the official map's marks ([as-built](/docs/genshin/puzzles)).
 - **Measured:** a timed monument's time lit, a Seelie's route and speed, and each challenge's limit where the wiki gives none, off recordings, provisional until then. A timed monument's time lit is provisional at sixty seconds until a recording measures it.
 - **Not in the map:** the map gives one point per Seelie and a court for thirty of Mondstadt's alone, and no target count for a challenge. The other courts and the targets are read from the mechanism's scene group before a Seelie or a challenge is placed.
 

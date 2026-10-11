@@ -1,6 +1,6 @@
 ---
 title: Offering systems
-description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels, its place in Mondstadt, its items, its name, its stand-in in Dragonspine, its F offer and its save are built, on the Offering systems page; its landmark, and each region's offerings, are what is left.
+description: Proposal — the regions' offering systems beyond the Frostbearing Tree: each region's offerings, written with its region on the one rule of a sacred tree, a fountain or a shrine, and the tree's landmark, which the world does not draw yet.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -13,24 +13,16 @@ touches:
 
 # Offering systems
 
-Beside the Statues of The Seven, many areas keep an offering of their own: the Frostbearing Tree in Dragonspine, the Sacred Sakura on Narukami Island, the Lumenstone Adjuvant in the Chasm's mines, Vanarana's Tree of Dreams, the Amrita Pool, the Fountain of Lucine, the Votive Rainjade, Tona's Flame and the Throne of the Primal Fire in Natlan, the Temple of Space's Memory Core and Snezhnaya's Shadow Realm Analyzer. Each takes items found exploring its place and gives rewards for levels, as a statue does for Oculi. They are one rule over different items, so this page is that rule. The rule is built with the statues' levelling, on the [Offering systems](/docs/genshin/offering-systems) page.
+Beside the Statues of The Seven, many areas keep an offering of their own: the Frostbearing Tree in Dragonspine, the Sacred Sakura on Narukami Island, the Lumenstone Adjuvant in the Chasm's mines, Vanarana's Tree of Dreams, the Amrita Pool, the Fountain of Lucine, the Votive Rainjade, Tona's Flame and the Throne of the Primal Fire in Natlan, the Temple of Space's Memory Core and Snezhnaya's Shadow Realm Analyzer. Each takes items found exploring its place and gives rewards for levels, as a statue does for Oculi. They are one rule over different items. The [offering systems](/docs/genshin/offering-systems) page holds the rule and the Frostbearing Tree built on it.
 
 ## Decisions
 
-- **Everything is offered at once.** Interacting with the offering takes every one of its offering items the bag holds, rather than one at a time as a statue takes Oculi.
-- **Levels at thresholds, each with its reward.** The offering rises a level for each threshold its total offered passes, and gives each level's reward once: a level's items, its gadget's blueprints, its Primogems and whatever else the wiki lists for that offering. Each offering's thresholds and rewards are read from its level-up table in the game's dump, which is fetched from the community's AnimeGameData into that dump where it is missing, and from the wiki's page of it where no table holds them.
-- **The first offer starts it.** Level 1 takes no items, so the first offer reaches it, and its reward is paid once, as [offering systems](/docs/genshin/offering-systems) settles.
-- **A surplus past the last level is held.** Items offered past an offering's last level are kept, as [offering systems](/docs/genshin/offering-systems) records, and not returned to the bag.
 - **Its items are found exploring its place.** Each offering's items stand at the [spawned places](/docs/proposals/genshin/spawned-places) or come from its region's quests, as the wiki lists for each.
 - **What a level unlocks is its region's.** A level that changes the place itself, such as a stronger Lumenstone Adjuvant, belongs to its region's page, which reads the offering's level.
 - **One offering at a time, as its region is built.** Each is written with its region, on this rule.
-- **The tree's place is its own slice.** The Frostbearing Tree's place is published per region as the `frostbearingTreePlaces` dataset, as the chests are, rather than into the region's landmark data, since the tree is not yet a landmark the world draws.
-- **The tree's row is named, not verbed.** A prompt row shows its target's name beside its kind's icon, as the statues' rows do ([map unlocking](/docs/genshin/map-unlocking)), so the tree's row is `InteractionKind.Activate` named by `UI_ELDERTREE_MAINUI_TITLE` ("Frostbearing Tree"), and the game's "Offer" (`UI_BAG_OFFERING_JUMP`) is a button of the tree's own screen, not of the row. The row waits on no decoding.
-- **Offering items are read by id.** An offering's offering items are the item ids its levels take, and the bag's count of each is offered together, so a tree whose levels take one item and an offering that takes several are one rule.
+- **The tree's landmark waits on the world's drawing.** The Frostbearing Tree's place is published per region as the `frostbearingTreePlaces` dataset, as the chests are, rather than into the region's landmark data, since the tree is not yet a landmark the world draws.
 
 ## Scope and order
-
-**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; its place in Mondstadt, written from the official map; its items, which the items step publishes with their names, and whose inclusion `buildItems`'s test asserts; and its prompt name, `GameTextKey.FrostbearingTree`, in every language, on the [Offering systems](/docs/genshin/offering-systems) page.
 
 **This still adds:**
 

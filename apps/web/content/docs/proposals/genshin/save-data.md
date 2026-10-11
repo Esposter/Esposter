@@ -1,6 +1,6 @@
 ---
 title: Save Data
-description: Proposal — what is left of the Genshin world's save: the characters the player holds and their copies, which the save does not yet hold, and the enemy respawn timers once they are saved. The save blob, its lease, the slices of the bag, Adventure Rank, achievements, wish counters, Reputation and Companionship, the shared If-Match path, the guest merge and the replaced signal are built.
+description: Proposal — what is left of the Genshin world's save: the characters the player holds and their copies, which the save does not yet hold, and the enemy respawn timers once they are saved.
 model: claude-haiku-5-5
 touches:
   [
@@ -15,7 +15,7 @@ touches:
 
 # Save Data
 
-The save, its lease, the shared blob-state path with its If-Match, the slices of the bag, Adventure Rank, achievements, wish counters, Reputation and Companionship, the guest merge and the replaced signal are built as [save data](/docs/genshin/save-data) describes. What is left is what the world holds that the save does not yet.
+The [save data](/docs/genshin/save-data) page holds the save, its lease, the shared blob path and the slices already kept. What is left is what the world holds that the save does not yet.
 
 ## Decisions
 
