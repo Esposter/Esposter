@@ -125,7 +125,8 @@ const LIGHTFALL_TRIGGER_DELAY_FRAMES = 35;
 const LIGHTFALL_STACK_ICD_SECONDS = 0.1;
 const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
-const LIGHTFALL_STACK_IDS = Array.from({ length: LIGHTFALL_MAX_STACKS }, (_, index) => `eula-lightfall-stack-${index}`);
+const getLightfallStackId = (index: number): string => `eula-lightfall-stack-${index}`;
+const LIGHTFALL_STACK_IDS = Array.from({ length: LIGHTFALL_MAX_STACKS }, (_, index) => getLightfallStackId(index));
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
 // Constellation 6 starts the Sword with this many stacks, with its extra stack from each of Eula's strikes a random roll that
 // This kit leaves out
@@ -201,7 +202,7 @@ const gainLightfallStack = (
   if (count >= LIGHTFALL_MAX_STACKS) return;
   addKitEffect(kitEffectState, {
     characterId,
-    id: LIGHTFALL_STACK_IDS[count],
+    id: getLightfallStackId(count),
     kind: "status",
     secondsRemaining: Infinity,
   });
