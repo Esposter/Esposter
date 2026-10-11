@@ -2,11 +2,14 @@ import type { TMXAnimationParsed } from "#src/models/tmx/parsed/TMXAnimationPars
 import type { TMXImageParsed } from "#src/models/tmx/parsed/TMXImageParsed";
 import type { TMXObjectParsed } from "#src/models/tmx/parsed/TMXObjectParsed";
 import type { TMXPropertiesParsed } from "#src/models/tmx/parsed/TMXPropertiesParsed";
-import type { TMXTileShared } from "#src/models/tmx/shared/TMXTileShared";
 
-export interface TMXTileParsed extends TMXTileShared {
+export interface TMXTileParsed {
   animation?: TMXAnimationParsed;
+  id: number;
   image?: TMXImageParsed;
   objects?: TMXObjectParsed[];
+  probability?: number;
   properties?: TMXPropertiesParsed;
+  terrain?: string;
+  type?: string;
 }

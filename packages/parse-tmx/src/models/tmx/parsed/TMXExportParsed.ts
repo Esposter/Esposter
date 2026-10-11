@@ -1,3 +1,4 @@
-import type { TMXExportShared } from "#src/models/tmx/shared/TMXExportShared";
-
-export interface TMXExportParsed extends TMXExportShared {}
+export interface TMXExportParsed {
+  format: string;
+  target: string;
+}
