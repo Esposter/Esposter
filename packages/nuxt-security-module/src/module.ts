@@ -63,11 +63,15 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     const resolver = createResolver(import.meta.url);
     const { basicAuth, ...publicOptions } = options;
 
-    // The credentials stay on the server, and the route rules every request matches are the options without them
-    const { private: privateRuntimeConfig } = nuxt.options.runtimeConfig;
-    nuxt.options.runtimeConfig.private = defu(checkIsRecord(privateRuntimeConfig) ? privateRuntimeConfig : {}, {
-      basicAuth,
-    });
+    // The credentials stay on the server, and the route rules every request matches are the options without them.
+    // Only configured credentials are written: Nuxt types the private config from the values it holds at prepare time,
+    // So a `false` would be typed `boolean` and refuse the options' `BasicAuthOptions | false` shape
+    if (basicAuth) {
+      const { private: privateRuntimeConfig } = nuxt.options.runtimeConfig;
+      nuxt.options.runtimeConfig.private = defu(checkIsRecord(privateRuntimeConfig) ? privateRuntimeConfig : {}, {
+        basicAuth,
+      });
+    }
     // Validated here, at build time, so a bad route rule stops the build before any request is served
     const routeSecurityRules = getRouteSecurityRules(nuxt.options.routeRules ?? {}, options);
     addServerTemplate({
