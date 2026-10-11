@@ -50,10 +50,12 @@ export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetc
 export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
 export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
-export const LEADING_SEGMENT_REGEX = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
 // The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what
 // It runs may write as readily as read; PowerShell's cmdlets are matched in any case, as PowerShell matches them
-export const LOOKUP_COMMAND_REGEX =
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
+export const LOOKUP_COMMAND_REGEX: RegExp =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question
 export const DELEGATION_NUDGE_EVERY = 3;
@@ -64,7 +66,5 @@ export const DELEGATION_NUDGE =
 export const IDLE_LINE_PREFIX = "machine idle:";
 // The repository's watcher, which the pulse runs as its child and reads the lines of
 export const MACHINE_WATCHER_SCRIPT = "scripts/src/machine/watch/index.ts";
-// A failed queue sync's toast is shown at most once this long apart
-export const QUEUE_SYNC_TOAST_MILLISECONDS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const IDLE_WAKE_PROMPT: string = `The machine has gone idle, with room for more runs. Run \`pnpm ai:fleet:fill\`, then launch one background haiku agent per brief it printed, the brief as the prompt, then report what started. If it printed "nothing ready", report that and stop.`;
