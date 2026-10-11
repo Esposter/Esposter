@@ -40,3 +40,7 @@ The [achievements](/docs/genshin/achievements) page holds the table, the quest t
 ## Sources
 
 - [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the namecard a category pays once it is done, as the namecard decision takes it.
+
+## Reference
+
+- `achievements-screen.mkv` — the Achievements screen opened from the Paimon menu on a category with a finished achievement and one with none, 20 seconds at most; the category tabs' places, the rows' layout, the Primogem glyph and the hidden row's "?" are read from it ([achievements](/docs/genshin/achievements)). Partly found 2026-10-11: the wiki's `File:Achievements.png`; still sought: A video of the Achievements screen opened from the Paimon menu on a category with a finished achievement and one with none, 20 seconds at most. The still is 1600x878 and older, with no hidden row in view.

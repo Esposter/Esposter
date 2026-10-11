@@ -74,3 +74,8 @@ packages/genshin-world/src/
 
 - [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the unlock after the Serenitea Pot, one bait per fish, the cast's distance, the bite and the tension, points emptied and back every 72 hours with separate day and night fish, and the Fishing Associations.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the skill, bait and proficiency tables, which the build does not read yet.
+
+## Reference
+
+- `fishing-reel.mkv` — a fish struck and reeled from its bite to its catch or the line's break, the reel held and released in turns with the tension bar in view, 60 seconds at most; how far the tension rises and falls a second (`REEL_TENSION_RATE`), how long the line may lie out of its zone before it breaks (`REEL_LOST_OUT_OF_ZONE_SECONDS`) and how the zone travels over its duration are read from it, in `packages/genshin-world/src/services/fishing/constants.ts` and the reel's zone, each provisional until then ([fishing](/docs/genshin/fishing)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `fishing-point-pool.mkv` — three fishing points of one region, each cast from in turn in the day and again at night, each catch's fish named, 3 minutes at most; which pool a point draws its fish from is read off the catches, and the region's pools it draws from are narrowed to the ones it shows ([fishing](/docs/proposals/genshin/fishing)). On the wiki and YouTube, none found (searched 2026-10-11).

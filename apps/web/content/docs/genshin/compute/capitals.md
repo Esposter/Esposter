@@ -12,4 +12,4 @@ description: The witness runs that lay out the capitals as the game draws them, 
 
 ## Waiting
 
-Nothing here.
+- [ ] `[cpu]` {capital-area-outlines} needs game-exports — **Capitals: each capital's area outlined as the game draws it.** blocked: the game's area shapes have no extracted source yet, so the squares the [world map](/docs/genshin/world-map) draws stay provisional. Bar: each capital's outline drawn from that source, in place of its square.

@@ -75,3 +75,8 @@ packages/genshin-world/src/services/leyLine/
 - [Ley Line Outcrops](https://genshin-impact.fandom.com/wiki/Ley_Line_Outcrops), Genshin Impact Wiki: the enemies by region at the World Level, the claims' rewards by World Level, and a claimed outcrop moving within its group. The page was not reachable when this proposal was last checked.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the outcrops' places drawn afresh with each day's reset.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the chest rows' reward ids, which the dump's reward table does not hold.
+
+## Reference
+
+- `liyue-outcrop-rank.mkv` — the map on M opened in Liyue at Adventure Rank 8 and again at 18, with no statue of Liyue activated in the second, 10 seconds at most; each shows whether a ley line blossom is offered there, which settles whether Liyue opens its blossoms at 8 and 12, as the wiki has it, or at 18, as the dump's table does. On the wiki and YouTube, none found (searched 2026-10-11).
+- `ley-line-claim.mkv` — a ley line blossom claimed with resin at the reader's World Level, the reward window in view, then the map after the claim; the claim's rewards by World Level are read from it, and the outcrop's move after a claim is checked against the rule. On the wiki and YouTube, none found (searched 2026-10-11).

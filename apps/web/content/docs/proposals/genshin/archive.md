@@ -56,3 +56,8 @@ The artifact sets' caller is wherever the player's artifacts change, which the f
 
 - [Archive](https://genshin-impact.fandom.com/wiki/Archive), Genshin Impact Wiki: entries opened when first obtained or defeated, artifact sets once every piece is held, kill counts and turning models, and Geography's viewpoints.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the codex tables the built sections read, and the view codex whose places the viewpoints are placed by.
+
+## Reference
+
+- `archive-screen.mkv` — the Archive opened from the Paimon menu on the English PC client, a section’s tab and one of its open entries in view, 30 seconds at most; the screen’s places and the sections’ look are measured from it. Partly found 2026-10-11: the wiki's `File:Archive Menu Home 1.png`; still sought: A video of the Archive opened from the Paimon menu with a section's tab and one open entry in view, 30 seconds at most. The still is the Archive's home, not an open section.
+- `book-reader.mkv` — a book opened from the Archive’s Books tab on the English PC client, its title and one page of its text in view, 30 seconds at most; the reader’s places, sizes and colours are measured from it ([Archive](/docs/genshin/archive)). Partly found 2026-10-11: the wiki's `File:Archive Menu Books.png`; still sought: A video of a book opened from the Archive's Books tab, its title and a page in view, 30 seconds at most. The still gives the reader's places and look, not its motion.

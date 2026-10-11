@@ -40,3 +40,7 @@ flowchart LR
 ## Sources
 
 - [Map](https://genshin-impact.fandom.com/wiki/Map), Genshin Impact Wiki: the minimap in the top left of the HUD, opening the map.
+
+## Reference
+
+- `oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is replaced by the audio pass. The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).

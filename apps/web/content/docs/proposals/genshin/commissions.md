@@ -69,3 +69,7 @@ packages/genshin-world/src/
 
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the scene tasks replacing their area's enemies and objects, the quest blocking a commission's place, the preferred region, and Encounter Points.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the daily task table with each task's place, radius, finish and swapped groups, read by the built part.
+
+## Reference
+
+- `commission-bonus.mkv` — the fourth commission of a day claimed at Katheryne's branch of the Adventurers' Guild, with the bonus's panel shown, 30 seconds at most; whether the Adventure Treasure Pack the wiki lists is paid on it is read from the clip, since the dump's preview gives its item at a count of zero, and the bonus's Mora and Companionship EXP are checked against the dump's preview ([commissions](/docs/genshin/commissions)). On the wiki and YouTube, none found (searched 2026-10-11).

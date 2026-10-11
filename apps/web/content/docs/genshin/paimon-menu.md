@@ -40,3 +40,5 @@ The game's pause menu, laid out as the English PC client's 1.3 still draws it at
 ## Sources
 
 - [Paimon Menu](https://genshin-impact.fandom.com/wiki/Paimon_Menu), Genshin Impact Wiki: the menu's contents and side bar in order, opened by Escape and a pad's Start, and its pause of everything but particles and music in single-player.
+- `menu-paimon.mkv` — the Paimon menu opened and closed. Found 2026-10-11: https://www.youtube.com/watch?v=IegFADn-Lmk at 0–141 s (`captures/yt-IegFADn-Lmk-menu-paimon.mp4`), the English PC client at 60 frames a second in 2025, the menu opening at about 35.3–36.3 s and closing at about 109.5–110.5 s; a caption runs along the bottom, the uploader's black box covers the name card, and a comment overlay covers the grid from about 85 to 107 s. The opening alone is also in https://www.youtube.com/watch?v=igW050DMb4A at 0–40 s (`captures/yt-igW050DMb4A-0-40.mp4`).
+- `menu-time.mkv` — the Time screen opened from the Paimon menu's side bar, an hour chosen on it and confirmed, 30 seconds at most, at 60 frames a second. Found 2026-10-11: https://www.youtube.com/watch?v=igW050DMb4A at 0–40 s (`captures/yt-igW050DMb4A-0-40.mp4`).

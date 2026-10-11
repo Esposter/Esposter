@@ -39,3 +39,13 @@ flowchart LR
 | :----------------------------------------------------------------- | :----------------------------------------------- |
 | `packages/genshin-world/src/components/Splash/Publisher/Index.vue` | The publisher's logo per client where it differs |
 | `packages/genshin-world/parity/screens.visual.ts`                  | An image per language whose screen differs       |
+
+## Reference
+
+- `japanese-launch.mkv` — the Japanese PC client launched from its launcher with the game's language set to Japanese, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (the health notice is about 7 to 12 seconds in and the door about 12 to 17 in the mainland's launch, so the clip must start at the launch). The Japanese client's publisher and title splashes, and its door, are read from it, since no published PC clip shows them ([localized opening](/docs/proposals/genshin/localized-opening)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `korean-launch.mkv` — the Korean PC client launched from its launcher with the game's language set to Korean, from the first frame of the client's window: its publisher splash, its title splash, its health notice and the door stage with its prompt in view, 30 seconds at most (starting at the launch, as for `japanese-launch.mkv`). The Korean launch's splash, notice and door are read from it, since the published Korean PC gameplay clip has no splash, notice or door ([localized opening](/docs/proposals/genshin/localized-opening)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `opening-korean.mkv` — launch to the title, the client's language set to Korean. On the wiki and YouTube, none found (searched 2026-10-11).
+
+## Sources
+
+- `opening-japanese.mkv` — launch to the title, the client's language set to Japanese. Found 2026-10-11 as `captures/yt-57d2PwbOdr0-opening-japanese.mp4` (https://www.youtube.com/watch?v=57d2PwbOdr0), read by the [Japanese health notice](/docs/genshin/compute/login) item.

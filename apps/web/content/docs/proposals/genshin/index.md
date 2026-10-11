@@ -50,6 +50,18 @@ flowchart TD
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | every placed plant's species, instanced and culled on the GPU                |
 | [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them   |
 | [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom  |
+| Page                                                               | What it adds                                                                 |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen |
+| [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows             |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | coastlines, and the ground's layers fitted to the game's own                 |
+| [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                  |
+| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | every placed plant's species, instanced and culled on the GPU                |
+| [World stalls](/docs/proposals/genshin/world-stalls)               | the Windrise frame's GPU stalls, each answered by its pass and object kind   |
+| [Windrise derivation](/docs/proposals/genshin/windrise-derivation) | Windrise's open world rebuilt from every object the game streams             |
+| [Ground detail](/docs/proposals/genshin/ground-detail)             | the ground's fine texture at each texture's own metres per texel             |
+| [Weather](/docs/proposals/genshin/weather)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them   |
+| [Exploring](/docs/proposals/genshin/exploring)                     | waypoints to jump to, the game's arrival points, and the map's pan and zoom  |
 
 ### Phase two: the regions
 

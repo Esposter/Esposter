@@ -74,3 +74,9 @@ flowchart TD
 - [Serenitea Pot](https://genshin-impact.fandom.com/wiki/Serenitea_Pot), Genshin Impact Wiki: the unlock at rank 28, the gadget and entering and leaving, the realm layouts, furnishings and their sources, the furnishing sets and gift sets, the companions, the load's traffic light, the Adeptal Mirror and the Trust Rank's bonuses.
 - [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: Realm Bounty's rate by Adeptal Energy and its store by Trust Rank.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the realm, furniture, comfort, farm, plant, fish-raising and furniture-making tables.
+
+## Reference
+
+- `realm-store-start.png`, `realm-store-hour.png` — two stills, not a clip, of one realm's Realm Currency and Realm Bounty stores an hour of real time apart, with its Adeptal Energy rank and Trust Rank shown beside them; they read whether a store fills per real hour at the table's rate ([Serenitea Pot](/docs/genshin/serenitea-pot)). `realm-store-start.png` searched 2026-10-11 on the wiki and YouTube, none found; `realm-store-hour.png` searched 2026-10-11 on the wiki and YouTube, none found.
+- `trust-queues.mkv` — Tubby's making at two Trust Ranks, the rank read off the Trust screen, a furnishing started in each queue, 30 seconds at most; it shows whether each rank holds one queue more than the rank below it ([Serenitea Pot](/docs/genshin/serenitea-pot)). On the wiki and YouTube, none found (searched 2026-10-11).
+- `realm-load.png` — one realm area's load traffic light at a few placements, with its load figure visible; it names the load each area holds, the number the placement editor waits on ([Serenitea Pot](/docs/proposals/genshin/serenitea-pot)). On the wiki and YouTube, none found (searched 2026-10-11).

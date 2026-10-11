@@ -46,3 +46,7 @@ flowchart LR
 
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the mobile client's every action done by touching the screen, the camera turned by touching and dragging it, and the jump that moves upward where the free camera flies.
 - [Game accessibility guidelines](https://gameaccessibilityguidelines.com/full-list/): support for several input devices.
+
+## Reference
+
+- `mobile-touch.png` — a screenshot of the mobile client's play screen with its touch controls. On the wiki and YouTube, none found (searched 2026-10-11).

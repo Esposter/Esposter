@@ -56,3 +56,8 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 - [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: Musk Reef and its wormhole, the twelve floors of three chambers, the monolith, the two-team chambers, the reset on the 16th, and the enemies changing by version. Its blessings' wording is what the blessing modules wait on.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the tower tables the rules are read from, and the domain scenes the chambers' camps are placed in.
+
+## Reference
+
+- `spiral-abyss-chamber.mkv` — a floor one chamber of the Abyss Corridor cleared with its clock in view, the time left and the stars shown at the clear, three minutes at most; the clock's length is measured from it, and `ABYSS_SHORT_CLOCK_SECONDS` is settled by it, as the star marks are checked against the clock left. Partly found 2026-10-11: https://www.youtube.com/watch?v=Osaylns8nyk at 130–188 s (`captures/yt-Osaylns8nyk-spiral-abyss-chamber.mp4`); still sought: a legible clock at the clear, read at full size, so the clock length and the star marks against time left are not confirmed.
+- `spiral-abyss-two-halves.mkv` — a floor five chamber of the Abyss Corridor, its first half cleared with the clock in view and its second half started, through to the clear, ten minutes at most; whether the second half keeps the first half's clock is read from it, which `checkIsAbyssChallengeFailed` and `stepAbyssChallenge` assume. On the wiki and YouTube, none found (searched 2026-10-11).

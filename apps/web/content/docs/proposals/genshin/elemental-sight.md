@@ -54,3 +54,7 @@ packages/genshin-world/src/services/elementalSight/computeSightTrail.ts
 ## Sources
 
 - [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki: the trails of bounties, Seelie and quests, and the sight's end after a short move.
+
+## Reference
+
+- `elemental-sight.mkv` — standing in the open world with a hilichurl and a drop in view, Elemental Sight turned on with the middle mouse button, its white range left to spread to its reach, then the character walked away until the sight ends, and turned on again standing still, 20 seconds at most; the reach, the spread, the walk that ends it, the muted and highlighted colours and whether the camera resets on the same press are measured from it. On the wiki and YouTube, none found (searched 2026-10-11).

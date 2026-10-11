@@ -36,3 +36,8 @@ This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by
 ## Sources
 
 - [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the Lunar and Stellar Glimmer formulas, direct and indirect, and the four contributors' weights.
+
+## Reference
+
+- `world-skill-burst.mkv` — the Traveler on the field with the skill pressed and its cooldown counted down, then the burst energy filling until the burst glows, the skill and burst buttons on screen. On the wiki and YouTube, none found (searched 2026-10-11).
+- `world-attacks.mkv` — the Traveler's normal attack string, a charged attack, a low and a high plunge, then E and then Q, each on a Hilichurl, 60 frames a second. Superseded by the animation clips: `genshin:assets timings` reads the hitmark seconds of each attack, plunge, skill and burst from the Traveler's clips, once the blocks are extracted. On the wiki and YouTube, none found (searched 2026-10-11).

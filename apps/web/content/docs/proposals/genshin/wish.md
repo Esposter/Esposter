@@ -57,3 +57,7 @@ packages/genshin-world/src/services/wish/getOpenEventBanners.ts
 ## Sources
 
 - [Wish](https://genshin-impact.fandom.com/wiki/Wish), Genshin Impact Wiki: the banner kinds, Chronicled Wish, and the wish history kept for a year.
+
+## Reference
+
+- `wish-standard.png` — the Standard Wish banner screen at 1080 high, English PC client, no pull under way; the published stills are the banner art and the details popups, not the screen itself. On the wiki and YouTube, none found (searched 2026-10-11).
