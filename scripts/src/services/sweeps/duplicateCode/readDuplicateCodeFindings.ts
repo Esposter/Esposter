@@ -11,7 +11,7 @@ import {
   MIN_DUPLICATE_TOKENS,
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -76,11 +76,24 @@ export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
   );
   if (result.status !== 0) {
     rmSync(outputDirectory, { force: true, recursive: true });
-    throw new InvalidOperationError(Operation.Read, "jscpd", result.stderr || result.stdout);
+    // A launcher that never started has no output, only its spawn error
+    throw new InvalidOperationError(
+      Operation.Read,
+      "jscpd",
+      result.stderr || result.stdout || (result.error?.message ?? ""),
+    );
   }
 
-  const report = jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8"));
+  const reportResult = getResult(() =>
+    jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")),
+  );
   rmSync(outputDirectory, { force: true, recursive: true });
+  const report = reportResult.match(
+    (value) => value,
+    (error) => {
+      throw error;
+    },
+  );
   const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
     duplicationA: toDuplicateCodeFragment(firstFile),
     duplicationB: toDuplicateCodeFragment(secondFile),
