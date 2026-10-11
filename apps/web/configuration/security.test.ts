@@ -34,23 +34,25 @@ describe("security", () => {
   test("holds the hosts the app's fetches and media need", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("AZURE_CONTAINER_BASE_URL", "https://esposter.blob.core.windows.net");
-    vi.stubEnv("LIVEKIT_URL", "wss://esposter.livekit.cloud");
+    vi.stubEnv("AZURE_CONTAINER_BASE_URL", "https://container.blob.core.windows.net");
+    vi.stubEnv("LIVEKIT_URL", "wss://livekit.example.cloud");
     vi.resetModules();
     const { security } = await import("./security.ts");
 
-    expect(security?.headers).toMatchObject({
-      contentSecurityPolicy: {
-        "connect-src": expect.arrayContaining([
-          "'self'",
-          "https://esposter.blob.core.windows.net",
-          "wss://esposter.livekit.cloud",
-          "https://esposter.livekit.cloud",
-          "wss://*.webpubsub.azure.com",
-          "https://cdn.jsdelivr.net",
-        ]),
-        "media-src": expect.arrayContaining(["'self'", "https://esposter.blob.core.windows.net", "blob:"]),
-      },
-    });
+    const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
+
+    expect(contentSecurityPolicy?.["connect-src"]).toStrictEqual(
+      expect.arrayContaining([
+        "'self'",
+        "https://container.blob.core.windows.net",
+        "wss://livekit.example.cloud",
+        "https://livekit.example.cloud",
+        "wss://*.webpubsub.azure.com",
+        "https://cdn.jsdelivr.net",
+      ]),
+    );
+    expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
+      expect.arrayContaining(["'self'", "https://container.blob.core.windows.net", "blob:"]),
+    );
   });
 });
