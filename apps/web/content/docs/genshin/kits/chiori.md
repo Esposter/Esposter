@@ -16,10 +16,8 @@ Chiori's kit is one module, `createChioriKit`, on avatar 10000094: four strikes 
 
 ## Not built
 
-- **Tapestry and Tailoring, from Ascension 1, are not built.** Tapestry is a forced swap to the next character and a Tamoto that answers each normal, charged or plunging attack hit near the enemy by the active character, and Tailoring is a Geo infusion for 5 seconds, both chosen by the next action after the sweep. They wait on the swap watchers on the kit events, which the [character kits proposal](/docs/proposals/genshin/character-kits) lists as unbuilt.
-- **Ascension 4's Geo DMG Bonus and the Geo construct's second Tamoto wait on Geo constructs.** Neither a construct nor an event announcing one is in the kit framework, so the rock doll that a construct calls, and the Geo bonus from a party member's construct, are not built.
-- **Constellations 1, 2, 4 and 6 are not built.** Constellation 1 needs a second Geo party member and the constructs above, Constellation 2 is the burst's Kinu, and Constellations 4 and 6 are the coordinated Kinu and the sweep's cooldown cut, which both follow Tapestry.
-- **The low plunge is available only after a hold in gcsim.** The kit's low plunge is not gated on the last action, as the kit framework does not check it, and it waits on a plunge gate that reads the last action.
+- **Her ascension passives are not built.** They add to her Tamoto and to her sweep and burst, and the kit framework has no hook for them yet, so they are left out rather than approximated.
+- **Her constellations are not built.** Their effects, including the Kinu her burst calls and the constructs her Geo passives depend on, have no hook in the kit framework yet, so none is approximated.
 - **Hold's threshold is provisional.** The half second a press must be held is Zhongli's, as no source gives Chiori's, and it is on the roadmap's Manual verification list.
 
 ## Key files
