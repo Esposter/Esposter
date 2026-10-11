@@ -1,20 +1,20 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { Combatant } from "#src/models/kit/Combatant";
 
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
-import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -172,7 +172,7 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     getTalentMultiplier(talentMultiplierMap, ESCOFFIER_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
   const burstMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, ESCOFFIER_BURST_GROUP_ID, TALENT_START_LEVEL, index);
-  const skillTickHits: KitHit[] = Array.from({ length: SKILL_TICK_COUNT }, (_, index): KitHit => ({
+  const skillTickHits: KitHit[] = Array.from({ length: SKILL_TICK_COUNT }, (_value, index): KitHit => ({
     hitArea: SKILL_TICK_HIT_AREA,
     hitmarkSeconds: skillTickFrames(index) / 60,
     poiseDamage: 0,
@@ -245,8 +245,7 @@ export const createEscoffierKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       ],
       onStart: ({ body, combatant, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon(body, combatant, skillTickHits));
-        if (findKitStatus(kitEffectState.effects, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID) !== undefined)
-          return;
+        if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID)) return;
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           id: ALIGNED_INTERVAL_STATUS_ID,
