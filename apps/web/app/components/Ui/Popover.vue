@@ -89,6 +89,7 @@ defineExpose({ triggerElement });
     role="dialog"
     :style="contentStyles"
     ui-popover
+    ui-popover-motion
     @keydown.esc.prevent.stop="closeToTrigger()"
   >
     <div max-h="[70dvh]" p-3 flex flex-col gap-3 of-y-auto ui-lifted>
@@ -100,13 +101,7 @@ defineExpose({ triggerElement });
 <style scoped>
 /* It steps out of what opened it and back in: down from a trigger by default, out of the dock's edge on the dock */
 .panel {
-  opacity: 0;
   transform: var(--ui-popover-from);
-  transition:
-    opacity var(--ui-motion-short),
-    transform var(--ui-motion-short),
-    display var(--ui-motion-short) allow-discrete,
-    overlay var(--ui-motion-short) allow-discrete;
 }
 
 .panel:popover-open {
