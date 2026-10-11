@@ -5,13 +5,13 @@ description: Aino's kit as built, with her three strikes, a provisional charged 
 
 # Aino
 
-Aino's kit is one module, `createAinoKit`, on avatar 10000121: her three strikes, a charged attack, a plunge collision and two plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with the Ascension 4 Elemental Mastery bonus. Her multipliers are read from proud skill groups 12131, 12132 and 12139. Her skill's cooldown of 10 seconds, the burst's cooldown of 13.5 and energy cost of 50 are read from the same groups, and they match gcsim's values.
+Aino's kit is one module, `createAinoKit`, on avatar 10000121: her three strikes and charged attack, a plunge collision and two plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with the Ascension 4 Elemental Mastery bonus. Her multipliers are read from proud skill groups 12131, 12132 and 12139. Her skill's cooldown of 10 seconds, the burst's cooldown of 13.5 and energy cost of 50 are read from the same groups, and they match gcsim's values.
 
 ## Decisions
 
 - **Her strikes land at their hitmarks, with no travel.** gcsim queues each strike's damage at its hitmark, so the strikes land at 23, 20 and 35 and 43 frames, in animations ending at 48, 75 and 93 frames. Their poise is gcsim's, 88.923, 88.512 and 48.3 per hit. The third strike's first hit is a box of 2.5 by 3.5 metres one metre behind the body, and its second a circle of radius 2, as gcsim's boxes are drawn. Her strikes are physical, so they carry no element.
-- **Her charged attack is provisional.** gcsim gives Aino no charged attack, as its charge is not implemented, so the charged attack takes the frames and reach of Ayato's measured claymore charge, as Gaming's does: 55 frames, a hit at 24, and the reach of a target within the strike area. Its multiplier is the table's at index 4, and its stamina is the table's at index 5, 40, which the layout of the group places by Gaming's. The question is on the [roadmap](/docs/genshin/roadmap).
-- **Her plunges are provisional.** gcsim has no plunge file for Aino, so the gap is her plunges' timing and poise. The kit takes Bennett's timings and poise, as Lauma's do, with her own table's multipliers at 7, 8 and 9. The question is on the [roadmap](/docs/genshin/roadmap).
+- **Her charged attack is provisional.** gcsim implements no charge for Aino, so her charged attack borrows Ayato's measured claymore charge, as Gaming's does, 55 frames, a hit at 24, and the reach of a target within the strike area. Its multiplier is the table's at index 4, and its stamina is the table's at index 5, 40, which the layout of the group places by Gaming's. The question is on the [roadmap](/docs/genshin/roadmap).
+- **Her plunges are provisional.** Aino has no gcsim plunge file; her plunges use Bennett's timings and poise like Lauma's, under her own multipliers at table indices 7, 8 and 9, and the [roadmap](/docs/genshin/roadmap) holds the question.
 - **Musecatcher's second stage is struck from the body.** gcsim centres its second stage on the body, a circle of radius 3.5 1.2 metres ahead, and does not carry its poise, as its stage's attack is copied before its own values are set. The kit gives it no poise either, and both stages are Hydro, gauge 1.
 - **Cool Your Jets Ducky drops ten Water Balls.** gcsim drops one every 90 frames from 123 frames for 14.2 seconds, the last at 933 frames, each landing 10 frames after it falls. Each ball strikes a random enemy within 10 metres of the body, which the kit cannot draw, so each ball's reach is the area it could land in, 11 metres round the body, as Ayato's ticks are. A ball against several enemies therefore overstates its damage.
 - **Ascension 4 adds half her Elemental Mastery to each Water Ball.** gcsim's `a4Dmg` is read as the balls are cast, and the kit reads the striker's Elemental Mastery the same way.
@@ -34,6 +34,6 @@ Aino's kit is one module, `createAinoKit`, on avatar 10000121: her three strikes
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/aino), MIT: each strike's hitmark, animation, poise and shape, Musecatcher's stages, and Cool Your Jets Ducky's interval, duration, radius and landing delay, read from `attack.go`, `skill.go`, `burst.go` and `asc.go`.
-- The proud skill groups' indices, read from gcsim's `zz_aino.dm.go` table, and the group values of the hosted game data.
+- The proud skill groups' indices, read from gcsim's data file for the character, and the group values of the hosted game data.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato), MIT: the claymore charge's frames and reach, borrowed as Aino's charged attack's are provisional.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Aino's own folder has no plunge file.

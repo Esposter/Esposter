@@ -19,5 +19,5 @@ Wanderer's kit is one module, `createWandererKit`, on avatar 10000075: three str
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/wanderer), MIT: Wanderer's strikes' hitmarks, cancel frames and reaches, the charged attack, the low plunge and its collision, Hanega: Song of the Wind and Windfavored's strikes, charged attack and burst, Kyougen: Five Ceremonial Plays' hitmarks, and the skydweller points.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/wanderer), MIT: Wanderer's strikes' hitmarks, cancel frames and reaches, the charged attack, the low plunge with its collision, Hanega: Song of the Wind and Windfavored's strikes, charged attack and burst, Kyougen: Five Ceremonial Plays' hitmarks, and the skydweller points.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the high plunge's timings and poise, borrowed as gcsim gives Wanderer none.

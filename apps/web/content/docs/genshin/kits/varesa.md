@@ -5,22 +5,22 @@ description: Varesa's kit as built outside her Nightsoul Blessing: her three str
 
 # Varesa
 
-Varesa's kit is one module, `createVaresaKit`, avatar 10000111: her three strikes, a charged attack, Rush as her skill with two charges, Flying Kick as her burst, and a low, high and collision plunge, all as she plays them outside her Nightsoul Blessing. Her multipliers are read from proud skill groups 11131, 11132 and 11139: the strikes, charged attack, stamina and plunges from the first, the skill's multiplier and cooldown from the second, and the burst's multiplier, cooldown and energy cost from the third. The charged attack costs the 50 stamina the table gives it, the skill cools for 9 seconds and the burst costs 70 energy and cools for 18 seconds.
+Varesa's kit is one module, `createVaresaKit`, avatar 10000111: her three strikes, a charged attack, Rush as her skill with two charges, Flying Kick as her burst, and a low, high and collision plunge, all as she plays them outside her Nightsoul Blessing. Her multipliers are read from proud skill groups 11131, 11132 and 11139. Her charged attack costs 50 stamina, Rush cools for 9 seconds, and Flying Kick costs 70 energy with an 18-second cooldown.
 
 ## Not yet built
 
-The framework holds no Nightsoul state, so everything that depends on it waits on the Nightsoul hook: the Nightsoul Blessing and its Fiery Passion forms, the Nightsoul points each Rush, Flying Kick and plunge gives, and the apex state that opens Volcanic Kablam.
+Her Nightsoul Blessing and its Fiery Passion forms, the points each Rush, Flying Kick and plunge gives, and the apex state that opens Volcanic Kablam all wait on the Nightsoul hook, which the framework lacks.
 
 - **The Fiery Passion forms wait on the Nightsoul hook.** Inside the blessing her strikes, charged attack, Rush, Flying Kick and plunges are gcsim's Fiery Passion moves, which replace the ones built here. The blessing is entered from the Nightsoul points, so until the hook lands none of them is reached.
 - **Her plunge chain waits on the Nightsoul hook.** gcsim gives each plunge 25 Nightsoul points and an apex state, which opens Volcanic Kablam, the short burst that follows a plunge. The plunges built here are the airborne ones without either, so the chain from a plunge to Kablam is not built.
 - **Volcanic Kablam waits on the Nightsoul hook.** Its short burst is the apex state's, which the plunge chain sets, so the burst is built as Flying Kick alone.
 - **The Follow-Up Strike waits on a Rush follow-up hook.** After Rush, her charged attack lands at 11 frames and costs no stamina, from a status Rush sets. A kit holds no charged attack variant to swap in, so the charged attack built here is the one without the follow-up.
-- **Ascension 1 and 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul hook.** Ascension 1 adds a share of her ATK to each plunge while a status holds, Ascension 4 stacks ATK on each Nightsoul burst, and the constellations read the blessing, Kablam or her plunges' energy, so none is built.
+- **Her Ascension 1 and 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul hook.** Ascension 1 adds a share of her ATK to each plunge while a status holds, Ascension 4 stacks ATK on each Nightsoul burst, and the constellations read the blessing, Kablam or her plunges' energy, so none is built.
 
 ## Decisions
 
 - **The strikes are gcsim's outside the blessing.** The first and second strikes are boxes and the third a circle, each centred as gcsim centres it, with a box priced as its far corner as the framework prices a box.
-- **Strikes and the charged attack give no poise.** gcsim gives Varesa's normal attacks and plunges no poise, so each reads 0, as the framework's rule for a poise gcsim does not give.
+- **Strikes and the charged attack give no poise.** gcsim gives Varesa's normal attacks and plunges none, so each reads 0, following the framework's rule for an absent poise.
 - **The plunges are the airborne ones.** gcsim plays a high plunge from a charged attack at 37 frames and from the air at 38, and the low plunge at 37 from the air, so the kit takes the airborne frames for both: the high at 38 frames of a 77-frame animation, and the low at 37 of 75. The collision is 6 frames before the high's first hit, at 31.
 - **Rush's box is gcsim's, marked provisional.** gcsim queues Rush as a box 0.1 metres wide and 2 metres long centred on the primary target and marks it "TODO: approximated". The kit ships it as gcsim gives it, priced as the target's reach plus the box's far corner. The roadmap's manual verification has the question.
 - **Rush's particles are not built.** Its hit gives particles in gcsim, which the framework does not yet produce, so Rush's energy is not generated, as the kit page's shared gap records.

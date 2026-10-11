@@ -5,7 +5,7 @@ description: Emilie's kit as built, with her four strikes, charged attack, colli
 
 # Emilie
 
-Emilie's kit is one module, `createEmilieKit`, on avatar 10000099: her four strikes, a charged attack, a plunge collision and two plunges, the Lumidouce Case's summon hit with Spiritbreath Thorn, and her Constellation 2 and Ascension 4. Her multipliers are read from proud skill groups 9931, 9932 and 9939, and match gcsim's values to four decimal places. The skill's cooldown of 14 seconds, the burst's of 13.5, the burst's energy cost of 50 and the charged attack's stamina of 25 are read from the same groups.
+Emilie's kit is one module, `createEmilieKit`, on avatar 10000099: her four strikes, a charged attack, a plunge collision and two plunges, the Lumidouce Case's summon hit with Spiritbreath Thorn, and her Constellation 2 and Ascension 4. Her multipliers are read from proud skill groups 9931, 9932 and 9939, matching gcsim's to four decimal places. The skill cools for 14 seconds, the burst for 13.5 with an energy cost of 50, and the charged attack costs 25 stamina.
 
 ## Decisions
 
@@ -33,4 +33,4 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/emilie), MIT: each strike's hitmark, animation and reach, the charged attack's box, the plunges' circles, collision and hitmarks, the skill's summon hit and Thorn, the burst's animation, Constellation 2 and Ascension 4, and the proud skill groups' indices, read from its `zz_emilie.dm.go` table.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/emilie), MIT: the strikes' hitmarks, animations and reaches, the charged attack's box, the plunges' circles, collision and hitmarks, the skill's summon hit and Thorn, the burst's animation, Constellation 2 and Ascension 4, and the proud skill groups' indices, read from gcsim's Emilie data file.

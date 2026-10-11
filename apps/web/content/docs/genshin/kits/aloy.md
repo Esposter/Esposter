@@ -9,7 +9,7 @@ Aloy's kit is one module, `createAloyKit`, avatar 10000062: four strikes, a full
 
 ## Decisions
 
-- **Aloy's strikes, fully charged shot, Freeze Bomb, Chillwater Bomblets and burst deal 0 poise.** Provisional, as gcsim gives none, so `aloyKit.ts` sets each at 0; her plunges' reaches and 0.4-second landing are the other kits' stand-ins.
+- **Aloy's strikes, fully charged shot, Freeze Bomb, Chillwater Bomblets and burst deal 0 poise.** Provisional, as gcsim gives none, so `aloyKit.ts` stands each hit at 0; her plunge reaches and 0.4-second landing are the stand-ins other kits use.
 - **Each Chillwater Bomblet adds one coil stack per enemy it strikes, and Freeze Bomb and each bomblet give 1U of Cryo.** gcsim counts a bomblet once for all its enemies and gives Freeze Bomb no gauge, so `aloyKit.ts` counts each enemy and reads 1U as Ganyu's Cryo hits do.
 
 ## Key files

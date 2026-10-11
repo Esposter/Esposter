@@ -5,13 +5,13 @@ description: Sethos's kit as built, with his three strikes, the fully-charged Ai
 
 # Sethos
 
-Sethos's kit is one module, `createSethosKit`, on avatar 10000097: three strikes, the second of two hits, a fully-charged Aimed Shot as his charged attack, a collision and two plunges, and Ancient Rite: Thunderous Roar of Sand. His multipliers are read from proud skill groups 9731, 9732 and 9739, and match gcsim's values to three decimal places. The skill's cooldown, the burst's cooldown and cost, and the charged attack's no-stamina cost are read from the same groups or stated by gcsim. The skill strikes an Electro circle of radius 4.5 round him at 13 frames of a 38-frame animation. The fully-charged Aimed Shot lands at 74 frames of an 83-frame animation, and its Electro gauge is 1U.
+Sethos's kit is one module, `createSethosKit`, on avatar 10000097: three strikes, the second of two hits, a fully-charged Aimed Shot as his charged attack, a collision and two plunges, and Ancient Rite: Thunderous Roar of Sand. His multipliers are read from proud skill groups 9731, 9732 and 9739, matching gcsim's to three decimal places. His skill's cooldown, his burst's cooldown and cost, and the charged attack's lack of a stamina cost come from those groups or from gcsim. The skill strikes an Electro circle of radius 4.5 round him at 13 frames of a 38-frame animation. The fully-charged Aimed Shot lands at 74 frames of an 83-frame animation, and its Electro gauge is 1U.
 
 ## Decisions
 
 - **The fully-charged Aimed Shot is the charged attack.** Sethos has one aimed shot in the kit's slot, so the fully-charged shot takes it, as Ganyu's does, and it is marked aimed so the body turns to the camera's aim while it is held.
 - **Hitmarks and animations are gcsim's.** His strikes' frames are 19, 35 and 69, with the second strike's two hits at 12 and 15 frames, as gcsim's attack file gives them, and no poise, since gcsim gives none.
-- **His plunges are provisional.** gcsim has no plunge file for Sethos, so his plunges take the shared plunge reach with 0 poise and land as their action starts, as Chevreuse's do. The roadmap's Manual verification list asks about them.
+- **His plunges are provisional.** Sethos has no gcsim plunge file; like Chevreuse's, his plunges use the shared reach with no poise and land as their action starts, and the Manual verification list on the roadmap asks about them.
 
 ## Not built
 

@@ -5,7 +5,7 @@ description: Yumemizuki Mizuki's kit as built, with her three strikes, charged a
 
 # Yumemizuki Mizuki
 
-Mizuki's kit is one module, `createMizukiKit`, on avatar 10000109: her three strikes, a charged attack, a plunge collision and two plunges, the skill's activation hit and the burst's hit. Her multipliers are read from proud skill groups 10931, 10932 and 10939, and match gcsim's values to four decimal places. The skill's cooldown of 15 seconds, the burst's cooldown of 15 and energy cost of 60, and the charged attack's stamina of 50 are read from the same groups.
+Mizuki's kit is one module, `createMizukiKit`, on avatar 10000109: three strikes, a charged attack, two plunges and the collision between them, her skill's activation hit and her burst's. Her multipliers are read from proud skill groups 10931, 10932 and 10939, matching gcsim's to four decimal places. The skill's cooldown is 15 seconds, the burst's 15 seconds and 60 energy, and the charged attack takes 50 stamina.
 
 ## Decisions
 
@@ -13,7 +13,7 @@ Mizuki's kit is one module, `createMizukiKit`, on avatar 10000109: her three str
 - **Her charged attack is a circle of 3.5 metres centred on the primary target at 39 frames, in an animation of 81.** gcsim delays it 14 frames when it is cast out of the air, a windup the kit does not hold: a kit's action has no hook that times it by the state it starts from, so the kit times it from idle, as gcsim does.
 - **Her skill's activation hit is a circle of 5.5 metres round the body at 2 frames, with 30 poise, in an animation of 50 frames.** It is Anemo at one unit of gauge.
 - **Her burst's hit is a circle of 8 metres centred on the primary target at 93 frames, with 100 poise, in an animation of 94 frames.** It is Anemo at two units of gauge, as gcsim's 50 durability gives it.
-- **Her plunges are provisional.** gcsim has no plunge file for Mizuki, so the gap is her plunges' reach, timing and poise. The kit shares the kit constants' reach, lands each plunge as its action starts, and takes the standard 0.4 seconds and 100, 150 and 25 poise the other plunges borrow. A recording of her plunges settles the three, and the question is on the [roadmap](/docs/genshin/roadmap).
+- **Her plunges are provisional.** Mizuki has no plunge in gcsim, so her collision, low and high plunge are the borrowed ones of the index, and the [roadmap](/docs/genshin/roadmap) asks whether a recording of her plunges agrees.
 
 ## Not built
 
@@ -26,11 +26,11 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                  |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKit`, Mizuki's strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, the state and snacks waiting on their hooks |
+| File                                                              | Role                                                                                                                                                                                |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/mizukiKit.ts` | `createMizukiKit`, Mizuki's three strikes and charged attack, provisional plunges, the activation hit of her skill and her burst's hit, the state and snacks waiting on their hooks |
 
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/mizuki), MIT: each strike's hitmark, animation and travel, the charged attack's hit, animation and windup, the skill's activation, animation and cooldown delay, and the burst's hit, animation and cooldown, read from `attack.go`, `charge.go`, `skill.go` and `burst.go`, with `snack.go`, `asc.go` and `cons.go` for the mechanics waiting on their hooks.
-- The proud skill groups' indices, read from gcsim's `zz_yumemizukimizuki.dm.go` table, which lists each multiplier beside its group.
+- The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.

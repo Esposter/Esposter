@@ -13,15 +13,15 @@ Chasca's kit is one module, `createChascaKit`, on avatar 10000104: four normal a
 - **Her charged attack is the fully-charged Aimed Shot.** It lands at 86 frames of its 96-frame animation, an Anemo hit on the same box as her strikes, with no Poise. A bow's charged attack spends no stamina, so its stamina is 0.
 - **Her collision and low plunge are gcsim's.** The collision lands at 44 frames, a circle of radius 1.5 on her. The low plunge lands at 50 frames of 80, with the plunge radius of 3.
 - **Galesplitting Soulseeker Shell is the burst's first hit, at 96 frames of its 114.** It is an Anemo circle of radius 6 on the primary target. Its cost is 60 energy and its cooldown 15 seconds, both from the table.
-- **Spirit Reins' Resonance lands at 3 frames, a circle of radius 5.5 round her.** Its press lets the next action start 6 frames later, gcsim's earliest cancel, and its cooldown is the table's 6.5 seconds. gcsim runs that cooldown from the Blessing's end, which is not built, so a press here starts it at once.
+- **Spirit Reins' Resonance lands at 3 frames, a circle of radius 5.5 round her.** Its press lets the next action start 6 frames later, gcsim's earliest cancel, and its cooldown is the table's 6.5 seconds. gcsim runs that cooldown from the end of the Blessing, which is not built, and a press here starts it at once instead.
 - **The high plunge is provisional.** gcsim gives its multiplier but no hitmark, so it lands with the low plunge's 50 frames in the high plunge's radius of 5. The [roadmap](/docs/genshin/roadmap) asks whether it lands there.
 
 ## Not built
 
-- **The Nightsoul Blessing is not built.** Her press starts it, which replaces her strikes and her Aimed Shot with the Blessing's own, and its Nightsoul points end it. It waits on the stance's attack tags, which the kit framework does not hold yet, and on Nightsoul points, a counter that a Blessing spends and that ends it at zero, which the framework's kit state does not hold.
+- **The Nightsoul Blessing is not built.** The skill's press would start it, replacing her strikes and Aimed Shot with the Blessing's own until its Nightsoul points end it; the index lists the framework gaps it waits on.
 - **The Blessing's flight and its Shadowhunt Shells are not built.** While in the Blessing she flies and fires Shadowhunt Shells at her aim. The framework's locomotion has Jump and Fall but no flight state, so the flight and the shells wait on a flight hook.
 - **The five shells after Galesplitting are not built.** Each of the burst's Soulseeker and Radiant Shells is Anemo or the party's element, the Radiant ones taking the team's elements in turn. A kit step cannot read the party's elements yet, so only the first hit is built.
-- **Ascension passives and constellations are not built.** Her Ascension bonuses and constellations are the [character kits proposal](/docs/proposals/genshin/character-kits)'s passives and the [constellations](/docs/proposals/genshin/constellations) page's.
+- **Ascension passives and constellations are not built.** They are the passives of the [character kits proposal](/docs/proposals/genshin/character-kits) and the [constellations](/docs/proposals/genshin/constellations) page's.
 
 ## Key files
 

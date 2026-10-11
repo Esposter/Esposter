@@ -18,7 +18,7 @@ Ascension 1's Endless Waltz starts when another character's heal runs past full 
 Not built yet:
 
 - **Constellation 2's Max HP**, 0.35% for each point of Fanfare past its most, waits on a buff to Max HP, as a buff adds to an attribute and Max HP is never computed again from it. The Fanfare is held at its most instead.
-- **Constellations 3 and 5's talent levels are not built.** The kit reads each group at its start level, and no kit reads the constellation talent additions (`getConstellationTalentAdditions`) yet.
+- **Constellations 3 and 5 are not built.** Their talent levels are the index's gap, so the kit reads each group at its start level.
 - **Constellation 6's Center of Attention**, the Hydro infusion that cannot be overridden and the share of her Max HP added to her strikes, charged attack and plunges for six hits, waits on a hit's flat DMG that reads the team's effects, as `additiveBaseDamageBonus` reads the combatant alone, and on a count of the infused hits.
 - **Salon Solitaire's particles** are not built, as no kit's are.
 - **The drain on a character in the burst's iframes.** Gcsim drains no character on the field during its own burst, while still counting it for the DMG, and waits on a field tick that reads the active character's action.
