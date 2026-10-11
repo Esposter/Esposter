@@ -14,7 +14,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
 
 - **The strongest wind in the world.** Mondstadt's base wind is the highest of any region, and gusts visibly roll across the meadows. This is the [vegetation](/docs/genshin/vegetation)'s wind field at its most visible, and Stormterror's Lair raises it to a gale.
 - **A bright, cool palette.** Saturated spring greens, white limestone, slate and terracotta roofs under a clear high blue. Dandelions and windwheel asters in the meadows, and cecilia flowers on Starsnatch Cliff. Its display transform and its light are solved against references at noon and at dusk, each in its pass.
-- **The Mondstadt building kit** is built as [Mondstadt buildings](/docs/genshin/mondstadt-buildings). Its dressing is not: window boxes, shutters, lanterns, banners.
+- **The Mondstadt building kit's dressing** (window boxes, shutters, lanterns, banners) is not built yet, on [Mondstadt buildings](/docs/genshin/mondstadt-buildings).
 
   Windmills are their own kit, a stone tower with sails that turn in the wind field. The city wall, the gate bridge and the cathedral are landmark-tier pieces built from the kit's parts and matched pose by pose.
 
@@ -52,7 +52,7 @@ References are found for each of these first, published recordings searched befo
 New files:
 
 ```text
-packages/genshin-world/src/services/mondstadt/   ← windmill and wall generators (the building kit is built)
+packages/genshin-world/src/services/mondstadt/   ← windmill and wall generators
 ```
 
 ## Sources

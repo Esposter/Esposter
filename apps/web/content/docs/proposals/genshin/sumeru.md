@@ -29,7 +29,7 @@ This region is built on [terrain](/docs/genshin/terrain) and its [shapes](/docs/
   Rain and mist are its regular weather.
 
 - **The desert is scale and wind.** Its dunes are heightfield features from authored ridge lines, with sand ground, ripples from noise, and wind carrying sand off the crests. Oases are water and palms. Sandstorms in the Desert of Hadramaveth come from [weather](/docs/proposals/genshin/weather), and rain never falls here.
-- **Two kits.** The rainforest kit builds Sumeru City's terraces, walkways and domed buildings grown into and around the colossal tree, plus village huts on stilts. The desert kit builds sandstone ruins, colonnades, obelisks, stepped pyramids and half-buried halls. The Mausoleum of King Deshret and Khaj-Nisut are landmark-tier.
+- **Landmarks.** The Mausoleum of King Deshret and Khaj-Nisut are landmark-tier.
 - **Sumeru is all surface.** The Ashavan Realm and the Realm of Farakhkert are surface areas like any other, not separate maps, so Sumeru adds no layer to the [world map](/docs/genshin/world-map). Its caves stay part of the surface, as the world map does for any cave the surface map shows.
 
 ## How it works
@@ -69,11 +69,9 @@ Sumeru City from the gate and from the Akademiya, Port Ormos, a Gandharva Ville 
 | :-------------------------------------------------------- | :------------------------------------ |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise and the dune ripples |
 
-Built: the kits, as [Sumeru kits](/docs/genshin/sumeru-kits), and Sumeru City's first landmark with a provisional colour, as [region buildings](/docs/genshin/region-buildings).
-
 **Still to build, in order:**
 
-1. **Sumeru City's witness claims**, which `sumeru-every-renderer` on the roadmap waits on, in the shape [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions settle. Where `ScreenFixture` has no `witnessComponents`, its claims by component are added first, as Inazuma's first step spells them out.
+1. **Sumeru City's witness claims**, which `sumeru-every-renderer` on the roadmap waits on, in the shape [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions settle.
    - `models/sumeru/SumeruPartFamily.ts` (`Ground`, `Buildings`) and `services/sumeru/SumeruPartFamilyMeshRegexMap.ts`, `Ground` matching `/^BigWorldTerrain_/u` and `Buildings` `/^Area_Xm_Build_/u`. `Xm` is the game's code for Sumeru, as Fontaine's export names its Sumeru plants `Area_Xm_Lvy_`; today's export has none of the city's houses, which the `sumeru-capital` re-extraction brings.
    - `services/sumeru/SumeruUndrawnMeshRegexMap.ts` for what the export holds now (`~/Esposter/genshin-parity/extracted/sumeru/`): `props` `/^Area_(?:Dq|Common)_Prop_/u`, `commonBuildings` `/^Area_Common_Build_/u`, `plants` `/^Stages_(?:LYLvy|Lvy)/u`, `stagePlanes` `/^Stages_Plane_/u` and `effects` `/^Eff_/u`.
    - `sumeru` joins the `World/Screen` fixture's `witnessComponents` with both maps.

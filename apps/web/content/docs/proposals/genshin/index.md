@@ -41,15 +41,15 @@ flowchart TD
 
 ### Phase one: the world engine
 
-| Page                                                           | What it adds                                                                  |
-| :------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| [Recreation passes](/docs/proposals/genshin/recreation-passes) | a screen rebuilt in ordered passes, each gated by its own measure and frozen  |
-| [Localized opening](/docs/proposals/genshin/localized-opening) | the publisher's splash and layouts as each client language shows              |
-| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)       | the continent's heights from authored shapes, and the ground painted by biome |
-| [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                   |
-| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | tree species and impostors, and flowers, bushes and rocks scattered by biome  |
-| [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them    |
-| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom   |
+| Page                                                           | What it adds                                                                 |
+| :------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| [Recreation passes](/docs/proposals/genshin/recreation-passes) | a screen rebuilt in ordered passes, each gated by its own measure and frozen |
+| [Localized opening](/docs/proposals/genshin/localized-opening) | the publisher's splash and layouts as each client language shows             |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)       | coastlines, and the ground's layers fitted to the game's own                 |
+| [Flowing water](/docs/proposals/genshin/flowing-water)         | rivers along their courses, and waterfalls over cliff bands                  |
+| [Trees and scatter](/docs/proposals/genshin/trees-and-scatter) | every placed plant's species, instanced and culled on the GPU                |
+| [Weather](/docs/proposals/genshin/weather)                     | rain, storms, snow, fog and sandstorms, set per area as the game sets them   |
+| [Exploring](/docs/proposals/genshin/exploring)                 | waypoints to jump to, the game's arrival points, and the map's pan and zoom  |
 
 ### Phase two: the regions
 
@@ -81,7 +81,7 @@ Each region is built on the whole engine above. It adds its palette, a parametri
 | [Menu quit prompt](/docs/proposals/genshin/menu-quit-prompt) | the exit prompt Quit Game opens, scaled to its whole frame                                                                                |
 | [Combat](/docs/proposals/genshin/combat)                     | the Lunar and Stellar Glimmer reactions                                                                                                   |
 | [Inventory](/docs/proposals/genshin/inventory)               | using food on the party, and the destroy mode on the bag's screen                                                                         |
-| [Load budget](/docs/proposals/genshin/load-budget)           | each load step measured, a screen's figures at ready held to a budget, then only the first frame's needs loaded before it shows           |
+| [Load budget](/docs/proposals/genshin/load-budget)           | the trims that load only the first frame's needs before a screen shows, each held to its measured budget                                  |
 | [Wish](/docs/proposals/genshin/wish)                         | the banners' pools, a charted course, Character Event Wish-2 and the history                                                              |
 | [Quests](/docs/proposals/genshin/quests)                     | the go-to triggers placed, the talks that offer a quest, the commissions dealt at the reset, and the quests' clues                        |
 

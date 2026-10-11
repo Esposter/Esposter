@@ -23,7 +23,6 @@ This page builds on the [vegetation](/docs/genshin/vegetation), the [trees](/doc
 - **A species is fitted once, in an object pass.** Each species' parameters are fitted against its own export as any object is: its outline, depth and normal in the shape pass, its unlit colour in the surface pass. The next species is the one `rank` prices largest.
 - **Instancing per species and detail.** Once a species stands many times, its mesh and its impostor are each one instanced draw for all its copies, the cross-over decided per instance.
 - **Instances are culled on the GPU.** A compute pass tests every instance of grass, scatter and trees against the frustum and distance and writes the survivors into an indirect draw, so a field of blades never passes through JavaScript. This is the engine's per-instance culling, added here as its first consumer ([engine architecture](/docs/genshin/engine-architecture)); occlusion against a depth pyramid follows when a city's bench shows the instances it would hide.
-- **A plant is named by its prefab, as a building is.** A placement's prefab is named through its path hash (`getPrefabNames` over `readAssetPathNames`), and a plant is a name holding `Tree`, `Bush`, `Shrub`, `Plant`, `Flower` or `Grass` that is not an effect, a decal, a drop or a pot (`^Eff_`, `Effect`, `Decal`, `^Item_`, `pot`), the way `checkIsArchitectureName` tells a building. Until its species is rebuilt, a placed tree's stand-in is our oak's impostor and any other plant's a low dome of the ground's green, each scaled by its placement and drawn as one instanced draw per prefab.
 - **Plants yield to what passes through.** Grass bends away from the character through a small trail texture around the viewer, written by the character controller.
 
 ## How it works
@@ -41,14 +40,11 @@ flowchart TD
 
 ## Scope
 
-**Today:** Windrise's great oak is a species ([trees](/docs/genshin/trees)), drawn as its mesh and as its impostor past ten of its heights, and each finest tile grows its flowers ([scatter](/docs/genshin/scatter)).
-
 **This adds:**
 
-1. **Windrise's placed plants, as stand-ins.** Built: `checkIsPlantName.ts` tells a plant's name as the Decisions set out, `fitWindrisePlants.ts` (the `plants` fit of `fitWindriseScene`, its records read by `readWindrisePlantPlacements`) keeps the plants within `GROUND_RADIUS` of the oak's foot and publishes `windrise/plants` (15 prefabs, about 2,200 places), and `World/Plants` draws them, one instanced draw per prefab: a tree as the oak's impostor, the other plants as [trees](/docs/genshin/trees) describes, the grass counted under the Grass family. The layout pass reads them as Grass and Trees rows, each held at 0 m against the stream records it was fitted from (`genshin:parity passes windrise`). Next: item 2, which the Shape pass settles first. Its oak envelope still fails the outline (9.02 px against the floor's 5.43 on the Mac; the depth 0.0911 and the normal 11.97 degrees hold against 0.101 and 17.3), so the oak's species closes before any other is fitted, and the roadmap's `windrise-oak-shape` row holds it open.
-2. **Every placed plant's species**, from the layout pass, each fitted to its export, the oak first.
-3. **Instancing and GPU culling** per species and detail level.
-4. **The trail**, with the character controller.
+1. **Every placed plant's species**, from the layout pass, each fitted to its export. The oak's species closes first: its outline is still short of its floor, and the roadmap's `windrise-oak-shape` row holds it open.
+2. **Instancing and GPU culling**
+3. **The trail**
 
 ## Deferred compute
 
@@ -57,17 +53,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                       | Role after the change                                                |
-| :------------------------------------------------------------------------- | :------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/world/createTreeSpeciesOptionsMap.ts` | Each species' parameters, fitted                                     |
-| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`      | A placed tree, instanced per species once many stand                 |
-| `packages/genshin-world/src/components/World/Plants/Index.vue`             | Windrise's placed plants as stand-ins, one instanced draw per prefab |
+| File                                                                       | Role after the change                                |
+| :------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `packages/genshin-world/src/services/world/createTreeSpeciesOptionsMap.ts` | Each species' parameters, fitted                     |
+| `packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`      | A placed tree, instanced per species once many stand |
 
 New files:
 
 ```text
-scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts
-scripts/src/services/genshinAssets/world/checkIsPlantName.ts
 packages/genshin-engine/src/culling/        ← the per-instance compute pass and its indirect draw
 ```
 

@@ -58,11 +58,11 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 | :-------------------------------------------------------- | :---------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
 
-The two kits' generators and the region's data file are built, as [Nod-Krai's kits](/docs/genshin/nod-krai-kits), and Nasha Town's first works stand as a [building landmark](/docs/genshin/region-buildings). Their fitted values are not.
+The kits' fitted values are not yet: the second step below reads them from the passes.
 
 **Still to build, in order:**
 
-1. **Nasha Town's witness claims**, the family map `nod-krai-every-renderer` on the roadmap names, shaped as [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions shape a capital's; before them, `ScreenFixture` takes `witnessComponents` as Inazuma's first step lays out, unless a region has added it.
+1. **Nasha Town's witness claims**, the family map `nod-krai-every-renderer` on the roadmap names, shaped as [Inazuma](/docs/proposals/genshin/inazuma)'s Decisions shape a capital's.
    - `models/nod-krai/NodKraiPartFamily.ts` (`Ground`, `Buildings`) and `services/nod-krai/NodKraiPartFamilyMeshRegexMap.ts`: `Ground` `/^BigWorldTerrain_/u`, and `Buildings` `/^Area_Ndkl_Build_/u`, the works the dieselpunk kit stands in for.
    - `services/nod-krai/NodKraiUndrawnMeshRegexMap.ts`, from the names under `~/Esposter/genshin-parity/extracted/nod-krai/`: `props` `/^(?:Area_(?:Ndkl|Common)_Prop|Area_Ly_Props?|Area_MdProps)_/u`, `lights` `/^Area_Ndkl_Light_/u`, `plants` `/^Area_Ndkl_Grass_/u`, `rocks` `/^Area_Nt_Rock_/u`, `stagePlanes` `/^Stages_(?:Plane|DecalCube)_/u` and `effects` `/^Eff_/u`; every mesh the export names is matched.
    - The fixture's `witnessComponents` gains `nod-krai` with both.
