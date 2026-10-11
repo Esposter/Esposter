@@ -5,9 +5,7 @@ import type { SQL } from "drizzle-orm";
 
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "#server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
@@ -15,6 +13,7 @@ import { getDirectMessageParticipantKey } from "#server/services/room/directMess
 import { readDirectMessageParticipantIds } from "#server/services/room/directMessage/readDirectMessageParticipantIds";
 import { updateDirectMessageParticipantKey } from "#server/services/room/directMessage/updateDirectMessageParticipantKey";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { readJoinedRoomsPage } from "#server/services/room/readJoinedRoomsPage";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -40,7 +39,7 @@ import {
 } from "@esposter/db-schema";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 export const directMessageRouter = router({
@@ -248,7 +247,7 @@ export const directMessageRouter = router({
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)
-    .query<CursorPaginationData<RoomInMessage>>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
+    .query<CursorPaginationData<RoomInMessage>>(({ ctx, input: { cursor, limit, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
@@ -257,13 +256,6 @@ export const directMessageRouter = router({
       const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.DirectMessage)];
       if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
 
-      const rooms = await ctx.db
-        .select(getColumns(roomsInMessage))
-        .from(roomsInMessage)
-        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-        .where(and(...wheres))
-        .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
-        .limit(limit + 1);
-      return getCursorPaginationData(rooms, limit, sortBy);
+      return readJoinedRoomsPage(ctx.db, innerJoinCondition, wheres, limit, sortBy);
     }),
 });
