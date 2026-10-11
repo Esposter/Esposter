@@ -1,5 +1,5 @@
-import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
+import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 
 import { ApprovalOutcome } from "#src/models/genshinParity/reference/ApprovalOutcome";
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";

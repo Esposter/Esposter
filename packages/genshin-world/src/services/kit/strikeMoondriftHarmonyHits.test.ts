@@ -4,8 +4,8 @@ import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
