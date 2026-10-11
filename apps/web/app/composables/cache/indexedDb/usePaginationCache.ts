@@ -1,17 +1,17 @@
+import type { DatabaseIndexName } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
-import type { IndexNames } from "idb";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { getSynchronizedFunction } from "@esposter/shared";
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, TStore>,
 >({
   configuration,
   getSlice,

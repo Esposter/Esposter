@@ -65,6 +65,7 @@
     "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
+    "fake-indexeddb": "catalog:",
     "happy-dom": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",

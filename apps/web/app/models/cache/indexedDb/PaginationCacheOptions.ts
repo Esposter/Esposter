@@ -1,8 +1,8 @@
+import type { DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
-import type { IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
 // The rows a partition holds are the rows its store keeps, which is the schema's own value type for that store —
@@ -10,7 +10,7 @@ import type { Promisable } from "type-fest";
 // The slice the cache asked for
 export interface PaginationCacheOptions<
   TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
+  TIndex extends DatabaseIndexName<IndexedDbDatabaseSchema, TStore>,
 > {
   configuration: IndexedDbStoreConfiguration<TStore, TIndex>;
   // The rows of one partition and whether they are its own, resolved by naming that partition. Both halves of the

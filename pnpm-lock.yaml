@@ -614,9 +614,6 @@ catalogs:
     howler:
       specifier: ^2.2.4
       version: 2.2.4
-    idb:
-      specifier: ^8.0.4
-      version: 8.0.4
     imagetracerjs:
       specifier: ^1.2.6
       version: 1.2.6
@@ -1281,9 +1278,6 @@ importers:
       howler:
         specifier: 'catalog:'
         version: 2.2.4
-      idb:
-        specifier: 'catalog:'
-        version: 8.0.4
       js-beautify:
         specifier: 'catalog:'
         version: 2.0.3
@@ -2025,9 +2019,6 @@ importers:
       genshin-text:
         specifier: workspace:*
         version: link:../genshin-text
-      idb:
-        specifier: 'catalog:'
-        version: 8.0.4
       three:
         specifier: 'catalog:'
         version: 0.186.1
@@ -2247,6 +2238,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 6.2.5
       happy-dom:
         specifier: 'catalog:'
         version: 20.14.6
@@ -11292,9 +11286,6 @@ packages:
 
   idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
-
-  idb@8.0.4:
-    resolution: {integrity: sha512-jd0ITCrN+Zah4J7R/Z2jnR3W7A4BXDAjmo62MwWuSjxCiueUAf7X5rbodEdidWzeknwXHmLpdZkoiiCppNi30Q==}
 
   identifier-regex@1.1.0:
     resolution: {integrity: sha512-SLX4H/vtcYlYnL7XqnuJKHU7Z8517TgsW9nmQiGOgMCjQ8V/deLYu6bEmbGoXe7WMMhc9+EUGyFFneHja8KabA==}
@@ -25377,8 +25368,6 @@ snapshots:
       safer-buffer: 2.1.2
 
   idb@7.1.1: {}
-
-  idb@8.0.4: {}
 
   identifier-regex@1.1.0:
     dependencies:
