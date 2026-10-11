@@ -211,6 +211,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           normalAttacks: garmentNormalAttacks,
         },
         GARMENT_SECONDS,
+        { isEndedOnSwap: true },
       ),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

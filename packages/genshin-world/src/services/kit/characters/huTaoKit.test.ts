@@ -8,8 +8,10 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -58,6 +60,32 @@ describe(createHuTaoKit, () => {
     expect(infusion?.element).toBe(Element.Pyro);
     expect(buff.attribute).toBe(Attribute.Attack);
     expect(buff.amount / combatant.attributes.maxHealth).toBeCloseTo(0.03841);
+  });
+
+  test("leaving the field ends the Paramita's Pyro infusion and ATK", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    HU_TAO_KIT.elementalSkill.onStart?.(context);
+    HU_TAO_KIT.onKitEvent?.(
+      {
+        characterId: TRAVELER_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: HU_TAO_CHARACTER_ID,
+      },
+      context,
+      combatant,
+    );
+
+    expect(
+      kitEffectState.effects
+        .filter(({ kind }) => kind !== "stance")
+        .map(({ kind, secondsRemaining }) => [kind, secondsRemaining]),
+    ).toStrictEqual([
+      ["infusion", 0],
+      ["buff", 0],
+    ]);
   });
 
   test("guide to Afterlife takes its HP share of Hu Tao's current HP", () => {

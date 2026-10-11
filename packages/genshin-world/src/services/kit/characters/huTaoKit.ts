@@ -245,7 +245,7 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           Math.min(skillTalentMultiplier(0) * healthShare, healthShare - minimumHealthShare),
         );
         damagePartyMember(party, combatant.characterId, lostHealthShare);
-        enterKitStance(kitEffectState, combatant, paramitaActions, paramitaSeconds);
+        enterKitStance(kitEffectState, combatant, paramitaActions, paramitaSeconds, { isEndedOnSwap: true });
         addKitEffect(kitEffectState, createPyroInfusion(combatant.characterId));
         buffKitMember(kitEffectState, combatant.characterId, {
           amount: skillTalentMultiplier(1) * combatant.attributes.maxHealth,
@@ -282,7 +282,21 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
+    // Leaving the field ends the Paramita's Pyro infusion and ATK with its stance, as gcsim's exit deletes the Paramita's
+    // ATK, which its infusion reads. Blood Blossom's tick strikes the enemy it is on
     onKitEvent: (event, { kitEffectState }, combatant) => {
+      const { characterId } = combatant;
+      if (event.kind === KitEventKind.CharacterSwapped) {
+        if (event.previousCharacterId !== characterId) return;
+        for (const effect of kitEffectState.effects)
+          if (
+            (effect.kind === "infusion" && effect.characterId === characterId && effect.element === Element.Pyro) ||
+            (effect.kind === "buff" && effect.characterId === characterId && effect.source === PARAMITA_SOURCE)
+          )
+            effect.secondsRemaining = 0;
+        return;
+      }
+
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
       const tick = createKitSummon({ facing: 0, height: 0, position: event.enemy.position }, combatant, [
         bloodBlossomHit,
