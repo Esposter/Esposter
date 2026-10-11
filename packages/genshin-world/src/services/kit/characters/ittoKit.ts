@@ -5,7 +5,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -17,10 +16,12 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -123,7 +124,7 @@ const FINAL_SLASH_POISE_DAMAGE = 143.4;
 // Slash spends them, and the stacks a normal attack gives as it lands, as gcsim assumes it hits: 1 for the second
 // Strike and 2 for the fourth, and under the burst 1 more for the first and the third
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/attack.go
-const SUPERSTRENGTH_STATUS_ID = "itto-superlative-superstrength";
+const SUPERSTRENGTH_RESOURCE_ID = "itto-superlative-superstrength";
 const SUPERSTRENGTH_MAX_STACKS = 5;
 const NORMAL_ATTACK_SUPERSTRENGTH_STACKS = [0, 1, 0, 2];
 const RAGING_ONI_KING_SUPERSTRENGTH_STACKS = [1, 0, 1, 0];
@@ -163,11 +164,6 @@ const BURST_SECONDS = (660 + 90 + 45) / 60;
 const BURST_NORMAL_ATTACK_SPEED_BONUS = 0.1;
 
 // The stacks of Superlative Superstrength Itto holds
-const countSuperstrength = (effects: readonly KitEffect[], characterId: number): number =>
-  effects.find(
-    (effect): effect is KitStatus =>
-      effect.kind === "status" && effect.characterId === characterId && effect.id === SUPERSTRENGTH_STATUS_ID,
-  )?.stacks ?? 0;
 
 // Whether Itto is the Raging Oni King: his burst's Geo conversion is on him
 const checkIsRagingOniKing = (effects: readonly KitEffect[], characterId: number): boolean =>
@@ -336,14 +332,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const stance = findKitStance(kitEffectState.effects, combatant.characterId);
         if (stance) stance.secondsRemaining = seconds;
-        kitEffectState.effects = kitEffectState.effects.filter(
-          (effect) =>
-            !(
-              effect.kind === "status" &&
-              effect.characterId === combatant.characterId &&
-              effect.id === SUPERSTRENGTH_STATUS_ID
-            ),
-        );
+        spendKitResource(kitEffectState, combatant.characterId, SUPERSTRENGTH_RESOURCE_ID);
       },
       seconds,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -371,12 +360,13 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const gainSuperstrength = (kitEffectState: KitEffectState, combatant: Combatant, gained: number): void => {
     if (gained === 0) return;
     const { characterId } = combatant;
-    const stacks = Math.min(countSuperstrength(kitEffectState.effects, characterId) + gained, SUPERSTRENGTH_MAX_STACKS);
-    addKitStatus(kitEffectState, characterId, {
-      id: SUPERSTRENGTH_STATUS_ID,
-      secondsRemaining: Number.POSITIVE_INFINITY,
-      stacks,
-    });
+    const stacks = gainKitResource(
+      kitEffectState,
+      characterId,
+      SUPERSTRENGTH_RESOURCE_ID,
+      gained,
+      SUPERSTRENGTH_MAX_STACKS,
+    );
     const stance = findKitStance(kitEffectState.effects, characterId);
     if (stance === undefined || stance.secondsRemaining === Number.POSITIVE_INFINITY)
       addKesagiriStance(kitEffectState, combatant, stacks);
@@ -452,7 +442,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       if (effect.kind === "taunt" && effect.combatant.characterId === characterId)
         gainSuperstrength(kitEffectState, combatant, 1);
       else if (effect.kind === "stance" && effect.characterId === characterId) {
-        const stacks = countSuperstrength(kitEffectState.effects, characterId);
+        const stacks = countKitResource(kitEffectState.effects, characterId, SUPERSTRENGTH_RESOURCE_ID);
         if (stacks > 0) addKesagiriStance(kitEffectState, combatant, stacks);
       }
     },
