@@ -96,7 +96,6 @@
     }
   },
   "scripts": {
-    "bench": "vitest bench --run",
     "build": "tsdown",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
