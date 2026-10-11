@@ -204,15 +204,20 @@ const receiveTile = async (terrainTile: PlantedTerrainTile) => {
   tileGroup.add(mesh);
   tileStreamer.receive(key, mesh);
 };
-const receiveWorkerMessage = (event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
-  const { data } = event;
-  requestWorkerMap.delete(data.key);
-  if ("kind" in data) {
-    failTile(data.key);
-    return;
-  }
-  receiveTile(data);
-};
+// An answer frees its tile's request only while the tile is still asked of the worker answering, since a tile failed
+// And asked of another can still be answered by the first, and a failure the first sends late fails nothing the other
+// Is still generating
+const createWorkerMessageReceiver =
+  (worker: Worker) => (event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
+    const { data } = event;
+    const isRequested = requestWorkerMap.get(data.key) === worker;
+    if (isRequested) requestWorkerMap.delete(data.key);
+    if ("kind" in data) {
+      if (isRequested) failTile(data.key);
+      return;
+    }
+    receiveTile(data);
+  };
 // A worker that errors, or cannot read a message, has lost the tiles it was asked for, so each of its pending tiles is
 // Failed, and the other workers' are left generating
 const createPendingTilesFailer = (worker: Worker) => (event: Event) => {
@@ -225,7 +230,7 @@ const createPendingTilesFailer = (worker: Worker) => (event: Event) => {
 };
 for (const worker of workers) {
   const failPendingTiles = createPendingTilesFailer(worker);
-  worker.addEventListener("message", receiveWorkerMessage);
+  worker.addEventListener("message", createWorkerMessageReceiver(worker));
   worker.addEventListener("error", failPendingTiles);
   worker.addEventListener("messageerror", failPendingTiles);
 }
