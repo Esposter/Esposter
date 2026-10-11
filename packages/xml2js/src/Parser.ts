@@ -5,6 +5,7 @@ import { checkIsEmpty } from "#src/checkIsEmpty";
 import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
 import { DefaultParserOptions } from "#src/DefaultParserOptions";
 import { defineProperty } from "#src/defineProperty";
+import type { ParserCallback } from "#src/models/ParserCallback";
 import { processItem } from "#src/processItem";
 import { stripBOM } from "#src/stripBOM";
 import { takeOne } from "@esposter/shared";
@@ -19,7 +20,9 @@ export class Parser {
   }
 
   readonly #options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
-  #resultObject: Record<string, unknown> | string = {};
+  // The first root element is the result and any element after it is ignored, as the upstream package has always done
+  #hasRoot = false;
+  #resultObject: Record<string, unknown> | string | null = null;
   readonly #saxParser: SAXParser;
   readonly #stack: Record<string, unknown>[] = [];
 
@@ -36,7 +39,8 @@ export class Parser {
       const newObject: Record<string, unknown> = { [this.#options.charkey]: "" };
       if (!this.#options.ignoreAttrs)
         for (const [key, attribute] of Object.entries<QualifiedAttribute | string>(node.attributes)) {
-          if (!(this.#options.attrkey in newObject) && !this.#options.mergeAttrs) newObject[this.#options.attrkey] = {};
+          if (!Object.hasOwn(newObject, this.#options.attrkey) && !this.#options.mergeAttrs)
+            newObject[this.#options.attrkey] = {};
           // Under xmlns sax hands over a qualified attribute, and it is the value it wraps that a processor takes
           const attributeValue = typeof attribute === "string" ? attribute : attribute.value;
           const newValue = this.#options.attrValueProcessors
@@ -103,12 +107,12 @@ export class Parser {
         if (!this.#options.preserveChildrenOrder) {
           const node: Record<string, unknown> = {};
           // Separate attributes
-          if (this.#options.attrkey in object) {
+          if (Object.hasOwn(object, this.#options.attrkey)) {
             node[this.#options.attrkey] = object[this.#options.attrkey];
             delete object[this.#options.attrkey];
           }
           // Separate char data
-          if (!this.#options.charsAsChildren && this.#options.charkey in object) {
+          if (!this.#options.charsAsChildren && Object.hasOwn(object, this.#options.charkey)) {
             node[this.#options.charkey] = object[this.#options.charkey];
             delete object[this.#options.charkey];
           }
@@ -126,7 +130,8 @@ export class Parser {
         }
       // Check whether we closed all the open tags
       if (this.#stack.length > 0) this.#assignOrPush(nextObject ?? {}, nodeName, object);
-      else {
+      else if (!this.#hasRoot) {
+        this.#hasRoot = true;
         // Under explicitRoot the result is wrapped in an object keyed by the root tag name
         if (this.#options.explicitRoot) {
           // Avoid circular references
@@ -174,39 +179,51 @@ export class Parser {
     };
   }
 
-  // Sax reports malformed input through `onerror` and refuses every later write until it is resumed, so the
-  // Handler resumes it to let `close` reach `onend`; the rejection comes first, and a settled promise ignores the rest
-  // The input is converted inside the executor, so a `toString` that throws rejects the promise like any other
-  // Parse failure. Every parse ends with an empty stack, since a rejected one can end with elements still open that
-  // The next parse on this instance would otherwise nest its root under
-  parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      this.#saxParser.onerror = (error) => {
-        reject(error);
-        this.#saxParser.resume();
-      };
-      this.#saxParser.onend = () => {
-        resolve(this.#resultObject as T);
-        this.#resultObject = {};
-        this.#stack.length = 0;
-      };
-      const string = stripBOM(convertableToString.toString());
-      this.#saxParser.write(string).close();
+  // Sax reports malformed input through `onerror` and refuses every later write until it is resumed. The handler keeps
+  // The first error and resumes, so `close` still runs to the end and the callback receives the error it started with.
+  // The input is converted before anything is written, so a `toString` that throws leaves the parser unchanged.
+  // Every parse ends with an empty stack, since a rejected one can end with elements still open that the next parse
+  // On this instance would otherwise nest its root under
+  parseString<T>(convertableToString: convertableToString, callback: ParserCallback<T>): void {
+    let error: Error | undefined;
+    this.#saxParser.onerror = (saxError) => {
+      error ??= saxError;
+      this.#saxParser.resume();
+    };
+    const string = stripBOM(convertableToString.toString());
+    this.#saxParser.write(string).close();
+
+    const result = this.#resultObject as T | null;
+    this.#hasRoot = false;
+    this.#resultObject = null;
+    this.#stack.length = 0;
+
+    // The `async` option hands the callback to a later turn of the event loop instead of calling it inside this one
+    if (this.#options.async) queueMicrotask(() => callback(error ?? null, error ? null : result));
+    else callback(error ?? null, error ? null : result);
+  }
+
+  parseStringPromise<T>(convertableToString: convertableToString): Promise<T | null> {
+    return new Promise<T | null>((resolve, reject) => {
+      this.parseString<T>(convertableToString, (error, result) => (error ? reject(error) : resolve(result)));
     });
   }
+
   // A second value under a key that holds a lone one promotes it to an array and lands beside it: the promotion
   // Alone would drop the value that caused it, which is the second of three siblings under `explicitArray: false`
   #assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
-    if (key in object) {
+    // An own-property check, so a child named after an inherited member such as `constructor` is a key of its own
+    if (Object.hasOwn(object, key)) {
       const objectValue = object[key];
       if (Array.isArray(objectValue)) objectValue.push(newValue);
       else defineProperty(object, key, [objectValue, newValue]);
     } else if (this.#options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
+
   // A node whose only key is the char data is the char data: `<a>b</a>` parses to "b", not to { _: "b" }
   #collapseCharKey(object: Record<string, unknown>): Record<string, unknown> {
-    if (Object.keys(object).length === 1 && this.#options.charkey in object)
+    if (Object.keys(object).length === 1 && Object.hasOwn(object, this.#options.charkey))
       return object[this.#options.charkey] as Record<string, unknown>;
     else return object;
   }

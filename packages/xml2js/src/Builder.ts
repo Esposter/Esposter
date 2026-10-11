@@ -14,17 +14,22 @@ export class Builder {
     Object.assign(this.#options, init);
   }
 
-  buildObject(rootObj: Record<string, unknown>): string {
-    // Use a lone first element as the root, unless the user specified a non-default rootName.
+  buildObject(rootObj: Record<string, unknown> | unknown[]): string {
+    // Use a lone first element as the root, unless the user specified a non-default rootName. An array has no key to
+    // Name the root by, so it is always rendered under the root name, rather than under index 0 of itself (issue #630)
     let rootName = this.#options.rootName;
-    let rootObject = rootObj;
-    if (Object.keys(rootObject).length === 1 && this.#options.rootName === DefaultBuilderOptions.rootName) {
-      rootName = takeOne(Object.keys(rootObject));
-      rootObject = rootObject[rootName] as Record<string, unknown>;
+    let rootObject: unknown = rootObj;
+    if (
+      !Array.isArray(rootObj) &&
+      Object.keys(rootObj).length === 1 &&
+      this.#options.rootName === DefaultBuilderOptions.rootName
+    ) {
+      rootName = takeOne(Object.keys(rootObj));
+      rootObject = rootObj[rootName];
     }
 
     const rootElement = create(this.#options.xmldec).ele(rootName);
-    return this.#render(rootElement, rootObject).end(this.#options.renderOpts);
+    return this.#render(rootElement, rootObject).end({ ...this.#options.renderOpts, headless: this.#options.headless });
   }
 
   #render(element: XMLBuilder, object: unknown): XMLBuilder {

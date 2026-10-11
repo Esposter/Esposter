@@ -1,6 +1,6 @@
 import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
 import { parseStringPromise } from "#src/parseStringPromise";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(parseStringPromise, () => {
   // The first repeated child promotes the lone value to an array, and the value that caused the promotion has to
@@ -12,6 +12,8 @@ describe(parseStringPromise, () => {
       explicitArray: false,
     });
 
+    assert.exists(parsedXml);
+
     expect(parsedXml.a.b).toStrictEqual(["a", "b", "c"]);
   });
 
@@ -22,6 +24,8 @@ describe(parseStringPromise, () => {
       "<a><b>a  b</b><b>b  a</b></a>",
       { charsAsChildren: true, explicitChildren: true, normalize: true, preserveChildrenOrder: true },
     );
+
+    assert.exists(parsedXml);
 
     expect(parsedXml.a.$$.map(({ $$ }) => $$)).toStrictEqual([
       [{ _: "a b", [BUILTIN_NAME_KEY]: TEXT_NODE_NAME }],
@@ -39,6 +43,8 @@ describe(parseStringPromise, () => {
 
     const parsedXml = await parseStringPromise<{ a: { b: string[] } }>("<a><b> a  b </b></a>", options);
 
+    assert.exists(parsedXml);
+
     expect(parsedXml.a.b).toStrictEqual([expected]);
   });
 
@@ -49,6 +55,8 @@ describe(parseStringPromise, () => {
       normalize: true,
       valueProcessors: [(value) => value.toUpperCase()],
     });
+
+    assert.exists(parsedXml);
 
     expect(parsedXml.a.b).toStrictEqual(["A B"]);
   });

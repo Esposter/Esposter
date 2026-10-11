@@ -29,6 +29,13 @@ describe(Builder, () => {
     );
   });
 
+  // Issue #630: an array has no key to name the root by, so it is rendered under the root name rather than index 0
+  test("renders an array root under the root name", () => {
+    expect.hasAssertions();
+
+    expect(builder.buildObject([{ b: 1 }])).toBe(`${xmlDeclaration}<root><b>1</b></root>`);
+  });
+
   test("renders nothing for a nullish root array member or attribute bag", () => {
     expect.hasAssertions();
 
@@ -36,6 +43,16 @@ describe(Builder, () => {
     expect(builder.buildObject({ a: { $: null, b: 0 } })).toBe(`${xmlDeclaration}<a><b>0</b></a>`);
   });
 
+  // Issues #130 and #600: a headless document has no XML declaration, as the upstream headless option gave it
+  test("omits the XML declaration when headless is set", () => {
+    expect.hasAssertions();
+
+    const headlessBuilder = new Builder({ headless: true, renderOpts: { pretty: false } });
+
+    expect(headlessBuilder.buildObject({ a: { b: 0 } })).toBe("<a><b>0</b></a>");
+  });
+
+  // Issues #321 and #218: cdata is forced on every scalar, so a field the caller marks is wrapped whatever its value
   test("wraps every scalar value in cdata", () => {
     expect.hasAssertions();
 
