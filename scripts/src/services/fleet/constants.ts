@@ -58,4 +58,4 @@ export const UNIT_ID_SEPARATOR = "--";
 export const FLEET_FILL_MAX_TARGET = 20;
 // The standing rules every agent brief ends on, the same for a queue item and a unit
 export const FILL_RULES_LINE =
-  "Rules: read `.agents/skills/genshin-parity/references/compute-queue.md` for a lane item, or `building-proposals` for a unit; commit by pathspec; never push; release with --miss naming what is left.";
+  "Rules: read `.agents/skills/genshin-parity/references/compute-queue.md` for a lane item, or `building-proposals` for a unit; commit by pathspec and land with the `review-queue` skill's loop; release with --miss naming what is left.";

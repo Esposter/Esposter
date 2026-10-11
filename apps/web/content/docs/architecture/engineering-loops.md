@@ -96,6 +96,8 @@ A session that finishes a unit of work does not stop to ask whether to go on. It
 5. **The cheapest valuable proposal** that the same report lists (`building-proposals` skill).
 6. **An open ledger row**, as `pnpm ai:sweep:ledger-coverage` dates them (`sweeps` skill); the skills' own rows are the skill sweep.
 
+Beside every step, never one of them: **the machine's compute queue.** Once the leftovers are clear, `pnpm ai:fleet:fill` claims up to the machine's share and a `haiku` agent takes each brief it prints, and it runs again on each idle line from the machine's watcher. The runners keep going through every later step, and a pause the session takes for any of them, a usage window's end, a stop on one lane or a collector repair, leaves them running: only the user stops the queue (the `genshin-parity` skill's `references/compute-queue.md`, "Keeping it busy").
+
 No step on this list waits for approval, since each one ends in a queue push, which spends nothing and is reviewed by the collector's one release review. What still asks first is whatever spends something outside the queue: opening a pull request, pushing `develop` or `main`, a paid service, or a destructive change to shared infrastructure.
 
 ## Key files
