@@ -5,7 +5,7 @@ description: How any number of machines share one backlog — each machine pulls
 
 # Fleet
 
-Machines pull work; nothing pushes it to them. Each machine keeps a profile saying what it is and which areas it is lent, each unit of work names the capabilities it needs, and a claim is a git ref on origin saying which machine works a unit. The coordinator writes the entries and settles the calls it is asked for. It never assigns work by message, never reads a report from each machine, and never names a machine in a rule, so adding a machine costs the coordinator nothing. The rules an agent follows are in the throughput skill's `references/fleet.md`; this page explains how the pieces fit and what the fleet holds now.
+Machines pull work; nothing pushes it to them. Each machine keeps a profile saying what it is and which areas it is lent, each unit of work names the capabilities it needs, and a claim is a git ref on origin saying which machine works a unit. The coordinator writes the entries and settles the calls it is asked for. It never assigns work by message, never reads a report from each machine, and never names a machine in a rule, so adding a machine costs the coordinator nothing. The procedure an agent follows (commands, lanes, worktrees, the game-data copy) is the throughput skill's `references/fleet.md`; this page is the design those rules serve.
 
 ## How the pieces fit
 
@@ -40,54 +40,39 @@ Git is the only coordination. A claim is created by pushing a parentless commit 
 A machine's profile is `~/.esposter/machine.json`, written by `pnpm ai:fleet:profile`:
 
 - `id`, the name the machine's claims and heartbeat carry. A new profile takes the hostname.
-- `areas`, the areas the user lent the machine for. A new profile is lent `["*"]`, every area. What an area it did not lend means for an agent is the throughput skill's (`.agents/skills/throughput/references/fleet.md`).
-- `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present under the game folder, `game-exports` when the parity exports exist, and `media-engine` on macOS and on Windows when FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it by hand, and a capability the user set is kept.
-- `fillTarget` and `fillKinds`, the live claims `pnpm ai:fleet:fill` keeps on the machine and the kinds it takes, in order. `pnpm ai:fleet:profile` sets them with `--fill-target` and `--fill-kinds`, and a machine without them takes its logical cores capped at twenty and every kind. Only the machine with the most headroom takes the compute lanes; the coordinating machine keeps a small unit-only share.
-
-The game folder is the one holding `GenshinImpact_Data`, set by the `GENSHIN_GAME_DIRECTORY` variable and defaulting to `C:\Program Files\Genshin Impact\Genshin Impact game`. The tooling and the profile read the same folder. On macOS the default is the parity folder's `game`, which is where the MacBook holds it, so no variable is needed there.
+- `areas`, the areas the user lent the machine for. A new profile is lent every area. An area a machine was not lent is never worked, however idle it is.
+- `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present, `game-exports` when the parity exports exist, and `media-engine` where FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it, and a capability the user set is kept.
+- `fillTarget` and `fillKinds`, how many live claims `pnpm ai:fleet:fill` keeps on the machine and the kinds it takes, in order. The coordinating machine keeps a small unit-only share, so the compute lanes go to the machines with the most headroom.
 
 The profile's `id` and `areas` are never overwritten once the user has set them.
 
 ## Entries
 
-An entry is one unit of work a machine may take, from two sources, read in this order:
+An entry is one unit of work a machine may take, from two sources:
 
-- **The compute queue.** Each open item under the **Queue** heading of a page in `apps/web/content/docs/genshin/compute/` (the index excepted) has an id in braces and its needs after `needs`, such as `needs game-install, game-exports`. Its written paths are its touch set. An item under **Waiting** is not offered.
-- **The open proposal units** under `apps/web/content/docs/proposals/<area>/`, the same units `pnpm ai:proposals:report` reads. A proposal's area is its folder, and its touch set is its Key files table plus the `touches` globs its frontmatter names. Its `needs` and `waiting` are its frontmatter's `needs` and `waiting`, empty when the page names none; a unit with a `waiting` blocker is not offered, and `pnpm ai:fleet:status` lists it with the blocker.
+- **The compute queue.** Each open item under the **Queue** heading of a page in `apps/web/content/docs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. An item under **Waiting** is not offered.
+- **The open proposal units** under `apps/web/content/docs/proposals/<area>/`, the units `pnpm ai:proposals:report` reads. A unit's touch set is its Key files table plus the `touches` globs its frontmatter names, and a unit with a `waiting` blocker is not offered.
 
-`pnpm ai:fleet:next` returns the first entry that meets every condition: the machine has its needs, the entry's area is lent, the entry is not waiting, no live claim holds the entry, and its touch set overlaps no live claim's. A claim is stale, and so does not hold, once it has gone unrenewed for thirty minutes. A runner passes its lane with `--lane <lane>` (`page` or `cpu`), so it never takes another lane's item, and `--kind queue` or `--kind unit` picks between roadmap items and proposal units. A queue line with no `{id}` is skipped, with one warning on stderr naming how many. Nothing takeable means the machine prints nothing and stays idle. `pnpm ai:fleet:fill` keeps a machine's live claims at its target, which is the profile's `fillTarget` when set and otherwise its logical cores capped at twenty, taking the kinds the profile names (every kind when it names none): it claims through the same selection, one kind after another, starts each claim's hold detached, and prints a brief for an agent per claim. The pulse wakes an idle session to run it.
+An entry is taken when the machine has its needs, its area is lent, it is not waiting, no live claim holds it, and its touch set overlaps no live claim's. Two entries whose paths do not overlap run in parallel on different machines; two that do wait for each other. Nothing takeable means the machine stays idle.
 
 ## Claims
 
-- **A claim is a ref.** `pnpm ai:fleet:claim <id>` pushes a parentless commit of the empty tree to `refs/claims/<id>`, its message `{ machine, worker, entry, claimedAt, renewedAt, load }`. Exit 0 means the worker won. Exit 1 names the holder, as `machine/worker`, when the ref already exists.
-- **Claims are per worker.** A holder is `machine/worker`, and the throughput skill's fleet reference says how each command takes the worker's id. A worker adopts only its own claim, so a live claim held by another worker on the same machine is taken as held, and each release stops only its own hold. A push that origin refuses is told apart from a network failure by asking origin again: the ref being there means a held claim, and an unreachable origin is an error.
-- **A holder renews it.** `pnpm ai:fleet:hold <id>` claims the entry, then renews every ten minutes with a new commit leased from the claim the remote holds at that moment, carrying the latest load line. At each renewal it stops when the ref is gone, when the claim is a miss, or when another machine or worker holds it. `pnpm ai:fleet:release` also deletes that worker's hold file under `~/.esposter/holds/`, which the hold polls every five seconds, so a local release ends it at once. It runs in the background for as long as the runner works the entry.
-- **A stale claim is taken over.** A claim unrenewed for thirty minutes is replaced with the same explicit lease, from the stale commit, so two machines taking the same stale claim cannot both land.
-- **A miss stays.** `pnpm ai:fleet:release <id> --miss "<text>"` writes the miss into the claim. A missed claim is never stale, so the entry waits for the coordinator's call, and its paths stay held for the same reason.
-- **A finished entry is released.** The landing commit deletes the entry's line from its area page, and `pnpm ai:fleet:release <id>` then deletes the ref, which ends the hold.
+- **A claim is a ref.** A claim pushes a parentless commit of the empty tree to `refs/claims/<id>`, its message naming the machine, the worker, the entry, when it was claimed and renewed, and the load at that moment. The push that wins creates the ref; a push that is refused because the ref exists names the holder.
+- **Holders are machine and worker pairs.** A machine runs several workers, and a claim held by one of them reads as held to the others on the same machine.
+- **A holder renews every ten minutes**, with a new commit leased from the claim the remote holds at that moment. A renewal stops when the ref is gone, or when another holder has it.
+- **Silence past thirty minutes frees a claim.** An unrenewed claim is replaced under the same explicit lease, so two machines reclaiming it cannot both land.
+- **A miss stays.** A miss is written into the claim and never goes stale, so the entry waits for the coordinator's call and its paths stay held.
+- **A finished entry releases its claim.** The landing commit removes the entry from its page, and the claim's ref is then deleted, which ends the hold.
 
-## Load
+## Load is read, not reported
 
-The watcher (`pnpm ai:machine:watch`, kept running by the [pulse mod](/docs/infra/claude-interface/genshin-mods/pulse)) pushes `refs/machines/<id>` every ten minutes, a parentless commit whose message is `{ machine, at, cpu, gpu, freeMemory, platform, lastPush }` from its latest minute's readings, where `lastPush` is the last push the machine made to `ai/queue`, if it has made one. A failed push prints one line and never stops the watcher. `pnpm ai:fleet:status` fetches every claim and heartbeat with pruning, then prints each machine's last sample and age, what it last pushed (its commit count and how long ago, or a dash), and each claim's holder, age and state. A machine's GPU figure is named by the platform that wrote its heartbeat, `GPU` for macOS and `GPU 3D` for Windows, so the label reads the same on whichever machine runs the status. It is the coordinator's whole view, and it reads a fixed number of refs regardless of how many machines there are.
+A machine's watcher pushes `refs/machines/<id>` every ten minutes: a parentless commit carrying the machine's latest sample of CPU, GPU, free memory and platform, and the last push the machine made to `ai/queue`. The coordinator's status command fetches every claim and heartbeat and prints each machine's last sample, what it last pushed and each claim's holder and age. It reads a fixed number of refs regardless of how many machines there are, which is what keeps its cost flat as the fleet grows.
 
-## Game data crosses the local network only
+A checkout pushes on each commit to `ai/queue` and at each turn's end, the events [no polling](/docs/architecture/no-polling) names as the trigger. Each push records itself in its machine's heartbeat, so one machine sees another's progress from the heartbeat, with no message.
 
-Exports and recordings move over SSH on the local network, authenticated and encrypted, and a machine off the network never holds the game exports, so it takes only the entries that need no game data. The design, including which folders are copied, is in the throughput skill's `references/fleet.md`.
+## Game data is never shared through a service
 
-## Game data over the LAN
-
-A machine's first route to the game data is the game itself: download it from HoYoverse's official CDN, then run the `genshin:assets` extraction locally. That works on any machine, on or off the LAN. A hand-copied install must also carry the install root's `config.ini` beside `GenshinImpact_Data`, since the extraction reads the game version from its `game_version=` line. `pnpm ai:fleet:data` is the faster route between machines whose owners allow SSH, because it copies the extracted files instead of re-extracting them.
-
-- **One-time setup on the peer:** the command always connects to the peer, whether it pulls from it or pushes to it, so the peer enables Remote Login (on a Mac, System Settings, General, Sharing, Remote Login). Then on the machine running the command run `ssh-keygen -t ed25519 -f ~/.ssh/<name>` for a dedicated key, and append its public key to the peer's `~/.ssh/authorized_keys`. The receiving machine, where the files land, is the peer for a push and the machine running the command for a pull.
-- **The peer row** goes in `~/.esposter/peers.json`: `host`, `user`, `identityFile` (the dedicated key, never the commit-signing key), `repository` (the peer's checkout) and `parityDirectory` (its `~/Esposter/genshin-parity`).
-- **Commands:** `pnpm ai:fleet:data manifest` prints each directory's digest as JSON. `pull <peer>` and `push <peer>` compare the two manifests, list only the directories whose digests differ, and stream the files the receiver lacks through one tar pipe over ssh. `--dry-run` counts without copying, `--folders` overrides the default folders, `--source <dir>` puts a local folder in place of the local parity directory (what a push copies from, where a pull lands), and `--into <subfolder>` puts a subfolder of the peer's parity directory in place of it (where a push lands, what a pull copies from).
-- **Magnitude:** the manifest walk over this PC's six copied folders takes about 3.6 minutes (median of three, 202 to 238 s) and peaks at about 480 MiB of resident memory, with the folders written by another session during the walk. Its JSON is about 36 MiB across roughly 250,000 directories. Nothing is listed for a directory whose digest matches, so an unchanged copy costs one manifest per side.
-- **What is never copied:** `frames` and `tmp`. Deleting on the receiver is out of scope, so a copy only adds or replaces files.
-
-## Machines now
-
-- **The PC** runs Windows 10 with an AMD RDNA 3 GPU and about 32 GB of memory. It holds the game install and the exports, and its profile is lent every area.
-- **A MacBook Air** runs macOS on an Apple M1 with 4 performance and 4 efficiency cores, 16 GB of memory and 568 GiB free. It is lent the Genshin area only, so it takes the compute queue's Genshin items and no other work.
+No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network never holds the game exports, so it takes only the entries that need no game data. The copy's procedure and the folders it moves are the throughput skill's `references/fleet.md`.
 
 ## Key files
 

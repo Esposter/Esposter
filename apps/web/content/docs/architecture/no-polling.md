@@ -15,7 +15,12 @@ Every wait must be one of:
 
 Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the autosave interval, and animation timers run **because time passed**, not to check whether something else finished. The test is the purpose of the timer — "do the thing every N seconds" is scheduling; "check every N seconds whether the thing happened" is polling and gets rewritten around the signal that already exists.
 
-A sync on a timer is polling even when the period is minutes: a timer that asks whether the remote moved is the same check as one that asks whether a test flipped. The trigger is the event that moves the remote instead, a commit (the `post-commit` hook) or a session turn's end, and the queue push takes a lock rather than waiting on either.
+A sync on a timer is polling even when the period is minutes: a timer that asks whether the remote moved is the same check as one that asks whether a test flipped. The queue sync is driven by the events that move the remote instead:
+
+- **A commit pushes.** The `post-commit` hook on `ai/queue` starts the queue push detached and returns at once. The push takes one lock, so a commit landing while one runs does not start a second push: it leaves a pending mark, and the running push makes one more pass after it lets go, however many commits landed meanwhile. The lock and the mark are in `scripts/src/queue/push/`.
+- **A turn's end syncs.** The genshin-mods plugin runs the queue sync when a session turn ends, under the pulse's own switch. A sync shows nothing unless it fails.
+- **The idle wake reacts to a line.** The plugin starts the machine watcher as its child and reads its output as each chunk arrives. The watcher prints a line starting with `machine idle:` when the machine goes idle and again on each reminder while it stays idle; the plugin submits the wake prompt on that line, unless a turn runs or a usage reserve winds down.
+- **The cache warning is one timer.** The prompt cache goes cold at a known instant. Each turn's end arms one timer for that instant, computed from the request that last read or wrote the cache; the timer warns once for that request and stands down while a turn runs.
 
 If a dependency genuinely exposes no signal — no promise, no event, no webhook — that is an integration-design problem to fix at the boundary (add the completion handle, subscribe to the service's events), never a license to poll around it.
 
