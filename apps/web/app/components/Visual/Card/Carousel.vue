@@ -172,11 +172,11 @@ watch(
   </div>
 </template>
 
-<style scoped lang="scss">
-// The JS code handles breakpoints/variables for each card.
+<style scoped>
+/* The JS code handles breakpoints/variables for each card. */
 .active-card {
   z-index: 100 !important;
-  // Fake grid-gap.
+  /* Fake grid-gap. */
   padding-right: v-bind(gap);
   animation: active-card 2s ease both;
 }
@@ -184,10 +184,10 @@ watch(
 @keyframes active-card {
   0% {
     transform: translateX(0%) scaleY(1);
-    // Subtract v-bind(gap) since it has that much padding.
+    /* Subtract v-bind(gap) since it has that much padding. */
     margin-right: calc(v-bind("activeCardStyle.oldMarginRight") - v-bind(gap));
   }
-  // End on the left, waiting to be sent back to the right.
+  /* End on the left, waiting to be sent back to the right. */
   100% {
     transform: translateX(-100%) scaleY(1);
     margin-right: 0;
@@ -205,18 +205,18 @@ watch(
     margin-right: 0;
     padding-right: v-bind(gap);
   }
-  // Scale in place first — the slide right starts after this.
+  /* Scale in place first — the slide right starts after this. */
   20% {
     transform: translateX(-100%) scale(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;
     padding-right: v-bind(gap);
   }
-  // Avoid the weird squishing look.
+  /* Avoid the weird squishing look. */
   90% {
     transform: translateX(0%) scale(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;
   }
-  // End in the place the active card left, at its own scale.
+  /* End in the place the active card left, at its own scale. */
   100% {
     transform: translateX(0%) scaleY(v-bind("inactiveCardStyle.scaleY"));
     margin-right: 0;
@@ -224,8 +224,8 @@ watch(
 }
 
 .of-card {
-  // Could be optimised by not rendering these, but that's more than a display:none
-  // since we'd need to handle the top card becoming normal.
+  /* Could be optimised by not rendering these, but that's more than a display:none */
+  /* since we'd need to handle the top card becoming normal. */
   display: none;
 }
 
@@ -242,26 +242,45 @@ watch(
   animation: normal-card-odd 2.5s ease both;
 }
 
-@each $parity in even, odd {
-  @keyframes normal-card-#{$parity} {
-    0% {
-      margin-right: var(--old-margin-right);
-      transform: scaleY(var(--old-scale-y));
-    }
+@keyframes normal-card-even {
+  0% {
+    margin-right: var(--old-margin-right);
+    transform: scaleY(var(--old-scale-y));
+  }
 
-    20% {
-      margin-right: var(--old-margin-right);
-      transform: scaleY(var(--old-scale-y));
-    }
+  20% {
+    margin-right: var(--old-margin-right);
+    transform: scaleY(var(--old-scale-y));
+  }
 
-    40% {
-      transform: scaleY(var(--scale-y));
-    }
+  40% {
+    transform: scaleY(var(--scale-y));
+  }
 
-    100% {
-      margin-right: var(--margin-right);
-      transform: scaleY(var(--scale-y));
-    }
+  100% {
+    margin-right: var(--margin-right);
+    transform: scaleY(var(--scale-y));
+  }
+}
+
+@keyframes normal-card-odd {
+  0% {
+    margin-right: var(--old-margin-right);
+    transform: scaleY(var(--old-scale-y));
+  }
+
+  20% {
+    margin-right: var(--old-margin-right);
+    transform: scaleY(var(--old-scale-y));
+  }
+
+  40% {
+    transform: scaleY(var(--scale-y));
+  }
+
+  100% {
+    margin-right: var(--margin-right);
+    transform: scaleY(var(--scale-y));
   }
 }
 </style>

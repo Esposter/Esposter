@@ -37,7 +37,7 @@ const { cards } = defineProps<Props>();
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .window {
   container-type: inline-size;
   transform-style: preserve-3d;

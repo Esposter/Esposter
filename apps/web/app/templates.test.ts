@@ -15,7 +15,7 @@ import { parse } from "vue/compiler-sfc";
 // Once into the elements every check iterates, and one generator answers every check that asks one. No check reads
 // A source map, which the parse would otherwise build for every block (`templates.bench.md`)
 const sourceFiles = await Promise.all(
-  (await Array.fromAsync(glob("**/*.{vue,scss,ts}", { cwd: import.meta.dirname }))).map(async (sourcePath) => {
+  (await Array.fromAsync(glob("**/*.{vue,css,ts}", { cwd: import.meta.dirname }))).map(async (sourcePath) => {
     const text = await readFile(join(import.meta.dirname, sourcePath), "utf8");
     const elements: ElementNode[] = [];
     const ast = sourcePath.endsWith(".vue") ? parse(text, { sourceMap: false }).descriptor.template?.ast : undefined;
@@ -272,7 +272,7 @@ describe("library layout", () => {
 // Every authored length is `rem` (`styling` skill). What keeps `px` holds a dependency's own values: the vendored
 // ApexCharts sample SVGs
 describe("lengths", () => {
-  const STYLE_PATH_REGEX = /\.(?:vue|scss)$/u;
+  const STYLE_PATH_REGEX = /\.(?:vue|css)$/u;
   const PX_REGEX = /[^a-z-]\d+px\b/u;
   const PX_EXCLUDED_DIRECTORY = "assets/dashboard/demo/icon/";
 
@@ -305,11 +305,11 @@ describe("lengths", () => {
 
 describe("design styles", () => {
   // The library draws what differs between styles, so only its folders, `NuxtTheme` (which puts the reader's style on
-  // The root) and the document chrome in `globals.scss` name the style attribute, and only the icon map names the voxel
+  // The root) and the document chrome in `globals.css` name the style attribute, and only the icon map names the voxel
   // Style's icon set. Checked here rather than by oxlint, which reads neither a template's attributes nor a style block
   // @TODO: https://github.com/oxc-project/oxc/issues/15761
   const STYLE_OWNER_PATH_REGEX =
-    /^(?:components\/Ui\/|composables\/ui\/|models\/ui\/|services\/ui\/|plugins\/ui\.ts$|components\/Nuxt\/Theme\.vue$|assets\/css\/globals\.scss$)/u;
+    /^(?:components\/Ui\/|composables\/ui\/|models\/ui\/|services\/ui\/|plugins\/ui\.ts$|components\/Nuxt\/Theme\.vue$|assets\/css\/globals\.css$)/u;
   // Every app source but the tests, and the files that own what the check finds
   const checkIsKept = (sourcePath: string) =>
     !sourcePath.endsWith(".test.ts") && !STYLE_OWNER_PATH_REGEX.test(sourcePath);
@@ -345,7 +345,7 @@ describe("design styles", () => {
   test("swaps every face token under readable text", () => {
     expect.hasAssertions();
 
-    const globalsFile = sourceFiles.find(({ sourcePath }) => sourcePath === "assets/css/globals.scss");
+    const globalsFile = sourceFiles.find(({ sourcePath }) => sourcePath === "assets/css/globals.css");
     const readableTextLines = globalsFile?.lines.slice(
       globalsFile.lines.findIndex((line) => line.startsWith("[data-readable-text]")),
     );

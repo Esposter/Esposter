@@ -74,7 +74,7 @@ onMounted(async () => {
   </VueFlow>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.selected .line) {
   border-style: dashed;
 }

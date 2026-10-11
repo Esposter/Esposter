@@ -241,7 +241,6 @@ catalog:
   remark-emoji: ^5.0.2
   rolldown: ^1.2.13
   rxjs: ^7.8.2
-  sass-embedded: ^1.105.1
   sax: ^1.6.1
   sharp: ^0.35.5
   sql-highlight: ^6.1.0

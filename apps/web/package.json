@@ -219,7 +219,6 @@
     "nuxt": "catalog:",
     "nuxt-security-module": "workspace:*",
     "remark-emoji": "catalog:",
-    "sass-embedded": "catalog:",
     "sql-highlight": "catalog:",
     "trpc-msw": "workspace:*",
     "tsx": "catalog:",

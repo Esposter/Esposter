@@ -16,7 +16,7 @@ const themeModeStore = useThemeModeStore();
 const { isDark } = storeToRefs(themeModeStore);
 const chart = useTemplateRef<{ chart?: ApexCharts }>("chart");
 // The UI library owns the theme, so the mode is pinned instead of letting ApexCharts auto-resolve it. The mode flip
-// Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.scss). Each series takes its own
+// Also re-renders the chart, which re-reads the "--apx-*" design tokens (globals.css). Each series takes its own
 // Marker shape unless the caller names one. A line or an area sizes its markers to 0 in ApexCharts, so it is given a
 // Size there for the shapes to be seen; every other type keeps its own. A legend entry is written with innerHTML, and
 // A single-series chart's entries are its category values — on a dashboard, a survey respondent's own answers, read by

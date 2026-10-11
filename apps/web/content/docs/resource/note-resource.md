@@ -40,7 +40,7 @@ Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `
 | `apps/web/app/components/Resource/Note/EditorMenuBar.vue`              | writing-kit toolbar                                     |
 | `apps/web/app/components/Resource/Note/View.vue`                       | published `generateHTML` render                         |
 | `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`        | keeps a task item's checkbox, disabled                  |
-| `apps/web/app/assets/css/globals.scss`                                 | task-list rules in the rich-text typography             |
+| `apps/web/app/assets/css/globals.css`                                  | task-list rules in the rich-text typography             |
 | `apps/web/app/store/resource/note/index.ts`                            | blade-scoped load/save store                            |
 | `apps/web/server/trpc/routers/note.ts`                                 | `createResourceProcedures(Note)` router                 |
 

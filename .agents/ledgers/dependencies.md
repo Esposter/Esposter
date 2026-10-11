@@ -196,7 +196,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `rolldown`                              | —     | Keep — tooling      | the bundler under tsdown and Vite                                                                      |
 | `rou3`                                  | —     | Keep — free         | h3's own router, reused by nuxt-security-module                                                        |
 | `rxjs`                                  | —     | Keep — free         | grid-engine's own observables                                                                          |
-| `sass-embedded`                         | —     | Replace — platform  | one `globals.scss` left; native CSS nesting replaces Sass                                              |
 | `sax`                                   | —     | Keep — spec         | the XML tokenizer under parse-tmx's reader                                                                     |
 | `sharp`                                 | —     | Keep — engine       | image processing                                                                                       |
 | `sql-highlight`                         | —     | Remove              | colours in the dev query log, worth less than a dependency                                             |

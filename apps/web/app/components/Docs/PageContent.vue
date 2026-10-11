@@ -13,16 +13,16 @@ const { page } = defineProps<Props>();
 </template>
 
 <!-- The page is markdown rendered to bare elements, so they take the library's type here rather than a class each -->
-<style scoped lang="scss">
+<style scoped>
 .docs-content {
   line-height: 1.5;
 
-  // A readable measure for running text; tables, code and diagrams keep the column's whole width
+  /* A readable measure for running text; tables, code and diagrams keep the column's whole width */
   :deep(:is(p, ul, ol, blockquote)) {
     max-width: 70ch;
   }
 
-  // Markdown's headings cannot wear the type rules, so they read the same tokens the rules do
+  /* Markdown's headings cannot wear the type rules, so they read the same tokens the rules do */
   :deep(:is(h1, h2, h3, h4)) {
     color: var(--ui-heading-color);
     font-family: var(--ui-font-heading);
@@ -36,7 +36,7 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
-  // A section is told apart by its heading's size and the room above it, never a rule under it
+  /* A section is told apart by its heading's size and the room above it, never a rule under it */
   :deep(h2) {
     font-size: var(--ui-text-heading);
     margin-block: 2.5rem 1rem;
@@ -60,7 +60,7 @@ const { page } = defineProps<Props>();
   :deep(a:hover) {
     text-decoration: underline;
   }
-  // Heading anchor links keep the heading colour; the hash affordance appears on hover
+  /* Heading anchor links keep the heading colour; the hash affordance appears on hover */
   :deep(:is(h1, h2, h3, h4) a) {
     color: inherit;
     text-decoration: none;
@@ -80,7 +80,7 @@ const { page } = defineProps<Props>();
     margin-bottom: 1rem;
   }
 
-  // Emphasis is drawn as a heading is: the accent in voxel, whose face has one weight, and heavier in standard
+  /* Emphasis is drawn as a heading is: the accent in voxel, whose face has one weight, and heavier in standard */
   :deep(strong) {
     color: var(--ui-heading-color);
     font-weight: var(--ui-weight-heading);
@@ -123,7 +123,7 @@ const { page } = defineProps<Props>();
     width: max-content;
   }
 
-  // Drawn in tones rather than a grid: the header row in the panel's, and a divider between rows, the only line left
+  /* Drawn in tones rather than a grid: the header row in the panel's, and a divider between rows, the only line left */
   :deep(:is(th, td)) {
     border-bottom: var(--ui-border-width) solid var(--ui-divider);
     padding: 0.5rem 0.75rem;

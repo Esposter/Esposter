@@ -86,7 +86,7 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.ProseMirror) {
   padding: 1rem 1rem 0 1rem;
   height: v-bind(height);

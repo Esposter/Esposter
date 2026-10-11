@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Apply when writing or reviewing styles in .vue or .scss files, or laying out a page, panel, sidebar, or border. Esposter's UnoCSS Attributify styling — every static style an attribute with class kept for what cannot be one, theme tokens over bespoke values, rem never px, the parent owning spacing, no fixed dimension on a layout region, borders drawn once, state variants over &:hover blocks, and the style block as the exception.
+description: Apply when writing or reviewing styles in .vue or .css files, or laying out a page, panel, sidebar, or border. Esposter's UnoCSS Attributify styling — every static style an attribute with class kept for what cannot be one, theme tokens over bespoke values, rem never px, the parent owning spacing, no fixed dimension on a layout region, borders drawn once, state variants over &:hover blocks, and the style block as the exception.
 ---
 
 # Styling — UnoCSS Attributify Mode
@@ -77,4 +77,4 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 
 ## Style Block — `references/style-blocks.md`
 
-`<style scoped>` always (`vue/enforce-style-attribute`), plain CSS until nesting earns `lang="scss"`, library CSS imported in script setup. A Fragment-rooted child defeats `scoped` and `:deep()` alike, silently — that page.
+`<style scoped>` always (`vue/enforce-style-attribute`), plain CSS with native nesting and no `lang`, library CSS imported in script setup. A Fragment-rooted child defeats `scoped` and `:deep()` alike, silently — that page.

@@ -25,7 +25,7 @@ const { visuals } = storeToRefs(visualStore);
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 /* The grid is the page's background, and each tile a panel on its edge, in the library's tokens */
 :deep(.vgl-layout) {
   width: 100%;

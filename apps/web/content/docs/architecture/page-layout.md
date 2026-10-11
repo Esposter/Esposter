@@ -50,7 +50,7 @@ An immersive page never scrolls the window at all: its layout hides the document
 
 | Surface                         | Drawn by                                             |
 | ------------------------------- | ---------------------------------------------------- |
-| The ground under everything     | `body`, in the `background` token (`globals.scss`)   |
+| The ground under everything     | `body`, in the `background` token (`globals.css`)    |
 | A docked drawer                 | The shell's `<aside>`, which wears `ui-frame`        |
 | A drawer on a narrow screen     | `UiDialog`, as a sheet                               |
 | The page                        | Nothing — the page sits on the ground                |
