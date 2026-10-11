@@ -64,13 +64,13 @@ export const MOTION_PACE_GATE = 0.01;
 export const MOTION_STEP_MS = 0.25;
 export const MOTION_WIDTH = 640;
 export const MOTION_HEIGHT = 360;
-// The committed report of each component's last run of its passes
-export const PARITY_PASSES_PATH: string = join(
+// The directory each component's committed report of its last run of its passes is written to, a file per component
+export const PARITY_PASSES_DIRECTORY: string = join(
   REPOSITORY_ROOT,
   "scripts",
   "src",
   "services",
   "genshinParity",
   "passes",
-  "ParityPasses.snapshot.md",
+  "snapshots",
 );

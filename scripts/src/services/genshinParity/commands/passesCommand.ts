@@ -26,7 +26,7 @@ export const passesCommand: SubCommandsDef[string] = defineCommand({
   },
   meta: {
     description:
-      "Run a component's recreation passes in order, each measure against its gate, up to the first that fails or has no measure yet, and rewrite its section of ParityPasses.snapshot.md",
+      "Run a component's recreation passes in order, each measure against its gate, up to the first that fails or has no measure yet, and rewrite its report in passes/snapshots",
     name: "passes",
   },
   run: async ({ args }) => {
