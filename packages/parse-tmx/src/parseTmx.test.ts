@@ -30,6 +30,8 @@ describe(parseTmx, () => {
   // Reach between them, plus a map with no object layer and one whose object layer holds no object. A map
   // Repeating a shape already here re-parses the same branches for megabytes of committed snapshot, so it
   // Does not join — coverage is what earns a map a place, never realism
+  // Each snapshot is the output of the parser this package shipped first, compared by deep equality, so a parser
+  // That builds the same value in another key order still matches
   test("snapshots", async () => {
     expect.hasAssertions();
 
@@ -41,8 +43,9 @@ describe(parseTmx, () => {
 
         const file = await readFile(`${MAP_DIRECTORY}/${filename}`, "utf8");
         const tmxParsed = await parseTmx(file);
+        const snapshot = await readFile(`${MAP_DIRECTORY}/${filename}.snapshot.json`, "utf8");
 
-        await expect(JSON.stringify(tmxParsed)).toMatchFileSnapshot(`${MAP_DIRECTORY}/${filename}.snapshot.json`);
+        expect(JSON.parse(JSON.stringify(tmxParsed))).toStrictEqual(JSON.parse(snapshot));
       }),
     );
   });
