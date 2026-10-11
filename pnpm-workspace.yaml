@@ -159,7 +159,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^7.8.0
+  apexcharts: ^7.9.1
   better-auth: ^1.7.7
   bowser: ^2.14.1
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
