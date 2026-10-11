@@ -16,7 +16,7 @@ describe("tRPCMswRouterRecord type", () => {
   });
   type RouterRecord = TRPCMswRouterRecord<{ id: string }, (typeof router)["_def"]["record"]>;
 
-  test("#25 query", () => {
+  test("#6 #25 query", () => {
     expect.hasAssertions();
 
     expectTypeOf<Parameters<Parameters<RouterRecord["nested"]["read"]["query"]>[0]>[0]["input"]>().toEqualTypeOf<{

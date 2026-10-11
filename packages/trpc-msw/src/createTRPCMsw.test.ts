@@ -109,7 +109,7 @@ describe(createTRPCMsw, () => {
     server.close();
   });
 
-  test("answers a batch through the transformer in both directions", async () => {
+  test("#1 #8 #38 #48 answers a batch through the transformer in both directions", async () => {
     expect.hasAssertions();
 
     const read = vi.fn<(options: { input: { id: string } }) => Date>(() => new Date(0));
@@ -277,7 +277,7 @@ describe(createTRPCMsw, () => {
     await expect(client.registeredLater.query()).resolves.toBe("later");
   });
 
-  test("hands the resolver the context built from the request", async () => {
+  test("#49 hands the resolver the context built from the request", async () => {
     expect.hasAssertions();
 
     trpc.readAuthorization.query(({ ctx }) => ctx.authorization);
@@ -296,7 +296,7 @@ describe(createTRPCMsw, () => {
     await expect(postClient.nested.query.query()).resolves.toBe(" ");
   });
 
-  test("passes a request naming no registered procedure on when told to bypass", async () => {
+  test("#51 passes a request naming no registered procedure on when told to bypass", async () => {
     expect.hasAssertions();
 
     const bypassMsw = createTRPCMsw<typeof router>({
