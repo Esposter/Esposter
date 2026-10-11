@@ -1,3 +1,4 @@
+import { HighlightStyleMap } from "#server/services/db/constants";
 import { highlightSql } from "#server/services/db/highlightSql";
 import { stripVTControlCharacters, styleText } from "node:util";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -13,7 +14,7 @@ describe(highlightSql, () => {
   test("colour is forced for these tests", () => {
     expect.hasAssertions();
 
-    expect(styleText("magenta", "select", { validateStream: false })).not.toBe("select");
+    expect(styleText(HighlightStyleMap.keyword, "select", { validateStream: false })).not.toBe("select");
   });
 
   test.each([
@@ -32,7 +33,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select count(id) from users where id = 1")).toBe(
-      `${styleText("magenta", "select")} ${styleText("blue", "count")}(id) ${styleText("magenta", "from")} users ${styleText("magenta", "where")} id = ${styleText("yellow", "1")}`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.function, "count")}(id) ${styleText(HighlightStyleMap.keyword, "from")} users ${styleText(HighlightStyleMap.keyword, "where")} id = ${styleText(HighlightStyleMap.number, "1")}`,
     );
   });
 
@@ -40,7 +41,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select 'from where' from t")).toBe(
-      `${styleText("magenta", "select")} ${styleText("green", "'from where'")} ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, "'from where'")} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -48,7 +49,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql(`select "select" from t`)).toBe(
-      `${styleText("magenta", "select")} ${styleText("blue", `"select"`)} ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.identifier, `"select"`)} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -56,7 +57,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql(`SELECT "users".* FROM "users"`)).toBe(
-      `${styleText("magenta", "SELECT")} ${styleText("blue", `"users"`)}.* ${styleText("magenta", "FROM")} ${styleText("blue", `"users"`)}`,
+      `${styleText(HighlightStyleMap.keyword, "SELECT")} ${styleText(HighlightStyleMap.identifier, `"users"`)}.* ${styleText(HighlightStyleMap.keyword, "FROM")} ${styleText(HighlightStyleMap.identifier, `"users"`)}`,
     );
   });
 
@@ -64,7 +65,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select 5 # 3 from t")).toBe(
-      `${styleText("magenta", "select")} ${styleText("yellow", "5")} # ${styleText("yellow", "3")} ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.number, "5")} # ${styleText(HighlightStyleMap.number, "3")} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -72,7 +73,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select a-1 from t")).toBe(
-      `${styleText("magenta", "select")} a-${styleText("yellow", "1")} ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} a-${styleText(HighlightStyleMap.number, "1")} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -80,7 +81,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql(String.raw`select 'a\' as x from t`)).toBe(
-      `${styleText("magenta", "select")} ${styleText("green", String.raw`'a\'`)} ${styleText("magenta", "as")} x ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, String.raw`'a\'`)} ${styleText(HighlightStyleMap.keyword, "as")} x ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -88,7 +89,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select 'it''s' from t")).toBe(
-      `${styleText("magenta", "select")} ${styleText("green", "'it''s'")} ${styleText("magenta", "from")} t`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.string, "'it''s'")} ${styleText(HighlightStyleMap.keyword, "from")} t`,
     );
   });
 
@@ -96,7 +97,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("select 1 -- note\nfrom t /* block */")).toBe(
-      `${styleText("magenta", "select")} ${styleText("yellow", "1")} ${styleText(["gray", "dim", "italic"], "-- note")}\n${styleText("magenta", "from")} t ${styleText(["gray", "dim", "italic"], "/* block */")}`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.number, "1")} ${styleText(HighlightStyleMap.comment, "-- note")}\n${styleText(HighlightStyleMap.keyword, "from")} t ${styleText(HighlightStyleMap.comment, "/* block */")}`,
     );
   });
 
@@ -104,7 +105,7 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql("Select * From t Where a Like 'x'")).toBe(
-      `${styleText("magenta", "Select")} * ${styleText("magenta", "From")} t ${styleText("magenta", "Where")} a ${styleText("magenta", "Like")} ${styleText("green", "'x'")}`,
+      `${styleText(HighlightStyleMap.keyword, "Select")} * ${styleText(HighlightStyleMap.keyword, "From")} t ${styleText(HighlightStyleMap.keyword, "Where")} a ${styleText(HighlightStyleMap.keyword, "Like")} ${styleText(HighlightStyleMap.string, "'x'")}`,
     );
   });
 
@@ -112,33 +113,39 @@ describe(highlightSql, () => {
     expect.hasAssertions();
 
     expect(highlightSql(`insert into "brands" ("name") values ('x') returning "id"`)).toContain(
-      styleText("magenta", "returning"),
+      styleText(HighlightStyleMap.keyword, "returning"),
     );
   });
 
   test("#26 paints OVERLAPS as a keyword", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).toContain(styleText("magenta", "overlaps"));
+    expect(highlightSql("select 1 where (a, b) overlaps (c, d)")).toContain(
+      styleText(HighlightStyleMap.keyword, "overlaps"),
+    );
   });
 
   test("#60 keeps keywords after a schema-qualified name", () => {
     expect.hasAssertions();
 
     expect(highlightSql(`select 1 from "db"."t" where x = 1`)).toBe(
-      `${styleText("magenta", "select")} ${styleText("yellow", "1")} ${styleText("magenta", "from")} ${styleText("blue", `"db"`)}.${styleText("blue", `"t"`)} ${styleText("magenta", "where")} x = ${styleText("yellow", "1")}`,
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.number, "1")} ${styleText(HighlightStyleMap.keyword, "from")} ${styleText(HighlightStyleMap.identifier, `"db"`)}.${styleText(HighlightStyleMap.identifier, `"t"`)} ${styleText(HighlightStyleMap.keyword, "where")} x = ${styleText(HighlightStyleMap.number, "1")}`,
     );
   });
 
   test("#13 reads a decimal number as one number", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select 42.11")).toBe(`${styleText("magenta", "select")} ${styleText("yellow", "42.11")}`);
+    expect(highlightSql("select 42.11")).toBe(
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.number, "42.11")}`,
+    );
   });
 
   test("a Postgres parameter is painted in the number style", () => {
     expect.hasAssertions();
 
-    expect(highlightSql("select $1")).toBe(`${styleText("magenta", "select")} ${styleText("yellow", "$1")}`);
+    expect(highlightSql("select $1")).toBe(
+      `${styleText(HighlightStyleMap.keyword, "select")} ${styleText(HighlightStyleMap.parameter, "$1")}`,
+    );
   });
 });

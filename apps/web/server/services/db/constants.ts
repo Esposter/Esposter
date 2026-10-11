@@ -1,3 +1,5 @@
+import type { styleText } from "node:util";
+
 // Postgres `unique_violation`. A generated id is short enough to collide, so a duplicate key is the one insert
 // Failure that means "try another id" — every other failure is the database itself, and retrying through it only
 // Delays the report and dresses it up as an id-allocation problem
@@ -91,3 +93,17 @@ export const POSTGRES_KEYWORDS = [
   "WINDOW",
   "WITH",
 ] as const;
+
+// Each token kind's colour in the dev query log, in the terminal's named colours so its own theme decides the shades.
+// Picked to read on a dark terminal's default palette: plain blue is too dark to read there, so a quoted name, a
+// Table or a column, is green as the log showed it before, a function call bright blue, and a string cyan.
+// Brackets and operators are left plain
+export const HighlightStyleMap = {
+  comment: ["gray", "italic"],
+  function: "blueBright",
+  identifier: "green",
+  keyword: "magenta",
+  number: "yellow",
+  parameter: "yellow",
+  string: "cyan",
+} as const satisfies Record<string, Parameters<typeof styleText>[0]>;
