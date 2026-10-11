@@ -9,7 +9,7 @@ committed.
 | :-------- | :----- | --------------: | ----: | ---: | ---: |
 | `character-artifacts` | `CharacterScreen` | 10.42% | 0.416 | 6.69% | 0.4314 |
 | `character-artifacts-tabs` | `CharacterScreen` | 7.89% | 0.481 | 5.72% | 0.3580 |
-| `character-attributes` | `CharacterScreen` | 7.74% | 0.766 | 5.57% | 0.3535 |
+| `character-attributes` | `CharacterScreen` | 7.74% | 0.765 | 5.57% | 0.3535 |
 | `character-attributes-panel` | `CharacterScreen` | 7.20% | 0.574 | 4.42% | 0.3177 |
 | `character-attributes-tabs` | `CharacterScreen` | 6.34% | 0.500 | 5.07% | 0.3094 |
 | `character-attributes-top` | `CharacterScreen` | 11.49% | 0.741 | 5.64% | 0.4177 |
@@ -20,6 +20,7 @@ committed.
 | `character-weapons` | `CharacterScreen` | 10.19% | 0.479 | 6.42% | 0.4153 |
 | `character-weapons-tabs` | `CharacterScreen` | 7.35% | 0.503 | 5.26% | 0.3381 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
+| `crafting-table` | `CraftingScreen` | 60.82% | 0.045 | 58.58% | 0.9300 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.34% | 0.756 | 8.55% | 0.4678 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |
@@ -56,11 +57,11 @@ committed.
 | `paimon-menu` | `MenuPaimon` | 5.42% | 0.905 | 3.64% | 0.2244 |
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
-| `quest-screen` | `QuestScreen` | 44.32% | 0.406 | 40.85% | 0.8047 |
+| `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
 | `reputation-screen` | `ReputationScreen` | 6.13% | 0.380 | 5.39% | 0.2658 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.992 | 0.41% | 0.0756 |
 | `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
-| `settings-graphics-rows` | `MenuSettings` | 1.10% | 0.992 | 0.58% | 0.0961 |
+| `settings-graphics-rows` | `MenuSettings` | 1.19% | 0.998 | 0.73% | 0.0974 |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
 | `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |

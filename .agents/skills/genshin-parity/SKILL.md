@@ -41,6 +41,7 @@ The loop and why it is shaped this way are `apps/web/content/docs/genshin/parity
 ## Rules
 
 - **Numbers before looking.** Run `pnpm -C scripts genshin:parity compare <reference>` and read the mean and the grid; zoom only on a cell that stands out. Target a mean of hundredths of a percent, with any remainder explained (antialiasing along an edge). The run rewrites its row of the committed `ParityReferenceMap.snapshot.md` (`--all` every row), which is committed with the change that moved it and is the only score a session quotes.
+- **An agent approves a screen's image with `genshin:parity approve` once its compare is clean against a stored reference, and fetches a missing reference first.** No person approves images, and nothing is approved blind (`references/approval.md`).
 - **A screen's load is held to its budget by the load bench once it ships**, the proposal at `apps/web/content/docs/proposals/genshin/load-budget.md`.
 
 ## Reference pages

@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { approveCommand } from "#src/services/genshinParity/commands/approveCommand";
 import { attacksCommand } from "#src/services/genshinParity/commands/attacksCommand";
 import { balanceCommand } from "#src/services/genshinParity/commands/balanceCommand";
 import { bandsCommand } from "#src/services/genshinParity/commands/bandsCommand";
@@ -77,6 +78,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     stalls: stallsCommand,
     bands: bandsCommand,
     attacks: attacksCommand,
+    approve: approveCommand,
     decay: decayCommand,
     instruments: instrumentsCommand,
     solos: solosCommand,
