@@ -34,7 +34,7 @@ flowchart TD
 
 ### Embedder policy
 
-The module sends `Cross-Origin-Embedder-Policy` — `credentialless` in production, `unsafe-none` in development — on rendered pages only, never on a static asset. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `configuration/routeRules.ts` gives the built scripts under `/_nuxt/` the production policy, which reaches them because Nitro's route-rule headers run ahead of its static handler.
+The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](/docs/nuxt-security-module/defaults-review) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `configuration/routeRules.ts` gives the built scripts under `/_nuxt/` the production policy, which reaches them because Nitro's route-rule headers run ahead of its static handler.
 
 A header change to those scripts never reaches a copy already cached. They are served `immutable` for a year, and the host's edge keeps its own copy for each `Accept-Encoding`, so a script cached before the change goes on being served without the new header until the edge's cache is purged, and a browser that fetched it meanwhile keeps its copy until its own cache is cleared. A file the change also renames is the exception, since no cache holds its new name.
 

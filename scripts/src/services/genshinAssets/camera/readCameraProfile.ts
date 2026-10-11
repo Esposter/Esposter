@@ -4,10 +4,10 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { CAMERA_PROFILE_NAME } from "#src/services/genshinAssets/camera/constants";
 import { parseCameraProfile } from "#src/services/genshinAssets/camera/parseCameraProfile";
-import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { EXTRACTED_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getInstalledBlockPath } from "#src/services/genshinAssets/shared/getInstalledBlockPath";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -22,16 +22,19 @@ export const readCameraProfile = async (): Promise<CameraProfileReading> => {
   const block = takeOne(blocks);
   const directory = join(EXTRACTED_DIRECTORY, "camera");
   await rm(directory, { force: true, recursive: true });
-  runAnimeStudio([
-    getInstalledBlockPath(block),
-    directory,
-    "--types",
-    AssetType.MonoBehaviour,
-    "--names",
-    namePattern,
-    "--export_type",
-    AnimeStudioExportType.Raw,
-  ]);
+  runAnimeStudio(
+    [
+      getInstalledBlockPath(block),
+      directory,
+      "--types",
+      AssetType.MonoBehaviour,
+      "--names",
+      namePattern,
+      "--export_type",
+      AnimeStudioExportType.Raw,
+    ],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const bytes = await readFile(join(directory, AssetType.MonoBehaviour, `${CAMERA_PROFILE_NAME}.dat`));
   return parseCameraProfile(bytes);
 };

@@ -1,9 +1,10 @@
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import { getDependantFiles } from "#src/services/genshinAssets/world/getDependantFiles";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 
 // The one key a file of the game's blocks is held by across the asset index and the CAB map: its block and its offset
@@ -24,7 +25,9 @@ export const readPrefabBlocks = async (
   );
   const dependantFileKeys = new Set([...nameDependantFilesMap.values()].flat().map((file) => toFileKey(file)));
   const listedFileKeys = new Set(
-    (await readIndexedAssets((asset) => dependantFileKeys.has(toFileKey(asset)))).map((asset) => toFileKey(asset)),
+    (await readIndexedAssets((asset) => dependantFileKeys.has(toFileKey(asset)), GENSHIN_ANIMESTUDIO_OPTIONS)).map(
+      (asset) => toFileKey(asset),
+    ),
   );
   const namePrefabBlocksMap = new Map<string, Set<string>>();
   for (const { block, name } of assets) {

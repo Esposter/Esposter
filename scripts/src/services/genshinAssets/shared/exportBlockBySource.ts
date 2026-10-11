@@ -2,8 +2,12 @@ import type { AnimeStudioExportType } from "#src/models/genshinAssets/shared/Ani
 import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
-import { GAME_BLOCKS_DIRECTORY, SOURCE_EXPORT_SUFFIX } from "#src/services/genshinAssets/shared/constants";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import {
+  GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  SOURCE_EXPORT_SUFFIX,
+} from "#src/services/genshinAssets/shared/constants";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { existsSync } from "node:fs";
 import { readdir, rename, rm } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -21,16 +25,19 @@ export const exportBlockBySource = async (
   const blockName = basename(block, ".blk");
   for (const type of types) {
     const typeDirectory = join(directory, blockName, type);
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      typeDirectory,
-      "--types",
-      type,
-      "--export_type",
-      exportType,
-      "--group_assets",
-      AnimeStudioGroupType.BySource,
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        typeDirectory,
+        "--types",
+        type,
+        "--export_type",
+        exportType,
+        "--group_assets",
+        AnimeStudioGroupType.BySource,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
     const sourceDirectory = join(typeDirectory, `${blockName}${SOURCE_EXPORT_SUFFIX}`);
     if (!existsSync(sourceDirectory)) continue;
     // oxlint-disable-next-line no-await-in-loop -- a type's files are moved once AnimeStudio has written them

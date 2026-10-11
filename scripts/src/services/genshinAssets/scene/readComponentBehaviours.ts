@@ -5,14 +5,18 @@ import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPoint
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { scanSerializedFields } from "#src/services/genshinAssets/scene/scanSerializedFields";
-import { CAB_MAP_PATH, SERIALIZED_POINTER_BYTES } from "#src/services/genshinAssets/shared/constants";
+import {
+  CAB_MAP_PATH,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  SERIALIZED_POINTER_BYTES,
+} from "#src/services/genshinAssets/shared/constants";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { parseCabMap } from "#src/services/genshinAssets/shared/parseCabMap";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile, rm } from "node:fs/promises";
@@ -58,7 +62,7 @@ export const readComponentBehaviours = async (
       [file, ...(cabMap.get(file)?.dependencies ?? [])].flatMap((target) => cabMap.get(target)?.block ?? []),
     ),
   );
-  const indexed = await readIndexedAssets(({ block }) => targetBlocks.has(block));
+  const indexed = await readIndexedAssets(({ block }) => targetBlocks.has(block), GENSHIN_ANIMESTUDIO_OPTIONS);
   const assetNameMap = new Map(
     indexed.map(({ block, name, pathId, type }) => [toObjectKey(block, pathId), `${type} ${name}`]),
   );

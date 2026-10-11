@@ -1,8 +1,12 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { ANIMESTUDIO_UNPARSED_SUFFIX, GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import {
+  ANIMESTUDIO_UNPARSED_SUFFIX,
+  GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+} from "#src/services/genshinAssets/shared/constants";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -27,16 +31,19 @@ export const exportTerrainTiles = async (
   for (const block of candidateBlocks) {
     // Every tile found, the blocks still to come are not read
     if (foundBlocks.size === tileNames.size) break;
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      unparsedDirectory,
-      "--types",
-      `${AssetType.TerrainData}${ANIMESTUDIO_UNPARSED_SUFFIX}`,
-      "--export_type",
-      AnimeStudioExportType.Raw,
-      "--group_assets",
-      AnimeStudioGroupType.ByType,
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        unparsedDirectory,
+        "--types",
+        `${AssetType.TerrainData}${ANIMESTUDIO_UNPARSED_SUFFIX}`,
+        "--export_type",
+        AnimeStudioExportType.Raw,
+        "--group_assets",
+        AnimeStudioGroupType.ByType,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
     const exportedDirectory = join(unparsedDirectory, AssetType.TerrainData);
     if (!existsSync(exportedDirectory)) continue;
     // oxlint-disable-next-line no-await-in-loop -- a block's exports are read once AnimeStudio has written them

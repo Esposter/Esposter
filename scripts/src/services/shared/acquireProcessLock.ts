@@ -1,48 +1,55 @@
 import { checkIsProcessRunning } from "#src/services/shared/checkIsProcessRunning";
+import { PROCESS_LOCK_WRITE_GRACE_MILLISECONDS } from "#src/services/shared/constants";
 import { tryCreateLock } from "#src/services/shared/tryCreateLock";
-import { getResult, noop } from "@esposter/shared";
-import { linkSync, mkdirSync, readFileSync, renameSync, rmSync, statSync } from "node:fs";
+import { getResult } from "@esposter/shared";
+import { closeSync, fstatSync, mkdirSync, openSync, readFileSync, rmSync } from "node:fs";
 import { uptime } from "node:os";
 import { dirname } from "node:path";
 
-// Takes a lock for this process, or returns False while a live process holds it. A lock whose process is gone was left
-// By a holder that died, and one written before the machine last booted names a process id the boot may have handed to
-// Another process since, so either is taken over. An empty lock is one whose holder is still writing it
+// Whether a lock was left by a holder that is gone: one whose process is gone, one written before the machine last
+// Booted, since the boot may have handed its process id to another process, and an empty one past the grace its writer
+// Has to write it in. Its holder and its time are read through one open file, so both are the same lock's, and a lock
+// That is not there is held by nothing
+const checkIsStale = (lockPath: string): boolean =>
+  getResult(() => openSync(lockPath, "r")).match(
+    (fileDescriptor) => {
+      const isStale = getResult(() => {
+        const holder = readFileSync(fileDescriptor, "utf8");
+        const { mtimeMs } = fstatSync(fileDescriptor);
+        const nowMilliseconds = Temporal.Now.instant().epochMilliseconds;
+        const bootMilliseconds =
+          nowMilliseconds - Temporal.Duration.from({ seconds: Math.ceil(uptime()) }).total("milliseconds");
+        if (mtimeMs < bootMilliseconds) return true;
+        return holder === ""
+          ? nowMilliseconds - mtimeMs > PROCESS_LOCK_WRITE_GRACE_MILLISECONDS
+          : !checkIsProcessRunning(Number(holder));
+      }).match(
+        (value) => value,
+        () => false,
+      );
+      closeSync(fileDescriptor);
+      return isStale;
+    },
+    () => true,
+  );
+
+// Takes a lock for this process, or returns False while a live process holds it or another takes it over. A stale lock
+// Is judged and replaced only by the one process holding its takeover file, so no taker moves or removes a lock another
+// Has just taken, and the lock is recreated exclusively, so a process finding it gone in between takes it instead. A
+// Takeover file outlives its taker only when the taker died inside the few calls it holds it for, and is judged stale
+// As a lock is; removing such a file is the one step two takers can race through
 export const acquireProcessLock = (lockPath: string): boolean => {
   mkdirSync(dirname(lockPath), { recursive: true });
   if (tryCreateLock(lockPath)) return true;
-  const holder = getResult(() => readFileSync(lockPath, "utf8")).match(
-    (text) => text,
-    () => "",
-  );
-  const lockStats = getResult(() => statSync(lockPath)).match(
-    (stats) => stats,
-    () => undefined,
-  );
-  const bootMilliseconds =
-    Temporal.Now.instant().epochMilliseconds -
-    Temporal.Duration.from({ seconds: Math.ceil(uptime()) }).total("milliseconds");
-  const isFromBeforeBoot = lockStats !== undefined && lockStats.mtimeMs < bootMilliseconds;
-  if (!isFromBeforeBoot && (holder === "" || checkIsProcessRunning(Number(holder)))) return false;
-  if (lockStats === undefined) return tryCreateLock(lockPath);
-  // Two processes can judge one lock stale together, and the first may take it over before the second removes it, so the
-  // Lock is moved aside rather than removed. A lock moved aside that is not the one judged stale is another process's
-  // Since, and is put back, unless a third has taken the lock meanwhile
-  const stalePath = `${lockPath}.${process.pid}.stale`;
-  const isMoved = getResult(() => renameSync(lockPath, stalePath)).match(
-    () => true,
-    () => false,
-  );
-  if (!isMoved) return tryCreateLock(lockPath);
-  const isJudgedLock = getResult(() => statSync(stalePath).ino === lockStats.ino).match(
-    (value) => value,
-    () => false,
-  );
-  // A failed link is a lock taken meanwhile, which stands, so the holder of the lock moved aside no longer holds it
-  if (!isJudgedLock)
-    getResult(() => linkSync(stalePath, lockPath)).match(noop, (error) => {
-      console.error(`${lockPath} was taken while it was moved aside, so its holder lost it: ${error.message}`);
-    });
-  rmSync(stalePath, { force: true });
-  return isJudgedLock && tryCreateLock(lockPath);
+  const takeoverPath = `${lockPath}.takeover`;
+  if (!tryCreateLock(takeoverPath)) {
+    if (!checkIsStale(takeoverPath)) return false;
+    rmSync(takeoverPath, { force: true });
+    if (!tryCreateLock(takeoverPath)) return false;
+  }
+  const isStale = checkIsStale(lockPath);
+  if (isStale) rmSync(lockPath, { force: true });
+  const isTaken = isStale && tryCreateLock(lockPath);
+  rmSync(takeoverPath, { force: true });
+  return isTaken;
 };

@@ -7,7 +7,7 @@ description: The Nuxt security module the repo is absorbing in place of nuxt-sec
 
 `packages/nuxt-security-module` is the replacement for [nuxt-security](https://github.com/Baroshem/nuxt-security), the Nuxt module that sets security headers, a nonce-based Content Security Policy, CORS, basic auth, a rate limiter, an XSS validator and a request size limiter. The absorption is in progress: our app still runs the upstream package, pinned at `2.6.0` with a patch, and this section is the record the absorption is built against.
 
-The decision to absorb it is recorded in [dependency admission](/docs/architecture/dependency-admission). A security-shaped package is absorbed only when the absorption carries the full upstream audit, a regression test for every in-scope defect, and a security review of the result. This is the first one under that rule.
+The decision to absorb it, and the rule a security-shaped absorption meets, are recorded in [dependency admission](/docs/architecture/dependency-admission).
 
 ## Pages
 

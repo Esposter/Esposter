@@ -5,7 +5,7 @@ description: As built — Inazuma's building kit (a raised timber floor, post-an
 
 # Inazuma
 
-The parts of [Inazuma](/docs/proposals/genshin/inazuma) built so far: the building kit its towns are made of, the colours of its islands, and the region's data file. Inazuma City stands as one building of the kit at a provisional place until the fit writes it ([region buildings](/docs/genshin/region-buildings)).
+The built parts of [Inazuma](/docs/proposals/genshin/inazuma): the building kit its towns are made of, the colours of its islands, and the region's data file. Inazuma City stands as one building of the kit at a provisional place until the fit writes it ([region buildings](/docs/genshin/region-buildings)).
 
 ## Building kit
 

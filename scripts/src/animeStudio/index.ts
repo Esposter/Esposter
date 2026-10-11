@@ -1,5 +1,6 @@
-import { buildAnimeStudio } from "#src/services/animeStudio/buildAnimeStudio";
-import { TOOLS_DIRECTORY } from "#src/services/animeStudio/constants";
+import { checkAnimeStudioParity } from "#src/services/genshinAssets/shared/checkAnimeStudioParity";
+import { buildAnimeStudio } from "#src/services/recreation/animeStudio/buildAnimeStudio";
+import { TOOLS_DIRECTORY } from "#src/services/recreation/animeStudio/constants";
 import { defineCommand, runMain } from "citty";
 
 await runMain(
@@ -24,7 +25,9 @@ await runMain(
       name: "genshin:animestudio:build",
     },
     async run({ args }) {
-      const cliPath = await buildAnimeStudio(args.directory, args.skipParity);
+      const cliPath = await buildAnimeStudio(args.directory, (stagedCliPath, outputDirectory) =>
+        checkAnimeStudioParity(stagedCliPath, outputDirectory, args.skipParity),
+      );
       console.log(`\nCLI published: ${cliPath}\nSet GENSHIN_ANIMESTUDIO_CLI to it.`);
     },
   }),

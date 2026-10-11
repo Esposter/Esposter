@@ -14,7 +14,7 @@ A third primitive sits beside them for the reads many stores share:
 
 - **`useCachedRead`** — a store's shared read, cached until a write invalidates its tag. Covered in [caching](/docs/architecture/caching).
 
-Both share the same error stack (`getResultAsync` → `createAlert`) and the same concurrency model — reads latest-wins per target, writes queued per target **by default**, with a write opting into latest-wins via `isSupersede` where dropping the earlier call is the intent, described in [Async operations](/docs/architecture/async-operations) — so no call site re-implements loading, error handling, or race protection.
+Both share the same error stack (`getResultAsync` → `createAlert`) and the concurrency model in [Async operations](/docs/architecture/async-operations), so no call site re-implements loading, error handling, or race protection.
 
 ## useQuery
 

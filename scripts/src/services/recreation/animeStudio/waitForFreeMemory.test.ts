@@ -1,8 +1,11 @@
 import type { readAvailableGigabytes as baseReadAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
 import type { setTimeout as baseSleep } from "node:timers/promises";
 
-import { waitForFreeMemory } from "#src/services/genshinAssets/shared/waitForFreeMemory";
-import { MEMORY_WAIT_MILLISECONDS, MIN_AVAILABLE_MEMORY_GIGABYTES } from "#src/services/genshinAssets/world/constants";
+import {
+  MEMORY_WAIT_MILLISECONDS,
+  MIN_AVAILABLE_MEMORY_GIGABYTES,
+} from "#src/services/recreation/animeStudio/constants";
+import { waitForFreeMemory } from "#src/services/recreation/animeStudio/waitForFreeMemory";
 import { noop } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

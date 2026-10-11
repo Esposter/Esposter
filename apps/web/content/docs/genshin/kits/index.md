@@ -223,6 +223,7 @@ flowchart TD
 | [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                         |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                        |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
+| [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                              |
 | [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                        |
 | [Qiqi](/docs/genshin/kits/qiqi)                     | Herald of Frost and Fortune-Preserving Talisman                      |

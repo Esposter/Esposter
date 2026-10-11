@@ -12,9 +12,10 @@ import {
   ASSET_MAP_SHARDS_DIRECTORY,
   CAB_MAP_PATH,
   GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
 } from "#src/services/genshinAssets/shared/constants";
 import { getPerformanceCoreCount } from "#src/services/genshinAssets/shared/getPerformanceCoreCount";
-import { runAnimeStudioAsync } from "#src/services/genshinAssets/shared/runAnimeStudioAsync";
+import { runAnimeStudioAsync } from "#src/services/recreation/animeStudio/runAnimeStudioAsync";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -30,16 +31,10 @@ const mapShard = async (files: BlockFile[], index: number): Promise<void> => {
   const directory = getShardDirectory(index);
   const blocksDirectory = join(directory, "blocks");
   await linkBlockShard(files, GAME_BLOCKS_DIRECTORY, blocksDirectory);
-  await runAnimeStudioAsync([
-    blocksDirectory,
-    directory,
-    "--map_op",
-    "Both",
-    "--map_type",
-    "JSON",
-    "--map_name",
-    getShardMapName(index),
-  ]);
+  await runAnimeStudioAsync(
+    [blocksDirectory, directory, "--map_op", "Both", "--map_type", "JSON", "--map_name", getShardMapName(index)],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   console.log(`shard ${index}: ${files.length} files, ${Math.round((performance.now() - start) / 1000)} s`);
 };
 

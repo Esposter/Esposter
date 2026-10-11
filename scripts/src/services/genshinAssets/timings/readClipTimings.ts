@@ -3,10 +3,14 @@ import type { ExportedClipTiming } from "#src/models/genshinAssets/timings/Expor
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { EXTRACTED_DIRECTORY, GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import {
+  EXTRACTED_DIRECTORY,
+  GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+} from "#src/services/genshinAssets/shared/constants";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import { computeClipTiming } from "#src/services/genshinAssets/timings/computeClipTiming";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, readdirSync, rmSync } from "node:fs";
@@ -24,16 +28,19 @@ export const readClipTimings = async (clipPattern: string): Promise<ClipTiming[]
   for (const block of blocks) {
     const blockDirectory = join(directory, basename(block, ".blk"));
     rmSync(blockDirectory, { force: true, recursive: true });
-    runAnimeStudio([
-      join(GAME_BLOCKS_DIRECTORY, block),
-      blockDirectory,
-      "--types",
-      AssetType.AnimationClip,
-      "--names",
-      clipPattern,
-      "--export_type",
-      AnimeStudioExportType.Json,
-    ]);
+    runAnimeStudio(
+      [
+        join(GAME_BLOCKS_DIRECTORY, block),
+        blockDirectory,
+        "--types",
+        AssetType.AnimationClip,
+        "--names",
+        clipPattern,
+        "--export_type",
+        AnimeStudioExportType.Json,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
   }
   const clipPaths = blocks.flatMap((block) => {
     const clipDirectory = join(directory, basename(block, ".blk"), AssetType.AnimationClip);

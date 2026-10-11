@@ -1,8 +1,9 @@
-import { assertAnimeStudioReady } from "#src/services/genshinAssets/shared/assertAnimeStudioReady";
-import { ANIMESTUDIO_CLI_PATH } from "#src/services/genshinAssets/shared/constants";
-import { getAnimeStudioArgs } from "#src/services/genshinAssets/shared/getAnimeStudioArgs";
-import { waitForFreeMemory } from "#src/services/genshinAssets/shared/waitForFreeMemory";
+import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
+
 import { getUtilityClampedCommand } from "#src/services/machine/getUtilityClampedCommand";
+import { assertAnimeStudioReady } from "#src/services/recreation/animeStudio/assertAnimeStudioReady";
+import { getAnimeStudioArgs } from "#src/services/recreation/animeStudio/getAnimeStudioArgs";
+import { waitForFreeMemory } from "#src/services/recreation/animeStudio/waitForFreeMemory";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
 import { constants, setPriority } from "node:os";
@@ -11,13 +12,16 @@ import { dirname } from "node:path";
 // Runs AnimeStudio as `runAnimeStudio` does, but waits for the free memory to clear the floor and runs the process at
 // Below-normal priority (under the utility QoS clamp on macOS, where a nice value leaves it competing with the
 // Foreground), so a long sweep of the blocks never slows the machine the session works on
-export const runAnimeStudioBelowNormal = async (args: string[]): Promise<void> => {
-  assertAnimeStudioReady();
+export const runAnimeStudioBelowNormal = async (args: string[], options: AnimeStudioOptions): Promise<void> => {
+  assertAnimeStudioReady(options);
   await waitForFreeMemory();
-  const { args: spawnArgs, command } = getUtilityClampedCommand(ANIMESTUDIO_CLI_PATH, getAnimeStudioArgs(args));
+  const { args: spawnArgs, command } = getUtilityClampedCommand(
+    options.executablePath,
+    getAnimeStudioArgs(args, options.game),
+  );
   await new Promise<void>((resolve, reject) => {
     const child = spawn(command, spawnArgs, {
-      cwd: dirname(ANIMESTUDIO_CLI_PATH),
+      cwd: dirname(options.executablePath),
       stdio: ["ignore", "ignore", "pipe"],
     });
     if (process.platform !== "darwin" && child.pid !== undefined)

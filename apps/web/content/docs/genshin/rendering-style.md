@@ -120,7 +120,7 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 
 ## Notes
 
-- **Characters are not styled here.** Character shading, with its face shadow map, hair highlights and material masks, belongs to the character page the program writes once the world is walkable. The environment material stays the one the world uses.
+- **Characters are not styled here.** Character shading, with its face shadow map, hair highlights and material masks, is the character page's subject, not yet built. The environment material stays the one the world uses.
 - **The ramp is a small texture, not a TSL function.** A row of sixty-four bytes filtered linearly is as smooth as the function would be, costs one texel fetch, and is regenerated in place when the tuning panel moves the step.
 - **The god rays' sun is not free.** It lights nothing, but three evaluates every light's shadow in every material that receives shadows. Its map is rarely redrawn, so the cost is one sample per shaded fragment; a light three can render a shadow for without any material reading it would remove that.
 

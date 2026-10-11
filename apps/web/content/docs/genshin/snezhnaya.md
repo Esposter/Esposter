@@ -5,7 +5,7 @@ description: Snezhnaya's built parts. Its industrial and capital building kits a
 
 # Snezhnaya
 
-Snezhnaya's region is specified in [its proposal](/docs/proposals/genshin/snezhnaya), and the parts below are the ones built so far. The capital kit stands as Snezhnograd's first hall, a [building landmark](/docs/genshin/region-buildings) on a provisional plateau; the industrial kit and the torch are generators nothing places yet.
+Snezhnaya's region is specified in [its proposal](/docs/proposals/genshin/snezhnaya), and the parts below are the built ones. The capital kit stands as Snezhnograd's first hall, a [building landmark](/docs/genshin/region-buildings) on a provisional plateau; the industrial kit and the torch are generators nothing places yet.
 
 ## How it works
 

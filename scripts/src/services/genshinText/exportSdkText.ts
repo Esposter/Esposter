@@ -1,8 +1,12 @@
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 
 // The account kit's string tables out of its bundle, by the path each was built from, since its language tables and
 // Its region names share file names and would overwrite each other exported by name
 export const exportSdkText = (): void => {
-  runAnimeStudio([SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY, "--types", "TextAsset", "--group_assets", "ByContainer"]);
+  runAnimeStudio(
+    [SDK_BUNDLE_PATH, SDK_TEXT_DIRECTORY, "--types", "TextAsset", "--group_assets", "ByContainer"],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
 };

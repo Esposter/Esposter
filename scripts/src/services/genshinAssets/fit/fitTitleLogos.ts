@@ -1,8 +1,8 @@
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import { GAME_BLOCKS_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { traceImage } from "#src/services/genshinParity/shared/traceImage";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -46,16 +46,19 @@ const shiftSubpath = (subpath: string, x: number, y: number): string => {
 export const fitTitleLogos = async (directory: string): Promise<Record<string, string>> => {
   const spriteDirectory = join(directory, "titleLogos");
   await mkdir(spriteDirectory, { recursive: true });
-  runAnimeStudio([
-    join(GAME_BLOCKS_DIRECTORY, LOGIN_INTERFACE_BLOCK),
-    spriteDirectory,
-    "--names",
-    `^(${TITLE_LOGO_SPRITES.map(({ sprite }) => sprite).join("|")})$`,
-    "--types",
-    AssetType.Texture2D,
-    "--group_assets",
-    AnimeStudioGroupType.ByType,
-  ]);
+  runAnimeStudio(
+    [
+      join(GAME_BLOCKS_DIRECTORY, LOGIN_INTERFACE_BLOCK),
+      spriteDirectory,
+      "--names",
+      `^(${TITLE_LOGO_SPRITES.map(({ sprite }) => sprite).join("|")})$`,
+      "--types",
+      AssetType.Texture2D,
+      "--group_assets",
+      AnimeStudioGroupType.ByType,
+    ],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const entries = await Promise.all(
     TITLE_LOGO_SPRITES.map(async ({ latinRegion, logo, sprite }) => {
       const flattenedPath = join(spriteDirectory, `${sprite}.png`);

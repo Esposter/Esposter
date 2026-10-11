@@ -1,4 +1,4 @@
-import { judgeAnimeStudioRun } from "#src/services/genshinAssets/shared/judgeAnimeStudioRun";
+import { judgeAnimeStudioRun } from "#src/services/recreation/animeStudio/judgeAnimeStudioRun";
 import { describe, expect, test } from "vitest";
 
 describe(judgeAnimeStudioRun, () => {
