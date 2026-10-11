@@ -62,7 +62,6 @@
       "source": "./src/runtime/server/middleware/corsHandler.ts",
       "default": "./dist/runtime/server/middleware/corsHandler.js"
     },
-    },
     "./runtime/server/middleware/rateLimiter": {
       "source": "./src/runtime/server/middleware/rateLimiter.ts",
       "default": "./dist/runtime/server/middleware/rateLimiter.js"
