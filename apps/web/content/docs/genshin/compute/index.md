@@ -14,10 +14,16 @@ The fleet reads every page here except this one, and an id that two pages share 
 | Page                                             | Covers                                                                                  |
 | :----------------------------------------------- | :-------------------------------------------------------------------------------------- |
 | [Capitals](/docs/genshin/compute/capitals)       | the four capitals laid out as the witness draws them, and the city areas' re-extraction |
+| [Character](/docs/genshin/compute/character)     | the character screen's Attributes tab, and the interface's character menu and its tabs  |
+| [Crafting](/docs/genshin/compute/crafting)       | the crafting table over its whole frame, and the interface's crafting screen            |
 | [Dialogue](/docs/genshin/compute/dialogue)       | the dialogue box's five states, scored over their backdrop                              |
 | [Fontaine](/docs/genshin/compute/fontaine)       | Fontaine's region, from its base ground to its frame score                              |
+| [Gcg](/docs/genshin/compute/gcg)                 | the Genius Invokation duel board over its whole frame                                   |
+| [Handbook](/docs/genshin/compute/handbook)       | the adventurer handbook's experience page over its whole frame                          |
 | [Inazuma](/docs/genshin/compute/inazuma)         | Inazuma's region, from its base ground to its frame score                               |
 | [Interaction](/docs/genshin/compute/interaction) | the interaction pill and the selection's move                                           |
+| [Interface](/docs/genshin/compute/interface)     | the interface components with no parity-page screen yet                                 |
+| [Inventory](/docs/genshin/compute/inventory)     | the bag's whole frame, and the interface's inventory screen                             |
 | [Liyue](/docs/genshin/compute/liyue)             | Liyue's region, from its base ground to its frame score                                 |
 | [Login](/docs/genshin/compute/login)             | the login screen's light and shadows, and the health notice                             |
 | [Map](/docs/genshin/compute/map)                 | the map's names over the terrain, and the Galesong Hill label                           |
@@ -25,6 +31,7 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Natlan](/docs/genshin/compute/natlan)           | Natlan's region, from its base ground to its frame score                                |
 | [Nod-Krai](/docs/genshin/compute/nod-krai)       | Nod-Krai's region, from its base ground to its frame score                              |
 | [Paimon](/docs/genshin/compute/paimon)           | the quit prompt, the menu's open and close, and the reputation reward page              |
+| [Quest](/docs/genshin/compute/quest)             | the quest screen over its whole frame                                                   |
 | [Settings](/docs/genshin/compute/settings)       | the follow camera's defaults                                                            |
 | [Snezhnaya](/docs/genshin/compute/snezhnaya)     | Snezhnaya's region, from its base ground to its frame score                             |
 | [Sumeru](/docs/genshin/compute/sumeru)           | Sumeru's region, from its base ground to its frame score                                |
