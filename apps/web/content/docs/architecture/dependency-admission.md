@@ -66,6 +66,19 @@ An **adapter** is a package whose every runtime dependency and peer is already i
 
 An adapter is the cheapest item this page finds and the one that costs the most per line, because it sits on the seam between two things we upgrade independently. It is pinned behind both, it re-implements whatever it cannot reach through their public APIs, and the workarounds it forces land in our code rather than its own — a type shim for a declaration it inlined, a build entry it needed once, a test-only branch in production code because it could not serve what the real transport sends. The signal is mechanical — its manifest's dependencies against the catalog — so the survey below reads every entry for it rather than waiting for a symptom.
 
+## The absorb score
+
+`pnpm ai:dependencies:score` scores every catalog entry out of 100 for how sensibly it could be absorbed into our own code. A high score is a strong candidate, and each ledger verdict is read against it. Four dimensions, each read from something the repo already holds:
+
+- **Size, 35.** The lines of the package's runtime module graph: its entry for the `import` condition (else `require`, else `main`), followed through its relative imports. Declarations, source maps and minified copies are left out, so a package shipping CJS, ESM and UMD builds of one module is counted once. Fewer lines score higher.
+- **Stability, 25.** Releases in the last two years. Few releases means little upstream to track once we own it.
+- **Format, 20.** CommonJS scores highest, since our ESM build gains the most from owning it. Dual scores less, and ESM or types-only scores 0.
+- **Self-containment, 20.** The package's own dependency count. None scores highest.
+
+The package's own dependencies' lines, its importing files and the manifests that list it are shown as unscored context. The weights and bands are named in `scripts/src/services/dependencies/score/constants.ts`.
+
+The command's Disagreements are rows to re-judge, never errors: a Keep whose reason is outside the exempt list (engine, SDK, framework, tooling, types, hold, free) that scores 60 or more is an absorb candidate its verdict missed, and an Absorb scoring under 30 is one the score does not back.
+
 ## The precedent
 
 The emoji picker is the shape every absorption on this page should take. What was removed was a package that owned the dataset, the search behaviour and the failure mode all at once, and threw on a query made of punctuation. What replaced it was not a rewrite of any of that. Two data packages generated from the Unicode spec were kept, a general-purpose search engine was kept, and what we wrote was the part that was always ours: which fields are boosted, that an exact shortcode outranks a longer match, that a room's own emoji lead the results, and that a query matching nothing renders the empty state.
@@ -181,4 +194,5 @@ The catalog's own standing check is `scripts/src/workspace/deprecatedPackages.te
 | `pnpm-workspace.yaml`                             | The catalog — every version in the workspace, under `catalogMode: strict` |
 | `packages/configuration/eslint/plugins/depend.js` | `depend/ban-dependencies` and its `allowed` escape hatch                  |
 | `packages/shared/src`                             | Where an absorbed utility lands                                           |
+| `scripts/src/services/dependencies/score`         | The absorb score, its dimensions and the disagreement filter              |
 | `apps/web/app/services/message/emoji`             | The precedent — data and search engine kept, behaviour taken back         |
