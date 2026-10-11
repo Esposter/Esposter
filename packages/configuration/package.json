@@ -66,6 +66,7 @@
     "@eslint/json": "catalog:",
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-jsonc": "catalog:",
     "eslint-plugin-oxlint": "catalog:",

@@ -1,8 +1,6 @@
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
-import { getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
+import { getVitestBrowserConfiguration, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
-import { playwright } from "@vitest/browser-playwright";
-import { join } from "node:path";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
 
@@ -14,19 +12,7 @@ export default defineConfig({
   // Its siblings from their source, as the page reads them
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
-    browser: {
-      enabled: true,
-      expect: {
-        toMatchScreenshot: {
-          resolveScreenshotPath: ({ arg, ext, platform, root }) =>
-            join(root, "src", "components", `${arg}.${platform}${ext}`),
-        },
-      },
-      headless: true,
-      instances: [{ browser: "chromium" }],
-      provider: playwright({ launchOptions: { channel: "msedge" } }),
-      viewport: { height: 720, width: 1280 },
-    },
+    browser: getVitestBrowserConfiguration({ height: 720, width: 1280 }),
     // The visual suite, and the screens' behaviour where only a browser runs it: the Web Animations and CSS
     // Transitions an opening hands its screens on with
     include: ["parity/*.visual.ts", "src/**/*.browser.test.ts"],
