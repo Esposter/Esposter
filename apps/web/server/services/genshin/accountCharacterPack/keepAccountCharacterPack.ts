@@ -13,7 +13,7 @@ import { downloadBlobBytes } from "#server/services/genshin/accountCharacterPack
 import { getAccountCharacterPackFileBlobName } from "#server/services/genshin/accountCharacterPack/getAccountCharacterPackFileBlobName";
 import { getAccountCharacterPacksBlobName } from "#server/services/genshin/accountCharacterPack/getAccountCharacterPacksBlobName";
 import { getAccountCharacterPackStagingBlobName } from "#server/services/genshin/accountCharacterPack/getAccountCharacterPackStagingBlobName";
-import { getBlobContentLength } from "#server/services/genshin/accountCharacterPack/getBlobContentLength";
+import { getBlobProperties } from "#server/services/genshin/accountCharacterPack/getBlobProperties";
 import { readAccountCharacterPackManifest } from "#server/services/genshin/accountCharacterPack/readAccountCharacterPackManifest";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -78,15 +78,16 @@ export const keepAccountCharacterPack = async (
     await Promise.all(
       uniqueFiles.map(async ({ sha256, size }) => {
         const stagingBlobName = getAccountCharacterPackStagingBlobName(userId, sha256);
-        // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded
-        const stagedSize = await getBlobContentLength(containerClient, stagingBlobName);
-        if (stagedSize !== size)
+        // The length is checked before the bytes are read, so a staged blob larger than it was granted for is never downloaded.
+        // The download is conditioned on the etag that check read, so a blob replaced since then is refused rather than read
+        const stagedProperties = await getBlobProperties(containerClient, stagingBlobName);
+        if (stagedProperties === undefined || stagedProperties.contentLength !== size)
           throw getInvalidOperationError(
             Operation.Create,
             String(characterId),
             `holds a file not uploaded as ${sha256}`,
           );
-        const bytes = await downloadBlobBytes(containerClient, stagingBlobName);
+        const bytes = await downloadBlobBytes(containerClient, stagingBlobName, { ifMatch: stagedProperties.etag });
         if (bytes === undefined || createHash("sha256").update(bytes).digest("hex") !== sha256)
           throw getInvalidOperationError(
             Operation.Create,

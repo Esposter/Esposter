@@ -1,17 +1,21 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob";
 
-import { checkIsNotFound } from "@esposter/db";
+import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { getResultAsync } from "@esposter/shared";
 
-// A blob's bytes read whole, or undefined where nothing is stored under its name
+// A blob's bytes read whole, or undefined where nothing is stored under its name or where the conditions fail,
+// So a caller holding an etag never reads a blob that has changed since it was checked
 export const downloadBlobBytes = async (
   containerClient: ContainerClient,
   blobName: string,
+  conditions?: BlobRequestConditions,
 ): Promise<Buffer | undefined> => {
-  const downloaded = await getResultAsync(() => containerClient.getBlockBlobClient(blobName).download()).match(
+  const downloaded = await getResultAsync(() =>
+    containerClient.getBlockBlobClient(blobName).download(undefined, undefined, { conditions }),
+  ).match(
     (response) => response,
     (error) => {
-      if (checkIsNotFound(error)) return undefined;
+      if (checkIsNotFound(error) || checkIsPreconditionFailed(error)) return undefined;
       throw error;
     },
   );
