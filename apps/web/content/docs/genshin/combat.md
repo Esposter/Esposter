@@ -38,6 +38,13 @@ Each target holds an `ElementalState`: its auras, its own clock, and when its El
 
 An attack applies a gauge of its element, in gauge units. Pyro, Hydro, Electro, Cryo and Dendro left as an aura are taxed to 0.8 of that gauge and decay evenly over 2.5 seconds a unit of the attack plus 7, so Bennett's 2U tap leaves 1.6U of Pyro for 12 seconds. Anemo and Geo leave no aura. A second attack of the same element keeps the larger gauge at the first aura's rate, except Pyro: a larger Pyro replaces the aura with its own rate.
 
+Not every aura comes from an attack.
+
+- **A self aura** is an element put on a target with no attack, as a slime's seeds or an enemy's elemental shield put one: `applyElement`'s last parameter, the seconds its source lasts. It reacts as an attack of its gauge would, but what is left of it is untaxed and decays at its source's gauge over those seconds, or not at all where they are `Infinity`, as most elemental shields' do. A Large Dendro Slime's Toxic Seeds leave 4U of Dendro losing 0.8U a second, and the Hydro Samachurl's 2U of Soothing Rain for 8 seconds keeps 1.6U after vaporizing 0.8U of Pyro, losing 0.25U a second.
+- **An immutable aura** is an enemy's innate element, set on its state with `isImmutable`. Its gauge takes its share of a trigger as any aura's does, but it is never consumed, never decays and gives Electro-Charged's ticks nothing, so what is left of the trigger goes on to the auras beside it. A Cryo Slime's 2U of Cryo takes 2U of Beidou's 4U of Electro as Superconduct, and the 2U left quicken the Dendro beside it; a Cryo Hypostasis's 4U takes all of it. An attack of its own element leaves it as it is.
+
+The Hilichurl Fighter, the one kind the world places yet, has neither: an enemy kind's innate element and its shield come with the kind.
+
 ### Reactions, in the game's priority
 
 `ElementReactionStepsMap` holds, for each applied element, the reactions it tries in the order the game tries them. Each step names the auras it reacts with and the gauge of aura each unit of the trigger consumes. A step meeting several auras consumes them together, by the larger one's gauge. What is left of the trigger after a step goes on to the next, so 2U of Hydro on a Burning target vaporizes the Burning and its Pyro, then blooms the Dendro under them with the unit left over. A reaction is recorded once per application, however many auras it meets.
@@ -134,7 +141,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 | File                                                                                   | Role                                                                                                                  |
 | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                      | An element applied to a target: its reactions in order, and its aura                                                  |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                      | An element applied to a target: its reactions in order, and its aura, an attack's or a self aura's                    |
 | `packages/genshin-world/src/services/combat/aura/ElementReactionStepsMap.ts`           | Each element's reactions in the game's priority, with their coefficient                                               |
 | `packages/genshin-world/src/services/combat/aura/advanceElementalState.ts`             | Decay, Electro-Charged's and Burning's ticks, at the fixed step                                                       |
 | `packages/genshin-world/src/services/combat/aura/applyReactionAura.ts`                 | What Frozen, Quicken, Burning, Shattered and Crystallize leave or take                                                |
@@ -167,7 +174,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 ## Sources
 
 - [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki: the aura tax, the aura's duration and decay, reapplication and Pyro's exception, and each reaction's coefficient.
-- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, the blunt hit's poise cost and Shatter, Quicken's aura, and Burning's aura, drain and refresh.
+- [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, the blunt hit's poise cost and Shatter, Quicken's aura, Burning's aura, drain and refresh, and self and immutable auras with each source's gauge.
 - [Simultaneous Reaction Priority](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Simultaneous_Reaction_Priority), Genshin Impact Wiki: the order an applied element tries its reactions in, and the scenarios with several auras.
 - [Electro-Charged](https://genshin-impact.fandom.com/wiki/Electro-Charged), Genshin Impact Wiki: its ticks, and the last tick as an aura decays out.
 - [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the general formula, defence, resistance, and the amplifying, catalyze and transformative formulas.

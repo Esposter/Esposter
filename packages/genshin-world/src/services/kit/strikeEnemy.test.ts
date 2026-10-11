@@ -187,7 +187,7 @@ describe(strikeEnemy, () => {
     expect.hasAssertions();
 
     const enemy = createSturdyEnemy();
-    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1 });
+    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1, isImmutable: false });
     const kitHit = takeOne(TRAVELER_KIT.lowPlunge.hits, 0);
     const damage = getDamage({
       attackerLevel: LEVEL,

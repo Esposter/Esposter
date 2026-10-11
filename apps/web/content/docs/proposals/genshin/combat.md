@@ -33,7 +33,11 @@ packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
    - `EnemyLevelMultiplierMap.ts`: levels 1 to 100, the "Enemies and Environment" column of the wiki's [Elemental Reaction/Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling) table, read through the persona's wiki reader and written as `CharacterLevelMultiplierMap` is.
    - `getTransformativeDamage` gains a last parameter, the triggering side's level multiplier map, defaulting to `CharacterLevelMultiplierMap`, so its caller in `services/kit/strikeEnemy.ts` is unchanged.
    - Test: `getTransformativeDamage.test.ts` gains an Overloaded at level 90 priced on 1202.813736 from the enemies' table and 1446.853458 from the characters', and the two tables agreeing at level 57, where they last match.
-2. Self and immutable auras, which the enemies' slimes and elemental shields need, each source's gauge read from the wiki's Elemental Gauge Theory: Advanced Mechanics page.
+2. **Self and immutable auras**, which the enemies' slimes and elemental shields need. Shipped: both are built and as-built on the [combat](/docs/genshin/combat) page.
+   - `Aura` gains `isImmutable`: an immutable aura takes its share of a trigger but is never consumed, never decays and gives Electro-Charged's ticks nothing, and an attack of its own element leaves it as it is.
+   - `applyElement` gains a last parameter, a self aura's seconds: what is left is untaxed and decays at the source's gauge over them, or not at all at `Infinity`.
+   - Tests: the wiki's Cryo Slime and Cryo Hypostasis under Beidou's 4U of Electro, an immutable Hydro holding up Electro-Charged undrained, the Large Dendro Slime's Toxic Seeds, and a self Hydro's excess kept whole after it vaporizes.
+   - The world's enemies give each kind its innate element and its shield as the kind is added, since the Hilichurl Fighter has neither.
 3. The limits on reaction damage, and Superconduct's shred.
 4. Reach, once the enemies and the character stand in one world to measure distances between.
 5. Energy from attacks.
@@ -46,13 +50,13 @@ packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
 
 ## Key files
 
-| File                                                                               | Role after the change                                               |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/combat/ElementalState.ts`                       | Gains a target's self and immutable auras and its reaction limits   |
-| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                  | Reads immutable auras, the party's Moonsign and the reaction limits |
-| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`     | Takes the level multiplier of the side that triggered the reaction  |
-| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts` | Joined by the enemies' and the environment's table                  |
-| `packages/genshin-world/src/services/enemy/damageEnemy.ts`                         | Where a reaction's damage and its reach reach the enemies           |
+| File                                                                               | Role after the change                                              |
+| :--------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-world/src/models/combat/ElementalState.ts`                       | Gains a target's reaction limits                                   |
+| `packages/genshin-world/src/services/combat/aura/applyElement.ts`                  | Reads the party's Moonsign                                         |
+| `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`     | Takes the level multiplier of the side that triggered the reaction |
+| `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts` | Joined by the enemies' and the environment's table                 |
+| `packages/genshin-world/src/services/enemy/damageEnemy.ts`                         | Where a reaction's damage and its reach reach the enemies          |
 
 ## Sources
 

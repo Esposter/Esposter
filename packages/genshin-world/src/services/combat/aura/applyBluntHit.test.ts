@@ -13,7 +13,7 @@ describe(applyBluntHit, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    state.auras.set(AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge });
+    state.auras.set(AuraType.Freeze, { decayRate: FREEZE_DECAY_RATE, gauge, isImmutable: false });
 
     expect(applyBluntHit(state, 300)).toStrictEqual(reactions);
     expect(state.auras.has(AuraType.Freeze)).toBe(false);

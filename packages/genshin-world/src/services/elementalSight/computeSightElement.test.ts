@@ -10,7 +10,8 @@ describe(computeSightElement, () => {
   const AURA_DECAY_RATE = 0;
   const createStateWithAuras = (auras: [AuraType, number][]): ElementalState => {
     const elementalState = createElementalState();
-    for (const [auraType, gauge] of auras) elementalState.auras.set(auraType, { decayRate: AURA_DECAY_RATE, gauge });
+    for (const [auraType, gauge] of auras)
+      elementalState.auras.set(auraType, { decayRate: AURA_DECAY_RATE, gauge, isImmutable: false });
     return elementalState;
   };
 
