@@ -18,7 +18,7 @@ flowchart TD
   RF --> OUT
 ```
 
-The house is what stands in for Mondstadt City's own buildings when the [parity](/docs/genshin/parity) inventory claims the city's export: its buildings family is the meshes named by the region's code, `Area_MdBuild_` and `Area_Mdbuild_` both, with its terrain tiles as its ground. The export's other meshes are claimed undrawn by kind (`MondstadtUndrawnMeshRegexMap`).
+The house is what stands in for Mondstadt City's own buildings when the [parity](/docs/genshin/parity) inventory claims the city's export: the export's buildings family is `Area_MdBuild_` and `Area_Mdbuild_`, with its terrain tiles as its ground. The export's other meshes are claimed undrawn by kind (`MondstadtUndrawnMeshRegexMap`).
 
 ## Parameters
 
@@ -32,14 +32,14 @@ The house is what stands in for Mondstadt City's own buildings when the [parity]
 
 ## Key files
 
-| File                                                                                 | Role                                                             |
-| :----------------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts` | The house from its parameters: four materials, one geometry each |
-| `packages/genshin-world/src/services/mondstadt/constants.ts`                         | The eave, timber, dormer and chimney dimensions                  |
-| `packages/genshin-world/src/models/mondstadt/MondstadtBuildingOptions.ts`            | The parameters a house takes                                     |
-| `packages/genshin-world/src/models/mondstadt/MondstadtBuildingGeometries.ts`         | The four geometries a house returns, one per material            |
-| `packages/genshin-engine/src/kits/mergeGeometryParts.ts`                             | Merges each material's parts into its one geometry               |
-| `packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`   | The game's meshes the ground and buildings families stand in for |
-| `packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`      | The rest of the city's export, claimed as not drawn yet, by kind |
+| File                                                                                 | Role                                                                        |
+| :----------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts` | The house from its parameters: four materials, one geometry each            |
+| `packages/genshin-world/src/services/mondstadt/constants.ts`                         | The eave, timber, dormer and chimney dimensions                             |
+| `packages/genshin-world/src/models/mondstadt/MondstadtBuildingOptions.ts`            | The parameters a house takes                                                |
+| `packages/genshin-world/src/models/mondstadt/MondstadtBuildingGeometries.ts`         | The four geometries a house returns, one per material                       |
+| `packages/genshin-engine/src/kits/mergeGeometryParts.ts`                             | Merges each material's parts into its one geometry                          |
+| `packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`   | The game's meshes standing in for Mondstadt's ground and buildings families |
+| `packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`      | The rest of the city's export, claimed as not drawn yet, by kind            |
 
 Not built yet: the house's dressing (window boxes, shutters, lanterns and banners), the windmill, and the city wall, gate bridge and cathedral. The windmill, the walls and the cathedral are landmark-tier pieces that need their reference poses.
