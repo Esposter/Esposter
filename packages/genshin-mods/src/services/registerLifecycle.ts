@@ -7,6 +7,7 @@ import type { EnabledMods } from "../../types";
 import {
   CACHE_WARNING_MS,
   IDLE_WAKE_PROMPT,
+  MACHINE_WATCHER_RETRY_MILLISECONDS,
   MACHINE_WATCHER_SCRIPT,
   QUEUE_SYNC_TIMEOUT_MILLISECONDS,
   QUEUE_SYNC_TOAST_MILLISECONDS,
@@ -91,7 +92,9 @@ const suggestWaypoints = async ($: EngineInterface) => {
 
 // Starts the machine watcher as this session's child and reads what it prints as each chunk arrives. Its idle line wakes the
 // Session with the next fleet work, unless a turn runs or a usage reserve winds down then. The watcher prints the idle line
-// Again on each reminder it keeps while the machine stays idle, so the reminder is what wakes an idle session again
+// Again on each reminder it keeps while the machine stays idle, so the reminder is what wakes an idle session again. A
+// Watcher exits at once while another session's holds the machine's lock, so each exit starts the watcher again after a
+// Wait, and the session that outlives the one watching takes the watching over
 const watchPulse = async ($: EngineInterface) => {
   if (!(await read($, enabledModsAtom)).pulse) return;
 
@@ -106,6 +109,11 @@ const watchPulse = async ($: EngineInterface) => {
     const wakeOptions = { isTurnRunning, isWindDown };
     if (taken.lines.some((line) => getPulseWake(line, wakeOptions))) await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
   }
+
+  $.clock.after(MACHINE_WATCHER_RETRY_MILLISECONDS, () => {
+    // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and the watcher's run settles as its process exits
+    watchPulse($);
+  });
 };
 
 // Pushes the queue at a turn's end, under the pulse's own switch. The push takes its own lock, so a turn ending while one

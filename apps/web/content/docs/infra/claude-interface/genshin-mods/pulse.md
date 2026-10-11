@@ -11,7 +11,7 @@ Pulse draws no row above the prompt. Its visible acts are a prompt the session t
 
 ## How it works
 
-At session start, with pulse on, the plugin starts `pnpm ai:machine:watch` in the session's directory as a child process and reads its output as it arrives, a whole line at a time. Outside the repository the watcher's script is not there, so nothing starts. The watcher writes each reading to `~/.esposter/machine/state.json`, and it holds `~/.esposter/machine/watcher.lock` for its life, taken before its first sample: a watcher that finds the lock held by a live process exits, so two sessions starting together never sample the machine twice. A lock whose process is gone, or written before the machine last booted, is taken over: it is moved aside and checked to be the lock judged stale, so two processes taking one over together never remove the lock the first has just taken, and a lock is only ever released by the process holding it. The watcher is the session's: it ends with the Claude Code process that started it.
+At session start, with pulse on, the plugin starts `pnpm ai:machine:watch` in the session's directory as a child process and reads its output as it arrives, a whole line at a time. Outside the repository the watcher's script is not there, so nothing starts. The watcher writes each reading to `~/.esposter/machine/state.json`, and it holds `~/.esposter/machine/watcher.lock` for its life, taken before its first sample: a watcher that finds the lock held by a live process exits, so two sessions starting together never sample the machine twice. A lock whose process is gone, or written before the machine last booted, is taken over: it is moved aside and checked to be the lock judged stale, so two processes taking one over together never remove the lock the first has just taken, and a lock is only ever released by the process holding it. The watcher is the session's: it ends with the Claude Code process that started it. Each session starts its watcher again a minute after it exits, so while one session's watcher holds the lock the others' exit each minute, and once that session ends another open session takes the watching over within a minute; only the session whose watcher holds the lock is woken by its idle line.
 
 The watcher prints one line when the machine goes idle, `machine idle: …`, and repeats that line on each reminder interval while the machine stays idle. Idle is a full three-minute window of CPU under 80% with free memory above its room share. Each idle line wakes the session, unless a turn is running or a usage reserve is winding down, in which case the line is dropped and nothing wakes the session for it. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku.
 
@@ -30,6 +30,8 @@ The push is triggered by a commit as well: the repository's `post-commit` hook s
 ```mermaid
 flowchart TD
   Start["Session start, pulse on"] --> Watch["pnpm ai:machine:watch as a child, lines read as they arrive"]
+  Watch -->|"exits, another session's watcher holding the lock"| Retry["Started again a minute later"]
+  Retry --> Watch
   Watch --> Line{"A line starting machine idle"}
   Line -->|no| Line
   Line -->|yes| Gate{"No turn running and no wind-down"}

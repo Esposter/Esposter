@@ -64,6 +64,9 @@ export const DELEGATION_NUDGE =
 export const IDLE_LINE_PREFIX = "machine idle:";
 // The repository's watcher, which the pulse runs as its child and reads the lines of
 export const MACHINE_WATCHER_SCRIPT = "scripts/src/machine/watch/index.ts";
+// How long after its watcher exits a session starts one again, so a session whose watcher found another's lock held takes
+// Over the watching once that watcher's session ends
+export const MACHINE_WATCHER_RETRY_MILLISECONDS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // How long a queue sync may run before the engine kills it, the longest a process run may take, since a push that retries
 // Outlasts the engine's default
 export const QUEUE_SYNC_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
