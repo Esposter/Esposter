@@ -94,6 +94,7 @@ What still separates the recreation from the whole game once the world and its p
 
 | Page                                                                 | What it adds                                                                                                                                                               |
 | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Kit framework](/docs/proposals/genshin/kit-framework)               | each kit split into a hosted record generated from gcsim, the tables and the wiki, and a behaviour module over shared primitives, loaded only for the party                |
 | [Character kits](/docs/proposals/genshin/character-kits)             | every character's skill, burst and passives on the framework the Traveler's kit runs on, priced by combat as built                                                         |
 | [Talents](/docs/proposals/genshin/talents)                           | the Talents tab's upgrade, with the levelling, the passives and the constellations' additions built                                                                        |
 | [Constellations](/docs/proposals/genshin/constellations)             | each constellation's effect in its character's kit, the Traveler's sets by element, and the Constellation tab; the table and activation are built                          |
