@@ -139,6 +139,9 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - [ ] **Do Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges deal poise?** — [Ororon](/docs/genshin/kits/ororon): gcsim gives none, so every hit reads 0; yes if the game gives them no poise.
 - [ ] **Do Ororon's plunges land at once with the shared reach?** — [Ororon](/docs/genshin/kits/ororon): no gcsim plunge file, so they land at 0 seconds; yes if a recording shows that.
 - [ ] **Do Citlali's plunges land at once with the shared reach?** — [Citlali](/docs/genshin/kits/citlali): no gcsim plunge file, so they land at 0 seconds; yes if a recording shows that.
+- [ ] **Does Savvy Strategy's cooldown start at its drain, not its press?** — [Jahoda](/docs/genshin/kits/jahoda): gcsim starts it at the drain, and the framework at the press, which is shipped.
+- [ ] **Do Jahoda's strikes, charged shot, flask hits and plunges deal poise?** — [Jahoda](/docs/genshin/kits/jahoda): gcsim gives none, so they deal zero.
+- [ ] **Do Jahoda's plunges land at once with the shared reach?** — [Jahoda](/docs/genshin/kits/jahoda): no gcsim plunge file, so they land at 0 seconds.
 - **Do Kinich's plunges deal the wiki's 100, 150 and 25 poise, and land as their action starts?** gcsim gives him no plunge file, so `kinichKit.ts` borrows the shared plunge reach, takes the wiki's standard poise and lands each plunge at its action's start, with a provisional 0.4 seconds: yes if a recording of his plunges shows that poise and that landing, no if it shows others, with the poise and frames it gives.
 - [ ] **Reputation reward page list** — [Reputation](/docs/genshin/reputation): the rows, marks and sizes sit as the 18-second reference frame shows them.
 - [ ] **Desert clip is a sandstorm** — [Weather](/docs/genshin/weather): what blows across the clip is the sandstorm the haze is matched to, not a dust column.
