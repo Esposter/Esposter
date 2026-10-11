@@ -242,7 +242,6 @@ catalog:
   rxjs: ^7.8.2
   sax: ^1.6.1
   sharp: ^0.35.5
-  sql-highlight: ^6.1.0
   superjson: ^2.2.6
   survey-core: ^3.2.0
   survey-creator-core: ^3.2.0
