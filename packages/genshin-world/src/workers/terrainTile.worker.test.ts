@@ -5,7 +5,10 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { SOURCE_CONDITION } from "@esposter/configuration";
 import { getTerrainTileKey } from "genshin-engine";
+import { isAbsolute, resolve } from "node:path";
+import { scan } from "rolldown/experimental";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { baseGround, groundLayers, regionGrounds, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
@@ -75,5 +78,28 @@ describe("terrainTile.worker", () => {
         1,
       ]),
     );
+  });
+
+  test("imports no package but three, reaching the engine through its generators alone", async () => {
+    expect.hasAssertions();
+
+    const moduleIds: string[] = [];
+    await scan({
+      // Every bare specifier but the engine's is left as its name, so the names in the graph are the packages it loads
+      external: (id, _importer, isResolved) =>
+        !isResolved && !isAbsolute(id) && /^[\w@]/u.test(id) && !id.startsWith("genshin-engine"),
+      input: resolve(import.meta.dirname, "terrainTile.worker.ts"),
+      plugins: [
+        {
+          buildEnd() {
+            moduleIds.push(...this.getModuleIds());
+          },
+          name: "module-ids",
+        },
+      ],
+      resolve: { conditionNames: [SOURCE_CONDITION, "import", "default"] },
+    });
+
+    expect(moduleIds.filter((id) => !isAbsolute(id))).toStrictEqual(["three"]);
   });
 });

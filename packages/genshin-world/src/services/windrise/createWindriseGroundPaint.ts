@@ -1,7 +1,7 @@
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { GroundLayerField, GroundPaint } from "genshin-engine";
 
-import { GroundLayer } from "genshin-engine";
+import { GroundLayer } from "genshin-engine/terrainWorker";
 import { Color } from "three";
 
 // Windrise's ground as its terrain paints it: each layer lies where the tiles' cells are painted in it, the roads its

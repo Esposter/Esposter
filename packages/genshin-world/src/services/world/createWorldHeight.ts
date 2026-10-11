@@ -1,6 +1,6 @@
 import type { RegionGround } from "#src/models/world/RegionGround";
 
-import { createTerrainShapeHeight } from "genshin-engine";
+import { createTerrainShapeHeight } from "genshin-engine/terrainWorker";
 
 // The world's one ground: Windrise's, fitted to the game's terrain tiles round the oak's foot at the origin
 // (`genshin:assets fit windrise`), with every region's ground laid over it. A region a fit has drawn stands on its own
