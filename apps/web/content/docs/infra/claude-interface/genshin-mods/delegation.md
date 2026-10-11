@@ -48,4 +48,4 @@ flowchart TD
 
 - The count judges a command by its first word after the leading segments, so a read reached another way (`pnpm exec cat`, a script that greps) is a reset. The guard errs toward asking less, since a note on a call that was not a lookup would be noise.
 - The count lives in the session's state and is cleared by each prompt, so a run of lookups spanning two prompts is two runs.
-- The mod has no command and no switch yet: it runs in every session, where the other mods are switched by their own command.
+- The mod has no command and no switch: it runs in every session, where the other mods are switched by their own command.

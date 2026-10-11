@@ -56,4 +56,4 @@ A stage opens on a fact about use or about the platform, never on a wish, and th
 ## Notes
 
 - Voice dictation costs one command and spends no tokens; it is the input half of the companion vision, already shipped.
-- Of the platform surfaces this rests on, the output style is the one that has been removed and restored once already; if it goes again, the rules text moves into the session-start script beside the card, so that fallback is proven.
+- Of the platform surfaces this rests on, the output style is the one that has already been removed once and restored; if it goes again, the rules text moves into the session-start script beside the card, so that fallback is proven.
