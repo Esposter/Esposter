@@ -68,7 +68,7 @@ which reads files through the file store, which reads the thread store back.
 
 ```mermaid
 flowchart LR
-  T["thread store"] -- "was: useReadMessageMetadata" --> M["metadata read"]
+  T["thread store"] -- "useReadMessageMetadata" --> M["metadata read"]
   M --> F["file store"]
   F --> T
   O["useOpenThread"] --> T
