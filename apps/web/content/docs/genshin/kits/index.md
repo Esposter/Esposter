@@ -222,6 +222,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Candace](/docs/genshin/kits/candace)               | Heron's Sanctum's shields and Wagtail's Tide's Prayer                |
 | [Charlotte](/docs/genshin/kits/charlotte)           | Framing's press, its Snappy Silhouette marks, Still Photo and Kamera |
 | [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades         |
+| [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades              |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite          |
