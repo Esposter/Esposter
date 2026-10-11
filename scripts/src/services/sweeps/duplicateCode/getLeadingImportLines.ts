@@ -16,5 +16,5 @@ export const getLeadingImportLines = (text: string): Set<number> => {
     }
     if (line.trim()) leadingLength = lineNumber;
   }
-  return new Set(Array.from({ length: leadingLength }, (_, index) => index + 1));
+  return new Set(Array.from({ length: leadingLength }, (_value, index) => index + 1));
 };
