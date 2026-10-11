@@ -9,9 +9,14 @@ vi.mock(import("@/services/shared/getWorkerTimers"), () => ({
     clearInterval: (intervalId: number) => {
       window.clearInterval(intervalId);
     },
+    // The timeout half the worker timers carry too, so the stand-in has their whole shape
+    clearTimeout: (timeoutId: number) => {
+      window.clearTimeout(timeoutId);
+    },
     // Through `window` rather than `globalThis`, whose node-typed overload returns a Timeout where the worker's
     // Timers hand back the number their own clearInterval takes
-    setInterval: (callback: () => void, intervalMs: number) => window.setInterval(callback, intervalMs),
+    setInterval: (callback: () => void, intervalMs?: number) => window.setInterval(callback, intervalMs),
+    setTimeout: (callback: () => void, delayMs?: number) => window.setTimeout(callback, delayMs),
   }),
 }));
 

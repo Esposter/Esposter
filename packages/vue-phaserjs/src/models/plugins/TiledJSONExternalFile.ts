@@ -4,7 +4,7 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
 
 import { TilesetFile } from "#src/models/plugins/TilesetFile";
-import { checkIsPlainObject, ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { parseTileset } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
 
@@ -26,7 +26,8 @@ export class TiledJSONExternalFile extends MultiFile {
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
-    if (checkIsPlainObject(key)) {
+    // The config-object form of the loader call, as Phaser's own tilemap file reads it
+    if (typeof key !== "string") {
       const configuration = key;
       key = GetFastValue(configuration, "key") as string;
       tilemapURL = GetFastValue(configuration, "url");

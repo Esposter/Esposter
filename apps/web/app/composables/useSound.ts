@@ -14,7 +14,9 @@ export const useSound = (src: string) => {
   return {
     play: async () => {
       // A clone per play, so a clip overlaps itself as each play of a Howl does, rather than cutting the last one off
-      await sound.value?.cloneNode().play();
+      // `cloneNode` is typed as returning a bare Node, so the clone is narrowed back to the element it is
+      const clone = sound.value?.cloneNode();
+      if (clone instanceof HTMLAudioElement) await clone.play();
     },
   };
 };
