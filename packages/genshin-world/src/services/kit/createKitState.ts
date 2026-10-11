@@ -12,6 +12,7 @@ export const createKitState = (): KitState => ({
   comboSeconds: 0,
   isAttackQueued: false,
   locomotionState: LocomotionState.Idle,
+  nextHitIndex: 0,
   plungeStartHeight: 0,
   skillChainCount: 0,
   skillChainSeconds: 0,

@@ -15,4 +15,12 @@ export const createKitSummon = (
   combatant: Combatant,
   hits: KitHit[],
   secondsRemaining = Math.max(0, ...hits.map(({ hitmarkSeconds }) => hitmarkSeconds)) + SUMMON_LINGER_SECONDS,
-): KitSummon => ({ body: copyKitBody(body), combatant, elapsedSeconds: 0, hits, kind: "summon", secondsRemaining });
+): KitSummon => ({
+  body: copyKitBody(body),
+  combatant,
+  elapsedSeconds: 0,
+  hits,
+  kind: "summon",
+  nextHitIndex: 0,
+  secondsRemaining,
+});

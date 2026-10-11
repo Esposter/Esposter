@@ -9,6 +9,6 @@ export const startKitAction = (kitState: KitState, action: KitAction, landedHits
   kitState.action = action;
   kitState.actionSeconds = 0;
   kitState.isAttackQueued = false;
-  landKitHits(action, -Infinity, 0, landedHits);
+  kitState.nextHitIndex = landKitHits(action.hits, 0, 0, landedHits);
   return action;
 };

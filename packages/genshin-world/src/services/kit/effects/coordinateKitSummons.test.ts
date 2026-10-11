@@ -34,6 +34,7 @@ describe(coordinateKitSummons, () => {
           elapsedSeconds: 0,
           hits: [],
           kind: "summon",
+          nextHitIndex: 0,
           onNormalAttackStart,
           secondsRemaining: 15,
         },

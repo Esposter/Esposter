@@ -92,19 +92,18 @@ export const stepKit = (
       ON_FOOT_LOCOMOTION_STATES.includes(locomotionState) ||
       (isSkillOrBurst && AIRBORNE_LOCOMOTION_STATES.includes(locomotionState));
     if (isAllowed) {
-      const fromSeconds = kitState.actionSeconds;
       const speedBonus = kit.normalAttacks.includes(action)
         ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
             ?.normalAttackSpeedBonus ?? 0)
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
-      landKitHits(action, fromSeconds, kitState.actionSeconds, landedHits);
+      kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
       if (kitState.actionSeconds < action.seconds) {
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
         return undefined;
       }
-      queueKitHits(action, kitState.actionSeconds, context);
+      queueKitHits(action, kitState, context);
       isStrikeEnded = kit.normalAttacks.includes(action);
     } else kitState.isAttackQueued = false;
     endKitAction(kitState, kit);
