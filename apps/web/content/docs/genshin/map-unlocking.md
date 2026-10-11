@@ -39,7 +39,7 @@ flowchart TD
 
 ## Notes
 
-- **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a recording the user records ([roadmap](/docs/genshin/roadmap), recordings owed), so the unlock is instant here.
+- **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a published clip ([roadmap](/docs/genshin/roadmap), References sought), so the unlock is instant here.
 - **Waypoints wait on exploring.** Teleport Waypoints are not landmarks of the region data until [exploring](/docs/proposals/genshin/exploring) fits them, so no waypoint is unlocked, rewarded or pointed to yet. The slice already holds every open-world point's reward, so a waypoint needs only its point id to be matched.
 
 ## Sources
