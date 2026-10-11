@@ -50,11 +50,11 @@
   { "title": "DOM Clobbering against an empty cookie", "payload": "<img src=x name=cookie>" },
   {
     "title": "JavaScript URIs using Unicode LS/PS I",
-    "payload": "123<a href=' javascript:alert(1)'>I am a dolphin!</a>"
+    "payload": "123<a href='\u2028javascript:alert(1)'>I am a dolphin!</a>"
   },
   {
     "title": "JavaScript URIs using Unicode LS/PS II",
-    "payload": "123<a href=' javascript:alert(1)'>I am a dolphin too!</a>"
+    "payload": "123<a href='\u2028javascript:alert(1)'>I am a dolphin too!</a>"
   },
   {
     "title": "JavaScript URIs using Unicode Whitespace",

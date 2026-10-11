@@ -1,6 +1,6 @@
+import { checkIsTypeBenchDrifted } from "#src/services/benchTypes/checkIsTypeBenchDrifted";
 import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
 import { getTypeBenchResultPath } from "#src/services/benchTypes/getTypeBenchResultPath";
-import { checkIsTypeBenchDrifted } from "#src/services/benchTypes/checkIsTypeBenchDrifted";
 import { renderTypeBench } from "#src/services/benchTypes/renderTypeBench";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";

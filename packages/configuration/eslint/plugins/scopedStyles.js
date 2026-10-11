@@ -1,6 +1,6 @@
-import { defineConfig } from "eslint/config";
 import { htmlElementAttributes } from "@esposter/configuration/eslint/plugins/htmlElementAttributes.js";
 import { htmlTagNames } from "@esposter/configuration/eslint/plugins/htmlTagNames.js";
+import { defineConfig } from "eslint/config";
 
 // A package styled by scoped CSS has no UnoCSS to read an attribute as a utility, so an attribute the HTML standard
 // Does not define on a native element (`size-full`, `flex`, `p="2"`) is inert: it styles nothing, and the element
