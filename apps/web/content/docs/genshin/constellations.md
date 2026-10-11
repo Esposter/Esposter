@@ -5,7 +5,7 @@ description: Each playable character's six constellations read per skill set fro
 
 # Constellations
 
-A character's six constellations are sequential upgrades, each activated with one Stella Fortuna of that character. What is built is the table side, which the stats run writes with the other stat tables, the activation as a pure rule over the character, the talent levels the active raises add, and the Stella Fortuna a wish counts to its character. A constellation's effect is a kit module's and waits on the [character kits](/docs/proposals/genshin/character-kits), as the Traveler's element sets wait on the statues.
+A character's six constellations are sequential upgrades, each activated with one Stella Fortuna of that character. What is built is the table side, which the stats run writes with the other stat tables, the activation as a pure rule over the character, the talent levels the active raises add, and the Stella Fortuna a wish counts to its character. A constellation's effect is a kit module's and waits on the [character kits](/docs/proposals/genshin/character-kits), as the Traveler's element sets wait on the statues. The Constellation tab that presses an activation and the store that hands a wish's Stella Fortuna to its character are not built, and the wish screen does not show a draw's Stella Fortuna or Masterless one.
 
 ## The table
 
@@ -34,11 +34,7 @@ flowchart LR
 - **A five-star past six copies brings a Masterless Stella Fortuna.** It goes to the wallet, once per copy, beside the Starglitter that a complete set returns. It is counted in `makeWishes` rather than `getWishReturn`, since that returns one currency and a five-star past six brings two.
 - **A new character starts with none.** `createCharacter` sets the constellations active and the Stella Fortuna held to zero.
 
-## Not built yet
-
-- **The other characters' constellation effects, and the table's numbers.** Each non-raising constellation is a switch its character's kit module reads off the combatant's constellation count, and the modules built so far carry theirs, a constellation that answers something in combat through the [kit events](/docs/genshin/kits). A character with no module of its own has none until the [character kits](/docs/proposals/genshin/character-kits) page writes it, and the numbers each module uses are the wiki's and gcsim's, typed beside it, until the world hands the kits this table's `paramList`.
-- **The Traveler's element sets.** The statues pick which element's set the Traveler holds, and the sources that unlock each set are their own pages'. Until then the Traveler has no set chosen, and the table holds all of them.
-- **The Constellation tab and the store.** The character screen's tab that presses an activation, and the store that hands a wish's Stella Fortuna to its character, are not built. The wish screen does not show a draw's Stella Fortuna or Masterless one.
+A non-raising constellation is a switch its character's kit module reads off the combatant's constellation count, through the [kit events](/docs/genshin/kits). A character with no module of its own has none until the [character kits](/docs/proposals/genshin/character-kits) page writes it. The statues pick which element's set the Traveler holds, until when the Traveler has no set chosen and the table holds all of them.
 
 ## Key files
 
