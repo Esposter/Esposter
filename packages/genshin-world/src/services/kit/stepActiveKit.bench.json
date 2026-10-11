@@ -6,11 +6,11 @@
         {
           "benchmarks": [
             {
-              "mean": 45.52100840000003,
+              "mean": 69.63072925,
               "name": "today's path",
-              "p99": 47.09208968000003,
-              "rme": 3.6969924911212146,
-              "sampleCount": 5
+              "p99": 77.99416714000003,
+              "rme": 1.367906774820748,
+              "sampleCount": 40
             }
           ],
           "fullName": "stepActiveKit > a minute of the proof party, idle"
@@ -18,11 +18,11 @@
         {
           "benchmarks": [
             {
-              "mean": 53.85897460000003,
+              "mean": 84.34951362500006,
               "name": "today's path",
-              "p99": 56.12770768,
-              "rme": 3.4530558873421873,
-              "sampleCount": 5
+              "p99": 95.30752389000004,
+              "rme": 1.2374833710192081,
+              "sampleCount": 40
             }
           ],
           "fullName": "stepActiveKit > a minute of the proof party, in combat"

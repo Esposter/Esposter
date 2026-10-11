@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T05:49:39.175Z
-- Commit: de43a7587d
+- Date: 2026-10-11T20:27:54.952Z
+- Commit: 880447c30d
 - Node: v26.11.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -20,10 +20,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------ | -------- | ------- |
-| today's path | 1.00×   | 45.5210   | ±3.70% | 47.0921  | 5       |
+| today's path | 1.00×   | 69.6307   | ±1.37% | 77.9942  | 40      |
 
 ## stepActiveKit > a minute of the proof party, in combat
 
 | task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------ | -------- | ------- |
-| today's path | 1.00×   | 53.8590   | ±3.45% | 56.1277  | 5       |
+| today's path | 1.00×   | 84.3495   | ±1.24% | 95.3075  | 40      |
