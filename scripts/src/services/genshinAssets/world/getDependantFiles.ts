@@ -1,5 +1,5 @@
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { getOrCreate } from "@esposter/shared";
 

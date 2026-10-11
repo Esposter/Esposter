@@ -1,12 +1,12 @@
-import type { IndexedAsset } from "#src/models/genshinAssets/shared/IndexedAsset";
-import type { readIndexedAssets as baseReadIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
+import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
+import type { readIndexedAssets as baseReadIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
 import { describe, expect, test, vi } from "vitest";
 
 const { readIndexedAssets } = vi.hoisted(() => ({ readIndexedAssets: vi.fn<typeof baseReadIndexedAssets>() }));
 
-vi.mock(import("#src/services/genshinAssets/shared/readIndexedAssets"), () => ({
+vi.mock(import("#src/services/recreation/animeStudio/readIndexedAssets"), () => ({
   readIndexedAssets: readIndexedAssets as typeof baseReadIndexedAssets,
 }));
 

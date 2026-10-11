@@ -1,8 +1,8 @@
 import type { AssetRoot } from "#src/models/genshinAssets/shared/AssetRoot";
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { SceneDrawing } from "#src/models/genshinAssets/shared/SceneDrawing";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
 import { findRootObject } from "#src/services/genshinAssets/shared/findRootObject";
 import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";

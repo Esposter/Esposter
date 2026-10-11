@@ -1,6 +1,6 @@
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
 // The object a pointer names, as its file, the block holding that file and its path ID: a path ID names an object only
 // Within its file, so a file index of zero stays in the pointer's own file and any other is its file's external

@@ -1,4 +1,4 @@
-import { readAnimeStudioExceptions } from "#src/services/genshinAssets/shared/readAnimeStudioExceptions";
+import { readAnimeStudioExceptions } from "#src/services/recreation/animeStudio/readAnimeStudioExceptions";
 import { describe, expect, test } from "vitest";
 
 describe(readAnimeStudioExceptions, () => {

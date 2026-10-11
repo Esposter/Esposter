@@ -1,4 +1,4 @@
-import { parseCabMap } from "#src/services/genshinAssets/shared/parseCabMap";
+import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { describe, expect, test } from "vitest";
 
 // A string as .NET's BinaryWriter writes one: its length in seven-bit groups, the high bit set while more follow

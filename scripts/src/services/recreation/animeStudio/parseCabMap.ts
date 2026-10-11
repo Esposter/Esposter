@@ -1,6 +1,6 @@
-import type { CabEntry } from "#src/models/genshinAssets/shared/CabEntry";
+import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
 
-import { readCabMap } from "#src/services/genshinAssets/shared/readCabMap";
+import { readCabMap } from "#src/services/recreation/animeStudio/readCabMap";
 
 // AnimeStudio's CAB map read from its bytes, which it writes beside itself when it maps the blocks: every serialized
 // File (a CAB) of the game's blocks by its name, with the block holding it, its offset there and the CABs it depends

@@ -8,9 +8,13 @@ import {
   NAMECARD_ICON_DIRECTORY,
   NAMECARD_ICON_PREFIX,
 } from "#src/services/genshinAssets/namecards/constants";
-import { ASSET_INDEX_PATH, GAME_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
+import {
+  ASSET_INDEX_PATH,
+  GAME_BLOCKS_DIRECTORY,
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+} from "#src/services/genshinAssets/shared/constants";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { extname, join, parse } from "node:path";
@@ -30,16 +34,19 @@ const readNamecardNames = (directory: string): string[] =>
 // One block's namecard textures of a folder, read in one AnimeStudio run by their exact names. AnimeStudio writes each
 // Type into a folder of its own, which is moved up beside the others, and a block that yields none is left to the check
 const exportBlockNamecards = (block: string, names: readonly string[], directory: string): void => {
-  runAnimeStudio([
-    join(GAME_BLOCKS_DIRECTORY, block),
-    directory,
-    "--names",
-    `^(${names.map((name) => RegExp.escape(name)).join("|")})$`,
-    "--types",
-    AssetType.Texture2D,
-    "--group_assets",
-    AnimeStudioGroupType.ByType,
-  ]);
+  runAnimeStudio(
+    [
+      join(GAME_BLOCKS_DIRECTORY, block),
+      directory,
+      "--names",
+      `^(${names.map((name) => RegExp.escape(name)).join("|")})$`,
+      "--types",
+      AssetType.Texture2D,
+      "--group_assets",
+      AnimeStudioGroupType.ByType,
+    ],
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   const typeDirectory = join(directory, AssetType.Texture2D);
   if (!existsSync(typeDirectory)) return;
   for (const file of readdirSync(typeDirectory)) renameSync(join(typeDirectory, file), join(directory, file));
@@ -49,7 +56,7 @@ const exportBlockNamecards = (block: string, names: readonly string[], directory
 // Holding exactly those names is left as it is, so a rerun costs nothing. Any other is cleaned and exported block by
 // Block, then checked for every name the index holds. An index naming no namecard is refused before any folder is touched
 export const exportNamecards = async (): Promise<string> => {
-  const assets = await readIndexedAssets(checkNamecardAsset);
+  const assets = await readIndexedAssets(checkNamecardAsset, GENSHIN_ANIMESTUDIO_OPTIONS);
   if (assets.length === 0)
     throw new InvalidOperationError(Operation.Read, ASSET_INDEX_PATH, "no namecard texture is indexed");
   const assetsByDirectory = Map.groupBy(assets, ({ name }) => getNamecardDirectory(name));

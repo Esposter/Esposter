@@ -1,10 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
@@ -31,7 +32,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     ]),
     ...[...gameObjectDrawingMap.values()].flatMap(({ materials: drawnMaterials }) => drawnMaterials),
   ]);
-  const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId));
+  const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId), GENSHIN_ANIMESTUDIO_OPTIONS);
   const pathIdAssetMap = new Map(indexed.map((asset) => [asset.pathId, asset]));
   const lines = [`# ${component} inventory`, "", "## Materials", ""];
   for (const { colors, floats, name, shaderPathId, textures } of materials.toSorted((firstMaterial, secondMaterial) =>

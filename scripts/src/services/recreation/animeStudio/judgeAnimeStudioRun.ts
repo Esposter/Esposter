@@ -1,4 +1,4 @@
-import { readAnimeStudioExceptions } from "#src/services/genshinAssets/shared/readAnimeStudioExceptions";
+import { readAnimeStudioExceptions } from "#src/services/recreation/animeStudio/readAnimeStudioExceptions";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The verdict on one AnimeStudio run: a non-zero exit fails it, with the failure's own text, and so does a clean exit

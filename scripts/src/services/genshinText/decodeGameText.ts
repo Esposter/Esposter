@@ -1,11 +1,9 @@
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { EXTRACTED_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { EXTRACTED_DIRECTORY, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getInstalledBlockPath } from "#src/services/genshinAssets/shared/getInstalledBlockPath";
 import { getPathHash } from "#src/services/genshinAssets/shared/getPathHash";
-import { readIndexedAssets } from "#src/services/genshinAssets/shared/readIndexedAssets";
-import { runAnimeStudio } from "#src/services/genshinAssets/shared/runAnimeStudio";
 import {
   EXCEL_BIN_OUTPUT_PATH,
   GameLanguageCodeMap,
@@ -13,6 +11,8 @@ import {
   TextMapChunkRangeMap,
 } from "#src/services/genshinText/constants";
 import { decodeTextMap } from "#src/services/genshinText/decodeTextMap";
+import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
+import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
@@ -33,7 +33,10 @@ export const decodeGameText = async (): Promise<string[]> => {
     ),
   );
   const chunkNames = new Set(chunks.map(({ name }) => name));
-  const assets = await readIndexedAssets(({ name, type }) => type === AssetType.MiHoYoBinData && chunkNames.has(name));
+  const assets = await readIndexedAssets(
+    ({ name, type }) => type === AssetType.MiHoYoBinData && chunkNames.has(name),
+    GENSHIN_ANIMESTUDIO_OPTIONS,
+  );
   if (assets.length !== chunks.length)
     throw new InvalidOperationError(
       Operation.Read,
@@ -44,18 +47,21 @@ export const decodeGameText = async (): Promise<string[]> => {
   const exportDirectory = join(EXTRACTED_DIRECTORY, "text");
   rmSync(exportDirectory, { force: true, recursive: true });
   for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block))
-    runAnimeStudio([
-      getInstalledBlockPath(block),
-      exportDirectory,
-      "--names",
-      `^(${blockAssets.map(({ name }) => name).join("|")})$`,
-      "--types",
-      AssetType.MiHoYoBinData,
-      "--export_type",
-      AnimeStudioExportType.Raw,
-      "--group_assets",
-      AnimeStudioGroupType.ByType,
-    ]);
+    runAnimeStudio(
+      [
+        getInstalledBlockPath(block),
+        exportDirectory,
+        "--names",
+        `^(${blockAssets.map(({ name }) => name).join("|")})$`,
+        "--types",
+        AssetType.MiHoYoBinData,
+        "--export_type",
+        AnimeStudioExportType.Raw,
+        "--group_assets",
+        AnimeStudioGroupType.ByType,
+      ],
+      GENSHIN_ANIMESTUDIO_OPTIONS,
+    );
 
   // The length prefix AnimeStudio's raw export leads each blob with, the payload it counts being the chunk
   const decoded = chunks.map(({ chunk, code, directory, name }) => {

@@ -1,4 +1,4 @@
-import type { CabMap } from "#src/models/genshinAssets/shared/CabMap";
+import type { CabMap } from "#src/models/recreation/animeStudio/CabMap";
 
 // The high bit of each byte of a length says another byte follows, as .NET's BinaryWriter writes one
 const LENGTH_CONTINUATION_BIT = 0x80;
