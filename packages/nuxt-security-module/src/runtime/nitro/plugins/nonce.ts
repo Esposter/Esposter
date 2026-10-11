@@ -1,10 +1,10 @@
-import { definePlugin } from "nitro";
 import type { NitroAppPlugin } from "nitro/types";
 
 import { generateNonce } from "#src/runtime/services/generateNonce";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { getSecurityState } from "#src/runtime/services/getSecurityState";
 import { injectNonce } from "#src/runtime/services/injectNonce";
+import { definePlugin } from "nitro";
 
 const HTML_SECTIONS = ["body", "bodyAppend", "bodyPrepend", "head"] as const;
 

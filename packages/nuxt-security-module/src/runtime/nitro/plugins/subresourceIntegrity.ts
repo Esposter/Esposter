@@ -1,9 +1,8 @@
 import type { NitroAppPlugin } from "nitro/types";
 
-import { definePlugin } from "nitro";
-
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { injectSubresourceIntegrity } from "#src/runtime/services/injectSubresourceIntegrity";
+import { definePlugin } from "nitro";
 
 const HTML_SECTIONS = ["body", "bodyAppend", "bodyPrepend", "head"] as const;
 

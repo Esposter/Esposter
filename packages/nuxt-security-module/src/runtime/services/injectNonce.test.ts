@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { injectNonce } from "#src/runtime/services/injectNonce";
+import { describe, expect, test } from "vitest";
 
 describe(injectNonce, () => {
   const NONCE = "abc";

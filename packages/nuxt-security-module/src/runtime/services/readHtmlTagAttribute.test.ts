@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { readHtmlTagAttribute } from "#src/runtime/services/readHtmlTagAttribute";
+import { describe, expect, test } from "vitest";
 
 describe(readHtmlTagAttribute, () => {
   const ATTRIBUTES = ' SRC="/a.js" rel=stylesheet data-quote=\'it"s\'';

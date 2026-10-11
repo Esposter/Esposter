@@ -1,8 +1,7 @@
-import { assert, describe, expect, test } from "vitest";
-
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
 import { mergeModuleOptions } from "#src/services/mergeModuleOptions";
+import { assert, describe, expect, test } from "vitest";
 
 describe(mergeModuleOptions, () => {
   const DEFAULTS = getDefaultModuleOptions(false, "http://localhost:3000", false);

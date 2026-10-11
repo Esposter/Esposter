@@ -1,7 +1,6 @@
-import { describe, expect, test } from "vitest";
-
 import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
 import { getStaticResourceHeaders } from "#src/services/getStaticResourceHeaders";
+import { describe, expect, test } from "vitest";
 
 describe(getStaticResourceHeaders, () => {
   test("a static resource carries the headers that are not page-only, and no page policy", () => {

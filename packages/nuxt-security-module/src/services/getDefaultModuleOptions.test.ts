@@ -1,7 +1,6 @@
-import { assert, describe, expect, test } from "vitest";
-
 import { getDefaultModuleOptions } from "#src/services/getDefaultModuleOptions";
 import { getDefaultSecurityHeaders } from "#src/services/getDefaultSecurityHeaders";
+import { assert, describe, expect, test } from "vitest";
 
 describe(getDefaultModuleOptions, () => {
   const DEV_SERVER_URL = "http://localhost:3000";

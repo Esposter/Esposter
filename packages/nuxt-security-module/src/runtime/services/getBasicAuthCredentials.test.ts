@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { getBasicAuthCredentials } from "#src/runtime/services/getBasicAuthCredentials";
+import { describe, expect, test } from "vitest";
 
 describe(getBasicAuthCredentials, () => {
   test("a Basic header decodes to its name and password", () => {

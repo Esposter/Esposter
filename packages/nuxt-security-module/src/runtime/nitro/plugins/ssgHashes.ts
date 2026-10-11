@@ -1,4 +1,3 @@
-import { definePlugin } from "nitro";
 import type { NitroAppPlugin } from "nitro/types";
 
 import { collectSsgHashes } from "#src/runtime/services/collectSsgHashes";
@@ -6,6 +5,7 @@ import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { getSecurityState } from "#src/runtime/services/getSecurityState";
 import { insertContentSecurityPolicyMeta } from "#src/runtime/services/insertContentSecurityPolicyMeta";
 import { updateContentSecurityPolicy } from "#src/runtime/services/updateContentSecurityPolicy";
+import { definePlugin } from "nitro";
 
 const HTML_SECTIONS = ["head", "bodyPrepend", "body", "bodyAppend"] as const;
 

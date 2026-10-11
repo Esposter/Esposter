@@ -1,7 +1,6 @@
-import { describe, expect, test } from "vitest";
-
 import { NONCE_PLACEHOLDER } from "#src/runtime/constants";
 import { updateContentSecurityPolicy } from "#src/runtime/services/updateContentSecurityPolicy";
+import { describe, expect, test } from "vitest";
 
 describe(updateContentSecurityPolicy, () => {
   const EMPTY_HASHES = { script: [], style: [] };

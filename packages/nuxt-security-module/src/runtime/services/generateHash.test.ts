@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { generateHash } from "#src/runtime/services/generateHash";
+import { describe, expect, test } from "vitest";
 
 describe(generateHash, () => {
   const CONTENT = "abc";

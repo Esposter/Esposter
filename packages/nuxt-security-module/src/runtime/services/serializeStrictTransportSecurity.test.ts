@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { serializeStrictTransportSecurity } from "#src/runtime/services/serializeStrictTransportSecurity";
+import { describe, expect, test } from "vitest";
 
 describe(serializeStrictTransportSecurity, () => {
   const MAX_AGE = 63072000;

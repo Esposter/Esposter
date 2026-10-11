@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { serializePermissionsPolicy } from "#src/runtime/services/serializePermissionsPolicy";
+import { describe, expect, test } from "vitest";
 
 describe(serializePermissionsPolicy, () => {
   test("a feature with several origins is written in parentheses", () => {

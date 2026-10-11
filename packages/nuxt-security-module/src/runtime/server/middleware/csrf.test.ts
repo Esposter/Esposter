@@ -1,8 +1,7 @@
-import { H3Event } from "nitro/h3";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
 import csrf from "#src/runtime/server/middleware/csrf";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
+import { H3Event } from "nitro/h3";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/runtime/services/getSecurityRules"), () => ({
   getSecurityRules: vi.fn<typeof getSecurityRules>(),

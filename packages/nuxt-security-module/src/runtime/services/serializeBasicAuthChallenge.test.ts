@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { serializeBasicAuthChallenge } from "#src/runtime/services/serializeBasicAuthChallenge";
+import { describe, expect, test } from "vitest";
 
 describe(serializeBasicAuthChallenge, () => {
   test("a realm is written as a quoted string", () => {

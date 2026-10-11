@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { getBasicAuthOptions } from "#src/runtime/services/getBasicAuthOptions";
+import { describe, expect, test } from "vitest";
 
 describe(getBasicAuthOptions, () => {
   test("basic auth switched off is no options", () => {

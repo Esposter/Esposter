@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { checkIsChallenged } from "#src/runtime/services/checkIsChallenged";
+import { describe, expect, test } from "vitest";
 
 describe(checkIsChallenged, () => {
   const OPTIONS = { name: "user", pass: "pass" };

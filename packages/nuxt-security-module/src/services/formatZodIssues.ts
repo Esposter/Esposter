@@ -1,4 +1,4 @@
-import type * as z from "zod";
+import type { z } from "zod";
 
 // Every option group is a union whose first branch is its object and whose second is `false`.
 // The `false` branch's complaint hides the object's, so a union is read through its first branch

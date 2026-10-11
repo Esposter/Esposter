@@ -1,12 +1,11 @@
 import type { Middleware } from "nitro/h3";
 
-import { defineMiddleware } from "nitro";
-import { getRequestIP, HTTPError } from "nitro/h3";
-
 import { MAX_RATE_LIMIT_ENTRIES, UNKNOWN_CLIENT_KEY } from "#src/runtime/constants";
 import { createInMemoryRateLimiterStore } from "#src/runtime/services/createInMemoryRateLimiterStore";
 import { getRetryAfterSeconds } from "#src/runtime/services/getRetryAfterSeconds";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
+import { defineMiddleware } from "nitro";
+import { getRequestIP, HTTPError } from "nitro/h3";
 
 const rateLimiterStore = createInMemoryRateLimiterStore(MAX_RATE_LIMIT_ENTRIES);
 

@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { checkIsBasicAuthorized } from "#src/runtime/services/checkIsBasicAuthorized";
+import { describe, expect, test } from "vitest";
 
 describe(checkIsBasicAuthorized, () => {
   const OPTIONS = { name: "user", pass: "pass" };
