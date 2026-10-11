@@ -43,7 +43,7 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
         </span>
       </button>
     </UiTooltip>
-    <HiddenFileInput
+    <UiHiddenFileInput
       ref="fileInput"
       accept="image/*"
       @select="
