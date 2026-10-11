@@ -4,6 +4,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -32,8 +33,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Musou no Hitotachi at 0, Resolve's bonus per stack to it at 1 and to Musou Isshin's attacks at 2, the stacks another
 // Member's burst gives per point of energy at 3, Musou Isshin's five strikes at 4 to 9, the fourth of two hits at 7 and 8,
 // Its charged attack's two hits at 10 and 11 and its stamina at 12, its plunges' collision, low and high at 13, 14 and 15,
-// The energy its hits restore at 16, its seconds at 17, the burst's cooldown at 18 and its energy cost at 19. The stacks
-// Gained at 3 and the plunges at 13 to 15 are not read, as the kit builds neither
+// The energy its hits restore at 16, its seconds at 17, the burst's cooldown at 18 and its energy cost at 19. The plunges
+// At 13 to 15 are not read, as the kit builds none
 const RAIDEN_ATTACK_GROUP_ID = 5231;
 const RAIDEN_SKILL_GROUP_ID = 5232;
 const RAIDEN_BURST_GROUP_ID = 5239;
@@ -105,6 +106,13 @@ const BURST_FRAMES = 112;
 const BURST_HITMARK_FRAMES = 98;
 const BURST_HIT_AREA = createBoxReach(-0.1, 13, 8);
 const RESOLVE_STATUS_ID = "raiden-resolve";
+// Measured: gcsim (MIT) raiden/burst.go, the Resolve another member's burst gives her, the burst group's stacks per point of
+// The energy that burst cost, raised by Constellation 1 by 80% for an Electro member's burst and 20% for any other's, and
+// Resolve's cap of 60 stacks
+const RESOLVE_MAX_STACKS = 60;
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_ELECTRO_RESOLVE_MULTIPLIER = 1.8;
+const CONSTELLATION_1_RESOLVE_MULTIPLIER = 1.2;
 const RESTORE_ICD_SECONDS = 1;
 const RESTORE_ICD_ID = "raiden-restore-icd";
 const RESTORE_COUNT_ID = "raiden-restore-count";
@@ -133,6 +141,12 @@ const MUSOU_ISSHIN_CHARGED_HITS = [
   { hitmarkFrames: 32, index: 11 },
 ];
 
+// Measured: gcsim (MIT) raiden/asc.go, Ascension 1's 2 Resolve stacks as the party gains particles or orbs, once every 3
+// Seconds
+const ASCENSION_1 = 1;
+const ASCENSION_1_RESOLVE_STACKS = 2;
+const ASCENSION_1_ICD_SECONDS = 3;
+const ASCENSION_1_ICD_ID = "raiden-a1-icd";
 // Measured: gcsim (MIT) raiden/asc.go, Ascension 4's 0.6% more energy restored by Musou Isshin for each whole 1% of Energy
 // Recharge past 100%, and its 0.4% Electro DMG Bonus for each 1% of it
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/asc.go
@@ -154,6 +168,19 @@ const countStatusStacks = (effects: readonly KitEffect[], characterId: number, i
   effects.find(
     (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
   )?.stacks ?? 0;
+
+// Adds Resolve stacks to those she holds, up to their cap, held until her burst spends them
+const gainResolve = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
+  addKitEffect(kitEffectState, {
+    characterId,
+    id: RESOLVE_STATUS_ID,
+    kind: "status",
+    secondsRemaining: Number.POSITIVE_INFINITY,
+    stacks: Math.min(
+      countStatusStacks(kitEffectState.effects, characterId, RESOLVE_STATUS_ID) + stacks,
+      RESOLVE_MAX_STACKS,
+    ),
+  });
 
 // The Raiden Shogun's Musou Isshin, while it holds
 const findMusouIsshin = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
@@ -183,12 +210,12 @@ export const RAIDEN_CHARACTER_ID = 10_000_052;
 
 // The Raiden Shogun's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Eye of
 // Stormy Judgment with its Eye and coordinated attacks, and Musou Shinsetsu, whose Musou Isshin stance plays her Electro
-// Strikes and charged attack. The burst spends her Resolve stacks into Musou no Hitotachi and every Musou Isshin attack,
-// Whose strikes restore the team's energy. The Eye's Elemental Burst DMG Bonus raises her own burst hits, read as the burst
-// Is cast. Ascension 4 and Constellations 4 and 6 are built. Resolve's gain from another member's burst, Ascension 1's
-// Gain from particles and Constellation 1's faster gain are not, as no kit event tells a burst's cast or a particle. The
-// Eye's bonus to another member's burst, Constellation 2's DEF ignored, the Musou Isshin plunges and the skill's particles
-// Are not either, as no kit reaches another kit's pricing, a hit's DEF ignored, a stance's plunges or a particle
+// Strikes and charged attack. Another member's burst gives her Resolve by its energy cost, and the burst spends her
+// Resolve stacks into Musou no Hitotachi and every Musou Isshin attack, whose strikes restore the team's energy. The Eye's
+// Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast. Ascension 1's Resolve from particles,
+// Ascension 4 and Constellations 1, 4 and 6 are built. The Eye's bonus to another member's burst, Constellation 2's DEF
+// Ignored, the Musou Isshin plunges and the skill's particles are not, as no kit reaches another kit's pricing, a hit's
+// DEF ignored, a stance's plunges or a particle a skill makes
 export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number) =>
     getTalentMultiplier(talentMultiplierMap, RAIDEN_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -197,6 +224,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   const burstMultiplier = (index: number) =>
     getTalentMultiplier(talentMultiplierMap, RAIDEN_BURST_GROUP_ID, TALENT_START_LEVEL, index);
   const burstEnergyCost = burstMultiplier(19);
+  const resolveStackGain = burstMultiplier(3);
   const eyeSeconds = skillMultiplier(2);
   const eyeBurstDamageBonus = skillMultiplier(3) * burstEnergyCost;
   const resolveAttackBonus = burstMultiplier(2);
@@ -382,15 +410,42 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
-    // Musou Isshin ends as she leaves the field, and its end gives the rest of the team Constellation 4's ATK. A Musou Isshin
-    // Attack that lands restores the team's energy, and from Constellation 6 cuts the others' burst cooldowns, once a
-    // Second and five times a cast, as gcsim's two callbacks keep the same interval and count. A member holding the Eye who
-    // Deals damage sets off its coordinated attack on the enemy struck
+    // Another member's burst gives her Resolve, and from Ascension 1 the party's particles and orbs give her 2 stacks
+    // Once every 3 seconds. Musou Isshin ends as she leaves the field, and its end gives the rest of the team
+    // Constellation 4's ATK. A Musou Isshin attack that lands restores the team's energy, and from Constellation 6 cuts
+    // The others' burst cooldowns, once a second and five times a cast, as gcsim's two callbacks keep the same interval
+    // And count. A member holding the Eye who deals damage sets off its coordinated attack on the enemy struck
     onKitEvent: (event, { characterIdCombatantMap, combatant, kitEffectState, party }) => {
       const { ascension, characterId, constellationCount } = combatant;
       const musouIsshin = findMusouIsshin(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId === characterId && musouIsshin) musouIsshin.secondsRemaining = 0;
+        return;
+      }
+
+      if (event.kind === KitEventKind.BurstUsed) {
+        if (event.characterId === characterId) return;
+        const isElectro = characterIdCombatantMap.get(event.characterId)?.element === Element.Electro;
+        const multiplier =
+          constellationCount < CONSTELLATION_1
+            ? 1
+            : isElectro
+              ? CONSTELLATION_1_ELECTRO_RESOLVE_MULTIPLIER
+              : CONSTELLATION_1_RESOLVE_MULTIPLIER;
+        gainResolve(kitEffectState, characterId, resolveStackGain * event.energyCost * multiplier);
+        return;
+      }
+
+      if (event.kind === KitEventKind.EnergyParticleCollected) {
+        if (ascension < ASCENSION_1 || checkHasKitStatus(kitEffectState.effects, characterId, ASCENSION_1_ICD_ID))
+          return;
+        addKitEffect(kitEffectState, {
+          characterId,
+          id: ASCENSION_1_ICD_ID,
+          kind: "status",
+          secondsRemaining: ASCENSION_1_ICD_SECONDS,
+        });
+        gainResolve(kitEffectState, characterId, ASCENSION_1_RESOLVE_STACKS);
         return;
       }
 

@@ -1,20 +1,25 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
 import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { RAIDEN_CHARACTER_ID } from "#src/services/kit/characters/raidenKit";
+import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createRaidenKit } from "#src/services/kit/characters/raidenKit";
+import { createRaidenKit, RAIDEN_CHARACTER_ID } from "#src/services/kit/characters/raidenKit";
 import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -35,6 +40,10 @@ const createRaidenCombatant = (): Combatant => ({
 });
 
 const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
+// The Resolve stacks she holds among the team's effects
+const readResolveStacks = ({ effects }: KitEffectState): number | undefined =>
+  effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === "raiden-resolve")?.stacks;
 
 // The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
 const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
@@ -58,6 +67,54 @@ describe(createRaidenKit, () => {
     expect(summon.hits[0]?.talentMultiplier).toBeCloseTo(4.008 + 0.03888);
     expect(stance?.actions.normalAttacks[0]?.hits[0]?.talentMultiplier).toBeCloseTo(0.447374 + 0.007262);
     expect(kitEffectState.effects.some((effect) => effect.kind === "status")).toBe(false);
+  });
+
+  test("another member's burst gives her resolve by its energy cost, constellation 1 raising an electro member's", () => {
+    expect.hasAssertions();
+    const electroMember: Combatant = {
+      ...createRaidenCombatant(),
+      characterId: FISCHL_CHARACTER_ID,
+      element: Element.Electro,
+    };
+    const createContext = (constellationCount: number) =>
+      createKitEventContext(
+        { ...createRaidenCombatant(), constellationCount },
+        {
+          characterIdCombatantMap: new Map([[FISCHL_CHARACTER_ID, electroMember]]),
+          party: createParty([RAIDEN_CHARACTER_ID, FISCHL_CHARACTER_ID]),
+        },
+      );
+    const context = createContext(0);
+    const constellationContext = createContext(1);
+    for (const eventContext of [context, constellationContext]) {
+      RAIDEN_KIT.onKitEvent?.(
+        { characterId: RAIDEN_CHARACTER_ID, energyCost: 90, kind: KitEventKind.BurstUsed },
+        eventContext,
+      );
+      RAIDEN_KIT.onKitEvent?.(
+        { characterId: FISCHL_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed },
+        eventContext,
+      );
+    }
+
+    expect(readResolveStacks(context.kitEffectState)).toBeCloseTo(0.15 * 60);
+    expect(readResolveStacks(constellationContext.kitEffectState)).toBeCloseTo(0.15 * 60 * 1.8);
+  });
+
+  test("from ascension 1 the party's particles give her 2 resolve stacks once every 3 seconds", () => {
+    expect.hasAssertions();
+    const context = createKitEventContext({ ...createRaidenCombatant(), ascension: 1 });
+    const event: KitEnergyParticleCollectedEvent = {
+      characterId: RAIDEN_CHARACTER_ID,
+      count: 1,
+      energyDropKind: EnergyDropKind.Particle,
+      kind: KitEventKind.EnergyParticleCollected,
+    };
+
+    RAIDEN_KIT.onKitEvent?.(event, context);
+    RAIDEN_KIT.onKitEvent?.(event, context);
+
+    expect(readResolveStacks(context.kitEffectState)).toBe(2);
   });
 
   test("musou isshin's strikes restore the team's energy once a second", () => {
