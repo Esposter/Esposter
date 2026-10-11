@@ -163,7 +163,6 @@
     "mime-types": "catalog:",
     "minisearch": "catalog:",
     "node-html-parser": "catalog:",
-    "p-progress": "catalog:",
     "parse-tmx": "workspace:*",
     "pdfjs-dist": "catalog:",
     "phaser": "catalog:",
