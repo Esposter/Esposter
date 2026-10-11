@@ -204,6 +204,51 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   border-bottom: calc(var(--unit) * 4) solid #e8d9b0;
 }
 
+.list {
+  position: absolute;
+  top: calc(var(--unit) * 120);
+  left: calc(var(--unit) * 66);
+  width: calc(var(--unit) * 580);
+}
+
+.recipes {
+  display: grid;
+  grid-template-columns: repeat(4, calc(var(--unit) * 127));
+  gap: calc(var(--unit) * 21) calc(var(--unit) * 19);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipe {
+  position: relative;
+  width: 100%;
+  height: calc(var(--unit) * 152);
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--unit) * 3);
+  background: #54658c;
+  color: inherit;
+  cursor: inherit;
+}
+
+.recipe[aria-pressed="true"] {
+  outline: calc(var(--unit) * 2) solid #fdfdfd;
+}
+
+.recipe-name {
+  position: absolute;
+  right: calc(var(--unit) * 4);
+  bottom: calc(var(--unit) * 4);
+  left: calc(var(--unit) * 4);
+  overflow: hidden;
+  font-size: calc(var(--unit) * 17);
+  line-height: calc(var(--unit) * 20);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tab-name {
   position: absolute;
   width: 1px;
