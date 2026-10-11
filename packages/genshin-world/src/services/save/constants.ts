@@ -5,8 +5,8 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import achievementCount from "#src/data/achievements/achievementCount.json";
 import { Currency } from "#src/models/inventory/Currency";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
+import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
-import { ORIGINAL_RESIN_CAP } from "#src/services/originalResin/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
 import { BannerKind } from "genshin-interface/save";
 
@@ -110,17 +110,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   reputation: EMPTY_REPUTATION_SAVE,
   unlockedLandmarks: [],
   wallet: {
-    currencies: {
-      [Currency.AcquaintFate]: 0,
-      [Currency.GenesisCrystal]: 0,
-      [Currency.IntertwinedFate]: 0,
-      [Currency.MasterlessStardust]: 0,
-      [Currency.MasterlessStarglitter]: 0,
-      [Currency.MasterlessStellaFortuna]: 0,
-      [Currency.Mora]: 0,
-      [Currency.OriginalResin]: ORIGINAL_RESIN_CAP,
-      [Currency.Primogem]: 0,
-    },
+    currencies: { ...EMPTY_CURRENCIES },
     originalResinChangedAt: "1970-01-01T00:00:00Z",
     primogemResinRefillCount: 0,
     primogemResinRefillDay: "1970-01-01",
