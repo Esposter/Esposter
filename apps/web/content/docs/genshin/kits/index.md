@@ -35,7 +35,7 @@ flowchart LR
   M -->|"fetched at the gate or as a character joins, checked by its schema"| R["readCharacterKit: the three read together as a character joins"]
   K["kits index: avatar id to its record, published by genshin:assets kits"] -->|"fetched beside the multipliers, checked by its schema"| R
   C["CharacterIdCreateKitBehaviourMap: each module's import(), a chunk of its own"] -->|"loaded as its character joins"| R
-  G["skillGlyphs index: avatar id to its skill and burst icons, published by genshin:assets skill-glyphs"] -->|"fetched beside the multipliers, by the character's own id"| R
+  G["skillGlyphs index: avatar id to its icons, published by genshin:assets skill-glyphs"] -->|"fetched beside the multipliers, by the character's own id"| R
   R -->|"buildKit: the record resolved and the behaviour joined"| T["the character's kit, built once: the Traveler's for a character with no module"]
 ```
 
