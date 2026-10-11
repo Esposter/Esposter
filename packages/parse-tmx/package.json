@@ -70,7 +70,6 @@
     "@types/sax": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
     "vitest": "catalog:"
   }
 }
