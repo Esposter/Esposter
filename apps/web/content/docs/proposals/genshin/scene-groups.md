@@ -1,6 +1,6 @@
 ---
 title: Scene groups
-description: Proposal — the scene group export many units wait on. The client's two non-group scene scripts are read; the group scripts themselves remain unresolved, and the current community dump's NPC births are published meanwhile. Leaked server data is never a source.
+description: Proposal — the scene group record many units wait on, published now from the current sources each of its fields can be filled from and refilled from the client's group scripts once they are read. Leaked server data is never a source.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 touches: ["scripts/src/services/genshinAssets/**", "apps/web/content/docs/genshin/game-data-formats.md"]
@@ -13,12 +13,14 @@ Teyvat's camps, chests, residents, benches, puzzles, viewpoints and quest trigge
 ## Decisions
 
 - **Leaked server data is not a source.** The community's decoded scene scripts (the Grasscutter resource sets) come from a 3.6-era leak of the game's server data, carry no licence, and say themselves that publishing them is a rights risk. They are also three years of patches old. They are never read, not even as a cross-check.
-- **The current dump's NPC births stand in for the NPCs.** Dimbreath's `animegamedata2` dump publishes `BinOutput/Scene/SceneNpcBorn` for the current version: every NPC's birth place by scene and group. The hosted `sceneNpcBorn/scene3` dataset carries it, and resident schedules, the blacksmith's place and the crafting bench's keeper will read their NPCs' places from it, then switch to the group record when it lands, since only the scripts hold the suites that move an NPC by time of day. No reader calls it yet.
+- **The record comes first, each field filled from the best current source, and nothing waits on one export.** The group record, keyed by group, holds each member's kind, object id, config id and place, and its suites where they are known. Each field names the source that filled it. Places come from what is already read: the official map's fitted points, and the dump's NPC births and transport points. Group ids come from the tables that already name a group, `ViewCodexExcelConfigData` for the viewpoints and `TriggerExcelConfigData` for the quest triggers. What only the scripts hold is left empty, never guessed, and a unit needing it keeps its stand-in: a camp's members and levels, a puzzle's mechanisms, a trigger's region, the suites that move a thing by time of day. When the client's group scripts are read, they refill the same record, and no unit changes.
+- **The current dump's NPC births fill the NPCs' places.** Dimbreath's `animegamedata2` dump publishes `BinOutput/Scene/SceneNpcBorn` for the current version: every NPC's birth place by scene and group. The hosted `sceneNpcBorn/scene3` dataset carries it, and the record takes each NPC's place from it.
 
 ## Scope and order
 
-1. **The groups' source.** The group scripts (`scene3_group*.lua`) remain unresolved in the install's map, so no group is read yet; the units need that source, and it is the next decision.
-2. **Publish and hand over.** Once a source is decided, publish the group records as hosted game data, keyed by group. Then the waiting units read their camps, chests, residents, gadgets and triggers from them, each unit on its own page.
+1. **The record**, published as hosted game data keyed by group and filled per field from the sources above. It needs no install.
+2. **Hand over.** The waiting units read the record, each on its own page. Those whose fields it fills move now: the viewpoints, the residents' places, the bench's keeper and the stove. The camps, puzzles, quest go-tos and schedules move once the scripts fill theirs, and each unit's page names the record rather than an export another machine is making.
+3. **The client's group scripts**, on the machine with the install. The group scripts (`scene3_group*.lua`) remain unresolved in the install's map: find them in the current index, and read their form against the non-group scripts' `GENSHIN_LUA_53` dialect ([game data formats](/docs/genshin/game-data-formats)). Once read, they refill the record.
 
 ## Sources
 
