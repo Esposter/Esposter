@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useInputStore } from "@/store/message/input";
 import { useThreadStore } from "@/store/message/thread";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const threadStore = useThreadStore();
 const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
 const target = computed(() => ({ roomId: activeRoomId.value, threadRootRowKey: activeRootRowKey.value }));
-const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(target);
 const inputStore = useInputStore();
 const { threadInput, threadTarget } = storeToRefs(inputStore);
 // The composer tells the input store which thread it is on, rather than the store reading it back out of the
@@ -22,31 +20,10 @@ watchImmediate(target, (newTarget) => {
      about a message rather than a second place to run them from -->
 <template>
   <div p-2>
-    <RichTextEditor
-      v-model="threadInput"
-      :limit="MESSAGE_MAX_LENGTH"
-      placeholder="Reply..."
-      :extensions
-      @paste="(_editor, files) => uploadFiles(files)"
-    >
-      <template #prepend-inner-header>
-        <MessageModelMessageFileInputContainer :target />
-      </template>
-      <template #prepend-footer>
+    <MessageModelMessageInputComposer v-model="threadInput" :target placeholder="Reply...">
+      <template #prepend-footer="{ uploadFiles }">
         <RichTextEditorCustomUploadFileButton @upload-file="(files) => uploadFiles(files)" />
       </template>
-      <template #append-footer="{ editor }">
-        <RichTextEditorCustomAudioRecorderButton @upload-file="(files) => uploadFiles(files)" />
-        <MessageModelMessageInputSendMessageButton
-          :disabled="!checkIsInputValid(target, editor)"
-          @click="
-            () => {
-              if (!editor) return;
-              sendComposerMessage(editor, target);
-            }
-          "
-        />
-      </template>
-    </RichTextEditor>
+    </MessageModelMessageInputComposer>
   </div>
 </template>

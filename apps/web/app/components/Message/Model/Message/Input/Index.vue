@@ -8,7 +8,6 @@ import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 // Discord's phone app waits for a tap before it raises the keyboard over the room, where a desktop types at once
 const layoutStore = useLayoutStore();
@@ -20,7 +19,6 @@ const roomName = useRoomName(currentRoomId);
 const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(target);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
@@ -45,36 +43,20 @@ useCommands(MessageInputCommands);
     <MessageModelMessageInputHeaderSlashCommandParameters />
     <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="rowKey = ''" />
     <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
-    <RichTextEditor
+    <MessageModelMessageInputComposer
       v-else
       v-model="input"
       :autofocus="isTouchScreen ? false : 'end'"
       :placeholder="`Message ${roomName}`"
-      :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[...extensions, slashCommandExtension]"
-      @paste="(_editor, files) => uploadFiles(files)"
+      :extra-extensions="[slashCommandExtension]"
+      :target
     >
-      <template #prepend-inner-header>
-        <MessageModelMessageFileInputContainer :target />
-      </template>
-      <template #prepend-footer>
+      <template #prepend-footer="{ uploadFiles }">
         <MessageModelMessageInputActionsMenuButton @upload-file="(files) => uploadFiles(files)" />
-      </template>
-      <template #append-footer="{ editor }">
-        <RichTextEditorCustomAudioRecorderButton @upload-file="(files) => uploadFiles(files)" />
-        <MessageModelMessageInputSendMessageButton
-          :disabled="!checkIsInputValid(target, editor)"
-          @click="
-            () => {
-              if (!editor) return;
-              sendComposerMessage(editor, target);
-            }
-          "
-        />
       </template>
       <template #prepend-outer-footer>
         <MessageModelMessageInputFooter />
       </template>
-    </RichTextEditor>
+    </MessageModelMessageInputComposer>
   </div>
 </template>
