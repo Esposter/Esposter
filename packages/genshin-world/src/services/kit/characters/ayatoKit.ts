@@ -8,7 +8,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
@@ -26,6 +25,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ayato's proud skill groups, read at his talent level. The attack group holds the five strikes at 0 to 4, the fourth
@@ -119,11 +119,7 @@ const BURST_AREA_RADIUS = 10;
 const BURST_HIT_RADIUS = 2.5;
 const BURST_HIT_AREA = createFanReach(360, BURST_AREA_RADIUS + BURST_HIT_RADIUS);
 
-// Whether a character carries a status of an id among the team's effects, and how many stacks it has
-const findKitStatus = (effects: readonly KitEffect[], characterId: number, id: string): KitStatus | undefined =>
-  effects.find(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
-  );
+// The Namisen stacks a character carries, and the most it can
 const countNamisenStacks = (effects: readonly KitEffect[], characterId: number): number =>
   findKitStatus(effects, characterId, NAMISEN_STATUS_ID)?.stacks ?? 0;
 const getNamisenStacksMax = (combatant: Combatant): number =>

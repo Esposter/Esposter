@@ -4,7 +4,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
+import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
 import { checkIsEnduringRock } from "#src/services/party/checkIsEnduringRock";
 import { ENDURING_ROCK_DAMAGE_BONUS } from "#src/services/party/constants";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -19,10 +19,7 @@ export const getBuffedCombatant = (combatant: Combatant, effects: readonly KitEf
   const passiveBonuses =
     combatant.kit.getPassiveBonuses?.(combatant, getPartyMember(party, combatant.characterId).healthShare) ?? [];
   const enduringRockBonuses = checkIsEnduringRock(combatant, effects)
-    ? [...Object.values(ElementDamageBonusAttributeMap), Attribute.PhysicalDamageBonus].map((attribute) => ({
-        amount: ENDURING_ROCK_DAMAGE_BONUS,
-        attribute,
-      }))
+    ? DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: ENDURING_ROCK_DAMAGE_BONUS, attribute }))
     : [];
   const bonuses = [...buffs, ...passiveBonuses, ...enduringRockBonuses];
   if (bonuses.length === 0) return combatant;

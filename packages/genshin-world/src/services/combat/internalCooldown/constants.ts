@@ -8,6 +8,14 @@ export const DEFAULT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.fre
   resetIntervalSeconds: 2.5,
   sequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 3 === 0 ? 1 : 0))),
 });
+// Measured: gcsim (MIT) pkg/core/attacks/icd_groups.dm.go, Salon Solitaire's group, which Surintendante Chevalmarin's and
+// Gentilhomme Usher's tags each count under: restarted by a hit 30 seconds after it last started, and between restarts
+// Every second hit applying, for the 24 hits its sequence holds
+// https://github.com/genshinsim/gcsim/blob/main/pkg/core/attacks/icd_groups.dm.go
+export const FURINA_SALON_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 30,
+  sequence: Object.freeze(Array.from({ length: 24 }, (_value, index) => (index % 2 === 0 ? 1 : 0))),
+});
 // Burning's Pyro: the first hit applies and none after it, until two seconds have passed
 export const BURNING_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
   resetIntervalSeconds: 2,

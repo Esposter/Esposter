@@ -13,6 +13,7 @@ import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/Elem
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { applyKeyedInternalCooldown } from "#src/services/combat/internalCooldown/applyKeyedInternalCooldown";
 import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCooldown/constants";
+import { InternalCooldownTagGroupMap } from "#src/services/combat/internalCooldown/InternalCooldownTagGroupMap";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
@@ -51,13 +52,14 @@ export const strikeEnemy = (
   const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
   const element = getKitHitElement(kitHit, combatant);
   if (gauge !== undefined && gauge > 0 && element !== undefined) {
-    // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown
+    // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown,
+    // Counted under its tag's own group where it has one
     let share = 1;
     if (internalCooldownTag !== undefined)
       share = applyKeyedInternalCooldown(
         enemy.internalCooldownMap,
         `${combatant.characterId}${ID_SEPARATOR}${internalCooldownTag}`,
-        DEFAULT_INTERNAL_COOLDOWN_GROUP,
+        InternalCooldownTagGroupMap[internalCooldownTag] ?? DEFAULT_INTERNAL_COOLDOWN_GROUP,
         elementalState.seconds,
       );
     reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant));

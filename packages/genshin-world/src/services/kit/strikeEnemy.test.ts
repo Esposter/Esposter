@@ -183,6 +183,23 @@ describe(strikeEnemy, () => {
     ).toStrictEqual({ hitIndex: 0, startSeconds: 0 });
   });
 
+  test("counts a hit under its tag's own internal cooldown group, which a standard group's reset does not restart", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const kitHit = {
+      ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
+      internalCooldownTag: InternalCooldownTag.FurinaChevalmarin,
+    };
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+    enemy.elementalState.seconds = 3;
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Hydro), NEVER_CRITICAL);
+
+    expect(
+      enemy.internalCooldownMap.get(`${CHARACTER_ID}${ID_SEPARATOR}${InternalCooldownTag.FurinaChevalmarin}`),
+    ).toStrictEqual({ hitIndex: 1, startSeconds: 0 });
+  });
+
   test("shatters a Freeze with a blunt hit, and deals the Shatter's damage", () => {
     expect.hasAssertions();
 

@@ -3,14 +3,11 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -18,18 +15,15 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import {
-  SKILL_TARGETING_AREA,
-  STRIKE_TARGETING_AREA,
-  SUMMON_LINGER_SECONDS,
-  UNBOUNDED_FIELD_RADIUS,
-} from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -145,11 +139,7 @@ const CONSTELLATION_4_LOSS_SOURCE = "alhaitham-c4-loss";
 const CONSTELLATION_4_GAIN_SOURCE = "alhaitham-c4-gain";
 const CONSTELLATION_6_SOURCE = "alhaitham-c6";
 
-// The status of an id a character carries among the team's effects, and the field of an id the team holds
-const findKitStatus = (effects: readonly KitEffect[], characterId: number, id: string): KitStatus | undefined =>
-  effects.find(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.characterId === characterId && effect.id === id,
-  );
+// The field of an id the team holds
 const findKitField = (effects: readonly KitEffect[], id: string): KitField | undefined =>
   effects.find((effect): effect is KitField => effect.kind === "field" && effect.id === id);
 const findKitBuff = (
@@ -296,24 +286,6 @@ const gainMirrors = (context: KitStepContext, generated: number): void => {
     addConstellation6Buffs(kitEffectState, characterId, total - MIRRORS_MAX);
 };
 
-// A field placed where its character stands, which ticks once after its delay, for the delay and its summon linger
-const createDelayedField = (
-  body: KitBody,
-  characterId: number,
-  delaySeconds: number,
-  onTick: (tick: KitFieldTick) => void,
-): KitField => ({
-  centre: { x: body.position.x, z: body.position.z },
-  characterId,
-  kind: "field",
-  nextTickSeconds: delaySeconds,
-  onTick,
-  radius: UNBOUNDED_FIELD_RADIUS,
-  secondsRemaining: delaySeconds + SUMMON_LINGER_SECONDS,
-  tickIndex: 0,
-  tickIntervalSeconds: 1,
-});
-
 // The Elemental Mastery a hit's flat damage takes, from its striker's total at the multiplier
 const elementalMasteryMultiplier = (combatant: Combatant, multiplier: number): number =>
   combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * multiplier;
@@ -445,7 +417,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     onStart: ({ body, combatant, kitEffectState, random }) =>
       addKitEffect(
         kitEffectState,
-        createDelayedField(body, combatant.characterId, mirrorFrames / 60, (tick) =>
+        createDelayedKitField(combatant.characterId, body.position, mirrorFrames / 60, (tick) =>
           gainMirrors(
             { body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random },
             getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
@@ -496,7 +468,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       const generated = constellationCount >= CONSTELLATION_6 ? MIRRORS_MAX : MIRRORS_MAX - consumed;
       if (generated <= 0) return;
       addKitEffect(kitEffectState, {
-        ...createDelayedField(body, characterId, BURST_MIRROR_REGEN_FRAMES / 60, (tick) => {
+        ...createDelayedKitField(characterId, body.position, BURST_MIRROR_REGEN_FRAMES / 60, (tick) => {
           gainMirrors({ body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random }, generated);
           if (constellationCount >= CONSTELLATION_4)
             addKitEffect(tick.kitEffectState, {
