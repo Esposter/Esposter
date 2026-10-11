@@ -54,8 +54,7 @@
     "./package.json": "./package.json",
     "./style.css": "./dist/style.css",
     "./parity/*": {
-      "source": "./parity/*.ts",
-      "default": "./parity/*.ts"
+      "source": "./parity/*.ts"
     }
   },
   "publishConfig": {

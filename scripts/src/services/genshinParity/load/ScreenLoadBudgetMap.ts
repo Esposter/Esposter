@@ -1,4 +1,4 @@
-import type { LoadBudget } from "#parity/models/LoadBudget";
+import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
 
 // Each screen's load budget, written at its measured figures plus a tenth on the machine named, so `load` fails a screen
 // That grows past what it loaded when its budget was written

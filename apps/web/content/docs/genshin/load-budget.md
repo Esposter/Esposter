@@ -29,7 +29,7 @@ Open the parity page (or the app) in DevTools' Performance panel, record the loa
 
 ## Budgets
 
-The budgets are written in `packages/genshin-world/parity/loadBudgets.ts`, each at the figure measured on this machine plus a tenth, rounded up. Lowering a budget is part of the commit that lowers the load; raising one needs its own reason.
+The budgets are written in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, each at the figure measured on this machine plus a tenth, rounded up. Lowering a budget is part of the commit that lowers the load; raising one needs its own reason.
 
 | Screen        | Ready (ms) | Requests | Game data (KB) | Objects | Geometries | Textures | Programs |
 | :------------ | ---------: | -------: | -------------: | ------: | ---------: | -------: | -------: |
@@ -54,6 +54,7 @@ flowchart LR
 
 - **The opening's ready is its mount.** `GameOpening`'s fixture names no ready event, so the page is ready as the opening mounts and its `opening` steps are read as they stand then. Its fixture also reads the title logo and the login records at module load, so the game data is fetched before the page is ready and its steps are short.
 - **The parity page raises the resource timing buffer.** The browser keeps 250 resource timings by default, and a world's load makes more requests than that, so the buffer is raised before the first request in `openParityPage`; without it the request and game data counts stop at the buffer.
+- **Ready waits on the finest terrain tiles only.** The terrain reports ready once every finest-level tile the view wants is held or given up, and the coarser rings keep streaming after ready without holding it. On `WorldScreen` this moved the median ready from 24.5 s to 24.2 s, within the noise, and the terrain measure did not move: the wait is the terrain workers starting, see the proposal. The budget stays where it is, since a tenth above the new median is still above it.
 - **The time's machine is named by the budget.** The counts are the same on every machine and the milliseconds are not, so a budget names the machine it was measured on.
 
 ## Key files
@@ -63,7 +64,7 @@ flowchart LR
 | `packages/genshin-world/src/services/loading/measureLoadStep.ts` | Times an awaited load step as `genshin:load:<name>`               |
 | `packages/genshin-world/src/services/loading/constants.ts`       | `LOAD_STEP_MEASURE_PREFIX`, the one prefix the measures carry     |
 | `packages/genshin-world/parity/benchLoad.ts`                     | The parity page's read at ready: measures, requests, scene counts |
-| `packages/genshin-world/parity/loadBudgets.ts`                   | Each screen's budget, by screen name                              |
+| `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts` | Each screen's budget, by screen name                              |
 | `scripts/src/services/genshinParity/commands/loadCommand.ts`     | The `load` command, beside `bench`                                |
 | `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`   | The meter's rows, the measures and the exit rule                  |
 | `scripts/src/services/genshinParity/shared/openParityPage.ts`    | Opens the page cold and raises the resource timing buffer         |
