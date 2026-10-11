@@ -3,8 +3,8 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { takeOne } from "@esposter/shared";
+import { insertRowAt } from "@/services/resource/sheet/commands/insertRowAt";
+import { removeRowAt } from "@/services/resource/sheet/commands/removeRowAt";
 
 export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> {
   readonly type = CommandType.DeleteRow;
@@ -23,17 +23,10 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
   }
 
   execute(dataSource: DataSource) {
-    const row = takeOne(dataSource.rows, this.#index);
-    for (const column of dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-    dataSource.rows = dataSource.rows.filter((_row, index) => index !== this.#index);
+    removeRowAt(dataSource, this.#index);
   }
 
   undo(dataSource: DataSource) {
-    for (const column of dataSource.columns) column.size += getValueSize(takeOne(this.#originalRow.data, column.name));
-    dataSource.rows = [
-      ...dataSource.rows.slice(0, this.#index),
-      this.#originalRow,
-      ...dataSource.rows.slice(this.#index),
-    ];
+    insertRowAt(dataSource, this.#index, this.#originalRow);
   }
 }

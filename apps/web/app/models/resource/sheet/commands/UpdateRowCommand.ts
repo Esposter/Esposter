@@ -28,20 +28,19 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   }
 
   execute(dataSource: DataSource) {
-    if (this.#index === -1) return;
-    const row = takeOne(dataSource.rows, this.#index);
-    for (const column of dataSource.columns)
-      column.size +=
-        getValueSize(takeOne(this.#updatedRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
-    row.data = { ...this.#updatedRow.data };
+    this.#setRowTo(dataSource, this.#updatedRow);
   }
 
   undo(dataSource: DataSource) {
+    this.#setRowTo(dataSource, this.#originalRow);
+  }
+
+  // Writes the given row's values over the row at this command's index, adjusting each column's size by the difference
+  #setRowTo(dataSource: DataSource, targetRow: Row) {
     if (this.#index === -1) return;
     const row = takeOne(dataSource.rows, this.#index);
     for (const column of dataSource.columns)
-      column.size +=
-        getValueSize(takeOne(this.#originalRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
-    row.data = { ...this.#originalRow.data };
+      column.size += getValueSize(takeOne(targetRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
+    row.data = { ...targetRow.data };
   }
 }
