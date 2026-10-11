@@ -9,8 +9,7 @@ import { QuestObjectiveKind } from "genshin-world";
 // Quest's hundred; its order the field numbering the steps from one; its finish conditions the list the most steps
 // Fill, where its fail conditions are a list only some do; and its words the field holding a hash the text map has. A step
 // With no words is the game's own bookkeeping, never shown, and one whose conditions ask nothing of the Traveler is
-// Left out and noted. A step's objective is its first condition that asks something, since a step finishing on any of
-// Several places lists each
+// Left out and noted. A step's objectives are every condition that asks something, all of which the step needs done
 export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
@@ -68,7 +67,7 @@ export const readQuestSteps = (
         notes.push(`${questId}'s step ${id} asks nothing of the Traveler its conditions name`);
         return [];
       }
-      return [{ id: String(id), objectives: objectives.slice(0, 1), textId: String(textHash) }];
+      return [{ id: String(id), objectives, textId: String(textHash) }];
     });
   return { notes, steps };
 };
