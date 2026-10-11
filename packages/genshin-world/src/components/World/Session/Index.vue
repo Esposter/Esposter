@@ -15,6 +15,7 @@ import AchievementScreen from "#src/components/Achievement/Screen/Index.vue";
 import BookReaderScreen from "#src/components/Archive/BookReader/Index.vue";
 import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterPackLoader from "#src/components/Character/PackLoader/Index.vue";
+import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
@@ -776,6 +777,9 @@ defineExpose({ jumpTo, readCameraPosition });
           :stat-tables
           @close="screenKind = ScreenKind.World"
         >
+          <template #scene="{ tab }">
+            <CharacterScene :tab />
+          </template>
           <template #default="{ characterId }">
             <CharacterPackLoader
               :character-id

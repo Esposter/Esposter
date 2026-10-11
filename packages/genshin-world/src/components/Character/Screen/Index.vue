@@ -54,8 +54,12 @@ interface Props {
   statTables: StatTables;
 }
 
-// What the host lays over the screen for the character it shows, outside the game's own screen
-defineSlots<{ default?: (props: { characterId: number }) => unknown }>();
+// What the host lays behind the screen, the scene the open tab is shown over, and over it for the character it shows,
+// Outside the game's own screen
+defineSlots<{
+  default?: (props: { characterId: number }) => unknown;
+  scene?: (props: { tab: CharacterMenuTab }) => unknown;
+}>();
 const {
   activeCharacterId,
   characters,
@@ -134,6 +138,7 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
   <!-- The character screen, the C key's, a dialog over the world: the player's characters, the one on the field chosen
        First, the open tab's panel for the chosen one, the Profile's aside, and the way back -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
+    <slot name="scene" :tab />
     <CharacterMenu v-model:character-id="characterId" v-model:tab="tab" :characters="menuEntries" :tab-labels>
       <CharacterAttributeList
         v-if="character && tab === CharacterMenuTab.Attributes"
