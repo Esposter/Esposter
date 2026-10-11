@@ -41,19 +41,19 @@ Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on.
 ## Notes
 
 - The idle count is the pulse's own. The watcher's `minutesInState` classifies a machine as busy, idle or tight by its memory gate and its CPU average over three minutes, which is a different line from the 80% that wakes a session.
-- A reading older than three minutes restarts the watcher even when its process is still alive, since a live watcher that writes nothing is one the pulse cannot otherwise see. A machine whose memory reader returns nothing every minute would therefore restart the watcher each minute, and `pnpm ai:resume` would show it.
+- A watcher is started only when none is alive: no reading exists, or the process that wrote the last one has exited. A live watcher is never started twice. A reading older than three minutes from a live watcher, which a machine whose memory reader returns nothing would leave, is read as no reading, so the pulse wakes nothing on it, and `pnpm ai:resume` shows it.
 - A run whose script exits non-zero is silent and the next tick tries again. A run that cannot start `node` at all rejects, and the timer slot leaves that rejection unhandled.
 
 ## Key files
 
-| File                                                            | Role                                                                              |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `packages/genshin-mods/scripts/machinePulse.mjs`                | Reads the watcher's reading, starts the watcher when it is missing, stale or dead |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`       | The minute clock and session start that run the pulse, and the wake itself        |
-| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`      | The wake decision, a pure function over the reading and the session               |
-| `packages/genshin-mods/src/services/pulse/getIdleMinutes.ts`    | The count of idle readings in a row                                               |
-| `packages/genshin-mods/src/services/pulse/checkIsIdle.ts`       | Under the line on the CPU, and on the GPU or unread                               |
-| `packages/genshin-mods/src/services/pulse/parseMachinePulse.ts` | The script's stdout as a reading, or nothing outside the repository               |
-| `packages/genshin-mods/src/services/constants.ts`               | The line, the wait, the repeat interval and the wake prompt                       |
-| `scripts/src/services/machine/writeMachineState.ts`             | The watcher's write of its reading, renamed over the file it replaces             |
-| `scripts/src/services/resume/getWatcherItems.ts`                | The `watcher` row of `pnpm ai:resume`                                             |
+| File                                                            | Role                                                                       |
+| :-------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `packages/genshin-mods/scripts/machinePulse.mjs`                | Reads the watcher's reading, starts the watcher when none is alive         |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`       | The minute clock and session start that run the pulse, and the wake itself |
+| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`      | The wake decision, a pure function over the reading and the session        |
+| `packages/genshin-mods/src/services/pulse/getIdleMinutes.ts`    | The count of idle readings in a row                                        |
+| `packages/genshin-mods/src/services/pulse/checkIsIdle.ts`       | Under the line on the CPU, and on the GPU or unread                        |
+| `packages/genshin-mods/src/services/pulse/parseMachinePulse.ts` | The script's stdout as a reading, or nothing outside the repository        |
+| `packages/genshin-mods/src/services/constants.ts`               | The line, the wait, the repeat interval and the wake prompt                |
+| `scripts/src/services/machine/writeMachineState.ts`             | The watcher's write of its reading, renamed over the file it replaces      |
+| `scripts/src/services/resume/getWatcherItems.ts`                | The `watcher` row of `pnpm ai:resume`                                      |
