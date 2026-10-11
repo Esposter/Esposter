@@ -2,15 +2,25 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
 
+import type { WardRecord } from "../../../types";
+
 import { WardAnswer, WardAnswers } from "../../models/WardAnswer";
 import { InitialState } from "../InitialState";
 import { getCollidingRecord } from "./getCollidingRecord";
 import { getRecordsPath } from "./getRecordsPath";
 import { getRecordsWithEdit } from "./getRecordsWithEdit";
-import { readRecords } from "./readRecords";
+import { parseRecords } from "./parseRecords";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const AGE_FORMATTER = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+// The records file under the person's home folder, the home read from this file's own environment lookup
+const resolveRecordsPath = async ($: EngineInterface): Promise<string> =>
+  getRecordsPath((await $.env.get("HOME")) ?? (await $.env.get("USERPROFILE")) ?? "");
+
+// The records as the file holds them, none when it does not yet exist
+const readRecords = async ($: EngineInterface, path: string): Promise<Record<string, WardRecord>> =>
+  (await $.fs.exists(path)) ? parseRecords(await $.fs.read(path)) : {};
 
 // Before the edit: the question, when another session's record calls for one. After it: the edit recorded
 const ward = async (
@@ -19,7 +29,7 @@ const ward = async (
   proceed: () => Promise<ToolCallResult>,
 ): Promise<ToolCallResult> => {
   if (!(await read($, enabledModsAtom)).ward) return proceed();
-  const recordsPath = await getRecordsPath($);
+  const recordsPath = await resolveRecordsPath($);
   const sessionId = await $.session.id();
   const now = await $.clock.now();
   const collision = getCollidingRecord((await readRecords($, recordsPath))[path], sessionId, now);
