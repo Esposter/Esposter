@@ -16,5 +16,7 @@ export const computeChestInteractables = (
   chestPlaces.flatMap(({ id, kind, position: { x, z } }) => {
     const nameKey = ChestKindNameKeyMap[kind];
     if (!nameKey || !ChestKindRewardMap[kind] || openedChestIds.has(id)) return [];
-    return [{ id, kind: InteractionKind.Open, name: gameText[nameKey], position: { x, y: getGroundHeight(x, z), z } }];
+    return [
+      { id, kind: InteractionKind.Open, name: gameText[nameKey] ?? "", position: { x, y: getGroundHeight(x, z), z } },
+    ];
   });
