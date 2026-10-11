@@ -30,7 +30,7 @@ describe(readWholeScreenImages, () => {
       { height: 1730, title: "File:Handbook.png", url: "https://wiki/handbook", width: 3130 },
       { height: 1440, title: "File:Menu.png", url: "https://wiki/menu", width: 2560 },
     ]);
-    expect(fetch.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation).toString()}`);
+    expect(fetch.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation)}`);
   });
 
   test("fails on a batch the API answers with an error, rather than returning the batches before it", async () => {
