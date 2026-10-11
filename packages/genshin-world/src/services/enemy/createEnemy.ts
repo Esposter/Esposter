@@ -38,6 +38,7 @@ export const createEnemy = (
     internalCooldownMap: new Map(),
     level: spawnLevel,
     maxHealth,
+    moondriftHarmonyHits: [],
     patrol,
     patrolIndex: 0,
     poise: length,

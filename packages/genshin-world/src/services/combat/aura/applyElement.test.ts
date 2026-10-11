@@ -157,6 +157,27 @@ describe(applyElement, () => {
     expect(lunarBloomState.auras).toStrictEqual(bloomState.auras);
   });
 
+  test("crystallizes Hydro with Geo as Lunar-Crystallize where the party turns it Lunar, under no cooldown, keeping its sources", () => {
+    expect.hasAssertions();
+
+    const state = createElementalState();
+    const lunarReactionTypes = [LunarReactionType.LunarCrystallize];
+    applyElement(state, Element.Hydro, 2, { sourceId: 1 });
+    const reactions = [
+      ...applyElement(state, Element.Geo, 1, { lunarReactionTypes }),
+      ...applyElement(state, Element.Geo, 1, { lunarReactionTypes }),
+    ];
+
+    expect(reactions).toStrictEqual(
+      Array.from({ length: 2 }, () => ({
+        element: Element.Hydro,
+        reactionType: ReactionType.LunarCrystallize,
+        sourceIds: [1],
+      })),
+    );
+    expect(state.auras.get(AuraType.Hydro)?.gauge).toBeCloseTo(0.6);
+  });
+
   test("freezes a target with twice the gauge it consumed", () => {
     expect.hasAssertions();
 

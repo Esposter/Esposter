@@ -81,3 +81,23 @@ export const LUNAR_CHARGED_CLOUD_SECONDS = 5.5;
 export const LUNAR_CHARGED_CLOUD_FIRST_TICK_SECONDS = 9 / 60;
 export const LUNAR_CHARGED_CLOUD_TICK_SECONDS = 6 / 60;
 export const LUNAR_CHARGED_CLOUD_RADIUS = 8;
+// A Lunar-Crystallize counts toward the party's next Moondrift Harmony, up to 6. While fewer than 3 Moondrifts stand
+// Within 20 metres of the character on the field, it leaves as many more as make 3 about the enemy it struck, each a
+// Metre out, lasting 9 seconds. With 3 standing and 3 counted, it spends the 3 to resonate a Harmony, at most once in
+// 37 frames, firing a hit at the enemy 13, 25 and 37 frames on, each flying 10 frames more, and keeping the Moondrifts
+// Standing for 9 seconds again, as gcsim (MIT) pkg/reactable/lunarcrystallize.go has it
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcrystallize.go
+export const LUNAR_CRYSTALLIZE_MAXIMUM_COUNT = 6;
+export const MOONDRIFT_NEARBY_RADIUS = 20;
+export const MOONDRIFT_SECONDS = 9;
+export const MOONDRIFT_HARMONY_COUNT = 3;
+export const MOONDRIFT_HARMONY_COOLDOWN_SECONDS = 37 / 60;
+export const MOONDRIFT_HARMONY_HIT_SECONDS = [13, 25, 37].map((hitmarkFrames) => (hitmarkFrames + 10) / 60);
+// Provisional: gcsim leaves its Moondrifts a metre out from the enemy at three even bearings, marking their place a
+// Guess, until a recording of a Lunar-Crystallize shows where they stand
+// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcrystallize.go
+export const MOONDRIFT_OFFSETS = [
+  { x: 0, z: 1 },
+  { x: Math.sqrt(3) / 2, z: -0.5 },
+  { x: -Math.sqrt(3) / 2, z: -0.5 },
+];

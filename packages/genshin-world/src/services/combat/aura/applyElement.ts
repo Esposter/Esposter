@@ -23,6 +23,7 @@ import { consumeAuras } from "#src/services/combat/aura/consumeAuras";
 import { ElementAuraTypeMap } from "#src/services/combat/aura/ElementAuraTypeMap";
 import { ElementReactionStepsMap } from "#src/services/combat/aura/ElementReactionStepsMap";
 import { extinguishBurning } from "#src/services/combat/aura/extinguishBurning";
+import { getAuraSourceIds } from "#src/services/combat/aura/getAuraSourceIds";
 import { getLunarReactionType } from "#src/services/combat/aura/getLunarReactionType";
 import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged";
 
@@ -35,10 +36,10 @@ import { tickElectroCharged } from "#src/services/combat/aura/tickElectroCharged
 // And lasting its source's seconds at its source's rate, never decaying where those are Infinity. Electro coming to
 // Lie beside Hydro starts Electro-Charged, which ticks at once. Crystallize triggers once a second, however many auras
 // It could meet. A reaction the attacking party's Moonsign turns Lunar is recorded as its Lunar form, consuming as the
-// Reaction it replaces does. Where the Moonsign turns Electro-Charged Lunar, each Electro or Hydro that leaves the two
-// Lying together, with no Freeze over them, triggers Lunar-Charged instead, which ticks nothing of its own, as gcsim
-// (MIT) pkg/reactable/lunarcharged.go has each application trigger it. The aura an application leaves keeps its source's
-// Share
+// Reaction it replaces does, and a Lunar-Crystallize, under no cooldown, keeps the sources of the Hydro it consumed.
+// Where the Moonsign turns Electro-Charged Lunar, each Electro or Hydro that leaves the two lying together, with no
+// Freeze over them, triggers Lunar-Charged instead, which ticks nothing of its own, as gcsim (MIT)
+// Pkg/reactable/lunarcharged.go has each application trigger it. The aura an application leaves keeps its source's share
 export const applyElement = (
   state: ElementalState,
   element: Element,
@@ -79,7 +80,9 @@ export const applyElement = (
         ...reaction,
         spreadGauge: (swirledGauge - SWIRL_GAUGE_OFFSET) * SWIRL_GAUGE_SCALE + SWIRL_BASE_GAUGE,
       });
-    } else if (!isRecorded) reactions.push(reaction);
+    } else if (!isRecorded && reaction.reactionType === ReactionType.LunarCrystallize)
+      reactions.push({ ...reaction, sourceIds: getAuraSourceIds(state, AuraType.Hydro) });
+    else if (!isRecorded) reactions.push(reaction);
 
     consumeAuras(auras, auraTypes, consumedGauge);
     applyReactionAura(state, reaction.reactionType, consumedGauge);
