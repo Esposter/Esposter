@@ -1,0 +1,12 @@
+import { SITE_NAME } from "@esposter/shared";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// The repositories one GraphQL request names, each an aliased field of it
+export const GITHUB_GRAPHQL_BATCH_SIZE = 100;
+// Each package's verdict, keyed by name and locked version, so an unchanged catalog asks GitHub nothing
+export const SUPERSESSION_CACHE_PATH: string = join(
+  homedir(),
+  `.${SITE_NAME.toLowerCase()}`,
+  "supersession-cache.json",
+);
