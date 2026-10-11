@@ -71,7 +71,7 @@ const SPLITTING_GALES_ARROW_COUNT = 2;
 const SPLITTING_GALES_SHARE = 0.33;
 const SPLITTING_GALES_POISE_DAMAGE = 2;
 // Measured: gcsim v2.47.2 (MIT) venti/skill.go, the press's Wind Domain at 51 frames, which gcsim queues apart from the
-// Press's animation, so the press ends at its earliest cancel, 22 frames, and the domain lands from a summon. The hold's
+// Press's animation, so the press ends at its earliest cancel, 22 frames, and the domain lands past its end. The hold's
 // Lands at 74 frames, and the hold ends at its earliest cancel, its high plunge at 116, as its rise is not built
 const PRESS_HITMARK_FRAMES = 51;
 const PRESS_FRAMES = 22;
@@ -223,13 +223,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    elementalSkill: {
-      hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [pressHit])),
-      seconds: PRESS_FRAMES / 60,
-      targetingArea: SKILL_TARGETING_AREA,
-    },
+    elementalSkill: { hits: [pressHit], seconds: PRESS_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     elementalSkillHolds: [
       {
         action: {

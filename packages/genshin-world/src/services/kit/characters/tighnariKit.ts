@@ -9,8 +9,6 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Tighnari's proud skill groups, read at his talent level. The attack group holds his four strikes at 0, 1, 2 and 3, the
@@ -36,9 +34,9 @@ const NORMAL_ATTACK_FRAMES = [
 ];
 
 // Measured: gcsim v2.47.2 (MIT) tighnari/aimed.go, the fully charged shot's animation at 94 frames, its arrow at 86 and
-// Travelling 10 frames to its target, so it lands at 96 frames, as gcsim's arrow does when the animation's end is taken
+// Travelling 10 frames to its target, so it lands at 96 frames, past the animation's end
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/tighnari/aimed.go
-const FULL_CHARGE_FRAMES = 96;
+const FULL_CHARGE_FRAMES = 94;
 const FULL_CHARGE_HITMARK_FRAMES = 86 + ARROW_TRAVEL_FRAMES;
 
 // Measured: gcsim v2.47.2 (MIT) tighnari/skill.go, Vijnana-Phala Mine's hit at 20 frames, 15 for its release and 5 for its
@@ -85,8 +83,7 @@ export const createTighnariKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       poiseDamage: NO_POISE_DAMAGE,
       talentMultiplier: getTalentMultiplier(talentMultiplierMap, TIGHNARI_ATTACK_GROUP_ID, TALENT_START_LEVEL, index),
     })),
-    // The action runs until its arrow lands, which a hit past the cancel does not wait for otherwise
-    seconds: Math.max(cancelFrames, Math.max(...hitmarkFramesList) + ARROW_TRAVEL_FRAMES) / 60,
+    seconds: cancelFrames / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   });
   const fullyChargedArrowHit: KitHit = {
@@ -134,14 +131,7 @@ export const createTighnariKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     },
     chargedAttackStamina: 0,
     elementalBurst: {
-      // Tanglevine Shaft's hits and its secondary's land past the animation, so they are cast with the burst as a summon
-      hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
-        addKitEffect(
-          kitEffectState,
-          createKitSummon(body, combatant, [...tanglevineShaftHits, ...secondaryTanglevineShaftHits]),
-        );
-      },
+      hits: [...tanglevineShaftHits, ...secondaryTanglevineShaftHits],
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

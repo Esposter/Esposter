@@ -34,9 +34,8 @@ describe(createVentiKit, () => {
     const combatant = createVentiCombatant(0, 0);
     const party = createParty([VENTI_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
     VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
-    // The press's Wind Domain lands at 51 frames and the Stormeye's first tick at 106, the next falling past 2 seconds
+    // The Stormeye's first tick lands at 106 frames, the next falling past 2 seconds
     const summonStrikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
     const multipliers = [
       ...VENTI_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
@@ -44,6 +43,7 @@ describe(createVentiKit, () => {
       VENTI_KIT.plungeCollision.talentMultiplier,
       takeOne(VENTI_KIT.lowPlunge.hits).talentMultiplier,
       takeOne(VENTI_KIT.highPlunge.hits).talentMultiplier,
+      takeOne(VENTI_KIT.elementalSkill.hits).talentMultiplier,
       ...summonStrikes.map(({ hit }) => hit.talentMultiplier),
       takeOne(takeOne(VENTI_KIT.elementalSkillHolds ?? []).action.hits).talentMultiplier,
     ];
@@ -138,11 +138,14 @@ describe(createVentiKit, () => {
       const combatant = createVentiCombatant(0, constellationCount);
       const party = createParty([VENTI_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      VENTI_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party });
       const strikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
 
-      expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant))).toStrictEqual([skillStatus, burstStatus]);
+      expect(
+        [takeOne(VENTI_KIT.elementalSkill.hits), ...strikes.map(({ hit }) => hit)].map(({ enemyStatus }) =>
+          enemyStatus?.(combatant),
+        ),
+      ).toStrictEqual([skillStatus, burstStatus]);
     },
   );
 });

@@ -9,7 +9,7 @@ Ganyu's kit is one module, `createGanyuKit`, avatar 10000037: six strikes, a ful
 
 ## Decisions
 
-- **Ganyu's Ice Lotus explodes with its second multiplier, and her Bloom is cast with the shot.** gcsim queues one lotus multiplier for both hits; here the flower reads the table's first and the explosion its second, as the wiki's flower and explosion. The explosion lands as the taunt runs out, 373 frames after the cast, gcsim's. The Bloom outlasts the shot's animation, so it is a summon cast with the shot and lands 131 frames on. No source gives the lotus health, so it stands until its seconds run out.
+- **Ganyu's Ice Lotus explodes with its second multiplier, and her Bloom is the shot's own hit.** gcsim queues one lotus multiplier for both hits; here the flower reads the table's first and the explosion its second, as the wiki's flower and explosion. The explosion lands as the taunt runs out, 373 frames after the cast, gcsim's. The Bloom outlasts the shot's 113-frame animation and lands 131 frames on, queued past the shot's end as gcsim queues it, so it is dealt as a charged attack. No source gives the lotus health, so it stands until its seconds run out.
 
 ## Key files
 
