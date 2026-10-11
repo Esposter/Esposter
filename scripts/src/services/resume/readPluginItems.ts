@@ -11,13 +11,13 @@ interface InstalledPlugins {
   plugins: Record<string, unknown>;
 }
 
-interface ProjectSettings {
-  enabledPlugins?: Record<string, boolean>;
-}
-
 interface Marketplace {
   name: string;
   plugins: { name: string }[];
+}
+
+interface ProjectSettings {
+  enabledPlugins?: Record<string, boolean>;
 }
 
 export const readPluginItems = (): ResumeItem[] => {
@@ -37,6 +37,6 @@ export const readPluginItems = (): ResumeItem[] => {
   return getPluginItems(
     marketplace.name,
     marketplace.plugins.map(({ name }) => name),
-    Array.from(new Set([...Object.keys(installed.plugins), ...enabledKeys])),
+    [...new Set([...Object.keys(installed.plugins), ...enabledKeys])],
   );
 };
