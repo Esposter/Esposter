@@ -47,13 +47,13 @@ jobs:
       # `build-mode: none` keeps CodeQL off autobuild: neither language needs a build to be analysed, and the
       # Build this repository has is minutes of Nuxt for a scan that reads sources
       - name: 🔎 Initialise CodeQL
-        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
           build-mode: none
           languages: ${{ matrix.language }}
 
       - name: 🔎 Analyse
-        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
 
   # `analyze` uploads its findings and exits 0 whatever they are, so an alert is a fact on the Security tab and
   # Nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one
