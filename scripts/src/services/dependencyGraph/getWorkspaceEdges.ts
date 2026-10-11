@@ -1,9 +1,10 @@
+import type { PnpmDependency } from "#src/models/dependencyGraph/PnpmDependency";
+import type { PnpmProject } from "#src/models/dependencyGraph/PnpmProject";
 import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
 import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
 import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
-import { DependencyField } from "#src/models/shared/DependencyField";
-import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#src/services/dependencyGraph/constants";
+import { LINK_PREFIX } from "#src/services/dependencyGraph/constants";
 
 const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
 // Ordered by `<` on the key rather than by `localeCompare`, so the order is UTF-16 code units rather than the
@@ -16,29 +17,39 @@ const getSortedEdges = (workspaceEdges: Map<string, WorkspaceEdge>): WorkspaceEd
     .toSorted(([leftKey], [rightKey]) => (leftKey < rightKey ? -1 : 1))
     .map(([, workspaceEdge]) => workspaceEdge);
 
-export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): WorkspaceEdges => {
+// A sibling is an edge where pnpm links it, a `link:` to its folder. The runtime fields are `dependencies` and
+// `optionalDependencies`, as opposed to `devDependencies`, which only the package's build, lint, test and bench
+// Runs reach. Drawing the two apart is the whole point of this graph: every package depends on
+// `@esposter/configuration`, and reading that as a runtime edge inverts what the repo actually is.
+export const getWorkspaceEdges = (
+  workspacePackages: WorkspacePackage[],
+  pnpmProjects: PnpmProject[],
+): WorkspaceEdges => {
   const nameDirectoryMap = new Map(
     workspacePackages.flatMap(({ directory, manifest }) =>
       manifest.name === undefined ? [] : [[manifest.name, directory] as const],
     ),
   );
-  const getDependencyDirectories = (dependencies: Record<string, string> = {}): string[] =>
-    Object.entries(dependencies).flatMap(([name, specifier]) => {
+  const getLinkedDirectories = (dependencies: Record<string, PnpmDependency> = {}): string[] =>
+    Object.entries(dependencies).flatMap(([name, { version }]) => {
       const directory = nameDirectoryMap.get(name);
-      return directory !== undefined && specifier.startsWith(WORKSPACE_SPECIFIER_PREFIX) ? [directory] : [];
+      return directory !== undefined && version.startsWith(LINK_PREFIX) ? [directory] : [];
     });
   const runtime = new Map<string, WorkspaceEdge>();
   const development = new Map<string, WorkspaceEdge>();
 
-  for (const { directory, manifest } of workspacePackages) {
-    for (const field of RUNTIME_DEPENDENCY_FIELDS)
-      for (const to of getDependencyDirectories(manifest[field])) {
-        const workspaceEdge = { from: directory, to };
-        runtime.set(getEdgeKey(workspaceEdge), workspaceEdge);
-      }
+  for (const { dependencies, devDependencies, name, optionalDependencies } of pnpmProjects) {
+    // The root project is no workspace package, so it has no directory to draw from and no edge
+    const from = nameDirectoryMap.get(name);
+    if (from === undefined) continue;
 
-    for (const to of getDependencyDirectories(manifest[DependencyField.DevDependencies])) {
-      const workspaceEdge = { from: directory, to };
+    for (const to of [...getLinkedDirectories(dependencies), ...getLinkedDirectories(optionalDependencies)]) {
+      const workspaceEdge = { from, to };
+      runtime.set(getEdgeKey(workspaceEdge), workspaceEdge);
+    }
+
+    for (const to of getLinkedDirectories(devDependencies)) {
+      const workspaceEdge = { from, to };
       development.set(getEdgeKey(workspaceEdge), workspaceEdge);
     }
   }
