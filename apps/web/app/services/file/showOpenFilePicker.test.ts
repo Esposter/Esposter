@@ -5,9 +5,9 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 const getFileInput = () => takeOne([...document.querySelectorAll<HTMLInputElement>('input[type="file"]')]);
 
-const file = new File([], "a.png", { type: "image/png" });
-
 describe(showOpenFilePicker, () => {
+  const file = new File([], "a.png", { type: "image/png" });
+
   afterEach(() => {
     delete window.showOpenFilePicker;
   });

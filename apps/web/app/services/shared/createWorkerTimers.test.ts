@@ -4,8 +4,6 @@ import { TimerMethod } from "@/models/shared/TimerMethod";
 import { createWorkerTimers } from "@/services/shared/createWorkerTimers";
 import { describe, expect, test, vi } from "vitest";
 
-const delayMs = 10;
-
 // A worker stands in as a target that takes the page's requests and fires a timer by posting its id back
 const createFakeWorker = () =>
   Object.assign(new EventTarget(), { postMessage: vi.fn<(request: TimerRequest) => void>() });
@@ -14,6 +12,8 @@ const fireTimer = (worker: EventTarget, id: number) => {
 };
 
 describe(createWorkerTimers, () => {
+  const delayMs = 10;
+
   test("hands out ids from 1 and posts each request to the worker", () => {
     expect.hasAssertions();
     const worker = createFakeWorker();

@@ -3,8 +3,6 @@ import type { TimerRequest } from "@/models/shared/TimerRequest";
 import { TimerMethod } from "@/models/shared/TimerMethod";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const delayMs = 10;
-
 // The worker module attaches its listener as it loads, so each test loads a fresh copy against a fake worker scope
 const loadWorker = async () => {
   const scope = {
@@ -23,6 +21,8 @@ const loadWorker = async () => {
 };
 
 describe("timer.worker", () => {
+  const delayMs = 10;
+
   beforeEach(() => {
     vi.resetModules();
     vi.useFakeTimers();

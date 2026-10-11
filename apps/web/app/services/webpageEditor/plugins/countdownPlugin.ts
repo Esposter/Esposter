@@ -136,12 +136,12 @@ export const countdownPlugin: Plugin = (editor) => {
   editor.Components.addType(COUNTDOWN_ID, {
     model: {
       defaults: {
-        "script-props": ["startfrom", "endText"],
         classes: [CLASS_PREFIX],
         components: countdownComponents,
         droppable: false,
         endText: "EXPIRED",
         script: countdownScript,
+        "script-props": ["startfrom", "endText"],
         startfrom: "",
         styles: countdownStyle,
         traits: [

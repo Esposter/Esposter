@@ -10,9 +10,9 @@ const selectFiles = (input: HTMLInputElement, files: File[]) => {
   input.dispatchEvent(new Event("change"));
 };
 
-const types = [{ accept: { "image/png": [".png"] } }, { accept: { "text/plain": [".txt", ".md"] } }];
-
 describe(pickFileInput, () => {
+  const types = [{ accept: { "image/png": [".png"] } }, { accept: { "text/plain": [".txt", ".md"] } }];
+
   test("accepts the mime type and the extensions of every type", () => {
     expect.hasAssertions();
 
