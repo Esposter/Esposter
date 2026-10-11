@@ -9,12 +9,15 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const ENTRIES_OPENING = '"AssetEntries": [';
 const ENTRIES_CLOSING = "]";
 const SOURCE_PREFIX = '"Source": "';
+// What follows a root in a source, as the file escapes it: AnimeStudio writes the platform's own separator, a
+// Backslash on Windows
+const ROOT_SEPARATORS = ["/", String.raw`\\`];
 
 export const mergeAssetMapLines = async function* (
   shards: AssetMapLines[],
   blocksRoot: string,
 ): AsyncGenerator<string> {
-  const to = `${toEscaped(blocksRoot)}/`;
+  const to = toEscaped(blocksRoot);
   const trailer: string[] = [];
   // The last entry read, held until the entry after it shows whether it takes a comma
   let previous: string[] | undefined;
@@ -26,7 +29,7 @@ export const mergeAssetMapLines = async function* (
   for await (const { index, line, root } of readShardLines(shards)) {
     if (index !== shardIndex) {
       shardIndex = index;
-      from = `${toEscaped(root)}/`;
+      from = toEscaped(root);
       inEntries = false;
       inTrailer = false;
       entry = undefined;
@@ -76,9 +79,10 @@ const toEscaped = (path: string): string => JSON.stringify(path).slice(1, -1);
 // The index reads every source relative to the installed blocks, so a stray one would index as another block
 const rebaseSource = (line: string, from: string, to: string, root: string): string => {
   const start = line.indexOf(SOURCE_PREFIX) + SOURCE_PREFIX.length;
-  if (!line.startsWith(from, start))
+  const end = start + from.length;
+  if (!line.startsWith(from, start) || !ROOT_SEPARATORS.some((separator) => line.startsWith(separator, end)))
     throw new InvalidOperationError(Operation.Read, root, `holds a source outside it: ${line.trim()}`);
-  return `${line.slice(0, start)}${to}${line.slice(start + from.length)}`;
+  return `${line.slice(0, start)}${to}${line.slice(end)}`;
 };
 
 // The entry's last line, the closing brace, with the comma that says another entry follows it. AnimeStudio writes that

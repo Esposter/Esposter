@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-// A shard's asset map as AnimeStudio writes it, one entry naming the block its source is under the shard's root, the
-// Source JSON-escaped as a Windows path's backslashes are
+// A shard's asset map as AnimeStudio writes it, one entry naming the block its source is under the shard's root by the
+// Platform's own separators, JSON-escaped as a Windows path's backslashes are
 const createShardText = (root: string, name: string): string =>
   [
     "{",
@@ -14,7 +14,7 @@ const createShardText = (root: string, name: string): string =>
     '  "AssetEntries": [',
     "    {",
     `      "Name": "${name}",`,
-    `      "Source": ${JSON.stringify(`${root}/00/1.blk`)},`,
+    `      "Source": ${JSON.stringify(join(root, "00", "1.blk"))},`,
     '      "PathID": 1',
     "    }",
     "  ]",
@@ -39,14 +39,16 @@ describe(writeMergedAssetMap, () => {
     const [first, second] = [join(directory, "first.json"), join(directory, "second.json")];
     writeFileSync(first, createShardText(join(directory, "first-blocks"), "a"));
     writeFileSync(second, createShardText(join(directory, "second-blocks"), "b"));
+    const blocksRoot = join(directory, "blocks");
     const output = join(directory, "merged.json");
+    const source = `      "Source": ${JSON.stringify(join(blocksRoot, "00", "1.blk"))},`;
 
     await writeMergedAssetMap(
       [
         { path: first, root: join(directory, "first-blocks") },
         { path: second, root: join(directory, "second-blocks") },
       ],
-      "/game/blocks",
+      blocksRoot,
       output,
     );
 
@@ -57,12 +59,12 @@ describe(writeMergedAssetMap, () => {
         '  "AssetEntries": [',
         "    {",
         '      "Name": "a",',
-        '      "Source": "/game/blocks/00/1.blk",',
+        source,
         '      "PathID": 1',
         "    },",
         "    {",
         '      "Name": "b",',
-        '      "Source": "/game/blocks/00/1.blk",',
+        source,
         '      "PathID": 1',
         "    }",
         "  ]",

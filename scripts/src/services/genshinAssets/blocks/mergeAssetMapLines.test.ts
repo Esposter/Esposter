@@ -59,16 +59,32 @@ describe(mergeAssetMapLines, () => {
     ]);
   });
 
+  test("rebases a Windows source, its backslashes escaped as AnimeStudio writes them", async () => {
+    expect.hasAssertions();
+
+    const merged = await merge(
+      [
+        {
+          lines: createShard([createEntry("a", String.raw`C:\\shards\\0\\blocks\\00\\1.blk`, "    }")]),
+          root: String.raw`C:\shards\0\blocks`,
+        },
+      ],
+      String.raw`C:\game\blocks`,
+    );
+
+    expect(merged).toContain(String.raw`      "Source": "C:\\game\\blocks\\00\\1.blk",`);
+  });
+
   test("refuses a source outside its shard's blocks, which the index would read as another block", async () => {
     expect.hasAssertions();
 
     await expect(
       merge(
-        [{ lines: createShard([createEntry("a", "/elsewhere/00/1.blk", "    }")]), root: "/shards/0/blocks" }],
+        [{ lines: createShard([createEntry("a", "/shards/0/blocks2/00/1.blk", "    }")]), root: "/shards/0/blocks" }],
         "/game/blocks",
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: /shards/0/blocks, holds a source outside it: "Source": "/elsewhere/00/1.blk",]`,
+      `[InvalidOperationError: Invalid operation: Read, name: /shards/0/blocks, holds a source outside it: "Source": "/shards/0/blocks2/00/1.blk",]`,
     );
   });
 });
