@@ -146,7 +146,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   // The ring's first tick lands 90 frames after its start, and each tick's DMG and healing reads the ring's caster as it
   // Stood at the cast, with its heal from the caster's Max HP and its Elemental Mastery at Ascension 4
-  const createRing = (body: KitBody, combatant: Combatant): KitField => {
+  const createRing = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
     const ringTickHit: KitHit = {
       additiveBaseDamageBonus: (striker) =>
         striker.ascension >= ASCENSION_4
@@ -163,7 +163,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       getTalentMultiplier(talentMultiplierMap, KUKI_SKILL_GROUP_ID, TALENT_START_LEVEL, 5) +
       (combatant.constellationCount >= RING_CONSTELLATION ? RING_CONSTELLATION_SECONDS : 0);
     return {
-      centre: { x: body.position.x, z: body.position.z },
+      centre: { x: position.x, z: position.z },
       characterId: combatant.characterId,
       kind: "field",
       nextTickSeconds: (RING_START_FRAMES + RING_TICK_INTERVAL_FRAMES) / 60,
@@ -178,7 +178,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           (skillTalentMultiplier(3) * combatant.attributes.maxHealth + skillTalentMultiplier(2) + ascensionHealing) /
             activeCombatant.attributes.maxHealth,
         );
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [ringTickHit]));
+        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, [ringTickHit]));
       },
       radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: RING_START_FRAMES / 60 + ringSeconds + SUMMON_LINGER_SECONDS,

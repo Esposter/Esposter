@@ -232,7 +232,7 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [ritualHit],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         if (combatant.constellationCount >= CONSTELLATION_2)
           addKitEffect(kitEffectState, {
             amount: CONSTELLATION_2_STACK,
@@ -245,12 +245,12 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const tickSeconds =
           (combatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_TICK_FRAMES : SOUNDWAVE_TICK_FRAMES) / 60;
         const field: KitField = {
-          centre: { x: body.position.x, z: body.position.z },
+          centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,
           kind: "field",
           nextTickSeconds: tickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            addKitEffect(tickEffectState, createKitSummon(body, combatant, [soundwaveHit]));
+            addKitEffect(tickEffectState, createKitSummon({ facing, height, position }, combatant, [soundwaveHit]));
           },
           radius: FIELD_RADIUS,
           secondsRemaining: getTalentMultiplier(talentMultiplierMap, ORORON_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

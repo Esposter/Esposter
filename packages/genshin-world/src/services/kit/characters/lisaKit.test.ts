@@ -12,7 +12,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLisaKit, LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -58,7 +58,7 @@ describe("lisa kit", () => {
     const context = createKitTestContext(createLisaCombatant(), { kitEffectState });
     LISA_KIT.elementalBurst.onStart?.(context);
 
-    const discharges = stepKitEffects(17, context);
+    const discharges = stepKitTestEffects(17, context);
     expect(discharges).toHaveLength(30);
     expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
     expect(kitEffectState.effects).toStrictEqual([]);

@@ -8,6 +8,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { BEIDOU_CHARACTER_ID, createBeidouKit } from "#src/services/kit/characters/beidouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -33,7 +34,7 @@ describe(createBeidouKit, () => {
     const context = createKitTestContext(createBeidouCombatant(0));
     BEIDOU_KIT.elementalBurst.onStart?.(context);
     takeOne(BEIDOU_KIT.normalAttacks).onStart?.(context);
-    const discharges = stepKitEffects(1, context);
+    const discharges = stepKitTestEffects(1, context);
     const multipliers = [
       ...BEIDOU_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
       ...BEIDOU_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
@@ -81,9 +82,9 @@ describe(createBeidouKit, () => {
     BEIDOU_KIT.elementalBurst.onStart?.(context);
     firstStrike.onStart?.(context);
     takeOne(BEIDOU_KIT.normalAttacks, 1).onStart?.(context);
-    const strikeDischarges = stepKitEffects(2, context);
+    const strikeDischarges = stepKitTestEffects(2, context);
     BEIDOU_KIT.chargedAttack.onStart?.(context);
-    const chargedAttackDischarges = stepKitEffects(2, context);
+    const chargedAttackDischarges = stepKitTestEffects(2, context);
     // The Targe's 15 seconds run out, so a strike after them discharges nothing
     stepKitEffects(11, context);
     firstStrike.onStart?.(context);
@@ -110,7 +111,7 @@ describe(createBeidouKit, () => {
       const movedBody = { x: 3, z: 4 };
       BEIDOU_KIT.elementalBurst.onStart?.(context);
       context.body = { facing: 0, height: 0, position: movedBody };
-      const ticks = stepKitEffects(15, context);
+      const ticks = stepKitTestEffects(15, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.enemyStatus?.(combatant)])).toStrictEqual(
         Array.from({ length: tickCount }, () => [

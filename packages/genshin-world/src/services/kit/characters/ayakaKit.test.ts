@@ -9,6 +9,7 @@ import { AYAKA_CHARACTER_ID, createAyakaKit } from "#src/services/kit/characters
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -55,7 +56,7 @@ describe(createAyakaKit, () => {
       const kitEffectState: KitEffectState = { effects: [] };
       const context = createKitTestContext(combatant, { kitEffectState });
       AYAKA_KIT.elementalBurst.onStart?.(context);
-      const strikes = stepKitEffects(7, context);
+      const strikes = stepKitTestEffects(7, context);
 
       expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual(
         damageShares.flatMap((damageShare) => [

@@ -171,15 +171,15 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     chargedAttackStamina: attackTalentMultiplier(7),
     elementalBurst: {
       hits: [ritesSlashHit, ritesLanceHit],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         const field: KitField = {
-          centre: { x: body.position.x, z: body.position.z },
+          centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,
           id: RITES_FIELD_ID,
           kind: "field",
           nextTickSeconds: RITES_LANCE_HITMARK_FRAMES / 60 + RITES_TICK_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) =>
-            addKitEffect(tickEffectState, createKitSummon(body, combatant, [ritesTickHit])),
+            addKitEffect(tickEffectState, createKitSummon({ facing, height, position }, combatant, [ritesTickHit])),
           radius: RITES_TICK_HIT_AREA.radius,
           secondsRemaining:
             burstTalentMultiplier(3) +

@@ -9,15 +9,21 @@ import { PROOF_PARTY_CHARACTER_IDS } from "#src/services/kit/constants.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.test";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
-import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-// The strike log is read off the strikes each step hands the enemies, the strike itself left to run as it does
+// The strike log is the strikes each step hands the enemies, copied as they are handed, since the step empties its list
+// For the next, the strike itself left to run as it does
+const strikeLog = vi.hoisted((): KitStrike[] => []);
 vi.mock(import("#src/services/kit/strikeKitEnemies"), async (importOriginal) => {
   const actual = await importOriginal();
-  return { strikeKitEnemies: vi.fn<typeof actual.strikeKitEnemies>(actual.strikeKitEnemies) };
+  return {
+    strikeKitEnemies: (strikes, context) => {
+      strikeLog.push(...strikes);
+      actual.strikeKitEnemies(strikes, context);
+    },
+  };
 });
 
 // A strike log's digest: its strikes' count and, by attack tag, the sum of their multipliers
@@ -68,11 +74,10 @@ describe(stepActiveKit, () => {
         tablesPromise,
         readCharacterKits(GAME_DATA_LOCAL_BASE_URL, characterIds),
       ]);
+      strikeLog.length = 0;
       replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat: true, statTables });
 
-      await expect(
-        toReplayDigest(vi.mocked(strikeKitEnemies).mock.calls.flatMap(([stepStrikes]) => stepStrikes)),
-      ).toMatchFileSnapshot(snapshotPath);
+      await expect(toReplayDigest(strikeLog)).toMatchFileSnapshot(snapshotPath);
     },
   );
 });

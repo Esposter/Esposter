@@ -6,7 +6,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createKaeyaKit, KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -47,7 +47,7 @@ describe("kaeya kit", () => {
     const context = createKitTestContext(createKaeyaCombatant());
     KAEYA_KIT.elementalBurst.onStart?.(context);
 
-    const icicles = stepKitEffects(9, context);
+    const icicles = stepKitTestEffects(9, context);
     expect(icicles).toHaveLength(13);
     expect(icicles.every(({ hit }) => hit.talentMultiplier === 0.776 && hit.element === "Ice")).toBe(true);
     expect(context.kitEffectState.effects).toStrictEqual([]);

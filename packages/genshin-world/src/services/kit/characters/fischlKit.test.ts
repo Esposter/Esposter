@@ -15,7 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createFischlKit, FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -206,7 +206,7 @@ describe(createFischlKit, () => {
     const context = createKitTestContext(createFischlCombatant(0, 4));
     getPartyMember(context.party, FISCHL_CHARACTER_ID).healthShare = 0.5;
     FISCHL_KIT.elementalBurst.onStart?.(context);
-    const strikes = stepKitEffects(114 / 60, context);
+    const strikes = stepKitTestEffects(114 / 60, context);
 
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([2.22]);
     expect(getPartyMember(context.party, FISCHL_CHARACTER_ID).healthShare).toBeCloseTo(0.7);

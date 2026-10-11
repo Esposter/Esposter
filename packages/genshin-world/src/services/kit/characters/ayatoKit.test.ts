@@ -24,7 +24,7 @@ const AYATO_KIT = createAyatoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BAS
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit =>
-  takeOne(findStance(kitEffectState)?.kit.normalAttacks[index]?.hits ?? []);
+  takeOne(findStance(kitEffectState)?.combatant.kit.normalAttacks[index]?.hits ?? []);
 
 describe(createAyatoKit, () => {
   const stacksAfterStrikes = (constellationCount: number): number => {
@@ -103,7 +103,7 @@ describe(createAyatoKit, () => {
       hitmarkFrames: Math.round(illusionHit.hitmarkSeconds * 60),
       multiplier: illusionHit.talentMultiplier,
       stanceSeconds: findStance(kitEffectState)?.secondsRemaining,
-      strikes: findStance(kitEffectState)?.kit.normalAttacks.length,
+      strikes: findStance(kitEffectState)?.combatant.kit.normalAttacks.length,
     }).toStrictEqual({ hitmarkFrames: 35, multiplier: 1.0148, stanceSeconds: 6, strikes: 3 });
   });
 

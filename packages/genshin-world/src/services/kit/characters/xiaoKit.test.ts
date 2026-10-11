@@ -11,7 +11,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createXiaoKit, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -35,7 +35,7 @@ const createXiaoCombatant = (ascension: number): Combatant => ({
 // Runs the team's effects on at the world's fixed step for the given seconds, as the world steps them
 const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
   Array.from({ length: Math.round(seconds / FIXED_STEP_SECONDS) }, () =>
-    stepKitEffects(FIXED_STEP_SECONDS, context),
+    stepKitTestEffects(FIXED_STEP_SECONDS, context),
   ).flat();
 
 describe(createXiaoKit, () => {
@@ -108,7 +108,7 @@ describe(createXiaoKit, () => {
       const waitSeconds = [1, 1, 1, 9, 1];
       const damageBonuses = waitSeconds.flatMap((seconds) => {
         XIAO_KIT.elementalSkill.onStart?.(context);
-        return stepKitEffects(seconds, context).map(({ hit }) => hit.damageBonus);
+        return stepKitTestEffects(seconds, context).map(({ hit }) => hit.damageBonus);
       });
 
       expect(damageBonuses).toStrictEqual(stackCounts.map((stacks) => (stacks === 0 ? undefined : 0.15 * stacks)));

@@ -1,10 +1,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { ActiveKitControls } from "#src/models/kit/ActiveKitControls";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHit } from "#src/services/gathering/readOreHit";
@@ -14,13 +12,13 @@ import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSum
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { infuseKitHit } from "#src/services/kit/effects/infuseKitHit";
-import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
+import { sendKitOutbox } from "#src/services/kit/sendKitOutbox";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
@@ -32,6 +30,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
 import { stepMoondrifts } from "#src/services/party/stepMoondrifts";
 import { stepVerdantDew } from "#src/services/party/stepVerdantDew";
+import { takeOne } from "@esposter/shared";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place on the world's
 // Combat state: a swap since the last step and the events raised since, the strikes the team's taunts took among them,
@@ -43,7 +42,8 @@ import { stepVerdantDew } from "#src/services/party/stepVerdantDew";
 // Turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes
 // The Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for
 // Its Energy, and the changes to the members' HP are sent last. A character whose combatant is not built yet, its talent
-// Multipliers still in flight, plays nothing until they arrive
+// Multipliers still in flight, plays nothing until they arrive. The body and every list the step fills are the context's
+// And the controls' own, written in place and emptied by their length, so a step where nothing lands allocates nothing
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -51,36 +51,35 @@ export const stepActiveKit = (
   context: KitContext,
   { aimYaw, characterController, isAimHeld, landedHits, strikeOre }: ActiveKitControls,
 ): void => {
-  const { characterIdCombatantMap, enemyMap, kitEffectState, outbox, party, random } = context;
+  const { body, characterIdCombatantMap, enemyMap, expiredEffects, kitEffectState, outbox, party, random, strikes } =
+    context;
   const characterId = getActiveCharacterId(party);
   const fieldCombatant = characterIdCombatantMap.get(characterId);
   if (!fieldCombatant) return;
-  const stance = findKitStance(kitEffectState.effects, characterId);
-  const kit = stance?.kit ?? fieldCombatant.kit;
-  const combatant = stance ? { ...fieldCombatant, kit } : fieldCombatant;
+  const combatant = findKitStance(kitEffectState.effects, characterId)?.combatant ?? fieldCombatant;
+  const { kit } = combatant;
   const { position } = characterController;
-  const kitBody = { facing: characterController.facing, height: input.height, position };
+  body.facing = characterController.facing;
+  body.height = input.height;
+  body.position = position;
   context.activeCombatant = combatant;
-  context.body = kitBody;
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== undefined && fieldCharacterId !== characterId)
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
-  for (const event of outbox) emitKitEvent(event, context);
-  outbox.length = 0;
-  const expiredEffects: KitEffect[] = [];
-  const summonStrikes = stepKitEffects(stepSeconds, context, expiredEffects);
+  sendKitOutbox(context);
+  stepKitEffects(stepSeconds, context);
   for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
   pickUpCrystallizeShards(kitEffectState, position);
-  for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emitKitEvent(event, context);
+  tickEnemyStatuses(enemyMap.values(), stepSeconds, outbox);
+  sendKitOutbox(context);
   strikeElementalTicks(context);
   strikeLunarChargedCloud(stepSeconds, position, context);
   strikeMoondriftHarmonyHits(stepSeconds, context);
   burstKitDendroCores(expiredEffects, context);
   const infusion = getKitInfusion(kitEffectState.effects, characterId);
-  const landedStart = landedHits.length;
   const action = stepKit(
     kitState,
     kit,
@@ -91,24 +90,19 @@ export const stepActiveKit = (
     landedHits,
     context,
   );
-  // The ores are struck by the hits as the kit gives them, before an infusion copies them
-  const stepHits = landedHits.slice(landedStart);
-  const landedOreHits = stepHits.map((hit) => readOreHit(combatant, hit));
-  if (infusion !== undefined)
-    for (const [index, hit] of stepHits.entries()) landedHits[landedStart + index] = infuseKitHit(hit, infusion);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
   let target: Enemy | undefined;
   if (action?.isAimed && isAimHeld) {
     characterController.face(aimYaw);
-    kitBody.facing = characterController.facing;
+    body.facing = characterController.facing;
   } else if (action) {
-    target = selectAttackTarget(action.targetingArea, kitBody, enemyMap.values());
+    target = selectAttackTarget(action.targetingArea, body, enemyMap.values());
     if (target) {
       const dx = target.position.x - position.x;
       const dz = target.position.z - position.z;
       characterController.face(Math.atan2(-dx, -dz));
-      kitBody.facing = characterController.facing;
+      body.facing = characterController.facing;
     }
   }
 
@@ -121,26 +115,39 @@ export const stepActiveKit = (
   // A start keeps the body it began from, as a field or summon it casts ticks from where it began, not where the body has moved
   action?.onStart?.({ ...context, body: copyKitBody(kitBody) }, target);
   if (action) coordinateKitSummons(action, context);
-  for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
+  // The ores are struck by the hits as the kit gives them, before an infusion copies them
+  for (const hit of landedHits) strikeOre(body, readOreHit(combatant, hit));
   // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
-  const landedFirstHits = new Set([...stepHits, ...summonStrikes.map(({ hit }) => hit)]);
-  for (const normalAttack of kit.normalAttacks) {
-    const [firstHit] = normalAttack.hits;
-    if (firstHit && landedFirstHits.has(firstHit))
-      emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-  }
+  if (landedHits.length > 0 || strikes.length > 0)
+    for (const normalAttack of kit.normalAttacks) {
+      const [firstHit] = normalAttack.hits;
+      if (firstHit && (landedHits.includes(firstHit) || strikes.some(({ hit }) => hit === firstHit)))
+        emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
+    }
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their infusions,
-  // And the step's own hits from the turned body and the character on the field
-  const strikes: KitStrike[] = [
-    ...summonStrikes.map((strike) => infuseKitStrike(strike, kitEffectState.effects)),
-    ...landedHits.map((hit): KitStrike => ({ attackTag: hit.attackTag, body: kitBody, combatant, hit })),
-  ];
+  // And the step's own hits from the turned body and the character on the field, infused by the infusion it started with
+  for (const strike of strikes) {
+    const strikeInfusion = getKitInfusion(kitEffectState.effects, strike.combatant.characterId);
+    if (strikeInfusion !== undefined) strike.hit = infuseKitHit(strike.hit, strikeInfusion);
+  }
+  for (const hit of landedHits)
+    strikes.push({
+      attackTag: hit.attackTag,
+      body,
+      combatant,
+      hit: infusion === undefined ? hit : infuseKitHit(hit, infusion),
+    });
   landedHits.length = 0;
-  gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, context), party, random);
+  if (strikes.length > 0) {
+    strikeKitEnemies(strikes, context);
+    gainKitAttackEnergy(kitState, strikes, party, random);
+  }
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
   // And a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;
-  party.healthChanges = [];
-  for (const healthChange of healthChanges)
-    emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
+  const sentCount = healthChanges.length;
+  for (let index = 0; index < sentCount; index++)
+    emitKitEvent({ ...takeOne(healthChanges, index), kind: KitEventKind.HealthChanged }, context);
+  healthChanges.copyWithin(0, sentCount);
+  healthChanges.length -= sentCount;
 };

@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -100,12 +101,14 @@ describe(createHuTaoKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
-    const bloodBlossom = stance?.kit.chargedAttack.hits[0]?.enemyStatus?.(combatant);
+    const bloodBlossom = stance?.combatant.kit.chargedAttack.hits[0]?.enemyStatus?.(combatant);
     if (!bloodBlossom) throw new Error("the Paramita's charged attack gave no Blood Blossom");
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses: [bloodBlossom] };
 
     // Each tick falls due one interval on, which a step of that many seconds reaches
-    for (const event of tickEnemyStatuses([enemy], bloodBlossom.tickIntervalSeconds ?? 0))
+    const outbox: KitEvent[] = [];
+    tickEnemyStatuses([enemy], bloodBlossom.tickIntervalSeconds ?? 0, outbox);
+    for (const event of outbox)
       HU_TAO_KIT.onKitEvent?.(
         event,
         createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), kitEffectState }),

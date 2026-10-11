@@ -95,7 +95,7 @@ describe(createCynoKit, () => {
     const buff = kitEffectState.effects.find((effect) => effect.kind === "buff");
 
     expect({
-      normalAttacks: findStance(kitEffectState)?.kit.normalAttacks.length,
+      normalAttacks: findStance(kitEffectState)?.combatant.kit.normalAttacks.length,
       secondsRemaining: Math.round((findStance(kitEffectState)?.secondsRemaining ?? 0) * 1000) / 1000,
       statAmount: buff?.kind === "buff" ? buff.amount : undefined,
       statAttribute: buff?.kind === "buff" ? buff.attribute : undefined,
@@ -112,7 +112,7 @@ describe(createCynoKit, () => {
     const combatant = createCynoCombatant();
     const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
     const stanceSeconds = findStance(kitEffectState)?.secondsRemaining ?? 0;
-    const mortuaryRite = findStance(kitEffectState)?.kit.elementalSkill;
+    const mortuaryRite = findStance(kitEffectState)?.combatant.kit.elementalSkill;
     const context = createKitTestContext(combatant, { kitEffectState });
     for (let cast = 0; cast < 3; cast++) mortuaryRite?.onStart?.(context);
 
@@ -145,7 +145,7 @@ describe(createCynoKit, () => {
   test("ascension 4 adds 150% of Elemental Mastery to a Pactsworn normal attack, and none before it", () => {
     expect.hasAssertions();
     const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
-    const hit = takeOne(takeOne(stance?.kit.normalAttacks ?? []).hits);
+    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
 
     expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
   });

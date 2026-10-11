@@ -476,7 +476,9 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       if (
         musouIsshin &&
         striker.characterId === characterId &&
-        [...musouIsshin.kit.normalAttacks, musouIsshin.kit.chargedAttack].some(({ hits }) => hits.includes(hit)) &&
+        [...musouIsshin.combatant.kit.normalAttacks, musouIsshin.combatant.kit.chargedAttack].some(({ hits }) =>
+          hits.includes(hit),
+        ) &&
         restoreCount < RESTORE_MAX_COUNT &&
         !checkHasKitStatus(kitEffectState.effects, characterId, RESTORE_ICD_ID)
       ) {

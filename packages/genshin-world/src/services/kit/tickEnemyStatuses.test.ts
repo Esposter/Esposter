@@ -1,3 +1,5 @@
+import type { KitEvent } from "#src/models/kit/KitEvent";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -14,7 +16,11 @@ describe(tickEnemyStatuses, () => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const status = { damageTakenBonus: 0, id: "", nextTickSeconds: 1, secondsRemaining: 3, tickIntervalSeconds: 1 };
     addEnemyStatus(enemy, { ...status });
-    const tickCounts = [0.5, 0.5, 2.5].map((stepSeconds) => tickEnemyStatuses([enemy], stepSeconds).length);
+    const tickCounts = [0.5, 0.5, 2.5].map((stepSeconds) => {
+      const outbox: KitEvent[] = [];
+      tickEnemyStatuses([enemy], stepSeconds, outbox);
+      return outbox.length;
+    });
     addEnemyStatus(enemy, { ...status });
 
     expect(tickCounts).toStrictEqual([0, 1, 2]);
@@ -32,6 +38,9 @@ describe(tickEnemyStatuses, () => {
       tickIntervalSeconds: 1,
     });
 
-    expect(tickEnemyStatuses([enemy], 1)).toStrictEqual([]);
+    const outbox: KitEvent[] = [];
+    tickEnemyStatuses([enemy], 1, outbox);
+
+    expect(outbox).toStrictEqual([]);
   });
 });

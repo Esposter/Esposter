@@ -71,7 +71,7 @@ describe(createWandererKit, () => {
       (effect): effect is KitStance => effect.kind === "stance",
     );
     expect({
-      firstStrikeMultiplier: stance?.kit.normalAttacks[0]?.hits[0]?.talentMultiplier,
+      firstStrikeMultiplier: stance?.combatant.kit.normalAttacks[0]?.hits[0]?.talentMultiplier,
       secondsRemaining: stance?.secondsRemaining,
     }).toStrictEqual({ firstStrikeMultiplier: 1.329825 * 0.68714, secondsRemaining: 10 });
   });

@@ -6,7 +6,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AMBER_CHARACTER_ID, createAmberKit } from "#src/services/kit/characters/amberKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -46,8 +46,8 @@ describe("amber kit", () => {
     AMBER_KIT.elementalSkill.onStart?.(context);
 
     // Landing and the eight seconds after it leave the bunny standing until its timer runs out
-    expect(stepKitEffects(8, context)).toStrictEqual([]);
-    const explosions = stepKitEffects(1, context);
+    expect(stepKitTestEffects(8, context)).toStrictEqual([]);
+    const explosions = stepKitTestEffects(1, context);
     expect(explosions.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.232]);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -58,7 +58,7 @@ describe("amber kit", () => {
     const context = createKitTestContext(createAmberCombatant(), { kitEffectState });
     AMBER_KIT.elementalBurst.onStart?.(context);
 
-    const arrows = stepKitEffects(4, context);
+    const arrows = stepKitTestEffects(4, context);
     expect(arrows).toHaveLength(18);
     expect(arrows.every(({ hit }) => hit.talentMultiplier === 0.2808)).toBe(true);
     expect(kitEffectState.effects).toStrictEqual([]);

@@ -199,9 +199,9 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         const field: KitField = {
-          centre: { x: body.position.x, z: body.position.z },
+          centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,
           kind: "field",
           nextTickSeconds: CELESTIAL_SHOWER_START_FRAMES / 60,
@@ -215,7 +215,10 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });
-            addKitEffect(tickEffectState, createKitSummon(body, combatant, [celestialShowerHit]));
+            addKitEffect(
+              tickEffectState,
+              createKitSummon({ facing, height, position }, combatant, [celestialShowerHit]),
+            );
           },
           radius: CELESTIAL_SHOWER_RADIUS,
           secondsRemaining:

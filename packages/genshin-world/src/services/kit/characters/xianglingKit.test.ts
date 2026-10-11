@@ -9,6 +9,7 @@ import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createXianglingKit, XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -35,7 +36,7 @@ describe(createXianglingKit, () => {
     XIANGLING_KIT.elementalSkill.onStart?.(context);
     XIANGLING_KIT.elementalBurst.onStart?.(context);
     // Guoba's first breath lands at 126 frames and the Pyronado's first tick at 56, its next falling at 129
-    const summonStrikes = stepKitEffects(2.12, context);
+    const summonStrikes = stepKitTestEffects(2.12, context);
     const multipliers = [
       ...XIANGLING_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(XIANGLING_KIT.chargedAttack.hits).talentMultiplier,
@@ -75,7 +76,7 @@ describe(createXianglingKit, () => {
       const kitEffectState: KitEffectState = { effects: [] };
       const context = createKitTestContext(combatant, { kitEffectState });
       XIANGLING_KIT.elementalSkill.onStart?.(context);
-      const breaths = stepKitEffects(8, context);
+      const breaths = stepKitTestEffects(8, context);
 
       expect(
         breaths.map(({ body: { position }, hit }) => [position, hit.hitArea.radius, hit.enemyStatus?.(combatant)]),
@@ -124,7 +125,7 @@ describe(createXianglingKit, () => {
       const movedBody = { x: 3, z: 4 };
       XIANGLING_KIT.elementalBurst.onStart?.(context);
       context.body = { facing: 0, height: 0, position: movedBody };
-      const ticks = stepKitEffects(15, context);
+      const ticks = stepKitTestEffects(15, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.element])).toStrictEqual(
         Array.from({ length: tickCount }, () => [movedBody, Element.Pyro]),
@@ -142,7 +143,7 @@ describe(createXianglingKit, () => {
       expect.hasAssertions();
       const context = createKitTestContext(createXianglingCombatant(0, constellationCount));
       for (const strike of XIANGLING_KIT.normalAttacks) strike.onStart?.(context);
-      const explosions = stepKitEffects(3, context);
+      const explosions = stepKitTestEffects(3, context);
 
       expect(explosions.map(({ hit }) => [hit.element, hit.hitmarkSeconds, hit.talentMultiplier])).toStrictEqual(
         Array.from({ length: explosionCount }, () => [Element.Pyro, (21 + 120) / 60, 0.75]),

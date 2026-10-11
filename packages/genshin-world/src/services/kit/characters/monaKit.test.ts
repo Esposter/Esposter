@@ -13,7 +13,7 @@ import { createMonaKit, MONA_CHARACTER_ID } from "#src/services/kit/characters/m
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -68,7 +68,7 @@ describe("mona kit", () => {
     MONA_KIT.elementalSkill.onStart?.(context);
 
     // A single step past the explosion at 329 frames lands every hit of the summon, and the summon then ends
-    const strikes = stepKitEffects(6, context);
+    const strikes = stepKitTestEffects(6, context);
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.32, 0.32, 0.32, 0.32, 1.328]);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -113,7 +113,7 @@ describe("mona kit", () => {
     expect(context.kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
 
     // The phantom's explosion lands once its 2 seconds run out, at 0.5 of the explosion's multiplier of 1.328
-    const strikes = stepKitEffects(2, context);
+    const strikes = stepKitTestEffects(2, context);
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toHaveLength(1);
     expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.664, 3);
   });
@@ -141,7 +141,7 @@ describe("mona kit", () => {
 
     // The Omen's 4 seconds and 42% DMG taken, from the burst at index 3 and 9 of the burst group
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "mona-omen", secondsRemaining: 4 }]);
-    const strikes = stepKitEffects(0.5, createKitTestContext(combatant, { kitEffectState }));
+    const strikes = stepKitTestEffects(0.5, createKitTestContext(combatant, { kitEffectState }));
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
     expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(4.424, 3);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -155,9 +155,9 @@ describe("mona kit", () => {
     strikeKitBubble(kitEffectState, enemy, combatant, takeOne(MONA_KIT.elementalBurst.hits));
     const context = createKitTestContext(combatant, { kitEffectState });
 
-    expect(stepKitEffects(7.9, context)).toStrictEqual([]);
+    expect(stepKitTestEffects(7.9, context)).toStrictEqual([]);
     expect(enemy.statuses).toStrictEqual([]);
-    const strikes = stepKitEffects(0.2, context);
+    const strikes = stepKitTestEffects(0.2, context);
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
     expect(enemy.statuses.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([4]);
   });

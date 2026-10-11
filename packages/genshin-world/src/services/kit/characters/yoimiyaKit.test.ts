@@ -54,7 +54,7 @@ describe(createYoimiyaKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
 
     YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(createYoimiyaCombatant(), { kitEffectState }));
-    const { normalAttacks } = findKitStance(kitEffectState.effects, YOIMIYA_CHARACTER_ID)?.kit ?? YOIMIYA_KIT;
+    const { normalAttacks } = findKitStance(kitEffectState.effects, YOIMIYA_CHARACTER_ID)?.combatant.kit ?? YOIMIYA_KIT;
 
     expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => [kind, secondsRemaining])).toStrictEqual([
       ["stance", 10],

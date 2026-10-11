@@ -7,6 +7,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createVentiKit, VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -30,7 +31,7 @@ describe(createVentiKit, () => {
     const context = createKitTestContext(createVentiCombatant(0, 0));
     VENTI_KIT.elementalBurst.onStart?.(context);
     // The Stormeye's first tick lands at 106 frames, the next falling past 2 seconds
-    const summonStrikes = stepKitEffects(2, context);
+    const summonStrikes = stepKitTestEffects(2, context);
     const multipliers = [
       ...VENTI_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(VENTI_KIT.chargedAttack.hits).talentMultiplier,
@@ -60,7 +61,7 @@ describe(createVentiKit, () => {
       const { kitEffectState, party } = context;
       const partyMember = getPartyMember(party, VENTI_CHARACTER_ID);
       VENTI_KIT.elementalBurst.onStart?.(context);
-      const ticks = stepKitEffects(9.5, context);
+      const ticks = stepKitTestEffects(9.5, context);
 
       expect(partyMember.energy).toBe(0);
 
@@ -83,7 +84,7 @@ describe(createVentiKit, () => {
       expect.hasAssertions();
       const context = createKitTestContext(createVentiCombatant(0, constellationCount));
       VENTI_KIT.chargedAttack.onStart?.(context);
-      const arrows = stepKitEffects(2, context);
+      const arrows = stepKitTestEffects(2, context);
 
       expect(arrows.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual(
         Array.from({ length: arrowCount }, () => [
@@ -128,7 +129,7 @@ describe(createVentiKit, () => {
       const combatant = createVentiCombatant(0, constellationCount);
       const context = createKitTestContext(combatant);
       VENTI_KIT.elementalBurst.onStart?.(context);
-      const strikes = stepKitEffects(2, context);
+      const strikes = stepKitTestEffects(2, context);
 
       expect(
         [takeOne(VENTI_KIT.elementalSkill.hits), ...strikes.map(({ hit }) => hit)].map(({ enemyStatus }) =>

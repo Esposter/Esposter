@@ -244,9 +244,9 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     poiseDamage: 0,
     talentMultiplier: burstMultiplier(0),
   };
-  const createBurstField = (body: KitBody, combatant: Combatant): KitField => {
+  const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
     const burstField: KitField = {
-      centre: { x: body.position.x, z: body.position.z },
+      centre: { x: position.x, z: position.z },
       characterId: combatant.characterId,
       isFollowing: true,
       kind: "field",
@@ -254,9 +254,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       onTick: ({ kitEffectState }) =>
         addKitEffect(
           kitEffectState,
-          createKitSummon({ facing: body.facing, height: body.height, position: burstField.centre }, combatant, [
-            burstHit,
-          ]),
+          createKitSummon({ facing, height, position: burstField.centre }, combatant, [burstHit]),
         ),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + burstSeconds,

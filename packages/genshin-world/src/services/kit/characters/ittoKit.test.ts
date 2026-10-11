@@ -89,7 +89,7 @@ describe(createIttoKit, () => {
     const { kitEffectState } = context;
     landNormalAttacks(context);
     const { chargedAttack, chargedAttackStamina } =
-      findKitStance(kitEffectState.effects, ITTO_CHARACTER_ID)?.kit ?? ITTO_KIT;
+      findKitStance(kitEffectState.effects, ITTO_CHARACTER_ID)?.combatant.kit ?? ITTO_KIT;
 
     expect(chargedAttackStamina).toBe(0);
     expect(

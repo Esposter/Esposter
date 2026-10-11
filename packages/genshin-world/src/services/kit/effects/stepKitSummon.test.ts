@@ -1,3 +1,4 @@
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -33,10 +34,12 @@ describe(stepKitSummon, () => {
       secondsRemaining: 1,
     };
 
-    expect([
-      stepKitSummon(summon, 0.5, { x: 0, z: 0 }).length,
-      stepKitSummon(summon, 0.5, { x: 0, z: 0 }).length,
-    ]).toStrictEqual([1, 0]);
+    const firstStrikes: KitStrike[] = [];
+    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, firstStrikes);
+    const secondStrikes: KitStrike[] = [];
+    stepKitSummon(summon, 0.5, { x: 0, z: 0 }, secondStrikes);
+
+    expect([firstStrikes.length, secondStrikes.length]).toStrictEqual([1, 0]);
   });
 
   test("lands a following summon's hits from where the body on the field stands on each step", () => {
@@ -54,11 +57,13 @@ describe(stepKitSummon, () => {
       nextHitIndex: 0,
       secondsRemaining: 2,
     };
-    const firstStrikes = stepKitSummon(summon, 1, { x: 3, z: 4 });
+    const firstStrikes: KitStrike[] = [];
+    stepKitSummon(summon, 1, { x: 3, z: 4 }, firstStrikes);
 
     expect(firstStrikes.map(({ body: { position } }) => position)).toStrictEqual([{ x: 3, z: 4 }]);
 
-    const secondStrikes = stepKitSummon(summon, 1, { x: -2, z: 1 });
+    const secondStrikes: KitStrike[] = [];
+    stepKitSummon(summon, 1, { x: -2, z: 1 }, secondStrikes);
 
     expect(secondStrikes.map(({ body: { position } }) => position)).toStrictEqual([{ x: -2, z: 1 }]);
   });

@@ -10,6 +10,7 @@ import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -57,7 +58,7 @@ describe(createBarbaraKit, () => {
     const regenerationHealthShare = (385.18774 + 0.04 * MAX_HEALTH) / MAX_HEALTH;
 
     // Two seconds in, both droplets have landed and the loop has healed once as it started
-    const dropletStrikes = stepKitEffects(2, context);
+    const dropletStrikes = stepKitTestEffects(2, context);
 
     expect(dropletStrikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
       [Element.Hydro, 0.584],

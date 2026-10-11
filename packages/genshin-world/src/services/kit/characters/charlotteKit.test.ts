@@ -10,6 +10,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHARLOTTE_CHARACTER_ID, createCharlotteKit } from "#src/services/kit/characters/charlotteKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
@@ -44,7 +45,7 @@ describe(createCharlotteKit, () => {
     const target = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const context = createKitTestContext(createCharlotteCombatant());
     const castCharged = (): void => CHARLOTTE_KIT.chargedAttack.onStart?.(context, target);
-    const stepThorn = (stepSeconds: number): number => stepKitEffects(stepSeconds, context).length;
+    const stepThorn = (stepSeconds: number): number => stepKitTestEffects(stepSeconds, context).length;
 
     castCharged();
     const firstThorn = stepThorn(THORN_HITMARK_SECONDS);

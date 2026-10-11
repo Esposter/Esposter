@@ -62,7 +62,7 @@ describe(createRaidenKit, () => {
     if (summon?.kind !== "summon") throw new Error("the burst casts no Musou no Hitotachi");
 
     expect(summon.hits[0]?.talentMultiplier).toBeCloseTo(4.008 + 0.03888);
-    expect(stance?.kit.normalAttacks[0]?.hits[0]?.talentMultiplier).toBeCloseTo(0.447374 + 0.007262);
+    expect(stance?.combatant.kit.normalAttacks[0]?.hits[0]?.talentMultiplier).toBeCloseTo(0.447374 + 0.007262);
     expect(kitEffectState.effects.some((effect) => effect.kind === "status")).toBe(false);
   });
 
@@ -124,7 +124,7 @@ describe(createRaidenKit, () => {
     const context = createKitTestContext(combatant, { kitEffectState });
     const event: KitDamageTakenEvent = {
       enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-      hit: takeOne(takeOne(stance?.kit.normalAttacks ?? []).hits),
+      hit: takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits),
       isCritical: false,
       isDefeated: false,
       kind: KitEventKind.DamageTaken,
