@@ -3,7 +3,11 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
@@ -11,16 +15,29 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Thoma's proud skill groups, read at his talent level. The attack group holds the four strikes at 0 to 3, the charged
 // Attack at 4 and its stamina at 5, and the plunges' collision, low and high at 6, 7 and 8. The skill group holds Blazing
-// Blessing's damage at 0, its shield's share of Max HP at 1 and its flat HP at 2, the shield's seconds at 3 and its cooldown
-// At 6. The burst group holds Crimson Ooyoroi's damage at 0, Fiery Collapse's at 1, its shield's share of Max HP at 2 and its
-// Flat HP at 3, the burst's seconds at 6, its cooldown at 7 and its energy cost at 8
+// Blessing's damage at 0, its shield's share of Max HP at 1 and its flat HP at 2, the shield's seconds at 3, the most
+// Its shield may hold, a share of Max HP at 4 and flat HP at 5, and its cooldown at 6. The burst group holds Crimson
+// Ooyoroi's damage at 0, Fiery Collapse's at 1, its shield's share of Max HP at 2 and its flat HP at 3, the shield's
+// Seconds at 4, the seconds between Fiery Collapses at 5, the burst's seconds at 6, its cooldown at 7 and its energy
+// Cost at 8
 const THOMA_ATTACK_GROUP_ID = 5031;
 const THOMA_SKILL_GROUP_ID = 5032;
 const THOMA_BURST_GROUP_ID = 5039;
+const THOMA_SKILL_MAX_SHIELD_SHARE_INDEX = 4;
+const THOMA_SKILL_MAX_SHIELD_FLAT_INDEX = 5;
+const THOMA_BURST_FIERY_COLLAPSE_INDEX = 1;
+const THOMA_BURST_SHIELD_SHARE_INDEX = 2;
+const THOMA_BURST_SHIELD_FLAT_INDEX = 3;
+const THOMA_BURST_SHIELD_SECONDS_INDEX = 4;
+const THOMA_BURST_FIERY_COLLAPSE_INTERVAL_INDEX = 5;
+const THOMA_BURST_SECONDS_INDEX = 6;
 
 // Measured: gcsim (MIT, main) internal/characters/thoma/attack.go, each strike's hitmarks and the frame its action cancels at.
 // The first two are fans of 270 degrees centred 0.8 metres ahead of the body, the third and fourth are boxes
@@ -50,13 +67,23 @@ const SKILL_INFUSION_SECONDS = 30 / 60;
 const SKILL_GAUGE = 1;
 
 // Measured: gcsim (MIT, main) internal/characters/thoma/burst.go, Crimson Ooyoroi's hit at 40 frames as a circle of radius 4
-// Round the body, and its animation at 58 frames. Its 50 durability is a gauge of 2U. Fiery Collapse, which fires on a
-// Shielded character's hits, is not built: no kit event reaches a shielded character's damage yet
+// Round the body, and its animation at 58 frames. Its 50 durability is a gauge of 2U
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/thoma/burst.go
 const BURST_HITMARK_FRAMES = 40;
 const BURST_FRAMES = 58;
 const BURST_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 4 });
 const BURST_GAUGE = 2;
+
+// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a normal
+// Attack the character on the field starts sets one off from its body, at most once in the table's seconds. It lands at
+// 11 frames as a box 4.5 metres wide and 8 long from the body, 1U of Pyro under the Elemental Burst internal cooldown.
+// The first enemy it strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield
+// Already standing, up to the most Blazing Blessing's shield may hold, for the table's seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
+const FIERY_COLLAPSE_HITMARK_FRAMES = 11;
+const FIERY_COLLAPSE_HIT_AREA = createBoxReach(0, 4.5, 8);
+const FIERY_COLLAPSE_GAUGE = 1;
+const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
 
 // Provisional: the plunges are the standard ones gcsim's plunge template gives, of the same reach and timing as Ganyu's, as
 // His own plunge clips are not in the sources fetched. The table's multipliers for them are read as the rest are
@@ -65,8 +92,8 @@ const PLUNGE_SECONDS = 0.4;
 export const THOMA_CHARACTER_ID = 10_000_050;
 
 // Thoma's first kit, at talent level 1: four strikes, a charged attack, a collision and two plunges, Blazing Blessing's hit
-// With its Pyro infusion and shield, and Crimson Ooyoroi's hit. His multipliers are read from his proud skill groups. Fiery
-// Collapse, his passives and his constellations are not built yet
+// With its Pyro infusion and shield, and Crimson Ooyoroi's hit with its Fiery Collapses and their shield. His multipliers
+// Are read from his proud skill groups. His passives and his constellations are not built yet
 export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, THOMA_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -87,6 +114,57 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       targetingArea: STRIKE_TARGETING_AREA,
     }),
   );
+
+  // A Fiery Collapse's hit, whose first strike stacks Thoma's shield, since a collapse shields the team once
+  const createFieryCollapseHit = (): KitHit => {
+    let isShielded = false;
+    return {
+      element: Element.Pyro,
+      gauge: FIERY_COLLAPSE_GAUGE,
+      hitArea: FIERY_COLLAPSE_HIT_AREA,
+      hitmarkSeconds: FIERY_COLLAPSE_HITMARK_FRAMES / 60,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      onStrike: ({ combatant: { attributes, characterId }, kitEffectState }) => {
+        if (isShielded) return;
+        isShielded = true;
+        const standingHealth =
+          kitEffectState.effects.find(
+            (effect): effect is KitShield =>
+              checkIsKitShieldLive(effect) && !effect.isCrystallize && effect.characterId === characterId,
+          )?.health ?? 0;
+        const maxHealth =
+          skillTalentMultiplier(THOMA_SKILL_MAX_SHIELD_SHARE_INDEX) * attributes.maxHealth +
+          skillTalentMultiplier(THOMA_SKILL_MAX_SHIELD_FLAT_INDEX);
+        addKitEffect(kitEffectState, {
+          characterId,
+          element: Element.Pyro,
+          health: Math.min(
+            standingHealth +
+              burstTalentMultiplier(THOMA_BURST_SHIELD_SHARE_INDEX) * attributes.maxHealth +
+              burstTalentMultiplier(THOMA_BURST_SHIELD_FLAT_INDEX),
+            maxHealth,
+          ),
+          kind: "shield",
+          secondsRemaining: burstTalentMultiplier(THOMA_BURST_SHIELD_SECONDS_INDEX),
+        });
+      },
+      poiseDamage: 0,
+      talentMultiplier: burstTalentMultiplier(THOMA_BURST_FIERY_COLLAPSE_INDEX),
+    };
+  };
+  // Sets off a Fiery Collapse from the body on the field, priced by Thoma as he cast the burst, unless one was set off
+  // Within the table's seconds
+  const setOffFieryCollapse = (ooyoroi: KitSummon, { body, kitEffectState }: KitStepContext): void => {
+    const { combatant } = ooyoroi;
+    if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, FIERY_COLLAPSE_COOLDOWN_STATUS_ID)) return;
+    addKitEffect(kitEffectState, {
+      characterId: combatant.characterId,
+      id: FIERY_COLLAPSE_COOLDOWN_STATUS_ID,
+      kind: "status",
+      secondsRemaining: burstTalentMultiplier(THOMA_BURST_FIERY_COLLAPSE_INTERVAL_INDEX),
+    });
+    addKitEffect(kitEffectState, createKitSummon(body, combatant, [createFieryCollapseHit()]));
+  };
 
   return {
     burstCooldownSeconds: burstTalentMultiplier(7),
@@ -115,6 +193,14 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           talentMultiplier: burstTalentMultiplier(0),
         },
       ],
+      // The burst stands the Ooyoroi for its seconds, which the normal attacks of the character on the field set off
+      onStart: ({ body, combatant, kitEffectState }) => {
+        const ooyoroi: KitSummon = {
+          ...createKitSummon(body, combatant, [], burstTalentMultiplier(THOMA_BURST_SECONDS_INDEX)),
+          onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
+        };
+        addKitEffect(kitEffectState, ooyoroi);
+      },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
