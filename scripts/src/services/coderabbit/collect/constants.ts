@@ -85,8 +85,8 @@ export const INSTALL_OUTPUT_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
 // The checks a repair earns before it reaches `main`, and the only checks the collector runs on anything it
 // Pushes — a window is verified by develop's own CI and an express cut by main's, since a gate on either held the
 // Red commit and the later one that fixes it at once. Check-only: a repair the collector wrote would be a
-// Commit nobody reviewed. Each is a root script named as the check it is — an aggregating `run-s` script by its
-// Passes, so each reports on its own — plus the two app bundles the suite asserts against,
+// Commit nobody reviewed. Each is a root script named as the check it is — an aggregating task by its
+// `dependsOn` passes, so each reports on its own — plus the two app bundles the suite asserts against,
 // Since `@esposter/functions` and `@esposter/infra` each snapshot a `dist` no source tree holds, and a run
 // Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
 // (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
@@ -254,7 +254,7 @@ export const DRAIN_SUBAGENT_CLAUSE =
   'The fix to each finding may be handed to a foreground subagent: the Agent tool with `model: "haiku"` and `run_in_background: false`, one at a time. Read each subagent\'s diff and judge it before the next. Keep every verdict and every reply your own. Leave the working tree clean, as the rest of this session does.';
 // The finishing ritual a headless session owes, foreground because a `claude -p` session has no next turn
 export const FINISHING_CHECKS_INSTRUCTION =
-  "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
+  "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `vp run lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
 // What each role runs on, one entry per role: a total record, so a role added to `SessionRole` does not compile
 // Until it has been priced, and a role moved to another family is this one line. The reconciliation roles share
 // The opus family: they are verified by the tree they left rather than trusted, so a cheaper one would be

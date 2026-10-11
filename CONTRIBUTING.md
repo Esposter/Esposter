@@ -31,7 +31,7 @@ All commands run from `apps/web/` unless noted.
 pnpm dev              # start dev server
 pnpm typecheck        # type check (vue-tsc)
 pnpm lint             # eslint only — see the root vp run lint below for oxlint
-pnpm lint:fix         # auto-fix linting — always use this, never fix manually
+vp run lint:fix         # auto-fix linting — always use this, never fix manually
 pnpm test             # vitest watch mode
 ```
 
@@ -110,7 +110,7 @@ flowchart LR
    pull request shows your commits alone.
 2. Make your changes and ensure all checks pass:
    ```bash
-   pnpm lint:fix && vp run typecheck && pnpm test <paths your change touched>
+   vp run lint:fix && vp run typecheck && pnpm test <paths your change touched>
    ```
    Name the paths — a bare `pnpm test` runs every project in the workspace, which is CI's job and takes tens of
    minutes locally.
@@ -127,7 +127,7 @@ Pre-commit hooks run the formatter automatically via [nano-staged](https://githu
 - **One export per file** — classes in `models/`, functions in `services/`, constants in `constants.ts`.
 - **No comments** unless the _why_ is non-obvious (hidden constraints, workarounds).
 - **No `console.log`** in committed code.
-- Use `pnpm lint:fix` — never fix lint errors by hand.
+- Use `vp run lint:fix` — never fix lint errors by hand.
 
 ## Community
 

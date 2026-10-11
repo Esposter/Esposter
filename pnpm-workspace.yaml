@@ -218,7 +218,6 @@ catalog:
   nitro: npm:nitro-nightly@latest
   node-html-parser: ^9.0.4
   node-pty: ^1.1.0
-  npm-run-all2: ^9.0.3
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
   nuxt: npm:nuxt-nightly@5x
   ohash: ^2.0.12

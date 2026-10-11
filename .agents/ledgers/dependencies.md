@@ -176,7 +176,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `nitro`                                 | —     | Keep — framework    | the server framework                                                                                   |
 | `node-html-parser`                      | —     | Keep — engine       | server-side HTML parsing                                                                               |
 | `node-pty`                              | —     | Keep — engine       | native pseudo-terminals                                                                                |
-| `npm-run-all2`                          | —     | Replace — installed | vite-plus: the `run-s` chains become vp tasks with `dependsOn`                                         |
 | `nuxt`                                  | —     | Keep — framework    | the framework                                                                                          |
 | `ohash`                                 | —     | Keep — free         | the framework installs it                                                                              |
 | `oxfmt`                                 | —     | Keep — tooling      | the formatter                                                                                          |
