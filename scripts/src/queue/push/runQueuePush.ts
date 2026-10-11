@@ -23,7 +23,7 @@ export const runQueuePush = async (
 
     // oxlint-disable-next-line no-await-in-loop -- one push at a time: a pending pass runs only after the push before it lets go
     const outcome = await withFinalizerAsync(
-      async () => {
+      () => {
         takePushPending(pendingPath);
         return push();
       },
