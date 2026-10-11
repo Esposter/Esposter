@@ -131,7 +131,7 @@ describe(createTileStreamer, () => {
     const requestTile = vi.fn<(key: number) => void>();
     const tileStreamer = createTileStreamer({ disposeTile, maxCachedCount: 1, maxPendingCount: 1, requestTile });
     tileStreamer.receive(fineKey, 0);
-    tileStreamer.refresh();
+    tileStreamer.refresh(() => true);
     const wanted = createTerrainSelection(1);
     wanted.keys.set([fineKey]);
     wanted.count = 1;
@@ -168,13 +168,39 @@ describe(createTileStreamer, () => {
     wanted.keys.set([fineKey]);
     wanted.count = 1;
     tileStreamer.update(wanted, emptySelection, emptySelection);
-    tileStreamer.refresh();
+    tileStreamer.refresh(() => true);
     tileStreamer.receive(fineKey, 0);
     tileStreamer.update(wanted, emptySelection, emptySelection);
 
     expect({ isSettled: tileStreamer.isSettled(fineKey), requested: requestTile.mock.calls }).toStrictEqual({
       isSettled: false,
       requested: [[fineKey], [fineKey]],
+    });
+  });
+
+  test("asks again only for the tiles a refresh names, held or generating", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 3,
+      maxPendingCount: 3,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(3);
+    wanted.keys.set([coarseKey, fineKey, otherFineKey]);
+    wanted.count = 3;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.receive(fineKey, 0);
+    tileStreamer.receive(otherFineKey, 1);
+    tileStreamer.refresh((key) => key !== otherFineKey);
+    tileStreamer.receive(coarseKey, 2);
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+
+    expect({ isSettled: tileStreamer.isSettled(otherFineKey), requested: requestTile.mock.calls }).toStrictEqual({
+      isSettled: true,
+      requested: [[coarseKey], [fineKey], [otherFineKey], [coarseKey], [fineKey]],
     });
   });
 

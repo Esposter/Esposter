@@ -27,6 +27,7 @@ import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
+  checkTerrainBoundsOverlap,
   checkTerrainTileCasts,
   computeTerrainIndices,
   createFlowerMaterial,
@@ -36,6 +37,8 @@ import {
   createTerrainSelection,
   createTerrainTileGeometry,
   createTileStreamer,
+  getTerrainOverlayBounds,
+  getTerrainTileBounds,
   getTerrainTileColumn,
   getTerrainTileLevel,
   getTerrainTileRow,
@@ -158,15 +161,22 @@ const tileStreamer = createTileStreamer<Mesh | number>({
 // Step `terrain-refresh` with the tiles it rebuilt. A ground arriving while one is under way extends it
 let refreshStart: number | undefined;
 // A region's ground arrives after the tiles over it may have been built, so each worker is sent the grounds so far ahead
-// Of any tile asked of it after, and every tile held or generating is asked for again over them, each held one drawn
-// Until its replacement arrives
+// Of any tile asked of it after, and every tile held or generating whose heights an arriving ground reaches is asked for
+// Again over them, each held one drawn until its replacement arrives. A tile past every arriving ground's reach would be
+// Built again over the very heights it holds, so it is kept
 watch(
   () => regionGrounds,
-  (grounds) => {
+  (grounds, previousGrounds) => {
     const message: TerrainWorkerMessage = { kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds: grounds };
     // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
     for (const worker of workers) worker.postMessage(message);
-    tileStreamer.refresh();
+    const arrivingReaches = grounds
+      .filter((ground) => !previousGrounds.includes(ground))
+      .map((ground) => getTerrainOverlayBounds(ground));
+    tileStreamer.refresh((key) => {
+      const tileBounds = getTerrainTileBounds(key, finestTileSize, cellsPerSide);
+      return arrivingReaches.some((reach) => checkTerrainBoundsOverlap(reach, tileBounds));
+    });
     if (refreshStart !== undefined) return;
     refreshStart = performance.now();
     rebuiltTileCount = 0;

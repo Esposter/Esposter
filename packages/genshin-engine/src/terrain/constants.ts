@@ -11,3 +11,6 @@ export const TERRAIN_RING_INITIAL_TILE_COUNT = 64;
 export const TERRAIN_CELL_SIZE = 64;
 // A Gaussian shape reaches three of its widths, past which a hill is cut, a little over a hundredth of its height
 export const GAUSSIAN_REACH_WIDTHS = 3;
+// How many vertices a tile's heights reach past it on every side: the next level's normals are taken two vertices
+// Either side of an even vertex, its own grid's one
+export const TERRAIN_HEIGHT_PADDING = 2;

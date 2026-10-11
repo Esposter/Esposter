@@ -1,13 +1,11 @@
 import type { TerrainTile } from "#src/models/terrain/TerrainTile";
 import type { TerrainTileOptions } from "#src/models/terrain/TerrainTileOptions";
 
+import { TERRAIN_HEIGHT_PADDING } from "#src/terrain/constants";
 import { getTerrainTileColumn } from "#src/terrain/getTerrainTileColumn";
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 import { getTerrainTileRow } from "#src/terrain/getTerrainTileRow";
 
-// How many vertices the heights reach past the tile on every side: the next level's normals are taken two vertices
-// Either side of an even vertex, its own grid's one
-const HEIGHT_PADDING = 2;
 // Writes the normal at a padded height by central differences over the vertices `reach` either side, and returns its
 // Upward component, which sets the ground's slope
 const writeNormal = (
@@ -48,13 +46,13 @@ export const computeTerrainTile = ({
   const left = getTerrainTileColumn(key) * size;
   const back = getTerrainTileRow(key) * size;
   const side = cellsPerSide + 1;
-  const paddedSide = side + HEIGHT_PADDING * 2;
+  const paddedSide = side + TERRAIN_HEIGHT_PADDING * 2;
   const heights = new Float32Array(paddedSide * paddedSide);
   for (let row = 0; row < paddedSide; row++)
     for (let column = 0; column < paddedSide; column++)
       heights[row * paddedSide + column] = getHeight(
-        left + (column - HEIGHT_PADDING) * step,
-        back + (row - HEIGHT_PADDING) * step,
+        left + (column - TERRAIN_HEIGHT_PADDING) * step,
+        back + (row - TERRAIN_HEIGHT_PADDING) * step,
       );
 
   const vertexCount = side * side;
@@ -66,7 +64,7 @@ export const computeTerrainTile = ({
   const coarseColors = new Float32Array(vertexCount * 3);
   for (let row = 0; row < side; row++)
     for (let column = 0; column < side; column++) {
-      const paddedIndex = (row + HEIGHT_PADDING) * paddedSide + column + HEIGHT_PADDING;
+      const paddedIndex = (row + TERRAIN_HEIGHT_PADDING) * paddedSide + column + TERRAIN_HEIGHT_PADDING;
       const height = heights[paddedIndex] ?? 0;
       const index = row * side + column;
       const offset = index * 3;
@@ -82,7 +80,7 @@ export const computeTerrainTile = ({
       const coarseOffset = index * 4;
       coarsePositions[coarseOffset] = coarseColumn * step;
       coarsePositions[coarseOffset + 1] =
-        heights[(coarseRow + HEIGHT_PADDING) * paddedSide + coarseColumn + HEIGHT_PADDING] ?? height;
+        heights[(coarseRow + TERRAIN_HEIGHT_PADDING) * paddedSide + coarseColumn + TERRAIN_HEIGHT_PADDING] ?? height;
       coarsePositions[coarseOffset + 2] = coarseRow * step;
       coarsePositions[coarseOffset + 3] = level;
       // An even vertex comes before every odd one collapsing onto it, so its coarse normal and colour are copied

@@ -16,8 +16,8 @@ interface CachedTile<TTile> {
 // Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
 // Arrives as recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The
 // Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as
-// Over a worker pool. A refresh marks every tile held or generating stale, so each is asked for again as if missing
-// While the held one is still drawn
+// Over a worker pool. A refresh marks each tile held or generating that it names stale, so each is asked for again as if
+// Missing while the held one is still drawn
 export const createTileStreamer = <TTile>({
   disposeTile,
   maxCachedCount,
@@ -92,9 +92,9 @@ export const createTileStreamer = <TTile>({
       if (replacedTile && replacedTile.tile !== tile) disposeTile(replacedTile.tile);
       evictStale();
     },
-    refresh: () => {
-      for (const cachedTile of cachedTileMap.values()) cachedTile.isStale = true;
-      for (const key of pendingWantedFrameMap.keys()) stalePendingKeySet.add(key);
+    refresh: (checkIsChanged) => {
+      for (const [key, cachedTile] of cachedTileMap) if (checkIsChanged(key)) cachedTile.isStale = true;
+      for (const key of pendingWantedFrameMap.keys()) if (checkIsChanged(key)) stalePendingKeySet.add(key);
     },
     update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;

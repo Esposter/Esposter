@@ -32,7 +32,7 @@ Open the parity page (or the app) in DevTools' Performance panel, record the loa
 
 ## Budgets
 
-The budgets are written in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, each at the figure measured on the budget's machine plus a tenth, rounded up. Lowering a budget is part of the commit that lowers the load; raising one needs its own reason.
+The budgets are written in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, each at the figure measured on the budget's machine plus a tenth, rounded up. A screen with a crossing holds its crossing's requests, game data and tiles rebuilt the same way, under `crossing`. Lowering a budget is part of the commit that lowers the load; raising one needs its own reason.
 
 The time column is checked on the budget's machine only. A screen's own load steps are named in its `measures` section when it has any: the world's are `world-gate` with each of its reads, `regions`, `landmark-colliders` once for each sync of the landmarks that arrived, `terrain` from mount to ready, and `compile`; the login has none of its own, its reads belong to the opening, and the opening's are `opening`.
 
@@ -83,6 +83,17 @@ flowchart LR
 - **A region's ground and palettes arrive with the region.** The gate read the seven grounds laid over Windrise's and every region's palette, though Windrise's first view stands in Mondstadt alone, which lays no ground over Windrise's and builds in Mondstadt's kit alone. Each region now reads its ground and the palettes of its buildings' kits with its data as it comes within reach (`readLoadedRegion`), and the terrain asks again for every tile a ground arrives under ([terrain](/docs/genshin/terrain)). Two runs each on `WorldScreen`, production and paused: the game data fell from 76 requests and 4560.3 KB to 63 and 4068.4 KB, and the page's requests from 132 to 119 (131 to 118 paused), with the objects, geometries, textures and programs at ready unchanged on the production build. `world-gate` read a median of 143.6 ms before (runs 206.5, 80.7) and 55.1 ms after (runs 53.8, 56.3) on the production build, 87.0 ms and 61.6 ms paused. Ready did not move past the runs' spread, measured while the landmark collider was being rebuilt beside it: 25.5 s before (runs 23.2, 27.7) and 25.5 s after (runs 25.4, 25.6) on the production build, 28.5 s and 25.9 s paused. Every read left at the gate is one the first frame reads.
 - **The time's machine is named by the budget.** The counts are the same on every machine and the milliseconds are not, so a budget names the machine it was measured on.
 - **The world's request budget holds the starting team's kit chunks.** Its counts were re-recorded once every trim was built, from three runs in each mode on another machine, the time left as the budget's machine measured it. The production build reads 120 requests: 65 of game data, 39 chunks of the starting team's kits, each kit its own chunk since the kit framework split them from the entry, 9 reads of region data (every region's, which the jump landmarks list, and Mondstadt's again as it comes within reach) and 7 of the page's own files. The 95 was recorded before the kits were split, so the budget rises to 132. The other counts stand, each one's figure plus a tenth at or past the budget already written: 4080.0 KB of game data, 312 objects, 220 geometries, 37 textures and 97 programs. Paused, the page reads one request fewer, and 133 to 145 geometries, 88 to 95 programs and, in two runs of three, 348 objects, which is over the 322 the production build is held to, as the scene at ready differs while only the frames asked for are drawn. On the dev server it reads 2049 requests, its modules served one at a time, and the production build's other counts.
+- **A ground rebuilds only the tiles it reaches.** The crossing into Liyue's reach rebuilt every tile the terrain held round the eye, though Liyue's ground stands 500 m and more west of it, past which the ground laid over Windrise's draws Windrise's very heights. The terrain now refreshes only the tiles whose sampled rectangle meets the arriving ground's reach ([terrain](/docs/genshin/terrain)). Three runs each before and after, twice, while other sessions' builds shared the machine (load average 8 to 16 before, 3 to 13 after):
+
+  | Figure                 |        Before |         After |
+  | :--------------------- | ------------: | ------------: |
+  | tiles rebuilt          |    219 to 237 |      32 to 33 |
+  | settled, from the move |  4.0 to 4.9 s |  2.4 to 2.9 s |
+  | long frames            | 332 to 369 ms | 312 to 348 ms |
+  | requests               |             3 |             3 |
+  | game data              |       93.3 KB |       93.3 KB |
+
+  What the crossing still settles over is the move's own new tiles, 80 m on, and the far rings over Liyue. Its long frames are its region's arrival, about 240 ms of them the landmark colliders' build, which the refresh never held. The crossing's budget holds the after figures: 3 requests, 95,524 bytes of game data and 33 tiles rebuilt, each plus a tenth.
 
 ## Key files
 
