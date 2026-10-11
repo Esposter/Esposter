@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BuildingLandmark } from "#src/models/world/BuildingLandmark";
+import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { ToonNodeMaterial } from "genshin-engine";
 
 import { BuildingKitPartsMap } from "#src/services/world/BuildingKitPartsMap";
@@ -12,13 +13,15 @@ interface Props {
   landmark: BuildingLandmark;
   // The one material every landmark's part draws in, each in the surface its mesh carries
   partMaterial: ToonNodeMaterial;
+  // The building colours each region's palette record samples, which its kit draws its buildings in
+  regionPalettes: RegionPaletteMap;
 }
 
-const { getGroundHeight, landmark, partMaterial } = defineProps<Props>();
+const { getGroundHeight, landmark, partMaterial, regionPalettes } = defineProps<Props>();
 const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
 // The building's region kit decides its parts, each drawn in its own colour
-const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never).map(({ color, geometry }) => {
+const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes).map(({ color, geometry }) => {
   const mesh = new Mesh(geometry, partMaterial);
   mesh.castShadow = true;
   mesh.receiveShadow = true;

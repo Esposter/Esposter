@@ -12,6 +12,7 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
@@ -143,6 +144,8 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // The building colours each region's palette record samples, which its kit draws its buildings in
+  regionPalettes: RegionPaletteMap;
   // The Mondstadt animals the official map marks, each stood at its place
   wildlifePlaces: WildlifePlace[];
   // Windrise's records: its ground and the regions' grounds, its surfaces, its oak, plants, paving and statue, and its
@@ -175,6 +178,7 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
+  regionPalettes,
   wildlifePlaces,
   windriseData,
   worldLevel,
@@ -444,6 +448,7 @@ onUnmounted(() => {
       :light-uniforms
       :ramp-texture
       :region-data-map
+      :region-palettes
       :statue
       :surfaces
       :tree-species-options-map

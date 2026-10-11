@@ -9,9 +9,7 @@ export const MONDSTADT_DORMER_DEPTH = 1.2;
 export const MONDSTADT_DORMER_HEIGHT = 1.4;
 // How far a dormer's base sinks below the slope, so it never floats above the roof
 export const MONDSTADT_DORMER_SINK = 0.2;
-// Provisional: the house's colours in sRGB, as the proposal names Mondstadt's town, until each is sampled from the
-// Game's own building textures: white limestone, cream plaster, dark timber and terracotta roofs
-export const MONDSTADT_STONE_COLOR = 0xd9d4c7;
+// Provisional: the house's plaster and roof in sRGB, which the palette does not sample: the plaster is trim in the game's
+// Atlases and the extraction holds no roof
 export const MONDSTADT_PLASTER_COLOR = 0xf0e6d2;
-export const MONDSTADT_TIMBER_COLOR = 0x5a3f2c;
 export const MONDSTADT_ROOF_COLOR = 0xa8543a;
