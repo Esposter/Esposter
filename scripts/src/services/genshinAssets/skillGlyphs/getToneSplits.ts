@@ -17,7 +17,10 @@ const getShare = (bin: number) => (bin + 0.5) / TONE_BIN_COUNT;
 export const getToneSplits = (shares: Iterable<number>): number[] => {
   const bins = Array.from({ length: TONE_BIN_COUNT }, () => 0);
   for (const share of shares)
-    if (share >= MIN_TONE_SHARE) bins[Math.min(TONE_BIN_COUNT - 1, Math.floor(share * TONE_BIN_COUNT))]++;
+    if (share >= MIN_TONE_SHARE) {
+      const bin = Math.min(TONE_BIN_COUNT - 1, Math.floor(share * TONE_BIN_COUNT));
+      bins[bin] = takeOne(bins, bin) + 1;
+    }
   const findPeak = (from: number, to: number): number => {
     let peak = from;
     for (let bin = from; bin <= to; bin++) if (takeOne(bins, bin) > takeOne(bins, peak)) peak = bin;
