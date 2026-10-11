@@ -12,18 +12,19 @@ import { describe, expect, test } from "vitest";
 
 const LAUMA_KIT = createLaumaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LAUMA_CHARACTER_ID]));
 
+const createCombatant = (elementalMastery: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),
+  characterId: LAUMA_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: LAUMA_KIT,
+  level: 90,
+});
+
 describe(createLaumaKit, () => {
   // Hymn of Eternal Rest's Lunar-Bloom multiplier of her Elemental Mastery for each Dew, at talent level 1
   const LUNAR_BLOOM_MULTIPLIER = 1.52;
-  const createCombatant = (elementalMastery: number): Combatant => ({
-    ascension: 0,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementalMastery }]),
-    characterId: LAUMA_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: LAUMA_KIT,
-    level: 90,
-  });
 
   test("reads the strikes', charged attack's, plunges' and press's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -98,7 +99,7 @@ describe(createLaumaKit, () => {
     });
   });
 
-  test("Hymn of Eternal Rest spends up to three Dew on a Lunar-Bloom hit of its multiplier for each, beside the sanctuary", () => {
+  test("spends up to three Dew with Hymn of Eternal Rest on a Lunar-Bloom hit of its multiplier for each, beside the sanctuary", () => {
     expect.hasAssertions();
 
     const holdAction = takeOne(LAUMA_KIT.elementalSkillHolds ?? [], 0).variant?.action;
