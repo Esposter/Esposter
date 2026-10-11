@@ -32,13 +32,13 @@ interface ParityReferenceBase {
   // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
   // Absent
   mask?: ImageRegion[];
-  // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
-  // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
-  poseBar?: number;
   // The interface's own pieces a backdrop's clean plate fills, each from the pixels around it, for a screen scored whole
   // Over a scene: the world between them stays the frame's own, so every piece is scored over what lies behind it. The
   // Scored region alone when absent
   plate?: ImageRegion[];
+  // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
+  // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
+  poseBar?: number;
   // The props the screen is shot with in place of its fixture's, where one screen is judged against several references
   // (a scene at each time of day)
   props?: Record<string, unknown>;

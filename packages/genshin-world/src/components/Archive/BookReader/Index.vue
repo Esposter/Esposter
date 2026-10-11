@@ -22,7 +22,7 @@ const emit = defineEmits<{ close: [] }>();
        sets it. Provisional: its size, place and colours wait on the parity pass against a recording of the English client's
        reader, the search for one having found none -->
   <GameScreen class="book-reader-screen">
-    <ScreenHeader :game-text="gameText" :title="title" @close="emit('close')" />
+    <ScreenHeader :game-text :title @close="emit('close')" />
     <p class="body">{{ body }}</p>
   </GameScreen>
 </template>

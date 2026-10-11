@@ -5,8 +5,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLaumaKit, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

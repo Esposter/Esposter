@@ -88,6 +88,12 @@ const BURST_HIT_AREA = createCircleReach(0, BURST_AREA_RADIUS + BURST_HIT_RADIUS
 const ASCENSION_4 = 4;
 const ASCENSION_4_MASTERY_SHARE = 0.5;
 
+const createPlunge = (hit: KitHit, animationFrames: number): KitAction => ({
+  hits: [hit],
+  seconds: animationFrames / 60,
+  targetingArea: STRIKE_TARGETING_AREA,
+});
+
 // Not built yet: Aino's Ascension 1 at a Moonsign of 2, which shortens the balls' interval and widens them, and Constellation 6's
 // Lunar DMG bonus, both wait on the Lunar and Moonsign hook; Constellation 2's ball on each enemy another member hits while
 // The burst lasts, which waits on a hook that reads another member's hits; Constellation 1's Elemental Mastery on the
@@ -128,12 +134,6 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     seconds: CHARGED_ATTACK_FRAMES / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   };
-
-  const createPlunge = (hit: KitHit, animationFrames: number): KitAction => ({
-    hits: [hit],
-    seconds: animationFrames / 60,
-    targetingArea: STRIKE_TARGETING_AREA,
-  });
 
   const elementalSkill: KitAction = {
     hits: [
