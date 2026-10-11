@@ -10,6 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
 import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
 import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
@@ -43,7 +44,10 @@ export const priceEnemyReactions = (
   let poiseDamage = 0;
   let transformativeDamage = 0;
   const reachingReactions: TransformativeReaction[] = [];
-  for (const reaction of reactions) {
+  // An Overloaded's explosion is a blunt hit that lands after it, so it is priced in turn: its poise drains a Freeze, and a
+  // Freeze left shatters
+  const pendingReactions = [...reactions];
+  for (const reaction of pendingReactions) {
     const { element: reactionElement, reactionType } = reaction;
     if (
       (reactionType === AmplifyingReactionType.Melt || reactionType === AmplifyingReactionType.Vaporize) &&
@@ -62,7 +66,10 @@ export const priceEnemyReactions = (
     ) {
       if (TransformativeReactionReachRadiusMap[reactionType] !== undefined)
         reachingReactions.push({ ...reaction, reactionType });
-      poiseDamage += TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
+      const reactionPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
+      poiseDamage += reactionPoiseDamage;
+      if (reactionType === TransformativeReactionType.Overloaded)
+        pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoiseDamage));
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
         getTransformativeDamage(

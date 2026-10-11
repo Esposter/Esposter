@@ -430,6 +430,34 @@ describe(strikeEnemy, () => {
     expect([enemy.poise, unreactedEnemy.poise]).toStrictEqual([0, createSturdyEnemy().poise]);
   });
 
+  test("breaks a Freeze under an Overloaded's blunt explosion, and shatters what is left", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    enemy.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1, isImmutable: false });
+    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), poiseDamage: 0 };
+    const hitDamage = getDamage({
+      attackerLevel: LEVEL,
+      defense,
+      resistance: kind.elementResistances[Element.Electro],
+      stat: ATTACK,
+      talentMultiplier: kitHit.talentMultiplier,
+    });
+    const overloadedDamage = getTransformativeDamage(
+      ReactionType.Overloaded,
+      LEVEL,
+      0,
+      kind.elementResistances[Element.Pyro],
+    );
+    const shatterDamage = getTransformativeDamage(ReactionType.Shattered, LEVEL, 0, kind.physicalResistance);
+
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
+
+    expect(enemy.elementalState.auras.has(AuraType.Freeze)).toBe(false);
+    expect(enemy.maxHealth - enemy.health).toBeCloseTo(hitDamage + overloadedDamage + shatterDamage);
+  });
+
   test("deals a source's second Overloaded within half a second no damage", () => {
     expect.hasAssertions();
 
