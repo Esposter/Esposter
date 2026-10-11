@@ -1,3 +1,4 @@
+import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -13,6 +14,7 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
+import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
@@ -21,7 +23,8 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each priced
 // By its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it. Each enemy struck drops its
 // Energy to the team, and the strike's bubbles, heals and reactions follow, the reactions it triggered and the damage
-// The enemy took sent to the deployed team's kits
+// The enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it reaches, each reaction
+// That landed with a reach reaches the enemies round its own, whose energy and reactions follow in turn
 export const strikeKitEnemies = (
   strikes: readonly KitStrike[],
   context: {
@@ -40,6 +43,8 @@ export const strikeKitEnemies = (
     const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects);
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
+    // The reactions that landed with a reach, each with the enemy it landed on, reached once the strike has landed
+    const reaches: [Enemy, TransformativeReaction][] = [];
     for (const enemy of enemyMap.values()) {
       if (
         [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
@@ -49,7 +54,7 @@ export const strikeKitEnemies = (
       addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
-      const { energyDrops, isCritical, reactions } = strikeEnemy(
+      const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,
         pricedHit,
@@ -59,6 +64,7 @@ export const strikeKitEnemies = (
       for (const energyDrop of energyDrops)
         gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
       addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
+      for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, hit);
       healKitStriker(party, pricedCombatant, hit);
       hit.onStrike?.({ body, combatant, kitEffectState });
@@ -82,5 +88,20 @@ export const strikeKitEnemies = (
         striker: combatant,
       });
     }
+
+    for (const [origin, reaction] of reaches)
+      for (const [enemy, { energyDrops, reachingReactions, reactions }] of landReactionReach(
+        enemyTables,
+        origin,
+        enemyMap.values(),
+        reaction,
+        pricedCombatant,
+      )) {
+        for (const energyDrop of energyDrops)
+          gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
+        addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
+        for (const reachingReaction of reachingReactions) reaches.push([enemy, reachingReaction]);
+        if (reactions.length > 0) emit({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant });
+      }
   }
 };

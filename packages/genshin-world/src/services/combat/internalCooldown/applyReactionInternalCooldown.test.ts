@@ -25,18 +25,4 @@ describe(applyReactionInternalCooldown, () => {
       ).toStrictEqual(shares);
     },
   );
-
-  test("lands a Swirl of one element once a tenth of a second whatever its source, and another element's apart", () => {
-    expect.hasAssertions();
-
-    const internalCooldownMap = new Map<string, InternalCooldown>();
-    const shares = [
-      applyReactionInternalCooldown(internalCooldownMap, 1, TransformativeReactionType.Swirl, Element.Hydro, 0),
-      applyReactionInternalCooldown(internalCooldownMap, 2, TransformativeReactionType.Swirl, Element.Hydro, 0.05),
-      applyReactionInternalCooldown(internalCooldownMap, 2, TransformativeReactionType.Swirl, Element.Pyro, 0.05),
-      applyReactionInternalCooldown(internalCooldownMap, 2, TransformativeReactionType.Swirl, Element.Hydro, 0.1),
-    ];
-
-    expect(shares).toStrictEqual([1, 0, 1, 1]);
-  });
 });

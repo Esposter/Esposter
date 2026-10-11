@@ -385,4 +385,33 @@ describe(strikeEnemy, () => {
     expect(enemy.maxHealth - healthBeforeBurst).toBeCloseTo(hitDamage(skillHit.talentMultiplier) + overloadedDamage);
     expect(healthBeforeBurst - enemy.health).toBeCloseTo(hitDamage(burstHit.talentMultiplier));
   });
+
+  test("returns a Swirl that lands to reach round the enemy, and none for a Swirl within a tenth of a second of it", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    const combatant = createCombatant(Element.Anemo);
+
+    const first = strikeEnemy(
+      enemyTables,
+      enemy,
+      takeOne(TRAVELER_KIT.elementalSkill.hits, 0),
+      combatant,
+      NEVER_CRITICAL,
+    );
+    const second = strikeEnemy(
+      enemyTables,
+      enemy,
+      takeOne(TRAVELER_KIT.elementalBurst.hits, 0),
+      combatant,
+      NEVER_CRITICAL,
+    );
+
+    expect([first, second].map(({ reactions }) => reactions.map(({ reactionType }) => reactionType))).toStrictEqual([
+      [ReactionType.Swirl],
+      [ReactionType.Swirl],
+    ]);
+    expect([first.reachingReactions, second.reachingReactions]).toStrictEqual([first.reactions, []]);
+  });
 });
