@@ -3,7 +3,7 @@ title: Crafting
 description: Proposal — the crafting bench's place in the city, the one part left. The recipes, their rules, the instruction unlocks, the gadgets, the characters' crafting talents with their regional materials, the screen with its tabs and the save's crafting slice are built, as the crafting page records.
 model: claude-haiku-5-5
 needs: [game-exports]
-waiting: "the crafting bench's own place, from the scene group export (the other machine), since the official map marks no bench"
+waiting: "the crafting bench's own place, from the city's streaming records the scene's extraction reads and does not read yet, since the official map marks no bench"
 touches:
   [
     "packages/genshin-world/src/services/crafting/**",
@@ -33,7 +33,7 @@ The crafting bench, which the game calls alchemy, turns materials into better on
 - **Left to other pages.** The [crafting page](/docs/genshin/crafting) lists what it leaves out. The essential oils and the Xiao Lantern are quest items for the [quests](/docs/proposals/genshin/quests) page to settle.
 - **The screen's words are the game's own.** The title and the Craft button read the reconfirm page's title, the Crafting Performed line `UI_SYNTHESIS_PAGE_ITEM_COUNT`, the Crafting Materials heading `UI_SYNTHESIS_PAGE_FOOD_ITEM_TITLE`, the Required line `UI_COMMON_ITEM_NEED`, and the amount slider's name the cooking page's Quantity, as `GameTextKey` records them. Each recipe's name is the names chunk's entry for its `nameTextId`.
 - **The recipe tabs are the combine types the open recipes fall under.** One tab per combine type, in ascending combine type order, named by the game's own text key for it, `COMBINE_TYPE_NAME1` to `COMBINE_TYPE_NAME12`. The labels of 6 and 12 are in the medium English text map, `Consumable` and `Food`, so every combine type a recipe carries has its key; the first tab shows until one is picked. The fixture's earlier note called the Condensed Resin's tab the Gadget tab, which the game's own label for combine type 6 does not match, so the note now says Consumable. A check of the clip by eye is the one thing left to settle.
-- **The bench's keeper is an NPC the dump places.** The NPC who keeps the bench is to read their place from the hosted `sceneNpcBorn/scene3` dataset, which has no caller yet, published from the dump's NPC births; the bench's own place is still the scene groups'.
+- **The bench's keeper is an NPC the dump places.** The NPC who keeps the bench is to read their place from the hosted `sceneNpcBorn/scene3` dataset, which has no caller yet, published from the dump's NPC births; the bench's own place is still the streaming records'.
 - **The bench's crafter is picked on the screen.** The party's characters are listed and one is picked to cook the batch; with none picked the batch crafts plainly.
 - **The gadgets are the combine type 6 rows beside Condensed Resin.** Seven recipes: the Portable Waypoint and the six Resonance Stones, each made from its materials and Mora, with a kind of its own, `CraftingRecipeKind.Gadget`. Each is opened by its instruction item, as the [crafting page](/docs/genshin/crafting) records, through its `ITEM_USE_UNLOCK_COMBINE` use, so the instructions are read from the dump, not the wiki. Where a player gets an instruction is not settled here; a gadget's recipe is offered only once its instruction is learned, as every hidden recipe is.
 
@@ -59,7 +59,7 @@ flowchart TD
 
 **Still to build, in order:**
 
-1. **The bench's place.** Waits on the other machine's scene group export, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
+1. **The bench's place.** Waits on the city's streaming records, which the scene's extraction reads and does not read yet, since the official map marks no bench and the wiki places Mondstadt's in the Market District. Its prompt then goes through the interaction page. The screen's learned recipes and crafted counts are already the world's, held in `useWorldSave`, so the bench binds them with its `craftedCountMap` model and its `progress` prop.
 
 ## Data and measures
 
