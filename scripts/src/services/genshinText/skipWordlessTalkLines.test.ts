@@ -1,21 +1,22 @@
-import type { SpokenTalkLine } from "genshin-world";
+import type { ChoiceTalkLine, SpokenTalkLine } from "genshin-world";
 
 import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTalkLines";
 import { choiceTalkLineSchema, TalkLineKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
+const createSpokenLine = (id: string, nextLineIds: string[], textId = "1"): SpokenTalkLine => ({
+  id,
+  kind: TalkLineKind.Spoken,
+  nextLineIds,
+  speakerRoleTextId: "",
+  speakerTextId: "",
+  textId,
+  voiceId: "",
+});
+
 describe(skipWordlessTalkLines, () => {
   const WORDLESS_TEXT_ID = "0";
   const checkHasWords = (textId: string) => textId !== WORDLESS_TEXT_ID;
-  const createSpokenLine = (id: string, nextLineIds: string[], textId = "1"): SpokenTalkLine => ({
-    id,
-    kind: TalkLineKind.Spoken,
-    nextLineIds,
-    speakerRoleTextId: "",
-    speakerTextId: "",
-    textId,
-    voiceId: "",
-  });
 
   test("goes on past a wordless line, the talk starting at the first line with words", () => {
     expect.hasAssertions();
@@ -54,7 +55,7 @@ describe(skipWordlessTalkLines, () => {
           kind: TalkLineKind.Choice,
           nextLineIds: [],
           textId: WORDLESS_TEXT_ID,
-        } as const,
+        } satisfies ChoiceTalkLine,
       ],
     ],
     [

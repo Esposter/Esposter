@@ -9,6 +9,8 @@ import { FORGE_ENHANCEMENT_TYPE, MAGICAL_CRYSTAL_CHUNK_ITEM_ID } from "#src/serv
 import { startForge } from "#src/services/forging/startForge";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -25,8 +27,6 @@ describe(startForge, () => {
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   const EPOCH_GAME_DAY = EPOCH.toZonedDateTimeISO("Asia/Shanghai").subtract({ hours: 4 }).toPlainDate();
   const INGREDIENT_ID = 101_002;
-  const VENTI_ID = 10_000_022;
-  const DILUC_ID = 10_000_016;
   const CLAYMORE_FORGE_TYPE = 5;
   const recipe: ForgeRecipe = {
     forgePoint: 2000,
@@ -137,7 +137,7 @@ describe(startForge, () => {
   test("should save a unit's seconds where a party's Venti gives an enhancement recipe its reduce talent", () => {
     expect.hasAssertions();
 
-    const result = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [VENTI_ID] });
+    const result = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [VENTI_CHARACTER_ID] });
 
     expect(result?.progress.orders).toStrictEqual([
       { count: 1, recipeId: recipe.id, startedAt: EPOCH, unitSeconds: 5 },
@@ -164,12 +164,12 @@ describe(startForge, () => {
     const weaponArguments = {
       ...startArguments,
       inventory: weaponInventory,
-      partyCharacterIds: [DILUC_ID],
+      partyCharacterIds: [DILUC_CHARACTER_ID],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: 1000 },
     };
 
     const result = startForge(weaponRecipe, 2, weaponArguments);
-    const enhancementResult = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [DILUC_ID] });
+    const enhancementResult = startForge(recipe, 1, { ...startArguments, partyCharacterIds: [DILUC_CHARACTER_ID] });
 
     expect(countInventoryItem(result?.inventory.items ?? [], INGREDIENT_ID)).toBe(15);
     expect(countInventoryItem(enhancementResult?.inventory.items ?? [], INGREDIENT_ID)).toBe(3);

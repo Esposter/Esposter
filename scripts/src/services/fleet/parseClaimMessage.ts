@@ -1,15 +1,8 @@
 import type { ClaimMessage } from "#src/models/fleet/ClaimMessage";
 
+import { checkIsInstant } from "#src/services/shared/checkIsInstant";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
-
-// Whether a value is an instant Temporal reads, since a claim is aged by its instants and a malformed one must not throw
-const checkIsInstant = (value: unknown): boolean =>
-  typeof value === "string" &&
-  getResult(() => Temporal.Instant.from(value)).match(
-    () => true,
-    () => false,
-  );
 
 const checkIsClaimMessage = (value: unknown): value is ClaimMessage =>
   typeof value === "object" &&

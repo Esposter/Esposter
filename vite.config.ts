@@ -49,6 +49,7 @@ const configuration: UserConfig = defineConfig({
         "packages/*/src/components/index.ts",
         "packages/*/src/index.ts",
         "packages/db-schema/src/generated/**",
+        "packages/genshin-world/src/generated/characterKitMap/**",
       ]),
       lint: createTask(
         "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused lint:workflows",

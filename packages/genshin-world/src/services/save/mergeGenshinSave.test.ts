@@ -204,6 +204,16 @@ describe(mergeGenshinSave, () => {
     });
   });
 
+  test("keeps the Frostbearing Tree's progress that holds more items on the same level", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 4, level: ACCOUNT_LEVEL } } };
+    const guest = { ...EMPTY_GENSHIN_SAVE, offerings: { frostbearingTree: { heldCount: 9, level: ACCOUNT_LEVEL } } };
+
+    expect(mergeGenshinSave(account, guest).offerings).toStrictEqual({
+      frostbearingTree: { heldCount: 9, level: ACCOUNT_LEVEL },
+    });
+  });
+
   test("keeps the counters of the kind of wish the copy that has made more wishes of it holds, whole", () => {
     expect.hasAssertions();
     const account = {

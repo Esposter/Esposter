@@ -17,13 +17,15 @@ interface Props {
 
 const { gameText, progress, reputation } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const levelId = ref(0);
-// A level is achieved once the nation's Reputation has reached it; its unlock line waits on the features' own words
+const levelId = defineModel<number>("levelId", { required: true });
+// A level is achieved once the nation's Reputation has reached it; its unlock line waits on the features' own words, and
+// The words its achieved mark and item count are read aloud with wait on game text naming them
 const levels = computed(() =>
   reputation.levels.map(({ level, reward }) => ({
     id: level,
     isAchieved: level <= progress.level,
     itemCount: reward.items.length,
+    itemCountLabel: "",
     levelLabel: fillGameTextValues(gameText[GameTextKey.LevelFormat], level),
     statusLabel: gameText[GameTextKey.ReputationNotAchieved],
     unlockLabel: "",
@@ -38,6 +40,7 @@ const levels = computed(() =>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CityReputation]">
     <ReputationScreen
       v-model:level-id="levelId"
+      achieved-label=""
       :back-label="gameText[GameTextKey.Back]"
       headline=""
       :levels

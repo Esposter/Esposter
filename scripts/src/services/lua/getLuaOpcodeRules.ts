@@ -38,7 +38,7 @@ export const getLuaOpcodeRules = (): LuaOpcodeRule[] => [
     describe: (statistic, context) => {
       if (statistic.rkBCount > 0 || statistic.rkCCount > 0) return undefined;
       const namers = Object.entries(statistic.nextSameAOpcodes);
-      const isSetOnly = namers.every(([opcode]) => context.setDialectOpcodes.includes(opcode));
+      const isSetOnly = namers.every(([opcode]) => context.setDialectOpcodes.includes(Number(opcode)));
       const namedCount = namers.reduce((total, [, count]) => total + count, 0);
       return isSetOnly && namedCount > 0
         ? `the next instruction naming its A is a table write in ${namedCount} of ${statistic.count}`

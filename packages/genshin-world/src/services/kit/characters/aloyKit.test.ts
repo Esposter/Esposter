@@ -8,7 +8,7 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { ALOY_CHARACTER_ID } from "#src/services/kit/characters/aloyKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createAloyKit } from "#src/services/kit/characters/aloyKit";
+import { ALOY_CHARACTER_ID, createAloyKit } from "#src/services/kit/characters/aloyKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";

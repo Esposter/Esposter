@@ -70,7 +70,7 @@ A region's data lists its residents beside its landmarks. Each resident has the 
 
 A resident's standing talk is the talk the game begins when the player presses F on them with no quest in the way: their greeting, and what they say about themselves. `mapNpcStandingTalkIds` picks it from the talk table alone. It is a talk begun by the player (`TALK_BEGIN_MANUAL`), that belongs to no quest, loads with no activity, waits on no condition and has a first dialog, and where an NPC has several, the lowest-numbered one is theirs. `genshin:assets residents` gives each resident that talk where the talk table holds one.
 
-`genshin:text standing-talks` publishes every resident's standing talk as one record, `standingTalks/residents`, and their words in every language under `standingTalkText`. A dialog with no words in any language, which only plays an action, is skipped, and the talk goes on from the line before it to the line after it (`skipWordlessTalkLines`). A talk where that cannot be done is left out and counted: a reply with no words, a wordless line that branches, or a talk with no words at all. Its resident then holds no talk the world can begin.
+`genshin:text standing-talks` publishes every resident's standing talk as one record, `standingTalks/residents`, and their words in every language under `standingTalkText`. A dialog with no words in the English text map, which marks one that only plays an action, is skipped, and the talk goes on from the line before it to the line after it (`skipWordlessTalkLines`). A talk where that cannot be done is left out and counted: a reply with no words, a wordless line that branches, or a talk with no words at all. Its resident then holds no talk the world can begin.
 
 The world reads both records as the session starts (`useWorldTalks`). It holds the quests' talks and the standing talks in one map by id, the quest's winning an id both share, and one text map of their words.
 
@@ -90,7 +90,7 @@ flowchart TD
 
 **The opening line offers the quest talks open to the resident.** `getTalkOffers` finds them: each talk-to objective of the step a quest in progress is on, not yet met, whose talk is begun on one of the characters the standing talk is begun on. Each is a reply with its quest's mark, a quest's or a story quest's, named by the quest's title. They are offered ahead of the talk's own replies and the card game's duel. Choosing one leaves the standing talk for the quest's, and its end advances the quest as any talk does. A quest's own talk offers none. A resident whose standing talk the world does not hold begins the first quest talk open to them instead, and one with neither is not listed.
 
-While the opening line offers a quest talk or a duel, a click, F or Space waits for a reply as at any line offering replies, and Skip stops there.
+While the opening line offers a quest talk or a duel, auto-play and Skip stop there, as at any line offering replies. A click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
 
 ## Parity
 
@@ -163,7 +163,7 @@ The reveal is timed off three lines of `yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4` (Not
 
 - [Template:DIcon](https://genshin-impact.fandom.com/wiki/Template:DIcon), Genshin Impact Wiki: the marks the game draws beside a dialogue choice, a plain reply or chat, a quest and a story quest among them.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: F as Pick Up/Interact and Space as Jump, the keys a talk goes on with.
-- [Genshin Impact dialogue choices](https://www.youtube.com/watch?v=nWBqOXWZuFg), an English-language public recording of the dialogue choices at 720 high, with controller prompts: the reply frame the screen is placed by, and the line frames the reveal was read off.
+- [Genshin Impact dialogue choices](https://www.youtube.com/watch?v=nWBqOXWZuFg), an English-language public recording of the dialogue choices at 720 high, with controller prompts: the reply frame the screen is placed by. Its lines show whole in their first frame, so the reveal is not read off it.
 - [Fischl island every NPC dialogue](https://www.youtube.com/watch?v=9I7XyJ2Z5RI), Nierly Good, 2022: a public recording of the English PlayStation client's talks at 1080 high and 60 frames a second, each line written out a character at a time, the reveal's rate read off it.
 - [NPC](https://genshin-impact.fandom.com/wiki/NPC), Genshin Impact Wiki: the world's characters, those met in the open world and those met only in quests.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the talk table's talks, each with the characters it is begun on and what it waits on, the dialog table's lines, each naming the ones that follow it and its speaker's role, with the Traveler's lines offered as choices and a black screen's naming no speaker, and the manual text map's character titles.

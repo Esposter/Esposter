@@ -1,9 +1,9 @@
 import type { SubCommandsDef } from "citty";
 
+import { ScreenLoadBudgetMap } from "#src/services/genshinParity/load/ScreenLoadBudgetMap";
 import { loadScreen } from "#src/services/genshinParity/page/loadScreen";
 import { formatLoadMeter } from "#src/services/genshinParity/shared/formatLoadMeter";
 import { defineCommand } from "citty";
-import { ScreenLoadBudgetMap } from "#src/services/genshinParity/load/ScreenLoadBudgetMap";
 import { hostname } from "node:os";
 
 export const loadCommand: SubCommandsDef[string] = defineCommand({
@@ -19,8 +19,8 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const reading = await loadScreen({ height: Number(args.height), screen: args.screen, width: Number(args.width) });
-    const { isOver, lines } = formatLoadMeter(reading, ScreenLoadBudgetMap[args.screen], hostname());
+    const { isFailed, lines } = formatLoadMeter(reading, ScreenLoadBudgetMap[args.screen], hostname());
     for (const line of lines) console.log(line);
-    if (isOver) process.exitCode = 1;
+    if (isFailed) process.exitCode = 1;
   },
 });

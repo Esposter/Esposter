@@ -1,7 +1,7 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { acquirePushLock } from "#src/queue/push/acquirePushLock";
 import { markPushPending } from "#src/queue/push/markPushPending";
 import { runQueuePush } from "#src/queue/push/runQueuePush";
+import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -32,7 +32,7 @@ describe(runQueuePush, () => {
 
     await expect(runQueuePush(push, lockPath, pendingPath)).resolves.toBe(QueuePushOutcome.Pushed);
     expect(push).toHaveBeenCalledExactlyOnceWith();
-    expect(acquirePushLock(lockPath)).toBe(true);
+    expect(acquireProcessLock(lockPath)).toBe(true);
   });
 
   test("runs once more when a commit lands during the push", async () => {
@@ -54,12 +54,23 @@ describe(runQueuePush, () => {
   test("only marks the commit pending when a live push holds the lock", async () => {
     expect.hasAssertions();
 
-    expect(acquirePushLock(lockPath)).toBe(true);
+    expect(acquireProcessLock(lockPath)).toBe(true);
     const push = vi.fn<() => Promise<QueuePushOutcome>>().mockResolvedValue(QueuePushOutcome.Pushed);
 
     await expect(runQueuePush(push, lockPath, pendingPath)).resolves.toBe(QueuePushOutcome.Queued);
     expect(push).not.toHaveBeenCalled();
     expect(existsSync(pendingPath)).toBe(true);
+  });
+
+  test("lets go of the lock and throws on when the push rejects", async () => {
+    expect.hasAssertions();
+
+    const push = vi.fn<() => Promise<QueuePushOutcome>>().mockRejectedValue(new Error("push failed"));
+
+    await expect(runQueuePush(push, lockPath, pendingPath)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: push failed]`,
+    );
+    expect(acquireProcessLock(lockPath)).toBe(true);
   });
 
   test("takes over a lock whose process is gone", async () => {

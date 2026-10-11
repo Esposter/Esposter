@@ -4,8 +4,8 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
-import { benchScene } from "#parity/benchScene";
 import { benchLoad } from "#parity/benchLoad";
+import { benchScene } from "#parity/benchScene";
 import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";
@@ -29,7 +29,7 @@ import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { capitalize, jsonDateParse } from "@esposter/shared";
+import { capitalize, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
@@ -40,9 +40,9 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
-// `witnessComponents` entry `&witnessComponent=<name>` names, or else by the fixture's own claims. A tool sets the
-// Screen's props as it runs, to play a motion at known moments, benches a scene's frames, and renders a segment of the
-// Login's music to score it
+// `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks, or else by the fixture's own
+// Claims. A tool sets the screen's props as it runs, to play a motion at known moments, benches a scene's frames, and
+// Renders a segment of the login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -89,7 +89,11 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const claims = screen.witnessComponents?.[searchParameters.get("witnessComponent") ?? ""] ?? screen;
+  const witnessComponent = searchParameters.get("witnessComponent");
+  const claims = witnessComponent ? screen.witnessComponents?.[witnessComponent] : screen;
+  // A component the fixture does not list is a typo in the tool's URL, never a reason to inventory with the screen's claims
+  if (!claims)
+    throw new InvalidOperationError(Operation.Read, witnessComponent ?? "", "not a witness component of the screen");
   const loaded = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, claims.witnessFamilies) : undefined;
   const witness: SceneWitness | undefined = loaded
     ? {
@@ -117,7 +121,6 @@ if (screen && root) {
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
-  Reflect.set(window, "benchLoad", () => benchLoad(sceneContext.value));
   Reflect.set(window, "getSceneCamera", () => getSceneCamera(sceneContext.value));
   Reflect.set(window, "getSceneSky", () => getSceneSky(sceneContext.value));
   Reflect.set(window, "getSceneFog", () => getSceneFog(sceneContext.value));
@@ -171,6 +174,9 @@ if (screen && root) {
   if (motion === "entry") holdAnimations();
   await window.document.fonts.ready;
   await ready;
+  // The load is read the moment the screen is ready, before the tool reading it has waited on the network to idle, so
+  // Neither its time nor its requests count what the page fetches after
+  Reflect.set(window, "loadReading", { bench: benchLoad(sceneContext.value), readyMs: performance.now() });
   if (motion === "props" && screen.motionProps) {
     await Promise.all(window.document.getAnimations().map(({ finished }) => finished));
     // A style flush now records the entry's end as the state the motion transitions from; without one the browser folds

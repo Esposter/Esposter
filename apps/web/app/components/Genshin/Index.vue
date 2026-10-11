@@ -20,12 +20,14 @@ const isOpeningShown = ref(true);
 const isDoorOpened = ref(false);
 // A diagnostic only: while the loading screen shows, each step still unfinished when the warning time is up is logged by
 // Name, so a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too.
-// Nothing is skipped or fallen back to, so the world's absence stays as it was
+// Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned once
+// Those awaits settle, so until then the warning reads the save as not loaded
+let isSaveLoadedRef: Ref<boolean> | undefined;
 useTimeoutFn(
   () => {
     if (!isOpeningShown.value) return;
     for (const [step, isStepDone] of [
-      ["save", isSaveLoaded.value],
+      ["save", isSaveLoadedRef?.value ?? false],
       ["world chunk", isLoaded.value],
       ["world ready", isReady.value],
     ] as const)
@@ -50,6 +52,7 @@ const {
   serverClockOffsetMs,
   takeBack,
 } = await useGenshinSave();
+isSaveLoadedRef = isSaveLoaded;
 const progress = computed(() => (Number(isSaveLoaded.value) + Number(isLoaded.value) + Number(isReady.value)) / 3);
 // The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
 const emit = defineEmits<{ load: []; ready: [] }>();

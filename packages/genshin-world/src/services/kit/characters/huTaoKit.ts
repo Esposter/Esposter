@@ -84,8 +84,7 @@ const PARAMITA_CHARGED_HITMARK_FRAMES = 3;
 const PARAMITA_CHARGED_ANIMATION_FRAMES = 42;
 
 // Measured: gcsim v2.47.2 (MIT) hutao/skill.go, Guide to Afterlife's Paramita Papilio at 14 frames of a 52-frame animation, its
-// Cooldown of 960 frames and its Pyro infusion and ATK share of Max HP. The stance's HP cost is not built, as the kit's
-// Actions reach no party HP at their start
+// Cooldown of 960 frames and its Pyro infusion and ATK share of Max HP
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/skill.go
 const SKILL_ANIMATION_FRAMES = 52;
 const PARAMITA_SOURCE = "hu-tao-paramita";
@@ -176,8 +175,8 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const paramitaChargedAttack: KitAction = {
     hits: [
       {
-        hitArea: CHARGED_HIT_AREA,
         enemyStatus: createBloodBlossomStatus,
+        hitArea: CHARGED_HIT_AREA,
         hitmarkSeconds: PARAMITA_CHARGED_HITMARK_FRAMES / 60,
         poiseDamage: NO_POISE_DAMAGE,
         talentMultiplier: attackTalentMultiplier(7),

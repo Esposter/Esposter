@@ -1,9 +1,8 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createSayuKit } from "#src/services/kit/characters/sayuKit";
+import { createSayuKit, SAYU_CHARACTER_ID } from "#src/services/kit/characters/sayuKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
-const SAYU_CHARACTER_ID = 10_000_053;
 const SAYU_KIT = createSayuKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SAYU_CHARACTER_ID]));
 
 describe(createSayuKit, () => {

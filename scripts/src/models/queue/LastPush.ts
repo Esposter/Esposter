@@ -9,7 +9,7 @@ export interface LastPush {
 }
 
 export const lastPushSchema: z.ZodType<LastPush> = z.object({
-  at: z.string(),
+  at: z.iso.datetime(),
   count: z.int().positive(),
   sha: z.string(),
 });

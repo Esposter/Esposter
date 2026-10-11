@@ -10,7 +10,7 @@ Each screen of the game is held to a budget for what it loads before it shows. T
 ## What is measured
 
 - **Load steps.** `measureLoadStep(name, promise)` times an awaited step from its call to its settling, as the measure `genshin:load:<name>`. The promise's result or rejection passes through unchanged, and a rejected step is measured too, with `detail: { isFailed: true }`. The start is a timestamp rather than a mark, since two steps of one name can run at once (each region's read is one `regions` step).
-- **Time to ready.** The milliseconds from navigation start to the moment the parity page signals the screen ready, read right after that signal.
+- **Time to ready.** The milliseconds from navigation start to the moment the parity page signals the screen ready, read by the page at that moment. The tool opening the page waits for the network to idle before it reads anything, and a screen can be ready well before that, so a figure read after the wait would count the time and the requests past ready.
 - **Requests.** Every request the page made, from resource timing, with its transferred bytes. The game data among them is the requests under the hosted game data's base, and their bytes are the game data bytes the budget holds.
 - **Renderer and objects.** The renderer's geometries, textures and programs, and the visible objects by kind, read once at ready the way the scene bench counts them. A screen with no scene at ready draws none, so its counts are zero.
 
@@ -21,7 +21,7 @@ pnpm -C scripts genshin:parity load WorldScreen        # 1920 by 1080, the defau
 pnpm -C scripts genshin:parity load LoginScreen 1280 720
 ```
 
-The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
+The screen is a fixture on the parity page, opened cold in a fresh browser, so its cache is empty. The command prints one meter row per figure: the value, its budget, the share used as a bar, and OVER when past it, then the measures slowest first, then the requests and the objects by kind. It exits non-zero when a figure checked here is over its budget, or when a load step failed, since a screen ready after a failed read loaded only part of itself. Time is checked only on the machine the budget names (`os.hostname()`); on any other machine the time is printed beside its row and does not fail.
 
 ## Reading the Timings track
 
@@ -44,9 +44,9 @@ The time column is checked on the budget's machine only. A screen's own load ste
 ```mermaid
 flowchart LR
   STEP["each awaited load step<br/>measureLoadStep → genshin:load:step"] --> READY["the screen signals ready"]
-  READY --> READ["parity page reads the measures,<br/>resource timing, renderer and scene counts"]
+  READY --> READ["parity page reads the time, the measures,<br/>resource timing, renderer and scene counts at once"]
   READ --> METER["genshin:parity load screen<br/>each figure against its budget"]
-  METER -->|a count over, or a time on its machine| FAIL["exit non-zero"]
+  METER -->|a count over, a time on its machine, or a failed step| FAIL["exit non-zero"]
   METER -->|within| PASS["meter printed"]
 ```
 

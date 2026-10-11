@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterAttributeLines } from "#src/services/character/getCharacterAttributeLines";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { describe, expect, test } from "vitest";
 
 describe(getCharacterAttributeLines, () => {
-  const TRAVELER_ID = 10_000_007;
   const DULL_BLADE_ID = 11_101;
 
   test("gives the Traveler at level 90 the wiki's Max HP and DEF, and both ATK bases raised by the ascension's 24%", async () => {
@@ -19,7 +19,7 @@ describe(getCharacterAttributeLines, () => {
         ascension: 6,
         constellationCount: 0,
         friendshipExp: 0,
-        id: TRAVELER_ID,
+        id: TRAVELER_CHARACTER_ID,
         level: 90,
         stellaFortunaCount: 0,
         talentLevels: {

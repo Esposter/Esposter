@@ -34,4 +34,7 @@ export const SECONDS_PER_DAY: number = Temporal.Duration.from({ hours: 24 }).tot
 export const MACHINE_STATE_DIRECTORY: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "machine");
 export const MACHINE_STATE_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.json");
 export const MACHINE_STATE_NEXT_PATH: string = join(MACHINE_STATE_DIRECTORY, "state.next.json");
+// The one watcher a machine runs holds this lock for its life, taken before it samples anything, so two sessions starting
+// Together cannot both start one
+export const MACHINE_WATCHER_LOCK_PATH: string = join(MACHINE_STATE_DIRECTORY, "watcher.lock");
 export const MACHINE_STATE_STALE_MILLISECONDS: number = Temporal.Duration.from({ minutes: 3 }).total("milliseconds");

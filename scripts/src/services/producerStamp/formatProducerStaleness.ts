@@ -6,14 +6,15 @@ import {
   SHORT_SHA_LENGTH,
 } from "#src/services/producerStamp/constants";
 
-// One reader's line about an output's producer, or "" when the output is stamped clean with nothing committed since
+// One reader's line about an output's producer, or "" when the output is stamped clean with nothing committed since a
+// Commit on the branch
 export const formatProducerStaleness = (
   label: string,
   { commits, isApproximate, stamp }: ProducerStaleness,
 ): string => {
   if (!stamp)
     return `${label}: written before outputs recorded their producer, so whether its extractor changed since is unknown`;
-  if (!stamp.isDirty && commits.length === 0) return "";
+  if (!stamp.isDirty && !isApproximate && commits.length === 0) return "";
   const source = stamp.isDirty ? ", from uncommitted changes" : "";
   const listed = commits.slice(0, MAX_LISTED_PRODUCER_COMMITS).map((commit) => `  ${commit}`);
   const omitted = commits.length - MAX_LISTED_PRODUCER_COMMITS;

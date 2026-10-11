@@ -13,6 +13,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
+import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -33,7 +34,6 @@ const KIRARA_BURST_GROUP_ID = 6139;
 // Body, each reach priced as its offset plus its radius, and the box as the circle to its far corner. The third strike
 // Hits at 17 and 39 frames, and its animation cancels at 39 to 61 frames
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/attack.go
-const createCircleReach = (offset: number, radius: number) => createFanReach(360, offset + radius);
 const KIRARA_STRIKES = [
   { animationFrames: 33, hits: [{ hitArea: createCircleReach(0.6, 2), hitmarkFrames: 13, index: 0 }] },
   { animationFrames: 35, hits: [{ hitArea: createBoxReach(-0.3, 1.8, 3.8), hitmarkFrames: 18, index: 1 }] },

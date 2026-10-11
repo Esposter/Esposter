@@ -86,9 +86,10 @@ const setProgress = (newProgress: TalkProgress) => {
   progress.value = newProgress;
   if (!newProgress.lineId) emit("end");
 };
-// A click, F or Space goes on only while no reply waits on screen, the opening line's offers and duel among them
+// A click, F or Space goes on unless the talk's own replies wait, which `advanceTalk` holds at. The opening line's
+// Offers and duel do not hold it, so a standing talk with no replies of its own still runs on past them
 const goOn = () => {
-  if (choices.value.length === 0) setProgress(advanceTalk(talk, progress.value));
+  setProgress(advanceTalk(talk, progress.value));
 };
 // Skip stops at the opening line written out whole while it offers a quest talk or a duel, as at any line asking for a
 // Reply, so a skip never passes them by
