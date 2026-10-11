@@ -81,4 +81,48 @@ describe("dialogueTalk", () => {
 
     expect(onBegin).toHaveBeenCalledExactlyOnceWith("quest");
   });
+
+  // A two-line standing talk whose opening line offers a quest talk and no reply of its own, which a click on the line
+  // Takes on to the second line rather than holding for the offer
+  test("should go on past the opening line's offers", async () => {
+    expect.hasAssertions();
+
+    const talk: Talk = {
+      id: "standing",
+      lines: [
+        {
+          id: "first",
+          kind: TalkLineKind.Spoken,
+          nextLineIds: ["second"],
+          speakerRoleTextId: "",
+          speakerTextId: "sara",
+          textId: "first",
+          voiceId: "",
+        },
+        {
+          id: "second",
+          kind: TalkLineKind.Spoken,
+          nextLineIds: [],
+          speakerRoleTextId: "",
+          speakerTextId: "sara",
+          textId: "second",
+          voiceId: "",
+        },
+      ],
+      npcIds: [],
+      startLineId: "first",
+    };
+    render(DialogueTalk, {
+      props: {
+        gameText: ENGLISH_GAME_TEXT,
+        offers: [{ icon: DialogueChoiceIcon.Quest, talkId: "quest", textId: "title" }],
+        startProgress: { isRevealed: true, lineId: "first" },
+        talk,
+        textMap: { first: "Hello.", sara: "Sara", second: "Goodbye.", title: "A Quest" },
+      },
+    });
+    await page.getByText("Hello.", { exact: true }).last().click();
+
+    await expect.element(page.getByText("Goodbye.", { exact: true }).last()).toBeInTheDocument();
+  });
 });

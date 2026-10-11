@@ -90,7 +90,7 @@ flowchart TD
 
 **The opening line offers the quest talks open to the resident.** `getTalkOffers` finds them: each talk-to objective of the step a quest in progress is on, not yet met, whose talk is begun on one of the characters the standing talk is begun on. Each is a reply with its quest's mark, a quest's or a story quest's, named by the quest's title. They are offered ahead of the talk's own replies and the card game's duel. Choosing one leaves the standing talk for the quest's, and its end advances the quest as any talk does. A quest's own talk offers none. A resident whose standing talk the world does not hold begins the first quest talk open to them instead, and one with neither is not listed.
 
-While the opening line offers a quest talk or a duel, a click, F or Space waits for a reply as at any line offering replies, and Skip stops there.
+While the opening line offers a quest talk or a duel, auto-play and Skip stop there, as at any line offering replies. A click, F or Space waits there only for the talk's own replies, so a standing talk whose opening line has none goes on past the offers to its next line.
 
 ## Parity
 
