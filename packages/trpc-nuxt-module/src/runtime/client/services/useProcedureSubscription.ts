@@ -27,7 +27,7 @@ export const useProcedureSubscription = (
 ): UseSubscriptionReturn<unknown, TRPCClientError<AnyTRPCRouter>> => {
   const data = shallowRef<unknown>();
   const error = shallowRef<TRPCClientError<AnyTRPCRouter>>();
-  const status = shallowRef(SubscriptionStatus.Idle);
+  const status = shallowRef<SubscriptionStatus>(SubscriptionStatus.Idle);
   let unsubscribable: undefined | Unsubscribable;
   const unsubscribe = () => {
     unsubscribable?.unsubscribe();
