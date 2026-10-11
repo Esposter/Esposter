@@ -4,7 +4,7 @@ import { GENSHIN_CHARACTER_PACK_BASE_URL } from "#shared/services/genshin/consta
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { defineEventHandler, useRuntimeConfig } from "nuxt/server";
 
-// The developer's own extracted official packs, which `modules/serveGenshinCharacterPacks.ts` registers under `nuxt dev`
+// The developer's own extracted official packs, which `modules/serveGenshinExtractions.ts` registers under `nuxt dev`
 // Alone, so no production build holds this route
 export default defineEventHandler(({ url }) =>
   serveGenshinCharacterPack(

@@ -2,7 +2,7 @@ import { CHARACTER_ID_REGEX } from "#server/services/genshin/characterPack/const
 import { listCharacterPackFiles } from "#server/services/genshin/characterPack/listCharacterPackFiles";
 import { listCharacterPackIds } from "#server/services/genshin/characterPack/listCharacterPackIds";
 import { readCharacterPackModelPath } from "#server/services/genshin/characterPack/readCharacterPackModelPath";
-import { contentType } from "@esposter/shared";
+import { createFileResponse } from "#server/services/genshin/createFileResponse";
 import {
   CHARACTER_MODEL_PATH,
   CHARACTER_PACK_INDEX_PATH,
@@ -13,11 +13,7 @@ import {
 } from "genshin-world/characterPack";
 import { statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
-
-// A body served as the type its name's extension gives, as bytes where it gives none
-const createResponse = (body: BodyInit, name: string): Response =>
-  new Response(body, { headers: { "Content-Type": contentType(extname(name)) || "application/octet-stream" } });
+import { join } from "node:path";
 
 // A file of the developer's own packs by its path below the packs' base URL, laid out as the world reads any host: the
 // Index of the characters' folders, a character's model as model.pmx, its terms decoded to UTF-8 as terms.txt, or a
@@ -38,13 +34,16 @@ export const serveGenshinCharacterPack = async (
   const path = pathParts.join("/");
   if (path === CHARACTER_TERMS_PATH) {
     const termsFilePath = chooseCharacterTermsFile(folder, filePaths);
-    return createResponse(decodeCharacterTerms(await readFile(join(folder, termsFilePath))).text, CHARACTER_TERMS_PATH);
+    return createFileResponse(
+      decodeCharacterTerms(await readFile(join(folder, termsFilePath))).text,
+      CHARACTER_TERMS_PATH,
+    );
   }
   const modelPath = await readCharacterPackModelPath(folder, filePaths, Number(folderName), gameDataBaseUrl);
   if (path === CHARACTER_MODEL_PATH)
-    return createResponse(await readFile(join(folder, modelPath)), CHARACTER_MODEL_PATH);
+    return createFileResponse(await readFile(join(folder, modelPath)), CHARACTER_MODEL_PATH);
   const [texture] = resolveCharacterPackTextures([path], filePaths, modelPath).files;
   return texture === undefined
     ? new Response(null, { status: 404 })
-    : createResponse(await readFile(join(folder, texture.filePath)), texture.filePath);
+    : createFileResponse(await readFile(join(folder, texture.filePath)), texture.filePath);
 };
