@@ -1,14 +1,20 @@
 import type { FleetEntryReading } from "#src/models/fleet/FleetEntryReading";
 
+import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { COMPUTE_QUEUE_DIRECTORY } from "#src/services/fleet/constants";
 import { readComputeQueue } from "#src/services/fleet/readComputeQueue";
 import { readProposalEntries } from "#src/services/fleet/readProposalEntries";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { resolve } from "node:path";
+import { readQueueFiles } from "#src/services/fleet/readQueueFiles";
+import { PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
+import { runGit } from "#src/services/shared/runGit";
 
 // Everything the fleet may take, in the order it is offered: the compute queue's items, then the open proposal units,
-// With the queue lines skipped for having no id
+// With the queue lines skipped for having no id. Both are read off the queue branch as origin holds it, fetched fresh
 export const readFleetEntries = (): FleetEntryReading => {
-  const queue = readComputeQueue(resolve(REPOSITORY_ROOT, COMPUTE_QUEUE_DIRECTORY));
-  return { entries: [...queue.entries, ...readProposalEntries()], skipped: queue.skipped };
+  runGit(["fetch", "--quiet", "origin", QUEUE_BRANCH]);
+  const queue = readComputeQueue(readQueueFiles(COMPUTE_QUEUE_DIRECTORY));
+  return {
+    entries: [...queue.entries, ...readProposalEntries(readQueueFiles(PROPOSALS_DIRECTORY))],
+    skipped: queue.skipped,
+  };
 };

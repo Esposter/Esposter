@@ -1,3 +1,4 @@
+import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -13,3 +14,5 @@ export const PUSH_RETRY_CAP_MILLISECONDS: number = Temporal.Duration.from({ seco
 export const LAST_PUSH_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "queue", "last-push.json");
 // The directory prefix of a throwaway worktree a queue push builds a tree in, off to the side of the checkout
 export const REPLAY_WORKTREE_PREFIX = "queue-push-";
+// The queue branch as origin holds it, which a push replays onto and the fleet reads its entries from
+export const REMOTE_QUEUE_REF = `origin/${QUEUE_BRANCH}`;

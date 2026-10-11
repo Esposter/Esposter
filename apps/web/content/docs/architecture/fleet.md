@@ -48,7 +48,7 @@ The profile's `id` and `areas` are never overwritten once the user has set them.
 
 ## Entries
 
-An entry is one unit of work a machine may take, from two sources:
+An entry is one unit of work a machine may take, from two sources, both read off `ai/queue` as origin holds it, fetched fresh. The checkout's own copy is never read: one behind origin still lists an item another machine finished and deleted, and would offer it again.
 
 - **The compute queue.** Each open item under the **Queue** heading of a page in `apps/web/content/docs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. An item under **Waiting** is not offered.
 - **The open proposal units** under `apps/web/content/docs/proposals/<area>/`, the units `pnpm ai:proposals:report` reads. A unit's touch set is its Key files table plus the `touches` globs its frontmatter names, and a unit with a `waiting` blocker is not offered.
@@ -90,6 +90,7 @@ No export or recording is ever committed, published or sent to a hosted service.
 | `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure    |
 | `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading     |
 | `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                             |
+| `scripts/src/services/fleet/readQueueFiles.ts`        | Reads a folder's files off origin's `ai/queue` in one `git cat-file --batch`, never off the checkout      |
 | `scripts/src/services/machine/watchMachine.ts`        | Samples the machine each minute and pushes its heartbeat every ten minutes                                |
 | `scripts/src/services/queue/pushQueue.ts`             | Pushes `ai/queue`, retrying a refused push with exponential backoff and full jitter, up to eight attempts |
 | `apps/web/content/docs/genshin/compute/`              | The compute queue's pages, whose items the fleet takes                                                    |
