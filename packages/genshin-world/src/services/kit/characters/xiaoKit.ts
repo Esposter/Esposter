@@ -16,6 +16,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -291,11 +292,9 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           nextTickSeconds: 0,
           onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
             if (!tickKitEffectState.effects.includes(infusion)) return;
-            addKitEffect(tickKitEffectState, {
+            buffKitMember(tickKitEffectState, characterId, {
               amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),
               attribute: Attribute.AnemoDamageBonus,
-              characterId,
-              kind: "buff",
               secondsRemaining: infusion.secondsRemaining,
               source: TAMER_OF_DEMONS_SOURCE,
             });

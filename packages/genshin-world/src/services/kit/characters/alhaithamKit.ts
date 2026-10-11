@@ -24,6 +24,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -225,11 +226,9 @@ const addConstellation2Buff = (kitEffectState: KitEffectState, characterId: numb
     secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
     stacks: (cursor + 1) % CONSTELLATION_2_STACKS_MAX,
   });
-  addKitEffect(kitEffectState, {
+  buffKitMember(kitEffectState, characterId, {
     amount: CONSTELLATION_2_ELEMENTAL_MASTERY,
     attribute: Attribute.ElementalMastery,
-    characterId,
-    kind: "buff",
     secondsRemaining: CONSTELLATION_2_SECONDS,
     source: `${CONSTELLATION_2_SOURCE_PREFIX}${cursor + 1}`,
   });
@@ -250,19 +249,15 @@ const addConstellation6Buffs = (kitEffectState: KitEffectState, characterId: num
       if (criticalDamage) criticalDamage.secondsRemaining += CONSTELLATION_6_SECONDS;
       continue;
     }
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, characterId, {
       amount: CONSTELLATION_6_CRITICAL_RATE,
       attribute: Attribute.CriticalRate,
-      characterId,
-      kind: "buff",
       secondsRemaining: CONSTELLATION_6_SECONDS,
       source: CONSTELLATION_6_SOURCE,
     });
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, characterId, {
       amount: CONSTELLATION_6_CRITICAL_DAMAGE,
       attribute: Attribute.CriticalDamage,
-      characterId,
-      kind: "buff",
       secondsRemaining: CONSTELLATION_6_SECONDS,
       source: CONSTELLATION_6_SOURCE,
     });
@@ -459,11 +454,9 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       if (constellationCount >= CONSTELLATION_4 && consumed > 0)
         for (const memberId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
           if (memberId === characterId) continue;
-          addKitEffect(kitEffectState, {
+          buffKitMember(kitEffectState, memberId, {
             amount: CONSTELLATION_4_ELEMENTAL_MASTERY_PER_MIRROR * consumed,
             attribute: Attribute.ElementalMastery,
-            characterId: memberId,
-            kind: "buff",
             secondsRemaining: CONSTELLATION_4_SECONDS,
             source: CONSTELLATION_4_LOSS_SOURCE,
           });
@@ -478,11 +471,9 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         (tick) => {
           gainMirrors(tick.kitEffectState, body, combatant, generated);
           if (constellationCount >= CONSTELLATION_4)
-            addKitEffect(tick.kitEffectState, {
+            buffKitMember(tick.kitEffectState, characterId, {
               amount: CONSTELLATION_4_DENDRO_DAMAGE_BONUS_PER_MIRROR * generated,
               attribute: Attribute.DendroDamageBonus,
-              characterId,
-              kind: "buff",
               secondsRemaining: CONSTELLATION_4_SECONDS,
               source: CONSTELLATION_4_GAIN_SOURCE,
             });

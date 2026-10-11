@@ -17,6 +17,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -275,11 +276,9 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const elementalBurst: KitAction = {
     hits: [],
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, combatant.characterId, {
         amount: burstTalentMultiplier(ITTO_BURST_DEFENSE_BONUS_INDEX) * combatant.attributes.defense,
         attribute: Attribute.Attack,
-        characterId: combatant.characterId,
-        kind: "buff",
         secondsRemaining: BURST_SECONDS,
       });
       addKitEffect(kitEffectState, {

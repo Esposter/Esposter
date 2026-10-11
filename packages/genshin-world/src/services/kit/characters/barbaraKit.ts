@@ -14,7 +14,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -119,11 +119,9 @@ const createMelodyLoopTick =
     if (tickIndex > 0 || owner.constellationCount < VITALITY_BURST_CONSTELLATION) return;
     for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
       if (characterId !== owner.characterId)
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, characterId, {
           amount: VITALITY_BURST_HYDRO_DAMAGE_BONUS,
           attribute: Attribute.HydroDamageBonus,
-          characterId,
-          kind: "buff",
           secondsRemaining: loopSeconds,
         });
   };

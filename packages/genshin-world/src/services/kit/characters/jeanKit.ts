@@ -13,7 +13,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -259,11 +259,9 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           action: {
             ...galeBlade,
             onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-              addKitEffect(kitEffectState, {
+              buffKitMember(kitEffectState, combatant.characterId, {
                 amount: SPIRALING_TEMPEST_DAMAGE_BONUS,
                 attribute: Attribute.AnemoDamageBonus,
-                characterId: combatant.characterId,
-                kind: "buff",
                 secondsRemaining: galeBlade.seconds,
               }),
           },

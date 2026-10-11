@@ -17,6 +17,8 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -168,11 +170,9 @@ const createChiliPepper = (owner: Combatant, centre: GroundPoint): KitField => {
   const chiliPepper = createKitField(owner.characterId, centre, {
     nextTickSeconds: GUOBA_FRAMES / 60,
     onTick: ({ activeCombatant, kitEffectState }) => {
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, activeCombatant.characterId, {
         amount: CHILI_PEPPER_ATTACK_SHARE * activeCombatant.attributes.attributeTotalMap[Attribute.BaseAttack],
         attribute: Attribute.Attack,
-        characterId: activeCombatant.characterId,
-        kind: "buff",
         secondsRemaining: CHILI_PEPPER_BUFF_SECONDS,
         source: CHILI_PEPPER_SOURCE,
       });
@@ -311,15 +311,12 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           combatant.characterId,
           PYRONADO_START_FRAMES / 60,
           ({ kitEffectState: tickKitEffectState, party }) => {
-            for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-              addKitEffect(tickKitEffectState, {
-                amount: CONDENSED_PYRONADO_PYRO_DAMAGE_BONUS,
-                attribute: Attribute.PyroDamageBonus,
-                characterId,
-                kind: "buff",
-                secondsRemaining: seconds,
-                source: CONDENSED_PYRONADO_SOURCE,
-              });
+            buffKitTeam(tickKitEffectState, party, {
+              amount: CONDENSED_PYRONADO_PYRO_DAMAGE_BONUS,
+              attribute: Attribute.PyroDamageBonus,
+              secondsRemaining: seconds,
+              source: CONDENSED_PYRONADO_SOURCE,
+            });
           },
         );
       },

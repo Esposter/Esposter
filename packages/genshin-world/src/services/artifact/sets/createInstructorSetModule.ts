@@ -3,7 +3,7 @@ import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { takeOne } from "@esposter/shared";
 
 // Instructor's four-piece bonus, its seconds and its Elemental Mastery in the set table's order: a reaction its wearer
@@ -20,15 +20,12 @@ export const createInstructorSetModule = ({ params }: ArtifactSetBonus): Artifac
         activeCombatant.characterId !== combatant.characterId
       )
         return;
-      for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-        addKitEffect(kitEffectState, {
-          amount: elementalMastery,
-          attribute: Attribute.ElementalMastery,
-          characterId,
-          kind: "buff",
-          secondsRemaining: seconds,
-          source: "Instructor",
-        });
+      buffKitTeam(kitEffectState, party, {
+        amount: elementalMastery,
+        attribute: Attribute.ElementalMastery,
+        secondsRemaining: seconds,
+        source: "Instructor",
+      });
     },
   };
 };

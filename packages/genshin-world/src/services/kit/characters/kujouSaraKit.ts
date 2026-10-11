@@ -19,6 +19,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -108,11 +109,9 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
 
   // The ATK Bonus Tengu Stormcall gives the character on the field as a hit lands, a share of Sara's base ATK
   const addAtkBonus = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void =>
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, getActiveCharacterId(party), {
       amount: atkBonusRatio * combatant.attributes.attributeTotalMap[Attribute.BaseAttack],
       attribute: Attribute.Attack,
-      characterId: getActiveCharacterId(party),
-      kind: "buff",
       secondsRemaining: atkBonusSeconds,
       source: TENGU_SOURCE,
     });

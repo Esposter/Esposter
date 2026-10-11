@@ -18,6 +18,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitField } from "#src/services/kit/effects/createKitField";
@@ -234,11 +235,9 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hits: [ritualHit],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         if (combatant.constellationCount >= CONSTELLATION_2)
-          addKitEffect(kitEffectState, {
+          buffKitMember(kitEffectState, combatant.characterId, {
             amount: CONSTELLATION_2_STACK,
             attribute: Attribute.ElectroDamageBonus,
-            characterId: combatant.characterId,
-            kind: "buff",
             secondsRemaining: getTalentMultiplier(talentMultiplierMap, ORORON_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
             source: CONSTELLATION_2_SOURCE,
           });

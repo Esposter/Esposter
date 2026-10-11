@@ -14,6 +14,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -246,11 +247,9 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         damagePartyMember(party, combatant.characterId, lostHealthShare);
         enterKitStance(kitEffectState, combatant, paramitaActions, paramitaSeconds);
         addKitEffect(kitEffectState, createPyroInfusion(combatant.characterId));
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, combatant.characterId, {
           amount: skillTalentMultiplier(1) * combatant.attributes.maxHealth,
           attribute: Attribute.Attack,
-          characterId: combatant.characterId,
-          kind: "buff",
           secondsRemaining: paramitaSeconds,
           source: PARAMITA_SOURCE,
         });

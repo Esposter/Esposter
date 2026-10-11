@@ -14,6 +14,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -143,11 +144,9 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     hitmarkSeconds: FROSTFLAKE_ARROW_HITMARK_FRAMES / 60,
     onStrike: ({ kitEffectState }, { combatant }) => {
       if (combatant.ascension < UNDIVIDED_HEART_ASCENSION) return;
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, combatant.characterId, {
         amount: UNDIVIDED_HEART_CRITICAL_RATE,
         attribute: Attribute.CriticalRate,
-        characterId: combatant.characterId,
-        kind: "buff",
         secondsRemaining: UNDIVIDED_HEART_SECONDS,
         source: UNDIVIDED_HEART_SOURCE,
       });
@@ -204,11 +203,9 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           nextTickSeconds: CELESTIAL_SHOWER_START_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
             if (combatant.ascension >= HARMONY_ASCENSION)
-              addKitEffect(tickEffectState, {
+              buffKitMember(tickEffectState, activeCombatant.characterId, {
                 amount: HARMONY_CRYO_DAMAGE_BONUS,
                 attribute: Attribute.CryoDamageBonus,
-                characterId: activeCombatant.characterId,
-                kind: "buff",
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });

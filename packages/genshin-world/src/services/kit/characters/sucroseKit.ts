@@ -17,6 +17,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
@@ -221,15 +223,12 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
               [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(ABSORB_CHECK_AREA, absorbBody, enemy)),
             );
             if (absorbedElement === undefined || combatant.constellationCount < ABSORBED_ELEMENT_CONSTELLATION) return;
-            for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-              addKitEffect(tickState, {
-                amount: ABSORBED_ELEMENT_DAMAGE_BONUS,
-                attribute: ElementDamageBonusAttributeMap[absorbedElement],
-                characterId,
-                kind: "buff",
-                secondsRemaining: ABSORBED_ELEMENT_SECONDS,
-                source: ABSORBED_ELEMENT_SOURCE,
-              });
+            buffKitTeam(tickState, party, {
+              amount: ABSORBED_ELEMENT_DAMAGE_BONUS,
+              attribute: ElementDamageBonusAttributeMap[absorbedElement],
+              secondsRemaining: ABSORBED_ELEMENT_SECONDS,
+              source: ABSORBED_ELEMENT_SOURCE,
+            });
           },
           secondsRemaining,
           tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
@@ -252,11 +251,9 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           if (reaction.reactionType !== ReactionType.Swirl || reaction.element === undefined) continue;
           for (const characterId of members)
             if (characterIdCombatantMap.get(characterId)?.element === reaction.element)
-              addKitEffect(kitEffectState, {
+              buffKitMember(kitEffectState, characterId, {
                 amount: SWIRL_ELEMENTAL_MASTERY_BONUS,
                 attribute: Attribute.ElementalMastery,
-                characterId,
-                kind: "buff",
                 secondsRemaining: SWIRL_SECONDS,
                 source: SWIRL_SOURCE,
               });
@@ -272,11 +269,9 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           SKILL_BURST_ELEMENTAL_MASTERY_SHARE * event.striker.attributes.attributeTotalMap[Attribute.ElementalMastery];
         for (const characterId of members)
           if (characterId !== combatant.characterId)
-            addKitEffect(kitEffectState, {
+            buffKitMember(kitEffectState, characterId, {
               amount,
               attribute: Attribute.ElementalMastery,
-              characterId,
-              kind: "buff",
               secondsRemaining: SKILL_BURST_SECONDS,
               source: SKILL_BURST_SOURCE,
             });

@@ -17,6 +17,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -407,11 +408,9 @@ export const createEulaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
               ]);
             // Constellation 1's bonus lasts six seconds plus six for each stack consumed
             if (combatant.constellationCount >= 1)
-              addKitEffect(kitEffectState, {
+              buffKitMember(kitEffectState, characterId, {
                 amount: CONSTELLATION_1_PHYSICAL_BONUS,
                 attribute: Attribute.PhysicalDamageBonus,
-                characterId,
-                kind: "buff",
                 secondsRemaining: CONSTELLATION_1_BASE_SECONDS + CONSTELLATION_1_SECONDS_PER_STACK * stacks,
                 source: "eula-c1",
               });
