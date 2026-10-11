@@ -39,6 +39,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Backend: [
       "auth",
       "agent-access",
+      "agent-content-tools",
       "rate-limiting",
       "azure-services",
       "file-uploads",
