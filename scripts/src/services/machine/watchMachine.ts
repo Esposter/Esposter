@@ -4,12 +4,8 @@ import type { MachineState } from "#src/models/machine/MachineState";
 import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
 import { pushMachineHeartbeat } from "#src/services/fleet/pushMachineHeartbeat";
 import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
-import {
-  LAUNCHD_PROCESS_ID,
-  MACHINE_WATCHER_LOCK_PATH,
-  SAMPLE_MILLISECONDS,
-  WINDOW_MINUTES,
-} from "#src/services/machine/constants";
+import { checkIsWatching } from "#src/services/machine/checkIsWatching";
+import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
 import { getCpuTotals } from "#src/services/machine/getCpuTotals";
@@ -17,6 +13,7 @@ import { getMachineLine } from "#src/services/machine/getMachineLine";
 import { getMachineState } from "#src/services/machine/getMachineState";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
 import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
+import { readMachineState } from "#src/services/machine/readMachineState";
 import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
 import { sweepOrphans } from "#src/services/machine/sweepOrphans";
