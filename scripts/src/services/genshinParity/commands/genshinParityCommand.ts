@@ -49,7 +49,7 @@ import { viewCommand } from "#src/services/genshinParity/commands/viewCommand";
 import { zoomCommand } from "#src/services/genshinParity/commands/zoomCommand";
 import { defineCommand } from "citty";
 
-// The parity loop's tool, one subcommand a step (apps/web/content/docs/genshin/parity.md)
+// The parity loop's tool, one subcommand a step (apps/web/content/docs/genshin/parity/commands.md)
 export const genshinParityCommand: CommandDef = defineCommand({
   meta: { description: "Shoot, score, trace and record the game's screens against ours", name: "genshin:parity" },
   subCommands: {
