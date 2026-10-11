@@ -27,7 +27,7 @@ flowchart TD
 - **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them. The bars stand flat to the wall, so the lattice reads as openwork from the street.
 - **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle, and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
 - **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height, so a building with three tiers stands three rises above its walls.
-- **The kit stands in for Liyue Harbor's houses.** When the [parity](/docs/genshin/parity) inventory claims the harbour's export, its buildings family is the meshes named by the region's code, `Area_Ly_Build_` and `Area_LY_Build_` both, with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
+- **The kit stands in for Liyue Harbor's houses.** When the [parity](/docs/genshin/parity) inventory claims the harbour's export, the export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
 
 ## Palette
 
@@ -35,12 +35,12 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 
 ## Key files
 
-| File                                                                         | Role                                                                |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts` | The building: terrace, columns and beams, lattice and roof tiers    |
-| `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts`   | One roof tier: the upturned shell and its finials                   |
-| `packages/genshin-world/src/services/liyue/getLiyueBays.ts`                  | A wall's bays, none wider than the bay width                        |
-| `packages/genshin-world/src/services/liyue/constants.ts`                     | The kit's proportions in metres, and the palette's hues             |
-| `packages/genshin-world/src/data/regions/liyue.json`                         | Liyue Harbor's building, at a provisional place until it is fit     |
-| `packages/genshin-world/src/services/liyue/LiyuePartFamilyMeshRegexMap.ts`   | The game's meshes the ground and buildings families stand in for    |
-| `packages/genshin-world/src/services/liyue/LiyueUndrawnMeshRegexMap.ts`      | The rest of the harbour's export, claimed as not drawn yet, by kind |
+| File                                                                         | Role                                                                           |
+| :--------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts` | The building: terrace, columns and beams, lattice and roof tiers               |
+| `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts`   | One roof tier: the upturned shell and its finials                              |
+| `packages/genshin-world/src/services/liyue/getLiyueBays.ts`                  | A wall's bays, none wider than the bay width                                   |
+| `packages/genshin-world/src/services/liyue/constants.ts`                     | The kit's proportions in metres, and the palette's hues                        |
+| `packages/genshin-world/src/data/regions/liyue.json`                         | Liyue Harbor's building, at a provisional place until it is fit                |
+| `packages/genshin-world/src/services/liyue/LiyuePartFamilyMeshRegexMap.ts`   | The game's meshes standing in for Liyue Harbor's ground and buildings families |
+| `packages/genshin-world/src/services/liyue/LiyueUndrawnMeshRegexMap.ts`      | The rest of the harbour's export, claimed as not drawn yet, by kind            |
