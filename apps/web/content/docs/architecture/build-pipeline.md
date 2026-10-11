@@ -129,12 +129,12 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## Key files
 
-| File                                                   | Role                                                                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto                                                                                |
-| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                                                                    |
-| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from                                                                    |
-| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                                                                           |
-| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program                                                                        |
-| `packages/configuration/src/generateExports.ts`        | Writes the barrels, leaving out a package's on-demand directories                                                  |
-| `apps/web/package.json`                                | Its `dev` script runs `build:packages` (the build cache over every package the app links) before `nuxt dev` starts |
+| File                                                   | Role                                                                                                                                |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto                                                                                                 |
+| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                                                                                     |
+| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from                                                                                     |
+| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                                                                                            |
+| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program                                                                                         |
+| `packages/configuration/src/generateExports.ts`        | Writes the barrels, leaving out a package's on-demand directories                                                                   |
+| `apps/web/package.json`                                | Its `dev` script runs the root `build:packages` vp task, replayed from vp's cache when no package changed, before `nuxt dev` starts |
