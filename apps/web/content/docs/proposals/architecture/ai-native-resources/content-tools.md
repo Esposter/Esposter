@@ -3,12 +3,7 @@ title: Content tools
 description: Proposal — four generic tools on the resource router let an agent find any resource, read its type's content schema as JSON Schema, read its content at a JSON Pointer and edit it with RFC 6902 operations applied on the server and saved through the one content door, for every type in ResourceDefinitionMap with nothing registered per type.
 model: claude-opus-5-5
 touches:
-  [
-    "packages/shared/src/services/jsonPatch/**",
-    "packages/shared/src/models/jsonPatch/**",
-    "apps/web/server/services/mcp/**",
-    "apps/web/server/services/resource/**",
-  ]
+  ["apps/web/shared/models/jsonPatch/**", "apps/web/server/services/mcp/**", "apps/web/server/services/resource/**"]
 ---
 
 # Content tools
@@ -52,7 +47,7 @@ A read answers the stored JSON — what `readSerializedResourceContent` returns,
 
 An edit is a list of RFC 6902 operations — add, remove, replace, move, copy and test — each addressed by a JSON Pointer. A patch is atomic: if any operation fails, a failed test included, none of them applies. Appending is the pointer's `-` index, so adding a row is `add /data/rows/-` with no index to know.
 
-`applyPatches`, in `@esposter/shared`, applies the operations to the stored JSON, sharing every untouched subtree and recording each operation's inverse as it goes. The [page builder](/docs/proposals/resource/page-builder/undo-as-patches) records its undo history with the same function, so the applier is written once for both of its consumers.
+`applyPatches` (`apps/web/shared/services/jsonPatch/applyPatches.ts`), landed with the page builder, applies the operations to the stored JSON, sharing every untouched subtree and recording each operation's inverse as it goes. The [page builder](/docs/proposals/resource/page-builder/undo-as-patches) records its undo history with the same function, so the applier is written once for both of its consumers; both live in `apps/web`, so it sits in the app's `shared/` layer rather than `@esposter/shared`.
 
 **Paths an agent may not write are refused first.** Every operation's path, and the `from` of a move or a copy, is resolved against the type's agent JSON Schema, and a write at or under a node marked `readOnly` or `x-opaque` is refused, naming the path. A `test` reads and is allowed anywhere. The refusal is read off the schema the agent was given, so the agent can know it in advance, and no type is special-cased.
 
@@ -109,8 +104,7 @@ One test iterates `ResourceTypes`, with no list of its own. For each type it con
 New code lands here:
 
 ```text
-packages/shared/src/models/jsonPatch/JsonPatchOperation.ts   the six operations and their schema
-packages/shared/src/services/jsonPatch/applyPatches.ts       applies operations atomically, recording each inverse
+apps/web/shared/models/jsonPatch/JsonPatchOperation.ts       the six operations' schema, beside their landed interface
 apps/web/server/services/mcp/getAgentJsonSchema.ts           the one conversion the bridge and the describe tool share
 apps/web/server/services/mcp/getAgentJsonSchema.test.ts      every content schema converts, its undescribed paths recorded
 apps/web/server/services/resource/updateResourceContent.ts   read, change, save at the version read, retry when unpinned

@@ -103,7 +103,7 @@ The generic tools reach every type at once, so ordering by value is ordering the
 4. **Schema fidelity** — the Flowchart's node data first, as the smallest fix with the largest gain, then the Note's document check and the Survey's model check.
 5. **Typed commands** — the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown once [Note Markdown portability](/docs/proposals/resource/note-markdown-portability) ships its converter.
 6. **The in-product assistant**, once the agent console pairs a host again.
-7. **The page builder's cutover.** Its document is a typed node tree whose schema the registry builds, its edits are JSON Patch operations, and it renders on the server at publish. So at the cutover the Webpage and the Email are described all the way down, their captured HTML goes, and the generic tools reach them whole with no unit of their own; the page builder's `applyPatches` is the one the content tools put in `@esposter/shared`.
+7. **The page builder's cutover.** Its document is a typed node tree whose schema the registry builds, its edits are JSON Patch operations, and it renders on the server at publish. So at the cutover the Webpage and the Email are described all the way down, their captured HTML goes, and the generic tools reach them whole with no unit of their own; the content tools apply the page builder's `applyPatches`, which lives in the app's `shared/` layer since both its consumers are in `apps/web`.
 
 ## Notes
 
