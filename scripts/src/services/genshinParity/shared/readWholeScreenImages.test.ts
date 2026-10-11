@@ -32,4 +32,17 @@ describe(readWholeScreenImages, () => {
     ]);
     expect(fetch.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation).toString()}`);
   });
+
+  test("fails on a batch the API answers with an error, rather than returning the batches before it", async () => {
+    expect.hasAssertions();
+
+    const responses: WikiImagesResponse[] = [
+      { continue: { gimcontinue: "2|Menu.png" }, query: { pages: { 1: { title: "File:Handbook.png" } } } },
+      { error: { code: "badcontinue", info: "Invalid continue param." } },
+    ];
+    const fetch = vi.spyOn(globalThis, "fetch");
+    for (const response of responses) fetch.mockResolvedValueOnce(Response.json(response));
+
+    await expect(readWholeScreenImages("a")).rejects.toThrow("badcontinue");
+  });
 });
