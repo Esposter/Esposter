@@ -4,7 +4,7 @@ import { getDescendants } from "#src/services/sweeps/getDescendants";
 import ts from "typescript";
 
 const RESULT_CALLEE_NAMES = new Set(["getResult", "getResultAsync"]);
-const TERMINATOR_NAMES = new Set(["andTee", "andThen", "mapErr", "map", "match", "orElse", "orTee", "unwrapOr"]);
+const TERMINATOR_NAMES = new Set(["andTee", "andThen", "map", "mapErr", "match", "orElse", "orTee", "unwrapOr"]);
 const AFTER_LENGTH = 34;
 
 const checkIsResultCall = (node: ts.Node): node is ts.CallExpression =>
