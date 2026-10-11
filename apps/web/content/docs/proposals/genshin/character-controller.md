@@ -1,13 +1,13 @@
 ---
 title: Character controller
-description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type but the medium female body's clip-read speeds moves by today, and each state approved by its own measure against those readings.
+description: Proposal — what the character controller still lacks past its states, its body and its stamina: every number the body moves by, read for each body type from the game's own clips, its data and recordings of it, in place of the provisional table every type moves by today past its clip-read speeds, and each state approved by its own measure against those readings.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 ---
 
 # Character controller
 
-The [character controller](/docs/genshin/character-controller) walks the world today: a kinematic capsule moves through the game's movement states on its stamina, in fixed steps, against the ground and the landmarks. The medium female body's walk, run, sprint, dash, climb, swim and drowning are read from its clips; every other number, and every number of the other body types, is provisional, one table they share. This page reads each of them off the game.
+The [character controller](/docs/genshin/character-controller) walks the world today: a kinematic capsule moves through the game's movement states on its stamina, in fixed steps, against the ground and the landmarks. Each body type's walk, run, sprint, dash, climb, swim and drowning are read from its own clips; every other number is provisional, one table they share. This page reads each of them off the game.
 
 ## Decisions
 
@@ -38,16 +38,11 @@ The readings are named work before any constant changes. Each is an open questio
 
 ## Scope and order
 
-**Today:** the medium female, medium male, tall female and tall male bodies move by their own clips' speeds, dash, climb, swim and drowning, and by the provisional table for the rest; the short female body moves by the provisional table.
+**Today:** every body type moves by its own clips' speeds, dash, climb, swim and drowning, read in metres at its avatar's human scale, and by the provisional table for the rest.
 
 **This adds, in order:**
 
-1. **The short female body's clip-read entry**, built as the tall male's entry was.
-   - Run `pnpm -C scripts genshin:assets locomotion Loli` with the game closed. It prints the body's human scale, then each clip's seconds, ground covered, speed, recorded speed and rise in metres at that scale.
-   - Write `BodyTypeLocomotionMap[BodyType.ShortFemale]` as `{ ...PROVISIONAL_LOCOMOTION, ... }` with the eleven fields the medium female entry overrides, each off the same clip of `Ani_Avatar_Loli_` as its `Girl` twin, as `~/Esposter/genshin-parity/extracted/locomotion/Girl/locomotion.json` holds them: `walkSpeed`, `runSpeed` and `sprintSpeed` the `WalkCycle`, `RunCycle` and `SprintCycle` speeds; `dashSpeed` and `dashSeconds` the `SprintBS` speed and seconds; `climbSpeed` the `ClimbU` rise a second; `climbJumpHeight` and `climbJumpSeconds` the `ClimbDashU` rise and seconds; `swimSpeed` and `swimDashSpeed` the `SwimF` and `SwimDash` speeds; and `drownSeconds` the `SwimDie` seconds, each to two decimals.
-   - Add the run to `Locomotion.reference.ts` as an investigation beside the medium female body's: its command, the readings and their outcome. A clip the body type lacks leaves its field provisional, and the investigation names it.
-   - The readings are data, so no unit test is owed; the printed readings in the reference are their proof.
-2. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter as it drains on a wall, in a glide and while treading water, published ones first. Until one is found, `world-movement.mkv` on the roadmap's References sought list is the clip that answers them.
+1. **The recordings**: a timed run between Windrise's statue and oak, a jump and a fall from a ledge, a glide and its plunge, a climb and its climb jump, a swim into deep water and out, and the meter as it drains on a wall, in a glide and while treading water, published ones first. Until one is found, `world-movement.mkv` on the roadmap's References sought list is the clip that answers them.
 
 Each state is approved by its own measure against the readings, as the motion pass judges any motion: a run between two landmarks takes the recording's time within that recording's noise, and a jump's apex stands at the recording's height. A unit test then holds each measure, so no later state retunes it.
 
