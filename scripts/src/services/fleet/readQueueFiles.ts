@@ -13,7 +13,11 @@ const NEWLINE_BYTE = 0x0a;
 // Still lists an item another worker finished and deleted, and the fleet would offer it again. The caller fetches first.
 // One `git cat-file --batch` reads them all, each answered as a `<sha> blob <size>` line, its bytes and a newline, so the
 // Output is cut by byte counts and stays a buffer until each file is cut from it
-export const readQueueFiles = (directory: string, ref = REMOTE_QUEUE_REF, cwd = REPOSITORY_ROOT): QueueFile[] => {
+export const readQueueFiles = (
+  directory: string,
+  ref: string = REMOTE_QUEUE_REF,
+  cwd: string = REPOSITORY_ROOT,
+): QueueFile[] => {
   const paths = getNonEmptyLines(runGit(["ls-tree", "-r", "--name-only", ref, "--", directory], cwd));
   const output = execFileSync("git", ["cat-file", "--batch"], {
     cwd,

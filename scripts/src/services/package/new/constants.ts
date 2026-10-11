@@ -3,7 +3,8 @@ import { DOCS_DIRECTORY } from "@esposter/configuration";
 
 export const PACKAGES_DIRECTORY = "packages";
 // Lowercase words joined by single hyphens: the name is a directory, an npm name and a docs slug at once
-export const PACKAGE_NAME_REGEX = /^[a-z]+(?:-[a-z\d]+)*$/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const PACKAGE_NAME_REGEX: RegExp = /^[a-z]+(?:-[a-z\d]+)*$/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const DOCS_SECTION_DIRECTORY: string = `apps/web/content/${DOCS_DIRECTORY}`;
 // The icon a new docs section takes until its author picks one. It is an icon name the UnoCSS preset resolves

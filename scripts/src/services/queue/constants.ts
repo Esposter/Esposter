@@ -15,4 +15,5 @@ export const LAST_PUSH_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase(
 // The directory prefix of a throwaway worktree a queue push builds a tree in, off to the side of the checkout
 export const REPLAY_WORKTREE_PREFIX = "queue-push-";
 // The queue branch as origin holds it, which a push replays onto and the fleet reads its entries from
-export const REMOTE_QUEUE_REF = `origin/${QUEUE_BRANCH}`;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const REMOTE_QUEUE_REF: string = `origin/${QUEUE_BRANCH}`;
