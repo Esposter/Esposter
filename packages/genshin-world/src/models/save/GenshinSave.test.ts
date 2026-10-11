@@ -8,6 +8,7 @@ import {
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
+  MAX_OPENED_CHEST_COUNT,
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
   MAX_TRAVELER_NAME_LENGTH,
@@ -51,6 +52,9 @@ describe("genshinSaveSchema", () => {
         nextId: maxNumber,
       },
       offerings: { frostbearingTree: { heldCount: maxNumber, level: maxNumber } },
+      openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
+        String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+      ),
       quests: Object.fromEntries(
         Array.from({ length: MAX_QUEST_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

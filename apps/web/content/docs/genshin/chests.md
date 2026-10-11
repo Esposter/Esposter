@@ -1,6 +1,6 @@
 ---
 title: Chests
-description: The official Teyvat Interactive Map's chests, fitted into each region's slice of the game data by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once; locks, digging, seals, the bag's drops and the other tiers wait on the proposal's later steps.
+description: The official Teyvat Interactive Map's chests, fitted into each region's slice of the game data by their kind: the five tiers from Common to Remarkable, and the buried and sealed places that carry no tier. Only ground chests are placed. Opening a Common, Exquisite or Precious chest pays its Primogems and Mora once and pours its drops out where it stands; locks, digging, seals and the other tiers wait on the proposal's later steps.
 ---
 
 # Chests
@@ -27,9 +27,9 @@ flowchart TD
 
 ## Opening
 
-`openChest` opens one chest. It rolls the kind's Primogems and Mora within their ranges into the wallet and keeps the chest as opened, so a second opening pays nothing. The ranges are the wiki's chest reward table, one range per tier, not banded by Adventure Rank, since the table lists no bands. `ChestKindRewardMap` holds them.
+In the world, each unopened Common, Exquisite or Precious chest of Mondstadt is a row on the ground beneath its point, named by its kind and opened on F. `useWorldChests` offers the rows and opens the chest through `openChest`, which rolls the kind's Primogems and Mora within their ranges into the wallet and keeps the chest as opened, so a second opening pays nothing. The chest's drops are poured out where it stands for the player to pick up. The opened chests are the save's `openedChests` slice, and the account's copy keeps them on a merge. The ranges are the wiki's chest reward table, one range per tier, not banded by Adventure Rank, since the table lists no bands. `ChestKindRewardMap` holds them.
 
-A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. Opening also pours out what the wiki lists for the tier, as provisional pools: one weapon picked from the one-star weapons Common and Exquisite chests name, and the Character EXP materials by star with their counts (Wanderer's Advice, Adventurer's Experience, Hero's Wit). The artifacts are not rolled yet, since an artifact needs its slot and rarity, and the pour-out is not yet placed in the world. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
+A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unstated, and Remarkable, whose blueprints are not built, and the buried and sealed places, which the map gives no tier. Each roll is uniform within its range, a provisional draw until a recording of openings reads its spread. Opening also pours out what the wiki lists for the tier, as provisional pools: one weapon picked from the one-star weapons Common and Exquisite chests name, and the Character EXP materials by star with their counts (Wanderer's Advice, Adventurer's Experience, Hero's Wit). The artifacts are not rolled yet, since an artifact needs its slot and rarity. The high zone-level areas (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and the Chasm) give more Primogems than the default, which the places cannot yet tell, since they name no area.
 
 ## The builder
 
@@ -45,16 +45,18 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 
 ## Key files
 
-| File                                                               | Role                                                                                                             |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region's axes, the ground and mapped areas, shared with the other map points |
-| `scripts/src/services/genshinAssets/chests/buildChestPlaces.ts`    | Builds each region's slice from the points and the fit                                                           |
-| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts` | Each chest kind's label on the official map                                                                      |
-| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`     | `genshin:assets chests`                                                                                          |
-| `packages/genshin-world/src/models/chest/ChestKind.ts`             | The five tiers, and the buried and sealed places                                                                 |
-| `packages/genshin-world/src/models/chest/ChestPlace.ts`            | A placed chest: its id, kind and ground position                                                                 |
-| `packages/genshin-world/src/services/chest/openChest.ts`           | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
-| `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`  | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                                         |
+| File                                                                     | Role                                                                                                             |
+| :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`            | Carries each kind's points into its region's axes, the ground and mapped areas, shared with the other map points |
+| `scripts/src/services/genshinAssets/chests/buildChestPlaces.ts`          | Builds each region's slice from the points and the fit                                                           |
+| `scripts/src/services/genshinAssets/chests/ChestKindLabelIdMap.ts`       | Each chest kind's label on the official map                                                                      |
+| `scripts/src/services/genshinAssets/commands/chestsCommand.ts`           | `genshin:assets chests`                                                                                          |
+| `packages/genshin-world/src/models/chest/ChestKind.ts`                   | The five tiers, and the buried and sealed places                                                                 |
+| `packages/genshin-world/src/models/chest/ChestPlace.ts`                  | A placed chest: its id, kind and ground position                                                                 |
+| `packages/genshin-world/src/services/chest/openChest.ts`                 | Opens a chest once and rolls its Primogems and Mora into the wallet                                              |
+| `packages/genshin-world/src/services/chest/computeChestInteractables.ts` | Each unopened rewarded chest, offered as an Open row beneath its point                                           |
+| `packages/genshin-world/src/composables/useWorldChests.ts`               | Loads Mondstadt's chests and opens one on F                                                                      |
+| `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`        | Each tier's Primogem and Mora ranges, from the wiki's chest reward table                                         |
 
 ## Sources
 

@@ -87,6 +87,8 @@ export enum GameTextKey {
   CombineTypeFood = "COMBINE_TYPE_NAME12",
   CombineTypePotion = "COMBINE_TYPE_NAME4",
   CombineTypeWeaponAscension = "COMBINE_TYPE_NAME2",
+  // The Common Chest, the most common kind, as the game names it
+  CommonChest = "3953934758",
   // The Paimon menu's link to the game's community, which opens a web page
   Community = "UI_STC_GAMEENTRYPAGE_COMMUNITY",
   CompatibilityMode = "1992637634",
@@ -127,6 +129,8 @@ export enum GameTextKey {
   ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
   // The quit prompt's button that leaves the world for the login interface
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
+  // The Exquisite Chest, the middle tier, as the game names it
+  ExquisiteChest = "3981652399",
   // The feedback link, a web page the Paimon menu opens
   Feedback = "UI_STC_GAMEENTRYPAGE_FEEDBACK",
   FineEnhancementOre = "377860124",
@@ -309,6 +313,8 @@ export enum GameTextKey {
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   PressToOpen = "1860729186",
+  // The Precious Chest, the richest tier the wallet rewards, as the game names it
+  PreciousChest = "3576739246",
   Primogem = "2696654964",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",

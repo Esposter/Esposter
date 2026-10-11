@@ -26,6 +26,7 @@ export const useWorldSave = ({
     | "craftingProgress"
     | "frostbearingTreeProgress"
     | "inventory"
+    | "openedChestIds"
     | "wallet"
     | "wishPityMap"
   >;
@@ -39,6 +40,7 @@ export const useWorldSave = ({
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
+  const openedChestIds = shallowRef<ReadonlySet<string>>(savedState.openedChestIds);
   watch(
     [
       inventory,
@@ -48,6 +50,7 @@ export const useWorldSave = ({
       craftedCountMap,
       craftingProgress,
       frostbearingTreeProgress,
+      openedChestIds,
     ],
     () => {
       emitGrant();
@@ -68,6 +71,7 @@ export const useWorldSave = ({
     craftingProgress,
     frostbearingTreeProgress,
     inventory,
+    openedChestIds,
     setInventory,
     setWallet,
     wallet,

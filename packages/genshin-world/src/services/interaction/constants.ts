@@ -15,3 +15,9 @@ export const INTERACTABLE_CAPACITY = 64;
 // The stand-ins' tints, until the drops and the residents are drawn as the game draws them
 export const DROP_STAND_IN_COLOR = 0xf2_d0_6b;
 export const RESIDENT_STAND_IN_COLOR = 0x8f_b8_e0;
+// A chest's stand-in is a box until a recording's chest is matched, its side in metres
+export const CHEST_STAND_IN_SIZE = 0.5;
+// The box's tint, until the chests are drawn as the game draws them
+export const CHEST_STAND_IN_COLOR = 0xb0_7a_3c;
+// How many chests the world draws stand-ins for at once: above Mondstadt's 528 places, so each one has a box
+export const CHEST_STAND_IN_CAPACITY = 640;

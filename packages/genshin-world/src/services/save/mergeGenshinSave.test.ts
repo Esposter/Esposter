@@ -8,6 +8,8 @@ describe(mergeGenshinSave, () => {
   const LANDMARK_ID = "1";
   const OTHER_LANDMARK_ID = "2";
   const QUEST_ID = "3";
+  const CHEST_ID = "chest-1";
+  const OTHER_CHEST_ID = "chest-2";
   const REFILL_DAY = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate().toString();
   const OTHER_REFILL_DAY = Temporal.PlainDate.from(REFILL_DAY).add({ days: 1 }).toString();
   const ACCOUNT_REFILL_COUNT = 2;
@@ -35,6 +37,14 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, unlockedLandmarks: [OTHER_LANDMARK_ID, LANDMARK_ID] };
 
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
+  });
+
+  test("keeps the account's opened chests over the guest's", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, openedChests: [CHEST_ID] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, openedChests: [OTHER_CHEST_ID] };
+
+    expect(mergeGenshinSave(account, guest).openedChests).toStrictEqual([CHEST_ID]);
   });
 
   test("keeps the further step of a quest", () => {

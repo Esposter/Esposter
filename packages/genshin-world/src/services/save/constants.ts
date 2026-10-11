@@ -18,6 +18,8 @@ export const MAX_TRAVELER_NAME_LENGTH = 32;
 // The most of each list a save may hold: a landmark or quest is unique, and a player holds fewer characters
 // Than the bound
 export const MAX_UNLOCKED_LANDMARK_COUNT = 512;
+// The chests a player opens once each, so the bound is every chest the world's regions hold at once with room to spare
+export const MAX_OPENED_CHEST_COUNT = 4096;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
@@ -51,6 +53,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: { items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
+  openedChests: [],
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
@@ -92,6 +95,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
       stepIndex: MAX_SAVE_NUMBER,
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_INVENTORY_ITEM_COUNT *
     getListEntryLength({
       id: MAX_SAVE_NUMBER,
@@ -112,6 +116,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: EMPTY_INVENTORY_SAVE,
   offerings: { frostbearingTree: { heldCount: 0, level: 0 } },
+  openedChests: [],
   quests: {},
   reputation: EMPTY_REPUTATION_SAVE,
   travelerName: "",

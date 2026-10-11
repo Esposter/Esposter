@@ -35,6 +35,7 @@ import { useInteraction } from "#src/composables/useInteraction";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
+import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
@@ -133,6 +134,7 @@ const {
   craftingProgress,
   frostbearingTreeProgress,
   inventory,
+  openedChestIds,
   setInventory,
   setWallet,
   wallet,
@@ -270,6 +272,16 @@ const {
 });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
+// Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
+const { chestInteractables, openChestById } = useWorldChests({
+  gameDataBaseUrl,
+  gameText,
+  getGroundHeight,
+  openedChestIds,
+  placeWorldDrops,
+  setWallet,
+  wallet,
+});
 const { offerFrostbearingTree } = useWorldOfferings({
   frostbearingTreeProgress,
   gainWorldAdventureExp,
@@ -353,6 +365,7 @@ useWorldSaveSync({
     craftingProgress: craftingProgress.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     inventory: inventory.value,
+    openedChestIds: openedChestIds.value,
     quests: questProgressMap.value,
     reputation: savedState.reputation,
     travelerName: savedState.travelerName,
@@ -382,7 +395,13 @@ const interactables = computed<Interactable[]>(() => {
       name: gameText[GameTextKey.StatueOfTheSeven],
       position: { x, y: getGroundHeight(x, z), z },
     }));
-  return [...pickUpInteractables.value, ...residentInteractables.value, ...frostbearingTrees, ...statues];
+  return [
+    ...pickUpInteractables.value,
+    ...residentInteractables.value,
+    ...chestInteractables.value,
+    ...frostbearingTrees,
+    ...statues,
+  ];
 });
 const { interactionPrompts, readInteraction } = useInteraction(() => interactables.value, characterBody);
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
@@ -527,6 +546,7 @@ defineExpose({ jumpTo, readCameraPosition });
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
+            else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
               offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {

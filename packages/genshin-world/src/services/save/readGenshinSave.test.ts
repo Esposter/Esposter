@@ -65,6 +65,7 @@ describe(readGenshinSave, () => {
   ]);
   const WISH_COUNT = 3;
   const LANDMARK_ID = "1";
+  const CHEST_ID = "chest-1";
   const QUEST_ID = "3";
   const POPULATED_SAVE: GenshinSave = {
     ...EMPTY_GENSHIN_SAVE,
@@ -80,6 +81,7 @@ describe(readGenshinSave, () => {
       nextId: 2,
     },
     offerings: { frostbearingTree: FROSTBEARING_TREE_PROGRESS },
+    openedChests: [CHEST_ID],
     quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 1 } },
     reputation: REPUTATION,
     unlockedLandmarks: [LANDMARK_ID],

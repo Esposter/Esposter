@@ -59,9 +59,9 @@ const checkIsLaterWorldLevelAdjustment = (
 // Quest keeps the further of the two steps, since a step is never undone, and on the same step each objective's count
 // Takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows.
 // Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its pity is one copy's
-// And never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag and the wallet are the
-// Account's copy, except that a Primogem refill count from the same game day takes the larger, as a count of refills
-// Within a day only grows. The World Level adjustment is the copy changed later, since the one change of it the player
+// And never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet and the opened
+// Chests are the account's copy, except that a Primogem refill count from the same game day takes the larger, as a count
+// Of refills within a day only grows. The World Level adjustment is the copy changed later, since the one change of it the player
 // Made last is the one they still stand by. The Traveler's name is the account's, or the guest's while the account has
 // Chosen none
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
@@ -102,6 +102,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         ? guest.offerings.frostbearingTree
         : account.offerings.frostbearingTree,
     },
+    openedChests: account.openedChests,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
     travelerName: account.travelerName || guest.travelerName,

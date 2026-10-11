@@ -1,6 +1,7 @@
 import { achievementProgressSaveSchema } from "#src/models/achievement/AchievementProgressSave";
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
 import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
+import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
@@ -23,6 +24,7 @@ export const genshinSaveSchema = z
     crafting: craftingSaveSchema,
     inventory: inventorySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
+    openedChests: openedChestSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
