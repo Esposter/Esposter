@@ -33,7 +33,12 @@ describe(createShenheKit, () => {
   const castField = (ascension: number): KitField => {
     const kitEffectState: KitEffectState = { effects: [] };
     const combatant = createShenheCombatant(ascension);
-    SHENHE_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState });
+    SHENHE_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([SHENHE_CHARACTER_ID]),
+    });
     return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
   };
   // The effects a field's tick adds, from a field cast by a combatant of the given ascension

@@ -10,6 +10,7 @@ import { ALOY_CHARACTER_ID } from "#src/services/character/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createAloyKit } from "#src/services/kit/characters/aloyKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -64,7 +65,13 @@ describe(createAloyKit, () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
     const bomblet = takeOne(bombletHits());
-    const strike = (): void => bomblet.onStrike?.({ body: kitBody, combatant: createAloyCombatant(), kitEffectState });
+    const strike = (): void =>
+      bomblet.onStrike?.({
+        body: kitBody,
+        combatant: createAloyCombatant(),
+        kitEffectState,
+        party: createParty([ALOY_CHARACTER_ID]),
+      });
 
     for (let index = 0; index < 3; index++) strike();
     expect(kitEffectState.effects).toStrictEqual([
