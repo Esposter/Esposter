@@ -17,10 +17,11 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Itto's proud skill groups, read at his talent level, as the game's tables give them and as gcsim v2.47.2 (MIT) labels
@@ -239,13 +240,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // Ushi's hit gives a stack the first time it strikes, however many enemies it strikes
     onStrike: ({ kitEffectState }, { combatant }) => {
       const { characterId } = combatant;
-      if (checkHasKitStatus(kitEffectState.effects, characterId, USHI_STRUCK_STATUS_ID)) return;
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: USHI_STRUCK_STATUS_ID,
-        kind: "status",
-        secondsRemaining: SKILL_FRAMES / 60,
-      });
+      if (!startKitCooldown(kitEffectState, characterId, USHI_STRUCK_STATUS_ID, SKILL_FRAMES / 60)) return;
       gainSuperstrength(kitEffectState, combatant, 1);
     },
     poiseDamage: SKILL_POISE_DAMAGE,
@@ -377,10 +372,8 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     if (gained === 0) return;
     const { characterId } = combatant;
     const stacks = Math.min(countSuperstrength(kitEffectState.effects, characterId) + gained, SUPERSTRENGTH_MAX_STACKS);
-    addKitEffect(kitEffectState, {
-      characterId,
+    addKitStatus(kitEffectState, characterId, {
       id: SUPERSTRENGTH_STATUS_ID,
-      kind: "status",
       secondsRemaining: Number.POSITIVE_INFINITY,
       stacks,
     });
@@ -433,15 +426,9 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       if (event.kind === KitEventKind.TauntDamaged) {
         if (
           event.taunt.combatant.characterId !== characterId ||
-          checkHasKitStatus(kitEffectState.effects, characterId, USHI_DAMAGED_COOLDOWN_STATUS_ID)
+          !startKitCooldown(kitEffectState, characterId, USHI_DAMAGED_COOLDOWN_STATUS_ID, USHI_DAMAGED_COOLDOWN_SECONDS)
         )
           return;
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: USHI_DAMAGED_COOLDOWN_STATUS_ID,
-          kind: "status",
-          secondsRemaining: USHI_DAMAGED_COOLDOWN_SECONDS,
-        });
         gainSuperstrength(kitEffectState, combatant, 1);
         return;
       }

@@ -22,6 +22,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -29,6 +30,7 @@ import { createKitField } from "#src/services/kit/effects/createKitField";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -210,7 +212,7 @@ const createDuststalkerBoltHit = (hitmarkSeconds: number): KitHit => ({
 
 // Day of the Jackal's stacks are set to four at the burst and raised by four at each Judication, to eight at most
 const addDayOfTheJackal = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
-  addKitEffect(kitEffectState, { characterId, id: C6_STATUS_ID, kind: "status", secondsRemaining: C6_SECONDS, stacks });
+  addKitStatus(kitEffectState, characterId, { id: C6_STATUS_ID, secondsRemaining: C6_SECONDS, stacks });
 
 // Constellation 2's Electro DMG bonus and Constellation 6's bolts are struck by each normal attack that hits an enemy, the
 // Constellation 2 stacks rising once every 0.1 seconds and Constellation 6's bolt once every 0.4, both only in Pactsworn
@@ -218,25 +220,13 @@ const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant 
   const { characterId, constellationCount } = combatant;
   if (
     constellationCount >= CONSTELLATION_2 &&
-    !checkHasKitStatus(kitEffectState.effects, characterId, C2_ICD_STATUS_ID)
+    startKitCooldown(kitEffectState, characterId, C2_ICD_STATUS_ID, C2_ICD_SECONDS)
   ) {
-    addKitEffect(kitEffectState, {
-      characterId,
-      id: C2_ICD_STATUS_ID,
-      kind: "status",
-      secondsRemaining: C2_ICD_SECONDS,
-    });
     const stacks = Math.min(
       C2_STACKS_MAX,
       (findKitStatus(kitEffectState.effects, characterId, C2_STATUS_ID)?.stacks ?? 0) + 1,
     );
-    addKitEffect(kitEffectState, {
-      characterId,
-      id: C2_STATUS_ID,
-      kind: "status",
-      secondsRemaining: C2_SECONDS,
-      stacks,
-    });
+    addKitStatus(kitEffectState, characterId, { id: C2_STATUS_ID, secondsRemaining: C2_SECONDS, stacks });
     buffKitMember(kitEffectState, characterId, {
       amount: C2_ELECTRO_DAMAGE_BONUS_PER_STACK * stacks,
       attribute: Attribute.ElectroDamageBonus,
@@ -244,20 +234,14 @@ const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant 
       source: C2_STATUS_ID,
     });
   }
-  if (
-    constellationCount >= CONSTELLATION_6 &&
-    findKitStance(kitEffectState.effects, characterId) &&
-    !checkHasKitStatus(kitEffectState.effects, characterId, C6_ICD_STATUS_ID)
-  ) {
+  if (constellationCount >= CONSTELLATION_6 && findKitStance(kitEffectState.effects, characterId)) {
     const day = findKitStatus(kitEffectState.effects, characterId, C6_STATUS_ID);
-    if (day && (day.stacks ?? 0) > 0) {
+    if (
+      day &&
+      (day.stacks ?? 0) > 0 &&
+      startKitCooldown(kitEffectState, characterId, C6_ICD_STATUS_ID, C6_ICD_SECONDS)
+    ) {
       day.stacks = (day.stacks ?? 0) - 1;
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: C6_ICD_STATUS_ID,
-        kind: "status",
-        secondsRemaining: C6_ICD_SECONDS,
-      });
       castKitSummon(kitEffectState, body, combatant, [createDuststalkerBoltHit(0)]);
     }
   }
@@ -388,10 +372,8 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         stance.secondsRemaining += extensionSeconds;
         const judication = findJudicationField(kitEffectState.effects, characterId);
         if (judication) judication.secondsRemaining += extensionSeconds;
-        addKitEffect(kitEffectState, {
-          characterId,
+        addKitStatus(kitEffectState, characterId, {
           id: BURST_EXTENSIONS_STATUS_ID,
-          kind: "status",
           secondsRemaining: stance.secondsRemaining,
           stacks: extensions + 1,
         });
@@ -427,12 +409,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       nextTickSeconds: JUDICATION_FIRST_FRAMES / 60,
       onTick: ({ kitEffectState }) => {
         if (!findKitStance(kitEffectState.effects, characterId)) return;
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: ENDSEER_STATUS_ID,
-          kind: "status",
-          secondsRemaining: ENDSEER_FRAMES / 60,
-        });
+        addKitStatus(kitEffectState, characterId, { id: ENDSEER_STATUS_ID, secondsRemaining: ENDSEER_FRAMES / 60 });
       },
       secondsRemaining: burstSeconds,
       tickIntervalSeconds: JUDICATION_INTERVAL_FRAMES / 60,
@@ -463,21 +440,13 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         secondsRemaining: burstSeconds,
         source: BURST_BUFF_SOURCE,
       });
-      addKitEffect(kitEffectState, {
-        characterId,
+      addKitStatus(kitEffectState, characterId, {
         id: BURST_EXTENSIONS_STATUS_ID,
-        kind: "status",
         secondsRemaining: burstSeconds,
         stacks: 0,
       });
       if (constellationCount >= CONSTELLATION_4)
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: C4_STATUS_ID,
-          kind: "status",
-          secondsRemaining: burstSeconds,
-          stacks: 0,
-        });
+        addKitStatus(kitEffectState, characterId, { id: C4_STATUS_ID, secondsRemaining: burstSeconds, stacks: 0 });
       if (constellationCount >= CONSTELLATION_6) addDayOfTheJackal(kitEffectState, characterId, C6_STACKS_PER_TRIGGER);
       if (ascension >= ASCENSION_1) addKitEffect(kitEffectState, createJudicationField(body, characterId));
     },

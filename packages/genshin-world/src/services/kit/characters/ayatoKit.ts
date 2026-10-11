@@ -18,6 +18,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
@@ -201,10 +202,8 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       const { characterId } = combatant;
       const stacks = countNamisenStacks(effectState.effects, characterId);
       if (stacks < getNamisenStacksMax(combatant))
-        addKitEffect(effectState, {
-          characterId,
+        addKitStatus(effectState, characterId, {
           id: NAMISEN_STATUS_ID,
-          kind: "status",
           secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
           stacks: stacks + 1,
         });
@@ -274,29 +273,23 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       const { characterId } = combatant;
       if (combatant.ascension >= ASCENSION_1) {
-        addKitEffect(kitEffectState, {
-          characterId,
+        addKitStatus(kitEffectState, characterId, {
           id: NAMISEN_STATUS_ID,
-          kind: "status",
           secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
           stacks: ASCENSION_1_CAST_STACKS,
         });
         // The water illusion's explosion sets the stacks to the most, as it lands at the illusion delay
         scheduleKitTask(kitEffectState, characterId, ILLUSION_DELAY_FRAMES / 60, ({ kitEffectState: effectState }) =>
-          addKitEffect(effectState, {
-            characterId,
+          addKitStatus(effectState, characterId, {
             id: NAMISEN_STATUS_ID,
-            kind: "status",
             secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
             stacks: getNamisenStacksMax(combatant),
           }),
         );
       }
       if (combatant.constellationCount >= CONSTELLATION_6)
-        addKitEffect(kitEffectState, {
-          characterId,
+        addKitStatus(kitEffectState, characterId, {
           id: CONSTELLATION_6_STATUS_ID,
-          kind: "status",
           secondsRemaining: HELD_UNTIL_SWAP_SECONDS,
         });
       // Soukai Kanka replaces the string with three Shunsuiken strikes, and keeps the kit's charged attack, plunges, skill and

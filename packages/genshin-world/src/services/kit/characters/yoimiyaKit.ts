@@ -12,7 +12,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
@@ -151,10 +151,8 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const elementalBurst: KitAction = {
     hits: [burstHit],
     onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      addKitStatus(kitEffectState, combatant.characterId, {
         id: AUROUS_BLAZE_PENDING_STATUS_ID,
-        kind: "status",
         secondsRemaining: BURST_FRAMES / 60,
       }),
     seconds: BURST_FRAMES / 60,

@@ -8,7 +8,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
@@ -21,9 +20,11 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -105,12 +106,6 @@ const findPrayerField = (effects: readonly KitEffect[], characterId: number): Ki
   effects.find(
     (effect): effect is KitField =>
       effect.kind === "field" && effect.characterId === characterId && effect.id === PRAYER_FIELD_ID,
-  );
-// The waves the Prayer has unleashed on the character's swaps, as a status of its stacks
-const findWavesStatus = (effects: readonly KitEffect[], characterId: number): KitStatus | undefined =>
-  effects.find(
-    (effect): effect is KitStatus =>
-      effect.kind === "status" && effect.characterId === characterId && effect.id === WAVES_STATUS_ID,
   );
 
 // The Prayer's infusion on a party member with a sword, claymore or polearm, as its field's tick and a swap give it
@@ -338,13 +333,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         secondsRemaining: prayerSeconds,
         tickIntervalSeconds: PRAYER_TICK_FRAMES / 60,
       });
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: WAVES_STATUS_ID,
-        kind: "status",
-        secondsRemaining: prayerSeconds,
-        stacks: 0,
-      });
+      addKitStatus(kitEffectState, characterId, { id: WAVES_STATUS_ID, secondsRemaining: prayerSeconds, stacks: 0 });
     },
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -376,12 +365,10 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       if (event.kind === KitEventKind.CharacterSwapped) {
         const incoming = characterIdCombatantMap.get(event.characterId);
         if (incoming) infuse(kitEffectState, incoming);
-        const waves = findWavesStatus(effects, characterId);
+        const waves = findKitStatus(effects, characterId, WAVES_STATUS_ID);
         if (!waves || (waves.stacks ?? 0) >= wavesMax) return;
-        addKitEffect(kitEffectState, {
-          characterId,
+        addKitStatus(kitEffectState, characterId, {
           id: WAVES_STATUS_ID,
-          kind: "status",
           secondsRemaining: waves.secondsRemaining,
           stacks: (waves.stacks ?? 0) + 1,
         });
@@ -395,16 +382,9 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         event.striker.characterId !== characterId &&
         event.striker.characterId === activeCombatant.characterId &&
         getKitHitElement(event.hit, event.striker) !== undefined &&
-        !checkHasKitStatus(effects, characterId, CONSTELLATION_6_STATUS_ID)
-      ) {
-        addKitEffect(kitEffectState, {
-          characterId,
-          id: CONSTELLATION_6_STATUS_ID,
-          kind: "status",
-          secondsRemaining: CONSTELLATION_6_COOLDOWN_SECONDS,
-        });
+        startKitCooldown(kitEffectState, characterId, CONSTELLATION_6_STATUS_ID, CONSTELLATION_6_COOLDOWN_SECONDS)
+      )
         castKitSummon(kitEffectState, body, combatant, [createWaveHit(CONSTELLATION_6_DAMAGE_SHARE)]);
-      }
     },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,

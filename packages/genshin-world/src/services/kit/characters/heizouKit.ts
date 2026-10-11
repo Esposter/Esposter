@@ -12,7 +12,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -244,10 +244,8 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalBurst: {
       hits: [irisCheckHit, burstHit],
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
+        addKitStatus(kitEffectState, combatant.characterId, {
           id: IRIS_TAG_STATUS_ID,
-          kind: "status",
           secondsRemaining: BURST_FRAMES / 60,
           stacks: 0,
         }),

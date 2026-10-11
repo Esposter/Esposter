@@ -26,6 +26,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
@@ -34,6 +35,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -236,15 +238,9 @@ const gainConstellation4Energy = ({ kitEffectState, party }: KitContext, combata
   const { characterId, constellationCount } = combatant;
   if (
     constellationCount < CONSTELLATION_4 ||
-    checkHasKitStatus(kitEffectState.effects, characterId, CONSTELLATION_4_COOLDOWN_STATUS_ID)
+    !startKitCooldown(kitEffectState, characterId, CONSTELLATION_4_COOLDOWN_STATUS_ID, CONSTELLATION_4_COOLDOWN_SECONDS)
   )
     return;
-  addKitEffect(kitEffectState, {
-    characterId,
-    id: CONSTELLATION_4_COOLDOWN_STATUS_ID,
-    kind: "status",
-    secondsRemaining: CONSTELLATION_4_COOLDOWN_SECONDS,
-  });
   gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
 };
 
@@ -298,12 +294,7 @@ const startEndlessWaltz = (
         effect.secondsRemaining = 0;
     addKitEffect(kitEffectState, createEndlessWaltzField(combatant, body.position));
   }
-  addKitEffect(kitEffectState, {
-    characterId,
-    id: ENDLESS_WALTZ_STATUS_ID,
-    kind: "status",
-    secondsRemaining: ENDLESS_WALTZ_SECONDS,
-  });
+  addKitStatus(kitEffectState, characterId, { id: ENDLESS_WALTZ_STATUS_ID, secondsRemaining: ENDLESS_WALTZ_SECONDS });
 };
 
 // Furina's first kit, at talent level 1: her four strikes, which open Spiritbreath Thorn or Surging Blade, a charged attack
@@ -330,13 +321,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     const { characterId } = combatant;
     const isPneuma = checkHasKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
     const cooldownStatusId = isPneuma ? SURGING_BLADE_COOLDOWN_STATUS_ID : SPIRITBREATH_THORN_COOLDOWN_STATUS_ID;
-    if (checkHasKitStatus(kitEffectState.effects, characterId, cooldownStatusId)) return;
-    addKitEffect(kitEffectState, {
-      characterId,
-      id: cooldownStatusId,
-      kind: "status",
-      secondsRemaining: attackMultiplier(isPneuma ? 11 : 10),
-    });
+    if (!startKitCooldown(kitEffectState, characterId, cooldownStatusId, attackMultiplier(isPneuma ? 11 : 10))) return;
     castKitSummon(kitEffectState, body, combatant, [arkheHit], { attackTag: AttackTag.NormalAttack });
   };
 
@@ -463,12 +448,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     const pneuma = findKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
     if (pneuma) kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== pneuma);
     else
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: PNEUMA_STATUS_ID,
-        kind: "status",
-        secondsRemaining: Number.POSITIVE_INFINITY,
-      });
+      addKitStatus(kitEffectState, characterId, { id: PNEUMA_STATUS_ID, secondsRemaining: Number.POSITIVE_INFINITY });
     const salon = findKitStatus(kitEffectState.effects, characterId, SALON_STATUS_ID);
     if (salon && salon.secondsRemaining > 0) summonSalon(kitEffectState, combatant, centre, 0, salon.secondsRemaining);
   };
@@ -512,10 +492,8 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     if (debounce && debounce.secondsRemaining > 0) delaySeconds = debounce.secondsRemaining;
     else
       scheduleKitTask(kitEffectState, characterId, FANFARE_DEBOUNCE_START_FRAMES / 60, (tick) =>
-        addKitEffect(tick.kitEffectState, {
-          characterId,
+        addKitStatus(tick.kitEffectState, characterId, {
           id: FANFARE_DEBOUNCE_STATUS_ID,
-          kind: "status",
           secondsRemaining: FANFARE_DEBOUNCE_FRAMES / 60,
         }),
       );
@@ -597,7 +575,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       const isPneuma = checkHasKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
       const delayFrames = isPneuma ? PNEUMA_SUMMON_DELAY_FRAMES : OUSIA_BUBBLE_HITMARK_FRAMES;
       const secondsRemaining = (SALON_FRAMES + delayFrames) / 60;
-      addKitEffect(kitEffectState, { characterId, id: SALON_STATUS_ID, kind: "status", secondsRemaining });
+      addKitStatus(kitEffectState, characterId, { id: SALON_STATUS_ID, secondsRemaining });
       if (!isPneuma)
         castKitSummon(kitEffectState, body, combatant, [ousiaBubbleHit], { attackTag: AttackTag.ElementalSkill });
       summonSalon(kitEffectState, combatant, body.position, delayFrames, secondsRemaining);

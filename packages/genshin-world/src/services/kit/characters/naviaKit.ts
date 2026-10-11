@@ -15,7 +15,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -256,12 +256,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
       }
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, ARKHE_ICD_STATUS_ID)) return;
-      addKitEffect(kitEffectState, {
-        characterId,
-        id: ARKHE_ICD_STATUS_ID,
-        kind: "status",
-        secondsRemaining: arkheIcdSeconds,
-      });
+      addKitStatus(kitEffectState, characterId, { id: ARKHE_ICD_STATUS_ID, secondsRemaining: arkheIcdSeconds });
       castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
         {
           element: Element.Geo,
@@ -291,18 +286,14 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const onCannonStrike = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
     const { characterId } = combatant;
     if (checkIsKitStatusActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
-    addKitEffect(kitEffectState, {
-      characterId,
+    addKitStatus(kitEffectState, characterId, {
       id: BURST_SHRAPNEL_ICD_STATUS_ID,
-      kind: "status",
       secondsRemaining: burstShrapnelIcdSeconds,
     });
     const stacks = countShrapnel(kitEffectState, characterId);
     if (stacks < SHRAPNEL_MAX)
-      addKitEffect(kitEffectState, {
-        characterId,
+      addKitStatus(kitEffectState, characterId, {
         id: SHRAPNEL_STATUS_ID,
-        kind: "status",
         secondsRemaining: shrapnelSeconds,
         stacks: stacks + 1,
       });

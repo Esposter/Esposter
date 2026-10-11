@@ -13,6 +13,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -103,19 +104,15 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     );
     const stacks = (coil?.stacks ?? 0) + 1;
     if (stacks < COIL_RUSHING_ICE_STACKS) {
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      addKitStatus(kitEffectState, combatant.characterId, {
         id: COIL_STATUS_ID,
-        kind: "status",
         secondsRemaining: COIL_STATUS_SECONDS,
         stacks,
       });
       return;
     }
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
+    addKitStatus(kitEffectState, combatant.characterId, {
       id: COIL_STATUS_ID,
-      kind: "status",
       secondsRemaining: COIL_STATUS_SECONDS,
       stacks: 0,
     });
@@ -125,10 +122,8 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       kind: "infusion",
       secondsRemaining: rushingIceSeconds,
     });
-    addKitEffect(kitEffectState, {
-      characterId: combatant.characterId,
+    addKitStatus(kitEffectState, combatant.characterId, {
       id: RUSHING_ICE_STATUS_ID,
-      kind: "status",
       secondsRemaining: rushingIceSeconds,
     });
   };

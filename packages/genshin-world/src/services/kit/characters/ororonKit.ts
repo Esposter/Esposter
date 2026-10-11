@@ -7,7 +7,6 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -18,10 +17,12 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitField } from "#src/services/kit/effects/createKitField";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -124,21 +125,17 @@ const onKitEvent = (
     attackTag !== AttackTag.PlungingAttack
   )
     return;
-  const status = kitEffectState.effects.find(
-    (effect): effect is KitStatus =>
-      effect.kind === "status" && effect.characterId === combatant.characterId && effect.id === ASCENSION_4_STATUS_ID,
-  );
+  const status = findKitStatus(kitEffectState.effects, combatant.characterId, ASCENSION_4_STATUS_ID);
   if (
     status === undefined ||
-    checkHasKitStatus(kitEffectState.effects, combatant.characterId, ASCENSION_4_COOLDOWN_STATUS_ID)
+    !startKitCooldown(
+      kitEffectState,
+      combatant.characterId,
+      ASCENSION_4_COOLDOWN_STATUS_ID,
+      ASCENSION_4_INTERNAL_COOLDOWN_SECONDS,
+    )
   )
     return;
-  addKitEffect(kitEffectState, {
-    characterId: combatant.characterId,
-    id: ASCENSION_4_COOLDOWN_STATUS_ID,
-    kind: "status",
-    secondsRemaining: ASCENSION_4_INTERNAL_COOLDOWN_SECONDS,
-  });
   gainPartyMemberEnergy(party, activeCombatant, ASCENSION_4_ENERGY);
   if (activeCombatant.characterId !== combatant.characterId)
     gainPartyMemberEnergy(party, combatant, ASCENSION_4_ENERGY);
@@ -199,10 +196,8 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     hitmarkSeconds: SPIRIT_ORB_HITMARK_FRAMES / 60,
     onStrike: ({ kitEffectState }, { combatant }) => {
       if (combatant.ascension < ASCENSION_4) return;
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
+      addKitStatus(kitEffectState, combatant.characterId, {
         id: ASCENSION_4_STATUS_ID,
-        kind: "status",
         secondsRemaining: ASCENSION_4_SECONDS,
         stacks: 0,
       });
