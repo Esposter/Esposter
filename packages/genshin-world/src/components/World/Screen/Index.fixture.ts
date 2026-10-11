@@ -5,6 +5,8 @@ import { MondstadtPartFamilyMeshRegexMap } from "#src/services/mondstadt/Mondsta
 import { MondstadtUndrawnMeshRegexMap } from "#src/services/mondstadt/MondstadtUndrawnMeshRegexMap";
 import { NatlanPartFamilyMeshRegexMap } from "#src/services/natlan/NatlanPartFamilyMeshRegexMap";
 import { NatlanUndrawnMeshRegexMap } from "#src/services/natlan/NatlanUndrawnMeshRegexMap";
+import { NodKraiPartFamilyMeshRegexMap } from "#src/services/nod-krai/NodKraiPartFamilyMeshRegexMap";
+import { NodKraiUndrawnMeshRegexMap } from "#src/services/nod-krai/NodKraiUndrawnMeshRegexMap";
 import { SnezhnayaPartFamilyMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap";
 import { SnezhnayaUndrawnMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
@@ -31,6 +33,7 @@ export const witnessComponents = {
   liyue: { witnessFamilies: LiyuePartFamilyMeshRegexMap, witnessUndrawn: LiyueUndrawnMeshRegexMap },
   mondstadt: { witnessFamilies: MondstadtPartFamilyMeshRegexMap, witnessUndrawn: MondstadtUndrawnMeshRegexMap },
   natlan: { witnessFamilies: NatlanPartFamilyMeshRegexMap, witnessUndrawn: NatlanUndrawnMeshRegexMap },
+  "nod-krai": { witnessFamilies: NodKraiPartFamilyMeshRegexMap, witnessUndrawn: NodKraiUndrawnMeshRegexMap },
   snezhnaya: { witnessFamilies: SnezhnayaPartFamilyMeshRegexMap, witnessUndrawn: SnezhnayaUndrawnMeshRegexMap },
 };
 export const witnessFamilies = WindrisePartFamilyMeshRegexMap;
