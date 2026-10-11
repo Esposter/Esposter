@@ -1,9 +1,16 @@
 import type { ProducerStaleness } from "#src/models/producerStamp/ProducerStaleness";
 
-import { MAX_LISTED_PRODUCER_COMMITS, SHORT_SHA_LENGTH } from "#src/services/producerStamp/constants";
+import {
+  MAX_LISTED_PRODUCER_COMMITS,
+  PRODUCER_STALE_WINDOW_DAYS,
+  SHORT_SHA_LENGTH,
+} from "#src/services/producerStamp/constants";
 
 // One reader's line about an output's producer, or "" when the output is stamped clean with nothing committed since
-export const formatProducerStaleness = (label: string, { commits, stamp }: ProducerStaleness): string => {
+export const formatProducerStaleness = (
+  label: string,
+  { commits, isApproximate, stamp }: ProducerStaleness,
+): string => {
   if (!stamp)
     return `${label}: written before outputs recorded their producer, so whether its extractor changed since is unknown`;
   if (!stamp.isDirty && commits.length === 0) return "";
@@ -11,7 +18,7 @@ export const formatProducerStaleness = (label: string, { commits, stamp }: Produ
   const listed = commits.slice(0, MAX_LISTED_PRODUCER_COMMITS).map((commit) => `  ${commit}`);
   const omitted = commits.length - MAX_LISTED_PRODUCER_COMMITS;
   return [
-    `${label}: written at ${stamp.commit.slice(0, SHORT_SHA_LENGTH)}${source}; ${commits.length} commits to its producer since`,
+    `${label}: written at ${stamp.commit.slice(0, SHORT_SHA_LENGTH)}${source}; ${commits.length} commits to its producer ${isApproximate ? `in the last ${PRODUCER_STALE_WINDOW_DAYS} days, since that commit is not on this branch` : "since"}`,
     ...listed,
     ...(omitted > 0 ? [`  …and ${omitted} more`] : []),
   ].join("\n");

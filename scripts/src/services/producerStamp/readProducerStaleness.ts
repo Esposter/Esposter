@@ -12,7 +12,7 @@ import { join } from "node:path";
 // Predates the stamp, so its producer is unknown rather than current
 export const readProducerStaleness = async (directory: string): Promise<ProducerStaleness> => {
   const path = join(directory, PRODUCER_STAMP_NAME);
-  if (!existsSync(path)) return { commits: [] };
+  if (!existsSync(path)) return { commits: [], isApproximate: false };
   const stamp = producerStampSchema.parse(parseMachineJson(await readFile(path, "utf8")));
-  return { commits: listProducerCommits(stamp.commit, stamp.producerPaths), stamp };
+  return { ...listProducerCommits(stamp.commit, stamp.producerPaths), stamp };
 };
