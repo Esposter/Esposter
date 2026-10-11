@@ -62,4 +62,17 @@ describe("worldScreen", () => {
     },
     timeoutMs,
   );
+
+  test(
+    "is ready paused, as it loads under the opening, drawing only the frames it asks for",
+    async () => {
+      expect.hasAssertions();
+
+      const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
+      await render(WorldScreen, { attrs: { onReady: resolveReady }, props: { ...props, isPaused: true } });
+
+      await expect(ready).resolves.toBeUndefined();
+    },
+    timeoutMs,
+  );
 });
