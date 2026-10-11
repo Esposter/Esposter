@@ -300,6 +300,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                   |
 | [Xianyun](/docs/genshin/kits/xianyun)               | Stars Gather at Dusk, with four strikes and Skyladder's first press  |
 | [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                        |
+| [Xilonen](/docs/genshin/kits/xilonen)               | Three strikes, the charged attack and Yohual's Scratch               |
 | [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                      |
 | [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                  |
 | [Yae Miko](/docs/genshin/kits/yae-miko)             | Sesshou Sakura totems and Great Secret Art: Tenko Kenshin            |
