@@ -12,7 +12,6 @@ import { defaultClientConditions, defineConfig } from "vite";
 // Build of the page is what `genshin:parity load` measures: its entry is named here since the root holds no `index.html`
 export default defineConfig({
   build: { rolldownOptions: { input: resolve(import.meta.dirname, "index.html") } },
-  experimental: { bundledDev: true },
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin, regionDataPlugin],
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   root: dirname(import.meta.dirname),
