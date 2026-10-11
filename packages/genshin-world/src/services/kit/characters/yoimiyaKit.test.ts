@@ -110,10 +110,14 @@ describe(createYoimiyaKit, () => {
     expect(
       kitEffectState.effects.flatMap((effect) =>
         effect.kind === "summon"
-          ? effect.hits.map(({ hitmarkSeconds, talentMultiplier }) => [hitmarkSeconds, talentMultiplier])
+          ? effect.hits.map(({ hitmarkSeconds, talentMultiplier }) => [
+              effect.attackTag,
+              hitmarkSeconds,
+              talentMultiplier,
+            ])
           : [],
       ),
-    ).toStrictEqual([[1 / 60, 1.22]]);
+    ).toStrictEqual([[AttackTag.ElementalBurst, 1 / 60, 1.22]]);
     expect(marked.statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining])).toStrictEqual([
       ["yoimiya-aurous-blaze", 10],
       ["yoimiya-aurous-blaze-cooldown", 2],

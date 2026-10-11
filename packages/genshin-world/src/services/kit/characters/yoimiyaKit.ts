@@ -64,9 +64,10 @@ const BLAZING_ARROW_GAUGE = 1;
 
 // Measured: gcsim v2.47.2 (MIT) yoimiya/burst.go, Ryuukin Saxifrage's initial hit, a circle of radius 6 round the body
 // At 75 frames with 220 poise and a Pyro gauge of 2U, blunt, of an animation of 113 frames. The first enemy it strikes
-// Carries Aurous Blaze for the table's seconds. While it does, a hit another member deals it as one of their kit's
-// Actions sets off an explosion a frame later, a circle of radius 3 round it, 1U of Pyro with 60 poise, blunt, then
-// Not again on that enemy for the table's internal cooldown
+// Carries Aurous Blaze for the table's seconds. While it does, a hit another member deals it as a kind of attack, an
+// Action's or a summon's, sets off an explosion a frame later, a circle of radius 3 round it, 1U of Pyro with 60 poise,
+// Blunt, dealt as Elemental Burst DMG, gcsim's AttackTagElementalBurst, then not again on that enemy for the table's
+// Internal cooldown
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yoimiya/burst.go
 const BURST_FRAMES = 113;
 const BURST_HITMARK_FRAMES = 75;
@@ -223,7 +224,7 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     },
     normalAttacks,
     // Niwabi Fire-Dance ends as she leaves the field. The burst's hit marks the first enemy it strikes with Aurous Blaze,
-    // And a hit another member's action deals a marked enemy off its cooldown sets off the explosion on it
+    // And a hit another member deals a marked enemy as a kind of attack off its cooldown sets off the explosion on it
     onKitEvent: (event, { combatant, kitEffectState }) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
@@ -266,10 +267,10 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         id: AUROUS_BLAZE_COOLDOWN_STATUS_ID,
         secondsRemaining: burstTalentMultiplier(YOIMIYA_BURST_EXPLOSION_COOLDOWN_INDEX),
       });
-      addKitEffect(
-        kitEffectState,
-        createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, [aurousBlazeExplosion]),
-      );
+      addKitEffect(kitEffectState, {
+        ...createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, [aurousBlazeExplosion]),
+        attackTag: AttackTag.ElementalBurst,
+      });
     },
     plungeCollision: {
       hitArea: createFanReach(360, 1),

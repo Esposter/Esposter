@@ -5,6 +5,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -155,6 +156,11 @@ describe(createFischlKit, () => {
     triggerReaction(ReactionType.Overloaded);
 
     expect(castHits(kitEffectState)).toStrictEqual([0.8]);
+    expect(
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "summon" && effect.id === undefined ? [effect.attackTag] : [],
+      ),
+    ).toStrictEqual([AttackTag.ElementalSkill]);
   });
 
   test("one constellation's coordinated attack follows her normal attack while Oz is away", () => {
