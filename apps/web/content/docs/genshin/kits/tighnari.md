@@ -5,9 +5,9 @@ description: Tighnari's kit as built: his four strikes, a fully charged shot, a 
 
 # Tighnari
 
-Tighnari's kit is one module, `createTighnariKit`, avatar 10000069: four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its Secondary Tanglevine Shaft. His multipliers are read from proud skill groups 6931, 6932 and 6939; Vijnana-Phala Mine's cooldown and Tanglevine Shaft's cooldown and energy cost come from the same groups. The particles are not built.
+Tighnari's kit is one module, `createTighnariKit`, avatar 10000069: four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its Secondary Tanglevine Shaft. His multipliers are read from proud skill groups 6931, 6932 and 6939; Vijnana-Phala Mine's cooldown and Tanglevine Shaft's cooldown and energy cost are read from the same groups.
 
-Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a shot of its own while the suffusion lasts, since the kit offers no charged variant yet; and the passives and constellations, which wait on the passive hook.
+Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a shot of its own while the suffusion lasts, since the kit offers no charged variant yet; and its passives and constellations.
 
 ## Decisions
 
