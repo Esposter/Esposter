@@ -3,6 +3,7 @@ import type { ModuleOptions } from "#src/models/ModuleOptions";
 import { allowedMethodsRestricterOptionsSchema } from "#src/schemas/allowedMethodsRestricterOptionsSchema";
 import { basicAuthOptionsSchema } from "#src/schemas/basicAuthOptionsSchema";
 import { corsHandlerOptionsSchema } from "#src/schemas/corsHandlerOptionsSchema";
+import { rateLimiterOptionsSchema } from "#src/schemas/rateLimiterOptionsSchema";
 import { requestSizeLimiterOptionsSchema } from "#src/schemas/requestSizeLimiterOptionsSchema";
 import { securityHeadersSchema } from "#src/schemas/securityHeadersSchema";
 import { ssgOptionsSchema } from "#src/schemas/ssgOptionsSchema";

@@ -1,6 +1,7 @@
 import type { AllowedMethodsRestricterOptions } from "#src/models/AllowedMethodsRestricterOptions";
 import type { BasicAuthOptions } from "#src/models/BasicAuthOptions";
 import type { CorsHandlerOptions } from "#src/models/CorsHandlerOptions";
+import type { RateLimiterOptions } from "#src/models/RateLimiterOptions";
 import type { RequestSizeLimiterOptions } from "#src/models/RequestSizeLimiterOptions";
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 import type { SsgOptions } from "#src/models/SsgOptions";
@@ -15,6 +16,7 @@ export interface ModuleOptions {
   headers: SecurityHeaders | false;
   hidePoweredBy: boolean;
   nonce: boolean;
+  rateLimiter: RateLimiterOptions | false;
   requestSizeLimiter: RequestSizeLimiterOptions | false;
   sri: boolean;
   ssg: SsgOptions | false;
