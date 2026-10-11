@@ -9,9 +9,9 @@ const BUILD_CACHE_SCRIPT_PATH = ".agents/skills/throughput/scripts/build-cached.
 // That competed with the agents for CPU and memory.
 // A start with nothing changed restores every `dist` instantly, and a package edit reaches the page on the next start.
 // The build starts in `setup` and is awaited at `build:before`, so it overlaps Nuxt's own app preparation.
-// A failed build stops Nuxt, since it would otherwise serve the packages' stale or missing `dist`. The error is a plain
-// Error because `@esposter/shared` is one of the packages this build brings up. Bash runs from the workspace root with
-// Both paths relative and forward-slashed, since bash on Windows reads a backslash in an argument as an escape.
+// A failed build stops Nuxt, since it would otherwise serve the packages' stale or missing `dist`. Bash runs from the
+// Workspace root with both paths relative and forward-slashed, since bash on Windows reads a backslash in an argument as
+// An escape.
 export default defineNuxtModule({
   meta: { name: "build-packages" },
   setup: (_options, nuxt) => {
@@ -21,24 +21,24 @@ export default defineNuxtModule({
       cwd: nuxt.options.workspaceDir,
       stdio: "inherit",
     });
-    // Settled with the failure rather than rejected, so a build failing before `build:before` is no unhandled rejection
-    const buildDone = new Promise<Error | undefined>((resolve) => {
+    // Settled with the failure's message rather than rejected, so a build failing before `build:before` is no unhandled
+    // Rejection
+    const buildDone = new Promise<string | undefined>((resolve) => {
       build.on("error", (error) => {
-        resolve(new Error(`The package build could not start: ${error.message}`, { cause: error }));
+        resolve(`The package build could not start: ${error.message}`);
       });
       build.on("close", (code) => {
         resolve(
           code === 0
             ? undefined
-            : new Error(
-                `A workspace package failed to build, see the failure with \`bash ${BUILD_CACHE_SCRIPT_PATH} apps/web\``,
-              ),
+            : `A workspace package failed to build, see the failure with \`bash ${BUILD_CACHE_SCRIPT_PATH} apps/web\``,
         );
       });
     });
     nuxt.hook("build:before", async () => {
-      const error = await buildDone;
-      if (error) throw error;
+      const failure = await buildDone;
+      // oxlint-disable-next-line error-handling/no-bare-error -- `@esposter/shared`, which holds InvalidOperationError, is one of the packages this build brings up
+      if (failure) throw new Error(failure);
     });
   },
 });

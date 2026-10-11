@@ -24,7 +24,9 @@ describe(readWorldOptions, () => {
 
     readProducerStaleness.mockRejectedValueOnce(new Error("a"));
 
-    await expect(readWorldOptions(DerivedAssetComponent.Fontaine)).rejects.toThrow("a");
+    await expect(readWorldOptions(DerivedAssetComponent.Fontaine)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: a]`,
+    );
 
     readProducerStaleness.mockResolvedValue({ commits: [], isApproximate: false });
     await Promise.all([

@@ -143,6 +143,7 @@ const tileStreamer = createTileStreamer<Mesh | number>({
     requestCount++;
     if (!worker) return;
     requestWorkerMap.set(key, worker);
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
     worker.postMessage(message);
   },
 });

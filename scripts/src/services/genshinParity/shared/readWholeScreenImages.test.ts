@@ -23,14 +23,13 @@ describe(readWholeScreenImages, () => {
         },
       },
     ];
-    const fetch = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(() => Promise.resolve(Response.json(responses[fetch.mock.calls.length - 1])));
+    const fetch = vi.spyOn(globalThis, "fetch");
+    for (const response of responses) fetch.mockResolvedValueOnce(Response.json(response));
 
     await expect(readWholeScreenImages("a")).resolves.toStrictEqual([
       { height: 1730, title: "File:Handbook.png", url: "https://wiki/handbook", width: 3130 },
       { height: 1440, title: "File:Menu.png", url: "https://wiki/menu", width: 2560 },
     ]);
-    expect(String(fetch.mock.calls[1]?.[0])).toContain(`&${new URLSearchParams(continuation).toString()}`);
+    expect(fetch.mock.calls[1]?.[0]).toContain(`&${new URLSearchParams(continuation).toString()}`);
   });
 });
