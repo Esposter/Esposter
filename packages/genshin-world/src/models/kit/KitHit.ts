@@ -9,7 +9,7 @@ import type { KitStackedHit } from "#src/models/kit/KitStackedHit";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 // One hit of a kit's action: its gauge of its element if it has one, the element it deals when that is not its
-// Character's own, the cylinder it reaches, when its hitmark falls in the action's seconds, its internal cooldown tag,
+// Character's own, the cylinder it reaches, when its hitmark falls from the action's start, its internal cooldown tag,
 // Whether it is blunt, its poise damage and the talent's multiplier
 export interface KitHit {
   // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats

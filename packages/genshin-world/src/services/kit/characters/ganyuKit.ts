@@ -188,14 +188,11 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, GANYU_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
     burstEnergyCost: getTalentMultiplier(talentMultiplierMap, GANYU_BURST_GROUP_ID, TALENT_START_LEVEL, 3),
-    // The fully charged shot's Frostflake Arrow lands with its animation's end. Its Bloom lands 18 frames after the
-    // Arrow's travel, past the animation, so it is cast with the shot as a summon at the body and lands on its own clock
+    // The fully charged shot's Frostflake Arrow lands with its animation's end, and its Bloom 18 frames after the arrow's
+    // Travel, past the animation, as the shot's own hit queued past its end
     chargedAttack: {
-      hits: [frostflakeArrowHit],
+      hits: [frostflakeArrowHit, frostflakeArrowBloomHit],
       isAimed: true,
-      onStart: ({ body, combatant, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [frostflakeArrowBloomHit]));
-      },
       seconds: FULL_CHARGE_FRAMES / 60,
       targetingArea: STRIKE_TARGETING_AREA,
     },

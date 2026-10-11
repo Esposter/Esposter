@@ -1,5 +1,4 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 
@@ -8,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -21,13 +21,6 @@ const NEUVILLETTE_SKILL_GROUP_ID = 8732;
 const NEUVILLETTE_BURST_GROUP_ID = 8739;
 
 export const NEUVILLETTE_CHARACTER_ID = 10_000_087;
-
-// A hit whose base damage is a share of its striker's Max HP rather than of its ATK, as gcsim's flat damage hits are: the share
-// Is given as the hit's flat base damage and the hit's talent multiplier is zero
-const createMaxHealthScaledBonus =
-  (talentMultiplier: number) =>
-  (combatant: Combatant): number =>
-    talentMultiplier * combatant.attributes.maxHealth;
 
 // Measured: gcsim (MIT) neuvillette/attack.go, each strike's hitmark, the frame its action cancels at by default and its circle
 // Round the target, of radius 1, 1 and 1.5. A strike deals no poise
@@ -58,26 +51,29 @@ const HIGH_PLUNGE_FRAMES = 68;
 const HIGH_PLUNGE_POISE_DAMAGE = 150;
 
 // Measured: gcsim (MIT) neuvillette/skill.go, O Tears, I Shall Repay's circle of radius 6 round the target at 23 frames, with its
-// Animation at 42 frames, its cooldown of twelve seconds and its share of Max HP. Spiritbreath Thorn hits at 60 frames, past
-// The animation, so it is not built
+// Animation at 42 frames, its cooldown of twelve seconds and its share of Max HP. Spiritbreath Thorn lands at 60 frames, past
+// The animation, on a circle of radius 4.5 round the target, a share of ATK dealing Hydro with no gauge. Its aligned 10-second
+// Cooldown is not built, as the skill's own twelve seconds always outlast it
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/neuvillette
 const SKILL_FRAMES = 42;
 const SKILL_HITMARK_FRAMES = 23;
 const SKILL_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 6);
+const SPIRITBREATH_THORN_HITMARK_FRAMES = 60;
+const SPIRITBREATH_THORN_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 4.5);
 
 // Measured: gcsim (MIT) neuvillette/burst.go, O Tides, I Have Returned's first hit at 95 frames on a circle of radius 8 ahead of
-// The body, and its Waterfall at 135 frames on a circle of radius 5 round the target, with its animation at 135 frames
+// The body, and its two Waterfalls at 135 and 154 frames on a circle of radius 5 round the target, with its animation at 135
+// Frames, so the second Waterfall lands past it
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/neuvillette
 const BURST_FRAMES = 135;
 const BURST_INITIAL_HITMARK_FRAMES = 95;
 const BURST_INITIAL_HIT_AREA = createCircleReach(1, 8);
-const BURST_WATERFALL_HITMARK_FRAMES = 135;
+const BURST_WATERFALL_HITMARK_FRAMES = [135, 154];
 const BURST_WATERFALL_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 5);
 
 // Not built yet: Equitable Judgment, the held charged attack, whose length counts the Sourcewater droplets its legal evaluation
-// Picks up and whose judgement ticks drain Max HP, and the droplets the skill and burst leave, which nothing collects. Spiritbreath
-// Thorn hits at 60 frames, past the skill's animation, and the burst's third Waterfall at 154 frames, past its animation, so both
-// Wait on a timed hit. His passives and constellations are not built.
+// Picks up and whose judgement ticks drain Max HP, and the droplets the skill and burst leave, which nothing collects. His
+// Passives and constellations are not built.
 export const createNeuvilletteKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, NEUVILLETTE_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -132,14 +128,14 @@ export const createNeuvilletteKit = (talentMultiplierMap: TalentMultiplierMap): 
           poiseDamage: 0,
           talentMultiplier: 0,
         },
-        {
+        ...BURST_WATERFALL_HITMARK_FRAMES.map((hitmarkFrames) => ({
           additiveBaseDamageBonus: burstWaterfallBonus,
           element: Element.Hydro,
           hitArea: BURST_WATERFALL_HIT_AREA,
-          hitmarkSeconds: BURST_WATERFALL_HITMARK_FRAMES / 60,
+          hitmarkSeconds: hitmarkFrames / 60,
           poiseDamage: 0,
           talentMultiplier: 0,
-        },
+        })),
       ],
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -153,6 +149,14 @@ export const createNeuvilletteKit = (talentMultiplierMap: TalentMultiplierMap): 
           hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
           poiseDamage: 0,
           talentMultiplier: 0,
+        },
+        {
+          element: Element.Hydro,
+          gauge: 0,
+          hitArea: SPIRITBREATH_THORN_HIT_AREA,
+          hitmarkSeconds: SPIRITBREATH_THORN_HITMARK_FRAMES / 60,
+          poiseDamage: 0,
+          talentMultiplier: skillMultiplier(1),
         },
       ],
       seconds: SKILL_FRAMES / 60,

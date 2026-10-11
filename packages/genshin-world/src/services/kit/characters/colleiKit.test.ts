@@ -41,9 +41,6 @@ describe(createColleiKit, () => {
     return kitEffectState.effects;
   };
 
-  const castSummon = (action: KitAction): KitSummon | undefined =>
-    castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
-
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -69,15 +66,13 @@ describe(createColleiKit, () => {
     expect(COLLEI_KIT.burstEnergyCost).toBe(60);
   });
 
-  test("the Floral Brush hits land at 34 and 138 frames, the second cast with the skill", () => {
+  test("the Floral Brush hits land at 34 and 138 frames, the second past the skill's 68-frame animation", () => {
     expect.hasAssertions();
-    const secondHit = castSummon(COLLEI_KIT.elementalSkill)?.hits ?? [];
 
-    expect(
-      [takeOne(COLLEI_KIT.elementalSkill.hits), ...secondHit].map(({ hitmarkSeconds }) =>
-        Math.round(hitmarkSeconds * 60),
-      ),
-    ).toStrictEqual([34, 138]);
+    expect(COLLEI_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      34, 138,
+    ]);
+    expect(Math.round(COLLEI_KIT.elementalSkill.seconds * 60)).toBe(68);
   });
 
   test("the fully charged shot's arrow lands 10 frames after its 86-frame hitmark", () => {

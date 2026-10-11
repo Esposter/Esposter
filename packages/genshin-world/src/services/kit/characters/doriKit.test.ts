@@ -3,7 +3,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
-import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -67,9 +66,10 @@ describe(createDoriKit, () => {
 
   test("the After-Sales Service Round's two hits land 46 and 59 frames after Troubleshooter Shot", () => {
     expect.hasAssertions();
-    const sales = castEffects(DORI_KIT.elementalSkill).find((effect): effect is KitSummon => effect.kind === "summon");
 
-    expect(sales?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([72, 85]);
+    expect(DORI_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      26, 72, 85,
+    ]);
   });
 
   test("the Connector ticks every 24 frames from 28 frames, 32 times, in the circle ahead of the body", () => {

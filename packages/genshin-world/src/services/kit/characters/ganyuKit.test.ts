@@ -10,8 +10,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
-import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
+import { createGanyuKit, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -38,15 +37,12 @@ describe(createGanyuKit, () => {
     action.onStart?.({ body: kitBody, combatant, kitEffectState, party: createParty([GANYU_CHARACTER_ID]) });
     return kitEffectState.effects;
   };
-  const castSummon = (action: KitAction): KitSummon | undefined =>
-    castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
       ...GANYU_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
-      takeOne(GANYU_KIT.chargedAttack.hits).talentMultiplier,
-      takeOne(castSummon(GANYU_KIT.chargedAttack)?.hits ?? []).talentMultiplier,
+      ...GANYU_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
       GANYU_KIT.plungeCollision.talentMultiplier,
       takeOne(GANYU_KIT.lowPlunge.hits).talentMultiplier,
       takeOne(GANYU_KIT.highPlunge.hits).talentMultiplier,
@@ -60,11 +56,10 @@ describe(createGanyuKit, () => {
 
   test("the fully charged Frostflake Arrow lands at 113 frames and its Bloom 18 frames after the arrow's travel", () => {
     expect.hasAssertions();
-    const arrowHitmark = Math.round(takeOne(GANYU_KIT.chargedAttack.hits).hitmarkSeconds * 60);
-    const bloomHitmark = Math.round(takeOne(castSummon(GANYU_KIT.chargedAttack)?.hits ?? []).hitmarkSeconds * 60);
-
-    expect(arrowHitmark).toBe(113);
-    expect(bloomHitmark).toBe(131);
+    expect(GANYU_KIT.chargedAttack.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
+      113, 131,
+    ]);
+    expect(Math.round(GANYU_KIT.chargedAttack.seconds * 60)).toBe(113);
   });
 
   test("the arrows after the first get Undivided Heart's CRIT Rate, from Ascension 1", () => {

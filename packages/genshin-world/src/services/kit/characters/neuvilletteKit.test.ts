@@ -9,7 +9,7 @@ const NEUVILLETTE_KIT = createNeuvilletteKit(
 );
 
 describe(createNeuvilletteKit, () => {
-  test("reads the strikes', charged attack's and plunges' multipliers from his proud skill group", () => {
+  test("reads the strikes', charged attack's, plunges' and Spiritbreath Thorn's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
       ...NEUVILLETTE_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
@@ -17,8 +17,9 @@ describe(createNeuvilletteKit, () => {
       NEUVILLETTE_KIT.plungeCollision.talentMultiplier,
       NEUVILLETTE_KIT.lowPlunge.hits[0]?.talentMultiplier,
       NEUVILLETTE_KIT.highPlunge.hits[0]?.talentMultiplier,
+      NEUVILLETTE_KIT.elementalSkill.hits[1]?.talentMultiplier,
     ];
-    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 1.368, 0.568288, 1.136335, 1.419344]);
+    expect(multipliers).toStrictEqual([0.545768, 0.462456, 0.723376, 1.368, 0.568288, 1.136335, 1.419344, 0.208]);
   });
 
   test("the charged attack costs 50 stamina, his burst costs 70 energy and cools for 18 seconds, and his skill cools for 12 seconds", () => {
@@ -36,18 +37,20 @@ describe(createNeuvilletteKit, () => {
     });
   });
 
-  test("his strikes deal hydro, and his skill and burst's hits take their share of Max HP at their hitmarks", () => {
+  test("his strikes deal hydro, and his skill's and burst's hits land at their hitmarks, past their animations too", () => {
     expect.hasAssertions();
     expect({
       normalAttackElements: NEUVILLETTE_KIT.normalAttacks.map(({ hits }) => hits[0]?.element),
-      skillHitmarkFrames: Math.round((NEUVILLETTE_KIT.elementalSkill.hits[0]?.hitmarkSeconds ?? 0) * 60),
+      skillHitmarkFrames: NEUVILLETTE_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) =>
+        Math.round(hitmarkSeconds * 60),
+      ),
       burstHitmarkFrames: NEUVILLETTE_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) =>
         Math.round(hitmarkSeconds * 60),
       ),
     }).toStrictEqual({
-      burstHitmarkFrames: [95, 135],
+      burstHitmarkFrames: [95, 135, 154],
       normalAttackElements: [Element.Hydro, Element.Hydro, Element.Hydro],
-      skillHitmarkFrames: 23,
+      skillHitmarkFrames: [23, 60],
     });
   });
 });

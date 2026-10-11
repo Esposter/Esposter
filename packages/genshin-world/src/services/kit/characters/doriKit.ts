@@ -177,11 +177,8 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: {
-      hits: [troubleshooterHit],
-      // The After-Sales Service Round lands from the skill's own spot, as its two hits follow the first
-      onStart: ({ body, combatant, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, afterSalesHits));
-      },
+      // The After-Sales Service Round's two hits follow the first past the skill's end
+      hits: [troubleshooterHit, ...afterSalesHits],
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

@@ -11,8 +11,7 @@ Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged s
 
 ## Decisions
 
-- **Tanglevine Shaft's twelve hits are cast with the burst.** Its six hits and its secondary's six land from 112 to 175 frames, past the 118-frame animation, so they are a summon cast at the body, as a hit past the animation would never land in the action.
-- **The normal attacks run until their arrows land.** A strike's action is as long as its cancel or its arrow's landing, whichever is later, so the arrow lands within the action it was thrown in.
+- **Each action ends at its gcsim cancel, and its arrows land on their own.** Tanglevine Shaft's six hits and its secondary's six land from 112 to 175 frames, past the 118-frame animation; the strikes' arrows land past their cancels, and the fully charged arrow at 96 frames, past its 94. Each is the action's own hit, queued past its end as gcsim queues it, so a later action or a swap does not stop it.
 - **Vijnana-Phala Mine's area is a circle of radius 6 round the primary target,** priced as the skill's targeting reach plus the circle, as the Celestial Shower's field is.
 
 ## Key files
