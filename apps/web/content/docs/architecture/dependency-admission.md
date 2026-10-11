@@ -113,7 +113,7 @@ The ledger is the gap analysis, one verdict per entry. What it cannot hold is a 
 
 A `@types/x` entry is read against the package it types rather than against a call site of its own: one whose runtime package now ships its own declarations is residue, and one whose major trails the package it types is describing an API we no longer install.
 
-The page-builder plugin belt is the one thinning left open: around a dozen single-purpose plugins, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter, the MJML and PostCSS integrations — are engines; the small ones register a block and a trait, and are absorbed into the page builder's own tree ([resource roadmap](/docs/resource/roadmap)). The full PDF viewer stays beside the thumbnail embed and the renderer both are built on, for the reasons in [PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation).
+The page-builder plugin belt is the one thinning left open: around a dozen single-purpose plugins, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter, the MJML and PostCSS integrations — are engines; the small ones register a block and a trait, and are replaced by the page builder's node types ([page builder proposal](/docs/proposals/resource/page-builder)). The full PDF viewer stays beside the thumbnail embed and the renderer both are built on, for the reasons in [PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation).
 
 ## Executing an absorption
 
