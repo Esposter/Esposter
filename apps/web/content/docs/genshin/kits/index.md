@@ -273,6 +273,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Lynette](/docs/genshin/kits/lynette)               | Enigmatic Feint and the Bogglecat Box of Magic Trick                 |
 | [Lyney](/docs/genshin/kits/lyney)                   | Bewildering Lights and the Prop Arrow's Grin-Malkin Hat              |
 | [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                  |
+| [Mavuika](/docs/genshin/kits/mavuika)               | Four strikes, the charged attack and her plunges                     |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
 | [Mualani](/docs/genshin/kits/mualani)               | Three strikes, the charged attack and Boomsharka-laka                |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
