@@ -314,6 +314,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Yaoyao](/docs/genshin/kits/yaoyao)                 | Yuegui radishes and Moonjade Descent                                 |
 | [Yelan](/docs/genshin/kits/yelan)                   | Lingering Lifeline and Depth-Clarion Dice                            |
 | [Yoimiya](/docs/genshin/kits/yoimiya)               | Niwabi Fire-Dance's Blazing Arrows and Aurous Blaze                  |
+| [Yumemizuki Mizuki](/docs/genshin/kits/mizuki)      | Three strikes, the charged attack and Aisa Utamakura Pilgrimage      |
 | [Yun Jin](/docs/genshin/kits/yun-jin)               | Opening Flourish and Cliffbreaker's Banner                           |
 | [Zhongli](/docs/genshin/kits/zhongli)               | Stone Steles, Jade Shield and Planet Befall                          |
 
