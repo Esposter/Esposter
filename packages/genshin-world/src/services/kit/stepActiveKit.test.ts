@@ -36,7 +36,6 @@ import { Vector3 } from "three";
 import { describe, expect, test, vi } from "vitest";
 
 const characterIdKitMap = await readCharacterKits(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]);
-const TRAVELER_KIT = takeOne([...characterIdKitMap.values()]);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
@@ -84,6 +83,7 @@ const createControls = (): ActiveKitControls => ({
 });
 
 describe(stepActiveKit, () => {
+  const TRAVELER_KIT = takeOne([...characterIdKitMap.values()]);
   const IDLE_INPUT: KitInput = {
     height: 0,
     isAttackHeld: false,
