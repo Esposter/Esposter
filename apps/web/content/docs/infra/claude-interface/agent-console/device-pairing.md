@@ -5,7 +5,7 @@ description: How the agent console pairs a browser with a host from one Connect 
 
 # Device Pairing
 
-The [host](/docs/infra/claude-interface/agent-console/host) once shared one long-lived token with every page, carried in a URL the browser kept in its history, and the page handed it to whatever answered on the port. Each browser now pairs with a credential of its own, as T3 Code pairs each device through a one-time link ([T3 Code remote access](https://github.com/pingdotgg/t3code/blob/main/docs/user/remote-access.md)) and Claude Code's Remote Control enrols each browser separately ([Remote Control](https://code.claude.com/docs/en/remote-control)). The browser's own open-app prompt is the reader's consent.
+The [host](/docs/infra/claude-interface/agent-console/host) gives each browser a credential of its own. One token shared by every page would sit in a URL the browser keeps in its history, and the page would hand it to whatever answers on the port. Pairing this way follows T3 Code pairs each device through a one-time link ([T3 Code remote access](https://github.com/pingdotgg/t3code/blob/main/docs/user/remote-access.md)) and Claude Code's Remote Control enrols each browser separately ([Remote Control](https://code.claude.com/docs/en/remote-control)). The browser's own open-app prompt is the reader's consent.
 
 ## How it works
 
