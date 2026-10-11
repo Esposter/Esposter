@@ -1,5 +1,6 @@
 import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
-import { mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
+import { PROCESS_LOCK_WRITE_GRACE_MILLISECONDS } from "#src/services/shared/constants";
+import { existsSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -42,5 +43,43 @@ describe(acquireProcessLock, () => {
     utimesSync(lockPath, 0, 0);
 
     expect(acquireProcessLock(lockPath)).toBe(true);
+  });
+
+  test("refuses an empty lock its holder is still writing", () => {
+    expect.hasAssertions();
+
+    writeFileSync(lockPath, "");
+
+    expect(acquireProcessLock(lockPath)).toBe(false);
+  });
+
+  test("takes an empty lock past the grace its holder had to write it in", () => {
+    expect.hasAssertions();
+
+    writeFileSync(lockPath, "");
+    const writtenSeconds =
+      (Temporal.Now.instant().epochMilliseconds - PROCESS_LOCK_WRITE_GRACE_MILLISECONDS * 2) / 1000;
+    utimesSync(lockPath, writtenSeconds, writtenSeconds);
+
+    expect(acquireProcessLock(lockPath)).toBe(true);
+  });
+
+  test("refuses a stale lock a live process is taking over", () => {
+    expect.hasAssertions();
+
+    writeFileSync(lockPath, String(DEAD_PROCESS_ID));
+    writeFileSync(`${lockPath}.takeover`, String(process.pid));
+
+    expect(acquireProcessLock(lockPath)).toBe(false);
+  });
+
+  test("takes a stale lock over past a takeover its taker died in", () => {
+    expect.hasAssertions();
+
+    writeFileSync(lockPath, String(DEAD_PROCESS_ID));
+    writeFileSync(`${lockPath}.takeover`, String(DEAD_PROCESS_ID));
+
+    expect(acquireProcessLock(lockPath)).toBe(true);
+    expect(existsSync(`${lockPath}.takeover`)).toBe(false);
   });
 });

@@ -99,3 +99,6 @@ export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The npm lockfile beside a manifest, which `npm install` writes and whose root entry repeats the manifest's `engines`
 export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";
+// How long a process lock may stay empty while its writer writes its process id in, the few calls between the lock's
+// Exclusive create and its write; an empty lock older than this was left by a writer that died between them
+export const PROCESS_LOCK_WRITE_GRACE_MILLISECONDS = 10_000;
