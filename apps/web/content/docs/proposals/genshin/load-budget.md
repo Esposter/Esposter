@@ -27,7 +27,7 @@ Miliastra Wonderland meters a stage's load as its author builds it: every placed
    - Read only the region ground in the first view at the gate, and the rest after the world shows. `readWindriseData` reads all seven region grounds and the base ground at the gate.
    - Leave the far terrain rings out of `ready`, so the first frame waits on the near tiles only. Built as the finest level only, `checkIsFirstFrameSettled`, as the [as-built page](/docs/genshin/load-budget) gives.
    - Next, measured on the production build: the terrain's tiles are the longest step of the world's ready. The next trim is chosen from that measure. A worker that imports only the terrain functions is the candidate, to be measured on the build before and after. A tile's compile is not the cost, so it is not a candidate.
-   - Compile the first view's materials before ready, and the rest after.
+   - Compile the first view's materials before ready, and the rest after. Built as the view alone: the rest, compiled after ready, was a frame of seconds and built programs no turn or walk then drew, so nothing compiles it, as the [as-built page](/docs/genshin/load-budget) gives.
    - Read each name-text and stat table when its first reader needs it, rather than all of them at the world gate.
 2. **Hold.** Each trim lowers its screen's budget in the same commit, so the meter only tightens.
 

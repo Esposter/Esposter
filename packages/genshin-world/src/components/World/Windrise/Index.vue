@@ -335,8 +335,8 @@ const isTerrainSettled = ref(false);
 whenever(
   () => isTerrainSettled.value && isRegionDataSettled.value,
   async () => {
-    // The scene's pipelines, outlines included, compile before the world shows, so no first sight of one stalls a frame.
-    // A compile that fails is logged and the world shows anyway, drawn without the warm-up, rather than never being ready
+    // The view's pipelines, outlines included, compile before the world shows, so its first frame builds none. A compile
+    // That fails is logged and the world shows anyway, drawn without the warm-up, rather than never being ready
     await getResultAsync(async () => {
       if (postPipeline.value) await measureLoadStep("compile", postPipeline.value.compileAsync());
     }).match(noop, (error) => {
