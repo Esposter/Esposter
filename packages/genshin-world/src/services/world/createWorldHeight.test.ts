@@ -1,11 +1,17 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
+import { regionGroundSchema } from "#src/models/world/RegionGround";
+import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { REGION_GROUND_KEYS } from "#src/services/world/constants";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { createTerrainShapeHeight, TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-const { baseGround, regionGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
+const { baseGround } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
+const regionGrounds = await Promise.all(
+  REGION_GROUND_KEYS.map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+);
 
 describe(createWorldHeight, () => {
   test("raises every region no fit has drawn at its plateaus, within the heights every tile is bounded by", () => {
@@ -16,7 +22,7 @@ describe(createWorldHeight, () => {
     const plateaus = regionGrounds
       .filter(({ hills }) => hills.length === 0)
       .flatMap(({ features }) => features.filter((feature) => feature.kind === TerrainFeatureKind.Plateau));
-    const { maxHeight, minHeight } = createWindriseTerrainOptions([baseGround, ...regionGrounds]);
+    const { maxHeight, minHeight } = createWindriseTerrainOptions([baseGround]);
 
     expect(plateaus).not.toHaveLength(0);
 
@@ -27,6 +33,18 @@ describe(createWorldHeight, () => {
       expect(groundHeight).toBeGreaterThanOrEqual(minHeight);
       expect(groundHeight).toBeLessThanOrEqual(maxHeight);
     }
+  });
+
+  test("stands every region's ground within the heights Windrise's ground bounds every tile by", () => {
+    expect.hasAssertions();
+
+    const { maxHeight, minHeight } = createWindriseTerrainOptions([baseGround]);
+    const outOfBoundsGrounds = regionGrounds.filter(
+      (regionGround) =>
+        (regionGround.minHeight ?? minHeight) < minHeight || (regionGround.maxHeight ?? maxHeight) > maxHeight,
+    );
+
+    expect(outOfBoundsGrounds).toStrictEqual([]);
   });
 
   test("draws Windrise's own features as its fitted ground does", () => {

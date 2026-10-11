@@ -12,6 +12,7 @@ import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
 import type { Object3D, Vector3 } from "three";
@@ -147,8 +148,7 @@ interface Props {
   regionDataBaseUrl: string;
   // The Mondstadt animals the official map marks, each stood at its place
   wildlifePlaces: WildlifePlace[];
-  // Windrise's records: its ground and the regions' grounds, its surfaces, its oak, plants, paving and statue, and its
-  // Water
+  // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
   windriseData: WindriseData;
   // The World Level the camps spawn at, from the player's Adventure EXP and quests
   worldLevel: number;
@@ -201,17 +201,11 @@ const hiddenLandmarkKinds = computed(() => [
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
 lightUniforms.rimStrength.value = RIM_STRENGTH;
-const { baseGround, groundLayers, oak, paving, plants, regionGrounds, statue, surfaces, water } = windriseData;
-// The ground's quadtree, which the terrain streams and the grass reads, and the records each terrain worker computes
-// Its tiles over
-const terrainOptions = createWindriseTerrainOptions([baseGround, ...regionGrounds]);
-const terrainWorkerGround: TerrainWorkerGround = {
-  baseGround,
-  groundLayers,
-  regionGrounds,
-  surfaces,
-  waterLevel: water.level,
-};
+const { baseGround, groundLayers, oak, paving, plants, statue, surfaces, water } = windriseData;
+// The ground's quadtree, which the terrain streams and the grass reads, bounded by Windrise's ground, which every
+// Region's ground laid over it stands within, and the records each terrain worker computes its tiles over
+const terrainOptions = createWindriseTerrainOptions([baseGround]);
+const terrainWorkerGround: TerrainWorkerGround = { baseGround, groundLayers, surfaces, waterLevel: water.level };
 // The trees the landmarks grow and the plants' impostor is baked from
 const treeSpeciesOptionsMap = createTreeSpeciesOptionsMap(oak);
 // The paving stones round the statue, cut from the stone the statue is made of
@@ -235,7 +229,14 @@ const { cascadedShadowNode, light: sun } = createSunLight({ cascadeCount, maxFar
 // Shade is lit only by this, so the sky's colour above and the grass's below are the shade's colours
 const hemisphere = new HemisphereLight();
 const worldOffset = useFloatingOrigin(origin);
-const { isRegionDataSettled, regionDataMap } = useRegionData(origin, regionDataBaseUrl, gameDataBaseUrl, catalogue);
+const { isRegionDataSettled, regionDataMap, regionGroundMap } = useRegionData(
+  origin,
+  regionDataBaseUrl,
+  gameDataBaseUrl,
+  catalogue,
+);
+// The regions' grounds laid over Windrise's so far, which the terrain's workers raise every tile after by
+const regionGrounds = computed<RegionGround[]>(() => [...regionGroundMap.values()]);
 const fogUniforms = createFogUniforms();
 fogUniforms.heightFalloff.value = FOG_HEIGHT_FALLOFF;
 fogUniforms.startDistance.value = FOG_START_DISTANCE;
@@ -367,8 +368,9 @@ if (isTuning)
     windUniforms,
   });
 
-// The regions' data, and the spot each resident is shown at, which the world screen reads the residents from
-defineExpose({ regionDataMap, residentSpots });
+// The regions' data and grounds, and the spot each resident is shown at, which the world screen reads the residents
+// And the world's ground from
+defineExpose({ regionDataMap, regionGroundMap, residentSpots });
 onUnmounted(() => {
   rampTexture.dispose();
   pavingGeometry.dispose();
@@ -399,6 +401,7 @@ onUnmounted(() => {
           :light-uniforms
           :origin
           :ramp-texture
+          :region-grounds
           :shadow-reach="SHADOW_MAX_FAR"
           :terrain-options
           :terrain-worker-ground

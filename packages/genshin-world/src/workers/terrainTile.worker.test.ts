@@ -2,16 +2,22 @@ import type { PlantedTerrainTile } from "#src/models/PlantedTerrainTile";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { regionGroundSchema } from "#src/models/world/RegionGround";
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
+import { readGameData } from "#src/services/data/readGameData";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
+import { REGION_GROUND_KEYS } from "#src/services/world/constants";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { SOURCE_CONDITION } from "@esposter/configuration";
-import { getTerrainTileKey } from "genshin-engine";
+import { getTerrainTileKey, TerrainFeatureKind } from "genshin-engine";
 import { isAbsolute, resolve } from "node:path";
 import { scan } from "rolldown/experimental";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { baseGround, groundLayers, regionGrounds, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
+const { baseGround, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
+const regionGrounds = await Promise.all(
+  REGION_GROUND_KEYS.map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
+);
 
 describe("terrainTile.worker", () => {
   const addEventListener =
@@ -22,7 +28,7 @@ describe("terrainTile.worker", () => {
     request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, 0, 0) },
   };
   const loadMessage: TerrainWorkerMessage = {
-    ground: { baseGround, groundLayers, regionGrounds, surfaces, waterLevel: water.level },
+    ground: { baseGround, groundLayers, surfaces, waterLevel: water.level },
     kind: TerrainWorkerMessageKind.Load,
   };
   const receive = async (message: TerrainWorkerMessage): Promise<void> => {
@@ -57,7 +63,7 @@ describe("terrainTile.worker", () => {
   test("computes a tile's heights over the ground it was loaded with", async () => {
     expect.hasAssertions();
 
-    const getGroundHeight = createWorldHeight(baseGround, regionGrounds);
+    const getGroundHeight = createWorldHeight(baseGround, []);
     await receive(loadMessage);
     await receive(tileMessage);
 
@@ -75,6 +81,42 @@ describe("terrainTile.worker", () => {
         1,
         1,
         getGroundHeight(1, 1),
+        1,
+      ]),
+    );
+  });
+
+  test("raises a tile asked for after the regions' grounds arrive by them", async () => {
+    expect.hasAssertions();
+
+    const [plateau] = regionGrounds.flatMap(({ features }) =>
+      features.flatMap((feature) => (feature.kind === TerrainFeatureKind.Plateau ? [feature] : [])),
+    );
+    assert.exists(plateau);
+    const x = Math.round(plateau.x);
+    const z = Math.round(plateau.z);
+    const getGroundHeight = createWorldHeight(baseGround, regionGrounds);
+    await receive(loadMessage);
+    await receive({ kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds });
+    await receive({
+      kind: TerrainWorkerMessageKind.Tile,
+      request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, x, z) },
+    });
+
+    assert.exists(postMessage.mock.lastCall);
+    expect(postMessage.mock.lastCall[0].positions).toStrictEqual(
+      new Float32Array([
+        0,
+        getGroundHeight(x, z),
+        0,
+        1,
+        getGroundHeight(x + 1, z),
+        0,
+        0,
+        getGroundHeight(x, z + 1),
+        1,
+        1,
+        getGroundHeight(x + 1, z + 1),
         1,
       ]),
     );

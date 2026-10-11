@@ -6,6 +6,8 @@ import { MAX_TILE_ATTEMPTS } from "#src/streaming/constants";
 import { getTerrainTileLevel } from "#src/terrain/getTerrainTileLevel";
 
 interface CachedTile<TTile> {
+  // Whether the tile was built before the last refresh, so it is drawn until its replacement arrives
+  isStale: boolean;
   lastWantedFrame: number;
   tile: TTile;
 }
@@ -14,7 +16,8 @@ interface CachedTile<TTile> {
 // Past the cache's size, the tile wanted longest ago is freed, never one wanted or drawn this frame, and a tile
 // Arrives as recently wanted as the last frame that wanted it, so one the view moved on from is freed first. The
 // Generating itself is the caller's, through `requestTile` and `receive`, so the streamer runs the same in a test as
-// Over a worker pool
+// Over a worker pool. A refresh marks every tile held or generating stale, so each is asked for again as if missing
+// While the held one is still drawn
 export const createTileStreamer = <TTile>({
   disposeTile,
   maxCachedCount,
@@ -27,6 +30,8 @@ export const createTileStreamer = <TTile>({
   // Each key's failures so far, and the keys given up for the session once they reach MAX_TILE_ATTEMPTS
   const failedAttemptMap = new Map<number, number>();
   const givenUpKeySet = new Set<number>();
+  // The keys generating when the last refresh came, whose tiles arrive built over what it replaced
+  const stalePendingKeySet = new Set<number>();
   let frame = 0;
   let isDisposed = false;
 
@@ -46,7 +51,10 @@ export const createTileStreamer = <TTile>({
     }
   };
 
-  const checkIsSettled = (key: number): boolean => cachedTileMap.has(key) || givenUpKeySet.has(key);
+  const checkIsSettled = (key: number): boolean => {
+    const cachedTile = cachedTileMap.get(key);
+    return (cachedTile !== undefined && !cachedTile.isStale) || givenUpKeySet.has(key);
+  };
 
   return {
     dispose: () => {
@@ -56,9 +64,11 @@ export const createTileStreamer = <TTile>({
       pendingWantedFrameMap.clear();
       failedAttemptMap.clear();
       givenUpKeySet.clear();
+      stalePendingKeySet.clear();
     },
     fail: (key) => {
       pendingWantedFrameMap.delete(key);
+      stalePendingKeySet.delete(key);
       const attempts = (failedAttemptMap.get(key) ?? 0) + 1;
       failedAttemptMap.set(key, attempts);
       if (attempts < MAX_TILE_ATTEMPTS) return false;
@@ -72,12 +82,19 @@ export const createTileStreamer = <TTile>({
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);
+      const isStale = stalePendingKeySet.delete(key);
       if (isDisposed) {
         disposeTile(tile);
         return;
       }
-      cachedTileMap.set(key, { lastWantedFrame, tile });
+      const replacedTile = cachedTileMap.get(key);
+      cachedTileMap.set(key, { isStale, lastWantedFrame, tile });
+      if (replacedTile && replacedTile.tile !== tile) disposeTile(replacedTile.tile);
       evictStale();
+    },
+    refresh: () => {
+      for (const cachedTile of cachedTileMap.values()) cachedTile.isStale = true;
+      for (const key of pendingWantedFrameMap.keys()) stalePendingKeySet.add(key);
     },
     update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;

@@ -111,6 +111,7 @@ const {
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
+const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // A witness render's tools set the camera themselves, which the controls would move off the pose they set
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
@@ -229,8 +230,12 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
-// The world's one ground, Windrise's with every region's laid over it, which everything in the world stands on
-const getGroundHeight = createWorldHeight(windriseData.baseGround, windriseData.regionGrounds);
+// The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
+// Reach, which everything in the world stands on. It is built again only as a region's ground arrives
+const worldHeight = computed(() =>
+  createWorldHeight(windriseData.baseGround, [...(windrise.value?.regionGroundMap.values() ?? [])]),
+);
+const getGroundHeight = (x: number, z: number): number => worldHeight.value(x, z);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
@@ -305,7 +310,6 @@ const {
   removeCharacterPack,
   storeCharacterPack,
 } = useCharacterPacks({ characterPackBaseUrl, getActiveCharacterId: () => getActiveCharacterId(party) });
-const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
 const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameId, talkMap, talkOffers, talkTextMap } =
