@@ -1,0 +1,95 @@
+---
+title: A player's own pack
+description: A player loads the official release they downloaded on the character screen, and the browser keeps its files, so nothing of the release leaves their browser.
+---
+
+# A player's own pack
+
+A player loads the official release they downloaded on the character screen, for the character it shows. The release is read in the page and kept in the browser's own storage, so a returning player loads it once. Nothing of it leaves the browser: the only requests the load makes are for the game data's character names, fetched by key ([hosted game data](/docs/genshin/hosted-game-data)).
+
+The layout the release is read into is the one [the characters index](/docs/genshin/characters) sets out. The folder rules below are the same ones [the development server](/docs/genshin/characters/development-packs) applies to a folder on its disk.
+
+```mermaid
+flowchart TD
+  OPEN["the character screen, its character drawn as its capsule"] --> PICK{"Load this character's official model"}
+  PICK -->|"the downloaded .zip"| ZIP["readCharacterPackZip: entry names decoded"]
+  PICK -->|"its extracted folder"| FOLDER["readCharacterPackFolder: each file by its path from the folder"]
+  ZIP --> READ["readPickedCharacterPack, in the page"]
+  FOLDER --> READ
+  NAMES["readCharacterIdNamesMap: every character's names in Chinese, English and Japanese"] --> READ
+  READ --> WHO["identifyCharacterPack: by the models' or folders' names"]
+  WHO --> RULES["the model, its textures and its terms, by the folder rules below"]
+  RULES -->|"no model, no terms, or a texture a material draws with missing"| REFUSED["the reason shown, nothing kept"]
+  RULES --> TERMS["the terms shown verbatim"]
+  TERMS -->|cancelled| DROPPED["nothing kept"]
+  TERMS -->|accepted| PUT["CharacterPackStore.put: every file under the id and hash, each write settled"]
+  PUT -->|"a write failed, a file's or the index's, as one past the storage's quota"| UNKEPT["the pack's folder removed, the index as it was: the loader says the storage is full"]
+  PUT -->|"every file written"| INDEXED["the index names the pack, then the pack it replaces is removed"]
+  INDEXED --> DRAW["chooseCharacterPackReader reads it ahead of the host's: the model on the body"]
+```
+
+## Picking and reading the release
+
+- **The loader.** `CharacterPackLoader` fills the character screen's slot. Where the character it shows is drawn as its capsule, it offers to load the character's official model, from the downloaded zip or its extracted folder. Where the browser keeps a pack for the character, it offers to remove it. Where the character is drawn from a pack, the browser's or the development server's, it offers the terms bundled with the model, which `CharacterTerms` reads through the character's `CharacterPackReader` and shows verbatim, or says could not be loaded.
+- **A zip is read in the page.** `readCharacterPackZip` lists a zip's entries with fflate without inflating any, and inflates only the files a read asks for. fflate reads a name the archive leaves unflagged as UTF-8 as Latin-1, a letter a byte, so `decodeCharacterPackEntryNames` reads those names back to their bytes and decodes them together, by the rule the terms are decoded by: strictly as UTF-8, else Shift-JIS where they read as Japanese, else GBK. The releases mix names flagged as UTF-8 with Shift-JIS ones, as Ningguang's and Klee's do, or GBK ones, as Zhongli's and Tartaglia's do. The resource forks macOS's archiver adds under `__MACOSX` are passed over.
+- **A RAR is read from its extracted folder.** Lumine's release of 2020 ships as RAR5, which nothing in the page decodes, so the player extracts it and picks the folder, which the browser hands over with each file's path from it.
+- **Whose release it is.** `identifyCharacterPack` matches the models' own names, else the folders' names, to every character's names in the languages the releases use, as `chooseCharacterPackModel` matches a model's name. A release matching another character is kept for that character, which the terms' dialog says. One matching none, as the Traveler's "女主角" and folder "荧" match no name of hers, or several, is kept for the character it was picked for.
+- **The terms before anything is kept.** The terms are shown verbatim with the model's name, and the release is kept only once the player accepts them. Cancelling keeps nothing.
+
+### Reading a release's folder
+
+An official release is extracted as it shipped: its folder names its files in Chinese or Japanese, nests the model a folder or two down, and spells a texture's case as it likes. Three rules turn it into the pack layout. Each lives in the world package and runs wherever a folder is read.
+
+- **The model.** `chooseCharacterPackModel` takes the folder's one `.pmx`, in any case. Of several, as Zhongli's release ships his skill effects beside him, it takes the one whose own name, read from its header, is one of the character's names in Chinese, English or Japanese. `readCharacterNames` reads those names from the [hosted game data](/docs/genshin/hosted-game-data), and only for such a folder. The releases spell a name in a case and spacing of their own, so a name is matched without either. A folder with no model, or with several and none named as its character, is refused, naming each.
+- **The textures.** `resolveCharacterPackTextures` matches each path the model names to a file below the model's own folder, case-insensitively and in either Unicode form, as MMD reads a path. A path climbing out of that folder matches nothing. `readPickedCharacterPack` matches every texture a material draws with and refuses a release lacking one, naming it: Tartaglia's release names a `tex/面.png` it does not ship.
+- **The terms.** `chooseCharacterTermsFile` takes the text file named as terms are, `利用規約`, then `readme`, `使用说明`, `规约`, `规则` and `terms`, the one nearest the root where several share a name. `decodeCharacterTerms` decodes it strictly, from UTF-16 by its byte-order mark, or as UTF-8, Shift-JIS or GBK, so a byte no character maps refuses the encoding rather than being replaced. A folder with no terms is refused.
+
+## Kept in the browser's storage
+
+`openCharacterPackStore` opens the private file system where the page can write a file there, else IndexedDB, else the page's own memory, logging a storage the browser has but refuses, as a private window may.
+
+A pack's files lie under its character's id and its hash, a SHA-256 of its files and their paths. `index.json` beside them lists which characters have one. A pack is written whole before the index names it:
+
+- every file's write settles first;
+- where any write failed, as one past the storage's quota does, or the index's write did, the pack's folder is removed and the index is left as it was, and the loader says the browser's storage is full and the model was not kept;
+- a pack the character already keeps under the same hash is not written again, so a failure never removes files the index names;
+- the index is read again once the files are written, so a pack kept meanwhile stays named;
+- the pack it replaces is removed after the index names the new one. A removal forgets the pack in the index before its files go, so the index never names a pack with files missing.
+
+An index that cannot be read or no longer parses is logged and rebuilt from the packs' folders, each named by a character's id and, within it, by a pack's hash. Where a character has several, the first found is kept, as a page closed between keeping a pack and removing the one it replaces leaves. The store is handed to the world before its index is read, so the packs kept from then on are drawn whatever the index held.
+
+## Decisions
+
+- **The loader is our own interface, laid over the character screen.** The game has no such control, so no reference measures it, and it stays out of what the parity loop scores. The character screen's fixture fills no slot, so its approved images and scores remain the game's. The loader is drawn in the screen's own colours and units.
+- **A zip's unflagged names are decoded together.** A name on its own can read as Japanese in an archive whose names are Chinese, "唷" in GBK reading as "爍" in Shift-JIS. The releases write one archive's unflagged names in one encoding, so the archive's names together decide it. A release flags the rest as UTF-8, which fflate decodes.
+- **The private file system first.** It keeps a pack's files as files, read back without a structured clone. IndexedDB stands in where the page cannot write a file there, and the page's memory where a browser keeps neither, so a pack loaded in a private window still draws until the page closes.
+- **A lost index is rebuilt rather than read as empty.** An empty index would leave the kept packs' files where nothing names them, drawn by no character and removed by nothing, so the next pack kept would orphan them for good. The folders already say which packs the browser holds.
+- **A drawn model's terms open from the loader.** The terms run to paragraphs, so laying them over the character screen would hide it. The loader offers them in the panel the terms are accepted in, which reads them only when opened.
+- **A RAR is extracted by the player.** Decoding RAR5 in the page would add a decoder for one release, so its folder is picked instead.
+- **A kept pack is stored under its hash, a host's pack at its character's id.** A pack loaded again lands beside the one it replaces, so the index names whole packs only. A host's files are the developer's folder, read as they stand on each request.
+
+## Key files
+
+| File                                                                                   | Role                                                                                                                               |
+| :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/character/openCharacterPackStore.ts`              | The kept packs' store over the private file system, else IndexedDB, else the page's memory                                         |
+| `packages/genshin-world/src/services/character/createCharacterPackStore.ts`            | Each kept pack's files under its id and hash, and the index of them                                                                |
+| `packages/genshin-world/src/services/character/createOpfsCharacterPackStorage.ts`      | The kept files in the browser's private file system                                                                                |
+| `packages/genshin-world/src/services/character/createIndexedDbCharacterPackStorage.ts` | The kept files in IndexedDB                                                                                                        |
+| `packages/genshin-world/src/services/character/createMemoryCharacterPackStorage.ts`    | The kept files in the page's memory                                                                                                |
+| `packages/genshin-world/src/services/character/getCharacterPackStorageNames.ts`        | The names directly below a path among the paths a storage keys its files by                                                        |
+| `packages/genshin-world/src/services/character/listStoredCharacterPacks.ts`            | The packs a storage holds by its folders alone, which a lost index is rebuilt from                                                 |
+| `packages/genshin-world/src/services/character/readCharacterPackZip.ts`                | A release's zip read in the page, its entries inflated only when asked for                                                         |
+| `packages/genshin-world/src/services/character/decodeCharacterPackEntryNames.ts`       | A zip's entry names decoded as the release wrote them                                                                              |
+| `packages/genshin-world/src/services/character/readCharacterPackFolder.ts`             | An extracted release's folder, each file by its path from it                                                                       |
+| `packages/genshin-world/src/services/character/readPickedCharacterPack.ts`             | A picked release read into the pack layout, hashed, with its terms as text                                                         |
+| `packages/genshin-world/src/services/character/identifyCharacterPack.ts`               | The character a release is of, by its models' and folders' names                                                                   |
+| `packages/genshin-world/src/services/character/readCharacterIdNamesMap.ts`             | Every character's names in the languages the releases use                                                                          |
+| `packages/genshin-world/src/services/character/getCharacterNameKey.ts`                 | A name as it is matched, in one form and case and with no spaces                                                                   |
+| `packages/genshin-world/src/services/character/chooseCharacterPackModel.ts`            | A folder's one model, or of several the one named as its character                                                                 |
+| `packages/genshin-world/src/services/character/readCharacterNames.ts`                  | A character's names in the languages the releases name their models in                                                             |
+| `packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts`        | Each texture matched to its file case-insensitively, kept at the model's spelling                                                  |
+| `packages/genshin-world/src/services/character/chooseCharacterTermsFile.ts`            | The terms file a folder holds                                                                                                      |
+| `packages/genshin-world/src/services/character/decodeCharacterTerms.ts`                | The terms decoded strictly, from UTF-16, UTF-8, Shift-JIS or GBK                                                                   |
+| `packages/genshin-world/src/components/Character/PackLoader/Index.vue`                 | Loads a character's release on the character screen, its terms accepted first, removes a kept one, and shows a drawn model's terms |
+| `packages/genshin-world/src/components/Character/Terms/Index.vue`                      | Shows the terms verbatim, or that they could not be loaded                                                                         |
