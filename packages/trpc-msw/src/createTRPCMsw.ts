@@ -8,7 +8,6 @@ import type { HttpHandler, WebSocketHandler } from "msw";
 import { WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE } from "#src/constants";
 import { MswWebSocketAdapter } from "#src/models/MswWebSocketAdapter";
 import { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
-import { WebSocketServerAdapter } from "#src/models/WebSocketServerAdapter";
 import { checkIsProcedureType } from "#src/services/checkIsProcedureType";
 import { createMockRouter } from "#src/services/createMockRouter";
 import { getProcedurePaths } from "#src/services/getProcedurePaths";
@@ -18,6 +17,7 @@ import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { http, ws } from "msw";
 import { IncomingMessage } from "node:http";
 import { Socket } from "node:net";
+import { WebSocketServerAdapter } from "trpc-nuxt-module/runtime/server/models/WebSocketServerAdapter";
 
 export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends object = object>({
   allowMethodOverride,

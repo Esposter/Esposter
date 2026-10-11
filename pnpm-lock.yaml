@@ -2429,6 +2429,9 @@ importers:
       superjson:
         specifier: 'catalog:'
         version: 2.2.6
+      trpc-nuxt-module:
+        specifier: workspace:*
+        version: link:../trpc-nuxt-module
       tsdown:
         specifier: 'catalog:'
         version: 0.23.1(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.1)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))(@vue/language-core@3.3.13)(oxc-resolver@11.24.2)(publint@0.3.25)(tsx@4.23.15)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))

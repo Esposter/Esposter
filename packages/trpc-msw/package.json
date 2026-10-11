@@ -66,6 +66,7 @@
     "@types/node": "catalog:",
     "publint": "catalog:",
     "superjson": "catalog:",
+    "trpc-nuxt-module": "workspace:*",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:",
