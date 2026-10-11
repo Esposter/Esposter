@@ -75,9 +75,9 @@ An adapter is the cheapest item this page finds and the one that costs the most 
 - **Format, 20.** CommonJS scores highest, since our ESM build gains the most from owning it. Dual scores less, and ESM or types-only scores 0.
 - **Self-containment, 20.** The package's own dependency count. None scores highest.
 
-The package's own dependencies' lines, its importing files and the manifests that list it are shown as unscored context. The weights and bands are named in `scripts/src/services/dependencies/score/constants.ts`.
+The package's own dependencies' lines, its importing files, the manifests that list it and its type shims are shown as unscored context. A type shim is a `declare module` over the package, or a `@ts-expect-error` or an `as unknown as` cast beside its import or call, and a package with shims is one absorbing it fixes at the root. The weights and bands are named in `scripts/src/services/dependencies/score/constants.ts`.
 
-The command's Disagreements are rows to re-judge, never errors: a Keep whose reason is outside the exempt list (engine, SDK, framework, tooling, types, hold, free) that scores 60 or more is an absorb candidate its verdict missed, and an Absorb scoring under 30 is one the score does not back.
+The command's Disagreements are rows to re-judge, never errors: a Keep whose reason is outside the exempt list (engine, SDK, framework, tooling, types, hold, free) that scores 60 or more is an absorb candidate its verdict missed, a Keep outside the shim-exempt reasons (engine, SDK, framework, tooling) that has type shims is one too, and an Absorb scoring under 30 is one the score does not back.
 
 ## The precedent
 

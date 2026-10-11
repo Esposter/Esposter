@@ -8,6 +8,7 @@ export interface DependencyScore {
   packageName: string;
   releaseCount: number;
   selfContainmentPoints: number;
+  shimCount: number;
   sizePoints: number;
   sourceLines: number;
   stabilityPoints: number;

@@ -3,7 +3,7 @@ import type { DependencyScore } from "#src/models/dependencies/score/DependencyS
 import { describe, expect, test } from "vitest";
 import { getDisagreements } from "#src/services/dependencies/score/getDisagreements";
 
-const createScore = (packageName: string, verdict: string, total: number): DependencyScore => ({
+const createScore = (packageName: string, verdict: string, total: number, shimCount = 0): DependencyScore => ({
   dependencyLines: 0,
   formatPoints: 0,
   importerCount: 0,
@@ -12,6 +12,7 @@ const createScore = (packageName: string, verdict: string, total: number): Depen
   packageName,
   releaseCount: 0,
   selfContainmentPoints: 0,
+  shimCount,
   sizePoints: 0,
   sourceLines: 0,
   stabilityPoints: 0,
@@ -33,5 +34,17 @@ describe(getDisagreements, () => {
     ];
 
     expect(getDisagreements(scores)).toStrictEqual([scores[0], scores[3]]);
+  });
+
+  test("flags a Keep with type shims outside the shim-exempt reasons, whatever its score", () => {
+    expect.hasAssertions();
+
+    const scores = [
+      createScore("eta", "Keep — data", 10, 1),
+      createScore("theta", "Keep — engine", 10, 1),
+      createScore("iota", "Keep — data", 10),
+    ];
+
+    expect(getDisagreements(scores)).toStrictEqual([scores[0]]);
   });
 });

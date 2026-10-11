@@ -24,6 +24,7 @@ export const printDependencyScores = (
       "Dependency lines",
       "Importers",
       "Manifests",
+      "Shims",
       "Deprecated",
       "Verdict",
     ],
@@ -38,6 +39,7 @@ export const printDependencyScores = (
       String(score.dependencyLines),
       String(score.importerCount),
       String(score.manifestCount),
+      String(score.shimCount),
       score.isDeprecated ? YES : "",
       score.verdict,
     ]),
@@ -46,8 +48,8 @@ export const printDependencyScores = (
 
   console.log(color.cyan("Disagreements"));
   if (disagreements.length === 0) console.log("None");
-  for (const { packageName, total, verdict } of disagreements)
-    console.log(`${packageName}: ${verdict}, scores ${total}`);
+  for (const { packageName, shimCount, total, verdict } of disagreements)
+    console.log(`${packageName}: ${verdict}, scores ${total}, ${shimCount} type shims`);
 
   if (unresolvedPackageNames.length > 0)
     console.log(color.yellow(`Not installed by any workspace: ${unresolvedPackageNames.join(", ")}`));

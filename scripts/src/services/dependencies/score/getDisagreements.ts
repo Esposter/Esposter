@@ -5,16 +5,20 @@ import {
   ABSORB_DISAGREEMENT_MAXIMUM_SCORE,
   KEEP_DISAGREEMENT_MINIMUM_SCORE,
   KEEP_EXEMPT_REASONS,
+  SHIM_EXEMPT_REASONS,
 } from "#src/services/dependencies/score/constants";
 import { parseVerdict } from "#src/services/dependencies/score/parseVerdict";
 
-// Rows to re-judge, never errors: a Keep for a reason outside the exempt list that scores as an absorb candidate, and an
-// Absorb the score does not back. A row the ledger has not judged is no disagreement.
+// Rows to re-judge, never errors: a Keep for a reason outside the exempt list that scores as an absorb candidate or carries
+// Type workarounds absorbing it would fix, and an Absorb the score does not back. A row the ledger has not judged is no disagreement.
 export const getDisagreements = (scores: DependencyScore[]): DependencyScore[] =>
-  scores.filter(({ total, verdict }) => {
+  scores.filter(({ shimCount, total, verdict }) => {
     const { kind, reason } = parseVerdict(verdict);
     if (kind === LedgerVerdict.Keep)
-      return total >= KEEP_DISAGREEMENT_MINIMUM_SCORE && !KEEP_EXEMPT_REASONS.includes(reason);
+      return (
+        (total >= KEEP_DISAGREEMENT_MINIMUM_SCORE && !KEEP_EXEMPT_REASONS.includes(reason)) ||
+        (shimCount > 0 && !SHIM_EXEMPT_REASONS.includes(reason))
+      );
     if (kind === LedgerVerdict.Absorb) return total < ABSORB_DISAGREEMENT_MAXIMUM_SCORE;
     return false;
   });
