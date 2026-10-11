@@ -21,8 +21,8 @@ Where a finding's home looked missing, it is settled:
 | Unit                                                             | Swept                  | Notes                                                                   |
 | ---------------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------- |
 | `scripts/src/services/genshinAssets`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
-| `packages/genshin-world`                                         | —                      | the rest of the package; `src/services/kit/characters` is its own row   |
-| `packages/genshin-world/src/services/kit/characters`             | —                      |                                                                         |
+| `packages/genshin-world`                                         | 2026-10-12 · Opus 5.5  | the rest of the package; `src/services/kit/characters` is its own row   |
+| `packages/genshin-world/src/services/kit/characters`             | 2026-10-12 · Opus 5.5  |                                                                         |
 | `packages`                                                       | 2026-10-11 · Haiku 5.5 | the light packages not named above                                      |
 | `apps/web/app`                                                   | —                      | the rest of the app, excluding the rows above                           |
 | `scripts/src/services/genshinParity`                             | 2026-10-11 · Haiku 5.5 |                                                                         |
