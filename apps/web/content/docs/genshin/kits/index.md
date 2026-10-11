@@ -238,6 +238,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                |
 | [Kamisato Ayaka](/docs/genshin/kits/kamisato-ayaka) | Soumetsu's storms and Senho's infusion                               |
 | [Kamisato Ayato](/docs/genshin/kits/kamisato-ayato) | Kyouka's Soukai Kanka stance and Suiyuu's field                      |
+| [Kaveh](/docs/genshin/kits/kaveh)                   | Artistic Ingenuity and Painted Dome                                  |
 | [Kazuha](/docs/genshin/kits/kazuha)                 | Chihayaburu and Kazuha Slash's Autumn Whirlwind                      |
 | [Keqing](/docs/genshin/kits/keqing)                 | Stellar Restoration and Starward Sword                               |
 | [Kirara](/docs/genshin/kits/kirara)                 | Tail-Flicking Flying Kick's shield and Secret Art: Surprise Dispatch |

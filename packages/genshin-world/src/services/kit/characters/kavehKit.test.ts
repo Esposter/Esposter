@@ -1,0 +1,73 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStance } from "#src/models/kit/KitStance";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createKavehKit, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createParty } from "#src/services/party/createParty";
+import { describe, expect, test } from "vitest";
+
+const KAVEH_KIT = createKavehKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAVEH_CHARACTER_ID]));
+const MAX_HEALTH = 10_000;
+const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
+const createKavehCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+  characterId: KAVEH_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: KAVEH_KIT,
+  level: 90,
+  weaponType: WeaponType.Claymore,
+});
+
+// The effects the burst's start adds to the team's, which its owner holds
+const castBurst = (): KitEffectState => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  KAVEH_KIT.elementalBurst.onStart?.({
+    body: kitBody,
+    combatant: createKavehCombatant(),
+    kitEffectState,
+    party: createParty([KAVEH_CHARACTER_ID]),
+  });
+  return kitEffectState;
+};
+
+describe(createKavehKit, () => {
+  test("reads the strikes', charged attack's, plunges', skill's and burst's multipliers from his proud skill groups", () => {
+    expect.hasAssertions();
+    const multipliers = [
+      ...KAVEH_KIT.normalAttacks.flatMap(({ hits }) => hits.map(({ talentMultiplier }) => talentMultiplier)),
+      KAVEH_KIT.plungeCollision.talentMultiplier,
+      KAVEH_KIT.lowPlunge.hits[0]?.talentMultiplier,
+      KAVEH_KIT.highPlunge.hits[0]?.talentMultiplier,
+      KAVEH_KIT.elementalSkill.hits[0]?.talentMultiplier,
+      KAVEH_KIT.elementalBurst.hits[0]?.talentMultiplier,
+    ];
+    expect(multipliers).toStrictEqual([0.761857, 0.696385, 0.842611, 1.026883, 0.745878, 1.49144, 1.862889, 2.04, 1.6]);
+  });
+
+  test("his burst costs 80 energy and cools for 20 seconds, and his skill cools for 6 seconds", () => {
+    expect.hasAssertions();
+    expect({
+      burstCooldownSeconds: KAVEH_KIT.burstCooldownSeconds,
+      burstEnergyCost: KAVEH_KIT.burstEnergyCost,
+      skillCooldownSeconds: KAVEH_KIT.skillCooldownSeconds,
+    }).toStrictEqual({ burstCooldownSeconds: 20, burstEnergyCost: 80, skillCooldownSeconds: 6 });
+  });
+
+  test("painted dome sets a stance of twelve seconds, whose first strike reaches 3.6 metres where his own reaches 2.7", () => {
+    expect.hasAssertions();
+    const stance = castBurst().effects.find((effect): effect is KitStance => effect.kind === "stance");
+    expect({
+      burstStanceRadius: stance?.actions.normalAttacks[0]?.hits[0]?.hitArea.radius,
+      normalRadius: KAVEH_KIT.normalAttacks[0]?.hits[0]?.hitArea.radius,
+      secondsRemaining: stance?.secondsRemaining,
+    }).toStrictEqual({ burstStanceRadius: expect.closeTo(3.6, 9), normalRadius: expect.closeTo(2.7, 9), secondsRemaining: 12 });
+  });
+});
