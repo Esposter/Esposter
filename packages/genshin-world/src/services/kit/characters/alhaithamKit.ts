@@ -32,6 +32,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
 // Alhaitham's proud skill groups, read at his talent level. The attack group holds the five strikes at 0, 1, 2 with its
@@ -441,7 +442,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       setMirrorCount(kitEffectState, characterId, 0);
       // Constellation 4's loss is the team's Elemental Mastery for each Mirror consumed, to every member but Alhaitham
       if (constellationCount >= CONSTELLATION_4 && consumed > 0)
-        for (const memberId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+        for (const memberId of getDeployedCharacterIds(party)) {
           if (memberId === characterId) continue;
           buffKitMember(kitEffectState, memberId, {
             amount: CONSTELLATION_4_ELEMENTAL_MASTERY_PER_MIRROR * consumed,

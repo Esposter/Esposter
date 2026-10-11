@@ -24,6 +24,7 @@ import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
@@ -58,7 +59,7 @@ export const useWorldCombat = ({
   // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
   // Changes to take it in, its module and multipliers read on demand
   const characterIdKitMap = shallowRef(startingCharacterIdKitMap);
-  const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
+  const deployedCharacterIds = computed(() => getDeployedCharacterIds(party));
   // A failed read is read again a wait later, as a team that does not change starts no other
   const { start: retryCharacterKits } = useTimeoutFn(() => readUnloadedCharacterKits(), DATA_FETCH_RETRY_MS, {
     immediate: false,

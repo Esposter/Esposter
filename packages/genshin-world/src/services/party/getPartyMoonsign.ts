@@ -9,6 +9,7 @@ import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { ASCENDANT_GLEAM_STATUS_ID } from "#src/services/party/constants";
 import { getAscendantGleamBonus } from "#src/services/party/getAscendantGleamBonus";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 
 // The deployed team's Moonsign: its level, and each member's Benediction turning its reactions Lunar and adding the
@@ -21,7 +22,7 @@ export const getPartyMoonsign = (
 ): PartyMoonsign => {
   const baseDamageBonusMap: Partial<Record<LunarReactionType, number>> = {};
   const lunarReactionTypes = new Set<LunarReactionType>();
-  for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+  for (const characterId of getDeployedCharacterIds(party)) {
     const combatant = characterIdCombatantMap.get(characterId);
     const benediction = combatant?.kit.moonsignBenediction;
     if (!combatant || !benediction) continue;

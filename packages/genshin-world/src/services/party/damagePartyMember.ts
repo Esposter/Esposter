@@ -1,6 +1,7 @@
 import type { Party } from "#src/models/party/Party";
 
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Takes a share of a character's Max HP from it, never below none, and records the change for the kits with the character
@@ -25,7 +26,7 @@ export const damagePartyMember = (
   });
   if (partyMember.healthShare > 0) return;
   partyMember.energy = 0;
-  const characterIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
+  const characterIds = getDeployedCharacterIds(party);
   if (characterIds[party.activeIndex] !== characterId) return;
   for (let offset = 1; offset < characterIds.length; offset++) {
     const index = (party.activeIndex + offset) % characterIds.length;

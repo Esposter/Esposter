@@ -14,6 +14,7 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { takeOne } from "@esposter/shared";
 
@@ -32,7 +33,7 @@ export const strikeLunarReaction = (
 ): boolean => {
   const { characterIdCombatantMap, enemyTables, kitEffectState, party, random } = context;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
-  const damages = (party.teams[party.deployedTeamIndex]?.characterIds ?? []).flatMap((characterId) => {
+  const damages = getDeployedCharacterIds(party).flatMap((characterId) => {
     const combatant = characterIdCombatantMap.get(characterId);
     if (!combatant || !contributorIds.has(characterId)) return [];
     const { attributes, level } = getBuffedCombatant(combatant, kitEffectState.effects, party);

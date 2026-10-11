@@ -1,12 +1,13 @@
 import type { Party } from "#src/models/party/Party";
 
 import { REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Revives every member of the deployed team who is down at a share of its Max HP, by default the share the game revives a
 // Fallen team with
 export const reviveParty = (party: Party, healthShare = REVIVE_HEALTH_SHARE): void => {
-  for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+  for (const characterId of getDeployedCharacterIds(party)) {
     const partyMember = getPartyMember(party, characterId);
     if (partyMember.healthShare === 0) partyMember.healthShare = healthShare;
   }

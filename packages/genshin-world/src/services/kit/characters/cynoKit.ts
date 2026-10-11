@@ -33,6 +33,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // Cyno's proud skill groups, read at his talent level. The attack group holds the Invoker's Spear strikes at 0 to 3, the
 // Third strike's two hits at 2 and 3, the fourth at 4, the charged attack at 5, the charged attack's stamina at 6, which is
@@ -533,7 +534,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       )
         return;
       counter.stacks = (counter.stacks ?? 0) + 1;
-      for (const memberId of party.teams[party.deployedTeamIndex]?.characterIds ?? []) {
+      for (const memberId of getDeployedCharacterIds(party)) {
         if (memberId === characterId) continue;
         const member = characterIdCombatantMap.get(memberId);
         if (member) gainPartyMemberEnergy(party, member, C4_ENERGY);
