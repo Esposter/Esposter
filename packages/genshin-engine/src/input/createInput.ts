@@ -15,6 +15,7 @@ import {
   KEY_CODE_RIGHT,
   KEY_CODE_UP,
   MOUSE_BUTTONS,
+  MOUSE_LOOK_MAX_PIXELS_PER_EVENT,
   MOUSE_LOOK_RADIANS_PER_PIXEL,
 } from "#src/input/constants";
 import { InputActionBindingMap } from "#src/input/InputActionBindingMap";
@@ -44,6 +45,8 @@ export const createInput = (target: Window): Input => {
   let pendingLookYaw = 0;
   let pendingLookPitch = 0;
   let pendingZoomSteps = 0;
+  // Whether the next pointer move is the first since the pointer was locked, which Chromium reports as one spurious jump
+  let isFirstMoveSinceLock = false;
   // The touch controls' on-screen stick, read with the gamepad's left stick
   let touchStickX = 0;
   let touchStickY = 0;
@@ -106,9 +109,24 @@ export const createInput = (target: Window): Input => {
     { signal },
   );
   target.addEventListener(
+    "pointerlockchange",
+    () => {
+      isFirstMoveSinceLock = target.document.pointerLockElement !== null;
+    },
+    { signal },
+  );
+  target.addEventListener(
     "mousemove",
     (event) => {
       if (target.document.pointerLockElement === null) return;
+      const isFirstMove = isFirstMoveSinceLock;
+      isFirstMoveSinceLock = false;
+      if (isFirstMove) return;
+      if (
+        Math.abs(event.movementX) > MOUSE_LOOK_MAX_PIXELS_PER_EVENT ||
+        Math.abs(event.movementY) > MOUSE_LOOK_MAX_PIXELS_PER_EVENT
+      )
+        return;
       pendingLookYaw -= event.movementX * MOUSE_LOOK_RADIANS_PER_PIXEL;
       pendingLookPitch -= event.movementY * MOUSE_LOOK_RADIANS_PER_PIXEL;
     },

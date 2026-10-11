@@ -46,6 +46,8 @@ A key typed into a field (an input, a text area, a select or anything editable) 
 
 While the pointer is locked to turn the camera, the browser keeps `Escape` for itself: it lets the lock go and never passes the key on. So a lock lost while the world is in play opens the Paimon menu, as `Escape` does with the pointer free ([screens](/docs/genshin/screens)). The lock is taken again by a click on the world, since the browser takes no lock from `Escape` itself.
 
+The first pointer move after a lock is taken is dropped, since Chromium reports one spurious, very large movement on it, and so is any single move larger than half a turn at the look's sensitivity (`MOUSE_LOOK_MAX_PIXELS_PER_EVENT`), which no hand makes between two reports.
+
 ## Decisions
 
 - **The game's defaults, and only them.** No binding is remapped: the game's controls fix most of its defaults, and the ones a player can change are left at the game's own until a Settings row backs a change.

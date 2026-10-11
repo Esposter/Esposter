@@ -40,6 +40,9 @@ export const MOUSE_BUTTONS: readonly MouseButton[] = [
 ];
 // The radians a pixel of pointer movement turns the look by
 export const MOUSE_LOOK_RADIANS_PER_PIXEL = 0.002;
+// The most pixels one mouse event may move while locked: half a turn at that rate. A hand moves a few pixels in the
+// Milliseconds between two reports, far under this, so a larger one is a spurious jump and is dropped
+export const MOUSE_LOOK_MAX_PIXELS_PER_EVENT = Math.PI / MOUSE_LOOK_RADIANS_PER_PIXEL;
 // The radians a second a gamepad's right stick held past its deadzone turns the look by
 export const GAMEPAD_LOOK_RADIANS_PER_SECOND = 2.5;
 // The fraction of a gamepad stick's travel read as no movement at all, so a resting stick holds still

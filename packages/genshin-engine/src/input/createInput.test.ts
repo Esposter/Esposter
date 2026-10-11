@@ -4,6 +4,7 @@ import {
   KEY_CODE_BACKWARD,
   KEY_CODE_FORWARD,
   KEY_CODE_RIGHT,
+  MOUSE_LOOK_MAX_PIXELS_PER_EVENT,
   MOUSE_LOOK_RADIANS_PER_PIXEL,
 } from "#src/input/constants";
 import { createInput } from "#src/input/createInput";
@@ -72,6 +73,32 @@ describe(createInput, () => {
       lookYaw: -POINTER_MOVE * MOUSE_LOOK_RADIANS_PER_PIXEL,
       next: 0,
     });
+  });
+
+  test("drops the first pointer move after the pointer locks, the browser's spurious jump", () => {
+    expect.hasAssertions();
+
+    const target = createTarget([], true);
+    const { readInput } = createInput(target as unknown as Window);
+    target.dispatchEvent(new Event("pointerlockchange"));
+    target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE * 100, movementY: 0 }));
+    target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE, movementY: 0 }));
+    const { lookYaw } = readInput(0);
+
+    expect(lookYaw).toBe(-POINTER_MOVE * MOUSE_LOOK_RADIANS_PER_PIXEL);
+  });
+
+  test("drops a single pointer move no hand could make in one event", () => {
+    expect.hasAssertions();
+
+    const target = createTarget([], true);
+    const { readInput } = createInput(target as unknown as Window);
+    target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: 0, movementY: 0 }));
+    target.dispatchEvent(
+      Object.assign(new Event("mousemove"), { movementX: MOUSE_LOOK_MAX_PIXELS_PER_EVENT + 1, movementY: 0 }),
+    );
+
+    expect(readInput(0).lookYaw).toBe(0);
   });
 
   test("moves by the touch controls: the key a button holds and the on-screen stick", () => {
