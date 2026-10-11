@@ -101,11 +101,9 @@ describe(createSkirkKit, () => {
 
     expect({
       attackTags: stance?.attackTags,
-      normalAttacks: stance?.actions.normalAttacks.length,
+      normalAttacks: stance?.kit.normalAttacks.length,
       secondsRemaining: Math.round((stance?.secondsRemaining ?? 0) * 1000) / 1000,
-      strikeElements: [
-        ...new Set(stance?.actions.normalAttacks.flatMap(({ hits }) => hits.map(({ element }) => element))),
-      ],
+      strikeElements: [...new Set(stance?.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ element }) => element)))],
     }).toStrictEqual({
       attackTags: {
         chargedAttack: AttackTag.ChargedAttack,

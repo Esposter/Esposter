@@ -171,7 +171,6 @@ describe(stepActiveKit, () => {
     const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)], {
       effects: [
         {
-          actions: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] },
           attackTags: {
             chargedAttack: AttackTag.ChargedAttack,
             elementalBurst: AttackTag.ElementalBurst,
@@ -181,6 +180,7 @@ describe(stepActiveKit, () => {
           characterId: TRAVELER_CHARACTER_ID,
           elapsedSeconds: 0,
           kind: "stance",
+          kit: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] },
           secondsRemaining: 1,
         },
       ],

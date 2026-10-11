@@ -1,14 +1,13 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -19,6 +18,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Itto's proud skill groups, read at his talent level, as the game's tables give them and as gcsim v2.47.2 (MIT) labels
@@ -166,10 +167,6 @@ const countSuperstrength = (effects: readonly KitEffect[], characterId: number):
       effect.kind === "status" && effect.characterId === characterId && effect.id === SUPERSTRENGTH_STATUS_ID,
   )?.stacks ?? 0;
 
-// Itto's stance, which plays the Arataki Kesagiri for his stacks, while he holds any
-const findKesagiriStance = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
-  effects.find((effect): effect is KitStance => effect.kind === "stance" && effect.characterId === characterId);
-
 // Whether Itto is the Raging Oni King: his burst's Geo conversion is on him
 const checkIsRagingOniKing = (effects: readonly KitEffect[], characterId: number): boolean =>
   effects.some(
@@ -239,7 +236,8 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     internalCooldownTag: InternalCooldownTag.ElementalSkill,
     isBlunt: true,
     // Ushi's hit gives a stack the first time it strikes, however many enemies it strikes
-    onStrike: ({ kitEffectState }, { combatant: { characterId } }) => {
+    onStrike: ({ kitEffectState }, { combatant }) => {
+      const { characterId } = combatant;
       if (checkHasKitStatus(kitEffectState.effects, characterId, USHI_STRUCK_STATUS_ID)) return;
       addKitEffect(kitEffectState, {
         characterId,
@@ -247,7 +245,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         kind: "status",
         secondsRemaining: SKILL_FRAMES / 60,
       });
-      gainSuperstrength(kitEffectState, characterId, 1);
+      gainSuperstrength(kitEffectState, combatant, 1);
     },
     poiseDamage: SKILL_POISE_DAMAGE,
     talentMultiplier: skillTalentMultiplier(0),
@@ -342,7 +340,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     return {
       hits,
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        const stance = findKesagiriStance(kitEffectState.effects, combatant.characterId);
+        const stance = findKitStance(kitEffectState.effects, combatant.characterId);
         if (stance) stance.secondsRemaining = seconds;
         kitEffectState.effects = kitEffectState.effects.filter(
           (effect) =>
@@ -359,32 +357,26 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   };
   const kesagiris = Array.from({ length: SUPERSTRENGTH_MAX_STACKS }, (_value, index) => createKesagiri(index + 1));
   // Itto's stance while he holds stacks, whose charged attack is the Arataki Kesagiri for them at no stamina, held
-  // Until a charged attack starts it
-  const addKesagiriStance = (kitEffectState: KitEffectState, characterId: number, stacks: number): void =>
-    addKitEffect(kitEffectState, {
-      actions: {
+  // Until a charged attack starts it. The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in
+  // Itto/charge.go's ChargeAttack
+  const addKesagiriStance = (kitEffectState: KitEffectState, combatant: Combatant, stacks: number): void =>
+    enterKitStance(
+      kitEffectState,
+      combatant,
+      {
         chargedAttack: kesagiris[stacks - 1] ?? saichimonjiAttack,
         chargedAttackStamina: ARATAKI_KESAGIRI_STAMINA,
         elementalBurst,
         elementalSkill,
         normalAttacks,
       },
-      // The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in itto/charge.go's ChargeAttack
-      attackTags: {
-        chargedAttack: AttackTag.ChargedAttack,
-        elementalBurst: AttackTag.ElementalBurst,
-        elementalSkill: AttackTag.ElementalSkill,
-        normalAttacks: AttackTag.NormalAttack,
-      },
-      characterId,
-      elapsedSeconds: 0,
-      kind: "stance",
-      secondsRemaining: Number.POSITIVE_INFINITY,
-    });
+      Number.POSITIVE_INFINITY,
+    );
   // Adds stacks of Superlative Superstrength, up to 5, and readies the Arataki Kesagiri for them, unless one is
   // Playing, whose end readies it
-  const gainSuperstrength = (kitEffectState: KitEffectState, characterId: number, gained: number): void => {
+  const gainSuperstrength = (kitEffectState: KitEffectState, combatant: Combatant, gained: number): void => {
     if (gained === 0) return;
+    const { characterId } = combatant;
     const stacks = Math.min(countSuperstrength(kitEffectState.effects, characterId) + gained, SUPERSTRENGTH_MAX_STACKS);
     addKitEffect(kitEffectState, {
       characterId,
@@ -393,9 +385,9 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       secondsRemaining: Number.POSITIVE_INFINITY,
       stacks,
     });
-    const stance = findKesagiriStance(kitEffectState.effects, characterId);
+    const stance = findKitStance(kitEffectState.effects, characterId);
     if (stance === undefined || stance.secondsRemaining === Number.POSITIVE_INFINITY)
-      addKesagiriStance(kitEffectState, characterId, stacks);
+      addKesagiriStance(kitEffectState, combatant, stacks);
   };
 
   return {
@@ -451,7 +443,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           kind: "status",
           secondsRemaining: USHI_DAMAGED_COOLDOWN_SECONDS,
         });
-        gainSuperstrength(kitEffectState, characterId, 1);
+        gainSuperstrength(kitEffectState, combatant, 1);
         return;
       }
 
@@ -463,7 +455,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           : 0;
         gainSuperstrength(
           kitEffectState,
-          characterId,
+          combatant,
           (NORMAL_ATTACK_SUPERSTRENGTH_STACKS[index] ?? 0) + ragingOniKingStacks,
         );
         return;
@@ -472,10 +464,10 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       if (event.kind !== KitEventKind.EffectExpired) return;
       const { effect } = event;
       if (effect.kind === "taunt" && effect.combatant.characterId === characterId)
-        gainSuperstrength(kitEffectState, characterId, 1);
+        gainSuperstrength(kitEffectState, combatant, 1);
       else if (effect.kind === "stance" && effect.characterId === characterId) {
         const stacks = countSuperstrength(kitEffectState.effects, characterId);
-        if (stacks > 0) addKesagiriStance(kitEffectState, characterId, stacks);
+        if (stacks > 0) addKesagiriStance(kitEffectState, combatant, stacks);
       }
     },
     plungeCollision: {

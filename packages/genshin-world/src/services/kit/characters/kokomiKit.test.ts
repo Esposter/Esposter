@@ -33,7 +33,7 @@ describe(createKokomiKit, () => {
     KOKOMI_KIT.elementalBurst.onStart?.(context);
     const garment = context.kitEffectState.effects.find((effect) => effect.kind === "stance");
     if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
-    const [firstNormalAttack] = garment.actions.normalAttacks;
+    const [firstNormalAttack] = garment.kit.normalAttacks;
     const bonus = firstNormalAttack?.hits[0]?.additiveBaseDamageBonus?.(combatant);
 
     expect(garment.secondsRemaining).toBe(10);

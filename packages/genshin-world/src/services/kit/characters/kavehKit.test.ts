@@ -60,7 +60,7 @@ describe(createKavehKit, () => {
     expect.hasAssertions();
     const stance = castBurst().effects.find((effect): effect is KitStance => effect.kind === "stance");
     expect({
-      burstStanceRadius: stance?.actions.normalAttacks[0]?.hits[0]?.hitArea.radius,
+      burstStanceRadius: stance?.kit.normalAttacks[0]?.hits[0]?.hitArea.radius,
       normalRadius: KAVEH_KIT.normalAttacks[0]?.hits[0]?.hitArea.radius,
       secondsRemaining: stance?.secondsRemaining,
     }).toStrictEqual({

@@ -2,16 +2,14 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Wanderer's proud skill groups, read at his talent level. The attack group holds the strikes at 0 to 3, the third strike's
@@ -186,30 +184,21 @@ export const createWandererKit = (talentMultiplierMap: TalentMultiplierMap): Kit
         talentMultiplier: skillMultiplier(0),
       },
     ],
-    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-      const stance: KitStance = {
-        actions: {
+    // The Windfavored strikes and charged attack are Normal and Charged Attack DMG, gcsim's AttackTagNormal in
+    // In wanderer/attack.go's WindfavoredAttack and AttackTagExtra in wanderer/charge.go's WindfavoredChargeAttack
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
           chargedAttack: windfavoredChargedAttack,
           chargedAttackStamina: attackMultiplier(5),
           elementalBurst: createBurst(burstMultiplier(0), WINDFAVORED_BURST_FRAMES),
           elementalSkill,
           normalAttacks: windfavoredNormalAttacks,
         },
-        // The Windfavored strikes and charged attack are Normal and Charged Attack DMG, gcsim's AttackTagNormal in
-        // In wanderer/attack.go's WindfavoredAttack and AttackTagExtra in wanderer/charge.go's WindfavoredChargeAttack
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId: combatant.characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: WINDFAVORED_SECONDS,
-      };
-      addKitEffect(kitEffectState, stance);
-    },
+        WINDFAVORED_SECONDS,
+      ),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

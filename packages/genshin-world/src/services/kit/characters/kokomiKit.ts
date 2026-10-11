@@ -4,7 +4,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
@@ -13,6 +12,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -200,28 +200,21 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: 0,
       },
     ],
+    // The garment's normal attacks are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
+    // In kokomi/attack.go and AttackTagExtra in kokomi/charge.go; its Bake-Kurage is Elemental Skill DMG in skill.go
     onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        actions: {
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
           chargedAttack: garmentChargedAttack,
           chargedAttackStamina,
           elementalBurst,
           elementalSkill: garmentSkill,
           normalAttacks: garmentNormalAttacks,
         },
-        // The garment's normal attacks are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
-        // In kokomi/attack.go and AttackTagExtra in kokomi/charge.go; its Bake-Kurage is Elemental Skill DMG in skill.go
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId: combatant.characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: GARMENT_SECONDS,
-      }),
+        GARMENT_SECONDS,
+      ),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

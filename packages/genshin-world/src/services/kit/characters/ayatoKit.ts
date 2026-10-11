@@ -7,7 +7,6 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
@@ -25,6 +24,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -323,9 +324,12 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         });
       // Soukai Kanka replaces the string with three Shunsuiken strikes, and keeps the kit's charged attack, plunges, skill and
       // Burst: a stance cannot take out the charged attack or the plunges, which gcsim refuses in the skill state, so those stand
-      // As the kit's own
-      const stance: KitStance = {
-        actions: {
+      // As the kit's own. The Shunsuiken strikes are Normal Attack DMG, gcsim's AttackTagNormal in ayato/attack.go's
+      // SoukaiKanka
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        {
           chargedAttack,
           chargedAttackStamina: attackMultiplier(6),
           elementalBurst,
@@ -336,19 +340,8 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             targetingArea: STRIKE_TARGETING_AREA,
           })),
         },
-        // The Shunsuiken strikes are Normal Attack DMG, gcsim's AttackTagNormal in ayato/attack.go's SoukaiKanka
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: SOUKAI_KANKA_SECONDS,
-      };
-      addKitEffect(kitEffectState, stance);
+        SOUKAI_KANKA_SECONDS,
+      );
     },
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -389,9 +382,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Leaving the field ends Soukai Kanka and clears the Namisen stacks, as gcsim's swap does
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      const stance = kitEffectState.effects.find(
-        (effect): effect is KitStance => effect.kind === "stance" && effect.characterId === combatant.characterId,
-      );
+      const stance = findKitStance(kitEffectState.effects, combatant.characterId);
       if (stance) stance.secondsRemaining = 0;
       const namisen = findKitStatus(kitEffectState.effects, combatant.characterId, NAMISEN_STATUS_ID);
       if (namisen) namisen.secondsRemaining = 0;

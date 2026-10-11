@@ -15,6 +15,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Yoimiya's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4.
@@ -172,21 +173,14 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // Niwabi Fire-Dance is a stance for the table's seconds whose normal attacks are the Blazing Arrows
   const elementalSkill: KitAction = {
     hits: [],
+    // The Blazing Arrows stay Normal Attack DMG, gcsim's AttackTagNormal in yoimiya/attack.go's Attack
     onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        actions: { chargedAttack, chargedAttackStamina, elementalBurst, elementalSkill, normalAttacks: blazingArrows },
-        // The Blazing Arrows stay Normal Attack DMG, gcsim's AttackTagNormal in yoimiya/attack.go's Attack
-        attackTags: {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.NormalAttack,
-        },
-        characterId: combatant.characterId,
-        elapsedSeconds: 0,
-        kind: "stance",
-        secondsRemaining: skillTalentMultiplier(YOIMIYA_SKILL_SECONDS_INDEX),
-      }),
+      enterKitStance(
+        kitEffectState,
+        combatant,
+        { chargedAttack, chargedAttackStamina, elementalBurst, elementalSkill, normalAttacks: blazingArrows },
+        skillTalentMultiplier(YOIMIYA_SKILL_SECONDS_INDEX),
+      ),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

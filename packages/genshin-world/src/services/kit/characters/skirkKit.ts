@@ -1,13 +1,13 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -22,6 +22,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Skirk's proud skill groups, read at her talent level. The attack group holds her five strikes at 0 to 5, the charged attack's
@@ -211,25 +213,19 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // The Seven-Phase Flash plays its own strikes, charged attack and burst in place of the kit's while it lasts, and a press of its
   // Skill is blocked by the cooldown the press set. Its strikes deal Normal Attack DMG, its charged attack Charged Attack DMG and its
   // Burst Elemental Burst DMG, as gcsim's AttackTag of each hit reads
-  const createSevenPhaseFlashStance = (characterId: number, skill: KitAction): KitStance => ({
-    actions: {
-      chargedAttack: sevenPhaseChargedAttack,
-      chargedAttackStamina: attackMultiplier(7),
-      elementalBurst: extinction,
-      elementalSkill: skill,
-      normalAttacks: sevenPhaseNormalAttacks,
-    },
-    attackTags: {
-      chargedAttack: AttackTag.ChargedAttack,
-      elementalBurst: AttackTag.ElementalBurst,
-      elementalSkill: AttackTag.ElementalSkill,
-      normalAttacks: AttackTag.NormalAttack,
-    },
-    characterId,
-    elapsedSeconds: 0,
-    kind: "stance",
-    secondsRemaining: SEVEN_PHASE_FLASH_FRAMES / 60,
-  });
+  const enterSevenPhaseFlash = (kitEffectState: KitEffectState, combatant: Combatant, skill: KitAction): void =>
+    enterKitStance(
+      kitEffectState,
+      combatant,
+      {
+        chargedAttack: sevenPhaseChargedAttack,
+        chargedAttackStamina: attackMultiplier(7),
+        elementalBurst: extinction,
+        elementalSkill: skill,
+        normalAttacks: sevenPhaseNormalAttacks,
+      },
+      SEVEN_PHASE_FLASH_FRAMES / 60,
+    );
 
   // The Seven-Phase Flash's press lands no hit: its state is entered on the field 19 frames on, through a field that ticks once
   const elementalSkill: KitAction = {
@@ -238,7 +234,7 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       addKitEffect(
         kitEffectState,
         createDelayedField(body, combatant.characterId, SKILL_DELAY_FRAMES / 60, ({ kitEffectState: tickState }) =>
-          addKitEffect(tickState, createSevenPhaseFlashStance(combatant.characterId, elementalSkill)),
+          enterSevenPhaseFlash(tickState, combatant, elementalSkill),
         ),
       ),
     seconds: SKILL_FRAMES / 60,
@@ -258,8 +254,8 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Leaving the field ends the Seven-Phase Flash, as gcsim's exit from the field does
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      for (const effect of kitEffectState.effects)
-        if (effect.kind === "stance" && effect.characterId === combatant.characterId) effect.secondsRemaining = 0;
+      const stance = findKitStance(kitEffectState.effects, combatant.characterId);
+      if (stance) stance.secondsRemaining = 0;
     },
     plungeCollision: {
       hitArea: PLUNGE_HIT_AREAS.collision,

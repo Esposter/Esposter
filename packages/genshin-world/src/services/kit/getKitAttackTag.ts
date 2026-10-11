@@ -7,10 +7,10 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 
 const getStanceAttackTag = (stance: KitStance, hit: KitHit): AttackTag | undefined => {
-  if (stance.actions.normalAttacks.some(({ hits }) => hits.includes(hit))) return stance.attackTags.normalAttacks;
-  if (stance.actions.chargedAttack.hits.includes(hit)) return stance.attackTags.chargedAttack;
-  if (stance.actions.elementalSkill.hits.includes(hit)) return stance.attackTags.elementalSkill;
-  if (stance.actions.elementalBurst.hits.includes(hit)) return stance.attackTags.elementalBurst;
+  if (stance.kit.normalAttacks.some(({ hits }) => hits.includes(hit))) return stance.attackTags.normalAttacks;
+  if (stance.kit.chargedAttack.hits.includes(hit)) return stance.attackTags.chargedAttack;
+  if (stance.kit.elementalSkill.hits.includes(hit)) return stance.attackTags.elementalSkill;
+  if (stance.kit.elementalBurst.hits.includes(hit)) return stance.attackTags.elementalBurst;
   return undefined;
 };
 

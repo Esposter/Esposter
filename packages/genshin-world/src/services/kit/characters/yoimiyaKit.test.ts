@@ -16,7 +16,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYoimiyaKit, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -54,7 +54,7 @@ describe(createYoimiyaKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
 
     YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(createYoimiyaCombatant(), { kitEffectState }));
-    const { normalAttacks } = getStancedKit(YOIMIYA_KIT, kitEffectState.effects, YOIMIYA_CHARACTER_ID);
+    const { normalAttacks } = findKitStance(kitEffectState.effects, YOIMIYA_CHARACTER_ID)?.kit ?? YOIMIYA_KIT;
 
     expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => [kind, secondsRemaining])).toStrictEqual([
       ["stance", 10],

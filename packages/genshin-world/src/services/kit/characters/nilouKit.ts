@@ -3,9 +3,9 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -25,6 +25,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Nilou's proud skill groups, read at her talent level. The attack group holds her three strikes at 0 to 2, the charged
@@ -219,45 +220,46 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     targetingArea: SKILL_TARGETING_AREA,
   };
 
-  const createNilouStance = (
-    characterId: number,
+  const enterNilouStance = (
+    kitEffectState: KitEffectState,
+    combatant: Combatant,
     normalAttacksOfStance: KitAction[],
     elementalSkill: KitAction,
     secondsRemaining: number,
-  ): KitStance => ({
-    actions: {
-      chargedAttack,
-      chargedAttackStamina: attackMultiplier(5),
-      elementalBurst,
-      elementalSkill,
-      normalAttacks: normalAttacksOfStance,
-    },
-    // The sword dance's steps and Luminous Illusion, and the Whirling Steps, are Elemental Skill DMG, gcsim's AttackTagElementalArt
-    // In nilou/skill.go's SwordDance and WhirlingSteps
-    attackTags: {
-      chargedAttack: AttackTag.ChargedAttack,
-      elementalBurst: AttackTag.ElementalBurst,
-      elementalSkill: AttackTag.ElementalSkill,
-      normalAttacks: AttackTag.ElementalSkill,
-    },
-    characterId,
-    elapsedSeconds: 0,
-    kind: "stance",
-    secondsRemaining,
-  });
+  ): void =>
+    enterKitStance(
+      kitEffectState,
+      combatant,
+      {
+        chargedAttack,
+        chargedAttackStamina: attackMultiplier(5),
+        elementalBurst,
+        elementalSkill,
+        normalAttacks: normalAttacksOfStance,
+      },
+      secondsRemaining,
+      // The sword dance's steps and Luminous Illusion, and the Whirling Steps, are Elemental Skill DMG, gcsim's
+      // AttackTagElementalArt in nilou/skill.go's SwordDance and WhirlingSteps
+      {
+        chargedAttack: AttackTag.ChargedAttack,
+        elementalBurst: AttackTag.ElementalBurst,
+        elementalSkill: AttackTag.ElementalSkill,
+        normalAttacks: AttackTag.ElementalSkill,
+      },
+    );
 
   // Lunar Prayer replaces the sword dance's normal attacks for eight seconds, and the dance is cast again as the skill
-  const createLunarPrayerStance = (characterId: number, dance: KitAction): KitStance =>
-    createNilouStance(characterId, createSwordDanceActions(), dance, LUNAR_PRAYER_SECONDS);
+  const enterLunarPrayer = (kitEffectState: KitEffectState, combatant: Combatant, dance: KitAction): void =>
+    enterNilouStance(kitEffectState, combatant, createSwordDanceActions(), dance, LUNAR_PRAYER_SECONDS);
 
   // The field that ends Pirouette once its third sword dance has landed, handing the team Lunar Prayer as it ticks
-  const createPirouetteEndField = (body: KitBody, characterId: number, dance: KitAction): KitField => ({
+  const createPirouetteEndField = (body: KitBody, combatant: Combatant, dance: KitAction): KitField => ({
     centre: { x: body.position.x, z: body.position.z },
-    characterId,
+    characterId: combatant.characterId,
     id: PIROUETTE_END_FIELD_ID,
     kind: "field",
     nextTickSeconds: LUNAR_PRAYER_DELAY_FRAMES / 60,
-    onTick: ({ kitEffectState }) => addKitEffect(kitEffectState, createLunarPrayerStance(characterId, dance)),
+    onTick: ({ kitEffectState }) => enterLunarPrayer(kitEffectState, combatant, dance),
     radius: UNBOUNDED_FIELD_RADIUS,
     secondsRemaining: LUNAR_PRAYER_DELAY_FRAMES / 60 + SUMMON_LINGER_SECONDS,
     tickIndex: 0,
@@ -267,11 +269,12 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Pirouette replaces the string with the sword dance and the skill with the first Whirling Steps, and its third dance
   // Sets off Lunar Prayer. A press of the skill within it is blocked by the cooldown the cast set, as a stance's skill press
   // Is not exempted from one, so the Whirling Steps are reachable only once it has run out
-  const createPirouetteStance = (characterId: number, dance: KitAction): KitStance =>
-    createNilouStance(
-      characterId,
-      createSwordDanceActions(({ activeCombatant: combatant, body, kitEffectState }) =>
-        addKitEffect(kitEffectState, createPirouetteEndField(body, combatant.characterId, dance)),
+  const enterPirouette = (kitEffectState: KitEffectState, combatant: Combatant, dance: KitAction): void =>
+    enterNilouStance(
+      kitEffectState,
+      combatant,
+      createSwordDanceActions(({ activeCombatant, body, kitEffectState: illusionEffectState }) =>
+        addKitEffect(illusionEffectState, createPirouetteEndField(body, activeCombatant, dance)),
       ),
       whirlingSteps,
       PIROUETTE_SECONDS,
@@ -290,7 +293,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, createPirouetteStance(combatant.characterId, elementalSkill)),
+      enterPirouette(kitEffectState, combatant, elementalSkill),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

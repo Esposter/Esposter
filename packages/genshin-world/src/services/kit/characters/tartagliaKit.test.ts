@@ -17,7 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTartagliaKit, TARTAGLIA_CHARACTER_ID } from "#src/services/kit/characters/tartagliaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -55,11 +55,9 @@ describe(createTartagliaKit, () => {
       stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
     };
   };
-  const meleeKit = getStancedKit(
-    TARTAGLIA_KIT,
-    enterMeleeStance(createTartagliaCombatant()).kitEffectState.effects,
-    TARTAGLIA_CHARACTER_ID,
-  );
+  const meleeKit =
+    findKitStance(enterMeleeStance(createTartagliaCombatant()).kitEffectState.effects, TARTAGLIA_CHARACTER_ID)?.kit ??
+    TARTAGLIA_KIT;
   const createDamageTaken = (enemy: Enemy, event: Partial<KitDamageTakenEvent>): KitDamageTakenEvent => ({
     enemy,
     hit: takeOne(TARTAGLIA_KIT.chargedAttack.hits),

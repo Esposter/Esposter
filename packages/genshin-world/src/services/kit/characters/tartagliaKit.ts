@@ -4,10 +4,9 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -24,6 +23,8 @@ import {
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
@@ -168,10 +169,6 @@ const HYDROSPOUT_FLASH_POISE_DAMAGE = 15;
 const HAVOC_ANNIHILATION_CONSTELLATION = 6;
 const HAVOC_ANNIHILATION_STATUS_ID = "tartaglia-havoc-annihilation";
 
-// Tartaglia's Melee Stance, while it holds
-const findMeleeStance = (effects: readonly KitEffect[], characterId: number): KitStance | undefined =>
-  effects.find((effect): effect is KitStance => effect.kind === "stance" && effect.characterId === characterId);
-
 // A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands
 const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void =>
   addKitEffect(kitEffectState, createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, hits));
@@ -261,7 +258,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       }),
     });
 
-  const meleeStanceActions: KitStance["actions"] = {
+  const meleeStanceActions: KitStanceActions = {
     chargedAttack: {
       hits: MELEE_CHARGED_HITS.map(({ hitmarkFrames, index, poiseDamage }) => ({
         element: Element.Hydro,
@@ -296,7 +293,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        const stance = findMeleeStance(kitEffectState.effects, combatant.characterId);
+        const stance = findKitStance(kitEffectState.effects, combatant.characterId);
         if (stance) stance.secondsRemaining = 0;
       },
       seconds: STANCE_RETURN_ANIMATION_FRAMES / 60,
@@ -379,22 +376,10 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           talentMultiplier: skillTalentMultiplier(0),
         },
       ],
+      // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
+      // In tartaglia/attack.go's meleeAttack and AttackTagExtra in tartaglia/charge.go's ChargeAttack
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          actions: meleeStanceActions,
-          // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
-          // In tartaglia/attack.go's meleeAttack and AttackTagExtra in tartaglia/charge.go's ChargeAttack
-          attackTags: {
-            chargedAttack: AttackTag.ChargedAttack,
-            elementalBurst: AttackTag.ElementalBurst,
-            elementalSkill: AttackTag.ElementalSkill,
-            normalAttacks: AttackTag.NormalAttack,
-          },
-          characterId: combatant.characterId,
-          elapsedSeconds: 0,
-          kind: "stance",
-          secondsRemaining: stanceSeconds,
-        }),
+        enterKitStance(kitEffectState, combatant, meleeStanceActions, stanceSeconds),
       seconds: STANCE_CHANGE_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -440,7 +425,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Their intervals, and each hit Tartaglia lands gives and sets off Riptide
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
-      const meleeStance = findMeleeStance(kitEffectState.effects, characterId);
+      const meleeStance = findKitStance(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId === characterId && meleeStance) meleeStance.secondsRemaining = 0;
         return;
