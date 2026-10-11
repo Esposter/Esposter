@@ -1,0 +1,16 @@
+// One catalog entry's score out of 100, with each dimension's points and the unscored context beside them
+export interface DependencyScore {
+  dependencyLines: number;
+  formatPoints: number;
+  importerCount: number;
+  isDeprecated: boolean;
+  manifestCount: number;
+  packageName: string;
+  releaseCount: number;
+  selfContainmentPoints: number;
+  sizePoints: number;
+  sourceLines: number;
+  stabilityPoints: number;
+  total: number;
+  verdict: string;
+}
