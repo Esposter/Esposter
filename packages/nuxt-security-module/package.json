@@ -1,0 +1,118 @@
+{
+  "name": "nuxt-security-module",
+  "version": "0.1.0",
+  "description": "Nuxt security module for Nitro 3 and h3 2 — security headers, a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/module.ts",
+      "default": "./dist/index.js"
+    },
+    "./runtime/constants": {
+      "source": "./src/runtime/constants.ts",
+      "default": "./dist/runtime/constants.js"
+    },
+    "./runtime/nitro/plugins/hidePoweredBy": {
+      "source": "./src/runtime/nitro/plugins/hidePoweredBy.ts",
+      "default": "./dist/runtime/nitro/plugins/hidePoweredBy.js"
+    },
+    "./runtime/nitro/plugins/nonce": {
+      "source": "./src/runtime/nitro/plugins/nonce.ts",
+      "default": "./dist/runtime/nitro/plugins/nonce.js"
+    },
+    "./runtime/nitro/plugins/routeRules": {
+      "source": "./src/runtime/nitro/plugins/routeRules.ts",
+      "default": "./dist/runtime/nitro/plugins/routeRules.js"
+    },
+    "./runtime/nitro/plugins/securityHeaders": {
+      "source": "./src/runtime/nitro/plugins/securityHeaders.ts",
+      "default": "./dist/runtime/nitro/plugins/securityHeaders.js"
+    },
+    "./runtime/nitro/plugins/ssgHashes": {
+      "source": "./src/runtime/nitro/plugins/ssgHashes.ts",
+      "default": "./dist/runtime/nitro/plugins/ssgHashes.js"
+    },
+    "./runtime/nitro/plugins/subresourceIntegrity": {
+      "source": "./src/runtime/nitro/plugins/subresourceIntegrity.ts",
+      "default": "./dist/runtime/nitro/plugins/subresourceIntegrity.js"
+    },
+    "./runtime/server/middleware/allowedMethodsRestricter": {
+      "source": "./src/runtime/server/middleware/allowedMethodsRestricter.ts",
+      "default": "./dist/runtime/server/middleware/allowedMethodsRestricter.js"
+    },
+    "./runtime/server/middleware/basicAuth": {
+      "source": "./src/runtime/server/middleware/basicAuth.ts",
+      "default": "./dist/runtime/server/middleware/basicAuth.js"
+    },
+    "./runtime/server/middleware/corsHandler": {
+      "source": "./src/runtime/server/middleware/corsHandler.ts",
+      "default": "./dist/runtime/server/middleware/corsHandler.js"
+    },
+    "./runtime/server/middleware/requestSizeLimiter": {
+      "source": "./src/runtime/server/middleware/requestSizeLimiter.ts",
+      "default": "./dist/runtime/server/middleware/requestSizeLimiter.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./runtime/constants": "./dist/runtime/constants.js",
+      "./runtime/nitro/plugins/hidePoweredBy": "./dist/runtime/nitro/plugins/hidePoweredBy.js",
+      "./runtime/nitro/plugins/nonce": "./dist/runtime/nitro/plugins/nonce.js",
+      "./runtime/nitro/plugins/routeRules": "./dist/runtime/nitro/plugins/routeRules.js",
+      "./runtime/nitro/plugins/securityHeaders": "./dist/runtime/nitro/plugins/securityHeaders.js",
+      "./runtime/nitro/plugins/ssgHashes": "./dist/runtime/nitro/plugins/ssgHashes.js",
+      "./runtime/nitro/plugins/subresourceIntegrity": "./dist/runtime/nitro/plugins/subresourceIntegrity.js",
+      "./runtime/server/middleware/allowedMethodsRestricter": "./dist/runtime/server/middleware/allowedMethodsRestricter.js",
+      "./runtime/server/middleware/basicAuth": "./dist/runtime/server/middleware/basicAuth.js",
+      "./runtime/server/middleware/corsHandler": "./dist/runtime/server/middleware/corsHandler.js",
+      "./runtime/server/middleware/requestSizeLimiter": "./dist/runtime/server/middleware/requestSizeLimiter.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "bench": "vitest bench --run",
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@nuxt/kit": "catalog:",
+    "@nuxt/schema": "catalog:",
+    "defu": "catalog:",
+    "rou3": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@nuxt/nitro-server": "catalog:",
+    "@types/node": "catalog:",
+    "nitro": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "nitro": "catalog:",
+    "nuxt": "catalog:"
+  }
+}
