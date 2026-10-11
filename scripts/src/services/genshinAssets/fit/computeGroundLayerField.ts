@@ -11,7 +11,7 @@ const toNodeSpan = (value: number, origin: number, cellSize: number, nodeCount: 
   const lower = Math.floor(coordinate);
   return [lower, Math.min(lower + 1, nodeCount - 1), coordinate - lower];
 };
-// Each layer's share at every node of a grid, from points of the ground each classed to one layer. A point counts toward
+// Each layer's share at every node of a grid, from points of the ground each in one layer. A point counts toward
 // Its four surrounding nodes by how near it stands to each, as a bilinear read gives it back, so a node holds the shares
 // Of the ground within a cell of it. A node no point reaches takes the shares of its nearest reached node through the
 // Grid (a breadth-first flood), and every share is kept to the decimals a fit keeps

@@ -12,7 +12,6 @@ import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePart
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { averageSurfaceDetails, computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
 import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
-import { computeGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { tintTexture } from "#src/services/genshinAssets/fit/tintTexture";
@@ -129,13 +128,11 @@ const withPartDetails = (
 // Are its placed meshes, each drawn with its submeshes' diffuse textures under their materials' tints as the witness
 // Draws them, and its terrain tiles, each drawn with its base map and read only where its faces stand within the terrain
 // Radius of the world's origin, the ground beyond which the screen never shows. Every face is read where it stands in
-// The world and weighted by its area there. Writes no file: the caller writes what this returns. A family listed in
-// `layeredFamilies` also returns each layer's mean colour, its base map texels classed to the nearest of the layer tones
+// The world and weighted by its area there. Writes no file: the caller writes what this returns
 export const fitSurfaceColours = async <Family extends string>(
   component: DerivedAssetComponent,
   meshRegexMap: Record<Family, RegExp>,
   terrainRadius: number,
-  layeredFamilies: readonly Family[] = [],
 ): Promise<Record<Family, FittedFamily>> => {
   const directory = getComponentDirectory(component);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
@@ -215,14 +212,7 @@ export const fitSurfaceColours = async <Family extends string>(
             "has no placed mesh or terrain tile whose covered faces can be read",
           );
         const familySurface = withDetail(computeSurfaceTones(samples), reads);
-        return [
-          family,
-          {
-            ...familySurface,
-            parts: withPartDetails(computePartSurfaces(samples), reads),
-            ...(layeredFamilies.includes(family) ? { layers: computeGroundLayerColours(samples) } : {}),
-          },
-        ] as const;
+        return [family, { ...familySurface, parts: withPartDetails(computePartSurfaces(samples), reads) }] as const;
       }),
     ),
   ) as Record<Family, FittedFamily>;
