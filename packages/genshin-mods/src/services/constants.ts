@@ -4,7 +4,6 @@ export const ACCENT_COLOR = "#d3bc8e";
 export const CACHE_LIFETIME_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
-export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
 // The usage lines each window's two tiers start at: the maintenance tier, then the wind-down
 export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;

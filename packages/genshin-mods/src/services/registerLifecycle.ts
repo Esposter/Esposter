@@ -6,7 +6,6 @@ import type { EnabledMods } from "../../types";
 
 import {
   CACHE_WARNING_MS,
-  CLOCK_TICK_MS,
   IDLE_WAKE_PROMPT,
   MACHINE_WATCHER_SCRIPT,
   QUEUE_SYNC_TOAST_MILLISECONDS,
@@ -20,6 +19,7 @@ import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
 import { getPulseWake } from "./pulse/getPulseWake";
 import { takeWatcherLines } from "./pulse/takeWatcherLines";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
+import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
 import { getReserveWindow } from "./resin/getReserveWindow";
 import { reserveText } from "./resin/reserveText";
@@ -51,7 +51,11 @@ const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const
 let warnedLastCacheRequestAt = 0;
 let isTurnRunning = false;
 
-const tick = async ($: EngineInterface) => {
+// The cache goes cold at a known instant, so its warning is one timer armed for that instant at each turn's end, from the
+// Request that last read or wrote the cache, rather than a check on a clock. The timer warns once for that request, and
+// Stands down while a turn runs, since that turn's end arms it again. A timer left from an earlier turn finds the cache
+// Renewed and does nothing more than the warning it would have given
+const warnCache = async ($: EngineInterface) => {
   const now = await $.clock.now();
   await update($, nowAtom, () => now);
   const lastCacheRequestAt = await read($, lastCacheRequestAtAtom);
@@ -67,6 +71,16 @@ const tick = async ($: EngineInterface) => {
 
   warnedLastCacheRequestAt = lastCacheRequestAt;
   $.ui.toast("The prompt cache goes cold in five minutes: warm it, compact or hand off from the band.");
+};
+
+const armCacheWarning = async ($: EngineInterface) => {
+  const delayMs = getCacheWarningDelayMs(await read($, lastCacheRequestAtAtom), await $.clock.now());
+  if (delayMs === undefined) return;
+
+  $.clock.after(delayMs, () => {
+    // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and every call in the warning resolves
+    warnCache($);
+  });
 };
 
 const suggestWaypoints = async ($: EngineInterface) => {
@@ -134,12 +148,6 @@ export const registerLifecycle = (on: On): void => {
         $.command.register({ argumentHint: "[on|off]", description: ModDescriptionMap[name], name }),
       ),
     );
-    // oxlint-disable-next-line unicorn/no-array-method-this-argument -- The engine's clock, not Array.prototype.every
-    $.clock.every(CLOCK_TICK_MS, () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and every call in the tick resolves
-      tick($);
-    });
-    // oxlint-disable-next-line typescript/no-floating-promises -- The session start takes no promise, and the watcher's lines are read as they come
     watchPulse($);
     return next(e);
   });
@@ -214,6 +222,7 @@ export const registerLifecycle = (on: On): void => {
       // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
       syncQueue($);
     });
+    await armCacheWarning($);
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {
         // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a fork resolves every outcome rather than rejecting

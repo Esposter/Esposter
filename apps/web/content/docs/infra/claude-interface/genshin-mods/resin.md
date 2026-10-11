@@ -25,7 +25,7 @@ Each is a button, or with the band focused a key: `w`, `c` and `h`.
 - **Warm** renews the cache: a one-word side question through a fork of the session, which re-sends the conversation's prefix and adds no row to the transcript.
 - **Compact** runs the engine's own compaction.
 - **Handoff** is the whole relay in one press. A fork writes a handoff of the session — the goal, what is done, what is next, the files and decisions that matter, the open questions — then the mod clears the conversation and sends the handoff as the first prompt of the fresh one. The buttons give way to a note while it is written, and the clear waits for the handoff, so a fork that fails clears nothing and a toast says why. A clear or submit that fails after the fork is toasted the same way, and the buttons come back either way.
-- Five minutes before the cache expires, a toast says so, once per expiry and never while a turn is running, since the turn renews the cache itself.
+- Five minutes before the cache expires, a toast says so, once per expiry and never while a turn is running, since the turn renews the cache itself. The toast is one timer armed at each turn's end for that instant, not a check on a clock.
 - `/resin off` hides the row, the toasts and the usage reserve's section.
 
 ## Usage reserve
@@ -58,20 +58,20 @@ The steps a session follows under a reserve are the repository's own, in the [th
 
 ## Key files
 
-| File                                                                      | Role                                                                    |
-| :------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
-| `packages/genshin-mods/src/services/resin/getResinFigures.ts`             | Usage and the clock into the row's figures and warnings                 |
-| `packages/genshin-mods/src/services/resin/getCacheRemainingMs.ts`         | The time left on the cache                                              |
-| `packages/genshin-mods/src/services/resin/RateLimitKindUsageWindowMap.ts` | The limit windows the reserve is read off, each with its lines          |
-| `packages/genshin-mods/src/services/resin/getReserveWindow.ts`            | The window whose tier names the reserve, with its reset time            |
-| `packages/genshin-mods/src/services/resin/getReserveSummary.ts`           | The sentence the reserve's section and its toast open with              |
-| `packages/genshin-mods/src/services/resin/reserveText.ts`                 | The reserve's system section                                            |
-| `packages/genshin-mods/src/services/resin/getReserveRefusal.ts`           | Whether a launch is refused under the reserve, and the text it is told  |
-| `packages/genshin-mods/src/services/resin/registerReserveGate.ts`         | The `tool.call` hook on `Agent` and `Workflow` that denies the launch   |
-| `packages/genshin-mods/src/services/resin/formatResetsAt.ts`              | The reset time in local time, for the toast and the section             |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`                 | The minute clock, the warning toast, the renewal, the reserve's reading |
-| `packages/genshin-mods/src/services/band/registerBand.ts`                 | The row and the warm, compact and handoff actions                       |
-| `packages/genshin-mods/src/services/constants.ts`                         | The cache's lifetime, the thresholds and the warm and handoff questions |
+| File                                                                      | Role                                                                           |
+| :------------------------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/resin/getResinFigures.ts`             | Usage and the clock into the row's figures and warnings                        |
+| `packages/genshin-mods/src/services/resin/getCacheRemainingMs.ts`         | The time left on the cache                                                     |
+| `packages/genshin-mods/src/services/resin/RateLimitKindUsageWindowMap.ts` | The limit windows the reserve is read off, each with its lines                 |
+| `packages/genshin-mods/src/services/resin/getReserveWindow.ts`            | The window whose tier names the reserve, with its reset time                   |
+| `packages/genshin-mods/src/services/resin/getReserveSummary.ts`           | The sentence the reserve's section and its toast open with                     |
+| `packages/genshin-mods/src/services/resin/reserveText.ts`                 | The reserve's system section                                                   |
+| `packages/genshin-mods/src/services/resin/getReserveRefusal.ts`           | Whether a launch is refused under the reserve, and the text it is told         |
+| `packages/genshin-mods/src/services/resin/registerReserveGate.ts`         | The `tool.call` hook on `Agent` and `Workflow` that denies the launch          |
+| `packages/genshin-mods/src/services/resin/formatResetsAt.ts`              | The reset time in local time, for the toast and the section                    |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`                 | The warning timer armed at each turn's end, the renewal, the reserve's reading |
+| `packages/genshin-mods/src/services/band/registerBand.ts`                 | The row and the warm, compact and handoff actions                              |
+| `packages/genshin-mods/src/services/constants.ts`                         | The cache's lifetime, the thresholds and the warm and handoff questions        |
 
 ## Notes
 
