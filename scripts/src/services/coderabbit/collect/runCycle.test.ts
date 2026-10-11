@@ -216,6 +216,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
                   createdAt: Temporal.Instant.fromEpochMilliseconds(0).toString(),
                   databaseId: id,
                 })),
+                pageInfo: { hasPreviousPage: false, startCursor: null },
               },
             },
           },

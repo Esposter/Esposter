@@ -10,6 +10,8 @@ export interface CommitCommentsPage {
           createdAt: string;
           databaseId: number;
         }[];
+        // GitHub answers `null` for the cursor of an empty page
+        pageInfo: { hasPreviousPage: boolean; startCursor: null | string };
       };
     };
   };

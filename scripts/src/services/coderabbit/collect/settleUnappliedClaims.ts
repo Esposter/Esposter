@@ -32,7 +32,7 @@ export const settleUnappliedClaims = ({
   if (shas.length === 0) return [];
 
   const task = `cut onto ${MAIN_BRANCH} at ${mainSha}`;
-  const comments = readNewestCommitComments();
+  const comments = readNewestCommitComments(Date.now());
   const claims = shas.map((sha) => {
     const key = readCommitPatch(sha, cwd);
     const attemptMarker = getMarker(EXPRESS_FAILED_MARKER, key, [collectorSha]);
