@@ -94,6 +94,7 @@
     "outdated:dependencies": "pnpm -C scripts outdated:dependencies",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
+    "recreation": "pnpm -C scripts recreation",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm format:check && vp run build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm -C apps/web start",

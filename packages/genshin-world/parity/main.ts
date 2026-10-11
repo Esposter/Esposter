@@ -39,8 +39,10 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // `data-parity-error` a failure nothing caught, so a tool waiting on a screen that will never be ready fails with it.
 // `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
-// Place of its own parts, from the layout the shooting browser serves there. A tool sets the screen's props as it runs,
-// To play a motion at known moments, benches a scene's frames, and renders a segment of the login's music to score it
+// Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
+// `witnessComponents` entry `&witnessComponent=<name>` names, or else by the fixture's own claims. A tool sets the
+// Screen's props as it runs, to play a motion at known moments, benches a scene's frames, and renders a segment of the
+// Login's music to score it
 const holdAnimations = (): void => {
   // Reading the animations resolves the styles that start them, and a held one stays listed once it would have ended
   for (const animation of window.document.getAnimations()) animation.pause();
@@ -87,7 +89,8 @@ if (screen && root) {
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
-  const loaded = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, screen.witnessFamilies) : undefined;
+  const claims = screen.witnessComponents?.[searchParameters.get("witnessComponent") ?? ""] ?? screen;
+  const loaded = witnessLayoutUrl ? await loadWitness(witnessLayoutUrl, claims.witnessFamilies) : undefined;
   const witness: SceneWitness | undefined = loaded
     ? {
         families: ref(loaded.parts.children.map(({ name: family }) => family)),
@@ -137,7 +140,7 @@ if (screen && root) {
     setSceneLights(sceneContext.value, shares),
   );
   // Each renderer of the exports with what of the scene claims it, the inventory pass's measure
-  if (loaded) Reflect.set(window, "claimWitnessRenderers", () => claimWitnessRenderers(loaded.layout, screen));
+  if (loaded) Reflect.set(window, "claimWitnessRenderers", () => claimWitnessRenderers(loaded.layout, claims));
   // The camera solve and the ranking set the witness's view from the shooting browser, one view a call
   if (witness) {
     Reflect.set(window, "setWitnessView", (view: WitnessView) => setWitnessView(witness, view));

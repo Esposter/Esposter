@@ -18,6 +18,8 @@ flowchart TD
   RF --> OUT
 ```
 
+The house is what stands in for Mondstadt City's own buildings when the [parity](/docs/genshin/parity) inventory claims the city's export: its buildings family is the meshes named by the region's code, `Area_MdBuild_` and `Area_Mdbuild_` both, beside its terrain tiles as its ground, and every other mesh of the export is claimed as not drawn yet, one entry a kind.
+
 ## Parameters
 
 - **Footprint.** The width runs along the gable walls and the depth along the front and back walls, in metres.
@@ -37,5 +39,7 @@ flowchart TD
 | `packages/genshin-world/src/models/mondstadt/MondstadtBuildingOptions.ts`            | The parameters a house takes                                     |
 | `packages/genshin-world/src/models/mondstadt/MondstadtBuildingGeometries.ts`         | The four geometries a house returns, one per material            |
 | `packages/genshin-engine/src/kits/mergeGeometryParts.ts`                             | Merges each material's parts into its one geometry               |
+| `packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`   | The game's meshes the ground and buildings families stand in for |
+| `packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`      | The rest of the city's export, claimed as not drawn yet, by kind |
 
 Not built yet: the house's dressing (window boxes, shutters, lanterns and banners), the windmill, and the city wall, gate bridge and cathedral. The windmill, the walls and the cathedral are landmark-tier pieces that need their reference poses.

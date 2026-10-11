@@ -1,0 +1,36 @@
+import { CLIP_NAME_REGEX } from "#src/services/recreation/video/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { isAbsolute, join } from "node:path";
+
+// The yt-dlp arguments for one section of a public video: the best MP4 at or under 1080 high, merged by the pinned
+// FFmpeg, saved into the directory as `yt-<videoId>-<name>.mp4`, and its path printed once written. yt-dlp reads its FFmpeg's
+// Location only as a path, so the FFmpeg on the PATH, named bare off Windows, is left for it to find. A name is a file
+// Name's part, so a path or a separator is refused rather than written somewhere else
+export const getClipArguments = (
+  url: string,
+  fromSeconds: number,
+  toSeconds: number,
+  name: string,
+  ffmpegPath: string,
+  directory: string,
+): string[] => {
+  if (!Number.isFinite(fromSeconds) || !Number.isFinite(toSeconds) || fromSeconds < 0 || toSeconds <= fromSeconds)
+    throw new InvalidOperationError(Operation.Read, url, `has no section from ${fromSeconds} to ${toSeconds}`);
+  if (!CLIP_NAME_REGEX.test(name)) throw new InvalidOperationError(Operation.Read, name, "is not a clip name");
+  return [
+    "--no-playlist",
+    "--no-simulate",
+    "--print",
+    "after_move:filepath",
+    "--download-sections",
+    `*${fromSeconds}-${toSeconds}`,
+    "--format",
+    "bv*[ext=mp4][height<=1080]+ba[ext=m4a]/b[ext=mp4][height<=1080]",
+    "--merge-output-format",
+    "mp4",
+    ...(isAbsolute(ffmpegPath) ? ["--ffmpeg-location", ffmpegPath] : []),
+    "--output",
+    join(directory, `yt-%(id)s-${name}.%(ext)s`),
+    url,
+  ];
+};

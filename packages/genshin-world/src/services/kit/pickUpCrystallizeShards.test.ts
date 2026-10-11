@@ -29,7 +29,7 @@ describe(pickUpCrystallizeShards, () => {
   test.each<[string, KitCrystallizeShard]>([
     ["before it may be", createShard(Element.Hydro, 0, PICKABLE_SECONDS + 0.01)],
     ["out of reach", createShard(Element.Hydro, CRYSTALLIZE_SHARD_PICKUP_RADIUS + 0.01)],
-  ])("leaves a shard %s on the ground", (_, shard) => {
+  ])("leaves a shard %s on the ground", (_description, shard) => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [shard] };

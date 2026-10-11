@@ -17,7 +17,7 @@ import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 
-const isElectroCharged = ({ reactionType }: Reaction): boolean =>
+const checkIsElectroCharged = ({ reactionType }: Reaction): boolean =>
   reactionType === TransformativeReactionType.ElectroCharged;
 
 // The ticks one combatant owns on an enemy, with the reactions they triggered there, dealt from it. A Burning tick's own
@@ -63,17 +63,23 @@ const strikeOwnedTicks = (
 export const strikeElementalTicks = (context: KitStrikeContext): void => {
   const { enemyMap, enemyTables } = context;
   for (const enemy of enemyMap.values()) {
-    const { burningCombatant, electroChargedCombatant, elementalReactions } = enemy;
-    if (elementalReactions.length === 0) continue;
-    const reactions = elementalReactions.splice(0);
+    const { burningCombatant, electroChargedCombatant, elementalReactions: reactions } = enemy;
+    if (reactions.length === 0) continue;
+    enemy.elementalReactions = [];
     if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) continue;
     const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
     // Only a Burning tick's Pyro triggers reactions of its own, so every reaction but Electro-Charged's is Burning's
-    strikeOwnedTicks(enemy, kind, reactions.filter(isElectroCharged), electroChargedCombatant, context);
     strikeOwnedTicks(
       enemy,
       kind,
-      reactions.filter((reaction) => !isElectroCharged(reaction)),
+      reactions.filter((reaction) => checkIsElectroCharged(reaction)),
+      electroChargedCombatant,
+      context,
+    );
+    strikeOwnedTicks(
+      enemy,
+      kind,
+      reactions.filter((reaction) => !checkIsElectroCharged(reaction)),
       burningCombatant,
       context,
     );

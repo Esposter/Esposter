@@ -22,17 +22,18 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
-// A reaction that landed on an enemy reaching every other standing enemy within its radius of it, written into each in
-// Place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's explosion deals each its
-// Damage, and a Superconduct's takes each one's Physical RES down. A Swirl applies its element to each at the gauge it
-// Spreads, and every Swirl but a Hydro one deals each its damage, which what its element triggers there amplifies or
-// Adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to each under that enemy's own
-// Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest Wet enemy alone, dealing it
-// Its damage and applying nothing. The damage on each is limited by the source's internal cooldown there. It returns
-// What each enemy reached took, the reactions it triggered there reaching further in turn
+// A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its radius
+// Of it, written into each in place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's
+// Explosion deals each its damage, and a Superconduct's takes each one's Physical RES down. A Swirl applies its element
+// To each at the gauge it spreads, and every Swirl but a Hydro one deals each its damage, which what its element
+// Triggers there amplifies or adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to
+// Each under that enemy's own Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest
+// Wet enemy alone, dealing it its damage and applying nothing, and a Dendro Core's burst, Burgeon and Hyperbloom deal
+// Each theirs. The damage on each is limited by the source's internal cooldown there. It returns what each enemy
+// Reached took, the reactions it triggered there reaching further in turn
 export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
-  origin: Enemy,
+  origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
   { element, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
@@ -44,11 +45,10 @@ export const landReactionReach = (
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
-  const reachedEnemies = [...enemies]
-    .map((enemy) => ({
-      distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
-      enemy,
-    }))
+  const reachedEnemies = Array.from(enemies, (enemy) => ({
+    distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
+    enemy,
+  }))
     .filter(
       ({ distance, enemy }) =>
         enemy !== origin &&
@@ -56,7 +56,7 @@ export const landReactionReach = (
         distance <= radius + ENEMY_CAPSULE_RADIUS &&
         (reactionType !== TransformativeReactionType.ElectroCharged || enemy.elementalState.auras.has(AuraType.Hydro)),
     )
-    .toSorted((a, b) => a.distance - b.distance)
+    .toSorted((firstReached, secondReached) => firstReached.distance - secondReached.distance)
     .slice(0, reactionType === TransformativeReactionType.ElectroCharged ? 1 : undefined);
   for (const { enemy } of reachedEnemies) {
     const { elementalState, internalCooldownMap } = enemy;

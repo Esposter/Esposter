@@ -22,8 +22,9 @@ import { chromium } from "playwright";
 // The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
 // Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.
 // A backdrop is served to the page under the name its query gives, which it draws behind the screen, and a witness's exports
-// Under `WITNESS_PATH_PREFIX`: its layout, which the query names, and its meshes and textures by their export folders. The
-// Caller closes the page with `close`, which closes its context and the browser
+// Under `WITNESS_PATH_PREFIX`: its layout, which the query names with the component whose claims the page reads, and its
+// Meshes and textures by their export folders. The caller closes the page with `close`, which closes its context and the
+// Browser
 export const openParityPage = async ({
   backdropPath,
   height,
@@ -73,7 +74,7 @@ export const openParityPage = async ({
     const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
     if (backdropPath) await page.route(`**/${PARITY_BACKDROP_FILE}`, (route) => route.fulfill({ path: backdropPath }));
     const witnessQuery = witness
-      ? `&witness=${encodeURIComponent(`${WITNESS_PATH_PREFIX}${WITNESS_LAYOUT_PATH}`)}`
+      ? `&witness=${encodeURIComponent(`${WITNESS_PATH_PREFIX}${WITNESS_LAYOUT_PATH}`)}&witnessComponent=${witness}`
       : "";
     if (witness) {
       const { assets, root } = getComponentDirectory(witness);

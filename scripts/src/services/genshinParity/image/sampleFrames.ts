@@ -1,8 +1,8 @@
 import { writeAnimatedFrames } from "#src/services/genshinParity/image/writeAnimatedFrames";
 import { CONTACT_SHEET_NAME, FRAMES_DIRECTORY, VIDEO_EXTENSIONS } from "#src/services/genshinParity/shared/constants";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
-import { writeContactSheet } from "#src/services/genshinParity/shared/writeContactSheet";
-import { writeVideoFrames } from "#src/services/genshinParity/shared/writeVideoFrames";
+import { writeContactSheet } from "#src/services/recreation/video/writeContactSheet";
+import { writeVideoFrames } from "#src/services/recreation/video/writeVideoFrames";
 import { mkdir, rm } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 

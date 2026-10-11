@@ -3,14 +3,33 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
+import { fitRegionGround } from "#src/services/genshinAssets/fit/fitRegionGround";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
+import { runFits } from "#src/services/genshinAssets/fit/runFits";
 
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
-// Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
+// Keys: every fit of the component's, or only those named. A component with no fit yet has no entry. A region's centre is
+// Its capital's landmark in its region data, in the same axes its ground is fitted in
 export const DerivedAssetFitMap: Partial<
   Record<DerivedAssetComponent, (only?: readonly string[]) => Promise<GameDataBuild>>
 > = {
+  [DerivedAssetComponent.Fontaine]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Fontaine, { x: 1554.31, z: -5721.47 }) }, only),
   [DerivedAssetComponent.Hud]: fitHud,
+  [DerivedAssetComponent.Inazuma]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Inazuma, { x: -4942.86, z: 3135.69 }) }, only),
+  [DerivedAssetComponent.Liyue]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Liyue, { x: -2392.4, z: -1562.44 }) }, only),
   [DerivedAssetComponent.Login]: fitLoginScene,
+  [DerivedAssetComponent.Mondstadt]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Mondstadt, { x: 391.51, z: -517.41 }) }, only),
+  [DerivedAssetComponent.Natlan]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Natlan, { x: -4568.99, z: -10185.85 }) }, only),
+  [DerivedAssetComponent.NodKrai]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.NodKrai, { x: -252.53, z: -10724.89 }) }, only),
+  [DerivedAssetComponent.Snezhnaya]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Snezhnaya, { x: 3750, z: -10730 }) }, only),
+  [DerivedAssetComponent.Sumeru]: (only = []) =>
+    runFits({ ground: () => fitRegionGround(DerivedAssetComponent.Sumeru, { x: -2306.31, z: -4053.85 }) }, only),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };

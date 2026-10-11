@@ -558,6 +558,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
       terraceStairTop: [1828, 1063],
       walkwayPostFoot: [419, 1137],
     },
+    // Provisional: noon, until `shadows` reads the sun's minute off the buildings' shadows
+    props: { heldMinutes: 720 },
     screen: "WorldScreen",
     wikiTitle: 'File:"People of the Springs".png',
   },

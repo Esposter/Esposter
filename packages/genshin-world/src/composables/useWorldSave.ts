@@ -40,7 +40,15 @@ export const useWorldSave = ({
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
   watch(
-    [inventory, wallet, wishPityMap, achievementProgressMap, craftedCountMap, craftingProgress, frostbearingTreeProgress],
+    [
+      inventory,
+      wallet,
+      wishPityMap,
+      achievementProgressMap,
+      craftedCountMap,
+      craftingProgress,
+      frostbearingTreeProgress,
+    ],
     () => {
       emitGrant();
     },

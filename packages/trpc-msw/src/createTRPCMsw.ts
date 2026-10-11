@@ -33,6 +33,9 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
   // Until a resolver is registered again
   const procedureTypes = new Map<string, TRPCProcedureType>();
   const endpointPathname = new URL(endpoint, "http://localhost").pathname;
+  // Built once and reused until a path is registered for the first time, since the router's procedures are the paths
+  // Registered then; the resolvers themselves are read from `registrations` at each call
+  let httpRouter: AnyTRPCRouter | undefined;
   const handlers: (HttpHandler | WebSocketHandler)[] = [
     http.all(`${endpoint}/*`, ({ request }) => {
       if (
@@ -41,12 +44,13 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
       )
         return undefined;
 
+      httpRouter ??= createMockRouter(t, procedureTypes, registrations, router);
       return fetchRequestHandler({
         allowMethodOverride,
         createContext,
         endpoint: endpointPathname,
         req: request,
-        router: createMockRouter(t, procedureTypes, registrations, router),
+        router: httpRouter,
       });
     }),
   ];
@@ -81,6 +85,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
     registrations.set(path, registration);
     if (procedureTypes.get(path) === registration.type) return;
     procedureTypes.set(path, registration.type);
+    httpRouter = undefined;
     if (!webSocketServer) return;
     for (const client of webSocketServer.clients) client.close(WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE);
     webSocketServer = undefined;

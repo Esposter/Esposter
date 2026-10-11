@@ -1,5 +1,5 @@
 import { MUSIC_RECORDING_BITRATE } from "#src/services/genshinAssets/shared/constants";
-import { resolveFfmpeg } from "#src/services/genshinParity/shared/resolveFfmpeg";
+import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
 import { execFileSync } from "node:child_process";
 
 // One recording as a piece ships it: from `startFrame`, counted at the recording's own rate, where its mapping says its

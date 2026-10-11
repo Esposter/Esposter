@@ -1,4 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { LiyuePartFamilyMeshRegexMap } from "#src/services/liyue/LiyuePartFamilyMeshRegexMap";
+import { LiyueUndrawnMeshRegexMap } from "#src/services/liyue/LiyueUndrawnMeshRegexMap";
+import { MondstadtPartFamilyMeshRegexMap } from "#src/services/mondstadt/MondstadtPartFamilyMeshRegexMap";
+import { MondstadtUndrawnMeshRegexMap } from "#src/services/mondstadt/MondstadtUndrawnMeshRegexMap";
+import { NatlanPartFamilyMeshRegexMap } from "#src/services/natlan/NatlanPartFamilyMeshRegexMap";
+import { NatlanUndrawnMeshRegexMap } from "#src/services/natlan/NatlanUndrawnMeshRegexMap";
+import { SnezhnayaPartFamilyMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap";
+import { SnezhnayaUndrawnMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
 import TerrainTileWorker from "#src/workers/terrainTile.worker?worker";
 import { QualityTier } from "genshin-engine";
@@ -17,4 +25,12 @@ export const props = {
   regionDataBaseUrl: "src/data/regions",
 };
 export const readyEvent = "ready";
+// Each capital's own claims on its region's exports, so no renderer of theirs falls to Windrise's families below, whose
+// Terrain tiles and common ruins their exports hold too
+export const witnessComponents = {
+  liyue: { witnessFamilies: LiyuePartFamilyMeshRegexMap, witnessUndrawn: LiyueUndrawnMeshRegexMap },
+  mondstadt: { witnessFamilies: MondstadtPartFamilyMeshRegexMap, witnessUndrawn: MondstadtUndrawnMeshRegexMap },
+  natlan: { witnessFamilies: NatlanPartFamilyMeshRegexMap, witnessUndrawn: NatlanUndrawnMeshRegexMap },
+  snezhnaya: { witnessFamilies: SnezhnayaPartFamilyMeshRegexMap, witnessUndrawn: SnezhnayaUndrawnMeshRegexMap },
+};
 export const witnessFamilies = WindrisePartFamilyMeshRegexMap;
