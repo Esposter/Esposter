@@ -25,12 +25,11 @@ const isProcessRunning = (processId) => {
 const startWatcher = (repositoryRoot) => {
   mkdirSync(MACHINE_DIRECTORY, { recursive: true });
   const logDescriptor = openSync(LOG_PATH, "a");
-  // The shell is what resolves pnpm on Windows, where it is a command script. Its output goes to the log, so nothing
-  // Holds the pipe this run reads, and the watcher outlives this run
-  const child = spawn("pnpm ai:machine:watch", {
+  // Without a shell, the watcher outlives this run on Windows, where a shell child exits with its parent. Its output goes
+  // To the log, so nothing holds the pipe this run reads
+  const child = spawn("pnpm", ["ai:machine:watch"], {
     cwd: repositoryRoot,
     detached: true,
-    shell: true,
     stdio: ["ignore", logDescriptor, logDescriptor],
     windowsHide: true,
   });
