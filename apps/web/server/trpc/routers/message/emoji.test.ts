@@ -20,11 +20,12 @@ describe("emojiRouter", () => {
   let roomId: string;
   const message = "message";
   const emojiTag = "👍";
+  const timeZone = "UTC";
 
   // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
   // Same three keys
   const setupEmoji = async () => {
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const newEmoji = await emojiCaller.createEmoji({
       emojiTag,
       messageRowKey: newMessage.rowKey,
@@ -51,7 +52,7 @@ describe("emojiRouter", () => {
   test("reads empty emojis", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
     expect(emojis).toHaveLength(0);
@@ -96,7 +97,7 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const subscription = await emojiCaller.onCreateEmoji({ roomId });
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const data = await getFirstEmit(
       () => subscription,
       () => emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: roomId }),
@@ -125,7 +126,7 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const { emojiKey, newMessage } = await setupEmoji();
-    const otherMessage = await messageCaller.createMessage({ message, roomId });
+    const otherMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
     await emojiCaller.updateEmoji({ ...emojiKey, messageRowKey: otherMessage.rowKey });

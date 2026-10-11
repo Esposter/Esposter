@@ -21,11 +21,12 @@ describe("userToRoomRouter", () => {
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
+  const timeZone = "UTC";
   // Creates a room as the owner plus a second member whose mention count the tests exercise.
   const setupMentionedMember = async () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id });
+    await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id, timeZone });
     return { member, roomId: newRoom.id };
   };
   const readMemberMentionCount = async (member: User, roomId: string) => {
@@ -138,7 +139,7 @@ describe("userToRoomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await messageCaller.createMessage({ message: name, roomId: newRoom.id });
+    await messageCaller.createMessage({ message: name, roomId: newRoom.id, timeZone });
     const { lastMessageAt } = takeOne(await userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }));
     const lastReadAt = new Date(0);
     // A variable rather than a literal, so the stray key reaches the schema the way a hand-built request would

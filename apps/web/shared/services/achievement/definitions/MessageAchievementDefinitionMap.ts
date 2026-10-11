@@ -4,6 +4,7 @@ import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessag
 import { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
 import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { contains } from "#shared/services/achievement/conditions/contains";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { isGreaterThan } from "#shared/services/achievement/conditions/isGreaterThan";
@@ -14,14 +15,14 @@ import { property } from "#shared/services/achievement/conditions/property";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
-import { MessageAchievementName, standardCreateMessageInputSchema } from "@esposter/db-schema";
+import { MessageAchievementName } from "@esposter/db-schema";
 
 export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Message, {
   [MessageAchievementName.CenturyClub]: defineAchievementDefinition({
     amount: 100,
     description: "Send 100 messages",
     icon: "i-mdi:message",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 100,
     triggerPath: "message.createMessage",
   }),
@@ -29,7 +30,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 500,
     description: "Send 500 messages",
     icon: "i-mdi:message-processing",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 250,
     triggerPath: "message.createMessage",
   }),
@@ -38,7 +39,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("replyRowKey", Boolean),
     description: "Reply to 50 messages",
     icon: "i-mdi:reply",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 75,
     triggerPath: "message.createMessage",
   }),
@@ -46,7 +47,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: isWithinTime({ maximum: 7, minimum: 5, referenceUnit: "day", unit: "hour" }),
     description: "Send a message between 5-7 AM",
     icon: "i-mdi:weather-sunset-up",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 25,
     triggerPath: "message.createMessage",
   }),
@@ -55,7 +56,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("message", (value) => (value ? countEmojis(value) >= 1 : false)),
     description: "Send a message with an emoji",
     icon: "i-mdi:emoticon-cool",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 15,
     triggerPath: "message.createMessage",
   }),
@@ -63,7 +64,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("message", length(isAtLeast(1000))),
     description: "Send a message with over 1,000 characters",
     icon: "i-mdi:text-long",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 40,
     triggerPath: "message.createMessage",
   }),
@@ -72,7 +73,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("files", length(isGreaterThan(0))),
     description: "Share your first file",
     icon: "i-mdi:file-upload",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 20,
     triggerPath: "message.createMessage",
   }),
@@ -80,7 +81,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     description: "Send your first message",
     icon: "i-mdi:message-text",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 10,
     triggerPath: "message.createMessage",
   }),
@@ -97,7 +98,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("message", contains("http")),
     description: "Share a URL in a message",
     icon: "i-mdi:link-variant",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 10,
     triggerPath: "message.createMessage",
   }),
@@ -121,7 +122,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1000,
     description: "Send 1,000 messages",
     icon: "i-mdi:message-star",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 500,
     triggerPath: "message.createMessage",
   }),
@@ -129,7 +130,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: isWithinTime({ maximum: 5, minimum: 0, referenceUnit: "day", unit: "hour" }),
     description: "Send a message between midnight and 5 AM",
     icon: "i-mdi:weather-night",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 30,
     triggerPath: "message.createMessage",
   }),
@@ -154,7 +155,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("message", length(isLessThan(10))),
     description: "Send 100 messages under 10 characters",
     icon: "i-mdi:message-flash",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 50,
     triggerPath: "message.createMessage",
   }),
@@ -171,7 +172,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     condition: property("message", length(isAtLeast(500))),
     description: "Send 50 messages with 500-999 characters",
     icon: "i-mdi:text",
-    inputSchema: standardCreateMessageInputSchema,
+    inputSchema: zonedCreateMessageInputSchema,
     points: 75,
     triggerPath: "message.createMessage",
   }),

@@ -25,6 +25,7 @@ describe("achievementRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   const name = "name";
+  const timeZone = "UTC";
   const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(() => {
@@ -60,7 +61,7 @@ describe("achievementRouter", () => {
     expect.hasAssertions();
 
     const room = await caller.room.createRoom({ name });
-    await caller.message.createMessage({ message: "😀".repeat(EMOJI_LOVER_EMOJI_COUNT), roomId: room.id });
+    await caller.message.createMessage({ message: "😀".repeat(EMOJI_LOVER_EMOJI_COUNT), roomId: room.id, timeZone });
     const achievementMap = await caller.achievement.readAchievementMap();
 
     expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(
@@ -82,7 +83,7 @@ describe("achievementRouter", () => {
     expect.hasAssertions();
 
     const room = await caller.room.createRoom({ name });
-    await caller.message.createMessage({ message: name, roomId: room.id });
+    await caller.message.createMessage({ message: name, roomId: room.id, timeZone });
     const ownerId = getMockSession().user.id;
     const ownAchievements = await caller.achievement.readUserAchievements();
 
