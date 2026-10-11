@@ -112,7 +112,6 @@ catalog:
   "@tiptap/starter-kit": ^3.31.4
   "@tiptap/suggestion": ^3.31.4
   "@tiptap/vue-3": ^3.31.4
-  "@tonejs/midi": ^2.0.28
   "@tresjs/cientos": ^5.9.3
   "@tresjs/core": ^5.9.3
   "@tresjs/nuxt": ^5.7.3

@@ -64,8 +64,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "@tonejs/midi": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",

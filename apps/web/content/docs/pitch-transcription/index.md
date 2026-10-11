@@ -32,7 +32,7 @@ flowchart TD
 - **Reading.** `readModel` frames the recording with half a window's overlap of silence first, runs the network one window at a time, trims each window's overlap and anything past the recording's end, and stops once the readings cover the recording. Each window's tensors are freed inside a `tidy` before the next runs, so memory holds one window's readings whatever the recording's length.
 - **Notes.** `createNotes` is the model repository's `output_to_notes_polyphonic`. Each onset peak — larger than the frames either side, above the onset threshold — starts a note, latest first, that lasts until its key's energy stays under the frame threshold for the energy tolerance, and claims that energy for its key and its neighbours. Inferred onsets add peaks where a key's frame reading jumps. Under the melodia trick the energy no onset claimed is then followed outward from its largest reading into further notes. The readings handed in are never changed.
 - **Bends.** `addPitchBends` picks, for each frame of a note, the contour bin within 25 of the note's own whose reading — weighted by a Gaussian centred on the note — is largest, and records its offset in bins.
-- **MIDI.** `writeMidi` writes one track through `@tonejs/midi`, each note's amplitude its velocity and each bend its share of the bend's two-semitone range.
+- **MIDI.** `writeMidi` writes the file's bytes itself, one note track with each note's amplitude its velocity and each bend its share of the bend's two-semitone range. Its output is pinned to the bytes `@tonejs/midi` wrote for the same notes, the library it replaced.
 
 `pitch-transcription/notes` exports note creation, bends, timing and MIDI alone, so a worker holding readings never loads TensorFlow.js. TensorFlow.js is a peer dependency: the consumer loads the model through its own copy — `loadGraphModelSync` over the two files under Node, `loadGraphModel` over their served URL in a browser — and picks its backend before doing so.
 
@@ -72,6 +72,20 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 | Windows past the recording's end still run              | "runs no window past the recording's last frame" in `readModel.test.ts`                       |
 | A frequency range zeroes the caller's own readings      | "leaves the readings it is handed unchanged under a frequency range" in `createNotes.test.ts` |
 | "adjustNoteStart" returns `pitch_midi` for `pitchMidi`  | Not carried — see Decisions                                                                   |
+
+## Upstream: @tonejs/midi
+
+The MIDI writer was [@tonejs/midi](https://github.com/Tonejs/Midi) until it was rewritten here. Its tracker holds 107 issues, read by title and, for the ones on the writer's path, with their bodies and comments, judged by the [dependency admission triage](/docs/architecture/dependency-admission). The writer's bytes are pinned to what the library wrote for the same notes, so a defect the library had on that path it still has, and the rows say which.
+
+| Upstream                                               | Verdict            | Proof                                                                                                                        |
+| ------------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| #80 — pitch bends                                      | In scope — feature | A bend's value and its tick in "#17 writes a bend as its share of the bend's range, held at its edge" in `writeMidi.test.ts` |
+| #174 — a velocity of 0 is a note off                   | Carried            | `createNotes` takes a note's amplitude from readings that cleared the frame threshold, so no note is written at velocity 0   |
+| #149, #182, #187 — the end of track                    | Carried            | The end of track sits at the last event's tick, as the library wrote it; pinned by the byte tests in `writeMidi.test.ts`     |
+| #162, #117 — ES modules under Node                     | Resolved           | No dependency: the package loads as ESM with no CommonJS interop, "loads under plain Node" in `index.test.ts`                |
+| #184 — control changes                                 | Out of scope       | The writer writes no control change; a caller needing one has no path here                                                   |
+| #52, #98, #116, #161 — reading tempos and the header   | Out of scope       | The writer never parses a file, and writes a fixed 120 beats a minute                                                        |
+| The rest — parsing, JSON, instruments, lyrics, loaders | Out of scope       | None is on the writer's path: the reads, the JSON conversions, the instrument tables, the browser loaders and the demos      |
 
 ## Key files
 
