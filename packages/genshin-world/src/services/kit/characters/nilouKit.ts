@@ -233,6 +233,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         normalAttacks: normalAttacksOfStance,
       },
       secondsRemaining,
+      { isEndedOnSwap: true },
     );
 
   // Lunar Prayer replaces the sword dance's normal attacks for eight seconds, and the dance is cast again as the skill
@@ -294,13 +295,11 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     highPlunge: createPlunge(PLUNGE_HIT_AREAS.high, HIGH_PLUNGE_POISE_DAMAGE, 8),
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, LOW_PLUNGE_POISE_DAMAGE, 7),
     normalAttacks,
-    // Leaving the field ends Pirouette and Lunar Prayer, and the field that would have handed the team Lunar Prayer
+    // Leaving the field ends, with Pirouette or Lunar Prayer, the field that would have handed the team Lunar Prayer
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      for (const effect of kitEffectState.effects) {
-        if (effect.kind === "stance" && effect.characterId === combatant.characterId) effect.secondsRemaining = 0;
+      for (const effect of kitEffectState.effects)
         if (effect.kind === "field" && effect.id === PIROUETTE_END_TASK_ID) effect.secondsRemaining = 0;
-      }
     },
     plungeCollision: {
       hitArea: PLUNGE_HIT_AREAS.collision,

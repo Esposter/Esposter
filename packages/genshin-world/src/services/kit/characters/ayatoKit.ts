@@ -22,7 +22,6 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
-import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -311,6 +310,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           })),
         },
         SOUKAI_KANKA_SECONDS,
+        { isEndedOnSwap: true },
       );
     },
     seconds: SKILL_FRAMES / 60,
@@ -349,11 +349,9 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     highPlunge,
     lowPlunge,
     normalAttacks,
-    // Leaving the field ends Soukai Kanka and clears the Namisen stacks, as gcsim's swap does
+    // Leaving the field clears the Namisen stacks as it ends Soukai Kanka, as gcsim's swap does
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
-      const stance = findKitStance(kitEffectState.effects, combatant.characterId);
-      if (stance) stance.secondsRemaining = 0;
       const namisen = findKitStatus(kitEffectState.effects, combatant.characterId, NAMISEN_STATUS_ID);
       if (namisen) namisen.secondsRemaining = 0;
     },

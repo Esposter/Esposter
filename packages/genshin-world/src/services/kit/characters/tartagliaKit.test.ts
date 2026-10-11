@@ -130,25 +130,15 @@ describe(createTartagliaKit, () => {
     },
   );
 
-  test("a swap ends the Melee Stance, and six constellations' burst in it ends the stance's cooldown as it ends", () => {
+  test("six constellations' burst in the Melee Stance ends the stance's cooldown as it ends", () => {
     expect.hasAssertions();
     const combatant = createTartagliaCombatant(0, 6);
     const { kitEffectState, stance } = enterMeleeStance(combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
     getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds = 1;
     meleeKit.elementalBurst.onStart?.(context);
-    TARTAGLIA_KIT.onKitEvent?.(
-      {
-        characterId: TRAVELER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: TARTAGLIA_CHARACTER_ID,
-      },
-      context,
-      combatant,
-    );
     if (stance) TARTAGLIA_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context, combatant);
 
-    expect(stance?.secondsRemaining).toBe(0);
     expect(getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds).toBe(0);
   });
 

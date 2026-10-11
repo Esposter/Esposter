@@ -178,6 +178,7 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         combatant,
         { chargedAttack, chargedAttackStamina, elementalBurst, elementalSkill, normalAttacks: blazingArrows },
         skillTalentMultiplier(YOIMIYA_SKILL_SECONDS_INDEX),
+        { isEndedOnSwap: true },
       ),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -215,17 +216,10 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
-    // Niwabi Fire-Dance ends as she leaves the field. The burst's hit marks the first enemy it strikes with Aurous Blaze,
-    // And a hit another member deals a marked enemy as a kind of attack off its cooldown sets off the explosion on it
+    // The burst's hit marks the first enemy it strikes with Aurous Blaze, and a hit another member deals a marked enemy
+    // As a kind of attack off its cooldown sets off the explosion on it
     onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
-      if (event.kind === KitEventKind.CharacterSwapped) {
-        if (event.previousCharacterId !== characterId) return;
-        for (const effect of kitEffectState.effects)
-          if (effect.kind === "stance" && effect.characterId === characterId) effect.secondsRemaining = 0;
-        return;
-      }
-
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, striker } = event;
       if (striker.characterId === characterId) {

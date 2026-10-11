@@ -433,6 +433,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           normalAttacks: pactswornNormalAttacks,
         },
         burstSeconds,
+        { isEndedOnSwap: true },
       );
       buffKitMember(kitEffectState, characterId, {
         amount: burstMultiplier(11),
@@ -504,13 +505,11 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       8,
     ),
     normalAttacks,
-    // Leaving the field ends Pactsworn Pathclearer, its Elemental Mastery and Judication, as gcsim's exit deletes the burst
+    // Leaving the field ends Pactsworn Pathclearer's Elemental Mastery and Judication with it, as gcsim's exit deletes the burst
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId !== characterId) return;
-        const stance = findKitStance(kitEffectState.effects, characterId);
-        if (stance) stance.secondsRemaining = 0;
         const buff = kitEffectState.effects.find(
           (effect) =>
             effect.kind === "buff" && effect.characterId === characterId && effect.source === BURST_BUFF_SOURCE,

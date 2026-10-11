@@ -173,7 +173,7 @@ describe(createNilouKit, () => {
     });
   });
 
-  test("leaving the field ends Pirouette and cancels the field that would hand the team Lunar Prayer", () => {
+  test("leaving the field cancels the field that would hand the team Lunar Prayer", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant();
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
@@ -185,9 +185,6 @@ describe(createNilouKit, () => {
       combatant,
     );
 
-    expect({
-      field: findField(kitEffectState)?.secondsRemaining,
-      stance: findStance(kitEffectState)?.secondsRemaining,
-    }).toStrictEqual({ field: 0, stance: 0 });
+    expect(findField(kitEffectState)?.secondsRemaining).toBe(0);
   });
 });

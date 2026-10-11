@@ -186,7 +186,7 @@ describe(createAyatoKit, () => {
     }).toStrictEqual({ hitmarkFrames: 38, isFollowing: true, nextTickFrames: 101, tickIntervalFrames: 30 });
   });
 
-  test("leaving the field ends Soukai Kanka and clears the Namisen stacks", () => {
+  test("leaving the field clears the Namisen stacks", () => {
     expect.hasAssertions();
     const combatant = createAyatoCombatant();
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
@@ -199,7 +199,6 @@ describe(createAyatoKit, () => {
       combatant,
     );
 
-    expect(findStance(kitEffectState)?.secondsRemaining).toBe(0);
     expect(kitEffectState.effects.find((effect) => effect.kind === "status")?.secondsRemaining).toBe(0);
   });
 });

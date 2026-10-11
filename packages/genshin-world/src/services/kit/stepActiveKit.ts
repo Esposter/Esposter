@@ -64,8 +64,11 @@ export const stepActiveKit = (
   context.activeCombatant = combatant;
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
-  if (fieldCharacterId !== undefined && fieldCharacterId !== characterId)
+  if (fieldCharacterId !== undefined && fieldCharacterId !== characterId) {
+    const leftStance = findKitStance(kitEffectState.effects, fieldCharacterId);
+    if (leftStance?.isEndedOnSwap) leftStance.secondsRemaining = 0;
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
+  }
   sendKitOutbox(context);
   stepKitEffects(stepSeconds, context);
   for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);

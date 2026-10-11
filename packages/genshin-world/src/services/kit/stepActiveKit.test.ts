@@ -5,6 +5,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -177,6 +178,7 @@ describe(stepActiveKit, () => {
           characterId: TRAVELER_CHARACTER_ID,
           combatant: { ...combatant, kit: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] } },
           elapsedSeconds: 0,
+          isEndedOnSwap: false,
           kind: "stance",
           secondsRemaining: 1,
         },
@@ -188,6 +190,29 @@ describe(stepActiveKit, () => {
 
     expect(kitState.action).toBe(stanceAttack);
   });
+
+  test.each([true, false])(
+    "a swap ends the stance of the character leaving the field if it ends on one: %s",
+    (isEndedOnSwap) => {
+      expect.hasAssertions();
+      const offFieldCombatant = createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT);
+      const stance: KitStance = {
+        characterId: FISCHL_CHARACTER_ID,
+        combatant: offFieldCombatant,
+        elapsedSeconds: 0,
+        isEndedOnSwap,
+        kind: "stance",
+        secondsRemaining: 1,
+      };
+      const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT), offFieldCombatant], {
+        effects: [stance],
+        fieldCharacterId: FISCHL_CHARACTER_ID,
+      });
+      stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+      expect(context.kitEffectState.effects.includes(stance)).toBe(!isEndedOnSwap);
+    },
+  );
 
   // A strike whose one hit lands at twice the seconds it plays for
   const lateHit = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);

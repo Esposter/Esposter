@@ -67,26 +67,6 @@ describe(createYoimiyaKit, () => {
     );
   });
 
-  test("niwabi Fire-Dance ends as she leaves the field", () => {
-    expect.hasAssertions();
-    const combatant = createYoimiyaCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitTestContext(combatant, { kitEffectState });
-    YOIMIYA_KIT.elementalSkill.onStart?.(context);
-
-    YOIMIYA_KIT.onKitEvent?.(
-      {
-        characterId: OTHER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: YOIMIYA_CHARACTER_ID,
-      },
-      context,
-      combatant,
-    );
-
-    expect(kitEffectState.effects.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([0]);
-  });
-
   test("the burst marks the first enemy it strikes with Aurous Blaze, which another member's hit sets off once a cooldown", () => {
     expect.hasAssertions();
     const combatant = createYoimiyaCombatant();
