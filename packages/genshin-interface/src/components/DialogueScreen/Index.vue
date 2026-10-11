@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DialogueChoice } from "#src/models/DialogueChoice";
 
+import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 import { computed } from "vue";
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
   revealedLength: number;
   // The reply F would choose, lit as the pointer lights one
   selectedChoiceId: string;
-  // The speaker's name over the line, none for a narration
+  // The speaker's name over the line, none for a narration, which is drawn centred on black
   speakerName: string;
   // The speaker's role under the name, "" for none
   speakerRole: string;
@@ -35,7 +36,7 @@ const lineParts = computed(() => {
        Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
        choices; the selected reply's look and the speaker's role line wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
-    <div class="band" aria-live="polite">
+    <div class="band" :class="{ narration: !speakerName }" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
       <p v-if="speakerRole" class="role">{{ speakerRole }}</p>
       <p class="line">
@@ -53,7 +54,9 @@ const lineParts = computed(() => {
           type="button"
           @click.stop="emit('choose', id)"
         >
-          <span class="icon" aria-hidden="true" />
+          <svg class="icon" aria-hidden="true" :viewBox="DialogueChoiceIconPathMap[icon].viewBox">
+            <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" />
+          </svg>
           {{ text }}
         </button>
       </li>
@@ -76,6 +79,16 @@ const lineParts = computed(() => {
   flex-direction: column;
   align-items: center;
   padding-top: calc(var(--unit) * 42);
+}
+
+/* A narration is drawn centred on black with no speaker, as the game's black screen draws it: provisional, until a
+   recording of one is read for its place and darkness */
+.band.narration {
+  inset: 0;
+  height: auto;
+  justify-content: center;
+  padding-top: 0;
+  background: #000;
 }
 
 /* The name's gold is the brightest saturated pixel of its letters in the English client's recording */
@@ -165,7 +178,7 @@ const lineParts = computed(() => {
   outline: none;
 }
 
-/* The mark's place, its glyph to come from the trace of the game's own */
+/* The mark's place, its traced glyph from the game's own file, drawn in the pill's colour */
 .icon {
   width: calc(var(--unit) * 30);
   height: calc(var(--unit) * 30);

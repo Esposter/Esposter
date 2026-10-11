@@ -15,4 +15,7 @@ export const props = {
   speakerName: "Sara",
   speakerRole: "Waitress, Good Hunter",
 };
-export const variants = { revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) } };
+export const variants = {
+  narration: { choices: [], speakerName: "", speakerRole: "" },
+  revealing: { choices: [], revealedLength: Math.floor(LINE.length / 2) },
+};
