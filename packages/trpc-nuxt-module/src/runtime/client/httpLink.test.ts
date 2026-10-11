@@ -2,7 +2,7 @@ import type { useRequestEvent as baseUseRequestEvent } from "nuxt/app";
 
 import { httpLink } from "#src/runtime/client/httpLink";
 import { createTRPCClient } from "@trpc/client";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { H3, H3Event } from "nitro/h3";
 import { describe, expect, test, vi } from "vitest";
@@ -27,5 +27,22 @@ describe(httpLink, () => {
 
     await expect(client.read.query()).resolves.toBe(0);
     expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  test("#143 rejects with the message a procedure threw", async () => {
+    expect.hasAssertions();
+
+    const failingRouter = t.router({
+      fail: t.procedure.query(() => {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Rejected" });
+      }),
+    });
+    const app = new H3().all("/**", (event) =>
+      fetchRequestHandler({ endpoint, req: event.req, router: failingRouter }),
+    );
+    useRequestEvent.mockReturnValueOnce(new H3Event(new Request("http://localhost/"), undefined, app));
+    const client = createTRPCClient<typeof failingRouter>({ links: [httpLink({ url: endpoint })] });
+
+    await expect(client.fail.query()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCClientError: Rejected]`);
   });
 });
