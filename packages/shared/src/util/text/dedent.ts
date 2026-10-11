@@ -14,16 +14,16 @@ interface Cooked {
 const ESCAPE_CHARACTER = "\\";
 const LINE_FEED = "\n";
 const LINE_FEED_CHARACTER: Character = { escapable: false, value: LINE_FEED };
-const HEXADECIMAL_PATTERN = /^[\da-fA-F]$/u;
-const WHITESPACE_PATTERN = /^\s$/u;
+const HEXADECIMAL_REGEX = /^[\da-fA-F]$/u;
+const WHITESPACE_REGEX = /^\s$/u;
 const BRACED_CODE_POINT_MAXIMUM_DIGITS = 6;
 const CODE_POINT_MAXIMUM = 0x10ffff;
 const HEXADECIMAL_BYTE_DIGITS = 2;
 const HEXADECIMAL_UNIT_DIGITS = 4;
 // Only the escapes a template author writes on purpose; anything else such as `\}` is kept as typed
 const escapeValueMap: Record<string, string> = {
-  $: "$",
   "0": "\0",
+  $: "$",
   "\\": "\\",
   "`": "`",
   b: "\b",
@@ -38,7 +38,7 @@ const escapeValueMap: Record<string, string> = {
 const toCharacters = (text: string, escapable: boolean): Character[] =>
   text.split("").map((value) => ({ escapable, value }));
 
-const isWhitespace = (character: Character) => WHITESPACE_PATTERN.test(character.value);
+const isWhitespace = (character: Character) => WHITESPACE_REGEX.test(character.value);
 
 const alignValue = (value: string, precedingText: string) => {
   const currentLine = precedingText.slice(precedingText.lastIndexOf(LINE_FEED) + 1);
@@ -138,7 +138,7 @@ const readHexadecimal = (characters: Character[], start: number, digits: number)
 
   for (let index = start; index < start + digits; index++) {
     const character = characters[index];
-    if (character?.escapable !== true || !HEXADECIMAL_PATTERN.test(character.value)) return undefined;
+    if (character?.escapable !== true || !HEXADECIMAL_REGEX.test(character.value)) return undefined;
 
     hexadecimal += character.value;
   }
@@ -152,10 +152,7 @@ const readBracedCodePoint = (characters: Character[], index: number): Cooked | u
 
   let digits = "";
   let cursor = index + 3;
-  while (
-    digits.length < BRACED_CODE_POINT_MAXIMUM_DIGITS &&
-    HEXADECIMAL_PATTERN.test(characters[cursor]?.value ?? "")
-  ) {
+  while (digits.length < BRACED_CODE_POINT_MAXIMUM_DIGITS && HEXADECIMAL_REGEX.test(characters[cursor]?.value ?? "")) {
     digits += characters[cursor]?.value;
     cursor++;
   }
@@ -210,7 +207,7 @@ const cookCharacters = (characters: Character[]) => {
 };
 
 const createDedent = (options: DedentOptions): Dedent => {
-  const dedent = (strings: TemplateStringsArray | string, ...values: unknown[]) => {
+  const dedent = (strings: string | TemplateStringsArray, ...values: unknown[]) => {
     const isTemplate = typeof strings !== "string";
     const raws = isTemplate ? strings.raw : [strings];
     const { alignValues = false, escapeSpecialCharacters = isTemplate, trimWhitespace = true } = options;

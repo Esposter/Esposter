@@ -28,7 +28,8 @@ export const filterStyle = (value: string, rules: Record<string, RegExp[]> | und
   }
   if (declarations.size === 0) return undefined;
 
-  return [...declarations]
-    .map(([property, propertyValue]) => `${property}${PROPERTY_SEPARATOR}${propertyValue}`)
-    .join(DECLARATION_SEPARATOR);
+  return Array.from(
+    declarations,
+    ([property, propertyValue]) => `${property}${PROPERTY_SEPARATOR}${propertyValue}`,
+  ).join(DECLARATION_SEPARATOR);
 };

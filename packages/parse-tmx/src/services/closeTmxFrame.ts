@@ -9,15 +9,15 @@ const parsePropertyValue = (propertyType: PropertyType, value: string): boolean 
   switch (propertyType) {
     case PropertyType.Bool:
       return value === "true";
-    case PropertyType.Float:
-    case PropertyType.Int:
-      return Number(value);
     case PropertyType.Class:
     case PropertyType.Color:
     case PropertyType.File:
     case PropertyType.Object:
     case PropertyType.String:
       return value;
+    case PropertyType.Float:
+    case PropertyType.Int:
+      return Number(value);
     default:
       return exhaustiveGuard(propertyType);
   }
@@ -27,15 +27,15 @@ const parsePropertyValue = (propertyType: PropertyType, value: string): boolean 
 // Data's encoded cells. Every other element is complete when it opens.
 export const closeTmxFrame = (frame: TMXFrame): void => {
   switch (frame.tag) {
-    case TMXTagName.Property:
-      // A class-typed property holds nested properties in place of a value
-      if (frame.propertyType === PropertyType.Class) return;
-      frame.target.value = parsePropertyValue(frame.propertyType, frame.valueAttribute ?? frame.text);
-      return;
     case TMXTagName.Chunk:
     case TMXTagName.Data:
     case TMXTagName.Text:
       frame.target.text = frame.text;
+      return;
+    case TMXTagName.Property:
+      // A class-typed property holds nested properties in place of a value
+      if (frame.propertyType === PropertyType.Class) return;
+      frame.target.value = parsePropertyValue(frame.propertyType, frame.valueAttribute ?? frame.text);
       return;
     default:
       return;

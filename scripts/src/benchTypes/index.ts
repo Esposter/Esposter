@@ -1,10 +1,10 @@
-import { getTypeBenchResultPath } from "#src/services/benchTypes/getTypeBenchResultPath";
-import { isTypeBenchDrifted } from "#src/services/benchTypes/isTypeBenchDrifted";
-import { renderTypeBench } from "#src/services/benchTypes/renderTypeBench";
 import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
+import { getTypeBenchResultPath } from "#src/services/benchTypes/getTypeBenchResultPath";
+import { checkIsTypeBenchDrifted } from "#src/services/benchTypes/checkIsTypeBenchDrifted";
+import { renderTypeBench } from "#src/services/benchTypes/renderTypeBench";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { runCommand } from "#src/services/timing/runCommand";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { writeFileSync } from "node:fs";
@@ -36,7 +36,7 @@ await runCommand(
         return;
       }
 
-      const driftedPaths = sourcePaths.filter((sourcePath) => isTypeBenchDrifted(sourcePath));
+      const driftedPaths = sourcePaths.filter((sourcePath) => checkIsTypeBenchDrifted(sourcePath));
       if (driftedPaths.length > 0)
         throw new InvalidOperationError(
           Operation.Read,

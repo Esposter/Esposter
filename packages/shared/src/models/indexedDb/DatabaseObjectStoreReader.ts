@@ -9,11 +9,11 @@ export interface DatabaseObjectStoreReader<
 > {
   get: (key: TSchema[TStoreName]["key"]) => Promise<TSchema[TStoreName]["value"] | undefined>;
   getAll: (
-    query?: IDBKeyRange | TSchema[TStoreName]["key"] | null,
+    query?: IDBKeyRange | null | TSchema[TStoreName]["key"],
     count?: number,
   ) => Promise<TSchema[TStoreName]["value"][]>;
   getAllKeys: (
-    query?: IDBKeyRange | TSchema[TStoreName]["key"] | null,
+    query?: IDBKeyRange | null | TSchema[TStoreName]["key"],
     count?: number,
   ) => Promise<TSchema[TStoreName]["key"][]>;
   index: <TIndexName extends DatabaseIndexName<TSchema, TStoreName>>(

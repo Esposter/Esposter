@@ -1,7 +1,7 @@
-import type { TMXAttributes } from "#src/models/tmx/TMXAttributes";
-import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 import type { TMXObjectParsed } from "#src/models/tmx/parsed/TMXObjectParsed";
 import type { TMXPropertiesParsed } from "#src/models/tmx/parsed/TMXPropertiesParsed";
+import type { TMXAttributes } from "#src/models/tmx/TMXAttributes";
+import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 
 import { AttributeKind } from "#src/models/AttributeKind";
 import { Shape } from "#src/models/Shape";

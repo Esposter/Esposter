@@ -2,8 +2,8 @@ import type { ComparatorText } from "#src/models/semver/ComparatorText";
 import type { ComparatorToken } from "#src/models/semver/ComparatorToken";
 
 import { RangeOperator } from "#src/models/semver/RangeOperator";
-import { ANY_COMPARATOR_TEXT } from "#src/services/semver/constants";
 import { checkIsAnyPart } from "#src/services/semver/checkIsAnyPart";
+import { ANY_COMPARATOR_TEXT } from "#src/services/semver/constants";
 import { incrementNumericIdentifier } from "#src/services/semver/incrementNumericIdentifier";
 import { toBounds } from "#src/services/semver/toBounds";
 

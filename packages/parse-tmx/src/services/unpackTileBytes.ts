@@ -16,5 +16,5 @@ export const unpackTileBytes = (bytes: Uint8Array): number[] => {
   for (let index = 0; index < tiles.length; index++)
     tiles[index] = dataView.getUint32(index * Uint32Array.BYTES_PER_ELEMENT, true);
 
-  return Array.from(tiles);
+  return [...tiles];
 };

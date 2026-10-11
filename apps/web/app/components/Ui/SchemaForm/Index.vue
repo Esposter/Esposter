@@ -4,8 +4,8 @@ import type { CoreActions, JsonFormsCore, JsonFormsSubStates, JsonSchema } from 
 import type { z } from "zod";
 
 import { SchemaFormRenderers } from "@/services/ui/schemaForm/SchemaFormRenderers";
-import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jsonforms/core";
 import { checkIsDeepEqual } from "@esposter/shared";
+import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jsonforms/core";
 
 interface Props {
   // What only the dialog knows, whose keys a field names for the items it chooses among: a sheet's columns

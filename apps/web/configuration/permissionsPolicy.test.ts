@@ -30,7 +30,7 @@ describe("permissionsPolicy", () => {
   ];
   const SOURCE_FILE_REGEX = /(?<!\.test)\.(?:ts|vue)$/u;
   const sources = SOURCE_DIRECTORIES.flatMap((directory) =>
-    readdirSync(directory, { recursive: true, encoding: "utf8" })
+    readdirSync(directory, { encoding: "utf8", recursive: true })
       .filter((path) => SOURCE_FILE_REGEX.test(path))
       .map((path) => readFileSync(join(directory, path), "utf8")),
   );

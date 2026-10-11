@@ -1,4 +1,4 @@
-import { isUnsafeUrlCharacter } from "#src/services/sanitizeHtml/isUnsafeUrlCharacter";
+import { checkIsUnsafeUrlCharacter } from "#src/services/sanitizeHtml/checkIsUnsafeUrlCharacter";
 import { takeOne } from "#src/util/array/takeOne";
 
 const PATH_DELIMITER_REGEX = /[/?#]/u;
@@ -9,10 +9,10 @@ const SCHEME_SEPARATOR = ":";
 // Tab or a stray character before the colon cannot hide a javascript: scheme. What remains before the colon must be an
 // Allowed scheme, and a value with no colon before its path is relative, which names no script. A browser that reads
 // Such a value differently is refused as well, so the check never depends on how a browser reads it
-export const isAllowedUrl = (url: string, allowedSchemes: string[]): boolean => {
+export const checkIsAllowedUrl = (url: string, allowedSchemes: string[]): boolean => {
   const normalizedUrl = url
     .split("")
-    .filter((character) => !isUnsafeUrlCharacter(character))
+    .filter((character) => !checkIsUnsafeUrlCharacter(character))
     .join("");
   const beforePath = takeOne(normalizedUrl.split(PATH_DELIMITER_REGEX), 0);
   const separatorIndex = beforePath.indexOf(SCHEME_SEPARATOR);

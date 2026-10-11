@@ -6,7 +6,7 @@ const VERSION_REGEX =
 // A numeric prerelease identifier never has a leading zero
 const LEADING_ZERO_NUMERIC_REGEX = /^0\d+$/u;
 
-export const parseVersion = (version: string): Version | undefined => {
+export const parseVersion = (version: string): undefined | Version => {
   const groups = VERSION_REGEX.exec(version.trim())?.groups;
   const prerelease = groups?.prerelease?.split(".") ?? [];
   if (

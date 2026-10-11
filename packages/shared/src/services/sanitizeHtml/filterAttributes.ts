@@ -1,11 +1,11 @@
-import type { DefaultTreeAdapterTypes } from "parse5";
 import type { SanitizePolicy } from "#src/models/sanitizeHtml/SanitizePolicy";
+import type { DefaultTreeAdapterTypes } from "parse5";
 
+import { checkIsAllowedUrl } from "#src/services/sanitizeHtml/checkIsAllowedUrl";
+import { SRCSET_ATTRIBUTE, URL_ATTRIBUTES } from "#src/services/sanitizeHtml/constants";
 import { filterClasses } from "#src/services/sanitizeHtml/filterClasses";
 import { filterSrcset } from "#src/services/sanitizeHtml/filterSrcset";
 import { filterStyle } from "#src/services/sanitizeHtml/filterStyle";
-import { isAllowedUrl } from "#src/services/sanitizeHtml/isAllowedUrl";
-import { SRCSET_ATTRIBUTE, URL_ATTRIBUTES } from "#src/services/sanitizeHtml/constants";
 
 // Keeps the attributes a tag's policy names, each in the form the policy allows. A transform runs first, so what it
 // Writes is filtered like the markup it replaced. Attribute names come from the parser already lower-cased
@@ -42,6 +42,6 @@ const filterValue = (tagName: string, name: string, value: string, policy: Sanit
       Object.hasOwn(policy.allowedClasses, tagName) ? policy.allowedClasses[tagName] : undefined,
     );
   if (name === SRCSET_ATTRIBUTE) return filterSrcset(value, policy.allowedSchemes);
-  if (URL_ATTRIBUTES.includes(name)) return isAllowedUrl(value, policy.allowedSchemes) ? value : undefined;
+  if (URL_ATTRIBUTES.includes(name)) return checkIsAllowedUrl(value, policy.allowedSchemes) ? value : undefined;
   return value;
 };

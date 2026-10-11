@@ -9,13 +9,13 @@ import type { UpgradeDatabase } from "#src/models/indexedDb/UpgradeDatabase";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
+interface Schema extends DatabaseSchema {
+  messages: { indexes: { roomId: string }; key: number; value: { roomId: string } };
+  users: { indexes: { name: string; tag: string }; key: number; value: UserValue };
+}
 interface UserValue {
   id: number;
   name: string;
-}
-interface Schema extends DatabaseSchema {
-  messages: { indexes: { byRoom: string }; key: number; value: { roomId: string } };
-  users: { indexes: { byName: string; byTag: string }; key: number; value: UserValue };
 }
 
 declare const database: Database<Schema>;
@@ -52,7 +52,7 @@ describe("database type", () => {
   test("get resolves to the store's value, or undefined when absent", () => {
     expect.hasAssertions();
 
-    expectTypeOf(database.get("users", 1)).toEqualTypeOf<Promise<UserValue | undefined>>();
+    expectTypeOf(database.get("users", 1)).toEqualTypeOf<Promise<undefined | UserValue>>();
   });
 
   test("getAll and getAllKeys resolve to the store's values and keys", () => {
@@ -106,9 +106,9 @@ describe("database type", () => {
   test("#346 an index read through a generic store name keeps its typed index names", () => {
     expect.hasAssertions();
 
-    expectTypeOf(readIndex("users", "byName")).toEqualTypeOf<DatabaseIndex<Schema, "users", "byName">>();
+    expectTypeOf(readIndex("users", "name")).toEqualTypeOf<DatabaseIndex<Schema, "users", "name">>();
     // @ts-expect-error -- an index of another store
-    readIndex("messages", "byName");
+    readIndex("messages", "name");
   });
 
   test("#346 a union of store names takes only the index names every store declares", () => {
@@ -119,15 +119,15 @@ describe("database type", () => {
       indexName: DatabaseIndexName<Schema, TStoreName>,
     ) => database.transaction(storeName).objectStore(storeName).index(indexName);
 
-    readSharedIndex("users", "byTag");
+    readSharedIndex("users", "tag");
     // @ts-expect-error -- no index is declared by both stores
-    readSharedIndex<DatabaseStoreName<Schema>>("users", "byName");
+    readSharedIndex<DatabaseStoreName<Schema>>("users", "name");
   });
 
   test("the index read the caller pattern makes returns the store's values", () => {
     expect.hasAssertions();
 
-    expectTypeOf(readCachedItems("users", "byName", "a")).resolves.toEqualTypeOf<UserValue[]>();
+    expectTypeOf(readCachedItems("users", "name", "a")).resolves.toEqualTypeOf<UserValue[]>();
   });
 
   test("the write pattern puts the store's values through a readwrite store", () => {

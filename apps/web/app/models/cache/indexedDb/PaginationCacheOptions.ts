@@ -1,8 +1,8 @@
-import type { DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
+import type { DatabaseIndexName } from "@esposter/shared";
 import type { Promisable } from "type-fest";
 
 // The rows a partition holds are the rows its store keeps, which is the schema's own value type for that store —

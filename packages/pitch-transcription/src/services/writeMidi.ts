@@ -33,7 +33,7 @@ const PIANO_PROGRAM_CHANGE = [0xc0, 0x00];
 const writeTrack = (events: MidiEvent[]) => {
   const data: number[] = [];
   let lastTick = 0;
-  for (const { bytes, tick } of events.toSorted((a, b) => a.tick - b.tick)) {
+  for (const { bytes, tick } of events.toSorted((firstEvent, secondEvent) => firstEvent.tick - secondEvent.tick)) {
     data.push(...writeVariableLength(tick - lastTick), ...bytes);
     lastTick = tick;
   }
@@ -50,7 +50,7 @@ const writeNoteEvents = (notes: NoteEventTime[]): MidiEvent[] =>
       onTick: toTicks(startTimeSeconds),
       pitchMidi,
     }))
-    .toSorted((a, b) => a.onTick - b.onTick)
+    .toSorted((firstNote, secondNote) => firstNote.onTick - secondNote.onTick)
     .flatMap(({ amplitude, offTick, onTick, pitchMidi }) => [
       { bytes: [0x90, pitchMidi, Math.floor(amplitude * 127)], tick: onTick },
       { bytes: [0x80, pitchMidi, 0], tick: offTick },

@@ -1,9 +1,9 @@
 import type { ChildProcess, SpawnOptions } from "node:child_process";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
 import { CMD_UNSAFE_ARGUMENT_REGEX } from "#src/services/exec/spawn/constants";
 import { spawnResolved } from "#src/services/exec/spawn/spawnResolved";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { spawn } from "node:child_process";
 
 // Spawn every virrun child through here so it never flashes a console window on win32. Windows gives a console child
 // Its own terminal window whenever it can't inherit the parent's — always for a `detached` child (severed from the

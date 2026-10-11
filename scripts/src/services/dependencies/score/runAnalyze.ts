@@ -1,5 +1,5 @@
-import { APP_DIRECTORY } from "#src/services/dependencies/score/constants";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
+import { APP_DIRECTORY } from "#src/services/dependencies/score/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { resolve } from "node:path";

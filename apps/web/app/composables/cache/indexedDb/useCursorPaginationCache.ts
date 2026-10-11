@@ -1,8 +1,8 @@
-import type { DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
+import type { DatabaseIndexName } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";

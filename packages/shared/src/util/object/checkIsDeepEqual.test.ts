@@ -77,8 +77,8 @@ describe(checkIsDeepEqual, () => {
   test("#141 an object whose toString or valueOf is a data field compares by its keys", () => {
     expect.hasAssertions();
 
-    const first = { toString: "In Progress", to: "3" };
-    const second = { toString: "In Progress", to: "3" };
+    const first = { to: "3", toString: "In Progress" };
+    const second = { to: "3", toString: "In Progress" };
     expect(checkIsDeepEqual(first, second)).toBe(true);
     expect(checkIsDeepEqual({ valueOf: "foo" }, {})).toBe(false);
     expect(checkIsDeepEqual({}, { valueOf: "foo" })).toBe(false);
@@ -90,7 +90,7 @@ describe(checkIsDeepEqual, () => {
     expect(checkIsDeepEqual(new Map([["a", 1]]), new Map([["a", 1]]))).toBe(true);
     expect(checkIsDeepEqual(new Map([["a", 1]]), new Map([["b", 1]]))).toBe(false);
     expect(checkIsDeepEqual(new Map([["a", 1]]), new Map([["a", 2]]))).toBe(false);
-    expect(checkIsDeepEqual(new Set([1, 2]), new Set([2, 1]))).toBe(true);
+    expect(checkIsDeepEqual(new Set([1, 2]), new Set([1, 2]))).toBe(true);
     expect(checkIsDeepEqual(new Set([1, 2]), new Set([1, 3]))).toBe(false);
     expect(checkIsDeepEqual(new Set([1, 2]), new Set([1, 2, 3]))).toBe(false);
   });

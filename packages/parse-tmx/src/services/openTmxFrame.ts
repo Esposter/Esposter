@@ -2,7 +2,6 @@ import type { TMXAnimationParsed } from "#src/models/tmx/parsed/TMXAnimationPars
 import type { TMXEditorSettingsParsed } from "#src/models/tmx/parsed/TMXEditorSettingsParsed";
 import type { TMXEmbeddedTilesetParsed } from "#src/models/tmx/parsed/TMXEmbeddedTilesetParsed";
 import type { TMXPropertyParsed } from "#src/models/tmx/parsed/TMXPropertyParsed";
-import type { TMXTilesetParsed } from "#src/models/tmx/parsed/TMXTilesetParsed";
 import type { TMXAttributes } from "#src/models/tmx/TMXAttributes";
 import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
@@ -108,13 +107,24 @@ const openTmxMapChild = (
 ): TMXFrame | undefined => {
   const map = parent.target;
   switch (tag) {
-    case TMXTagName.Properties:
-      return openTmxProperties(map);
+    case TMXTagName.Data:
+    case TMXTagName.Export:
+    case TMXTagName.Image:
+    case TMXTagName.Object:
+    case TMXTagName.Property:
+      return undefined;
     case TMXTagName.EditorSettings: {
       const editorSettings: TMXEditorSettingsParsed = {};
       map.editorsettings = editorSettings;
       return { tag, target: editorSettings, text: "" };
     }
+    case TMXTagName.Group:
+    case TMXTagName.ImageLayer:
+    case TMXTagName.Layer:
+    case TMXTagName.Objectgroup:
+      return openTmxLayer(map.layers, tag, attributes);
+    case TMXTagName.Properties:
+      return openTmxProperties(map);
     case TMXTagName.Tileset: {
       // A tileset that names a file is kept as the reference it is, and its file is not opened. Its children are not read.
       if (attributes.source !== undefined) {
@@ -125,17 +135,6 @@ const openTmxMapChild = (
       map.tilesets.push(tileset);
       return { tag, target: tileset, text: "" };
     }
-    case TMXTagName.Group:
-    case TMXTagName.ImageLayer:
-    case TMXTagName.Layer:
-    case TMXTagName.Objectgroup:
-      return openTmxLayer(map.layers, tag, attributes);
-    case TMXTagName.Data:
-    case TMXTagName.Export:
-    case TMXTagName.Image:
-    case TMXTagName.Object:
-    case TMXTagName.Property:
-      return undefined;
     default:
       throw new InvalidOperationError(Operation.Read, openTmxMapChild.name, `${name} is not a map child`);
   }
@@ -215,12 +214,6 @@ export const openTmxFrame = (
 
   const tag = parseTmxTagName(name);
   switch (parent.tag) {
-    case TMXTagName.Map:
-      return openTmxMapChild(parent, name, tag, attributes);
-    case TMXTagName.EditorSettings:
-      if (tag !== TMXTagName.Export) return undefined;
-      parent.target.export = readTmxAttributes(attributes, exportAttributeKindMap);
-      return { tag, target: parent.target.export, text: "" };
     case TMXTagName.Animation: {
       if (tag !== TMXTagName.Frame) return undefined;
       const frame = readTmxAttributes(attributes, animationFrameAttributeKindMap);
@@ -233,13 +226,19 @@ export const openTmxFrame = (
     case TMXTagName.ImageLayer:
     case TMXTagName.Layer:
       return openTmxLayerChild(parent, tag, attributes, context);
-    case TMXTagName.Objectgroup:
+    case TMXTagName.EditorSettings:
+      if (tag !== TMXTagName.Export) return undefined;
+      parent.target.export = readTmxAttributes(attributes, exportAttributeKindMap);
+      return { tag, target: parent.target.export, text: "" };
+    case TMXTagName.Map:
+      return openTmxMapChild(parent, name, tag, attributes);
     case TMXTagName.Object:
+    case TMXTagName.Objectgroup:
       return openTmxObjectChild(parent, tag, attributes);
-    case TMXTagName.Property:
-      return tag === TMXTagName.Properties ? openTmxProperties(parent.target) : undefined;
     case TMXTagName.Properties:
       return openTmxPropertyChild(parent, tag, attributes);
+    case TMXTagName.Property:
+      return tag === TMXTagName.Properties ? openTmxProperties(parent.target) : undefined;
     case TMXTagName.Tile:
       return openTmxTileChild(parent, tag, attributes);
     case TMXTagName.Tileset:

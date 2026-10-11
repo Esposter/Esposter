@@ -1,4 +1,3 @@
-import { openDatabase } from "@esposter/shared";
 import type { CharacterPackStorage } from "#src/models/character/CharacterPackStorage";
 
 import {
@@ -7,6 +6,7 @@ import {
   CHARACTER_PACK_STORE_VERSION,
 } from "#src/services/character/constants";
 import { getCharacterPackStorageNames } from "#src/services/character/getCharacterPackStorageNames";
+import { openDatabase } from "@esposter/shared";
 
 // The packs' files in IndexedDB, for a browser whose private file system cannot be written: one store of blobs keyed by
 // Their paths joined by slashes

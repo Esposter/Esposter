@@ -5,9 +5,9 @@ export interface TypeBenchFixture {
   members: {
     id: string;
     joinedAt?: Date;
-    profile: { avatarUrl?: string | null; displayName: string; links: { label: string; url: string | null }[] };
-    role: { name: string; permissions: string[] } | null;
+    profile: { avatarUrl?: null | string; displayName: string; links: { label: string; url: null | string }[] };
+    role: null | { name: string; permissions: string[] };
   }[];
   owner: { id: string; profile: { displayName: string; links: { label: string; url: string }[] } };
-  tags?: string[] | null;
+  tags?: null | string[];
 }

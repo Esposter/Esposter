@@ -33,7 +33,7 @@ describe("getProperties type", () => {
   test("non-string primitives", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<bigint | boolean | number | null | undefined>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<bigint | boolean | null | number | undefined>>().toEqualTypeOf<never>();
   });
 
   test("object", () => {

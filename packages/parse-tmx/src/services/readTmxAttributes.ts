@@ -3,16 +3,16 @@ import type { TMXAttributes } from "#src/models/tmx/TMXAttributes";
 import { AttributeKind } from "#src/models/AttributeKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-type TMXRequiredKind = AttributeKind.RequiredNumber | AttributeKind.RequiredString;
-type TMXNumberKind = AttributeKind.Number | AttributeKind.RequiredNumber;
 type TMXAttributeValue<Kind extends AttributeKind> = Kind extends TMXNumberKind ? number : string;
-
 // The model an element table reads as: a required kind is always a key, an optional one a key only when written
 type TMXAttributeValues<Table extends Record<string, AttributeKind>> = {
   [Name in keyof Table as Table[Name] extends TMXRequiredKind ? Name : never]: TMXAttributeValue<Table[Name]>;
 } & {
   [Name in keyof Table as Table[Name] extends TMXRequiredKind ? never : Name]?: TMXAttributeValue<Table[Name]>;
 };
+type TMXNumberKind = AttributeKind.Number | AttributeKind.RequiredNumber;
+
+type TMXRequiredKind = AttributeKind.RequiredNumber | AttributeKind.RequiredString;
 
 // An attribute left out or written empty is absent rather than zero, since `Number("")` would read it as zero. A
 // String attribute written empty is kept, as the document wrote it.

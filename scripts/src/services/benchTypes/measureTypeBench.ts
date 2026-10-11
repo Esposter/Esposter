@@ -1,12 +1,12 @@
 import type { TypeBenchRow } from "#src/models/benchTypes/TypeBenchRow";
 
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { TYPE_BENCH_PROGRAM_SUFFIX, TYPE_BENCH_SUFFIX } from "#src/services/benchTypes/constants";
 import { findPackageTsconfig } from "#src/services/benchTypes/findPackageTsconfig";
 import { measureTypeProgram } from "#src/services/benchTypes/measureTypeProgram";
 import { readCompilerFlags } from "#src/services/benchTypes/readCompilerFlags";
 import { readTypeBenchSource } from "#src/services/benchTypes/readTypeBenchSource";
 import { subtractTypeBenchCounts } from "#src/services/benchTypes/subtractTypeBenchCounts";
-import { TYPE_BENCH_PROGRAM_SUFFIX, TYPE_BENCH_SUFFIX } from "#src/services/benchTypes/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getResult } from "@esposter/shared";
 import { readFileSync, rmSync } from "node:fs";
 import { resolve } from "node:path";

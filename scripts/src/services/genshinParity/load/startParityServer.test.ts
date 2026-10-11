@@ -1,9 +1,9 @@
+import { getParityServerArgs } from "#src/services/genshinParity/load/startParityServer";
 import {
   PARITY_BUILD_DIRECTORY_NAME,
   PARITY_CONFIG_PATH,
   VITE_BIN_PATH,
 } from "#src/services/genshinParity/shared/constants";
-import { getParityServerArgs } from "#src/services/genshinParity/load/startParityServer";
 import { describe, expect, test } from "vitest";
 
 describe(getParityServerArgs, () => {

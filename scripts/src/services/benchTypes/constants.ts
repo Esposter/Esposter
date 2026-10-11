@@ -1,7 +1,7 @@
-import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
 // The compiler is the one `typescript` resolves to from this package, never a copy of an older one: a count is a

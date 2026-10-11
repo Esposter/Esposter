@@ -1,7 +1,7 @@
-import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 
