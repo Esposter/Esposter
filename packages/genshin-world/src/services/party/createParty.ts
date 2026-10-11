@@ -19,6 +19,7 @@ export const createParty = (characterIds: number[]): Party => {
     activeIndex: 0,
     characterIdMemberMap: new Map(characterIds.map((characterId) => [characterId, createPartyMember()])),
     deployedTeamIndex: 0,
+    healthChanges: [],
     switchedSeconds: -PARTY_SWITCH_COOLDOWN_SECONDS,
     teams: Array.from({ length: DEFAULT_PARTY_TEAM_COUNT }, (_value, index) => ({
       characterIds: index === 0 ? characterIds : [],

@@ -1,5 +1,4 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -20,6 +19,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -286,7 +286,7 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       nextTickSeconds: DRAIN_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState: tickKitEffectState, party }) => {
         if (!tickKitEffectState.effects.includes(infusion)) return;
-        getPartyMember(party, characterId).healthShare *= 1 - drainShare;
+        damagePartyMember(party, characterId, getPartyMember(party, characterId).healthShare * drainShare, characterId);
       },
       radius: UNBOUNDED_FIELD_RADIUS,
       // The field lives a tenth of a second past its last drain, so the step that runs it still has it

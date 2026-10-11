@@ -34,7 +34,7 @@ export const healKitParty = (
     (healParty.maxHealthShare ?? 0) * striker.attributes.maxHealth;
   for (const characterId of party.characterIdMemberMap.keys()) {
     const member = characterIdCombatantMap.get(characterId);
-    if (member) healPartyMember(party, characterId, healedHp / member.attributes.maxHealth);
+    if (member) healPartyMember(party, characterId, healedHp / member.attributes.maxHealth, striker.characterId);
   }
   return true;
 };

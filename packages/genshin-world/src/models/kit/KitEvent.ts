@@ -3,6 +3,7 @@ import type { KitCharacterSwappedEvent } from "#src/models/kit/KitCharacterSwapp
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectExpiredEvent } from "#src/models/kit/KitEffectExpiredEvent";
 import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
+import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
@@ -14,6 +15,7 @@ export type KitEvent =
   | KitDamageTakenEvent
   | KitEffectExpiredEvent
   | KitEnergyParticleCollectedEvent
+  | KitHealthChangedEvent
   | KitNormalAttackLandedEvent
   | KitReactionTriggeredEvent
   | KitStatusTickedEvent;

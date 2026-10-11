@@ -1,0 +1,67 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
+import { describe, expect, test } from "vitest";
+
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+
+const createCombatant = (characterId: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 16_000 }]),
+  characterId,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: TRAVELER_KIT,
+  level: 90,
+});
+
+describe(changeKitMemberHealth, () => {
+  const SOURCE_ID = 1;
+  const MEMBER_ID = 2;
+
+  const source = createCombatant(SOURCE_ID);
+  const characterIdCombatantMap = new Map([
+    [MEMBER_ID, createCombatant(MEMBER_ID)],
+    [SOURCE_ID, source],
+  ]);
+  const effects: KitEffect[] = [
+    { amount: 0.25, attribute: Attribute.HealingBonus, characterId: SOURCE_ID, kind: "buff", secondsRemaining: 1 },
+    {
+      amount: 0.75,
+      attribute: Attribute.IncomingHealingBonus,
+      characterId: MEMBER_ID,
+      kind: "buff",
+      secondsRemaining: 1,
+    },
+  ];
+
+  test("heals a member by the HP raised by the source's Healing Bonus and its own Incoming Healing Bonus", () => {
+    expect.hasAssertions();
+    const party = createParty([SOURCE_ID, MEMBER_ID]);
+    getPartyMember(party, MEMBER_ID).healthShare = 0.5;
+    changeKitMemberHealth({ characterIdCombatantMap, kitEffectState: { effects }, party }, source, MEMBER_ID, 2000);
+
+    expect(party.healthChanges).toStrictEqual([
+      { characterId: MEMBER_ID, healthShare: 0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },
+    ]);
+  });
+
+  test("drains a member by the HP as it is", () => {
+    expect.hasAssertions();
+    const party = createParty([SOURCE_ID, MEMBER_ID]);
+    changeKitMemberHealth({ characterIdCombatantMap, kitEffectState: { effects }, party }, source, MEMBER_ID, -4000);
+
+    expect(party.healthChanges).toStrictEqual([
+      { characterId: MEMBER_ID, healthShare: -0.25, overflowHealthShare: 0, sourceCharacterId: SOURCE_ID },
+    ]);
+  });
+});

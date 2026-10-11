@@ -47,7 +47,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 - **Damage** is a hit: its talent multiplier, its gauge of an element, the element it names when it is not its character's own, the DMG Bonus it carries of its own, if any, added to its striker's as it is priced, and the additive base damage it reads from its striker, if any, added to its base damage. A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through it.
 - **Infusion** makes the character's normal attacks, charged attack and plunges deal its element at the gauge the hit gives it, 1U for a strike and 0U for a collision. One that converts the attacks gives each hit its converted poise and reach where it has them, and one with a DMG Bonus adds it to each hit it infuses, as Bane of All Evil's does to Xiao's Normal, Charged and Plunging Attacks alone. It is refreshed by a second one of its kind on the same character, not stacked.
 - **Buff** adds a stat bonus to the character's pricing for its seconds: a flat ATK adds to its attack and any other bonus to its attribute total. It is refreshed by one of its attribute from the same source on the same character, not stacked: a source names the effect that gives it, so two effects on one attribute run side by side, as Sprawling Greenery's two Elemental Mastery buffs do.
-- **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
+- **Heal and drain** are `changeKitMemberHealth`, the one way a kit changes a member's current HP, its own or another's, by an amount of HP: a heal is raised by its source's Healing Bonus and the member's Incoming Healing Bonus as the buffs on them stand, and a drain is taken as it is, as gcsim's `Heal` and `Drain` price them. Under it, the party's `healPartyMember` and `damagePartyMember` change a share of a standing member's Max HP, a heal never above all of it and a drain never below none, and a downed member stays down, as only a revive brings one back. Each records the change it made in the party's `healthChanges`, with the share of a heal past full and the character whose kit made it, which `HealthChanged` sends to the kits.
 - **Energy** is the party's `gainPartyEnergy`, which an enemy's drop calls through `collectKitEnergyDrops`.
 - **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds. A field that ticks once and no more is a one-tick field.
 - **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's. A summon may travel: its body moves forward at its speed from its start on its clock, and its hits are reached from where it is then. A summon may follow the body on the field instead: its body stands where that body stands on each step, whoever is on the field, and its hits are reached from there. A summon whose seconds end on its last hitmark lives `SUMMON_LINGER_SECONDS` past it, so the step that lands its last hit still has it on the field however its clock and its seconds left round. An action's hits whose hitmarks fall past its end are a summon too, cast as the action runs its course (`queueKitHits`), so each lands at its hitmark through a later action or a swap, dealt as the action's kind of attack and infused as it lands, by [combat's timing rule](/docs/genshin/combat): an action's `seconds` is its gcsim cancel, never stretched to its last hit.
@@ -77,6 +77,7 @@ flowchart TD
   STRIKES -->|"the hit triggered reactions"| REACTION["ReactionTriggered"]
   STRIKES -->|"the enemy took its damage, CRIT or not, defeated or not"| DAMAGE["DamageTaken"]
   STRIKES -->|"collectKitEnergyDrops: the enemy dropped energy, which the team took"| PARTICLE["EnergyParticleCollected"]
+  STEP -->|"last: each change to a member's HP the party recorded since the last step"| HEALTH["HealthChanged"]
   SWAP --> EMIT["emitKitEvent: every deployed member's kit, as its own combatant"]
   EXPIRED --> EMIT
   TICK --> EMIT
@@ -85,6 +86,7 @@ flowchart TD
   REACTION --> EMIT
   DAMAGE --> EMIT
   PARTICLE --> EMIT
+  HEALTH --> EMIT
   EMIT --> EFFECTS["the kit's handler: summons, statuses, heals, energy, cooldowns"]
   EFFECTS -->|"its summons' hits, on a later step"| STEP
 ```
@@ -97,6 +99,7 @@ flowchart TD
 - **StatusTicked** carries an enemy and the status on it whose tick fell due. Hydrospout answers Riptide's.
 - **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays. Resolve's stacks from another member's burst answer it.
 - **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.
+- **HealthChanged** carries a member whose HP changed, the share of its Max HP it gained or lost, the share of a heal past full, and the character whose kit made the change, none for an enemy's strike or a drown. `healPartyMember` and `damagePartyMember` record every change wherever it is made, so a strike between steps is heard as well as a kit's own, and the step sends the changes last and empties them: a change a handler makes as it hears one is sent on the next step.
 
 ## Framework decisions
 
@@ -138,6 +141,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 - **A kit moves no enemy.** Pulls, knockbacks and holds that move or fix an enemy in place are not built.
 - **A hit is priced from its striker alone.** A kit reads no other member's buff into a hit, so a Quill or a banner that adds to another member's hits is not built.
 - **A character holds no aura.** Only an enemy holds elemental state in this package, so an aura on a party member is not built.
+- **A heal written before `changeKitMemberHealth` reads no Healing Bonus.** The kits that call `healPartyMember` with a share of their own, and `healKitParty` and `healKitStriker`, heal as their talent gives it, without the healer's Healing Bonus or the member's Incoming Healing Bonus, until each moves onto the hook.
 
 ## Key files
 
@@ -205,7 +209,10 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | `packages/genshin-world/src/services/kit/effects/checkHasKitStatus.ts`                | Whether a character carries a status of an id                                                                                                                                   |
 | `packages/genshin-world/src/services/kit/effects/getKitFieldCooldownMultiplier.ts`    | The cooldown factor of the fields a skill or burst is cast inside                                                                                                               |
 | `packages/genshin-world/src/services/party/gainPartyMemberEnergy.ts`                  | A flat amount of energy a passive or constellation gives one member, up to its burst's cost                                                                                     |
-| `packages/genshin-world/src/services/party/healPartyMember.ts`                        | Heals a standing member up to all its HP                                                                                                                                        |
+| `packages/genshin-world/src/services/party/healPartyMember.ts`                        | Heals a standing member up to all its HP, recording the change with its overflow and its healer                                                                                 |
+| `packages/genshin-world/src/services/party/damagePartyMember.ts`                      | Takes a share of a standing member's HP, recording the change, and downs it at none                                                                                             |
+| `packages/genshin-world/src/services/kit/effects/changeKitMemberHealth.ts`            | The one way a kit heals or drains a member by an amount of HP, a heal raised by the Healing and Incoming Healing Bonuses                                                        |
+| `packages/genshin-world/src/models/party/PartyHealthChange.ts`                        | A change to a member's HP as it took effect, which the party queues and `HealthChanged` carries                                                                                 |
 
 ## Sources
 
