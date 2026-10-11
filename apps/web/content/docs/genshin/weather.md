@@ -1,6 +1,6 @@
 ---
 title: Weather
-description: Genshin's weather as built. The area the camera stands in names the weather, an area with several weathers turns through them, and a change blends over ten seconds, eased in and out. Each weather raises the sky's cloud cover, the fog's density and the ground's wetness over the region's own clear sky, tints the haze where it carries sand, and falls its particles in a box that follows the eye. Rain splashes where it meets the ground, and a thunderstorm's lightning flashes the sky and drops a bolt.
+description: Genshin's weather as built. The area the camera stands in names the weather, an area with several weathers turns through them, and a change blends over nine seconds, eased in and out. Each weather raises the sky's cloud cover, the fog's density and the ground's wetness over the region's own clear sky, tints the haze where it carries sand, and falls its particles in a box that follows the eye. Rain splashes where it meets the ground, and a thunderstorm's lightning flashes the sky and drops a bolt.
 ---
 
 # Weather
@@ -17,7 +17,7 @@ flowchart TD
   TURN --> W
   AREA -->|none| CLEAR[Clear]
   CLEAR --> W
-  W -->|changed| BLEND["Blend from where it stood, ten seconds, eased in and out"]
+  W -->|changed| BLEND["Blend from where it stood, nine seconds, eased in and out"]
   BLEND --> STATE[The weather as it stands]
   STATE -->|max over the region's clear values| SKY[Cloud coverage and fog density]
   STATE --> WET[Wetness: the toon surfaces, the ground and the grass darken and glint]
@@ -85,7 +85,7 @@ The values are starting points, not the game's: each is marked provisional where
 - **Windrise stays clear.** Galesong Hill's own weather is clear, as its reference screenshots are. Moving its area's list to start at rain shows the rain over the valley, which the parity pages do not measure.
 - **An area's weather turns on a provisional schedule.** The standard chain is the game's, but the change interval is a built stand-in, and the cities and special climates' own chains are not yet read; the game's own weather data, which weathers an area turns between and how long each holds, replaces each area's chain and the interval when it is read ([weather](/docs/proposals/genshin/weather)).
 - **The bolt shines through the haze.** It writes no depth, so the height fog, a post pass over the depth, does not reach it, as a strike reads through the game's rain.
-- **The first recordings of a turning sky and of a thunderstorm were a dusk.** Each first minute (`world-weather-turn.dusk.mkv` and `world-thunderstorm.dusk.mkv`, both 1280 by 592) is a clear dusk settling into night, with a moon up by about twenty seconds, no rain at any still and no flash in the thunderstorm's. Its sky darkens from the first still and its mean luma stops falling near forty seconds, a time-of-day change rather than a weather change, so it neither confirms nor moves `WEATHER_TRANSITION_SECONDS` and gives no strike to count. Both are kept under the `.dusk` name and replaced. The turn is a thunderstorm clearing to sun, rain to clear rather than clear to rain, and `WEATHER_TRANSITION_SECONDS` stays provisional at ten seconds until it is read. The thunderstorm is Yashiori Island's perpetual storm, whose flashes come every two or three seconds, so the rate read off it is that storm's and may run above an ordinary thunderstorm's few strikes a minute.
+- **The first recordings of a turning sky and of a thunderstorm were a dusk.** Each first minute (`world-weather-turn.dusk.mkv` and `world-thunderstorm.dusk.mkv`, both 1280 by 592) is a clear dusk settling into night, with a moon up by about twenty seconds, no rain at any still and no flash in the thunderstorm's. Its sky darkens from the first still and its mean luma stops falling near forty seconds, a time-of-day change rather than a weather change, so it neither confirms nor moves `WEATHER_TRANSITION_SECONDS` and gives no strike to count. Both are kept under the `.dusk` name and replaced. The turn is a thunderstorm clearing to sun, rain to clear rather than clear to rain, and `WEATHER_TRANSITION_SECONDS` is nine seconds, read off that clip: its top-left sky's frame-to-frame change spikes once, from about 8 s to 16.6 s, and settles by 18.7 s. The thunderstorm is Yashiori Island's perpetual storm, whose flashes come every two or three seconds, so the rate read off it is that storm's and may run above an ordinary thunderstorm's few strikes a minute.
 
 ## Sources
 
