@@ -5,7 +5,6 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { Except } from "type-fest";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -75,7 +74,7 @@ export const createAyatoKitBehaviour = ({
   // The Shunsuiken strikes target as the string's strikes do
   const shunsuikenTargetingArea = takeOne(kit.normalAttacks).targetingArea;
   // The record holds every field of a Shunsuiken strike but its multiplier, which its place in the string picks
-  const shunsuiken = readHitFields("shunsuiken") as Except<KitHit, "talentMultiplier">;
+  const shunsuiken = readHitFields("shunsuiken", ["talentMultiplier"]);
   const shunsuikenMultipliers = readParameters("shunsuikenMultipliers");
   // Constellation 6's strikes land their hitmarks from the attack's start, so from the strike that sets them off they land
   // Its hitmark sooner

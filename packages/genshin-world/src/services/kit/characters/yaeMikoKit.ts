@@ -45,8 +45,7 @@ export const createYaeMikoKitBehaviour = ({
   const totemFrames = totemSeconds * KIT_FRAMES_PER_SECOND;
   const totemStrikeIntervalFrames = readSeconds("totemStrikeInterval") * KIT_FRAMES_PER_SECOND;
   const skillSpawnSeconds = readSeconds("sesshouSakuraSpawn");
-  // The record's fields hold each totem strike's reach and poise, which their partial type cannot show
-  const totemStrikeFields = readHitFields("totemStrikes");
+  const totemStrikeFields = readHitFields("totemStrikes", ["hitmarkSeconds", "talentMultiplier"]);
   // A totem's strike multiplier at each of its levels, which the totems standing pick as it is cast
   const totemStrikeMultipliers = readParameters("totemStrikeMultipliers");
   const thunderboltArea = readArea("tenkoThunderbolt");
@@ -63,11 +62,7 @@ export const createYaeMikoKitBehaviour = ({
       strikeFrames < totemFrames;
       strikeFrames += totemStrikeIntervalFrames
     )
-      hits.push({
-        ...totemStrikeFields,
-        hitmarkSeconds: strikeFrames / KIT_FRAMES_PER_SECOND,
-        talentMultiplier,
-      } as KitHit);
+      hits.push({ ...totemStrikeFields, hitmarkSeconds: strikeFrames / KIT_FRAMES_PER_SECOND, talentMultiplier });
     return hits;
   };
   return {

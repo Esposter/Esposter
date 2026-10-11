@@ -1,6 +1,5 @@
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
-import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStanceBehaviour } from "#src/models/kit/KitStanceBehaviour";
 import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
@@ -10,6 +9,7 @@ import type { createKitRecordResolver } from "#src/services/kit/build/createKitR
 import { applyKitActionBehaviour } from "#src/services/kit/build/applyKitActionBehaviour";
 import { applyKitHitBehaviour } from "#src/services/kit/build/applyKitHitBehaviour";
 import { checkIsKitHitIncomplete } from "#src/services/kit/build/checkIsKitHitIncomplete";
+import { checkIsKitHitShortOf } from "#src/services/kit/build/checkIsKitHitShortOf";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const readEntry = <T>(bag: string, bagValueMap: Record<string, T> | undefined, name: string): T => {
@@ -31,18 +31,11 @@ const readList = <T>(bag: string, bagValueMap: Record<string, T | T[]> | undefin
   return value;
 };
 
-// Fields no behaviour completes, so a bubble, a party heal or a stacked hit among their hits fails
-const checkFieldsComplete = <T>(fields: T, hits: readonly Partial<KitHit>[], path: string): T => {
-  if (hits.some((hit) => checkIsKitHitIncomplete(hit)))
-    throw new InvalidOperationError(Operation.Read, path, "holds what only a behaviour completes");
-  return fields;
-};
-
 // A kit's record as its behaviour reads it, over the kit its slots built: each value of a bag by its name, resolved as
 // The slots are, failing on a name the bag does not hold or holds in the other shape
 export const createKitRecordReader = (
   record: KitRecord,
-  { toAction, toActionFields, toHit, toHitFields, toParameter, toSeconds }: ReturnType<typeof createKitRecordResolver>,
+  { toAction, toHit, toHitFields, toParameter, toSeconds }: ReturnType<typeof createKitRecordResolver>,
   kit: Kit,
 ): KitRecordReader => {
   const buildAction = (actionRecord: KitActionRecord, behaviour: KitActionBehaviour | undefined, path: string) =>
@@ -76,10 +69,6 @@ export const createKitRecordReader = (
     kit,
     readAction: (name, behaviour) =>
       buildAction(readOne("actions", record.actions, name), behaviour, `actions.${name}`),
-    readActionFields: (name) => {
-      const fields = toActionFields(readEntry("actionFields", record.actionFields, name));
-      return checkFieldsComplete(fields, fields.hits ?? [], `actionFields.${name}`);
-    },
     readActions: (name, behaviour) =>
       readList("actions", record.actions, name).map((actionRecord, index) =>
         buildAction(actionRecord, behaviour, `actions.${name}.${index}`),
@@ -88,9 +77,15 @@ export const createKitRecordReader = (
     readAreas: (name) => readList("areas", record.areas, name),
     readHit: (name, behaviour = {}) =>
       applyKitHitBehaviour(toHit(readOne("hits", record.hits, name)), behaviour, `hits.${name}`),
-    readHitFields: (name) => {
+    readHitFields: (name, shortFields) => {
+      const path = `hitFields.${name}`;
       const fields = toHitFields(readEntry("hitFields", record.hitFields, name));
-      return checkFieldsComplete(fields, [fields], `hitFields.${name}`);
+      // No behaviour completes a hit's fields, so a bubble, a party heal or a stacked hit among them fails
+      if (checkIsKitHitIncomplete(fields))
+        throw new InvalidOperationError(Operation.Read, path, "holds what only a behaviour completes");
+      if (!checkIsKitHitShortOf(fields, shortFields))
+        throw new InvalidOperationError(Operation.Read, path, "is not a hit short of exactly what its behaviour gives");
+      return fields;
     },
     readHits: (name, behaviour = {}) =>
       readList("hits", record.hits, name).map((hitRecord, index) =>

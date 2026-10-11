@@ -11,16 +11,15 @@ export const LYNEY_CHARACTER_ID = 10_000_084;
 // Expires. The tap-released Physical aimed shot and the Pyro shot at a partial hold, Bewildering Lights' Prop Surplus
 // Bonus, its heal and the hats it explodes, Miracle Parade's ticks, and his passives and constellations are not built
 export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecordReader): KitBehaviour => {
-  const pyrotechnicStrikeFields = readHitFields("pyrotechnicStrike");
-  // The record's fields hold every field of the Pyrotechnic Strike but its hitmark, which their partial type cannot show
-  const propArrowPyrotechnicStrike = {
+  const pyrotechnicStrikeFields = readHitFields("pyrotechnicStrike", ["hitmarkSeconds"]);
+  const propArrowPyrotechnicStrike: KitHit = {
     ...pyrotechnicStrikeFields,
     hitmarkSeconds: readSeconds("propArrowPyrotechnicStrikeHitmark"),
-  } as KitHit;
-  const miracleParadePyrotechnicStrike = {
+  };
+  const miracleParadePyrotechnicStrike: KitHit = {
     ...pyrotechnicStrikeFields,
     hitmarkSeconds: readSeconds("miracleParadePyrotechnicStrikeHitmark"),
-  } as KitHit;
+  };
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>

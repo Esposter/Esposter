@@ -79,9 +79,8 @@ interface KitRecord {
   skillCooldownSeconds: KitParameter;
   skillHolds: KitHoldRecord[]; // { action, cooldownSeconds, minimumHeldSeconds, variant? }
   skillMaximumHeldSeconds?: KitParameter;
-  // What a behaviour reads by name, each under its module's name for it: an action or its fields, an area, a frame
+  // What a behaviour reads by name, each under its module's name for it: an action, an area, a frame
   // Count, a hit or its fields, a table's parameter, and a stance's own actions where they differ from the kit's
-  actionFields?: Record<string, Partial<KitActionRecord>>;
   actions?: Record<string, KitActionRecord | KitActionRecord[]>;
   areas?: Record<string, AttackArea | AttackArea[]>;
   frames?: Record<string, number | number[]>;

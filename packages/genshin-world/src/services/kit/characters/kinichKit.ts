@@ -21,9 +21,7 @@ export const KINICH_CHARACTER_ID = 10_000_101;
 // Shots and its Nightsoul Points. The blessing is a stance that runs on those points, which wait on the Nightsoul hook, so
 // The press deals nothing until then
 export const createKinichKitBehaviour = ({ readHitFields, readSecondsList }: KitRecordReader): KitBehaviour => {
-  // The record's fields hold each laser's reach, element, gauge, internal cooldown, poise and multiplier, which their
-  // Partial type cannot show
-  const dragonBreathFields = readHitFields("dragonBreath");
+  const dragonBreathFields = readHitFields("dragonBreath", ["hitmarkSeconds"]);
   const dragonBreathIntervalFramesList = readSecondsList("dragonBreathInterval").map(
     (seconds) => seconds * KIT_FRAMES_PER_SECOND,
   );
@@ -36,7 +34,7 @@ export const createKinichKitBehaviour = ({ readHitFields, readSecondsList }: Kit
           dragonBreathIntervalFramesList,
           Math.floor(random() * dragonBreathIntervalFramesList.length),
         );
-      return { ...dragonBreathFields, hitmarkSeconds: hitmarkFrames / KIT_FRAMES_PER_SECOND } as KitHit;
+      return { ...dragonBreathFields, hitmarkSeconds: hitmarkFrames / KIT_FRAMES_PER_SECOND };
     });
   };
   return {

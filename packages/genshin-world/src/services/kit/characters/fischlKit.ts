@@ -71,7 +71,7 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
   const herPilgrimageOfBleak = readHit("herPilgrimageOfBleak");
   const thunderingRetribution = readHit("thunderingRetribution");
   const gazeOfTheDeep = readHit("gazeOfTheDeep");
-  const evernightRavenFields = readHitFields("evernightRaven");
+  const evernightRavenFields = readHitFields("evernightRaven", ["hitArea"]);
   // Each of Oz's attacks, landing its hitmark after its tick
   const ozAttack = readHit("ozAttack");
   const ozSpawnSeconds = readSeconds("ozSpawn");

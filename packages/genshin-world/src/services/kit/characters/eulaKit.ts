@@ -96,19 +96,18 @@ export const createEulaKitBehaviour = ({
   const icewhirlHitmarkSecondsList = readSecondsList("icewhirlHitmark");
   const icewhirlMultiplier = readParameter("icewhirlMultiplier");
   const shatteredLightfall = readHit("shatteredLightfall");
-  const lightfallExplosionFields = readHitFields("lightfallExplosion");
+  const lightfallExplosionFields = readHitFields("lightfallExplosion", ["hitmarkSeconds", "talentMultiplier"]);
   const lightfallStatusStartSeconds = readSeconds("lightfallStatusStart");
   const lightfallStatusEndSeconds = readSeconds("lightfallStatusEnd");
   const lightfallExplosionSeconds = readSeconds("lightfallExplosion");
   const lightfallTriggerDelaySeconds = readSeconds("lightfallTriggerDelay");
   // The explosion of the Lightfall Sword as the stacks it holds make it, its multiplier set by them and its hitmark at the
-  // Seconds. The record's fields hold the explosion's reach and poise, which their partial type cannot show
-  const createLightfallExplosion = (stacks: number, hitmarkSeconds: number) =>
-    ({
-      ...lightfallExplosionFields,
-      hitmarkSeconds,
-      talentMultiplier: explodeBase + explodePerStack * Math.min(stacks, LIGHTFALL_MAX_STACKS),
-    }) as KitHit;
+  // Seconds
+  const createLightfallExplosion = (stacks: number, hitmarkSeconds: number): KitHit => ({
+    ...lightfallExplosionFields,
+    hitmarkSeconds,
+    talentMultiplier: explodeBase + explodePerStack * Math.min(stacks, LIGHTFALL_MAX_STACKS),
+  });
   // Each Eula strike that lands while the Sword is lit gains it a stack, once every 0.1 seconds, and rebuilds its explosion
   // From the stacks it now holds, so the explosion is priced by them when it lands
   const gainLightfallStack = (kitEffectState: KitEffectState, combatant: Combatant): void => {

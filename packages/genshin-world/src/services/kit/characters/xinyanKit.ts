@@ -94,7 +94,10 @@ export const createXinyanKitBehaviour = ({
   const riffDotHits = readHits("riffDot");
   const constellationDotHits = readHits("impromptuOpeningRiffRevolutionDots");
   // Rave's DoT hit is the pulse Constellation 2 adds to Riff Revolution's DoT, struck a frame after the field's tick
-  const shieldDotHit: KitHit = { ...takeOne(constellationDotHits, riffDotHits.length), ...readHitFields("shieldDot") };
+  const shieldDotHit: KitHit = {
+    ...takeOne(constellationDotHits, riffDotHits.length),
+    ...readHitFields("shieldDot", ["talentMultiplier"]),
+  };
   const shieldSeconds = readParameter("shieldSeconds");
   // The shield's share of DEF and flat HP at each level from 1, picked by the level the shield is set at as she plays
   const shieldDefenseShares = readParameters("shieldDefenseShares");

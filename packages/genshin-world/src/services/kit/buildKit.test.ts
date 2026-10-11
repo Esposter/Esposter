@@ -1,7 +1,9 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitRecord } from "#src/models/kit/record/KitRecord";
+import type { RequiredKeysOf } from "type-fest";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
@@ -133,11 +135,29 @@ describe(buildKit, () => {
 
     expect(() =>
       buildKit(record, TALENT_MULTIPLIER_MAP, ({ readHitFields }) => {
-        readHitFields("heal");
+        readHitFields("heal", ["hitArea", "hitmarkSeconds", "poiseDamage", "talentMultiplier"]);
         return {};
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: hitFields.heal, holds what only a behaviour completes]`,
+    );
+  });
+
+  test.each<[string, RequiredKeysOf<KitHit>[]]>([
+    ["lacking a field it names none to give", []],
+    ["holding a field it names to give", ["hitmarkSeconds", "talentMultiplier"]],
+  ])("fails where a behaviour reads a hit's fields %s", (_name, shortFields) => {
+    expect.hasAssertions();
+    const { area, hitmarkFrames, poiseDamage } = HIT_RECORD;
+    const record: KitRecord = { ...RECORD, hitFields: { explosion: { area, hitmarkFrames, poiseDamage } } };
+
+    expect(() =>
+      buildKit(record, TALENT_MULTIPLIER_MAP, ({ readHitFields }) => {
+        readHitFields("explosion", shortFields);
+        return {};
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: hitFields.explosion, is not a hit short of exactly what its behaviour gives]`,
     );
   });
 });

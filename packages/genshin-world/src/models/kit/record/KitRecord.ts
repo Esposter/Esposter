@@ -23,10 +23,9 @@ const createNamedSchema = <T extends z.ZodType>(schema: T) => z.record(z.string(
 // A character's kit as values, published as the `kits` index by avatar id: each action's frames, targeting and hits,
 // The skill's and burst's cooldowns, cost, charges and holds, and the charged attack's stamina. Beside them, by the name
 // Its behaviour module reads each by, the actions, areas, frames, hits, parameters and stances the module plays outside
-// Those slots, a list where it reads one name at several places, and the fields of each hit or action it builds as it
+// Those slots, a list where it reads one name at several places, and the fields of each hit it builds as it
 // Plays. What the character does with them is its behaviour module's
 export interface KitRecord {
-  actionFields?: Record<string, Partial<KitActionRecord>>;
   actions?: Record<string, KitActionRecord | KitActionRecord[]>;
   areas?: Record<string, AttackArea | AttackArea[]>;
   burst: KitActionRecord;
@@ -54,7 +53,6 @@ export interface KitRecord {
 }
 
 export const kitRecordSchema = z.strictObject({
-  actionFields: z.record(z.string(), kitActionRecordSchema.partial()).optional(),
   actions: createNamedSchema(kitActionRecordSchema).optional(),
   areas: createNamedSchema(attackAreaSchema).optional(),
   burst: kitActionRecordSchema,

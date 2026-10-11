@@ -10,7 +10,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
 // RES below for 10 seconds
@@ -59,16 +58,10 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     enemyStatus: createShredStatus,
   });
   // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
-  const { hitArea, hitmarkSeconds, poiseDamage, ...holdLunarBloomFields } =
-    readHitFields("hymnOfEternalRestLunarBloom");
-  if (hitArea === undefined || hitmarkSeconds === undefined || poiseDamage === undefined)
-    throw new InvalidOperationError(Operation.Read, "hitFields.holdLunarBloom", "is not a hit short of its multiplier");
+  const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", ["talentMultiplier"]);
   const createHoldLunarBloomHit = (dewCount: number): KitHit => ({
     ...holdLunarBloomFields,
     enemyStatus: createShredStatus,
-    hitArea,
-    hitmarkSeconds,
-    poiseDamage,
     talentMultiplier: holdLunarBloomMultiplier * dewCount,
   });
   // The Frostgrove Sanctuary the press and the hold each plant where she stands

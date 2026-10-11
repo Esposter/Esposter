@@ -46,9 +46,7 @@ export const createShenheKitBehaviour = ({
     resistanceReduction: { [Element.Cryo]: burstResistanceReduction },
     secondsRemaining: fieldTickIntervalSeconds,
   };
-  // The record's fields hold each DoT hit's reach, element, gauge, poise and multiplier, which their partial type cannot
-  // Show
-  const burstTickFields = readHitFields("talismanSpiritTick") as KitHit;
+  const burstTickFields = readHitFields("talismanSpiritTick", ["hitmarkSeconds"]);
   const createBurstTickHit = (hitmarkSeconds: number): KitHit => ({
     ...burstTickFields,
     enemyStatus: () => burstResistanceStatus,

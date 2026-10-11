@@ -38,27 +38,22 @@ export const createDilucKitBehaviour = ({
 }: KitRecordReader): KitBehaviour => {
   // The phoenix launches as the slash lands
   const launchSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
-  const dawnPhoenixFields = readHitFields("dawnPhoenixHit");
+  const dawnPhoenixFields = readHitFields("dawnPhoenixHit", ["hitArea", "hitmarkSeconds", "talentMultiplier"]);
   const dawnTickArea = readArea("dawnTick");
   const dawnTickIntervalSeconds = readSeconds("dawnTickInterval");
   const dawnTickMultiplier = readParameter("dawnTickMultiplier");
-  // The record's fields hold each phoenix hit's poise, which their partial type cannot show
-  const dawnPhoenixTicks = Array.from(
-    { length: DAWN_TICK_COUNT },
-    (_value, index) =>
-      ({
-        ...dawnPhoenixFields,
-        hitArea: dawnTickArea,
-        hitmarkSeconds: launchSeconds + dawnTickIntervalSeconds * (index + 1),
-        talentMultiplier: dawnTickMultiplier,
-      }) as KitHit,
-  );
-  const dawnPhoenixExplosion = {
+  const dawnPhoenixTicks = Array.from({ length: DAWN_TICK_COUNT }, (_value, index): KitHit => ({
+    ...dawnPhoenixFields,
+    hitArea: dawnTickArea,
+    hitmarkSeconds: launchSeconds + dawnTickIntervalSeconds * (index + 1),
+    talentMultiplier: dawnTickMultiplier,
+  }));
+  const dawnPhoenixExplosion: KitHit = {
     ...dawnPhoenixFields,
     hitArea: readArea("dawnExplosion"),
     hitmarkSeconds: launchSeconds + DAWN_EXPLOSION_SECONDS,
     talentMultiplier: readParameter("dawnExplosionMultiplier"),
-  } as KitHit;
+  };
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {

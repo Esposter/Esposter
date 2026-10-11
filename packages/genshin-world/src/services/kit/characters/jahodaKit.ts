@@ -5,7 +5,6 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { Except } from "type-fest";
 
 import { Element } from "#src/models/Element";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -60,7 +59,7 @@ export const createJahodaKitBehaviour = ({
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
   const circle = readArea("pursuitCircle");
-  const drainHitFields = readHitFields("flaskDrain") as Except<KitHit, "hitmarkSeconds" | "talentMultiplier">;
+  const drainHitFields = readHitFields("flaskDrain", ["hitmarkSeconds", "talentMultiplier"]);
   const drainTalentMultipliers = readParameters("flaskDrainTalentMultipliers");
   const flaskFillValue = readParameter("flaskFillValue");
   // A flask that has absorbed an element fills by its full value from that element and by half from another

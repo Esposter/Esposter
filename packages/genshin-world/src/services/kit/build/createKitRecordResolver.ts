@@ -118,22 +118,12 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     poiseDamage: hitRecord.poiseDamage,
     talentMultiplier: getAdditiveScalingAttribute(hitRecord) === undefined ? toParameter(hitRecord.multiplier) : 0,
   });
-  // The fields an action holds or not
-  const toOptionalActionFields = ({ isAimed, staminaPerSecond }: Partial<KitActionRecord>): Partial<KitAction> => ({
+  const toAction = ({ animationFrames, hits, isAimed, staminaPerSecond, targeting }: KitActionRecord): KitAction => ({
+    hits: hits.map((hitRecord) => toHit(hitRecord)),
     ...(isAimed && { isAimed }),
+    seconds: toSeconds(animationFrames),
     ...(staminaPerSecond !== undefined && { staminaPerSecond: toParameter(staminaPerSecond) }),
-  });
-  const toActionFields = (actionRecord: Partial<KitActionRecord>): Partial<KitAction> => ({
-    ...toOptionalActionFields(actionRecord),
-    ...(actionRecord.hits && { hits: actionRecord.hits.map((hitRecord) => toHit(hitRecord)) }),
-    ...(actionRecord.animationFrames !== undefined && { seconds: toSeconds(actionRecord.animationFrames) }),
-    ...(actionRecord.targeting && { targetingArea: KitTargetingAreaMap[actionRecord.targeting] }),
-  });
-  const toAction = (actionRecord: KitActionRecord): KitAction => ({
-    ...toOptionalActionFields(actionRecord),
-    hits: actionRecord.hits.map((hitRecord) => toHit(hitRecord)),
-    seconds: toSeconds(actionRecord.animationFrames),
-    targetingArea: KitTargetingAreaMap[actionRecord.targeting],
+    targetingArea: KitTargetingAreaMap[targeting],
   });
   // The kit its record's slots build, each variant's check missing until its behaviour gives it
   const toKit = (record: KitRecord): Kit => ({
@@ -174,5 +164,5 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     plungeCollision: toHit(record.plungeCollision),
     skillCooldownSeconds: toParameter(record.skillCooldownSeconds),
   });
-  return { toAction, toActionFields, toHit, toHitFields, toKit, toParameter, toSeconds };
+  return { toAction, toHit, toHitFields, toKit, toParameter, toSeconds };
 };

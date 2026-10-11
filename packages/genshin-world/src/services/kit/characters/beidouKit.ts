@@ -54,8 +54,8 @@ export const createBeidouKitBehaviour = ({
   const baneOfEvilTicks = readHits("baneOfEvilTicks", { enemyStatus: () => BANE_OF_EVIL_STATUS });
   // The Targe's lightning discharge beside each hit of her strikes and charged attack, landing its delay past the hit.
   // Gcsim chains it from the enemy struck to a random other within 8 metres, which an area cannot pick, so it reaches what
-  // Its hit reaches. The record's fields hold the rest of it, which their partial type cannot show
-  const lightningDischargeFields = readHitFields("lightningDischarge") as KitHit;
+  // Its hit reaches, and the record's fields hold the rest of it
+  const lightningDischargeFields = readHitFields("lightningDischarge", ["hitArea"]);
   const chargedAttackHits = kit.chargedAttack.hits;
   const hitDischargeMap = new Map(
     [...kit.normalAttacks.flatMap(({ hits }) => hits), ...chargedAttackHits].map((hit): [KitHit, KitHit] => [

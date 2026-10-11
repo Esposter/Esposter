@@ -8,7 +8,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
-import type { Except } from "type-fest";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -90,7 +89,7 @@ export const createXingqiuKitBehaviour = ({
   const rainSwordsBurstFirstTickSeconds = readSeconds("rainSwordsBurstFirstTick");
   const rainSwordsTickIntervalSeconds = readSeconds("rainSwordsTickInterval");
   // The record holds every field of a Rain Swords tick but its hitmark, which each tick takes as the swords stand
-  const rainSwordsTick = readHitFields("rainSwordsTick") as Except<KitHit, "hitmarkSeconds">;
+  const rainSwordsTick = readHitFields("rainSwordsTick", ["hitmarkSeconds"]);
   const rainscreenHits = readHits("rainscreen");
   const evilsootherRainscreenHits = readHits("evilsootherRainscreen");
   // From two constellations, each sword takes Rainbow Upon the Azure Sky's Hydro RES
