@@ -16,17 +16,16 @@ const [characterIdKitMap, statTables, enemyTables] = await Promise.all([
   readEnemyTables(GAME_DATA_LOCAL_BASE_URL),
 ]);
 // The proof party through the scripted minute, idle with no enemies and no effects, and in combat with enemies in reach
-// And the party's effects up, on today's path alone until the kit framework's path joins it in a comparison. The
-// Framework re-runs it on the same machine after each of its phases, and the diff of the report is the before against
-// The after
+// And the party's effects up. A change to the step re-runs it on the machine that wrote the report, and the diff of the
+// Report is the change's before against its after
 describe(stepActiveKit, () => {
   test.for([
     { isInCombat: false, scale: "idle" },
     { isInCombat: true, scale: "in combat" },
   ])("a minute of the proof party, $scale", async ({ isInCombat }, { bench }) => {
-    // A run is a minute of steps, tens of milliseconds, so a few rounds hold the margin
-    await bench("today's path", () => {
+    // A run is a minute of steps, tens of milliseconds, so forty rounds hold the margin to about a percent
+    await bench("the fixed step", () => {
       replayScriptedMinute({ characterIdKitMap, enemyTables, isInCombat, statTables });
-    }).run({ ...BENCHMARK_RUN_OPTIONS, iterations: 5, warmupIterations: 1 });
+    }).run({ ...BENCHMARK_RUN_OPTIONS, iterations: 40, warmupIterations: 1 });
   });
 });

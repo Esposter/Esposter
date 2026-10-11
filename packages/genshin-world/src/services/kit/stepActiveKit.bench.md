@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-11T20:27:54.952Z
-- Commit: 880447c30d
+- Date: 2026-10-11T20:28:12.307Z
+- Commit: 31cc65e2c5
 - Node: v26.11.1
 - OS: darwin 27.0.0 (arm64)
 - CPU: Apple M1 × 8
@@ -18,12 +18,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## stepActiveKit > a minute of the proof party, idle
 
-| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------ | -------- | ------- |
-| today's path | 1.00×   | 69.6307   | ±1.37% | 77.9942  | 40      |
+| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------ | -------- | ------- |
+| the fixed step | 1.00×   | 53.2898   | ±0.94% | 57.6176  | 40      |
 
 ## stepActiveKit > a minute of the proof party, in combat
 
-| task         | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ------------ | ------- | --------- | ------ | -------- | ------- |
-| today's path | 1.00×   | 84.3495   | ±1.24% | 95.3075  | 40      |
+| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------ | -------- | ------- |
+| the fixed step | 1.00×   | 68.6880   | ±3.49% | 91.8462  | 40      |
