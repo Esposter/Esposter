@@ -9,7 +9,39 @@ describe(readQuestSteps, () => {
   const TEXT_HASH = 1000;
   const checkIsText = (hash: number) => hash === TEXT_HASH;
 
-  test("reads the shown steps in their order, each with its first condition that asks something", () => {
+  test("keeps every condition of a step that asks something, in the order the game lists them", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          D: TEXT_HASH,
+          E: [
+            { F: "QUEST_CONTENT_OBTAIN_ITEM", G: [0, 3] },
+            { F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] },
+          ],
+        },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      steps: [
+        {
+          id: "100",
+          objectives: [
+            { count: 3, kind: QuestObjectiveKind.Collect, targetId: "0" },
+            { count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" },
+          ],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
+
+  test("reads the shown steps in their order, each with the conditions that ask something", () => {
     expect.hasAssertions();
 
     const questBinary = {
