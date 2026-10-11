@@ -405,7 +405,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-confusing-void-expression": COSTLY_TYPE_AWARE_SEVERITY,
-    "typescript/no-deprecated": COSTLY_TYPE_AWARE_SEVERITY,
+    "typescript/no-deprecated": "error",
     "typescript/no-dynamic-delete": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
