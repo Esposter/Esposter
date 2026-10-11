@@ -3,6 +3,7 @@ import type { Component } from "vue";
 
 import "@fontsource/signika/600.css";
 import GameScreen from "#src/components/GameScreen/Index.vue";
+import { InteractionState } from "#src/models/InteractionState";
 import { FIXTURE_VARIANT_SEPARATOR } from "#src/services/constants";
 import { assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -58,9 +59,19 @@ describe("genshin-interface components", () => {
   test.for(cases)("$imageName", async ({ component, imageName, props, slot }) => {
     expect.hasAssertions();
 
+    // A state the fixture forces is the stage's, which every button drawn on it takes
+    const { interactionState, ...componentProps } = props;
     const { container } = await render(
       defineComponent({
-        render: () => h(GameScreen, { style: STAGE_STYLE }, () => h(component, props, slot ? () => slot : undefined)),
+        render: () =>
+          h(
+            GameScreen,
+            {
+              interactionState: Object.values(InteractionState).find((state) => state === interactionState),
+              style: STAGE_STYLE,
+            },
+            () => h(component, componentProps, slot ? () => slot : undefined),
+          ),
       }),
     );
     await window.document.fonts.ready;

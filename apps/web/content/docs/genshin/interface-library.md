@@ -1,11 +1,11 @@
 ---
 title: Interface library
-description: genshin-interface, the game's 2D interface as presentational Vue components. Every screen is drawn inside its GameScreen root, which carries the game's unit, its canvas's unit and inset, face and pointer. Each piece is a folder holding its component, its fixture and the images a browser suite holds it to. Each is measured from the English client's recordings, with an overlay compared over the recording's own frame.
+description: genshin-interface, the game's 2D interface as presentational Vue components. Every screen is drawn inside its GameScreen root, which carries the game's unit, its canvas's unit and inset, face and pointer. Every button is a GameButton, drawn in its game template's look for each state. Each piece is a folder holding its component, its fixture and the images a browser suite holds it to. Each is measured from the English client's recordings, with an overlay compared over the recording's own frame.
 ---
 
 # Interface library
 
-`genshin-interface` holds the pieces the game's screens are made of, as presentational Vue components with no three.js in them: the root a screen is drawn in, the round buttons and their glyphs, the server bar, the progress bar, the prompt band, the notice card, the wait mark and the ornamented divider. `genshin-world` builds its screens from them, and a page that shows only interface loads this package alone.
+`genshin-interface` holds the pieces the game's screens are made of, as presentational Vue components with no three.js in them: the root a screen is drawn in, the button every state of the game's is drawn by, the round buttons and their glyphs, the server bar, the progress bar, the prompt band, the notice card, the wait mark and the ornamented divider. `genshin-world` builds its screens from them, and a page that shows only interface loads this package alone.
 
 ## Where a piece goes
 
@@ -27,18 +27,44 @@ flowchart TD
 - **Every piece has a fixture and images.** A component is a folder: `Index.vue`, the `Index.fixture.ts` whose props and variants it is shot in, and `Index.<platform>.png` and `Index-<variant>.<platform>.png`, each shot to the component's own box at the game's 1080 high scale. `pnpm -C packages/genshin-interface test:visual` holds each to its image and fails for a component without a fixture, so no piece reaches a screen unshot; `GameScreen` and `GameRect`, which draw nothing of their own, are the exceptions.
 - **Sizes and colours are the English client's.** Each is measured from its 1080 high recording of the login screen, and the whole interface is compared over the recording's own frame on the [parity](/docs/genshin/parity) page, so a piece's place is exact to the unit. Its text is set in Signika, which is narrower than the game's face at one cap height, so a line keeps the game's cap height and is letter-spaced to its width.
 
+## Interaction states
+
+Every button the game draws is a `GameButton`, whose `kind` is the game's button template it copies, so each state's look lives once, in the button, and a screen only places it. Its content takes the colour the state sets, and a piece no state reaches stays the screen's own.
+
+```mermaid
+flowchart TD
+  B[A GameButton] --> D{Disabled?}
+  D -->|yes| X[Its kind's disabled look]
+  D -->|no| H{"Under the pointer, focused from the keyboard, or its screen's interactionState is Hover?"}
+  H -->|yes| L[Hover: entered over INTERACTION_HOVER_MS]
+  H -->|no| R[Rest: entered over INTERACTION_REST_MS]
+```
+
+- **A state is entered over its own crossfade.** The game's button controllers (block 07356235, read from its animators' transitions into each state) fade into a hover over 0.05 seconds and back to rest over 0.1, which `INTERACTION_HOVER_MS` and `INTERACTION_REST_MS` hold: each is the duration of the state being entered, so a hover fades in and out at the game's two speeds.
+- **The colours are the game's own.** `GAME_CREAM`, `GAME_INK` and `GAME_GOLD` are its button clips' colours, the cream a lit icon turns, the ink a cream pill's words are and the gold the side bar's icons rest in.
+- **Keyboard focus is drawn as a hover.** The game has no keyboard focus of its own to copy, so `:focus-visible` takes the hover's look. A `Plain` button, which the game draws the same in every state, is ringed in white instead, so focus still shows.
+- **A screen forces a state for its fixture.** `GameScreen`'s `interactionState` draws every button on it, and on any screen drawn inside it, in that state in place of the pointer's, so a fixture's `hover` variant is shot without a pointer. The visual suite of this package hands a component fixture's `interactionState` to the stage's `GameScreen`; a screen in `genshin-world` whose root is a `GameScreen` takes it from its fixture's props as its own.
+- **A Disc is the Paimon menu's side bar.** At rest its icon is gold. Hovered, a translucent navy disc 65 units across lights behind it and the icon turns cream and grows by 1.12, its name shown in a dark slate box past the side bar's edge; all measured off the English PC client's settings gear at 1080 high, the disc's colour fitted over two recordings' side bars.
+- **The game draws some buttons the same in every state.** The profile card's info icon is one: its disc reads the same from the pointer's arrival to the click that opens its dialog, so it is a `Plain` button. Back is drawn the same way, provisionally, since no recording shows it under the pointer.
+- **A button for a screen not built yet is disabled.** The game has no such button, so a Disc is drawn faded and answers nothing.
+
 ## Key files
 
-| File                                                              | Role                                                                   |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| `packages/genshin-interface/src/components/GameScreen/Index.vue`  | The root: the units, the canvas's inset, the face and the pointer      |
-| `packages/genshin-interface/src/services/constants.ts`            | The face, the units, the canvas's inset, the pointer and the separator |
-| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`    | A RectTransform as the CSS that places it                              |
-| `packages/genshin-interface/src/components/GameRect/Index.vue`    | A piece placed by its rect inside its game parent's                    |
-| `packages/genshin-interface/src/services/InterfaceIconPathMap.ts` | Each round button's traced glyph                                       |
-| `packages/genshin-interface/src/components/components.visual.ts`  | The suite holding every component to its images                        |
+| File                                                              | Role                                                                                                     |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/src/components/GameScreen/Index.vue`  | The root: the units, the canvas's inset, the face and the pointer                                        |
+| `packages/genshin-interface/src/services/constants.ts`            | The face, the units, the canvas's inset, the pointer, the separator, and the states' colours and timings |
+| `packages/genshin-interface/src/services/toCanvasRectStyle.ts`    | A RectTransform as the CSS that places it                                                                |
+| `packages/genshin-interface/src/components/GameRect/Index.vue`    | A piece placed by its rect inside its game parent's                                                      |
+| `packages/genshin-interface/src/components/GameButton/Index.vue`  | Every button, in its game template's look for each state                                                 |
+| `packages/genshin-interface/src/services/InterfaceIconPathMap.ts` | Each round button's traced glyph                                                                         |
+| `packages/genshin-interface/src/components/components.visual.ts`  | The suite holding every component to its images                                                          |
 
 ## Sources
 
 - [Tutorial System Show Cursor](https://genshin-impact.fandom.com/wiki/File:Tutorial_System_Show_Cursor.png), Genshin Impact Wiki: the pointer.
 - [GENSHIN IMPACT | CELESTIA DOOR | LOADING SCREEN](https://www.youtube.com/watch?v=rBnfA4pXw6U): the 1080 high, 60 frame recording of the English client's login screen, which every size and colour here is measured from.
+- Block 07356235, the English PC client's interface block: its button controllers' transitions into each state, and its button clips' colours, read with AnimeStudio and fitted, nothing of it kept.
+- [The Settings screen from the side bar](https://www.youtube.com/watch?v=5EmJX_RyuY8) (`captures/yt-5EmJX_RyuY8-menu-settings.mp4`), the English PC client in 2024 at 1080 high and 60 frames a second: the side bar's settings gear at rest at 9.8 seconds and hovered at 10.5.
+- [Quitting from the Paimon menu](https://www.youtube.com/watch?v=kIDee7nyD0w) (`captures/yt-kIDee7nyD0w-menu-quit-prompt.mp4`), the English PC client in 2024 at 1080 high: the side bar hovered over another green, against which the disc's colour is fitted.
+- `captures/world-level-dialog-2024.mkv`, the English PC client at 1080 high and 60 frames a second: the info icon from the pointer's arrival to its click, unchanged.

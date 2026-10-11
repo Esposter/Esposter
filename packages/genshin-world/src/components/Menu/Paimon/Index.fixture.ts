@@ -1,3 +1,4 @@
+import { InteractionState } from "genshin-interface";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 
 // The menu with every screen built, so each entry is drawn as the game draws it, the world's own unbuilt ones disabled
@@ -8,4 +9,8 @@ export const props = {
   checkIsBuilt: () => true,
   gameText: ENGLISH_GAME_TEXT,
   worldLevel: 0,
+};
+export const variants = {
+  disabled: { checkIsBuilt: () => false },
+  hover: { interactionState: InteractionState.Hover },
 };

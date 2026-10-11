@@ -30,6 +30,11 @@ export const GAME_CANVAS_RECT: CanvasRect = {
 // The white the game's opening is drawn on, a step under full white: the PC client's screens read 253 on the user's own
 // Recording and on a 2023 one alike, where a phone's and an older build's read 255
 export const GAME_WHITE = "#fdfdfd";
+// The game's own cream, ink and gold, read off its button clips' colours (block 07356235): the cream its pills and
+// Lit icons are drawn in, the ink a cream pill's words are, and the gold the side bar's icons rest in
+export const GAME_CREAM = "#ece5d8";
+export const GAME_INK = "#3b4354";
+export const GAME_GOLD = "#d3bc8e";
 // The game's pointer, a four pointed star with its point at the upper left: a white and a cream facet either side of
 // Its diagonal, and a gold star within it lit from its inner corner, traced from the wiki's render of its tutorial
 // On a 64 unit square with its point at the origin. It is 25 pixels across on a 1080 high screen, where the game
@@ -73,3 +78,7 @@ export const CONSTELLATION_NODE_PLACES: readonly { left: number; top: number }[]
   { left: 69.25, top: 560.75 },
   { left: -2.75, top: 671.75 },
 ];
+// How long a button takes to reach each state, the crossfade its animator's transitions into the state run over in the
+// Game's own button controllers (block 07356235): a hover in 0.05 seconds, back to rest in 0.1 and a press at once
+export const INTERACTION_HOVER_MS = 50;
+export const INTERACTION_REST_MS = 100;

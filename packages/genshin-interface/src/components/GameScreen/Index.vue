@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { InteractionState } from "#src/models/InteractionState";
+
 import {
   GAME_CANVAS_INSET,
   GAME_CANVAS_UNIT,
@@ -7,6 +9,14 @@ import {
   GAME_UNIT,
   GAME_WHITE,
 } from "#src/services/constants";
+
+interface Props {
+  // The state every button on the screen is drawn in in place of the pointer's, which a fixture sets to shoot a hover,
+  // Screens drawn inside it included
+  interactionState?: InteractionState;
+}
+
+const { interactionState } = defineProps<Props>();
 </script>
 
 <template>
@@ -14,7 +24,7 @@ import {
        Game's 1920 by 1080 screen, `--canvas-unit` a unit of its interface's 1600 by 900 canvas and `--canvas-inset` how
        Far the canvas stands in from each side and `--white` the white its opening is drawn on, in the game's face and
        Pointer. Each resolves where a child uses it, against this container -->
-  <div class="game-screen"><slot /></div>
+  <div class="game-screen" :data-interaction-state="interactionState"><slot /></div>
 </template>
 
 <style scoped>

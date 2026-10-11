@@ -19,7 +19,7 @@ import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -101,33 +101,36 @@ onBeforeUnmount(() => {
   >
     <div class="menu" :inert="isWorldLevelDialogOpen || isClosing">
       <div class="side-bar" />
-      <button
+      <GameButton
         ref="backButton"
         class="back"
         :aria-label="gameText[GameTextKey.Back]"
-        type="button"
+        :kind="GameButtonKind.Plain"
         @click="closeMenu()"
       />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
-      <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
-        <button
-          class="side-entry"
-          :aria-label="gameText[ScreenKindGameTextKeyMap[screenKind]]"
-          :disabled="!checkIsBuilt(screenKind)"
-          :style="getMenuGlyphStyle(MenuFrameGlyphMap[icon])"
-          type="button"
-          @click="emit('open', screenKind)"
-        />
-        <MenuGlyph :class="{ unbuilt: !checkIsBuilt(screenKind) }" :glyph="MenuFrameGlyphMap[icon]" />
-      </template>
-      <button
+      <!-- Each side bar button is its icon's box, the icon drawn from the box's corner -->
+      <GameButton
+        v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR"
+        :key="screenKind"
         class="side-entry"
-        :aria-label="gameText[GameTextKey.QuitGame]"
+        :disabled="!checkIsBuilt(screenKind)"
+        :kind="GameButtonKind.Disc"
+        :style="getMenuGlyphStyle(MenuFrameGlyphMap[icon])"
+        :tip="gameText[ScreenKindGameTextKeyMap[screenKind]]"
+        @click="emit('open', screenKind)"
+      >
+        <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }" />
+      </GameButton>
+      <GameButton
+        class="side-entry"
+        :kind="GameButtonKind.Disc"
         :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
-        type="button"
+        :tip="gameText[GameTextKey.QuitGame]"
         @click="isExitPrompted = true"
-      />
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
+      >
+        <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[MenuFrameIcon.Quit], x: 0, y: 0 }" />
+      </GameButton>
       <!-- The panel and everything on it, one layer so it is revealed on its own, after the side bar -->
       <div class="panel-layer">
         <div class="panel" />
@@ -146,12 +149,12 @@ onBeforeUnmount(() => {
         <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
         <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
         <p class="world-level value">{{ worldLevel }}</p>
-        <button
+        <GameButton
           ref="worldLevelInfoButton"
           class="info"
           :aria-label="gameText[GameTextKey.WorldLevel]"
+          :kind="GameButtonKind.Plain"
           :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
-          type="button"
           @click="isWorldLevelDialogOpen = true"
         />
         <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
@@ -255,17 +258,15 @@ onBeforeUnmount(() => {
   background: linear-gradient(#4a5265, #4c5869 40%, #48545c 62%, #445451 88%);
 }
 
+/* Provisional: no recording shows Back hovered or pressed, so it is drawn with no state of its own */
 .back {
   position: absolute;
   top: calc(var(--unit) * 18.25);
   left: calc(var(--unit) * 18.25);
   width: calc(var(--unit) * 58);
   height: calc(var(--unit) * 58);
-  padding: 0;
-  border: none;
   border-radius: 50%;
   background: #999a9b;
-  cursor: inherit;
 }
 
 .back::after {
@@ -276,24 +277,10 @@ onBeforeUnmount(() => {
   background: #ece5d7;
 }
 
+/* Above the panel, which a lit button's name reaches over */
 .side-entry {
   position: absolute;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: inherit;
-}
-
-.side-entry:focus-visible,
-.side-entry:hover:enabled,
-.back:focus-visible,
-.back:hover {
-  outline: none;
-  background: rgb(236 229 215 / 0.2);
-}
-
-.unbuilt {
-  opacity: 0.4;
+  z-index: 1;
 }
 
 .panel {
@@ -429,19 +416,11 @@ onBeforeUnmount(() => {
   translate: -100% 0;
 }
 
+/* The game draws the info icon the same hovered and pressed: its disc reads #eae4d6 throughout, from the pointer's
+   Arrival to the click that opens the dialog (`world-level-dialog-2024.mkv`, 0.9 to 3.0 seconds at 60 frames) */
 .info {
   position: absolute;
-  padding: 0;
-  border: none;
   border-radius: 50%;
-  background: none;
-  cursor: inherit;
-}
-
-.info:focus-visible,
-.info:hover {
-  outline: none;
-  background: rgb(236 229 215 / 0.2);
 }
 
 .info-glyph {
