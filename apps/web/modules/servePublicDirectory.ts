@@ -1,7 +1,6 @@
 // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment Nuxt turns Vite's `publicDir` off and never mounts
 // The dev handler that keeps Vite's transform off a URL outside its base, so a script in `public/` comes back as a
 // Module exporting its own URL and a classic head script throws "Cannot use import statement outside a module"
-import { contentType } from "@esposter/shared";
 import { createReadStream, statSync } from "node:fs";
 import { extname, join, resolve, sep } from "node:path";
 import { defineNuxtModule } from "nuxt/kit";
@@ -11,8 +10,11 @@ import { defineNuxtModule } from "nuxt/kit";
 // Still gets the file
 export default defineNuxtModule({
   meta: { name: "serve-public-directory" },
-  setup: (_options, nuxt) => {
+  setup: async (_options, nuxt) => {
     if (!nuxt.options.dev) return;
+    // Imported only once the server is a dev one: the install's `nuxt prepare` loads this module before any workspace
+    // Package is built, and `@esposter/shared` resolves to its build. `pnpm dev` builds the packages before it starts
+    const { contentType } = await import("@esposter/shared");
     // Nuxt resolves its directories with forward slashes, which `join` would not match on Windows
     const publicDirectory = resolve(nuxt.options.dir.public);
     nuxt.hook("vite:serverCreated", (viteServer, { isClient }) => {
