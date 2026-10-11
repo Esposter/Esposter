@@ -1,13 +1,12 @@
 ---
 title: Compute queue: Capitals
-description: The witness runs that lay out the capitals as the game draws them, owed for Nod-Krai and Fontaine.
+description: The witness runs that lay out the capitals as the game draws them, owed for Fontaine.
 ---
 
 # Capitals
 
 ## Queue
 
-- [ ] `[cpu]` {nod-krai-capital} needs game-install, game-exports — **Nod-Krai: the capital laid out as the witness draws it.** `pnpm -C scripts genshin:assets extract nod-krai` with the game closed, then `pnpm -C scripts genshin:assets witness nod-krai`. Reads `~/Esposter/genshin-parity/extracted/nod-krai/`. Writes `witness.json` and its `assets/` beside it. Measure: `pnpm -C scripts genshin:assets tree nod-krai` prints `architecture placed within 600 metres of the capital` above 0 and `architecture lost fathers within 600 metres of the capital: 0`. Unplaced spawns are their own line and never fail it.
 - [ ] `[cpu]` {fontaine-capital} needs game-install, game-exports — **Fontaine: the capital laid out as the witness draws it.** `pnpm -C scripts genshin:assets extract fontaine` with the game closed, then `pnpm -C scripts genshin:assets witness fontaine`. Reads `~/Esposter/genshin-parity/extracted/fontaine/`. Writes `witness.json` and its `assets/` beside it. Measure: `pnpm -C scripts genshin:assets tree fontaine` prints `architecture placed within 600 metres of the capital` above 0 and `architecture lost fathers within 600 metres of the capital: 0`. Unplaced spawns are their own line and never fail it.
 
 ## Waiting
