@@ -15,9 +15,9 @@ export const readWholeScreenImages = async (articleTitle: string): Promise<Whole
   const pageMap: WikiImagePageMap = {};
   let continueParameters: Record<string, string> | undefined = {};
   while (continueParameters) {
-    const query = new URLSearchParams(continueParameters).toString();
+    const query: string = new URLSearchParams(continueParameters).toString();
     // oxlint-disable-next-line no-await-in-loop -- each batch is asked for by the continuation the one before it gave
-    const response = await readWikiJson<WikiImagesResponse>(query ? `${url}&${query}` : url);
+    const response: WikiImagesResponse = await readWikiJson<WikiImagesResponse>(query ? `${url}&${query}` : url);
     for (const [id, page] of Object.entries(response.query?.pages ?? {})) pageMap[id] = { ...pageMap[id], ...page };
     continueParameters = response.continue;
   }
