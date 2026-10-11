@@ -396,6 +396,7 @@ flowchart TD
    - The entry fell from 2,153,111 bytes to 1,386,245, 36,245 over the ceiling: the modules took about 767 KB with them, a little less than the ceiling assumed, and the loader map came in at about 9 KB.
    - What holds the rest up is none of the kits': the hand-traced glyph path maps (about 312 KB over sixteen files, `ElementMarkPathMap` alone 98,658 bytes), the components (about 345 KB) and the framework (about 61 KB). The ceiling stands.
 9. **The guard and the bench's entry for today's path deleted,** once nothing moves anymore, with the bench re-run on the same machine for the before against after. The zero test turns on.
+   - The zero test is on: the workspace suite holds genshin-world at no clone, and the ledger's two rows are swept. The split test is on: `kitModules.test.ts` reads each module's source and fails on one that divides by 60 or by `KIT_FRAMES_PER_SECOND`, names `proudSkillGroupId` or calls `getTalentMultiplier`.
 
 **Per kit, after the tree has moved.** What no whole-tree commit can do is a sweep: classifying each overlay's `Unclassified` entries from its module's own comments, and rendering each page's Provisional and Sources sections. The kit-records ledger is opened for it, in the `sweeps` skill's shape, only if such work remains.
 
