@@ -1,6 +1,6 @@
 ---
 title: Achievements
-description: Proposal — the achievements beyond the quest triggers already built: exploring's triggers as their pages land, and the server-fired ones written one by one from their descriptions. The table, the quest triggers and the screen are built, as the achievements page describes.
+description: Proposal — the achievements beyond the built quest triggers: exploring's triggers as their pages land, the server-fired ones written one by one from their descriptions, and the grant of a finished category's namecard.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/achievement/**"]
 waiting: "every remaining trigger waits on another unit or data: the waypoint and area triggers on the statues of the seven's scene points and areas for every region (the region data holds Windrise only), the chest triggers on the chests unit calling openChest, the offering levels on the offering systems unit, and the server-fired ones on their pages"
@@ -8,13 +8,13 @@ waiting: "every remaining trigger waits on another unit or data: the waypoint an
 
 # Achievements
 
-The table, the quest triggers and the Achievements screen are built, and the [achievements](/docs/genshin/achievements) page describes them. What is left is the triggers the other pages record, and the grant of a finished category's namecard. Each trigger type is wired once to the record it reads, so an achievement waits on the page that records its doing and moves once that page does.
+The [achievements](/docs/genshin/achievements) page holds the table, the quest triggers, the Achievements screen and the namecard a finished category pays. What is left is the triggers the other pages record, and the grant of that namecard to the profile. Each trigger type is wired once to the record it reads, so an achievement waits on the page that records its doing and moves once that page does.
 
 ## Decisions
 
 - **A watcher per trigger type, added as its page lands.** Exploring's triggers (chests, waypoints, areas, statues and offerings, materials, fish caught) join `AchievementTriggerEventKindMap` one trigger type at a time, each wired to the record its page keeps. A trigger type not in the map is not watched, so its achievements stay at zero until it is.
 - **Server-fired triggers are written one by one.** Hundreds are triggered by a scene group's notice or a combat config, which run on the game's servers and are never in the client. Each is written from its own description, as a check over the world's doings, when the page building its subject lands: a puzzle's with the puzzle, a combat feat's with the kits.
-- **A namecard is held by the finished category, never stored.** A category with an end pays the namecard item its reward names when every one of its achievements is finished, which `checkIsAchievementCategoryComplete` already tests, and the open-ended categories, whose `namecardItemId` is zero, pay none. The namecard is read from the progress each time, as [companionship](/docs/proposals/genshin/companionship) reads a Friendship namecard from the level, so nothing waits on a namecard list kept in the save; the profile's list is the two read together.
+- **The namecard is granted from the finished category, never stored.** The namecard is read from the progress each time, so the grant adds to the profile's held namecards and nothing waits on a namecard list kept in the save.
 - **Exploring's triggers wait on their doings' callers.** Only the pickups have a caller in the world today, and no achievement counts Mondstadt's pickups, so each exploring trigger type joins the map when its page's rule (opening a chest, unlocking a waypoint, an offering's level) is called from the world.
 - **Settled for the triggers still to come (2026-10-09, from the table).** A quest trigger names a sub-quest's id, the `subId` of the quest table. A parent-quest trigger names a main quest's id, which finishes once its last sub-quest does. An OR trigger counts each named quest once, so an OR with a count of five needs five of its list.
 
@@ -22,8 +22,7 @@ The table, the quest triggers and the Achievements screen are built, and the [ac
 
 1. **Exploring's triggers**, each as its page's rule gains a caller in the world.
 2. **Each server-fired achievement**, with the page that builds its subject.
-
-The namecard a finished category pays is built: `computeAchievementNamecardItemIds` lists it from the progress, and the [achievements](/docs/genshin/achievements) page describes it. Its grant to the profile waits on the companionship page's namecard list.
+3. **The namecard's grant**, from `computeAchievementNamecardItemIds` into the profile's held namecards.
 
 ## Data and measures
 

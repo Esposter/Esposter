@@ -62,7 +62,7 @@ packages/
 
 - **Read from the game's tables:** a dish's use from its item row in `MaterialExcelConfigData`, and each recipe's `foodType` from `CookRecipeExcelConfigData`.
 - **Read from the wiki:** the cooking talents, settled under Decisions.
-- **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then. Processing is built with its units one after another at the table's seconds each, and a recording owed on the [roadmap](/docs/genshin/roadmap) confirms that rule rather than settling an unbuilt one.
+- **Measured:** the indicator's speed and the zone layout off a recording of the cooking screen, provisional until then.
 - **Not yet read:** the source that teaches most processings, which the table does not name, so they stay closed.
 
 ## Key files

@@ -8,7 +8,7 @@ waiting: "the wildlife's strike, a shown tip and the scene group export each bel
 
 # Archive
 
-The Archive's seven sections, their entries read from the game's codex tables, the bag's opening of Equipment and Materials, the artifact sets' rule, and the unlock after the quest it opens after are built, as the [Archive](/docs/genshin/archive) page sets out. What remains is what the other sections open by doings the world does not have yet.
+The [Archive](/docs/genshin/archive) page holds the seven sections, their entries read from the game's codex tables, the bag's opening, the artifact sets' rule and the unlock after its quest. What remains is what the other sections open by doings the world does not have yet.
 
 ## Decisions
 
@@ -38,12 +38,12 @@ flowchart LR
 
 Each of the three waits on the blocker in the frontmatter, so none is buildable yet.
 
-Its caller for the artifact sets is wherever the player's artifacts change, which the first artifact drop brings; the rule itself is built, as the [Archive](/docs/genshin/archive) page sets out.
+The artifact sets' caller is wherever the player's artifacts change, which the first artifact drop brings.
 
 ## Data and measures
 
 - **Each viewpoint's place:** from the scene points where it is one, or the spawned places' fit where it is not.
-- **Books placed in the world:** the reader and the unlock are built, but no world drop is a volume's material yet, so a volume is picked up only once the world places the books (the pick up is `pickUpWorldDrop`'s branch in the as-built page).
+- **Books placed in the world:** no world drop is a volume's material yet, so a volume is picked up only once the world places the books.
 
 ## Key files
 
