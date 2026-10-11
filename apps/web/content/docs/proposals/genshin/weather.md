@@ -2,7 +2,7 @@
 title: Weather
 description: Proposal — Genshin's weather, still to come: each weather's sky colours read from the game's environment scripts, an area's weather turning on the game's own schedule rather than the built stand-in, and every provisional look fitted to recordings. The weather states, their blend, particles, splashes, lightning, sand haze, wetness, each area's weathers in the catalogue, the turn through them and the cities that never rain are built, as the weather page describes.
 model: claude-opus-5-5
-waiting: "each weather area's outline, which only the client's scene holds (the user's)"
+waiting: "each weather area's outline, which only the client's scene holds, read on the PC from the install now that the user allows reading the scene's scripts (as the scene-groups unit does)"
 touches:
   [
     "packages/genshin-world/src/services/world/WeatherKindTransitionWeightsMap.ts",
