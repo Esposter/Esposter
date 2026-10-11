@@ -15,7 +15,6 @@ A screen's reference clips are replaced by the interface export once the screen'
 
 The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity)): approvals only an eye gives, and the agents' unsure values, each on the page that holds its source. Every other call is made and built.
 
-- [ ] **Are the prod saves backfilled with the Frostbearing Tree's slice?** — [Offering systems](/docs/genshin/offering-systems): every `genshin-assets` `{userId}/save.json` needs `offerings.frostbearingTree` `{ heldCount: 0, level: 0 }`, a prod write left to the user; until then each is refused.
 - [ ] **Does the Paimon menu's Back look the same hovered and pressed?** — [Paimon menu](/docs/genshin/paimon-menu): no recording shows it under the pointer, so it is drawn with no state of its own, as the info icon is.
 - [ ] **Are the Settings screen's provisional looks the game's?** — [Paimon menu](/docs/genshin/paimon-menu): the header veil, tab light, value star, scroll alphas and Audio widgets are solved from two frames; Anisotropic Filtering's 8x is a number, not a text id.
 - [ ] **Does a Mualani plunge land as its action starts?** — [Mualani](/docs/genshin/kits/mualani): provisional, hitting at 1, 3 and 5 metres with no poise.
