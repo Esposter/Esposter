@@ -10,6 +10,7 @@ import { createXingqiuKit, XINGQIU_CHARACTER_ID } from "#src/services/kit/charac
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -53,13 +54,13 @@ describe(createXingqiuKit, () => {
     const skillContext = createKitTestContext(combatant);
     XINGQIU_KIT.elementalSkill.onStart?.(skillContext);
     // Fatal Rainscreen's hits land at 12 and 31 frames, ahead of the Rain Swords' first Hydro at 44
-    const rainscreenStrikes = stepKitEffects(0.6, skillContext);
+    const rainscreenStrikes = stepKitTestEffects(0.6, skillContext);
     const burstContext = createKitTestContext(combatant);
     XINGQIU_KIT.elementalBurst.onStart?.(burstContext);
     coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstContext);
     // The Rain Swords' first Hydro lands at 19 frames, and the first wave's two swords at 20
     stepKitEffects(0.32, burstContext);
-    const swordStrikes = stepKitEffects(0.02, burstContext);
+    const swordStrikes = stepKitTestEffects(0.02, burstContext);
     const multipliers = [
       ...XINGQIU_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       ...XINGQIU_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
@@ -84,7 +85,7 @@ describe(createXingqiuKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const movedBody = { x: 3, z: 4 };
     XINGQIU_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
-    const strikes = stepKitEffects(
+    const strikes = stepKitTestEffects(
       15,
       createKitTestContext(combatant, { body: { facing: 0, height: 0, position: movedBody }, kitEffectState }),
     );
@@ -123,10 +124,10 @@ describe(createXingqiuKit, () => {
       XINGQIU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
       const waves = Array.from({ length: swordCounts.length }, () => {
         coordinateKitSummons(normalAttack, context);
-        const strikes = stepKitEffects(0.5, context);
+        const strikes = stepKitTestEffects(0.5, context);
         // A normal attack within the second of the last wave sets none off
         coordinateKitSummons(normalAttack, context);
-        return [...strikes, ...stepKitEffects(0.5, context)].filter(({ hit }) => hit.talentMultiplier > 0);
+        return [...strikes, ...stepKitTestEffects(0.5, context)].filter(({ hit }) => hit.talentMultiplier > 0);
       });
       // Raincutter ends, so a normal attack after it sets no wave off
       stepKitEffects(20, context);
@@ -149,7 +150,7 @@ describe(createXingqiuKit, () => {
       const context = createKitTestContext(createXingqiuCombatant(0, constellationCount));
       XINGQIU_KIT.elementalBurst.onStart?.(context);
       XINGQIU_KIT.elementalSkill.onStart?.(context);
-      const strikes = stepKitEffects(0.6, context);
+      const strikes = stepKitTestEffects(0.6, context);
 
       expect(
         strikes.map(({ hit }) => hit.talentMultiplier).filter((talentMultiplier) => talentMultiplier > 0),

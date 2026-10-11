@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -158,10 +159,13 @@ describe("diluc kit", () => {
     const FRAME_SECONDS = 1 / 60;
     const explosionHits: number[] = [];
     const tickHits: number[] = [];
-    for (let frame = 0; frame < 230; frame++)
-      for (const { hit } of stepKitSummon(phoenix, FRAME_SECONDS, { x: 0, z: 0 }))
+    for (let frame = 0; frame < 230; frame++) {
+      const strikes: KitStrike[] = [];
+      stepKitSummon(phoenix, FRAME_SECONDS, { x: 0, z: 0 }, strikes);
+      for (const { hit } of strikes)
         if (hit.hitArea.radius === 9.4) explosionHits.push(frame);
         else tickHits.push(frame);
+    }
     // Eight ticks, from the 12th frame after the slash's 100th, and the explosion at 202 frames
     expect(tickHits).toHaveLength(8);
     expect(explosionHits).toHaveLength(1);

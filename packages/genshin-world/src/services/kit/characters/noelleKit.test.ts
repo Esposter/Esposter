@@ -8,7 +8,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createNoelleKit, NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -136,7 +136,7 @@ describe("noelle kit", () => {
       );
       NOELLE_KIT.elementalSkill.onStart?.(context);
       // Breastplate lasts 12 seconds, so 13 seconds run it out
-      return stepKitEffects(13, { ...context, body: { facing: 0, height: 0, position: { x: -4, z: 7 } } });
+      return stepKitTestEffects(13, { ...context, body: { facing: 0, height: 0, position: { x: -4, z: 7 } } });
     };
 
     expect(explodeAfterShield(3)).toStrictEqual([]);
@@ -152,7 +152,7 @@ describe("noelle kit", () => {
     NOELLE_KIT.elementalSkill.onStart?.(context);
     NOELLE_KIT.elementalSkill.onStart?.(context);
 
-    expect(stepKitEffects(0.1, context)).toHaveLength(1);
+    expect(stepKitTestEffects(0.1, context)).toHaveLength(1);
     expect(context.kitEffectState.effects).toHaveLength(1);
   });
 });

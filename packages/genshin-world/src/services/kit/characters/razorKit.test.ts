@@ -8,6 +8,7 @@ import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
 import { createRazorKit, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -99,7 +100,7 @@ describe(createRazorKit, () => {
     RAZOR_KIT.elementalBurst.onStart?.(context);
     stepKitEffects(33 / 60, context);
     firstStrike.onStart?.(context);
-    const soulCompanionStrikes = stepKitEffects(1, context);
+    const soulCompanionStrikes = stepKitTestEffects(1, context);
 
     expect(partyMember.energy).toBe(10);
     expect(soulCompanionStrikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
@@ -142,7 +143,7 @@ describe(createRazorKit, () => {
       const firstStrike = takeOne(RAZOR_KIT.normalAttacks);
       const strikes = [1, 10, 1].flatMap((stepSeconds) => {
         firstStrike.onStart?.(context);
-        return stepKitEffects(stepSeconds, context);
+        return stepKitTestEffects(stepSeconds, context);
       });
 
       expect(strikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual(lightningStrikes);

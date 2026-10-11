@@ -113,9 +113,9 @@ describe(createNilouKit, () => {
     const stance = findStance(castAction(NILOU_KIT.elementalSkill));
 
     expect({
-      normalAttacks: stance?.kit.normalAttacks.length,
+      normalAttacks: stance?.combatant.kit.normalAttacks.length,
       secondsRemaining: stance?.secondsRemaining,
-      skillHitmarkFrames: Math.round(takeOne(stance?.kit.elementalSkill.hits ?? []).hitmarkSeconds * 60),
+      skillHitmarkFrames: Math.round(takeOne(stance?.combatant.kit.elementalSkill.hits ?? []).hitmarkSeconds * 60),
     }).toStrictEqual({ normalAttacks: 3, secondsRemaining: 10, skillHitmarkFrames: 21 });
   });
 
@@ -124,13 +124,13 @@ describe(createNilouKit, () => {
     const combatant = createNilouCombatant();
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
-    const thirdStep = takeOne((findStance(kitEffectState)?.kit.normalAttacks ?? []).slice(2));
+    const thirdStep = takeOne((findStance(kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2));
     thirdStep.onStart?.(context);
     const endField = findField(kitEffectState);
     endField?.onTick(context, 0);
 
     expect({
-      lunarPrayerNormalAttacks: findStance(kitEffectState)?.kit.normalAttacks.length,
+      lunarPrayerNormalAttacks: findStance(kitEffectState)?.combatant.kit.normalAttacks.length,
       lunarPrayerSeconds: findStance(kitEffectState)?.secondsRemaining,
       nextTickFrames: Math.round((endField?.nextTickSeconds ?? 0) * 60),
     }).toStrictEqual({ lunarPrayerNormalAttacks: 3, lunarPrayerSeconds: 8, nextTickFrames: 30 });
@@ -139,7 +139,7 @@ describe(createNilouKit, () => {
   test("constellation 1 raises Luminous Illusion's DMG by 65%, and no other strike's", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant(1);
-    const sword = findStance(castAction(NILOU_KIT.elementalSkill, combatant))?.kit.normalAttacks ?? [];
+    const sword = findStance(castAction(NILOU_KIT.elementalSkill, combatant))?.combatant.kit.normalAttacks ?? [];
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const party = createParty([NILOU_CHARACTER_ID]);
     const getBonus = (action: KitAction, constellationCount: number): number | undefined =>
@@ -178,7 +178,7 @@ describe(createNilouKit, () => {
     const combatant = createNilouCombatant();
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
     const context = createKitTestContext(combatant, { kitEffectState });
-    takeOne((findStance(kitEffectState)?.kit.normalAttacks ?? []).slice(2)).onStart?.(context);
+    takeOne((findStance(kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2)).onStart?.(context);
     NILOU_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: NILOU_CHARACTER_ID },
       context,

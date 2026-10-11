@@ -11,6 +11,7 @@ import { createZhongliKit, ZHONGLI_CHARACTER_ID } from "#src/services/kit/charac
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -109,7 +110,7 @@ describe(createZhongliKit, () => {
     ZHONGLI_KIT.elementalSkill.onStart?.(context);
     stepKitEffects(1, context);
     holdAction.onStart?.(context);
-    const cutStrikes = stepKitEffects(0.8, context).filter(({ hit }) => hit.enemyStatus);
+    const cutStrikes = stepKitTestEffects(0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
     absorbKitShield(kitEffectState.effects, combatant, Number.POSITIVE_INFINITY);
@@ -125,7 +126,7 @@ describe(createZhongliKit, () => {
         secondsRemaining: 1,
       })),
     );
-    expect(stepKitEffects(0.5, context)).toStrictEqual([]);
+    expect(stepKitTestEffects(0.5, context)).toStrictEqual([]);
   });
 
   test.each([

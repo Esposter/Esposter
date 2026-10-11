@@ -9,6 +9,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKleeKit, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -73,8 +74,8 @@ describe(createKleeKit, () => {
       });
       const offFieldContext = { ...context, activeCombatant: travelerCombatant };
       KLEE_KIT.elementalBurst.onStart?.(context);
-      const onFieldStrikes = stepKitEffects(4.5, context);
-      const offFieldStrikes = [...stepKitEffects(1, offFieldContext), ...stepKitEffects(1, offFieldContext)];
+      const onFieldStrikes = stepKitTestEffects(4.5, context);
+      const offFieldStrikes = [...stepKitTestEffects(1, offFieldContext), ...stepKitTestEffects(1, offFieldContext)];
 
       expect(onFieldStrikes).toHaveLength(3);
       expect(offFieldStrikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual(explosionMultipliers);

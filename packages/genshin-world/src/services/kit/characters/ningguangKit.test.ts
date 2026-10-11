@@ -10,7 +10,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createNingguangKit, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -36,7 +36,7 @@ const createNingguangCombatant = (ascension: number, constellationCount: number)
 // Runs the team's effects on at the world's fixed step for the given seconds, as the world steps them
 const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
   Array.from({ length: Math.round(seconds / FIXED_STEP_SECONDS) }, () =>
-    stepKitEffects(FIXED_STEP_SECONDS, context),
+    stepKitTestEffects(FIXED_STEP_SECONDS, context),
   ).flat();
 
 // Strikes an enemy with each strike, as the world does for an enemy within its area

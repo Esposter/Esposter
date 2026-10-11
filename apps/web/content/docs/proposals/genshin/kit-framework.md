@@ -187,14 +187,15 @@ What it does after:
 - **What the build can resolve is resolved once.**
   - Each hit gets its `attackTag`: its action's kind, unless gcsim's `AttackInfo` for that hit names another, including a stance's.
   - That removes `getKitAttackTag` and the stance's hand-written `attackTags`. No action needs a slot: the step already tells its actions apart by which of the kit's lists holds them.
-  - An infusion and the ores follow the list a hit sits in, not its kind of attack, so the same build gives each hit its action's kind beside it (`actionAttackTag`), and the infusable and melee Sets, built from the kit on the field each frame a hit lands, go. Read off the hit, a stance's normal attack whose stance ends mid-swing is still a normal attack to both, as gcsim infuses an attack by its own tag as it lands.
-  - A stance's kit is built once, when the stance starts.
+  - An infusion and the ores follow the list a hit sits in, not its kind of attack, so the same build gives each hit its action's kind beside it (`actionAttackTag`), and the infusable and melee Sets, built from the kit on the field each frame a hit lands, go. Read off the hit, the hits of an attack that outlives its stance stay infusable and melee, which gcsim's infusion, applied by the attack's tag as it lands, agrees with.
+  - A stance's combatant is built once, when the stance starts, its kit with the stance's actions in place.
 - **A cursor lands the hits.** An action and a summon each keep the index of their next hit. A step compares one hitmark rather than the whole list, and a summon with nothing to land does nothing.
 - **The effects are stepped by index, in today's order, and compacted in place.**
   - The order is unchanged: seconds down, then fields, then summons, taunts, bubbles and shields. That is three walks of the list, with no array made.
-  - On the way, the walk notes the field member's stance and infusion, the live shield Enduring Rock reads, and each member's buffs for pricing.
-  - The rule that a write replaces the list goes. A walk runs to the length it started with, an effect added during it is appended and stepped as it is today, and an ended effect has its seconds zeroed, as kits already end effects.
-- **A frame where nothing lands allocates nothing.** The body, the outbox, and the strike and expired lists belong to the context and are emptied by setting their length to zero. A frame that lands hits allocates only its strikes.
+  - The walk notes nothing on the way. The field member's stance and infusion, the live shield Enduring Rock reads and the buffs a strike is priced by are each read where today's step reads them, after the ticks and events that change them, and each read is one scan of a few dozen effects that makes nothing. Noted in the walk, they would be read before those writes. `getBuffedCombatant` still copies the attributes for a strike a buff applies to, a copy made only on a frame that lands it.
+  - The rule that a write replaces the list stays. Each walk runs over the list as it stood when the walk started, so an effect a field's tick adds is stepped only by the walks after that tick, as today. The third walk, where no kit code runs, compacts that list in place, dropping the effects that ran out into the context's expired list.
+- **A frame where nothing lands allocates nothing.** The body, the outbox, and the strike and expired lists belong to the context and are emptied by setting their length to zero. A frame that lands hits allocates only its strikes, an infused hit's copy and a buffed striker's attributes.
+  - The other searches a landed hit made go with them: a hit's infusion and its ore read the kind of action it sits in off the hit (`actionAttackTag`), a normal attack's first hit is looked for only on a frame that lands one, and an enemy's status ticks join the outbox rather than a list of their own.
 - **No typed arrays.** A kit holds at most a few dozen hits and the team a few dozen effects, and scanning that many costs no more than the objects a typed array would replace. They wait until the bench shows a hot loop.
 - **`stepActiveKit.bench.ts` proves it.**
   - **The workload:** one minute of the fixed step for a party of four (Raiden, Xiangling, Noelle and the Traveler, the proof party).
@@ -303,7 +304,7 @@ flowchart LR
 flowchart TD
   BUILD["buildKit, once per member as it joins: each hit's tag"]
   IN["the frame's KitInput, read once by the world"] --> DRAIN["the outbox drained in order, each event sent to every deployed kit"]
-  DRAIN --> EFFECTS["the team's effects stepped in place, noting stance, infusion, shield and buffs"]
+  DRAIN --> EFFECTS["the team's effects stepped in place, the strikes and expired effects kept on the context"]
   EFFECTS --> ENEMIES["enemy statuses tick, elemental ticks strike, Dendro Cores burst"]
   ENEMIES --> STEP["stepKit on the stance's kit: the cursor lands hits, or presses start an action"]
   BUILD -.-> STEP
@@ -311,7 +312,7 @@ flowchart TD
   STEP --> STRIKES["the strikes: the step's hits and each summon's, the tag read off the hit"]
   EFFECTS --> STRIKES
   START --> STRIKES
-  STRIKES --> PRICE["strikeKitEnemies: priced from the noted buffs, reactions and damage sent"]
+  STRIKES --> PRICE["strikeKitEnemies: priced from the buffs, reactions and damage sent"]
   PRICE --> ENERGY["attack energy rolled for the strikes that struck"]
 ```
 
@@ -335,7 +336,8 @@ flowchart TD
    - The tag is the one step whose digests move, in a commit of its own that means to: tagging at build closes the stance edge the [kits page](/docs/genshin/kits) names, which the read at landing left untagged. Eight kits' digests move between tags (Tartaglia, Hu Tao, Yoimiya, Raiden, Nilou, Skirk, Flins and Durin), and no strike count or total does.
    - No action carries a slot, for the reasons under the per-frame path.
 5. **The cursors.** Landed. An action (`KitState.nextHitIndex`) and a summon (`KitSummon.nextHitIndex`) each keep the index of their next hit, and `queueKitHits` queues the hits from it on. A fix landed ahead of it, in a commit of its own: a summon's hit at its cast never landed, since its first step read hits after nought, and eight kits' digests move by the field ticks that now strike (Collei, Columbina, Dori, Faruzan, Lynette, Ororon, Rosaria and Shenhe).
-6. **The effects stepped in place,** in today's order and compacted in place, the expired and strike lists held on the context.
+6. **The effects stepped in place.** Landed. In today's order and compacted in place, the body, the outbox and the expired and strike lists held on the context and emptied by their length, and a stance holding its built combatant. A fix landed ahead of it, in a commit of its own: an infusion and the ores read the kind of action a hit sits in, tagged at build, so an attack that outlives its stance keeps its kind for both; no digest moves.
+   - The bench's minute, idle and in combat, ran in 45.52 and 53.86 ms before step 3 and 33.54 and 39.74 ms after this step, on the same machine; its committed figures move at step 9.
 7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
 8. **The loader map on `lazyDirectories`.** Landed, over its ceiling. `CharacterIdCreateKitMap` is a map of `import()` calls, the barrel leaves the kit modules out, and `readCharacterKits` reads a member's module and multipliers together, at the gate and as the team changes.
    - The entry fell from 2,153,111 bytes to 1,386,245, 36,245 over the ceiling: the modules took about 767 KB with them, a little less than the ceiling assumed, and the loader map came in at about 9 KB.

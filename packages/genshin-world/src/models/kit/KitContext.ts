@@ -2,23 +2,32 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
 
 // The world's combat state, which every call of a kit reads and writes: built once by useWorldCombat and written in
 // Place each step, it holds the character on the field as its combatant and the body it stands as, every built
 // Combatant of the deployed team by its id, the enemies with the tables they are priced by, the effects on the team, the
-// Events raised between steps, which the next step sends first, the deployed team's party, and the world's one seeded
-// Random source, so the world plays the same under the same seed
+// Events raised outside a kit's own calls, which the step sends in the order they were raised, the deployed team's
+// Party, and the world's one seeded random source, so the world plays the same under the same seed. The step's own
+// Lists, the effects that ran out on it and the strikes it lands, are kept here too and emptied by their length, so a
+// Step where nothing lands makes nothing
 export interface KitContext {
   activeCombatant: Combatant;
   body: KitBody;
   characterIdCombatantMap: Map<number, Combatant>;
   enemyMap: Map<string, Enemy>;
   enemyTables: EnemyTables;
+  // The effects that ran out on the step, which it sends as expired and bursts the Dendro Cores of
+  expiredEffects: KitEffect[];
   kitEffectState: KitEffectState;
+  // The events raised outside a kit's own calls: between steps, as a taunt is struck, and as the enemies' statuses tick
   outbox: KitEvent[];
   party: Party;
   random: () => number;
+  // The strikes the step lands, the summons' and then its own, which keep only those that struck an enemy once struck
+  strikes: KitStrike[];
 }

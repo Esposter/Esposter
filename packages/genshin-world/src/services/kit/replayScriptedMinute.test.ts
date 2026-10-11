@@ -114,10 +114,12 @@ export const replayScriptedMinute = ({
     characterIdCombatantMap,
     enemyMap,
     enemyTables,
+    expiredEffects: [],
     kitEffectState: { effects: [] },
     outbox: [],
     party,
     random: createSeededRandom(WORLD_RANDOM_SEED),
+    strikes: [],
   };
   const landedHits: KitHit[] = [];
   const turnStepCount = toStepCount(7.5);

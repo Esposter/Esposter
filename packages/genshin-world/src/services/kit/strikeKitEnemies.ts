@@ -30,14 +30,15 @@ import { startPartyLunarReactions } from "#src/services/party/startPartyLunarRea
 // Strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores, the party's Lunar answers and reactions follow, the reactions it
 // Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
 // Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow
-// In turn. It returns the strikes that struck an enemy
-export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitContext): KitStrike[] => {
+// In turn. The strikes given keep only those that struck an enemy, written in place
+export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
   const { characterIdCombatantMap, enemyMap, enemyTables, kitEffectState, party, random } = context;
-  const struckStrikes: KitStrike[] = [];
+  let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party);
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
     const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party);
+    let isStruck = false;
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
     // The reactions that landed with a reach, each with the enemy it landed on, reached once the strike has landed
@@ -49,7 +50,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitCont
         (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, body, enemy))
       )
         continue;
-      if (struckStrikes.at(-1) !== strike) struckStrikes.push(strike);
+      isStruck = true;
       addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
@@ -97,6 +98,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitCont
     }
 
     landKitReactionReaches(reaches, pricedCombatant, context);
+    if (isStruck) strikes[struckCount++] = strike;
   }
-  return struckStrikes;
+  strikes.length = struckCount;
 };

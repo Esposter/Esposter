@@ -162,13 +162,14 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // The burst's field waves an Exquisite Throw each second from its first second after the hit, for the burst's seconds
   // From the hit, and it rings the body wherever it moves, as the field's ticks do not depend on where the body stands
-  const createDepthClarionDiceField = (body: KitBody, combatant: Combatant): KitField => ({
-    centre: { x: body.position.x, z: body.position.z },
+  const createDepthClarionDiceField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => ({
+    centre: { x: position.x, z: position.z },
     characterId: combatant.characterId,
     id: DEPTH_CLARION_DICE_ID,
     kind: "field",
     nextTickSeconds: BURST_HITMARK_FRAMES / 60 + EXQUISITE_THROW_WAVE_SECONDS,
-    onTick: ({ kitEffectState }) => addKitEffect(kitEffectState, createExquisiteThrowSummon(body, combatant)),
+    onTick: ({ kitEffectState }) =>
+      addKitEffect(kitEffectState, createExquisiteThrowSummon({ facing, height, position }, combatant)),
     radius: UNBOUNDED_FIELD_RADIUS,
     secondsRemaining: BURST_HITMARK_FRAMES / 60 + burstTalentMultiplier(2) + 0.1,
     tickIndex: 0,

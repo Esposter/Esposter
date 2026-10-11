@@ -173,9 +173,9 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   };
 
   // The burst's field follows the body and drops a Water Ball every interval, from the first tick to its last
-  const createBurstField = (body: KitBody, combatant: Combatant): KitField => {
+  const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
     const burstField: KitField = {
-      centre: { x: body.position.x, z: body.position.z },
+      centre: { x: position.x, z: position.z },
       characterId: combatant.characterId,
       isFollowing: true,
       kind: "field",
@@ -183,9 +183,7 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onTick: ({ kitEffectState }) =>
         addKitEffect(
           kitEffectState,
-          createKitSummon({ facing: body.facing, height: body.height, position: burstField.centre }, combatant, [
-            burstHit,
-          ]),
+          createKitSummon({ facing, height, position: burstField.centre }, combatant, [burstHit]),
         ),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + BURST_SECONDS,

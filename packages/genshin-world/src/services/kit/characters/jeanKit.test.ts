@@ -12,6 +12,7 @@ import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
@@ -67,14 +68,14 @@ describe(createJeanKit, () => {
     JEAN_KIT.elementalBurst.onStart?.(context);
 
     // The activation, at 40 frames, heals by 251.2% of Jean's ATK plus 1540, and lands the entering damage of 78.4%
-    const enteringStrikes = stepKitEffects(40 / 60, context);
+    const enteringStrikes = stepKitTestEffects(40 / 60, context);
     const activationHealthShare = 0.1 + (1540.3248 + 2.512 * BASE_ATTACK) / MAX_HEALTH;
 
     expect(partyMember.healthShare).toBeCloseTo(activationHealthShare, 4);
 
     // Ten regenerations, a second apart, each heal by 25.12% of her ATK plus 154, and the field's end lands the exiting
     // Damage, after which neither the field nor its damage stands
-    const exitingStrikes = [...stepKitEffects(10, context), ...stepKitEffects(0.2, context)];
+    const exitingStrikes = [...stepKitTestEffects(10, context), ...stepKitTestEffects(0.2, context)];
 
     expect(partyMember.healthShare).toBeCloseTo(
       activationHealthShare + (10 * (154.0325 + 0.2512 * BASE_ATTACK)) / MAX_HEALTH,

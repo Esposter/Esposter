@@ -275,6 +275,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // A hold casts a Stone Stele unless the most stand, and its Jade Shield at its hitmark, through a field with no edge
   // That ticks once then
   const castHold = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
+    const { facing, height, position } = body;
     const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
     if (steles.length < getMaxSteleCount(combatant))
       addKitEffect(
@@ -287,11 +288,12 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         ),
       );
     addKitEffect(kitEffectState, {
-      centre: { x: body.position.x, z: body.position.z },
+      centre: { x: position.x, z: position.z },
       characterId: combatant.characterId,
       kind: "field",
       nextTickSeconds: HOLD_HITMARK_FRAMES / 60,
-      onTick: ({ kitEffectState: tickKitEffectState }) => castJadeShield(tickKitEffectState, body, combatant),
+      onTick: ({ kitEffectState: tickKitEffectState }) =>
+        castJadeShield(tickKitEffectState, { facing, height, position }, combatant),
       radius: UNBOUNDED_FIELD_RADIUS,
       // The field lives a tenth of a second past its tick, so the step that runs it still has it
       secondsRemaining: HOLD_HITMARK_FRAMES / 60 + 0.1,

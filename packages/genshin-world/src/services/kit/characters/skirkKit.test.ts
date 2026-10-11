@@ -102,14 +102,16 @@ describe(createSkirkKit, () => {
 
     expect({
       attackTags: {
-        chargedAttack: [...new Set(stance?.kit.chargedAttack.hits.map(({ attackTag }) => attackTag))],
+        chargedAttack: [...new Set(stance?.combatant.kit.chargedAttack.hits.map(({ attackTag }) => attackTag))],
         normalAttacks: [
-          ...new Set(stance?.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ attackTag }) => attackTag))),
+          ...new Set(stance?.combatant.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ attackTag }) => attackTag))),
         ],
       },
-      normalAttacks: stance?.kit.normalAttacks.length,
+      normalAttacks: stance?.combatant.kit.normalAttacks.length,
       secondsRemaining: Math.round((stance?.secondsRemaining ?? 0) * 1000) / 1000,
-      strikeElements: [...new Set(stance?.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ element }) => element)))],
+      strikeElements: [
+        ...new Set(stance?.combatant.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ element }) => element))),
+      ],
     }).toStrictEqual({
       attackTags: { chargedAttack: [AttackTag.ChargedAttack], normalAttacks: [AttackTag.NormalAttack] },
       normalAttacks: 5,

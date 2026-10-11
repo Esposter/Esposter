@@ -54,10 +54,12 @@ const createContext = (combatants: Combatant[], kitEffectState: KitEffectState =
   characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
   enemyMap: new Map(),
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
+  expiredEffects: [],
   kitEffectState,
   outbox: [],
   party: createParty(combatants.map(({ characterId }) => characterId)),
   random: () => 0,
+  strikes: [],
 });
 
 // The combat state the kit on the field steps in with an enemy standing in its strikes' reach
@@ -168,13 +170,14 @@ describe(stepActiveKit, () => {
   test("plays a stance's actions in place of the kit's while the stance holds", () => {
     expect.hasAssertions();
     const stanceAttack: KitAction = { ...takeOne(TRAVELER_KIT.normalAttacks) };
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)], {
+    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const context = createContext([combatant], {
       effects: [
         {
           characterId: TRAVELER_CHARACTER_ID,
+          combatant: { ...combatant, kit: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] } },
           elapsedSeconds: 0,
           kind: "stance",
-          kit: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] },
           secondsRemaining: 1,
         },
       ],

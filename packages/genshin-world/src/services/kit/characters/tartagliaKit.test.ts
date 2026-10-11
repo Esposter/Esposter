@@ -56,8 +56,8 @@ describe(createTartagliaKit, () => {
     };
   };
   const meleeKit =
-    findKitStance(enterMeleeStance(createTartagliaCombatant()).kitEffectState.effects, TARTAGLIA_CHARACTER_ID)?.kit ??
-    TARTAGLIA_KIT;
+    findKitStance(enterMeleeStance(createTartagliaCombatant()).kitEffectState.effects, TARTAGLIA_CHARACTER_ID)
+      ?.combatant.kit ?? TARTAGLIA_KIT;
   const createDamageTaken = (enemy: Enemy, event: Partial<KitDamageTakenEvent>): KitDamageTakenEvent => ({
     enemy,
     hit: takeOne(TARTAGLIA_KIT.chargedAttack.hits),

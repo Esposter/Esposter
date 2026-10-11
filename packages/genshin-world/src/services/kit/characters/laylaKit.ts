@@ -158,8 +158,8 @@ export const createLaylaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   });
 
   // The field holds the body's place as the burst starts, and each tick strikes from that place
-  const createBurstField = (body: KitBody, combatant: Combatant): KitField => {
-    const centre = { x: body.position.x, z: body.position.z };
+  const createBurstField = ({ facing, height, position }: KitBody, combatant: Combatant): KitField => {
+    const centre = { x: position.x, z: position.z };
     return {
       centre,
       characterId: combatant.characterId,
@@ -168,9 +168,7 @@ export const createLaylaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       onTick: ({ kitEffectState }) =>
         addKitEffect(
           kitEffectState,
-          createKitSummon({ facing: body.facing, height: body.height, position: centre }, combatant, [
-            createBurstStrike(combatant),
-          ]),
+          createKitSummon({ facing, height, position: centre }, combatant, [createBurstStrike(combatant)]),
         ),
       radius: BURST_AREA_RADIUS,
       // The field's last tick falls on the frame gcsim's loop leaves out, so it ends a frame before that
