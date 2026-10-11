@@ -36,14 +36,14 @@ Miliastra Wonderland meters a stage's load as its author builds it: every placed
 
 ## Key files
 
-| File                                                               | Role                                                       |
-| :----------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/genshin-world/parity/benchScene.ts`                      | The scene bench whose counts the load bench takes at ready |
-| `scripts/src/services/genshinParity/commands/benchCommand.ts`      | The frame bench's command, which `load` stands beside      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`     | The world's gate of reads before it shows                  |
-| `packages/genshin-world/src/services/world/readLoadedRegion.ts`    | A region's data, ground and palettes, read in reach        |
-| `packages/genshin-world/src/components/World/Terrain/Index.vue`    | The tiles whose arrival the world's ready waits on         |
-| `packages/genshin-engine/src/collision/createLandmarkCollider.ts`  | The landmarks' hierarchies, built on the main thread       |
+| File                                                              | Role                                                       |
+| :---------------------------------------------------------------- | :--------------------------------------------------------- |
+| `packages/genshin-world/parity/benchScene.ts`                     | The scene bench whose counts the load bench takes at ready |
+| `scripts/src/services/genshinParity/commands/benchCommand.ts`     | The frame bench's command, which `load` stands beside      |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`    | The world's gate of reads before it shows                  |
+| `packages/genshin-world/src/services/world/readLoadedRegion.ts`   | A region's data, ground and palettes, read in reach        |
+| `packages/genshin-world/src/components/World/Terrain/Index.vue`   | The tiles whose arrival the world's ready waits on         |
+| `packages/genshin-engine/src/collision/createLandmarkCollider.ts` | The landmarks' hierarchies, built on the main thread       |
 
 ## Sources
 
