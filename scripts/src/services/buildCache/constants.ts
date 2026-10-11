@@ -40,3 +40,6 @@ export const SLOT_STALE_SECONDS = Temporal.Duration.from({ minutes: 1 }).total({
 // A waiting run polls after two seconds, doubling to every ten: a slot frees on the scale of minutes
 export const SLOT_MIN_POLL_MILLISECONDS = Temporal.Duration.from({ seconds: 2 }).total({ unit: "milliseconds" });
 export const SLOT_MAX_POLL_MILLISECONDS = Temporal.Duration.from({ seconds: 10 }).total({ unit: "milliseconds" });
+// The variable a gate sets for the command it runs, to the gate's process id. A gate that finds it already set is
+// Running inside a slot its parent holds, so it runs at once rather than wait on that slot
+export const RUN_IN_SLOT_ENVIRONMENT_NAME = `${SITE_NAME.toUpperCase()}_RUN_IN_SLOT`;

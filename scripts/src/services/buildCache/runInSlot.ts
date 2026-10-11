@@ -6,6 +6,7 @@ import type { SlotAdmission } from "#src/models/buildCache/SlotAdmission";
 
 import { checkCanAdmit } from "#src/services/buildCache/checkCanAdmit";
 import {
+  RUN_IN_SLOT_ENVIRONMENT_NAME,
   SLOT_DIRECTORY,
   SLOT_MAX_POLL_MILLISECONDS,
   SLOT_MIN_POLL_MILLISECONDS,
@@ -117,6 +118,8 @@ const sleep = (milliseconds: number): void => {
 // Layout as the shell gate's, so a node run and a shell run count against one set of slots. A run that throws keeps its
 // Slot until a later runner finds its holder dead, which the build's own exit does at once
 export const runInSlot = <T>(run: () => T): T => {
+  // A gate nested in a slot its parent holds waits on nothing: waiting here would wait on the slot the parent holds
+  if (process.env[RUN_IN_SLOT_ENVIRONMENT_NAME]) return run();
   let slotPath = tryAcquireSlot();
   let pollMilliseconds = SLOT_MIN_POLL_MILLISECONDS;
   while (slotPath === undefined) {
@@ -124,7 +127,10 @@ export const runInSlot = <T>(run: () => T): T => {
     pollMilliseconds = Math.min(pollMilliseconds * 2, SLOT_MAX_POLL_MILLISECONDS);
     slotPath = tryAcquireSlot();
   }
+  // Set for the run's children, and for any build this process runs while it holds the slot, then removed with it
+  process.env[RUN_IN_SLOT_ENVIRONMENT_NAME] = String(process.pid);
   const result = run();
+  delete process.env[RUN_IN_SLOT_ENVIRONMENT_NAME];
   rmSync(slotPath, { force: true, recursive: true });
   return result;
 };
