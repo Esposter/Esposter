@@ -23,5 +23,5 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/xianyun), MIT: the strikes' hitmarks, cancel frames and circles, the charged attack's frames and circle, the plunges' frames and circles, Skyladder's press and Stars Gather at Dusk's hit, and the travel each strike takes.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xianyun), MIT: the strikes' hitmarks, cancel frames and circles, the charged attack's frames and circle, the plunges' frames and circles, Skyladder's press and Stars Gather at Dusk's hit, and the travel each strike takes.
 - The game's proud skill groups 9331, 9332 and 9339, read through the hosted talent multipliers: each multiplier and cooldown matches gcsim's table at talent level 1.

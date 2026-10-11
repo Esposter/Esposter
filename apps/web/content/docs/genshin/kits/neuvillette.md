@@ -19,5 +19,5 @@ Not built: Equitable Judgment, the held charged attack, whose length counts the 
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/neuvillette), MIT: Neuvillette's strikes' hitmarks, cancel frames and reaches, the short charged attack, O Tears, I Shall Repay with its circle and Max HP share, Spiritbreath Thorn's hitmark and circle, and O Tides, I Have Returned's first hit and two Waterfalls with their hitmarks and animation.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/neuvillette), MIT: Neuvillette's strikes' hitmarks, cancel frames and reaches, the short charged attack, O Tears, I Shall Repay with its circle and Max HP share, Spiritbreath Thorn's hitmark and circle, and O Tides, I Have Returned's first hit and two Waterfalls with their hitmarks and animation.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings, reaches and poise, borrowed as gcsim gives Neuvillette no plunge file.

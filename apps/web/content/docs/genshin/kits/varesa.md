@@ -33,4 +33,4 @@ Her Nightsoul Blessing and its Fiery Passion forms, the points each Rush, Flying
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/varesa), MIT, at main: the three strikes' hitmarks, cancels and reaches, the charged attack and its frames, the plunges' frames and reaches, Rush, Flying Kick and the Nightsoul and apex states the hook waits on.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/varesa), MIT, at v2.47.2: the three strikes' hitmarks, cancels and reaches, the charged attack and its frames, the plunges' frames and reaches, Rush, Flying Kick and the Nightsoul and apex states the hook waits on.

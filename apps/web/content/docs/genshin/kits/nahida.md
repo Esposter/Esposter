@@ -19,5 +19,5 @@ Nahida's kit is its record and one behaviour module, `createNahidaKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/nahida), MIT: Nahida's strikes' hitmarks, cancel frames and boxes, the charged attack's box and frames, and All Schemes to Know's press and hold frames, reaches and cooldowns.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nahida), MIT: Nahida's strikes' hitmarks, cancel frames and boxes, the charged attack's box and frames, and All Schemes to Know's press and hold frames, reaches and cooldowns.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Nahida's own folder has none.

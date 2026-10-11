@@ -27,4 +27,4 @@ Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/citlali), MIT, at main: Citlali's strikes' hitmarks and cancels, the charged attack's and Ice Storm's frames and reaches, Obsidian Tzitzimitl's hit, and the Nightsoul passives and skulls the hooks wait on.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/citlali), MIT, at v2.47.2: Citlali's strikes' hitmarks and cancels, the charged attack's and Ice Storm's frames and reaches, Obsidian Tzitzimitl's hit, and the Nightsoul passives and skulls the hooks wait on.

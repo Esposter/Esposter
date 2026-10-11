@@ -34,6 +34,6 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma), MIT: each strike's hitmark, animation and box, the charged attack's hit, animation and box, the press's hitmark, animation and circle, the Frostgrove Sanctuary's ticks, duration and circle, the RES shred and its duration, the hold's hitmark, animation, Dew and Lunar-Bloom hit, and the burst's animation, read from `attack.go`, `charge.go`, `skill.go` and `burst.go`, with `charge.go` for the stamina and `asc.go` for the Moonsign Benediction.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma), MIT: each strike's hitmark, animation and box, the charged attack's hit, animation and box, the press's hitmark, animation and circle, the Frostgrove Sanctuary's ticks, duration and circle, the RES shred and its duration, the hold's hitmark, animation, Dew and Lunar-Bloom hit, and the burst's animation, read from `attack.go`, `charge.go`, `skill.go` and `burst.go`, with `charge.go` for the stamina and `asc.go` for the Moonsign Benediction.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Lauma's own folder has no plunge file.

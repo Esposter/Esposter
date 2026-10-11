@@ -29,5 +29,5 @@ Mualani's kit is its record and one behaviour module, `createMualaniKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/mualani), MIT: the hitmarks, animations and reach of the kit, the charged attack's windup and Boomsharka-laka's travel, and the proud group indices behind each multiplier.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mualani), MIT: the hitmarks, animations and reach of the kit, the charged attack's windup and Boomsharka-laka's travel, and the proud group indices behind each multiplier.
 - [Hosted game data](/docs/genshin/hosted-game-data): the avatar's talent groups 10231, 10232 and 10239 and her skill depot, read from the talent and skill kit tables.

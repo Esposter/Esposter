@@ -31,5 +31,5 @@ Chasca's kit is its record and one behaviour module, `createChascaKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/chasca), MIT: the kit's hitmarks, animations, reach and the plunges' radii, and the proud group indices behind each multiplier.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chasca), MIT: the kit's hitmarks, animations, reach and the plunges' radii, and the proud group indices behind each multiplier.
 - [Hosted game data](/docs/genshin/hosted-game-data): the avatar's talent groups 10431, 10432 and 10439, read from the talent and skill kit tables.

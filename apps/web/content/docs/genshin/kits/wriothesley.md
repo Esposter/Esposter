@@ -17,4 +17,4 @@ Icefang Rush deals no damage of its own, so its action has no hits and the kit h
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/wriothesley), MIT: Wriothesley's strikes' hitmarks and cancel frames, the charged attack, the low and high plunges and their collision, Icefang Rush's animation, and Darkgold Wolfbite's hitmarks and animation.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/wriothesley), MIT: Wriothesley's strikes' hitmarks and cancel frames, the charged attack, the low and high plunges and their collision, Icefang Rush's animation, and Darkgold Wolfbite's hitmarks and animation.

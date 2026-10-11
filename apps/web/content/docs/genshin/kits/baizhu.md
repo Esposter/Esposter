@@ -21,5 +21,5 @@ Not built yet: Universal Diagnosis's bounces to the next nearby enemy and its he
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/baizhu), MIT: Baizhu's strikes' hitmarks, cancel frames and boxes, the charged attack, Universal Diagnosis' first hit and animation, and Holistic Revivification's animation, shield timings and recasts.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu), MIT: Baizhu's strikes' hitmarks, cancel frames and boxes, the charged attack, Universal Diagnosis' first hit and animation, and Holistic Revivification's animation, shield timings and recasts.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Baizhu's own folder has none.
