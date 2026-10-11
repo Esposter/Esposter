@@ -11,6 +11,7 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   genshin: "i-custom:genshin",
   infra: "i-mdi:cloud",
   "nuxt-security-module": "i-mdi:shield-lock",
+  "parse-tmx": "i-mdi:map",
   "pitch-transcription": "i-mdi:music-note",
   post: "i-mdi:note-text",
   proposals: "i-mdi:lightbulb",
@@ -20,4 +21,5 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   user: "i-mdi:account-group",
   virrun: "i-mdi:console",
   "vue-phaserjs": "i-mdi:gamepad-variant",
+  xml2js: "i-mdi:code-tags",
 };

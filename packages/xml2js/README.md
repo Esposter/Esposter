@@ -37,6 +37,8 @@ const result = await parseStringPromise(xml);
 // result: { root: { child: [ { _: 'text', $: { attr: 'value' } } ] } }
 ```
 
+The callback form is `parseString(xml, [options], callback)`, which calls the callback before it returns unless `async` is set. A document with no root element resolves to `null`.
+
 ### Why Not the Original `xml2js`?
 
 The original package pulls in the `events` module which causes runtime errors in certain bundler/edge environments. This rewrite is a drop-in replacement that works cleanly in Node.js, Azure Functions, and browser bundles.
