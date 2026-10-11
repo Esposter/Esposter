@@ -219,6 +219,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Barbara](/docs/genshin/kits/barbara)               | Let the Show Begin♪ droplets, Melody Loop and Shining Miracle♪       |
 | [Beidou](/docs/genshin/kits/beidou)                 | Tidecaller's shield and the Thunderbeast's Targe                     |
 | [Bennett](/docs/genshin/kits/bennett)               | Passion Overload's Charge Levels and Fantastic Voyage's field        |
+| [Candace](/docs/genshin/kits/candace)               | Heron's Sanctum's shields and Wagtail's Tide's Prayer                |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Dehya](/docs/genshin/kits/dehya)                   | Molten Inferno and Incineration Drive                                |
