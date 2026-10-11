@@ -183,9 +183,9 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const createSwordDanceActions = (onIllusionStart?: KitAction["onStart"]): KitAction[] =>
     swordDanceSteps.map(({ cancelSeconds, hit }, index): KitAction => ({
       hits: [hit],
+      onStart: index === LUMINOUS_ILLUSION_STEP ? onIllusionStart : undefined,
       seconds: cancelSeconds,
       targetingArea: STRIKE_TARGETING_AREA,
-      onStart: index === LUMINOUS_ILLUSION_STEP ? onIllusionStart : undefined,
     }));
 
   const whirlingSteps: KitAction = {
