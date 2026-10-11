@@ -102,12 +102,39 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Snezhnaya]: {},
-  // Sumeru City's nine landmarks (ParityReferenceMap's sumeru-city-location: the harbour minaret's collar, dome and
-  // Finial and the terrace spire's base, wings and tip) name no mesh, so all nine are dropped: the extraction draws
-  // Vines, wharf boards, banners and two house trims 3.4 metres tall within 600 metres of the capital, and the houses'
-  // Meshes its layout dumps name (Area_Xm_Build_XKC_Comp_House_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
-  [DerivedAssetComponent.Sumeru]: {},
+  // Sumeru City's four spire landmarks named (ParityReferenceMap's sumeru-city-location: the terrace spire's base, tip
+  // And wings): the slender Area_Xm_Build_XKC_Shendian_04_Lod0 at the plateau's top (its tip 190.8 to 216.5 metres) for
+  // The tip and wings, and Area_Xm_Build_XKC_Shendian_03_Lod0 under it for the base's left edge, all standing at
+  // (-2253, 191, -4144). The harbour minaret's collar, dome and finial are dropped: the extraction's round towers near
+  // The harbour are walls and pillars (Area_Common_Build_Matou_03_Lod0 and the ruin walls) with no dome among them, so
+  // None is matched to the reference's minaret with confidence. The pose could not run here (no parity page on
+  // Localhost:3011), so these four are unmeasured
+  [DerivedAssetComponent.Sumeru]: {
+    spireBaseLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_03_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0, 0.5, 0.5],
+    },
+    spireTip: {
+      isInterior: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0.5, 1, 0.5],
+    },
+    spireWingLeft: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [0, 0.85, 0.5],
+    },
+    spireWingRight: {
+      isEdge: true,
+      mesh: "Area_Xm_Build_XKC_Shendian_04_Lod0",
+      near: [-2252.81, 190.83, -4144.23],
+      share: [1, 0.85, 0.5],
+    },
+  },
   // Rigid architecture only, never decoration: the statue's own meshes. Points on the statue's axis, which a round part
   // Holds from any heading: the centre of its dish and the top of its figure; the two ends of the dish's brim, the face
   // Centres of its widest ring; and the two outermost vertices of the plinth's rim, read off the rim's band of vertices
