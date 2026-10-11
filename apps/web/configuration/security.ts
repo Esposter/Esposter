@@ -11,7 +11,7 @@ export const security: NuxtConfig["security"] = {
     contentSecurityPolicy: {
       "img-src": ImageSourceWhitelist,
       // Desmos
-      "script-src": "'unsafe-eval'",
+      "script-src": ["'unsafe-eval'"],
       "script-src-elem": [
         // Nuxt data hydration
         "'unsafe-inline'",
@@ -45,16 +45,15 @@ export const security: NuxtConfig["security"] = {
     },
     permissionsPolicy: {
       // `livekit-client`
-      camera: "self",
-      "display-capture": "self",
+      camera: ["self"],
+      "display-capture": ["self"],
       // @vue-pdf-viewer/viewer
-      fullscreen: "self",
-      microphone: "self",
+      fullscreen: ["self"],
+      microphone: ["self"],
     },
   },
   rateLimiter: false,
   requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE, maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE },
-  // Its filter rejects ordinary text a message carries and passes a script once `escapeHtml` is off, as
-  // `security.test.ts` measures; rich text is sanitised at its Zod boundary instead
-  xssValidator: false,
+  // The module has no XSS validator: its filter rejects ordinary text a message carries and passes a script once
+  // `escapeHtml` is off, as `security.test.ts` measures. Rich text is sanitised at its Zod boundary instead
 };

@@ -1615,6 +1615,9 @@ importers:
       nuxt-security:
         specifier: 'catalog:'
         version: 2.6.0(patch_hash=37f88bed52769a662a18edea1094a99324973f84745e45eafdbfe79c7d0865fe)(@nuxt/schema@4.6.1)(confbox@0.3.1)(dotenv@18.0.7)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.13)(rollup@4.64.5)(supports-color@8.1.1)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.13)(rollup@4.64.5)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.111.1(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.29)(sharp@0.35.5(@types/node@26.6.5))(uglify-js@3.19.3)))
+      nuxt-security-module:
+        specifier: workspace:*
+        version: link:../../packages/nuxt-security-module
       remark-emoji:
         specifier: 'catalog:'
         version: 5.0.2

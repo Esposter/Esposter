@@ -20,7 +20,7 @@ const trpcModule: [string, ModuleOptions] = [
 // SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
 // E.g. @vite-pwa/nuxt trips the Windows "filename must be a file URL" crash on its virtual register module (taking
 // Down even pure-node tests) and builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
-// Leaks an EnvironmentTeardownError after teardown, and nuxt-security adds headers/CSP nothing asserts.
+// Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP nothing asserts.
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST
   ? ["@nuxt/image", "@nuxt/scripts", "@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", trpcModule]
@@ -37,6 +37,6 @@ export const modules: NuxtConfig["modules"] = process.env.VITEST
       "@unocss/nuxt",
       "@vite-pwa/nuxt",
       "@vueuse/nuxt",
-      "nuxt-security",
+      "nuxt-security-module",
       trpcModule,
     ];
