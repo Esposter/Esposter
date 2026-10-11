@@ -32,6 +32,9 @@ const knipConfiguration: KnipConfig = {
         // @TODO: no upstream issue — `@nuxtjs/mdc`'s generated plugin imports reach `remark-emoji`, which Nitro 3
         // Resolves from the app, so nothing in the app imports it (nuxt-content/mdc)
         "remark-emoji",
+        // Nuxt loads it by name when `nuxt analyze` turns `build.analyze` on, for the dependency score's bundle column, so
+        // Nothing in the app imports it
+        "rollup-plugin-visualizer",
         "temporal-polyfill",
         "vue-tsc",
       ],
@@ -58,6 +61,8 @@ const knipConfiguration: KnipConfig = {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       ignore: ["**/auto-imports.d.ts"],
     },
+    // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
+    "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     scripts: {
       // The shell wrapper starts the slot gate by its path, so nothing imports it
