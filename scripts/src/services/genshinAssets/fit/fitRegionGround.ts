@@ -22,6 +22,7 @@ import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
+import { GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -52,8 +53,8 @@ interface Catalogue {
 // Region's centre and only inside its catalogue outlines, so no region's ground runs into another's; a region the
 // Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. Returns the hills, the
 // Plateaus, cliffs and ridges the hills leave, the residual's noise faded out where they hold and the heights they
-// Stand between as the record `<region>/base-ground`, with a report holding the composed ground's error with and
-// Without the residual
+// Stand between as the region's ground, the record `ground/<region>`, with a report holding the composed ground's error
+// With and without the residual
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<GameDataBuild> => {
   const [getGameHeight, origin, catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
@@ -139,6 +140,8 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
       `ground: places cleared of the residual, ${footprints.map(({ id, radius, source, x, z }) => `${id} ${radius} metres from ${source}, its residual ${roundFitted(getGroundHeight(x, z) - getFeaturedHeight(x, z))} metres`).join(", ")}`,
       `ground: the residual's power by octave against the faded leftover's, as the change over its scale, ${octaveScales.map((scale) => `${roundFitted(computeLagDifference(drawnResidual, scale))} against ${roundFitted(computeLagDifference(fadedRemainder, scale))} metres at ${scale}`).join(", ")}`,
     ],
-    objects: { [`${region}/base-ground`]: { ...hills, features, ...computeGroundBounds(heightGrid.values), residual } },
+    objects: {
+      [`${GameDataset.Ground}/${region}`]: { ...hills, features, ...computeGroundBounds(heightGrid.values), residual },
+    },
   };
 };

@@ -1,4 +1,3 @@
-import type { WindriseBaseGround } from "#src/models/windrise/WindriseBaseGround";
 import type { WindriseOak } from "#src/models/windrise/WindriseOak";
 import type { WindrisePaving } from "#src/models/windrise/WindrisePaving";
 import type { WindrisePlant } from "#src/models/windrise/WindrisePlant";
@@ -8,9 +7,9 @@ import type { WindriseWater } from "#src/models/windrise/WindriseWater";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { GroundLayerField } from "genshin-engine";
 
-// Everything the Windrise records hold, with the seven regions' grounds the world's one ground is raised over
+// Everything the Windrise records hold, Windrise's ground among them, with the regions' grounds the world lays over it
 export interface WindriseData {
-  baseGround: WindriseBaseGround;
+  baseGround: RegionGround;
   groundLayers: GroundLayerField;
   oak: WindriseOak;
   paving: WindrisePaving;

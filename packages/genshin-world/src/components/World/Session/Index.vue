@@ -227,7 +227,7 @@ onUnmounted(() => {
 });
 // The world's origin, owned here so the cameras read the ground through it before the floating origin shifts it
 const origin = new Vector3();
-// The world's one ground, Windrise's base raised at every region's plateaus, which everything in the world stands on
+// The world's one ground, Windrise's with every region's laid over it, which everything in the world stands on
 const getGroundHeight = createWorldHeight(windriseData.baseGround, windriseData.regionGrounds);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();

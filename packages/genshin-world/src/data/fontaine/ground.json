@@ -1,1 +1,5 @@
-{ "features": [{ "falloff": 400, "height": 222.33, "kind": "plateau", "radius": 600, "x": 1554.31, "z": -5721.47 }] }
+{
+  "base": 0,
+  "features": [{ "falloff": 400, "height": 222.33, "kind": "plateau", "radius": 600, "x": 1554.31, "z": -5721.47 }],
+  "hills": []
+}

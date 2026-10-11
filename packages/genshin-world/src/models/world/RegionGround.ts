@@ -1,13 +1,25 @@
-import type { PlateauFeature } from "genshin-engine";
+import type { TerrainFeature, TerrainShape } from "genshin-engine";
 
-import { plateauFeatureSchema } from "#src/models/world/plateauFeatureSchema";
+import { gaussianHillSchema } from "#src/models/world/gaussianHillSchema";
+import { terrainFeatureSchema } from "#src/models/world/terrainFeatureSchema";
+import { terrainResidualSchema } from "#src/models/world/terrainResidualSchema";
 import { z } from "zod";
 
-// A region's ground where no fit has drawn it yet: the plateaus its places stand on, added to the world's one ground
-export interface RegionGround {
-  features: PlateauFeature[];
+// A region's ground as its fit draws it: the Gaussian hills over its base, the plateaus, cliffs and ridges over them, the
+// Residual's noise below both, and the heights it stands between, which bound every tile. A region no fit has drawn yet
+// Holds no hills, so its base is never drawn, only the plateaus its places stand on over the world's base, and no
+// Residual or bounds
+export interface RegionGround extends TerrainShape {
+  features: TerrainFeature[];
+  maxHeight?: number;
+  minHeight?: number;
 }
 
 export const regionGroundSchema = z.object({
-  features: z.array(plateauFeatureSchema),
+  base: z.number(),
+  features: z.array(terrainFeatureSchema),
+  hills: z.array(gaussianHillSchema),
+  maxHeight: z.number().optional(),
+  minHeight: z.number().optional(),
+  residual: terrainResidualSchema.optional(),
 }) satisfies z.ZodType<RegionGround>;

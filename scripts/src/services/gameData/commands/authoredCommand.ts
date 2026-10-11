@@ -1,11 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
-import { AGE_RATING_KEY } from "#src/services/gameData/constants";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { readAuthoredGameData } from "#src/services/gameData/readAuthoredGameData";
+import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
 import { defineCommand } from "citty";
-import { GameDataset } from "genshin-world";
 
 export const authoredCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
@@ -15,11 +14,13 @@ export const authoredCommand: SubCommandsDef[string] = defineCommand({
     name: "authored",
   },
   run: async ({ args }) => {
+    const objects = await readAuthoredGameData();
+    // Each file is its own key, so a ground a fit publishes, Windrise's among them, is kept beside the authored ones
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects: await readAuthoredGameData() },
-        scopes: [GameDataset.Catalogue, GameDataset.Ground, AGE_RATING_KEY],
+        publication: { indexes: {}, objects },
+        scopes: toGameDataKeyScopes(Object.keys(objects)),
       }),
     );
   },
