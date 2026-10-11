@@ -38,7 +38,7 @@ export const buildSceneNpcBorns = (): GameDataBuild => {
       NPC_BORN_PATH,
       `is scene ${sceneId}, not scene ${SCENE_NPC_BORN_SCENE_ID}`,
     );
-  const births = bornPosList.map(toSceneNpcBorn);
+  const births = bornPosList.map((born) => toSceneNpcBorn(born));
   return {
     notes: [`${births.length} NPC births in scene ${SCENE_NPC_BORN_SCENE_ID}`],
     objects: { [`${GameDataset.SceneNpcBorn}/scene${SCENE_NPC_BORN_SCENE_ID}`]: births },

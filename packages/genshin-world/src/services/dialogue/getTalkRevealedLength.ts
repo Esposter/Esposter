@@ -5,6 +5,7 @@ import { TALK_REVEAL_MS_PER_CHARACTER } from "#src/services/dialogue/constants";
 // Character before it, so the line is whole the moment its last character is written
 export const getTalkRevealedLength = (line: string, elapsedMs: number): number => {
   const writtenCount = Math.floor(elapsedMs / TALK_REVEAL_MS_PER_CHARACTER);
+  // oxlint-disable-next-line typescript/no-misused-spread -- code points are the unit the dialogue screen slices the line by
   const characters = [...line];
   let visibleCount = 0;
 

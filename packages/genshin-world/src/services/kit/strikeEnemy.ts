@@ -26,9 +26,9 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
-// And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it through
-// DamageEnemy, against the enemy's RES as its statuses leave it. It returns the energy the hit dropped, whether it was a
-// CRIT hit, the reactions it triggered and those of them that landed and reach round the enemy
+// And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it
+// Through damageEnemy, against the enemy's RES as its statuses leave it. It returns the energy the hit dropped, whether
+// It was a CRIT hit, the reactions it triggered and those of them that landed and reach round the enemy
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
