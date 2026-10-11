@@ -1,6 +1,4 @@
-import type { PinnedTool } from "#src/models/shared/PinnedTool";
-
-import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -30,43 +28,13 @@ export const PLANS_DIRECTORY: string = join(PARITY_DIRECTORY, "plans");
 export const SHAPES_DIRECTORY: string = join(PARITY_DIRECTORY, "shapes");
 // Each reference's surface pass drawn where its readings lie, ours beside the exports
 export const SURFACES_DIRECTORY: string = join(PARITY_DIRECTORY, "surfaces");
-// FFmpeg, pinned to one release and its checksum and unpacked inside the checkout the first time the tool needs it:
-// Window capture (`gfxcapture`, Windows Graphics Capture) arrived in FFmpeg 8, which no npm package bundles, and this
-// One build serves every other job the tool gives FFmpeg too. Gyan's releases are versioned and kept
-export const FFMPEG_DIRECTORY: string = join(REPOSITORY_ROOT, "scripts", "node_modules", ".cache", "ffmpeg");
-export const FFMPEG_ARCHIVE_URL =
-  "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip";
-export const FFMPEG_ARCHIVE_SHA256 = "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba";
-// The yt-dlp that reads public videos, pinned to one release and its checksum: the standalone Windows build is the
-// Executable itself, not an archive, and its folder is named for the release so a bump never reuses the old one. The
-// Pinned FFmpeg merges the streams it downloads
-export const YT_DLP_DIRECTORY: string = join(
-  REPOSITORY_ROOT,
-  "scripts",
-  "node_modules",
-  ".cache",
-  "yt-dlp",
-  "2026.08.19",
-);
-export const YT_DLP_PINNED_TOOL: PinnedTool = {
-  archiveSha256: "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
-  archiveUrl: "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
-  directory: YT_DLP_DIRECTORY,
-  downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
-  executablePattern: "yt-dlp.exe",
-  isArchive: false,
-};
 // A whole-screen screenshot is at least this wide, and a 16:9 or 16:10 screen's aspect ratio sits between these two
 export const WHOLE_SCREEN_MIN_WIDTH = 1280;
 export const WHOLE_SCREEN_MIN_ASPECT_RATIO = 1.6;
 export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
-// The most a search's output may run to: the fields it prints for each result, read whole as one string
-export const SEARCH_MAX_BUFFER_BYTES: number = 64 * 1024 * 1024;
 // A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
-export const CLIP_NAME_REGEX: RegExp = /^[\w-]+$/u;
 // The world package's parity page, which renders a screen without Nuxt. Its port is 3011 unless `GENSHIN_PARITY_PORT`
 // Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
 // Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port
@@ -137,8 +105,6 @@ export const RECORD_ENCODING: string[] = [
 ];
 // What ffmpeg samples; everything else is an image sharp reads, animated or not
 export const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set([".mkv", ".mov", ".mp4", ".webm"]);
-export const CONTACT_SHEET_COLUMNS = 6;
-export const CONTACT_SHEET_CELL_WIDTH = 320;
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
 // The contact sheet `frames` writes beside its frames, which is not one of them
