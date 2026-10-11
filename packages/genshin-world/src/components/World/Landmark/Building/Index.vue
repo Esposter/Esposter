@@ -13,15 +13,17 @@ interface Props {
   landmark: BuildingLandmark;
   // The one material every landmark's part draws in, each in the surface its mesh carries
   partMaterial: ToonNodeMaterial;
-  // The building colours each region's palette record samples, which its kit draws its buildings in
-  regionPalettes: RegionPaletteMap;
+  // The building colours the palette records of the regions in reach sample, which hold its own kit's, read with its
+  // Region's data
+  regionPalettes: Partial<RegionPaletteMap>;
 }
 
 const { getGroundHeight, landmark, partMaterial, regionPalettes } = defineProps<Props>();
 const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
-// The building's region kit decides its parts, each drawn in its own colour
-const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes).map(
+// The building's region kit decides its parts, each drawn in its own colour, from its own kit's palette, which arrived
+// With the building's region
+const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes as never).map(
   ({ color, geometry }) => {
     const mesh = new Mesh(geometry, partMaterial);
     mesh.castShadow = true;

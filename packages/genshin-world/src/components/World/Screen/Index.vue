@@ -17,7 +17,6 @@ import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readCatalogue } from "#src/services/world/readCatalogue";
-import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
 import { getResultAsync } from "@esposter/shared";
 
 // The world, opened once the names and the game's tables it reads its save and runs its rules by have arrived, with the
@@ -41,7 +40,6 @@ getResultAsync(() =>
       measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
       measureLoadStep("character-kits", readCharacterKits(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS)),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
-      measureLoadStep("region-palettes", readRegionPalettes(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
       measureLoadStep("frostbearing-tree-places", readMondstadtFrostbearingTreePlaces(props.gameDataBaseUrl)),
@@ -57,7 +55,6 @@ getResultAsync(() =>
     hudInterfaceRects,
     startingCharacterIdKitMap,
     windriseData,
-    regionPalettes,
     catalogue,
     wildlifePlaces,
     frostbearingTreePlaces,
@@ -70,7 +67,6 @@ getResultAsync(() =>
       hudInterfaceRects,
       materialDataMap,
       nameText,
-      regionPalettes,
       startingCharacterIdKitMap,
       statTables,
       wildlifePlaces,

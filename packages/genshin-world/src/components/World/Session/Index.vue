@@ -98,7 +98,6 @@ const {
   nameText,
   qualityTier,
   regionDataBaseUrl,
-  regionPalettes,
   save,
   serverClockOffsetMs = 0,
   startingCharacterIdKitMap,
@@ -571,6 +570,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
         :enemy-tables
+        :game-data-base-url
         :get-ground-height
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
@@ -581,7 +581,6 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
-        :region-palettes
         :frostbearing-tree-places
         :wildlife-places
         :windrise-data

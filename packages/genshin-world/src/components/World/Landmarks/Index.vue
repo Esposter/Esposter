@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
-import type { RegionData } from "#src/models/world/RegionData";
+import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { TreeImpostor } from "#src/models/world/TreeImpostor";
 import type { TreeSpecies } from "#src/models/world/TreeSpecies";
@@ -31,9 +31,8 @@ interface Props {
   landmarkCollider: LandmarkCollider;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
-  regionDataMap: ReadonlyMap<string, RegionData>;
-  // The building colours each region's palette record samples, which its kit draws its buildings in
-  regionPalettes: RegionPaletteMap;
+  // The regions in reach, each with the palettes its buildings are drawn in
+  regionDataMap: ReadonlyMap<string, LoadedRegion>;
   // The statue every Statue of The Seven is drawn as
   statue: WindriseStatue;
   // The families' surfaces, the oak's painting the trees and the statue's the statues
@@ -51,7 +50,6 @@ const {
   lightUniforms,
   rampTexture,
   regionDataMap,
-  regionPalettes,
   statue,
   surfaces,
   treeSpeciesOptionsMap,
@@ -60,6 +58,12 @@ const {
 // Every landmark of every region in reach, built by its kind's kit, so a region's landmarks appear as its data
 // Arrives and go when it is released
 const regionLandmarks = computed(() => [...regionDataMap.values()].flatMap(({ landmarks }) => landmarks));
+// The palettes every region in reach read with its data, which each of its buildings is drawn in
+const regionPalettes = computed(() => {
+  const mergedRegionPalettes: Partial<RegionPaletteMap> = {};
+  for (const loadedRegion of regionDataMap.values()) Object.assign(mergedRegionPalettes, loadedRegion.regionPalettes);
+  return mergedRegionPalettes;
+});
 // The landmarks are placed in this group in the world's own coordinates, and the collider is given each as it is built,
 // Once the scene holds its meshes, and lets go of each as it goes. The collider reads the group's matrices, so it is
 // Made here rather than reached through a template ref's readonly proxy

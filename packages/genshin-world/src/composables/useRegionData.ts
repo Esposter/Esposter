@@ -1,25 +1,30 @@
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { RegionData } from "#src/models/world/RegionData";
+import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { Vector3 } from "three";
 
 import { REGION_REACH } from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createRecheckDueCheck } from "#src/services/world/createRecheckDueCheck";
-import { readRegionData } from "#src/services/world/readRegionData";
+import { readLoadedRegion } from "#src/services/world/readLoadedRegion";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { computeOutlineDistance } from "genshin-engine";
 
-// Each region's data is fetched when the camera comes within reach of any of its areas' outlines, and released when it
-// Leaves. It is fetched rather than imported because the browser keeps an imported module for the life of the page,
-// So an imported region could never be released. Reach is rechecked only once the camera has moved a stretch, and a
+// Each region's data, with the palettes its buildings are drawn in, is fetched when the camera comes within reach of
+// Any of its areas' outlines, and released when it leaves. It is fetched rather than imported because the browser keeps
+// An imported module for the life of the page, so an imported region could never be released. Reach is rechecked only once the camera has moved a stretch, and a
 // Region whose data fails its schema or does not arrive in time is logged and left undrawn while the rest of the world
 // Loads. The data is settled whenever every region in reach has arrived or failed, which the first view's settling
 // Marks as the world ready to be shown
-export const useRegionData = (origin: Vector3, regionDataBaseUrl: string, catalogue: Catalogue) => {
+export const useRegionData = (
+  origin: Vector3,
+  regionDataBaseUrl: string,
+  gameDataBaseUrl: string,
+  catalogue: Catalogue,
+) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
-  const regionDataMap = shallowReactive(new Map<string, RegionData>());
+  const regionDataMap = shallowReactive(new Map<string, LoadedRegion>());
   const pendingRegionIds = new Set<string>();
   const wantedRegionIds = new Set<string>();
   const isRegionDataSettled = ref(false);
@@ -46,7 +51,7 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string, catalo
       if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
       pendingRegionIds.add(id);
       // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
-      getResultAsync(() => measureLoadStep("regions", readRegionData(regionDataBaseUrl, id))).match(
+      getResultAsync(() => measureLoadStep("regions", readLoadedRegion(regionDataBaseUrl, gameDataBaseUrl, id))).match(
         (regionData) => {
           pendingRegionIds.delete(id);
           // A region that left reach while it was fetching is not kept
