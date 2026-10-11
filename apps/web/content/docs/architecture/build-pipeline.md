@@ -129,12 +129,12 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## Key files
 
-| File                                                   | Role                                                     |
-| ------------------------------------------------------ | -------------------------------------------------------- |
-| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto                      |
-| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns          |
-| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from          |
-| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                 |
-| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program              |
-| `packages/configuration/src/generateExports.ts`        | Writes the barrels                                       |
-| `apps/web/modules/buildPackages.ts`                    | Brings the app's packages up to date at `nuxt dev` start |
+| File                                                   | Role                                                                    |
+| ------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `packages/configuration/src/getTsdownConfiguration.ts` | The base every config composes onto                                     |
+| `packages/configuration/src/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                         |
+| `packages/configuration/src/readPackageManifest.ts`    | Reads the manifest every derivation starts from                         |
+| `packages/configuration/tsconfig.base.json`            | Root of the preset chain                                                |
+| `packages/configuration/tsconfig.build.base.json`      | The excludes of the Vue declaration program                             |
+| `packages/configuration/src/generateExports.ts`        | Writes the barrels                                                      |
+| `apps/web/modules/buildPackages.ts`                    | Starts the package build at `nuxt dev` setup, awaited at `build:before` |
