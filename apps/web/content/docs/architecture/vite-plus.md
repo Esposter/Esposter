@@ -9,7 +9,7 @@ description: What `vp` owns here — a traced task cache for the builds and the 
 
 ## The task cache
 
-The builds and the two whole-repository checks run as tasks of the root `vite.config.ts` — `build:packages`, `build:app`, `lint` and `typecheck` — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+The builds and the two whole-repository checks run as tasks of the root `vite.config.ts` — `build:app`, `lint`, `typecheck` and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
 
 ```mermaid
 flowchart TD
@@ -64,7 +64,7 @@ The root scripts run their tools natively. virrun stays installed with its `virr
 | `vite.config.ts`                              | the `run` block — each cached build and check a task, with the files it rewrites subtracted |
 | `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool            |
 | `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed                    |
-| `scripts/src/updateNode/index.ts`             | writes the node pin and hands the install to `vp env`                                       |
+| `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                            |
 | `virrun.config.ts`                            | the opt-in sandbox's backend per platform                                                   |
 
 ## Sources

@@ -21,7 +21,7 @@ Every line is `export *`, so two modules exporting the same name are an ambiguit
 
 Generation is **unguarded** — it runs on every build. It reads as a function of the source file list, and a skip keyed on that list would save milliseconds while trusting a key to see every way the output can move; CI's task cache already replays `dist` and the barrels together, keyed on every file the build read.
 
-**A new module reaches the barrel at the package's next build.** tsdown calls `build:prepare` inside its build pass, so a file added to `src` is absent from the barrel until that package is built again, and a sibling resolving the `source` arm reads a barrel that never learned about it. `nuxt dev` builds each package it loads once at start, through the build cache, which regenerates the barrel whenever the source changed. An edit inside an existing module — a new export included — needs nothing, since `export *` re-exports whatever the file holds.
+**A new module reaches the barrel at the package's next build.** tsdown calls `build:prepare` inside its build pass, so a file added to `src` is absent from the barrel until that package is built again, and a sibling resolving the `source` arm reads a barrel that never learned about it. `pnpm dev` runs `vp run -w build:packages` before `nuxt dev` starts, and that task regenerates a barrel whenever its package's source changed. An edit inside an existing module — a new export included — needs nothing, since `export *` re-exports whatever the file holds.
 
 ## A subpath entry is a hand-written barrel
 
@@ -29,4 +29,4 @@ The generated barrel is the package's `.` entry and reaches every module. A seco
 
 ## Why the packages are not built more concurrently
 
-The wall time is one topological chain, because a sibling's `source` arm points at its generated — and gitignored — barrel, so a worker count past what the graph allows changes nothing. What already answers the dev loop is the build cache, which restores an unchanged package's `dist` and rebuilds only what changed, and CI's is the traced task cache, which replays the whole build when nothing it read has changed.
+The wall time is one topological chain, because a sibling's `source` arm points at its generated — and gitignored — barrel, so a worker count past what the graph allows changes nothing. What already answers the dev loop is vp's task cache, which restores an unchanged package's `dist` and rebuilds only what changed, and CI replays the whole set when nothing it read has changed.

@@ -1,6 +1,7 @@
 import type { UserConfig } from "vite-plus";
 
 import { defineConfig } from "vite-plus";
+import { readdirSync, readFileSync } from "node:fs";
 
 import oxfmtConfiguration from "./oxfmt.config.ts";
 import oxlintConfiguration from "./oxlint.config.ts";
@@ -26,6 +27,83 @@ const createTask = (
   command,
 });
 
+const PACKAGES_DIRECTORY = "packages";
+
+// The files a package's build rewrites, relative to the package
+const PACKAGE_REWRITTEN_PATTERNS = [
+  "auto-imports.d.ts",
+  "dist/**",
+  // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
+  "_tmp_*",
+  "src/components/index.ts",
+  "src/index.ts",
+  "src/generated/**",
+  // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
+  "node_modules/.cache/**",
+];
+
+// Each package with a build script is a task of its own, run in its directory and ordered after the builds of the
+// Workspace packages it depends on, so an edit rebuilds that package and the ones downstream while the rest replay.
+// The manifests are read rather than listed, so a new package gains its task with no edit here.
+interface PackageManifest {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  name: string;
+  optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
+}
+
+const readPackageBuildManifests = () =>
+  readdirSync(PACKAGES_DIRECTORY).flatMap((directory) => {
+    // The root config cannot import `@esposter/shared`, whose `dist` is one of the builds this file orders, and no
+    // Manifest carries a Date
+    // eslint-disable-next-line no-restricted-properties -- a manifest holds no Date for jsonDateParse to revive
+    const manifest: PackageManifest = JSON.parse(
+      readFileSync(`${PACKAGES_DIRECTORY}/${directory}/package.json`, "utf8"),
+    );
+    return manifest.scripts?.build ? [{ directory, manifest }] : [];
+  });
+
+const getBuildTaskName = (directory: string) => `build:${directory}`;
+
+const readPackageBuildTasks = () => {
+  const buildManifests = readPackageBuildManifests();
+  const buildTaskNameMap = new Map(
+    buildManifests.map(({ directory, manifest }) => [manifest.name, getBuildTaskName(directory)]),
+  );
+  return buildManifests.map(({ directory, manifest }) => {
+    const dependencyNames = [
+      manifest.dependencies,
+      manifest.devDependencies,
+      manifest.optionalDependencies,
+      manifest.peerDependencies,
+    ].flatMap((dependencies) => Object.keys(dependencies ?? {}));
+    return [
+      getBuildTaskName(directory),
+      {
+        cache: {
+          input: [
+            { auto: true },
+            ...PNPM_STATE_PATTERNS,
+            // Resolved from the workspace root, as the task belongs to it rather than to the package its `cwd` names
+            ...PACKAGE_REWRITTEN_PATTERNS.map((pattern) => ({
+              base: "workspace",
+              pattern: `!${PACKAGES_DIRECTORY}/${directory}/${pattern}`,
+            })),
+          ],
+          output: [{ auto: true }, ...PNPM_STATE_PATTERNS],
+        },
+        command: "pnpm run build",
+        cwd: `${PACKAGES_DIRECTORY}/${directory}`,
+        dependsOn: dependencyNames.flatMap((dependencyName) => buildTaskNameMap.get(dependencyName) ?? []),
+      },
+    ] as const;
+  });
+};
+
+const packageBuildTasks = readPackageBuildTasks();
+
 // Composed from one module per tool, as nuxt.config.ts is: the lint and format settings stay in their own files, which
 // The bare binaries and the editor read directly. It configures no bundler: the app builds through `nuxt build` from
 // The app's own nuxt.config.ts.
@@ -41,15 +119,13 @@ const configuration: UserConfig = defineConfig({
         ["apps/web/.data/**", "apps/web/.nuxt/**", "apps/web/node_modules/.cache/**"],
         [],
       ),
-      "build:packages": createTask('pnpm -r --filter "./packages/*" --bail build', [
-        "packages/*/auto-imports.d.ts",
-        "packages/*/dist/**",
-        // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
-        "packages/*/_tmp_*",
-        "packages/*/src/components/index.ts",
-        "packages/*/src/index.ts",
-        "packages/*/src/generated/**",
-      ]),
+      ...Object.fromEntries(packageBuildTasks),
+      // The libraries as a set: the per-package tasks do the caching, so this one only orders them
+      "build:packages": {
+        cache: false,
+        command: 'echo "every package built"',
+        dependsOn: packageBuildTasks.map(([taskName]) => taskName),
+      },
       lint: createTask(
         "run-s --continue-on-error lint:oxlint lint:eslint lint:workspace lint:unused lint:workflows",
         [],
