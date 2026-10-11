@@ -84,6 +84,7 @@ describe("messageRouter", () => {
   const mimetype = MimeType.Png;
   const size = 1;
   const name = "name";
+  const timeZone = "UTC";
   const updatedMessage = "updatedMessage";
   // A word the message wrapper cannot contain on its own, so a room's filter only ever matches the text a test
   // Deliberately put in front of it
@@ -99,7 +100,8 @@ describe("messageRouter", () => {
     question: "question",
     votes: {},
   });
-  const createPoll = () => messageCaller.createMessage({ message: pollMessage, roomId, type: MessageType.Poll });
+  const createPoll = () =>
+    messageCaller.createMessage({ message: pollMessage, roomId, timeZone, type: MessageType.Poll });
   // The two blobs one attachment owns, which every deletion path has to publish together
   const getExpectedBlobDeletionData = (id: string) => ({
     blobNames: [getBlobName(`${roomId}/${id}`, filename), getThumbnailBlobName(roomId, id)],
@@ -179,7 +181,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const messages = await messageCaller.readMessages({ roomId });
 
     expect(messages.items).toHaveLength(1);
@@ -245,8 +247,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROW_KEY_SORT_ITEM]);
     let messages = await messageCaller.readMessages({ cursor, roomId });
 
@@ -265,8 +267,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     let messages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 
     expect(messages.items).toHaveLength(1);
@@ -292,8 +294,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     // The state between createMessage's two table writes
     const messageClient = await useTableClient(AzureTable.Messages);
     await messageClient.deleteEntity(roomId, firstMessage.rowKey);
@@ -318,8 +320,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     await messageCaller.deleteMessage({ partitionKey: roomId, rowKey: firstMessage.rowKey });
     const messages = await messageCaller.readMessages({ order: SortOrder.Asc, roomId });
 
@@ -343,7 +345,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const messages = await messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [newMessage.rowKey] });
 
     expect(messages).toHaveLength(1);
@@ -356,8 +358,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const messages = await messageCaller.readMessagesByRowKeys({
       roomId,
       rowKeys: [firstMessage.rowKey, secondMessage.rowKey],
@@ -371,7 +373,7 @@ describe("messageRouter", () => {
 
     const userId = getMockSession().user.id;
     const message = createMentionMessage(userId);
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     expect(newMessage).toStrictEqual(
       new StandardMessageEntity({
@@ -502,7 +504,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
     const trackedData = await getFirstEmit(
       () => subscription,
-      () => messageCaller.createMessage({ message, roomId }),
+      () => messageCaller.createMessage({ message, roomId, timeZone }),
     );
 
     assert(isTrackedEnvelope<MessageEntity[]>(trackedData));
@@ -518,9 +520,9 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstMessage = await messageCaller.createMessage({ message, roomId });
-    const secondMessage = await messageCaller.createMessage({ message, roomId });
-    const thirdMessage = await messageCaller.createMessage({ message, roomId });
+    const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
+    const thirdMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const subscription = await messageCaller.onCreateMessage({ lastEventId: firstMessage.rowKey, roomId });
     const trackedData = await withAsyncIterator(
       () => subscription,
@@ -544,7 +546,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const ownerMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const ownerMessage = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     const subscription = await messageCaller.onCreateMessage({ lastEventId: ownerMessage.rowKey, roomId });
     // Holds the catch-up open across the racing send, which is the window a listener attached after it would miss
     const { promise, resolve } = Promise.withResolvers<string>();
@@ -557,7 +559,7 @@ describe("messageRouter", () => {
       () => subscription,
       async (iterator) => {
         const emit = iterator.next();
-        await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId });
+        await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId, timeZone });
         resolve("");
         return emit;
       },
@@ -613,6 +615,7 @@ describe("messageRouter", () => {
       files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
       message,
       roomId,
+      timeZone,
     });
     await messageCaller.updateMessage({ message: updatedMessage, ...getCompositeKey(newMessage) });
     const messages = await messageCaller.readMessages({ roomId });
@@ -630,7 +633,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
 
@@ -643,7 +646,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const subscription = await messageCaller.onUpdateMessage({ roomId });
     const data = await getFirstEmit(
       () => subscription,
@@ -657,7 +660,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
     const messages = await messageCaller.readMessages({ roomId });
@@ -669,7 +672,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
       () => subscription,
@@ -684,7 +687,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const compositeKey = getCompositeKey(newMessage);
     await messageCaller.deleteMessage(compositeKey);
 
@@ -697,7 +700,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const compositeKey = getCompositeKey(newMessage);
     const forwardedRoom = await roomCaller.createRoom({ name });
     await messageCaller.deleteMessage(compositeKey);
@@ -717,7 +720,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
@@ -732,7 +735,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({ message, ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
@@ -748,7 +751,7 @@ describe("messageRouter", () => {
   test("forwarding a word-filtered message still posts to rooms that did not block, timing out only the blocking room", async () => {
     expect.hasAssertions();
 
-    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     const filteredRoom = await roomCaller.createRoom({ name });
     await mockContext.db
       .insert(roomFiltersInMessage)
@@ -786,7 +789,7 @@ describe("messageRouter", () => {
   test("logs every room a forward failed for", async () => {
     expect.hasAssertions();
 
-    const source = await messageCaller.createMessage({ message: filteredMessage, roomId });
+    const source = await messageCaller.createMessage({ message: filteredMessage, roomId, timeZone });
     const firstFilteredRoom = await roomCaller.createRoom({ name });
     const secondFilteredRoom = await roomCaller.createRoom({ name });
     await mockContext.db.insert(roomFiltersInMessage).values([
@@ -815,7 +818,7 @@ describe("messageRouter", () => {
     // The forwarded body is the text that lands in the destination room, so filtering only the note attached to
     // The forward makes forwarding from an unfiltered room a way around the filter entirely. Both texts are
     // Checked together, so a clean note alongside a filtered body does not buy the forward a pass either.
-    const source = await messageCaller.createMessage({ message: filteredMessage, roomId });
+    const source = await messageCaller.createMessage({ message: filteredMessage, roomId, timeZone });
     const filteredRoom = await roomCaller.createRoom({ name });
     await insertWordFilter(filteredRoom.id);
     const member = await createMember();
@@ -966,7 +969,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
     setMessageAssetBlob(id);
 
     await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
@@ -988,6 +995,7 @@ describe("messageRouter", () => {
         { filename, id: secondId, mimetype, size },
       ],
       roomId,
+      timeZone,
     });
     const compositeKey = getCompositeKey(newMessage);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
@@ -1006,7 +1014,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
     MockEventGridDatabase.clear();
@@ -1025,7 +1037,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const id = crypto.randomUUID();
-    const newMessage = await messageCaller.createMessage({ files: [{ filename, id, mimetype, size }], roomId });
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
     MockEventGridDatabase.clear();
@@ -1048,6 +1064,7 @@ describe("messageRouter", () => {
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id: newFileId, mimetype, size }],
       roomId,
+      timeZone,
     });
     setMessageAssetBlob(newFileId);
 
@@ -1067,6 +1084,7 @@ describe("messageRouter", () => {
       files: [{ filename, id, mimetype, size }],
       message,
       roomId,
+      timeZone,
     });
     setMessageAssetBlob(id);
     const subscription = await messageCaller.onCreateMessage({ roomId });
@@ -1091,7 +1109,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     const id = crypto.randomUUID();
 
@@ -1106,7 +1124,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     await messageCaller.deleteLinkPreviewResponse(getCompositeKey(newMessage));
 
@@ -1122,7 +1140,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const compositeKey = getCompositeKey(newMessage);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
     const clearLinkPreviewResponse = messageCaller.deleteLinkPreviewResponse(compositeKey);
@@ -1141,7 +1159,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     await messageCaller.pinMessage(getCompositeKey(newMessage));
 
@@ -1160,7 +1178,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     await messageCaller.pinMessage(getCompositeKey(newMessage));
     await messageCaller.unpinMessage(getCompositeKey(newMessage));
@@ -1179,7 +1197,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const newMessage = await messageCaller.createMessage({ message, roomId });
+    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const compositeKey = getCompositeKey(newMessage);
     await messageCaller.pinMessage(compositeKey);
     const { isFirstWriting, resolveSecondWritten } = holdFirstWrite();
@@ -1201,7 +1219,7 @@ describe("messageRouter", () => {
 
     await expect(
       // @ts-expect-error -- the input refuses the type, which is the behaviour under test
-      messageCaller.createMessage({ message: " ", roomId, type: MessageType.System }),
+      messageCaller.createMessage({ message: " ", roomId, timeZone, type: MessageType.System }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: [
         {
@@ -1230,11 +1248,11 @@ describe("messageRouter", () => {
 
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);
-    await messageCaller.createMessage({ message, roomId });
+    await messageCaller.createMessage({ message, roomId, timeZone });
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);
 
-    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(messageCaller.createMessage({ message, roomId, timeZone })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Slowmode]}]`,
     );
   });
@@ -1252,8 +1270,8 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
     await mockSessionOnce(mockContext.db, member);
     const results = await Promise.allSettled([
-      messageCaller.createMessage({ message, roomId }),
-      messageCaller.createMessage({ message, roomId }),
+      messageCaller.createMessage({ message, roomId, timeZone }),
+      messageCaller.createMessage({ message, roomId, timeZone }),
     ]);
 
     expect(results.map(({ status }) => status).toSorted()).toStrictEqual(["fulfilled", "rejected"]);
@@ -1270,11 +1288,11 @@ describe("messageRouter", () => {
 
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);
-    await messageCaller.createMessage({ message, roomId });
+    await messageCaller.createMessage({ message, roomId, timeZone });
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);
 
-    const createdMessage = await messageCaller.createMessage({ message, roomId });
+    const createdMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     expect(createdMessage.message).toBe(message);
   });
@@ -1286,7 +1304,7 @@ describe("messageRouter", () => {
 
     // A forward is a send, so it advances the same clock it was checked against — otherwise a stale
     // `lastMessageAt` keeps passing and forwarding floods a room slowmode is supposed to throttle
-    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
     const member = await createMember();
     const forwardInput = { ...getCompositeKey(source), roomIds: [roomId] };
@@ -1311,10 +1329,10 @@ describe("messageRouter", () => {
     await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
     const message = createOwnMentionMessage();
     vi.advanceTimersByTime(1);
-    await messageCaller.createMessage({ message, roomId });
+    await messageCaller.createMessage({ message, roomId, timeZone });
     vi.advanceTimersByTime(1);
 
-    const createdMessage = await messageCaller.createMessage({ message, roomId });
+    const createdMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     expect(createdMessage.message).toBe(message);
   });
@@ -1327,7 +1345,7 @@ describe("messageRouter", () => {
     const message = createMentionMessage(member.id);
     await mockSessionOnce(mockContext.db, member);
 
-    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(messageCaller.createMessage({ message, roomId, timeZone })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.ReadOnly]}]`,
     );
   });
@@ -1340,7 +1358,7 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
 
-    const createdMessage = await messageCaller.createMessage({ message, roomId });
+    const createdMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     expect(createdMessage.message).toBe(message);
   });
@@ -1359,7 +1377,7 @@ describe("messageRouter", () => {
     const message = createMentionMessage(member.id);
     await mockSessionOnce(mockContext.db, member);
 
-    await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(messageCaller.createMessage({ message, roomId, timeZone })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
     );
   });
@@ -1377,7 +1395,7 @@ describe("messageRouter", () => {
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
     await expect(
-      messageCaller.createMessage({ message: createOwnMentionMessage(), roomId }),
+      messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${MessageCreationRejectionReasonMap[MessageCreationRejectionType.Timeout]}]`,
     );
@@ -1389,7 +1407,7 @@ describe("messageRouter", () => {
     // The filter is a moderation tool, so it never fires on the moderator wielding it
     await insertWordFilter();
 
-    const createdMessage = await messageCaller.createMessage({ message: filteredMessage, roomId });
+    const createdMessage = await messageCaller.createMessage({ message: filteredMessage, roomId, timeZone });
 
     expect(createdMessage.message).toBe(filteredMessage);
   });
@@ -1402,7 +1420,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.createMessage({ message: filteredMessage, roomId }),
+      messageCaller.createMessage({ message: filteredMessage, roomId, timeZone }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
   });
 
@@ -1412,7 +1430,7 @@ describe("messageRouter", () => {
     await insertWordFilter();
     const message = createOwnMentionMessage();
 
-    const createdMessage = await messageCaller.createMessage({ message, roomId });
+    const createdMessage = await messageCaller.createMessage({ message, roomId, timeZone });
 
     expect(createdMessage.message).toBe(message);
   });
@@ -1430,7 +1448,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.createMessage({ message: filteredMessage, roomId }),
+      messageCaller.createMessage({ message: filteredMessage, roomId, timeZone }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     const [membership] = await readRoomMembershipRows(mockContext.db, roomId, member.id);
@@ -1441,7 +1459,7 @@ describe("messageRouter", () => {
   test("followThread then readFollowedThreads returns the thread root", async () => {
     expect.hasAssertions();
 
-    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
 
     const { threads } = await messageCaller.readFollowedThreads({ roomId });
@@ -1454,8 +1472,8 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const message = createOwnMentionMessage();
-    const firstRoot = await messageCaller.createMessage({ message, roomId });
-    const secondRoot = await messageCaller.createMessage({ message, roomId });
+    const firstRoot = await messageCaller.createMessage({ message, roomId, timeZone });
+    const secondRoot = await messageCaller.createMessage({ message, roomId, timeZone });
     // Followed oldest-root-last, so a list that merely echoed the follow order would come back reversed
     await messageCaller.followThread({ roomId, threadRootRowKey: secondRoot.rowKey });
     await messageCaller.followThread({ roomId, threadRootRowKey: firstRoot.rowKey });
@@ -1468,7 +1486,7 @@ describe("messageRouter", () => {
   test("unfollowThread removes the follow", async () => {
     expect.hasAssertions();
 
-    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
     await messageCaller.unfollowThread({ roomId, threadRootRowKey: root.rowKey });
 
@@ -1480,7 +1498,7 @@ describe("messageRouter", () => {
   test("readFollowedThreads keeps a follow whose root was deleted while the display list drops it", async () => {
     expect.hasAssertions();
 
-    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId });
+    const root = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     await messageCaller.followThread({ roomId, threadRootRowKey: root.rowKey });
     await messageCaller.deleteMessage(getCompositeKey(root));
 
@@ -1499,7 +1517,7 @@ describe("messageRouter", () => {
   test("createMessage publishes one notification", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message: name, roomId });
+    const newMessage = await messageCaller.createMessage({ message: name, roomId, timeZone });
     const events = MockEventGridDatabase.get("");
     assert.exists(events);
 
@@ -1512,7 +1530,7 @@ describe("messageRouter", () => {
   test("createMessage reply publishes one notification carrying the thread root", async () => {
     expect.hasAssertions();
 
-    const newRootMessage = await messageCaller.createMessage({ message: name, roomId });
+    const newRootMessage = await messageCaller.createMessage({ message: name, roomId, timeZone });
     // Ignore the root message's notification; assert only on the reply
     MockEventGridDatabase.clear();
 
@@ -1520,6 +1538,7 @@ describe("messageRouter", () => {
       message: name,
       replyRowKey: newRootMessage.rowKey,
       roomId,
+      timeZone,
     });
     const events = MockEventGridDatabase.get("");
     assert.exists(events);

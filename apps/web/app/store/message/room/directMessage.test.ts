@@ -119,7 +119,14 @@ describe(useDirectMessageStore, () => {
 
     expect(directMessages.value).toStrictEqual([friendDirectMessage]);
     expect(sentMessages).toStrictEqual([
-      { files: [], message: inviteLink, replyRowKey: "", roomId: friendDirectMessage.id, type: MessageType.Message },
+      {
+        files: [],
+        message: inviteLink,
+        replyRowKey: "",
+        roomId: friendDirectMessage.id,
+        timeZone: Temporal.Now.timeZoneId(),
+        type: MessageType.Message,
+      },
     ]);
   });
 });

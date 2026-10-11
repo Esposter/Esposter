@@ -1,9 +1,9 @@
 import { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
+import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { length } from "#shared/services/achievement/conditions/length";
 import { property } from "#shared/services/achievement/conditions/property";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
-import { standardCreateMessageInputSchema } from "@esposter/db-schema";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe(defineAchievementDefinition, () => {
@@ -14,7 +14,7 @@ describe(defineAchievementDefinition, () => {
       condition: property("message", length(isAtLeast(1000))),
       description: "",
       icon: "",
-      inputSchema: standardCreateMessageInputSchema,
+      inputSchema: zonedCreateMessageInputSchema,
       points: 0,
       triggerPath: "message.createMessage",
     });
@@ -43,7 +43,7 @@ describe(defineAchievementDefinition, () => {
       condition: property("data.pointCount", isAtLeast(1)),
       description: "",
       icon: "",
-      inputSchema: standardCreateMessageInputSchema,
+      inputSchema: zonedCreateMessageInputSchema,
       points: 0,
       triggerPath: "message.createMessage",
     });
@@ -57,7 +57,7 @@ describe(defineAchievementDefinition, () => {
       condition: property("message", isAtLeast(1)),
       description: "",
       icon: "",
-      inputSchema: standardCreateMessageInputSchema,
+      inputSchema: zonedCreateMessageInputSchema,
       points: 0,
       triggerPath: "message.createMessage",
     });

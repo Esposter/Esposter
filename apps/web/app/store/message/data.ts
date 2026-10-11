@@ -88,7 +88,9 @@ export const useDataStore = defineStore("message/data", () => {
     if (!isOptimisticCreated) return false;
     await onOptimisticCreate?.(sentFileIds);
 
-    return getResultAsync(() => $trpc.message.createMessage.mutate(sentInput)).match(
+    return getResultAsync(() =>
+      $trpc.message.createMessage.mutate({ ...sentInput, timeZone: Temporal.Now.timeZoneId() }),
+    ).match(
       async (createdMessage) => {
         Object.assign(newMessage, createdMessage);
         delete newMessage.isLoading;

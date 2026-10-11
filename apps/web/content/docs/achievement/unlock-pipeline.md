@@ -42,6 +42,7 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `server/trpc/plugins/achievementPlugin.ts`                                   | the middleware                     |
 | `shared/services/achievement/definitions/defineAchievementDefinition.ts`     | the per-definition `check`         |
 | `shared/services/achievement/conditions/`                                    | typed predicate helpers            |
+| `shared/models/db/message/ZonedCreateMessageInput.ts`                        | a send with the sender's time zone |
 | `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map              |
 | `server/trpc/routers/achievement.ts`                                         | read + subscription procedures     |
 | `app/components/Achievement/`                                                | gallery grid + notification toasts |
@@ -50,4 +51,5 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 ## Notes
 
 - Processing is synchronous in the request path, in the mutation's best-effort tail ([persist then notify](/docs/architecture/persist-then-notify)) — the whole post-mutation block and each definition's writes sit behind their own `getResultAsync` boundaries, so a failure is logged with its path, user, and definition name. Nothing needs a retry: a lost counter increment self-heals on the next trigger, and an unmet `amount: 1` condition re-evaluates on the next qualifying call. Escalate to EventGrid only if plugin latency ever shows in traces.
+- A time-of-day condition (`isWithinTime`) reads the hour in the time zone the triggering call carries, never the server's, which is UTC in production. `message.createMessage` takes the sender's IANA zone beside the message (`ZonedCreateMessageInput`), the client sending `Temporal.Now.timeZoneId()`, and the procedure drops it before the message is written, so the zone is read by the condition alone. A send at six in the morning in Sydney earns the early-bird window there.
 - `readUserAchievements` accepts another user's id, so achievement showcases on user-facing surfaces need no new procedure.

@@ -22,7 +22,7 @@ sequenceDiagram
     participant EG as Azure Event Grid
     participant F as ProcessNotification (Azure Function)
 
-    C->>T: createMessage({ roomId, message })
+    C->>T: createMessage({ roomId, message, timeZone })
     T->>T: assertCanCreateMessage, then advance the slowmode clock
     T->>AT: insert Messages + MessagesAscending rows
     T->>E: emit("createMessage", entity)

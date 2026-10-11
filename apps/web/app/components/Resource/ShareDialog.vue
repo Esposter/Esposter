@@ -49,7 +49,12 @@ const share = async () => {
   if (!room) return false;
   // The caller's own message in their own room — RBAC, rate limits and the message pipeline apply unchanged
   const outcome = await executeMutation(
-    () => $trpc.message.createMessage.mutate({ message: shareMessage.value, roomId: roomId.value }),
+    () =>
+      $trpc.message.createMessage.mutate({
+        message: shareMessage.value,
+        roomId: roomId.value,
+        timeZone: Temporal.Now.timeZoneId(),
+      }),
     {
       key: Symbol("shareResource"),
       onError: createErrorNotification,

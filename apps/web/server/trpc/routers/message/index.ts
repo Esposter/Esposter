@@ -59,6 +59,7 @@ import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
+import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -91,7 +92,6 @@ import {
   MessageType,
   MessageTypeEntityMap,
   roomIdSchema,
-  standardCreateMessageInputSchema,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
@@ -100,8 +100,9 @@ import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const baseMessageRouter = router({
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
-    ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
+  // The sender's time zone is the call's and never the message's, so it is dropped before the message is written
+  createMessage: getMemberProcedure(zonedCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+    ({ ctx, input: { timeZone: _timeZone, ...input } }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
   ),
   // oxlint-disable-next-line trpc-procedure/require-query-verb -- typing earns no achievement, and a mutation runs the achievement plugin on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
