@@ -74,7 +74,7 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 | `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                               |
 | `packages/genshin-world/src/components/World/Session/Index.vue`          | reads the input once a frame, keeps what is open, holds the world, lets the pointer go, mounts a talk |
 | `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                        |
-| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the Graphics tab's header, tab and quality row, held until the world opens it                         |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them       |
 | `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                                |
 
 ## Sources

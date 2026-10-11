@@ -58,10 +58,11 @@ export const compareScreen = async (referenceId: string, witness?: DerivedAssetC
     throw new InvalidOperationError(Operation.Read, referenceId, `no reference at ${referencePath}`);
   const { height, width } = await sharp(referencePath).metadata();
   const region = reference.region ?? { height, width, x: 0, y: 0 };
-  // A backdrop is the reference with its region filled from its surroundings, so the game's interface is not drawn
-  // Behind ours; a reference with no border to fill from keeps the reference itself
+  // A backdrop is the reference with its interface's pieces, its region unless it names them, filled from their
+  // Surroundings, so the game's interface is not drawn behind ours; one with no border to fill from keeps the reference
   const backdropPath = reference.isBackdrop
-    ? ((await getCleanPlatePath(referenceId, referencePath, region, { height, width })) ?? referencePath)
+    ? ((await getCleanPlatePath(referenceId, referencePath, reference.plate ?? [region], { height, width })) ??
+      referencePath)
     : undefined;
   // A recording softens what it shows, so our shot is softened by its capture's own measured blur before it is scored
   const softness = reference.capture === undefined ? undefined : await getCaptureSoftness(reference.capture);
