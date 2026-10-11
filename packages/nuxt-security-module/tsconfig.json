@@ -1,0 +1,1 @@
+{ "compilerOptions": { "lib": ["ESNext", "dom", "dom.iterable"] }, "extends": "../configuration/tsconfig.node.json" }
