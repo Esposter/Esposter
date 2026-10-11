@@ -2,6 +2,7 @@
 import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { RegionData } from "#src/models/world/RegionData";
+import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 import type { TreeImpostor } from "#src/models/world/TreeImpostor";
 import type { TreeSpecies } from "#src/models/world/TreeSpecies";
 import type { LandmarkCollider, LightUniforms, TreeOptions, WindUniforms } from "genshin-engine";
@@ -30,6 +31,8 @@ interface Props {
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
+  // The building colours each region's palette record samples, which its kit draws its buildings in
+  regionPalettes: RegionPaletteMap;
   // The statue every Statue of The Seven is drawn as
   statue: WindriseStatue;
   // The families' surfaces, the oak's painting the trees and the statue's the statues
@@ -47,6 +50,7 @@ const {
   lightUniforms,
   rampTexture,
   regionDataMap,
+  regionPalettes,
   statue,
   surfaces,
   treeSpeciesOptionsMap,
@@ -134,6 +138,7 @@ onUnmounted(() => {
         :get-ground-height
         :landmark
         :part-material
+        :region-palettes
       />
     </TresGroup>
   </primitive>

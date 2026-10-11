@@ -4,13 +4,10 @@ import type { LatheSection } from "genshin-engine";
 // Trim and green lawns under a hazy blue sky, with pink and purple in Erinnyes Forest and grey in Morte. The hex values
 // Are a first reading of those names, to be checked against the reference screenshots
 export const FONTAINE_WATER_COLOR = 0x3ec9c0;
-export const FONTAINE_STONE_COLOR = 0xf1e6cf;
 export const FONTAINE_WHITE_STONE_COLOR = 0xf7f4ec;
-export const FONTAINE_SLATE_COLOR = 0x3f5a7a;
+// Provisional: the gold and iron are trim in the game's atlases, which the palette does not sample
 export const FONTAINE_GOLD_COLOR = 0xd6a94a;
 export const FONTAINE_IRON_COLOR = 0x2e333d;
-// Provisional: the awnings' canvas, a first reading until it is sampled from the game's own textures
-export const FONTAINE_AWNING_COLOR = 0x2f6f8f;
 export const FONTAINE_LAWN_COLOR = 0x86c25a;
 export const FONTAINE_SKY_COLOR = 0x9ec8ea;
 export const ERINNYES_PINK_COLOR = 0xd98fb8;

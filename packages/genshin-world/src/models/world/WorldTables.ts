@@ -9,6 +9,7 @@ import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
+import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
 // Opens its session
@@ -29,6 +30,8 @@ export interface WorldTables {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
+  // The building colours each region's palette record samples, which its kit draws its buildings in
+  regionPalettes: RegionPaletteMap;
   // The combat talent multipliers of the team the world starts with, so its first frame has each member's combatant
   startingTalentMultipliers: TalentMultiplierMap;
   // The game's stat tables a character is made and summed from

@@ -97,6 +97,7 @@ const {
   nameText,
   qualityTier,
   regionDataBaseUrl,
+  regionPalettes,
   save,
   serverClockOffsetMs = 0,
   startingTalentMultipliers,
@@ -571,6 +572,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        :region-palettes
         :frostbearing-tree-places
         :wildlife-places
         :windrise-data
