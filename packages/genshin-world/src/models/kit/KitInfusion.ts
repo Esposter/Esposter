@@ -8,6 +8,8 @@ export interface KitInfusion {
   element: Element;
   // Whether the infusion converts the attacks it infuses, so each hit with a converted poise or reach deals that instead
   isConverted?: true;
+  // Whether its character leaving the field ends it
+  isEndedOnSwap?: true;
   kind: "infusion";
   // The share the infusion raises its character's Normal ATK SPD by, if it raises it, which plays each normal attack's
   // Seconds and hitmarks that much faster
