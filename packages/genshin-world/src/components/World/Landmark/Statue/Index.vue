@@ -4,7 +4,6 @@ import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { ToonNodeMaterial } from "genshin-engine";
 
-import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { getWindrisePartDetail } from "#src/services/windrise/getWindrisePartDetail";
 import { createStatueGeometries, setObjectSurface } from "genshin-engine";
 import { Mesh } from "three";
@@ -17,19 +16,20 @@ interface Props {
   partMaterial: ToonNodeMaterial;
   // The statue's parts and the sections of their shafts
   statue: WindriseStatue;
-  // The families' surfaces, the statue's painting each of its parts
+  // The families' surfaces, the statue's giving each of its parts its detail
   surfaces: WindriseSurfaces;
 }
 
 const { getGroundHeight, landmark, partMaterial, statue, surfaces } = defineProps<Props>();
 const { heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
-// Each part of the statue is drawn in its own colour and detail, as its export mesh's textures paint it
+// Each part of the statue is drawn in the colours its stacks carry, read off its export mesh's textures where each of
+// Their vertices stands, unscaled, and in its own detail
 const statueMeshes = Object.entries(createStatueGeometries(statue.parts)).map(([part, geometry]) => {
   const mesh = new Mesh(geometry, partMaterial);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  setObjectSurface(mesh, getWindrisePartColor(surfaces.Statue, part), getWindrisePartDetail(surfaces.Statue, part));
+  setObjectSurface(mesh, 0xffffff, getWindrisePartDetail(surfaces.Statue, part));
   return mesh;
 });
 

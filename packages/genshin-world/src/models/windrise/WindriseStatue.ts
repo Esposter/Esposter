@@ -9,12 +9,17 @@ export interface WindriseStatue {
 }
 
 // One section of a part's shaft: its ring's centre in the part's own x and z, its height, and its radius about the
-// Centre at each of the part's angles
-const statueSectionSchema = z.object({
-  centre: z.array(z.number()).length(2),
-  height: z.number().positive(),
-  radii: z.array(z.number().nonnegative()),
-}) satisfies z.ZodType<StatueSection>;
+// Centre and its surface's colour, a packed sRGB hex, at each of the part's angles, one colour a radius
+const statueSectionSchema = z
+  .object({
+    centre: z.array(z.number()).length(2),
+    colors: z.array(z.int().min(0).max(0xffffff)),
+    height: z.number().positive(),
+    radii: z.array(z.number().nonnegative()),
+  })
+  .refine(({ colors, radii }) => colors.length === radii.length, {
+    error: "a section holds one colour at each angle it holds a radius at",
+  }) satisfies z.ZodType<StatueSection>;
 const statuePartSchema = z.object({
   part: z.string().min(1),
   position: z.array(z.number()).length(3),

@@ -1,5 +1,6 @@
 import type { Vector } from "#src/models/shared/Vector";
 import type { StatueSection, StatueStack } from "genshin-engine";
+import type { Except } from "type-fest";
 
 import { toRadialSector } from "#src/services/genshinAssets/fit/toRadialSector";
 import { computeSymmetricEigen } from "#src/services/shared/computeSymmetricEigen";
@@ -7,6 +8,7 @@ import { Matrix4, Quaternion, Vector3 } from "three";
 
 // How near to the axis a principal axis may point and still be read as across it
 const CROSSING_COSINE = 0.9;
+const FULL_TURN = Math.PI * 2;
 // A sector no point reached takes the lesser of its nearest reached neighbours' radii either way round, so a gap in a
 // Thin blade's ring is read across its edge rather than bulging it
 const fillEmptySectors = (radii: readonly number[]): number[] =>
@@ -47,11 +49,22 @@ const computePrincipalAxes = (points: readonly Vector[]): { axes: Vector3[]; cen
 // Points read as one of a statue kit's stacks: along the axis given, or else along their own greatest spread, cut into
 // Sections of about `sectionHeight`, each section's ring centred on its points' centroid and its radius at each of
 // `angleCount` angles the farthest of its points in that sector, the first angle along the points' next greatest spread
-// Across the axis. The stack's foot and turn place it in the frame the points are in. A section no point reaches keeps
-// The one below it. Returns the stack in the kit's terms, unrounded
+// Across the axis, and its colour at each angle what `readColour` reads where that angle's vertex stands, in the frame
+// The points are in. The stack's foot and turn place it in that frame. A section no point reaches keeps the one below
+// It. Returns the stack in the kit's terms, unrounded
 export const fitStatueStack = (
   points: readonly Vector[],
-  { angleCount, axis, sectionHeight }: { angleCount: number; axis?: Readonly<Vector>; sectionHeight: number },
+  {
+    angleCount,
+    axis,
+    readColour,
+    sectionHeight,
+  }: {
+    angleCount: number;
+    axis?: Readonly<Vector>;
+    readColour: (point: Readonly<Vector>) => number;
+    sectionHeight: number;
+  },
 ): StatueStack => {
   const { axes, centroid } = computePrincipalAxes(points);
   const along = axis ? new Vector3(...axis).normalize() : (axes[0] ?? new Vector3(0, 1, 0));
@@ -76,11 +89,11 @@ export const fitStatueStack = (
   const sectionPoints = Array.from({ length: sectionCount }, (): Vector[] => []);
   for (const local of locals)
     sectionPoints[Math.min(sectionCount - 1, Math.floor((local[0] - foot) / height))]?.push(local);
-  const sections: StatueSection[] = [];
+  const shapes: Except<StatueSection, "colors">[] = [];
   for (const members of sectionPoints) {
-    const below = sections.at(-1);
+    const below = shapes.at(-1);
     if (members.length === 0) {
-      sections.push({
+      shapes.push({
         centre: below?.centre ?? [0, 0],
         height,
         radii: below?.radii ?? Array.from({ length: angleCount }, () => 0),
@@ -96,8 +109,26 @@ export const fitStatueStack = (
       const sector = toRadialSector(x, z, centre, angleCount);
       radii[sector] = Math.max(radii[sector] ?? 0, Math.hypot(x - centre[0], z - centre[1]));
     }
-    sections.push({ centre, height, radii: fillEmptySectors(radii) });
+    shapes.push({ centre, height, radii: fillEmptySectors(radii) });
   }
+  // Each ring stands at its section's middle, as the kit lofts it, and each of its vertices at its angle about its centre
+  const vertex = new Vector3();
+  const sections = shapes.map(({ centre: [centreX = 0, centreZ = 0], radii }, index) => ({
+    centre: [centreX, centreZ],
+    colors: radii.map((radius, sector) => {
+      const turn = (sector / angleCount) * FULL_TURN;
+      return readColour(
+        vertex
+          .copy(centroid)
+          .addScaledVector(along, foot + (index + 0.5) * height)
+          .addScaledVector(across, centreX + radius * Math.cos(turn))
+          .addScaledVector(third, centreZ + radius * Math.sin(turn))
+          .toArray(),
+      );
+    }),
+    height,
+    radii,
+  }));
   const position = centroid.clone().addScaledVector(along, foot);
   const rotation = new Quaternion().setFromRotationMatrix(new Matrix4().makeBasis(across, along, third));
   return { position: position.toArray(), rotation: rotation.toArray(), sections };

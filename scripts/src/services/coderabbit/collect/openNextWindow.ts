@@ -6,6 +6,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import {
   ATTEMPT_RETRY_DELAY_SECONDS,
   DEVELOP_BRANCH,
+  EXPRESS_RELAND_STEP,
   MAIN_BRANCH,
   QUEUE_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
@@ -17,13 +18,14 @@ import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readFixedPullRequests } from "#src/services/coderabbit/collect/readFixedPullRequests";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { replyPullRequestAnswers } from "#src/services/coderabbit/collect/replyPullRequestAnswers";
 import { syncFixes } from "#src/services/coderabbit/collect/syncFixes";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 // One window cut from the top of the stack and opened over it. The fixes and the queue are synced onto `develop`, the
 // Port builds the window measured from the base the bot reviews it against (the top window's head, or `main` when none
@@ -34,7 +36,8 @@ export const openNextWindow = async ({
   collectorSha,
   cwd,
   drainedPullRequests,
-  expressHeldCount,
+  expressHeldShas,
+  expressMainSha,
   fileCap,
   isDryRun,
   openPullRequests,
@@ -81,8 +84,9 @@ export const openNextWindow = async ({
   );
   const isReady = port.fixCount > 0 || pendingCommitCount + port.queueShas.length > 0;
   if (!isReady) {
-    // A held first commit is the residual case, since the sync parks what its caps exhaust: one the port still cannot
-    // Take is parked too, out of the owed set, and the run wakes a minute later to cut what follows it
+    // A held first commit is a fix no window can take — alone over the cap, or conflicting once a fix before it was
+    // Parked — or the residual queue commit, since the sync parks what its caps exhaust: either is parked too, out of
+    // The owed set, and the run wakes a minute later to cut what follows it
     if (port.queueShas.length === 0 && port.heldSha) {
       if (isDryRun)
         return {
@@ -97,19 +101,36 @@ export const openNextWindow = async ({
         isWindowOpened: false,
         outcome: {
           kind: CycleOutcomeKind.Idle,
-          reason: `parked ${port.heldSha}, which no window could carry — the queue is cut again without it`,
+          reason: `parked ${port.heldSha}, which no window could carry — the window is cut again without it`,
           retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS,
         },
       };
     }
     // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an idle
-    // Run reads as a synced queue over a commit still owed to `main`
-    else if (expressHeldCount > 0)
+    // Run reads as a synced queue over a commit still owed to `main`. With no window open, none to cut and `main` where
+    // The lane met it, nothing in flight can move `main` under it, so the head it failed on is the last it would meet:
+    // It is parked now rather than counted on heads that never come
+    else if (expressHeldShas.length > 0 && openPullRequests.length === 0 && mainSha === expressMainSha) {
+      parkCommits({
+        cause: `no cut onto ${MAIN_BRANCH} at ${mainSha} applied them, and with no window open or owed nothing will move ${MAIN_BRANCH} under them — ${EXPRESS_RELAND_STEP}`,
+        cwd,
+        isDryRun,
+        shas: expressHeldShas,
+        viewerLogin,
+      });
       return {
         isWindowOpened: false,
         outcome: {
           kind: CycleOutcomeKind.Idle,
-          reason: `${expressHeldCount} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
+          reason: `${isDryRun ? "would park" : "parked"} ${expressHeldShas.length} claimed commits no cut onto ${MAIN_BRANCH} applies, with nothing in flight to move it`,
+        },
+      };
+    } else if (expressHeldShas.length > 0)
+      return {
+        isWindowOpened: false,
+        outcome: {
+          kind: CycleOutcomeKind.Idle,
+          reason: `${expressHeldShas.length} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
         },
       };
     return {
@@ -166,7 +187,12 @@ export const openNextWindow = async ({
   });
   if (outcome.kind === CycleOutcomeKind.Opened) {
     const answeredCommits = readAnsweredCommits([`${developSha}..${targetSha}`], cwd);
-    for (const pullRequest of drainedPullRequests)
+    // A window carrying fixes answers the reviews they were drained from, however many windows the cap cut them over
+    const answeredPullRequests =
+      port.fixCount === 0
+        ? drainedPullRequests
+        : [...new Set([...drainedPullRequests, ...readFixedPullRequests(takeOne(fixShas), cwd)])];
+    for (const pullRequest of answeredPullRequests)
       replyPullRequestAnswers({ commits: answeredCommits, isDryRun, pullRequest, viewerLogin });
   }
   return { isWindowOpened: outcome.kind === CycleOutcomeKind.Opened, outcome };

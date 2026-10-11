@@ -18,7 +18,7 @@ describe(fitStatueStack, () => {
     // The lower ring about x 0 at heights 0 to 1, the upper about x 1 at heights 1 to 2
     const { position, sections } = fitStatueStack(
       [...toRing(0, 0), ...toRing(0, 0.9), ...toRing(1, 1.1), ...toRing(1, 2)],
-      { angleCount: 4, axis: [0, 1, 0], sectionHeight: 1 },
+      { angleCount: 4, axis: [0, 1, 0], readColour: () => 0, sectionHeight: 1 },
     );
 
     expect(position.map((value) => Number(value.toFixed(6)))).toStrictEqual([0.5, 0, 0]);
@@ -37,8 +37,31 @@ describe(fitStatueStack, () => {
   test("reads a flat piece along an axis it spans nothing of as one section of its points", () => {
     expect.hasAssertions();
 
-    const { sections } = fitStatueStack(toRing(0, 0), { angleCount: 4, axis: [0, 1, 0], sectionHeight: 1 });
+    const { sections } = fitStatueStack(toRing(0, 0), {
+      angleCount: 4,
+      axis: [0, 1, 0],
+      readColour: () => 0,
+      sectionHeight: 1,
+    });
 
     expect(sections.map(({ radii }) => radii.map((value) => Number(value.toFixed(6))))).toStrictEqual([[1, 1, 1, 1]]);
+  });
+
+  test("reads each ring's colour where its vertices stand in the points' frame, at its section's middle", () => {
+    expect.hasAssertions();
+
+    // The rings of the stack above, each vertex read 1 past x 0.75 and 2 past y 1: the lower ring's middle stands at y
+    // 0.5 with its first vertex at x 1, and the upper's at y 1.5 about x 1, so only its third vertex stands at x 0
+    const { sections } = fitStatueStack([...toRing(0, 0), ...toRing(0, 0.9), ...toRing(1, 1.1), ...toRing(1, 2)], {
+      angleCount: 4,
+      axis: [0, 1, 0],
+      readColour: ([x, y]) => (x > 0.75 ? 1 : 0) + (y > 1 ? 2 : 0),
+      sectionHeight: 1,
+    });
+
+    expect(sections.map(({ colors }) => colors)).toStrictEqual([
+      [1, 0, 0, 0],
+      [3, 3, 2, 3],
+    ]);
   });
 });

@@ -6,15 +6,16 @@ import { computeStatueSurface } from "#src/kits/statue/computeStatueSurface";
 import { BufferAttribute, BufferGeometry, Quaternion } from "three";
 
 // One stack of a statue's part as its radial stack, turned onto its own axis and standing at its own place in the
-// Statue's frame
+// Statue's frame, each vertex in its section's colour
 const createStackGeometry = ({
   position: [x = 0, y = 0, z = 0],
   rotation: [rotationX = 0, rotationY = 0, rotationZ = 0, rotationW = 1],
   sections,
 }: StatueStack): BufferGeometry => {
-  const { indices, positions } = computeStatueSurface(sections);
+  const { colors, indices, positions } = computeStatueSurface(sections);
   const geometry = new BufferGeometry();
   geometry.setAttribute("position", new BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new BufferAttribute(colors, 3));
   geometry.setIndex(new BufferAttribute(indices, 1));
   geometry.computeVertexNormals();
   return geometry
@@ -22,8 +23,9 @@ const createStackGeometry = ({
     .translate(x, y, z);
 };
 // A statue as radial stacks, grouped by the export part each came from: every stack of one part merged into one
-// Geometry, so each part is drawn in its own material. The stacks are fitted from the game's own meshes, so the
-// Silhouette is theirs and the surface is ours, its normals read off the surface itself
+// Geometry, so each part is drawn in its own detail. The stacks are fitted from the game's own meshes, so the
+// Silhouette is theirs and the surface is ours, its normals read off the surface itself and its colour carried by its
+// Vertices
 export const createStatueGeometries = (parts: readonly StatuePart[]): Record<string, BufferGeometry> =>
   Object.fromEntries(
     Object.entries(Object.groupBy(parts, ({ part }) => part)).map(([part, stacks]) => [

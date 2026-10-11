@@ -3,8 +3,9 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { Triangle, Vector3 } from "three";
 
-// Points spread over a mesh's surface by area, each with its face's normal: a face is drawn with a chance in proportion
-// To its area, then a point uniformly within it, so a large face is read as often as its share of the surface
+// Points spread over a mesh's surface by area, each with its face's normal and where on its face it lies: a face is
+// Drawn with a chance in proportion to its area, then a point uniformly within it, so a large face is read as often as
+// Its share of the surface
 export const sampleMeshSurface = (
   vertices: readonly Vector[],
   faces: readonly Vector[],
@@ -44,6 +45,6 @@ export const sampleMeshSurface = (
     }
     point.copy(a).addScaledVector(b.clone().sub(a), u).addScaledVector(c.clone().sub(a), v);
     triangle.getNormal(normal);
-    return { normal: normal.toArray(), point: point.toArray() };
+    return { face: low, normal: normal.toArray(), point: point.toArray(), weights: [1 - u - v, u, v] };
   });
 };

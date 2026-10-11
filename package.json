@@ -38,6 +38,7 @@
     "ai:citations:sync": "pnpm -C scripts ai:citations:sync",
     "ai:coderabbit:collect": "pnpm -C scripts ai:coderabbit:collect",
     "ai:coderabbit:feedback": "pnpm -C scripts ai:coderabbit:feedback",
+    "ai:coderabbit:guard": "pnpm -C scripts ai:coderabbit:guard",
     "ai:coderabbit:state": "pnpm -C scripts ai:coderabbit:state",
     "ai:fleet:data": "pnpm -C scripts ai:fleet:data",
     "ai:fleet:claim": "pnpm -C scripts ai:fleet:claim",
