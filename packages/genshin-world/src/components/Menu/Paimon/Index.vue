@@ -48,6 +48,12 @@ const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
 // Behind it is inert until it closes, so focus stays in the dialog
 const isWorldLevelDialogOpen = ref(false);
+// The info button is inert until the menu is patched, so the focus goes back to it on the tick after the dialog closes
+const closeWorldLevelDialog = async () => {
+  isWorldLevelDialogOpen.value = false;
+  await nextTick();
+  worldLevelInfoButton.value?.focus();
+};
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
 // The menu is a dialog over the world, so focus starts inside it, on its way back
@@ -154,10 +160,7 @@ onMounted(() => {
       :is-world-level-lowered
       :server-clock-offset-ms
       :world-level-changed-at
-      @close="
-        isWorldLevelDialogOpen = false;
-        worldLevelInfoButton?.focus();
-      "
+      @close="closeWorldLevelDialog"
       @toggle-world-level="emit('toggleWorldLevel')"
     />
   </GameScreen>
