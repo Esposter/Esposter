@@ -15,6 +15,8 @@ interface Props {
 }
 
 const { visual } = defineProps<Props>();
+// The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh
+defineSlots<{ actions?: () => VNode }>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");
 const height = ref<number>();
@@ -47,7 +49,7 @@ const { copy } = clipboardStore;
 <template>
   <div size-full ui-frame>
     <div ref="container" h-full relative>
-      <UiErrorState v-if="error" :error @retry="refresh()" />
+      <UiErrorState v-if="error" pointer-events-auto :error @retry="refresh()" />
       <!-- A bound visual's own data is on its way: the tile's shape rather than the demo data it would otherwise show -->
       <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
         <UiSkeleton size-full />
@@ -55,7 +57,8 @@ const { copy } = clipboardStore;
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
-      <div flex gap-1 right-1 top-1 absolute>
+      <div flex gap-1 right-1 top-1 absolute pointer-events-auto>
+        <slot name="actions" />
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->
         <UiIconButton

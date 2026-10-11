@@ -30,8 +30,7 @@ const { updateVisual } = visualStore;
           ui-frame
           cursor-pointer
           active="not-focus-within:[background-image:var(--ui-pressed-overlay)]"
-          :id="visual.id"
-          :type="visual.type"
+          :visual
         />
       </template>
     </DashboardGrid>
