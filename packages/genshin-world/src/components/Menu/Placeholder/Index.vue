@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -25,15 +25,15 @@ onMounted(() => {
        Its title over the world, veiled as a menu veils it, and the way back -->
   <GameScreen class="menu-placeholder" role="dialog" aria-modal="true" :aria-label="title">
     <p class="title" role="heading" aria-level="2">{{ title }}</p>
-    <button ref="backButton" class="back" type="button" @click="emit('close')">
+    <GameButton ref="backButton" class="back" :kind="GameButtonKind.Pill" @click="emit('close')">
       {{ gameText[GameTextKey.Back] }}
-    </button>
+    </GameButton>
   </GameScreen>
 </template>
 
 <style scoped>
-/* Provisional: a placeholder has no screen of the game's to be measured against, so its veil, sizes and colours are
-   The Paimon menu's own provisional ones */
+/* Provisional: a placeholder has no screen of the game's to be measured against, so its veil and sizes are the Paimon
+   Menu's own provisional ones, and its back is the game's cream pill */
 .menu-placeholder {
   display: grid;
   align-content: center;
@@ -50,19 +50,6 @@ onMounted(() => {
 
 .back {
   padding: calc(var(--unit) * 12) calc(var(--unit) * 40);
-  border: calc(var(--unit) * 2) solid #ece5d8;
-  border-radius: calc(var(--unit) * 28);
-  background: none;
-  color: inherit;
-  cursor: inherit;
-  font: inherit;
   font-size: calc(var(--unit) * 26);
-}
-
-.back:hover,
-.back:focus-visible {
-  outline: none;
-  background: #ece5d8;
-  color: #3b4255;
 }
 </style>
