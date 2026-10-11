@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
+
 interface Props {
   // Each of the character's five artifact slots, in the game's order, true where an artifact is worn
   equipped: boolean[];
@@ -16,10 +18,7 @@ const { equipped } = defineProps<Props>();
     </ul>
     <div class="details" />
     <div class="set-bonus" />
-    <div class="buttons">
-      <span class="button" />
-      <span class="button" />
-    </div>
+    <CharacterMenuButtons />
   </div>
 </template>
 
@@ -75,21 +74,5 @@ const { equipped } = defineProps<Props>();
   bottom: calc(var(--unit) * 80);
   left: 0;
   background: rgb(0 0 0 / 0.1);
-}
-
-.buttons {
-  position: absolute;
-  top: calc(var(--unit) * 859);
-  right: 0;
-  left: 0;
-  display: flex;
-  gap: calc(var(--unit) * 23);
-}
-
-.button {
-  flex: 1;
-  height: calc(var(--unit) * 52);
-  border-radius: calc(var(--unit) * 26);
-  background: rgb(236 229 216 / 0.85);
 }
 </style>

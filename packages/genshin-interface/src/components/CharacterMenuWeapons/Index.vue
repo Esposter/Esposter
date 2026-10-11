@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CharacterMenuButtons from "#src/components/CharacterMenuButtons/Index.vue";
 import { ASCENSION_PHASE_COUNT } from "#src/services/constants";
 
 interface Props {
@@ -38,10 +39,7 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
       <span v-for="phase in ASCENSION_PHASE_COUNT" :key="phase" class="spark" :class="{ lit: phase <= ascension }" />
     </p>
     <p class="refinement">{{ refinement }}</p>
-    <div class="buttons">
-      <span class="button" />
-      <span class="button" />
-    </div>
+    <CharacterMenuButtons />
   </div>
 </template>
 
@@ -149,22 +147,5 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   line-height: calc(var(--unit) * 19);
-}
-
-/* The two buttons, the game's pills, each the panel's half less the gap between them */
-.buttons {
-  position: absolute;
-  top: calc(var(--unit) * 859);
-  right: 0;
-  left: 0;
-  display: flex;
-  gap: calc(var(--unit) * 23);
-}
-
-.button {
-  flex: 1;
-  height: calc(var(--unit) * 52);
-  border-radius: calc(var(--unit) * 26);
-  background: rgb(236 229 216 / 0.85);
 }
 </style>
