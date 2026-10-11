@@ -1,5 +1,7 @@
 import type { EditorConfig } from "grapesjs";
 
+import { FlexAlignmentItems } from "@/services/webpageEditor/FlexAlignmentItems";
+
 export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
   sectors: [
     {
@@ -143,18 +145,7 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
           property: "justify-content",
           type: "radio",
         },
-        {
-          defaults: "center",
-          list: [
-            { className: "icons-flex icon-al-start", id: "flex-start", title: "Start", value: "flex-start" },
-            { className: "icons-flex icon-al-end", id: "flex-end", title: "End", value: "flex-end" },
-            { className: "icons-flex icon-al-str", id: "stretch", title: "Stretch", value: "stretch" },
-            { className: "icons-flex icon-al-center", id: "center", title: "Center", value: "center" },
-          ],
-          name: "Align",
-          property: "align-items",
-          type: "radio",
-        },
+        { defaults: "center", list: FlexAlignmentItems, name: "Align", property: "align-items", type: "radio" },
         { name: "Flex Children", property: "label-parent-flex", type: "integer" },
         { defaults: "0", min: 0, name: "Order", property: "order", type: "integer" },
         {
@@ -176,13 +167,7 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
         },
         {
           defaults: "auto",
-          list: [
-            { id: "auto", name: "Auto", value: "auto" },
-            { className: "icons-flex icon-al-start", id: "flex-start", title: "Start", value: "flex-start" },
-            { className: "icons-flex icon-al-end", id: "flex-end", title: "End", value: "flex-end" },
-            { className: "icons-flex icon-al-str", id: "stretch", title: "Stretch", value: "stretch" },
-            { className: "icons-flex icon-al-center", id: "center", title: "Center", value: "center" },
-          ],
+          list: [{ id: "auto", name: "Auto", value: "auto" }, ...FlexAlignmentItems],
           name: "Align",
           property: "align-self",
           type: "radio",

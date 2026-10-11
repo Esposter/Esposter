@@ -70,23 +70,28 @@ export const useRoomStore = defineStore("message/room", () => {
       },
     });
   };
-  // Rooms are deleted independently, so each deletion is keyed by its room id — an unkeyed executor would
-  // Treat an earlier in-flight deletion as stale and swallow both its rollback and its active-room navigation
+  // A room leaving the list, whether it was deleted or left: the room goes at once, a failure puts back only this room,
+  // And the reader is navigated off it once the server agrees. The list is sorted for display, so where the room lands
+  // In it is not observable. Keyed per room, since rooms are deleted and left independently: an unkeyed executor would
+  // Treat an earlier in-flight removal as stale and swallow both its rollback and its navigation
+  const getRoomRemovalOptions = (roomId: string) => ({
+    applyOptimistic: () => {
+      const removedRoom = items.value.find(({ id }) => id === roomId);
+      baseStoreDeleteRoom({ id: roomId });
+      return () => {
+        if (removedRoom) storeCreateRoom(removedRoom);
+      };
+    },
+    key: roomId,
+    onSuccess: async () => {
+      await navigateFromDeletedRoom(roomId);
+    },
+  });
   const deleteRoom = async (input: DeleteRoomInput) => {
-    const outcome = await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
-      // Restore only this room. The list is sorted for display, so where it lands in it is not observable
-      applyOptimistic: () => {
-        const deletedRoom = items.value.find(({ id }) => id === input);
-        baseStoreDeleteRoom({ id: input });
-        return () => {
-          if (deletedRoom) storeCreateRoom(deletedRoom);
-        };
-      },
-      key: input,
-      onSuccess: async () => {
-        await navigateFromDeletedRoom(input);
-      },
-    });
+    const outcome = await executeDeleteRoomMutation(
+      () => $trpc.room.deleteRoom.mutate(input),
+      getRoomRemovalOptions(input),
+    );
     return outcome.status === MutationStatus.Succeeded;
   };
   const joinRoom = async (input: JoinRoomInput) => {
@@ -99,20 +104,10 @@ export const useRoomStore = defineStore("message/room", () => {
     });
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
-    const outcome = await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
-      applyOptimistic: () => {
-        const deletedRoom = items.value.find(({ id }) => id === input);
-        baseStoreDeleteRoom({ id: input });
-        return () => {
-          if (deletedRoom) storeCreateRoom(deletedRoom);
-        };
-      },
-      // Keyed per room so leaving one room never queues behind another in-flight leave
-      key: input,
-      onSuccess: async () => {
-        await navigateFromDeletedRoom(input);
-      },
-    });
+    const outcome = await executeLeaveRoomMutation(
+      () => $trpc.room.leaveRoom.mutate(input),
+      getRoomRemovalOptions(input),
+    );
     return outcome.status === MutationStatus.Succeeded;
   };
   MessageHookMap[Operation.Create].register(({ message, partitionKey, type }) => {
