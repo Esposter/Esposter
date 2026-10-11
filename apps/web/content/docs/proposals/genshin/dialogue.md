@@ -1,13 +1,13 @@
 ---
 title: Dialogue
-description: Proposal — Genshin's dialogue, still to come. The line's reveal and auto-play's hold timed off a public recording, a resident's standing talk offered beside the quest talks open to them, and the rest of the screen's look measured. The talk graph, its runner, the dialogue screen, a talk begun by F and its words, the player filled in, the speaker's title, narration and the replies' marks are built, as the dialogue page describes.
+description: Proposal — Genshin's dialogue, still to come. Auto-play's hold timed off a public recording, a resident's standing talk offered beside the quest talks open to them, and the rest of the screen's look measured. The talk graph, its runner, the dialogue screen, a talk begun by F and its words, the line written out at the game's rate, the player filled in, the speaker's title, narration and the replies' marks are built, as the dialogue page describes.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/components/Dialogue/Talk/**"]
 ---
 
 # Dialogue
 
-A talk runs over the world from F on a resident, with its words, the player filled into them, the speaker's title, narration on black and the replies' traced marks: see [dialogue](/docs/genshin/dialogue). What remains times the line's reveal and auto-play's hold against the game, offers a resident's own talk beside the quest talks open to them, and measures what is left of the screen's look.
+A talk runs over the world from F on a resident, with its words written out at the game's rate, the player filled into them, the speaker's title, narration on black and the replies' traced marks: see [dialogue](/docs/genshin/dialogue). What remains times auto-play's hold against the game, offers a resident's own talk beside the quest talks open to them, and measures what is left of the screen's look.
 
 ## Decisions
 
@@ -16,7 +16,7 @@ A talk runs over the world from F on a resident, with its words, the player fill
 
 ## Still to build
 
-1. **The reveal and auto-play timings off a public 60 frames a second clip.** `pnpm -C scripts genshin:parity clip https://www.youtube.com/watch?v=9I7XyJ2Z5RI --from 0 --to 30 --name dialogue-npc-60` (an English PC client's NPC talks at 1080p60), then `genshin:parity frames` over the first line and `luma` over its glyphs: the frames from the line's first ink to its last give `TALK_REVEAL_MS_PER_CHARACTER`, written as a constant naming the clip, and a line whole in its first frame sets it to 0, the game then showing a line whole. Auto-play's hold waits on `dialogue-auto-skip.mkv`, since no published clip found shows auto-play on.
+1. **Auto-play's hold off a public clip with auto-play on.** The frames from a line with no voice-over being whole to the next line's first character give `TALK_AUTO_PLAY_HOLD_MS`, written as a constant naming the clip, read the way the reveal was (`genshin:parity frames`, then the line's darkness frame by frame). Xinyan's talk at 60 frames a second waits between lines for a click, with auto-play off, so it shows no hold.
 2. **A resident's standing talk offered beside their quest talks**, once residents hold standing talks. None does yet (`components/World/Session/Index.vue` merges an empty `standingTalkMap`), so this waits on the [scene group](/docs/proposals/genshin/scene-groups) export, the residents' own talks being read from the scene groups the other machine is exporting.
 
 ## Measures owed
@@ -24,7 +24,7 @@ A talk runs over the world from F on a resident, with its words, the player fill
 These need a recording of the English PC client's dialogue at 1080 high, found among published recordings first ([parity](/docs/genshin/parity)):
 
 - **Whether the world runs on around a talk**: the sky, the clouds and the residents behind the speaker moving or still, read by eye.
-- **The line's reveal rate and auto-play's hold**, read off the line's darkness frame by frame (`frames`, then `luma` over the line's glyphs), into `TALK_REVEAL_MS_PER_CHARACTER` and `TALK_AUTO_PLAY_HOLD_MS`.
+- **Auto-play's hold**, read off the line's darkness frame by frame, into `TALK_AUTO_PLAY_HOLD_MS`.
 - **The band's gradient, the selected reply's look and the fades**: the speaker's name, the line and the replies are sized and placed off one published frame, and their fades are not yet read.
 - **A narration's place on its black screen**, which no published frame read so far shows, so the line's centre on the screen is an estimate.
 - **The marks' inner glyphs and colour**: the quest's exclamation mark inside its ring and the story quest's nested diamonds, split from the silhouettes the trace keeps, with the game's gold, and the auto-play and skip buttons' glyphs.
@@ -35,10 +35,9 @@ These need a recording of the English PC client's dialogue at 1080 high, found a
 | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`      | Offers the open quest talks on a standing talk's first line                        |
 | `packages/genshin-world/src/components/World/Session/Index.vue`      | Merges the residents' standing talks with the quests' talks                        |
-| `packages/genshin-world/src/services/dialogue/constants.ts`          | The reveal and auto-play timings, once measured                                    |
+| `packages/genshin-world/src/services/dialogue/constants.ts`          | The auto-play hold, once measured                                                  |
 | `packages/genshin-interface/src/components/DialogueScreen/Index.vue` | The measured look: the band, the selected reply, the fades and a narration's place |
 
 ## Sources
 
 - [NPC](https://genshin-impact.fandom.com/wiki/NPC), Genshin Impact Wiki: the world's characters, those met in the open world and those met only in quests.
-- [Fischl island every NPC dialogue](https://www.youtube.com/watch?v=9I7XyJ2Z5RI), Nierly Good, 2022: a public recording of the English client's talks at 1080 high and 60 frames a second, each line written out a character at a time.

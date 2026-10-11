@@ -6,13 +6,10 @@ import type { GameText } from "genshin-text";
 import { TalkLineKind } from "#src/models/dialogue/TalkLineKind";
 import { advanceTalk } from "#src/services/dialogue/advanceTalk";
 import { chooseTalkLine } from "#src/services/dialogue/chooseTalkLine";
-import {
-  DIALOGUE_DUEL_CHOICE_ID,
-  TALK_AUTO_PLAY_HOLD_MS,
-  TALK_REVEAL_MS_PER_CHARACTER,
-} from "#src/services/dialogue/constants";
+import { DIALOGUE_DUEL_CHOICE_ID, TALK_AUTO_PLAY_HOLD_MS } from "#src/services/dialogue/constants";
 import { getTalkChoices } from "#src/services/dialogue/getTalkChoices";
 import { getTalkLine } from "#src/services/dialogue/getTalkLine";
+import { getTalkRevealedLength } from "#src/services/dialogue/getTalkRevealedLength";
 import { skipTalk } from "#src/services/dialogue/skipTalk";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
@@ -49,6 +46,9 @@ const travelerName = computed(() => fillLinePlaceholders(gameText[GameTextKey.Tr
 const fillLine = (text: string) => fillLinePlaceholders(text, travelerName.value, LOGIN_TRAVELER_GENDER);
 const lineText = computed(() => (talkLine.value ? fillLine(textMap[talkLine.value.textId] ?? "") : ""));
 const lineLength = computed(() => [...lineText.value].length);
+const revealedLength = computed(() =>
+  progress.value.isRevealed ? lineLength.value : getTalkRevealedLength(lineText.value, elapsedMs.value),
+);
 // A duel offered is one more reply on the opening line, after the talk's own, and choosing it leaves the talk for the duel
 const choices = computed(() => {
   if (!progress.value.isRevealed) return [];
@@ -80,8 +80,7 @@ useRafFn(({ delta }) => {
   if (!progress.value.lineId) return;
   elapsedMs.value += delta;
   if (!progress.value.isRevealed) {
-    if (elapsedMs.value >= lineLength.value * TALK_REVEAL_MS_PER_CHARACTER)
-      setProgress(advanceTalk(talk, progress.value));
+    if (revealedLength.value === lineLength.value) setProgress(advanceTalk(talk, progress.value));
   } else if (isAutoPlaying.value && choices.value.length === 0 && elapsedMs.value >= TALK_AUTO_PLAY_HOLD_MS)
     setProgress(advanceTalk(talk, progress.value));
 });
@@ -107,7 +106,7 @@ useEventListener("keydown", (event) => {
     <DialogueScreen
       :choices
       :line="lineText"
-      :revealed-length="progress.isRevealed ? lineLength : Math.floor(elapsedMs / TALK_REVEAL_MS_PER_CHARACTER)"
+      :revealed-length
       :selected-choice-id="choices[selectedChoiceIndex]?.id ?? ''"
       :speaker-name="
         talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerTextId] ?? '') : travelerName
