@@ -20,7 +20,6 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

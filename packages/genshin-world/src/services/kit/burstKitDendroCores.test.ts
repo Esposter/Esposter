@@ -17,7 +17,6 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { noop } from "@esposter/shared";

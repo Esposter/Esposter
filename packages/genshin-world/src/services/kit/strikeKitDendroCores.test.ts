@@ -14,7 +14,6 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
