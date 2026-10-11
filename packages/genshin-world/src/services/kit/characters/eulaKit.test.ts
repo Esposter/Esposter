@@ -47,7 +47,7 @@ describe(createEulaKit, () => {
     if (!hold?.action.onStart) throw new Error("Icetide Vortex's hold has no start");
     hold.action.onStart({ body, combatant: createEulaCombatant(), kitEffectState });
 
-    const [icewhirls] = kitEffectState.effects.filter((effect) => effect.kind === "summon");
+    const icewhirls = kitEffectState.effects.find((effect) => effect.kind === "summon");
     if (icewhirls?.kind !== "summon") throw new Error("the hold casts no Icewhirl summon");
     expect(icewhirls.hits).toHaveLength(1);
     expect(

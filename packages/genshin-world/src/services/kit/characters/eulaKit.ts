@@ -24,8 +24,8 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 // Eula's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the charged
 // Attack's spinning and final hits at 5 and 6, its stamina at 7, then the plunges' collision, low and high at 9, 10 and 11.
 // The skill group holds Icetide Vortex's press at 0, its hold at 1, each Icewhirl at 2, the Cryo and Physical RES it shreds
-// at 3 and 4, the seconds a shred lasts per Grimheart stack at 5, the press's cooldown at 6, the hold's at 7 and Grimheart's
-// seconds at 12. The burst group holds Glacial Illumination's initial hit at 0, the Lightfall Sword's explosion at 1, its
+// At 3 and 4, the seconds a shred lasts per Grimheart stack at 5, the press's cooldown at 6, the hold's at 7 and Grimheart's
+// Seconds at 12. The burst group holds Glacial Illumination's initial hit at 0, the Lightfall Sword's explosion at 1, its
 // DMG per stack at 2, the most stacks it holds at 3, its cooldown at 4 and its energy cost at 5
 const EULA_ATTACK_GROUP_ID = 5131;
 const EULA_SKILL_GROUP_ID = 5132;
@@ -130,12 +130,6 @@ const LIGHTFALL_SUMMON_ID = "eula-lightfall";
 // Constellation 6 starts the Sword with this many stacks, with its extra stack from each of Eula's strikes a random roll that
 // This kit leaves out
 const CONSTELLATION_6_STARTING_STACKS = 5;
-
-const isGrimheartActive = (effects: readonly KitEffect[], characterId: number): boolean =>
-  effects.some(
-    (effect) =>
-      effect.kind === "status" && effect.characterId === characterId && GRIMHEART_STACK_IDS.includes(effect.id),
-  );
 
 const countGrimheartStacks = (effects: readonly KitEffect[], characterId: number): number =>
   effects.filter(
