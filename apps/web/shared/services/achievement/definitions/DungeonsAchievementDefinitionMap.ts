@@ -20,7 +20,7 @@ const defineMonsterLevelAchievementDefinition = ({
   defineAchievementDefinition({
     amount: 1,
     condition: {
-      operation: (value) => value.some(({ statistics }) => statistics.level >= level),
+      operation: (value) => value?.some(({ statistics }) => statistics.level >= level) ?? false,
       operator: AchievementOperator.Operation,
       path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
@@ -43,6 +43,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     amount: 1,
     condition: {
       operation: (value) => {
+        if (!value) return false;
         const chests = Object.values(value).flatMap(({ chestMap }) => Object.values(chestMap));
         return chests.length > 0 && chests.every(({ isOpened }) => isOpened);
       },
@@ -66,7 +67,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
     amount: 1,
     condition: {
       // The starter is the party's first member, so a second member means a capture
-      operation: (value) => value.length >= 2,
+      operation: (value) => (value?.length ?? 0) >= 2,
       operator: AchievementOperator.Operation,
       path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
@@ -79,7 +80,8 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
   [DungeonsAchievementName.MonsterCollector]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operation: (value) => MonsterKeys.every((monsterKey) => value.some(({ key }) => key === monsterKey)),
+      operation: (value) =>
+        value !== undefined && MonsterKeys.every((monsterKey) => value.some(({ key }) => key === monsterKey)),
       operator: AchievementOperator.Operation,
       path: "data.save.player.monsters",
       type: AchievementConditionType.Property,
