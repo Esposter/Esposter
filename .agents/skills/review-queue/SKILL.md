@@ -30,7 +30,7 @@ Every ref has one writer, and the session's is `ai/queue` alone — its linear h
 
 An agent's commits never go through the main checkout. Each agent:
 
-1. **Sets up a worktree on the queue.** `git worktree add ~/Esposter/wt/<name> origin/ai/queue` (detached), then in it an install of only the packages it will touch and their dependencies (`pnpm i --frozen-lockfile --prefer-offline --filter "<package>..."`, the app only when it edits `apps/web`) and `vp run build:<directory>` for each. A whole-workspace install hard-links tens of thousands of files, so many of them at once crawl (`.agents/skills/throughput/references/fleet.md`). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
+1. **Sets up a worktree on the queue.** `git worktree add ~/Esposter/wt/<name> origin/ai/queue` (detached), then in it installs and builds only the packages it will touch, never the whole workspace (`.agents/skills/throughput/references/fleet.md` owns the commands and why). A failing `nuxt prepare` postinstall does not stop the agent: the packages still link, and the app's prepare is only the app's concern.
 2. **Commits each coherent unit in the worktree, by pathspec.** The touched tests run once after the sitting's last edit, in the background (the `running-checks` skill), and what they call for is its own commit behind the unit, so every cut the collector makes is green on its own.
 3. **Lands the commits:**
 
