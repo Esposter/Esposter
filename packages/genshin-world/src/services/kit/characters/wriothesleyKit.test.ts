@@ -1,4 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
 import { createWriothesleyKit, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
@@ -45,5 +46,17 @@ describe(createWriothesleyKit, () => {
         talentMultiplier,
       })),
     ).toStrictEqual([99, 104, 109, 114, 119].map((frames) => ({ frames, talentMultiplier: 1.272 })));
+  });
+
+  test("his strikes, charged attack, plunges and burst deal cryo, as gcsim gives them", () => {
+    expect.hasAssertions();
+    expect(
+      [
+        ...WRIOTHESLEY_KIT.normalAttacks.flatMap(({ hits }) => hits),
+        ...WRIOTHESLEY_KIT.chargedAttack.hits,
+        ...WRIOTHESLEY_KIT.elementalBurst.hits,
+        ...WRIOTHESLEY_KIT.lowPlunge.hits,
+      ].map(({ element }) => element),
+    ).toStrictEqual(Array.from({ length: 13 }, () => Element.Cryo));
   });
 });
