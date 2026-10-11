@@ -50,6 +50,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "bench": "vitest bench --run",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "eslint .",
@@ -65,6 +66,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@types/sax": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",

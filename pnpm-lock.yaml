@@ -2089,6 +2089,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       '@types/sax':
         specifier: 'catalog:'
         version: 1.2.7
