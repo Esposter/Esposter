@@ -1,4 +1,3 @@
-import { HandbookRewardTone } from "#src/models/handbook/HandbookRewardTone";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
 // The Experience page of the English client's Adventurer Handbook, Chapter 9, with every investigation done
@@ -7,8 +6,8 @@ export const props = {
     {
       progress: 3,
       rewards: [
-        { count: 4000, tone: HandbookRewardTone.Orange },
-        { count: 5, tone: HandbookRewardTone.Book },
+        { count: 4000, rarity: 3 },
+        { count: 5, rarity: 4 },
       ],
       titleKey: GameTextKey.HandbookCommissionAscendCharactersPhase5,
       total: 3,
@@ -16,8 +15,8 @@ export const props = {
     {
       progress: 1,
       rewards: [
-        { count: 4000, tone: HandbookRewardTone.Orange },
-        { count: 5, tone: HandbookRewardTone.Book },
+        { count: 4000, rarity: 3 },
+        { count: 5, rarity: 4 },
       ],
       titleKey: GameTextKey.HandbookCommissionLevelUpCharacterLv80,
       total: 1,
@@ -25,8 +24,8 @@ export const props = {
     {
       progress: 3,
       rewards: [
-        { count: 4000, tone: HandbookRewardTone.Orange },
-        { count: 10, tone: HandbookRewardTone.Orange },
+        { count: 4000, rarity: 3 },
+        { count: 10, rarity: 3 },
       ],
       titleKey: GameTextKey.HandbookCommissionAscendWeaponsPhase5,
       total: 3,
@@ -34,8 +33,8 @@ export const props = {
     {
       progress: 1,
       rewards: [
-        { count: 4000, tone: HandbookRewardTone.Orange },
-        { count: 10, tone: HandbookRewardTone.Orange },
+        { count: 4000, rarity: 3 },
+        { count: 10, rarity: 3 },
       ],
       titleKey: GameTextKey.HandbookCommissionEnhanceWeaponLv80,
       total: 1,
@@ -43,8 +42,8 @@ export const props = {
     {
       progress: 8,
       rewards: [
-        { count: 4000, tone: HandbookRewardTone.Orange },
-        { count: 1, tone: HandbookRewardTone.Orange },
+        { count: 4000, rarity: 3 },
+        { count: 1, rarity: 5 },
       ],
       titleKey: GameTextKey.HandbookCommissionEnhanceArtifactsLv20,
       total: 8,
@@ -53,10 +52,10 @@ export const props = {
   completedCount: 11,
   gameText: ENGLISH_GAME_TEXT,
   investigationRewards: [
-    { count: 1, tone: HandbookRewardTone.Orange },
-    { count: 6, tone: HandbookRewardTone.Book },
-    { count: 50000, tone: HandbookRewardTone.Orange },
-    { count: 150, tone: HandbookRewardTone.Orange },
+    { count: 1, rarity: 5 },
+    { count: 6, rarity: 4 },
+    { count: 50000, rarity: 3 },
+    { count: 150, rarity: 5 },
   ],
   isRewardClaimed: true,
   totalCount: 11,

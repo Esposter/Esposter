@@ -2,6 +2,7 @@
 import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
+import ItemTile from "#src/components/ItemTile/Index.vue";
 import { CHECK_MARK_PATH } from "#src/services/constants";
 
 interface Props {
@@ -62,16 +63,15 @@ const emit = defineEmits<{ close: [] }>();
             </span>
           </span>
           <span class="items">
-            <span
+            <ItemTile
               v-for="({ count, label, rarity }, index) of cell.items"
               :key="index"
               class="item"
               :aria-label="label"
-              :data-rarity="rarity"
+              :count
+              :rarity
               role="img"
-            >
-              <span class="item-count" aria-hidden="true">{{ count }}</span>
-            </span>
+            />
           </span>
           <span v-if="cell.unlockLabel" class="unlock">{{ cell.unlockLabel }}</span>
           <span v-if="cell.isAchieved" class="achieved">
@@ -236,33 +236,12 @@ const emit = defineEmits<{ close: [] }>();
   gap: calc(var(--unit) * 12);
 }
 
-/* A slot's rarity colours it, lit from the foot, with its count on a darker strip across the foot */
+/* The clip's slots, 76 square, their counts at 16 */
 .item {
-  display: flex;
+  --count-size: 21cqh;
+
   width: calc(var(--unit) * 76);
   height: calc(var(--unit) * 76);
-  align-items: end;
-  overflow: hidden;
-  border-radius: calc(var(--unit) * 5);
-  background: linear-gradient(#77809e, #7096b6);
-}
-
-.item[data-rarity="4"] {
-  background: linear-gradient(#8276a3, #a089b5);
-}
-
-.item-count {
-  width: 100%;
-  height: calc(var(--unit) * 19);
-  background: #506684;
-  color: #f2f4f8;
-  font-size: calc(var(--unit) * 16);
-  line-height: calc(var(--unit) * 19);
-  text-align: center;
-}
-
-.item[data-rarity="4"] .item-count {
-  background: #686580;
 }
 
 /* The unlock line, wrapped at 320 and set centred on the row, behind its info mark 12 to the left */

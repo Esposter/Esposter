@@ -5,7 +5,7 @@ description: genshin-interface, the game's 2D interface as presentational Vue co
 
 # Interface library
 
-`genshin-interface` holds the pieces the game's screens are made of, as presentational Vue components with no three.js in them: the root a screen is drawn in, the button every state of the game's is drawn by, the round buttons and their glyphs, the server bar, the progress bar, the prompt band, the notice card, the wait mark and the ornamented divider. `genshin-world` builds its screens from them, and a page that shows only interface loads this package alone.
+`genshin-interface` holds the pieces the game's screens are made of, as presentational Vue components with no three.js in them: the root a screen is drawn in, the button every state of the game's is drawn by, the round buttons and their glyphs, the server bar, the progress bar, the prompt band, the notice card, the wait mark, the ornamented divider and the item tile a reward list draws. `genshin-world` builds its screens from them, and a page that shows only interface loads this package alone.
 
 ## Where a piece goes
 

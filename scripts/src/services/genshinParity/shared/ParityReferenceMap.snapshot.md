@@ -29,7 +29,7 @@ committed.
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
-| `handbook-experience` | `HandbookScreen` | 8.22% | 0.895 | 4.49% | 0.3601 |
+| `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `hud-stamina-climb` | `HudScreen` | 1.94% | 0.728 | 2.15% | 0.1405 |
@@ -62,7 +62,7 @@ committed.
 | `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
 | `quest-screen-details` | `QuestScreen` | 49.84% | 0.835 | 48.29% | 0.8746 |
 | `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
-| `reputation-screen` | `ReputationScreen` | 2.07% | 0.879 | 1.39% | 0.1448 |
+| `reputation-screen` | `ReputationScreen` | 2.10% | 0.877 | 1.39% | 0.1458 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.992 | 0.41% | 0.0756 |
 | `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
 | `settings-graphics-rows` | `MenuSettings` | 1.19% | 0.998 | 0.73% | 0.0974 |
