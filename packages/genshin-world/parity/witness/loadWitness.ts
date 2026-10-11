@@ -14,23 +14,35 @@ const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
 // Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
 // Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
 // Its mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and
-// Without them every mesh is drawn in one unnamed family. The meshes and textures are served
-// Beside the layout, by their export folders, and the layout is handed back with the parts
+// Without them every mesh is drawn in one unnamed family. The meshes and textures are served beside the layout, by
+// Their export folders, and only those of the meshes drawn are loaded, each texture once however many slots name it:
+// A capital's exports run to over a gigabyte, most of it in meshes no family draws
 export const loadWitness = async (
   layoutUrl: string,
   familyMeshRegexMap: Readonly<Record<string, RegExp>> = {},
-): Promise<{ layout: SceneLayout; parts: Group }> => {
+): Promise<Group> => {
   const getUrl = (path: string): string => new URL(path, new URL(layoutUrl, window.location.href)).href;
   const response = await fetch(layoutUrl);
   const layout = (await response.json()) as SceneLayout;
+  const familyEntries = Object.entries(familyMeshRegexMap);
+  // A mesh no family names (the sky's dome, an effect's cone) is drawn by the scene's own shaders, not priced here
+  const drawnPlacements = layout.placements.flatMap((placement) => {
+    const family = familyEntries.find(([, regex]) => regex.test(placement.mesh))?.[0];
+    return familyEntries.length > 0 && family === undefined ? [] : [{ family: family ?? "", placement }];
+  });
+  const meshNames = [...new Set(drawnPlacements.map(({ placement: { mesh } }) => mesh))];
+  const drawnMaterialNames = new Set(drawnPlacements.flatMap(({ placement: { materials } }) => materials));
+  const drawnMaterials = Object.entries(layout.materials).filter(([name]) => drawnMaterialNames.has(name));
+  // Each texture by its name with the slot it is read for, the last slot naming it as the texture map keeps it
+  const textureNameSlotMap = new Map(
+    drawnMaterials.flatMap(([, { textures }]) => Object.entries(textures).map(([slot, { name }]) => [name, slot])),
+  );
   const objLoader = new OBJLoader();
   const textureLoader = new TextureLoader();
-  const meshNames = [...new Set(layout.placements.map(({ mesh }) => mesh))];
-  const textureSlots = Object.values(layout.materials).flatMap(({ textures }) => Object.entries(textures));
   const [meshes, textures] = await Promise.all([
     Promise.all(meshNames.map((name) => objLoader.loadAsync(getUrl(`Mesh/${name}.obj`)))),
     Promise.all(
-      textureSlots.map(async ([slot, { name }]) => {
+      Array.from(textureNameSlotMap, async ([name, slot]) => {
         const loaded = await textureLoader.loadAsync(getUrl(`Texture2D/${name}.png`));
         loaded.colorSpace = COLOR_SLOTS.has(slot) ? SRGBColorSpace : NoColorSpace;
         // Tiled past its edges as Unity samples it, since a part's coordinates run past 0 and 1 where it repeats its
@@ -45,7 +57,7 @@ export const loadWitness = async (
   ]);
   const nameTextureMap = new Map<string, Texture>(textures);
   const nameMaterialMap = new Map<string, Material>(
-    Object.entries(layout.materials).map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap)]),
+    drawnMaterials.map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap)]),
   );
   const fallbackMaterial = new MeshStandardMaterial();
   const nameSubmeshesMap = new Map(
@@ -65,11 +77,10 @@ export const loadWitness = async (
     witness.add(group);
     return group;
   };
-  const familyEntries = Object.entries(familyMeshRegexMap);
-  for (const { materials, mesh, position, rotation, scale } of layout.placements) {
-    const family = familyEntries.find(([, regex]) => regex.test(mesh))?.[0];
-    // A mesh no family names (the sky's dome, an effect's cone) is drawn by the scene's own shaders, not priced here
-    if (familyEntries.length > 0 && family === undefined) continue;
+  for (const {
+    family,
+    placement: { materials, mesh, position, rotation, scale },
+  } of drawnPlacements) {
     const part = new Group();
     part.name = mesh;
     for (const submesh of nameSubmeshesMap.get(mesh) ?? []) {
@@ -82,7 +93,7 @@ export const loadWitness = async (
     part.position.set(...position);
     part.quaternion.set(...rotation);
     part.scale.set(...scale);
-    getFamilyGroup(family ?? "").add(part);
+    getFamilyGroup(family).add(part);
   }
-  return { layout, parts: witness };
+  return witness;
 };

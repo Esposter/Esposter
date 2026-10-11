@@ -177,8 +177,9 @@ export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 400
 export const LISTEN_FLOOR_DECIBELS = 60;
 // The screen that plays the login's music, which the parity page renders it through
 export const LOGIN_MUSIC_SCREEN = "LoginMusic";
-// The size the parity page is opened at for music, which draws nothing for it
-export const MUSIC_PAGE_SIZE = 360;
+// The size the parity page is opened at where nothing it draws is read: the music it renders, the claims on a scene's
+// Exports
+export const UNDRAWN_PAGE_SIZE = 360;
 // A frame whose whole power rises by half again over the last is a note's attack, where `bands` weighs a band's power
 export const BANDS_ONSET_RISE = 1.5;
 // The ages in seconds since the last note began that `decay` reads a band's gap between: the attack, its first
