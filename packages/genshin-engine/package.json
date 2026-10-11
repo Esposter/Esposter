@@ -63,6 +63,9 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
+  "dependencies": {
+    "three-mesh-bvh": "catalog:"
+  },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",

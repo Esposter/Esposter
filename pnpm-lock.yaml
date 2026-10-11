@@ -740,6 +740,9 @@ catalogs:
     three-globe:
       specifier: ^2.45.4
       version: 2.45.4
+    three-mesh-bvh:
+      specifier: ^0.9.16
+      version: 0.9.16
     tsdown:
       specifier: ^0.23.1
       version: 0.23.1
@@ -1825,6 +1828,9 @@ importers:
       three:
         specifier: 'catalog:'
         version: 0.186.1
+      three-mesh-bvh:
+        specifier: 'catalog:'
+        version: 0.9.16(three@0.186.1)
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'

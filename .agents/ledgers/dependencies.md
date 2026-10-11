@@ -205,6 +205,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `temporal-polyfill`                     | —     | Keep — hold       | until every target ships `Temporal`                                                                    |
 | `three`                                 | —     | Keep — engine     | the 3D engine                                                                                          |
 | `three-globe`                           | —     | Keep — engine     | the globe                                                                                              |
+| `three-mesh-bvh`                        | —     | Keep — engine     | the landmark collider's bounding volume hierarchy                                                      |
 | `tsdown`                                | —     | Keep — tooling    | the package bundler                                                                                    |
 | `tsx`                                   | —     | Keep — tooling    | runs TypeScript with enums, which node's type stripping refuses                                        |
 | `type-fest`                             | —     | Keep — types      | type utilities                                                                                         |
