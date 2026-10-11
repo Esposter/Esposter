@@ -15,3 +15,17 @@ const { glyphLayers } = defineProps<Props>();
     <path v-for="{ opacity, path } of glyphLayers" :key="path" fill-rule="evenodd" :fill-opacity="opacity" :d="path" />
   </svg>
 </template>
+
+<style scoped>
+/* A glyph is centred on its button's disc, its side a share of the disc set by the button */
+.glyph {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--glyph-size);
+  height: var(--glyph-size);
+  fill: #fff;
+  pointer-events: none;
+  translate: -50% -50%;
+}
+</style>
