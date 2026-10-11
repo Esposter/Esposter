@@ -6,7 +6,6 @@ needs: [game-install, game-exports]
 touches:
   [
     "packages/genshin-world/src/components/Hud/**",
-    "packages/genshin-world/src/data/hud/**",
     "scripts/src/services/genshinParity/shared/**",
   ]
 ---

@@ -1,5 +1,6 @@
 import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+import { SITE_NAME } from "@esposter/shared";
 
 export const MAIN_BRANCH = "main";
 
@@ -119,8 +120,9 @@ export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 // How many times one unit of work's session may fail against one basis before the work is routed around it: past the
 // Cap a review's findings are deferred, a commit is parked, a fold's window is re-cut and a red signature gets an
-// Issue. Nothing fails red or waits on a person. The basis is what every attempt's marker names (`getMarker`): a
-// Count that outlived the collector code that failed it would leave the work waiting on a number nobody resets.
+// Issue. A claimed commit's cut onto `main` counts against it too, though no session makes the cut, once per `main`
+// Head it failed on. Nothing fails red or waits on a person. Every attempt's marker names its basis (`getMarker`):
+// A count that outlived the collector code that failed it would leave the work waiting on a number nobody resets.
 export const SESSION_ATTEMPT_CAP = 3;
 // The tree whose hash at the run's start is the basis every attempt count names — a change to any of it is a fresh
 // Turn for whatever failed under the old. The collector's own services rather than the `scripts` package around
@@ -136,12 +138,14 @@ export const SESSION_LIMITED_MARKER = "review-collector session-limited";
 export const DRAINS_MARKER = "review-collector drains";
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
 // Same cap in a comment on the commit itself, since the sync runs with no release open to hold a count: past it
-// The commit is a person's, and the port holds on it
+// The commit is parked on its held branch and the replay goes on without it (`replayOwed`)
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 // Keys the one issue a park opens (`parkCommits`), by the first commit it parks
 export const HELD_MARKER = "review-collector held";
 // A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
 export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
+// A claimed commit whose express cut did not apply to `main`, counted on the commit itself like the sync's marker
+export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 // An attempt at a red `main`, failed or pushed, posted on the head it was made at and keyed by the red's failure
@@ -172,6 +176,14 @@ export const CARRY_SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes
 export const SESSION_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 45 }).total("milliseconds");
 // One repair attempt's deadline, covering the regenerators, their verify, the session and the repair step's verify
 export const REPAIR_ATTEMPT_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
+// How long one run may spend from its job's start before it launches no further session: a session that could end
+// Past it ends the run idle with the minute's retrigger instead (`assertCycleBudget`). A run its job's timeout kills
+// Writes no retrigger, so that timeout sits above this plus the longest step that launches one
+export const CYCLE_BUDGET_MS: number = Temporal.Duration.from({ minutes: 100 }).total("milliseconds");
+// The job's start in epoch milliseconds, which the job's first step records for every step after it. Unset outside the
+// Job, where no timeout ends the run, so nothing is budgeted there
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
+export const JOB_STARTED_AT_ENVIRONMENT_VARIABLE: string = `${SITE_NAME.toUpperCase()}_COLLECTOR_JOB_STARTED_AT_MS`;
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,

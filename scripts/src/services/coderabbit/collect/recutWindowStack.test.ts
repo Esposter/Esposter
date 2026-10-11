@@ -20,6 +20,9 @@ const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
 
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
+const getPrCalls = () =>
+  runGh.mock.calls.filter(([args]) => args[0] === "pr" && (args[1] === "comment" || args[1] === "close"));
+
 describe(recutWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, installPreReceiveHook, publish, readSha } = setupFixtureRepository();
   const fileCap = 1;
@@ -44,8 +47,6 @@ describe(recutWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     return { bottom, middle, top };
   };
-  const getPrCalls = () =>
-    runGh.mock.calls.filter(([args]) => args[0] === "pr" && (args[1] === "comment" || args[1] === "close"));
 
   test("returns develop to the window below and closes the window with every one above it, top first", () => {
     expect.hasAssertions();

@@ -2,7 +2,11 @@ import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:ch
 
 import { SessionLimitedError } from "#src/models/coderabbit/collect/SessionLimitedError";
 import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
-import { SESSION_TIMEOUT_MS } from "#src/services/coderabbit/collect/constants";
+import {
+  CYCLE_BUDGET_MS,
+  JOB_STARTED_AT_ENVIRONMENT_VARIABLE,
+  SESSION_TIMEOUT_MS,
+} from "#src/services/coderabbit/collect/constants";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { EventEmitter } from "node:events";
 import { PassThrough, Readable } from "node:stream";
@@ -112,6 +116,22 @@ describe(runSession, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[SessionUnstartedError: Invalid operation: Read, name: coderabbit, no session started - the launch wrote nothing]`,
     );
+  });
+
+  // Every step that launches a session takes this one path, so a run that could outlive its job's timeout ends before
+  // The session rather than inside it, where the kill would leave it no retrigger
+  test("launches no session the run's budget cannot hold", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv(JOB_STARTED_AT_ENVIRONMENT_VARIABLE, "0");
+    vi.setSystemTime(CYCLE_BUDGET_MS);
+
+    await expect(
+      runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[CycleBudgetSpentError: Invalid operation: Create, name: coderabbit, the run has spent 100 of its 100 minutes, too few for a session of up to 45]`,
+    );
+    expect(spawn).not.toHaveBeenCalled();
   });
 
   // A session that lost its way is bounded by its own wall clock rather than the job's, and the kill names the group:

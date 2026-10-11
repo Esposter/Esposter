@@ -35,7 +35,7 @@ flowchart LR
 
 ## The tables
 
-`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints` and `home/levels`; the bundle still imports the committed copies in the world's generated folder. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](/docs/genshin/forging) tables are.
+`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints` and `home/levels`, which `readHomeBlueprints` and `readHomeLevels` fetch by key. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](/docs/genshin/forging) tables are.
 
 - **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds: between ten and twenty hours, the first blueprint fourteen. Each order makes one furnishing.
 - **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and over a thousand of the blueprints have one. The few dozen that no diagram names are open from the start.
@@ -70,8 +70,8 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 | `packages/genshin-world/src/services/home/computeHomeAccrued.ts`     | A store's Realm Currency or Realm Bounty after a span, capped             |
 | `packages/genshin-world/src/services/home/learnHomeBlueprint.ts`     | A blueprint learned by using its diagram                                  |
 | `packages/genshin-world/src/services/shared/learnByDiagram.ts`       | The one diagram-learning rule the forge's recipes share                   |
-| `packages/genshin-world/src/generated/home/blueprints.json`          | The furnishings Tubby makes, a slice imported on demand                   |
-| `packages/genshin-world/src/generated/home/levels.json`              | The Trust and Adeptal Energy ranks, a slice imported on demand            |
+| `packages/genshin-world/src/services/home/readHomeBlueprints.ts`     | The furnishings Tubby makes, fetched by their `home/blueprints` key       |
+| `packages/genshin-world/src/services/home/readHomeLevels.ts`         | The Trust and Adeptal Energy ranks, fetched by their `home/levels` key    |
 
 ## Notes
 

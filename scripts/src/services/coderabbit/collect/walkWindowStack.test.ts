@@ -35,19 +35,22 @@ vi.mock(import("#src/services/coderabbit/collect/readCheckStatus"), () => ({
 
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
+const getWindow = (number: number, baseRefName: string, headRefOid = ""): WindowPullRequest => ({
+  baseRefName,
+  createdAt: new Date(0).toISOString(),
+  headRefName: getWindowBranch(number),
+  headRefOid,
+  number,
+  state: WindowPullRequestState.Open,
+});
+const getPrCalls = (subcommands: string[]) =>
+  runGh.mock.calls.filter(([args]) => args[0] === "pr" && subcommands.includes(args[1] ?? ""));
+
 describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
   const viewerLogin = "viewerLogin";
   const baseInput = { collectorSha: "", developSha: "", isDryRun: false, queueSha: "", viewerLogin };
   const askBody = `${PROBE_COMMENT}\n<!-- ${REVIEW_ASK_MARKER} -->`;
-  const getWindow = (number: number, baseRefName: string, headRefOid = ""): WindowPullRequest => ({
-    baseRefName,
-    createdAt: new Date(0).toISOString(),
-    headRefName: getWindowBranch(number),
-    headRefOid,
-    number,
-    state: WindowPullRequestState.Open,
-  });
   // What `gh` answers: the windows on every list, the bottom window's comments, and one page of nothing for every other
   // List. Each close records where `develop` stood on the remote when it was made
   const answerGh = (windows: WindowPullRequest[], bottomComments: GitHubEntry[]): string[] => {
@@ -62,8 +65,6 @@ describe(walkWindowStack, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     return closedOverDevelopShas;
   };
-  const getPrCalls = (subcommands: string[]) =>
-    runGh.mock.calls.filter(([args]) => args[0] === "pr" && subcommands.includes(args[1] ?? ""));
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });

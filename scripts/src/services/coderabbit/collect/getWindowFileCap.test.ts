@@ -7,15 +7,16 @@ import { getWindowFileCap } from "#src/services/coderabbit/collect/getWindowFile
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
+const getWindow = (number: number, state: WindowPullRequestState): WindowPullRequest => ({
+  baseRefName: MAIN_BRANCH,
+  createdAt: new Date(0).toISOString(),
+  headRefName: getWindowBranch(number),
+  headRefOid: "",
+  number,
+  state,
+});
+
 describe(getWindowFileCap, () => {
-  const getWindow = (number: number, state: WindowPullRequestState): WindowPullRequest => ({
-    baseRefName: MAIN_BRANCH,
-    createdAt: new Date(0).toISOString(),
-    headRefName: getWindowBranch(number),
-    headRefOid: "",
-    number,
-    state,
-  });
   const halvedFileCap = Math.floor(REVIEW_FILE_CAP / 2);
   const windowHistory = [getWindow(0, WindowPullRequestState.Merged), getWindow(1, WindowPullRequestState.Closed)];
 

@@ -11,8 +11,6 @@ Read when `deps.onlyImport`, `publint` or `attw` fails a build, or when a consum
 
 `@esposter/configuration` is the one package that widens the list, because everything it externalizes is a `devDependency` and the base derives the allowlist from the runtime fields only.
 
-A generated file a package imports on demand must exist before the package builds. A `#src/generated/<slice>/<file>.json` dynamic import with no file on disk is an unresolvable specifier, so the gate reports it as an import `deps.onlyImport` does not name, though the package declares nothing new. The order that works is the slice's placeholder first (`[]`, written by hand and replaced by the writer), then the build, then the writer, which reads the package's built `dist` (`tsx` resolves no `source` condition, so a writer that imports a package sees its last build). The generated genshin-world `forging` slice took that order.
-
 `deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` is declared, well-formed, and still ships a package that resolves nothing on a stranger's `npm install`. That edge is the one thing about the manifest no build gate can see, so `scripts/src/workspace/publishedDependencies.test.ts` asserts it instead: no published package names a private sibling in any field a consumer's package manager resolves.
 
 ## `publint` and `attw` — a published package is gated further
