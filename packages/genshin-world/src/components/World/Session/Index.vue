@@ -102,7 +102,7 @@ const {
   regionPalettes,
   save,
   serverClockOffsetMs = 0,
-  startingTalentMultipliers,
+  startingCharacterIdKitMap,
   statTables,
   wildlifePlaces,
   windriseData,
@@ -295,7 +295,7 @@ const {
     if (nearestLandmark) jumpTo(computeJumpPose(nearestLandmark));
   },
   placeWorldDrops,
-  startingTalentMultipliers,
+  startingCharacterIdKitMap,
   statTables,
 });
 // The characters' packs: the ones the browser keeps, which a player loads on the character screen, read ahead of the

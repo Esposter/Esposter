@@ -10,7 +10,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
@@ -22,10 +22,10 @@ import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
 import { getResultAsync } from "@esposter/shared";
 
 // The world, opened once the names and the game's tables it reads its save and runs its rules by have arrived, with the
-// Starting team's talent multipliers its first frame builds their combatants from, and the ground, the catalogue and the
-// Animals its first frame draws. The bag's weapons, materials and names are read as the save loads, so the world is made
-// Only then. A record that fails to arrive is logged and the world stays shut, ready all the same, as a world that cannot
-// Start is, so a host waiting on it moves on
+// Starting team's kits its first frame builds their combatants from, and the ground, the catalogue and the animals its
+// First frame draws. The bag's weapons, materials and names are read as the save loads, so the world is made only then.
+// A record that fails to arrive is logged and the world stays shut, ready all the same, as a world that cannot start
+// Is, so a host waiting on it moves on
 const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const tables = shallowRef<WorldTables>();
@@ -40,7 +40,7 @@ getResultAsync(() =>
       measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
       measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
       measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
-      measureLoadStep("talent-multipliers", readTalentMultipliers(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS)),
+      measureLoadStep("character-kits", readCharacterKits(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS)),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("region-palettes", readRegionPalettes(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
@@ -57,7 +57,7 @@ getResultAsync(() =>
     adventureRankTables,
     materialDataMap,
     hudInterfaceRects,
-    startingTalentMultipliers,
+    startingCharacterIdKitMap,
     windriseData,
     regionPalettes,
     catalogue,
@@ -75,7 +75,7 @@ getResultAsync(() =>
       materialDataMap,
       nameText,
       regionPalettes,
-      startingTalentMultipliers,
+      startingCharacterIdKitMap,
       statTables,
       wildlifePlaces,
       windriseData,

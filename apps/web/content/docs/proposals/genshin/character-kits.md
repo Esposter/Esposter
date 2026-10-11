@@ -19,7 +19,7 @@ Every character on the [character kits](/docs/genshin/kits) index has a module o
 
 ## Scope and order
 
-**Today:** a character without a module of its own fights with the Traveler's kit until one is written, as `createCharacterKit` falls back to `createTravelerKit`.
+**Today:** a character without a module of its own fights with the Traveler's kit until one is written, as `readCharacterKits` falls back to `createTravelerKit`.
 
 **This adds, in order:**
 

@@ -29,7 +29,7 @@ describe("generated character kit map", () => {
     ).toStrictEqual(declaredIds.toSorted((firstId, secondId) => firstId - secondId));
   });
 
-  test("maps each character id to its own module's create function", () => {
+  test("loads each character id's own module's create function", async () => {
     expect.hasAssertions();
 
     const kitModules = Object.values(
@@ -43,7 +43,10 @@ describe("generated character kit map", () => {
       );
       const characterId = idName ? kitModule[idName] : undefined;
       expect(characterId).toBeTypeOf("number");
-      expect(CharacterIdCreateKitMap[Number(characterId)]).toBe(createName ? kitModule[createName] : undefined);
+      // oxlint-disable-next-line no-await-in-loop -- each module is already loaded by the glob, so the loads cost nothing to serialise
+      await expect(CharacterIdCreateKitMap[Number(characterId)]?.()).resolves.toBe(
+        createName ? kitModule[createName] : undefined,
+      );
     }
   });
 });

@@ -1,6 +1,5 @@
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -16,11 +15,10 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
-import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
 import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
@@ -43,7 +41,7 @@ export const useWorldCombat = ({
   gameDataBaseUrl,
   onPartyRevived,
   placeWorldDrops,
-  startingTalentMultipliers,
+  startingCharacterIdKitMap,
   statTables,
 }: {
   enemyTables: EnemyTables;
@@ -51,50 +49,42 @@ export const useWorldCombat = ({
   gameDataBaseUrl: string;
   onPartyRevived: () => void;
   placeWorldDrops: (enemy: Enemy, enemyDrops: EnemyDrops) => void;
-  startingTalentMultipliers: TalentMultiplierMap;
+  startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
 }) => {
   // The player's characters, the Traveler alone as a new player's, on the field, and their party
   const characters = shallowRef<Character[]>([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
   const party = reactive(createParty([...STARTING_TEAM_CHARACTER_IDS]));
-  // The combat talent multipliers of the deployed team: the starting team's, read at the world's gate, and each character's
-  // Chunk read on demand as the team changes to take it in
-  const talentMultipliers = shallowRef(startingTalentMultipliers);
-  // The characters whose chunks have been read, whose kits are built from the multipliers
-  const loadedCharacterIds = shallowRef<number[]>([...STARTING_TEAM_CHARACTER_IDS]);
+  // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
+  // Changes to take it in, its module and multipliers read on demand
+  const characterIdKitMap = shallowRef(startingCharacterIdKitMap);
   const deployedCharacterIds = computed(() => party.teams[party.deployedTeamIndex]?.characterIds ?? []);
   // A failed read is read again a wait later, as a team that does not change starts no other
-  const { start: retryTalentMultipliers } = useTimeoutFn(() => readUnloadedTalentMultipliers(), DATA_FETCH_RETRY_MS, {
+  const { start: retryCharacterKits } = useTimeoutFn(() => readUnloadedCharacterKits(), DATA_FETCH_RETRY_MS, {
     immediate: false,
   });
-  const readUnloadedTalentMultipliers = () => {
+  const readUnloadedCharacterKits = () => {
     const unloadedCharacterIds = deployedCharacterIds.value.filter(
-      (characterId) => !loadedCharacterIds.value.includes(characterId),
+      (characterId) => !characterIdKitMap.value.has(characterId),
     );
     if (unloadedCharacterIds.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readTalentMultipliers(gameDataBaseUrl, unloadedCharacterIds)).match(
-      (newTalentMultipliers) => {
-        talentMultipliers.value = { ...talentMultipliers.value, ...newTalentMultipliers };
-        loadedCharacterIds.value = [...new Set([...loadedCharacterIds.value, ...unloadedCharacterIds])];
+    getResultAsync(() => readCharacterKits(gameDataBaseUrl, unloadedCharacterIds)).match(
+      (newCharacterIdKitMap) => {
+        // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
+        characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);
       },
       (error) => {
         console.error(error);
-        retryTalentMultipliers();
+        retryCharacterKits();
       },
     );
   };
-  watch(deployedCharacterIds, readUnloadedTalentMultipliers);
-  const characterIdKitMap = computed(() => {
-    const kitMap = new Map<number, Kit>();
-    for (const characterId of loadedCharacterIds.value)
-      kitMap.set(characterId, createCharacterKit(characterId, talentMultipliers.value));
-    return kitMap;
-  });
+  watch(deployedCharacterIds, readUnloadedCharacterKits);
   // How the character on the field moves, its body type's
   const locomotion = computed(() => getCharacterLocomotion(getActiveCharacterId(party), statTables.characterDataMap));
-  // Each character's combat once its kit is built from its loaded multipliers, a character whose chunk has not arrived
-  // Having none yet. The character on the field's combat and its party member are what the HUD's Health and skills read
+  // Each character's combat once its kit is built, a character whose kit has not arrived having none yet. The character on
+  // The field's combat and its party member are what the HUD's Health and skills read
   const characterIdCombatantMap = computed(() => {
     const combatantMap = new Map<number, Combatant>();
     // The deployed team's resonances, read off its members' elements in the roster, which hold on every member

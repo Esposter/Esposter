@@ -17,9 +17,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
-import { createCharacterKit } from "#src/services/kit/createCharacterKit";
 import { createKitState } from "#src/services/kit/createKitState";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { createParty } from "#src/services/party/createParty";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
@@ -35,10 +34,8 @@ import {
 import { Vector3 } from "three";
 import { describe, expect, test, vi } from "vitest";
 
-const TRAVELER_KIT = createCharacterKit(
-  TRAVELER_CHARACTER_ID,
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]),
-);
+const characterIdKitMap = await readCharacterKits(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]);
+const TRAVELER_KIT = takeOne([...characterIdKitMap.values()]);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
