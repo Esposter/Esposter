@@ -119,7 +119,7 @@ export const useWorldPickups = ({
   // The game's hint over the world for a pick up the bag had no room for, cleared by the next pick up that fits
   const bagFullHint = ref("");
   // A pick up takes the drop's Mora or item into the wallet or the bag, and what the bag has no room for stays on the
-  // Ground as a smaller drop
+  // Ground as a smaller drop. Mora picked up is told to the team's kits, which an artifact set answers
   const pickUpWorldDrop = (worldDrop: WorldDrop) => {
     // A volume is taken straight into the Archive, which opens its entry, and never into the bag
     const books = archive.archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
@@ -132,6 +132,7 @@ export const useWorldPickups = ({
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);
     bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+    if (worldDrop.itemId === MORA_ITEM_ID) events.emit("pickUpMora");
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
     worldDrops.value =
       pickUp.overflow > 0

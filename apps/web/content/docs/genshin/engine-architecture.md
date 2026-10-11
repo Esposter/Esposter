@@ -83,7 +83,8 @@ Every generator and every per-frame selection is benched under the `bench` skill
 ```mermaid
 flowchart LR
   Pick[useWorldPickups] -->|questEvent| Quests[useWorldQuests]
-  Combat[useWorldCombat] -->|defeatEnemy| Archive[useWorldArchive]
+  Pick -->|pickUpMora| Combat[useWorldCombat]
+  Combat -->|defeatEnemy| Archive[useWorldArchive]
   Combat -->|questEvent| Quests
   Talks[useWorldTalks] -->|questEvent| Quests
   Save[useWorldSave] -->|bagChange| Archive

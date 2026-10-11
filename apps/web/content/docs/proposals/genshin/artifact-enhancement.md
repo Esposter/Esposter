@@ -3,11 +3,12 @@ title: Artifact enhancement
 description: Proposal — each artifact set's conditional bonus, the four-piece effects that wait on combat, as a module per set over the character kits' shared effects, its numbers from the set table.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/services/artifact/**"]
+waiting: "a chest opened in the world, which Adventurer's four-piece answers: the chests unit's first step, as `openChest` is called nowhere yet"
 ---
 
 # Artifact enhancement
 
-Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, The Exile's and Traveling Doctor's, which answer a burst used, and Berserker's, which reads its wearer's HP as its hits are priced, are built. What is left is Adventurer's and Lucky Dog's, whose bonuses answer a world action no route carries to the kits yet.
+Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhancement): a drop's main and minor affixes by the wiki's weights, the Artifact EXP and its Mora, the every-fourth-level affixes, and the fodder and lock rules. A set's bonus that waits on combat is a module of its set's answering the kits' events, and Instructor's, which answers a reaction triggered, The Exile's and Traveling Doctor's, which answer a burst used, Berserker's, which reads its wearer's HP as its hits are priced, and Lucky Dog's, which answers Mora picked up, are built. What is left is Adventurer's, whose bonus answers a chest opened, which no chest in the world does yet.
 
 ## Decisions
 
@@ -16,11 +17,11 @@ Rolling, enhancing and locking artifacts is [built](/docs/genshin/artifact-enhan
 
 ## Scope and order
 
-**Today:** an artifact's unconditional set lines are summed, each bonus carries its affix's numbers, and a combatant's kit carries the modules of the sets it wears. Instructor's, The Exile's, Traveling Doctor's and Berserker's four-pieces are modules; every other set the world carries in its chests' pools gives only its attributes.
+**Today:** an artifact's unconditional set lines are summed, each bonus carries its affix's numbers, and a combatant's kit carries the modules of the sets it wears. Instructor's, The Exile's, Traveling Doctor's, Berserker's and Lucky Dog's four-pieces are modules; every other set the world carries in its chests' pools gives only its attributes. A world action outside the step reaches the kits as Mora picked up does: a world event the combat puts on the outbox as a kit event, sent at the next step.
 
 **Still to build, in order:**
 
-1. **Adventurer's and Lucky Dog's four-pieces as modules**, each an entry of `ArtifactSetIdCreateModuleMap`, their numbers already published with their sets: Adventurer's 6% of its wearer's Max HP each second for 5 seconds as a chest opens, and Lucky Dog's 300 HP as Mora is picked up. Both wait on a world action reaching the kits as a kit event. Sprinting reaches a kit as input its step reads, which a pickup is not: picking up Mora is `pickUpWorldDrop` in `useWorldPickups`, an interaction outside the step on the field, so it needs a world event queued for that step to send to the kits. Adventurer also waits on the [chests](/docs/proposals/genshin/chests) unit's first step, which opens a chest in the world, as `openChest` is called nowhere yet.
+1. **Adventurer's four-piece as a module**, an entry of `ArtifactSetIdCreateModuleMap`, its numbers already published with its set: 6% of its wearer's Max HP each second for 5 seconds as a chest opens. A chest opened reaches the kits as Mora picked up does, a world event the combat puts on the outbox as a kit event. It waits on the [chests](/docs/proposals/genshin/chests) unit's first step, which opens a chest in the world, as `openChest` is called nowhere yet.
 
 ## Data and measures
 

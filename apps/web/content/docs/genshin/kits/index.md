@@ -83,6 +83,7 @@ flowchart TD
   STRIKES -->|"the hit triggered reactions"| REACTION["ReactionTriggered"]
   STRIKES -->|"the enemy took its damage, CRIT or not, defeated or not"| DAMAGE["DamageTaken"]
   STRIKES -->|"collectKitEnergyDrops: the enemy dropped energy, which the team took"| PARTICLE["EnergyParticleCollected"]
+  STEP -->|"the outbox: Mora the character on the field picked up since the last step"| MORA["MoraPickedUp"]
   STEP -->|"last: each change to a member's HP the party recorded since the last step"| HEALTH["HealthChanged"]
   SWAP --> EMIT["emitKitEvent: every deployed member's kit, as its own combatant"]
   TAUNT --> EMIT
@@ -93,6 +94,7 @@ flowchart TD
   REACTION --> EMIT
   DAMAGE --> EMIT
   PARTICLE --> EMIT
+  MORA --> EMIT
   HEALTH --> EMIT
   EMIT --> EFFECTS["the kit's handler: summons, statuses, heals, energy, cooldowns"]
   EFFECTS -->|"its summons' hits, on a later step"| STEP
@@ -107,6 +109,7 @@ flowchart TD
 - **StatusTicked** carries an enemy and the status on it whose tick fell due. Hydrospout answers Riptide's.
 - **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays. Resolve's stacks from another member's burst answer it.
 - **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`). Wishes Unnumbered's Resolve answers it.
+- **MoraPickedUp** carries the character on the field as it picks up Mora lying in the world. A pick up is an interaction outside the step, so the pickups emit it as a world event (`pickUpMora`), which the combat puts on the outbox for the next step to send. Lucky Dog's four-piece answers it ([artifact enhancement](/docs/genshin/artifact-enhancement)).
 - **HealthChanged** carries a recorded change to a member's HP, as the party's `healthChanges` hold it, with no character for an enemy's strike or a drown. `healPartyMember` and `damagePartyMember` record every change wherever it is made, so a strike between steps is heard as well as a kit's own, and the step sends the changes last and empties them: a change a handler makes as it hears one is sent on the next step. Let the People Rejoice's Fanfare and Endless Waltz answer it.
 
 ## How a kit is read

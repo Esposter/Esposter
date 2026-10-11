@@ -1,6 +1,6 @@
 ---
 title: Artifact enhancement
-description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's, The Exile's, Traveling Doctor's and Berserker's four-pieces built.
+description: An artifact rolled, enhanced and locked as the game does it: a drop's main and minor affixes drawn by the game's pools and the wiki's weights, Artifact EXP fed from materials and fodder at a Mora a point with its chance of double or five times, a minor affix added or raised at every fourth level, and the locks that keep a fodder safe. A set's bonus that waits on combat is a module of its set's answering the kits' events, Instructor's, The Exile's, Traveling Doctor's, Berserker's and Lucky Dog's four-pieces built.
 ---
 
 # Artifact enhancement
@@ -53,6 +53,7 @@ flowchart TD
 - **Instructor's four-piece gives the team Elemental Mastery on a reaction.** A reaction its wearer triggers while on the field gives every member of the deployed team the bonus's Elemental Mastery for its seconds, as a buff another restarts rather than stacks. A reaction its wearer's summon triggers once the wearer has left the field gives none, as the wiki notes.
 - **The Exile's four-piece regenerates the others' energy after a burst.** A burst its wearer uses sets a field with no edge that ticks every 2 seconds for the bonus's 6 seconds, the first tick 2 seconds on, as the wiki's gameplay notes give it, and each tick gives every other member of the deployed team the bonus's 2 energy, flat and unraised by Energy Recharge. A burst while the field still ticks, the wearer's or another wearer's, starts no second one, as gcsim (MIT) `exile.go` rejects it.
 - **Traveling Doctor's four-piece heals its wearer as its burst is used.** The burst-used event its wearer's burst sends restores the bonus's 20% of its Max HP to it, ahead of the burst's own start. Its two-piece's Incoming Healing Bonus is summed with its lines but read by no heal, as no heal yet reads a Healing Bonus.
+- **Lucky Dog's four-piece heals its wearer as it picks up Mora.** A pick up of Mora lying in the world is a world event (`pickUpMora`) that the combat queues on the outbox as a Mora-picked-up kit event of the character on the field, sent at the next step, and a wearer that picked it up is restored the bonus's 300 HP, the table's `Relic_CoinHealSelf`, raised by the Healing Bonuses as every heal is (`changeKitMemberHealth`).
 - **Berserker's four-piece raises CRIT Rate at low HP.** Its module's passive bonus gives the bonus's 24% CRIT Rate while its wearer's HP is below the bonus's 70% of its Max HP, read as each of its hits is priced. A passive's bonuses are handed the character's HP as a share of its Max HP from the party beside the character (`getBuffedCombatant`), its current HP that share of its Max HP, so a kit's passive at low or high HP reads it the same way.
 
 ## Where the tables come from
@@ -90,6 +91,8 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 | `packages/genshin-world/src/services/artifact/sets/createBerserkerSetModule.ts`       | Berserker's four-piece                                                                         |
 | `packages/genshin-world/src/services/artifact/sets/createExileSetModule.ts`           | The Exile's four-piece                                                                         |
 | `packages/genshin-world/src/services/artifact/sets/createTravelingDoctorSetModule.ts` | Traveling Doctor's four-piece                                                                  |
+| `packages/genshin-world/src/services/artifact/sets/createLuckyDogSetModule.ts`        | Lucky Dog's four-piece                                                                         |
+| `packages/genshin-world/src/models/kit/KitMoraPickedUpEvent.ts`                       | The character on the field picked up Mora, the event Lucky Dog's four-piece answers            |
 | `packages/genshin-world/src/services/shared/drawWeightedValue.ts`                     | One draw in proportion to weights, from a seeded random source                                 |
 | `scripts/src/services/genshinAssets/stats/getArtifactRarityDatas.ts`                  | Writes the rarity tables from the reliquary, level and affix rows                              |
 | `scripts/src/services/genshinAssets/stats/getArtifactMainAffixPools.ts`               | Writes the main affix pools                                                                    |
@@ -114,4 +117,5 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 - [Instructor](https://genshin-impact.fandom.com/wiki/Instructor), Genshin Impact Wiki: the four-piece bonus, and its gameplay notes that the wearer triggers the reaction on the field and that the bonus refreshes rather than stacks.
 - [The Exile](https://genshin-impact.fandom.com/wiki/The_Exile), Genshin Impact Wiki: the four-piece bonus, and its gameplay notes that Energy Recharge does not raise it and that it ticks three times every 2 seconds, the first 2 seconds on.
 - [Traveling Doctor](https://genshin-impact.fandom.com/wiki/Traveling_Doctor), Genshin Impact Wiki: the four-piece bonus, 20% of the wearer's HP restored as its burst is used.
+- [Lucky Dog](https://genshin-impact.fandom.com/wiki/Lucky_Dog), Genshin Impact Wiki: the four-piece bonus, 300 HP restored as Mora is picked up.
 - [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.

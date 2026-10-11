@@ -9,6 +9,8 @@ export const BERSERKER_ARTIFACT_SET_ID = 10_005;
 export const INSTRUCTOR_ARTIFACT_SET_ID = 10_007;
 // The Exile's id in the set table
 export const EXILE_ARTIFACT_SET_ID = 10_009;
+// Lucky Dog's id in the set table
+export const LUCKY_DOG_ARTIFACT_SET_ID = 10_011;
 // Traveling Doctor's id in the set table
 export const TRAVELING_DOCTOR_ARTIFACT_SET_ID = 10_013;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
