@@ -2,6 +2,7 @@
 title: Scene groups
 description: Proposal — the client's own group scripts read on the machine with the install, refilling what the built scene group record leaves out (a camp's monsters, a puzzle's mechanisms, a trigger's region, the suites by the hour), and the units waiting on those fields moved onto it. Leaked server data is never a source.
 model: claude-opus-5-5
+waiting: "the user's decision on the groups' source"
 needs: [game-install, game-exports]
 touches: ["scripts/src/services/genshinAssets/**", "apps/web/content/docs/genshin/game-data-formats.md"]
 ---

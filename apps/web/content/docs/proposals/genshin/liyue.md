@@ -4,7 +4,7 @@ description: Proposal — Liyue, the Geo nation of contracts and commerce. Tower
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
 touches: ["packages/genshin-world/src/services/liyue/**"]
-waiting: "exports holding the karst and the stone forests, which Liyue's extraction does not (Jueyun Karst lies past it, and no stone of Guyun Stone Forest is among its placements), and Liyue's passes reaching shape: Inventory, then Layout on the base ground, then Camera"
+waiting: "exports holding the karst and the stone forests, which Liyue's extraction does not (Jueyun Karst lies past it, and no stone of Guyun Stone Forest is among its placements), and Liyue's passes reaching shape: its Inventory and base ground are done, its Layout waits on the camera its harbour landmarks solve, then the Camera"
 ---
 
 # Liyue
@@ -39,7 +39,7 @@ The catalogue holds Liyue's areas as the game names them: Bishui Plain, Minlin, 
 
 1. **The karst and stone-forest generators**, under `packages/genshin-world/src/services/liyue/`, each fitted to its exports once the passes come to shape, as the [scene derivation](/docs/genshin/scene-derivation)'s object passes fit every re-derivation against its own export. Neither can be built yet:
    - **No export holds them.** Liyue's extraction is the harbour's streams. Jueyun Karst's waypoints stand a few hundred metres past the farthest of its placements. Guyun Stone Forest's waypoint stands inside them, but no rock or stone is placed within 400 metres of it: the nearest are the harbour's own "Area_Ly_Stone_LYG_" pieces. An extraction reaching the karst's and the stone forests' streams needs the game's install.
-   - **The passes before shape.** The capital's passes run in order: the Inventory (`liyue-every-renderer`), the Layout, which waits on the base ground (`liyue-region-base`), then the Camera ([compute queue](/docs/genshin/compute/liyue)).
+   - **The passes before shape.** The capital's passes run in order: the Inventory (`liyue-every-renderer`) and the base ground (`liyue-region-base`) are done, the Layout waits on the camera `liyue-harbor-location` solves on its landmarks, which waits on a mesh the extraction holds for each, then the Camera ([compute queue](/docs/genshin/compute/liyue)).
 
 ## Build order
 

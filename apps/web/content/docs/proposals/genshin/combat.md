@@ -2,6 +2,7 @@
 title: Combat
 description: Proposal — the Stellar Glimmer reactions of the game's newest characters, each dealt its own damage formula from the community's documented mechanics, on the combat rules the built ones already run.
 model: claude-opus-5-5
+waiting: "the Cryo Traveler's or Odette's kit, the only two that gcsim v2.47.2 turns Stellar-Conduct and Stellar Swirl on from (the character-kits unit: Odette's module, or the Traveler's Cryo set once the statues page holds the resonance)"
 touches: ["packages/genshin-world/src/services/combat/**"]
 ---
 
