@@ -1,0 +1,63 @@
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { useWorldOfferings } from "#src/composables/useWorldOfferings";
+import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
+import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { offerBagItems } from "#src/services/offering/offerBagItems";
+import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { GameLanguage } from "genshin-text";
+import { assert, describe, expect, test } from "vitest";
+import { ref, shallowRef } from "vue";
+
+const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
+const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
+const levels = await readFrostbearingTreeLevels(GAME_DATA_LOCAL_BASE_URL);
+
+describe(useWorldOfferings, () => {
+  test("offers the bag as it stands once the tree's levels arrive", async () => {
+    expect.hasAssertions();
+
+    const offeringLevel = levels.find(({ itemCount }) => itemCount > 0);
+    assert.exists(offeringLevel);
+    const definition = getItemDefinition(offeringLevel.itemId, englishNameText, materialDataMap);
+    const inventory = ref<Inventory>({ items: [], nextId: 0 });
+    const wallet = ref(EMPTY_WALLET);
+    const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCount: 0, level: 1 });
+    const { offerFrostbearingTree } = useWorldOfferings({
+      frostbearingTreeProgress,
+      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+      inventory,
+      materialDataMap,
+      nameText: englishNameText,
+      setInventory: (nextInventory) => {
+        inventory.value = nextInventory;
+      },
+      setWallet: (nextWallet) => {
+        wallet.value = nextWallet;
+      },
+      wallet,
+    });
+    const offer = offerFrostbearingTree();
+    inventory.value = { items: [{ definition, id: 0, quantity: 1 }], nextId: 1 };
+    const {
+      inventory: offeredInventory,
+      progress,
+      wallet: paidWallet,
+    } = offerBagItems(
+      inventory.value,
+      wallet.value,
+      { ...frostbearingTreeProgress.value, levels },
+      englishNameText,
+      materialDataMap,
+    );
+    await offer;
+
+    expect(inventory.value).toStrictEqual(offeredInventory);
+    expect(wallet.value).toStrictEqual(paidWallet);
+    expect(frostbearingTreeProgress.value).toStrictEqual({ heldCount: progress.heldCount, level: progress.level });
+  });
+});

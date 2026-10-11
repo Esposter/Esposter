@@ -86,7 +86,6 @@ const {
   characterPackBaseUrl,
   createTerrainWorker,
   enemyTables,
-  frostbearingTreeLevels,
   frostbearingTreePlaces,
   gameDataBaseUrl,
   gameText,
@@ -138,10 +137,10 @@ const {
   wallet,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to
 const { offerFrostbearingTree } = useWorldOfferings({
-  frostbearingTreeLevels,
   frostbearingTreeProgress,
+  gameDataBaseUrl,
   inventory,
   materialDataMap,
   nameText,

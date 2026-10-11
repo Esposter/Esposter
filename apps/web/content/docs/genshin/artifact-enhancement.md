@@ -64,6 +64,8 @@ flowchart TD
 - `stats/artifactExpMaterials`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
 - `stats/artifactSets`: per set in `ReliquarySetExcelConfigData`, each bonus's piece count, the attributes its affix adds, and the numbers its effect reads, the affix's `paramList` in `EquipAffixExcelConfigData` with its trailing zeros cut.
 
+The set table is read with the world's stat tables, since a worn set's bonuses are summed into its wearer. The first three are read by nothing yet: nothing in the world rolls or enhances an artifact, so they are left out of the stat tables the world reads before it opens, and wait for the screen that does.
+
 The weights are not in the tables. They are the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
 
 ## Key files
