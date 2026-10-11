@@ -152,4 +152,44 @@ describe(spawnResolved, () => {
 
     expect(onError).not.toHaveBeenCalled();
   });
+
+  // Regression: the refusal sat on every win32 argv, so `wsl.exe --exec sh -c '<multi-line script>'` — the whole WSL
+  // Sandbox — was refused although an .exe receives its argv as data and no cmd.exe ever parses it
+  test("passes a line break and a percent sign to a resolved .exe, which no cmd.exe parses", () => {
+    expect.hasAssertions();
+
+    stubPlatform("win32");
+    resolveCmdCommand.mockReturnValue(RESOLVED_EXECUTABLE);
+
+    spawnResolved("node", ["\n%path%"], {});
+
+    expect(spawn).toHaveBeenCalledExactlyOnceWith(RESOLVED_EXECUTABLE, ["\n%path%"], {});
+  });
+
+  // Cmd.exe ends the command at a bare line break even inside quotes, so the rest would run as a second command
+  test("#179 refuses a line break in an argument bound for cmd.exe", () => {
+    expect.hasAssertions();
+
+    stubPlatform("win32");
+    resolveCmdCommand.mockReturnValue(RESOLVED_BATCH_FILE);
+
+    expect(() => spawnResolved(COMMAND, ["\n"], {})).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: pnpm, a cmd.exe argv cannot carry a line break or a percent sign]`,
+    );
+    expect(spawn).not.toHaveBeenCalled();
+  });
+
+  // Regression for BatBadBut (https://github.com/moxystudio/node-cross-spawn/issues/171): a `%name%` argument is
+  // Expanded by cmd.exe from an environment variable whose name the caret escaping itself spells, so cross-spawn's
+  // Escaping cannot make it data. Upstream spawns it anyway; this refuses it.
+  test("#171 refuses a percent sign in an argument bound for cmd.exe, which expands it as an environment variable", () => {
+    expect.hasAssertions();
+
+    stubPlatform("win32");
+
+    expect(() => spawnResolved(COMMAND, ["%path%"], {})).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: pnpm, a cmd.exe argv cannot carry a line break or a percent sign]`,
+    );
+    expect(spawn).not.toHaveBeenCalled();
+  });
 });

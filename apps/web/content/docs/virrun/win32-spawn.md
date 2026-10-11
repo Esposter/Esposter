@@ -16,22 +16,22 @@ flowchart TD
   argv["spawnHidden(file, args)"]
   shell{"shell option?"}
   nodeSpawn["node spawn, unchanged"]
-  refuse{"win32 argv carries a CR, LF or %?"}
-  throws["InvalidOperationError"]
   resolve["resolveCmdCommand: PATH, PATHEXT, cwd"]
   exe{".com or .exe?"}
-  direct["node spawn of the resolved file"]
+  direct["node spawn of the resolved file, argv as data"]
+  refuse{"an argument carries a CR, LF or %?"}
+  throws["InvalidOperationError"]
   cmd["cmd.exe /d /s /c with the command caret-escaped and each argument escaped twice"]
   missing{"resolved?"}
   enoent["exit 1 reported as CommandNotFoundError"]
   argv --> shell
   shell -->|yes| nodeSpawn
-  shell -->|no| refuse
-  refuse -->|yes| throws
-  refuse -->|no| resolve
+  shell -->|no| resolve
   resolve --> exe
   exe -->|yes| direct
-  exe -->|no, a batch file or nothing| cmd
+  exe -->|no, a batch file or nothing| refuse
+  refuse -->|yes| throws
+  refuse -->|no| cmd
   cmd --> missing
   missing -->|no| enoent
 ```
@@ -48,7 +48,7 @@ The escaper is checked against upstream's `escape.js` on random arguments of up 
 
 ## Refusals
 
-Two characters cannot be escaped for `cmd.exe`, so an argv carrying one is refused on win32 rather than spawned:
+Two characters cannot be escaped for `cmd.exe`, so an argv bound for it carrying one is refused rather than spawned. Only an argv bound for it: a resolved `.com` or `.exe` receives its arguments as data with no `cmd.exe` in between, which is how `wsl.exe --exec sh -c` carries the sandbox's multi-line scripts, and refusing every win32 argv refused the whole WSL sandbox with it:
 
 - **A line break** ends the command line inside `cmd.exe` even within quotes, so the rest would run as a second command. Upstream spawns it anyway ([#179](#upstream)).
 - **A percent sign** expands an environment variable. Caret escaping does not stop it, because the name the escape spells can be set by the caller: `set path^^=^"^&calc` makes `%path%` expand to `"&calc` ([#171](#upstream), the BatBadBut attack).
@@ -242,7 +242,7 @@ Regression tests against upstream were checked by running upstream's escaper on 
 | [#166](https://github.com/moxystudio/node-cross-spawn/pull/166)   | PR    | merged | Not a defect         | fix: update cross-spawn version to 7.0.5 in package-lock.json                                 | merged lockfile version bump                                                                                                                 |
 | [#167](https://github.com/moxystudio/node-cross-spawn/issues/167) | Issue | open   | Fixed here           | CVE-2024-21538                                                                                | Regular Expression Denial of Service (ReDoS) in cross-spawn                                                                                  | Version Fixed?                                 | #167 escapes a long backslash run in one pass (escapeCmdArgument.test.ts) |
 | [#168](https://github.com/moxystudio/node-cross-spawn/issues/168) | Issue | closed | Not applicable       | [ERR_REQUIRE_ESM]: require() of ES Module                                                     | closed 2024; a require of an ES module, and this build is ESM                                                                                |
-| [#171](https://github.com/moxystudio/node-cross-spawn/issues/171) | Issue | open   | Fixed here           | Vulnerable to arbitrary command execution on Windows (BatBadBut)                              | #171 refuses a win32 argv carrying a percent sign (spawnHidden.test.ts); see the Residual section                                            |
+| [#171](https://github.com/moxystudio/node-cross-spawn/issues/171) | Issue | open   | Fixed here           | Vulnerable to arbitrary command execution on Windows (BatBadBut)                              | #171 refuses a percent sign in an argument bound for cmd.exe (spawnResolved.test.ts); see the Residual section                               |
 | [#172](https://github.com/moxystudio/node-cross-spawn/pull/172)   | PR    | open   | Not a defect         | Update README.md                                                                              | README edit                                                                                                                                  |
 | [#173](https://github.com/moxystudio/node-cross-spawn/issues/173) | Issue | open   | Not a defect         | Spawn                                                                                         | title-only report with a quoted comment and no defect                                                                                        |
 | [#174](https://github.com/moxystudio/node-cross-spawn/issues/174) | Issue | open   | Not a defect         | Spawn                                                                                         | title-only report with a quoted comment and no defect                                                                                        |
@@ -250,7 +250,7 @@ Regression tests against upstream were checked by running upstream's escaper on 
 | [#176](https://github.com/moxystudio/node-cross-spawn/issues/176) | Issue | open   | Not applicable       | Deprecation warning on Node 24 [DEP0190]                                                      | DEP0190 is raised for argv with shell:true; spawnResolved passes no shell option                                                             |
 | [#177](https://github.com/moxystudio/node-cross-spawn/pull/177)   | PR    | closed | Not applicable       | Inline `shebang-command`, `shebang-regex` and `path-key`                                      | inlines shebang-command, shebang-regex and path-key: this port has no such dependency                                                        |
 | [#178](https://github.com/moxystudio/node-cross-spawn/issues/178) | Issue | open   | Out of scope         | Performance optimization opportunities for process spawning                                   | no measured cost; a process spawn is not on a hot path here                                                                                  |
-| [#179](https://github.com/moxystudio/node-cross-spawn/issues/179) | Issue | open   | Fixed here           | Windows cmd.exe Command Injection via Newline Characters                                      | #179 refuses a win32 argv carrying a line break (spawnHidden.test.ts)                                                                        |
+| [#179](https://github.com/moxystudio/node-cross-spawn/issues/179) | Issue | open   | Fixed here           | Windows cmd.exe Command Injection via Newline Characters                                      | #179 refuses a line break in an argument bound for cmd.exe (spawnResolved.test.ts)                                                           |
 | [#180](https://github.com/moxystudio/node-cross-spawn/issues/180) | Issue | open   | Out of scope         | Maintaining this Module                                                                       | the maintainer's own project health                                                                                                          |
 | [#181](https://github.com/moxystudio/node-cross-spawn/issues/181) | Issue | open   | Out of scope         | Consider npm Staged Publishing — sole publisher + 230M weekly downloads                       | the maintainer's publishing policy                                                                                                           |
 | [#183](https://github.com/moxystudio/node-cross-spawn/pull/183)   | PR    | open   | Fixed upstream, kept | fix: resolve relative commands with custom cwd in Worker threads                              | worker threads with a custom cwd: resolveCmdCommand takes cwd and never calls process.chdir (#90 test)                                       |
