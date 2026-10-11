@@ -11,6 +11,7 @@ describe(getQuestTargetId, () => {
     descriptionTextId: "descriptionTextId",
     id: "0",
     kind: QuestKind.Archon,
+    offerTalkIds: [],
     steps: [
       { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "talk" }], textId: "0" },
       { id: "1", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "lone-talk" }], textId: "1" },

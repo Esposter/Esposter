@@ -161,6 +161,7 @@ const {
   finishedMainQuestIds,
   questProgressMap,
   questsInProgress,
+  questsOffered,
   questTargetId,
   questTextMap,
   trackedQuestId,
@@ -322,6 +323,7 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
     nameText,
     questProgressMap,
     questsInProgress,
+    questsOffered,
     questTextMap,
   });
 // The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays

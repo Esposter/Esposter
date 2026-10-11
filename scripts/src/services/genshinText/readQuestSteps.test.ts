@@ -28,6 +28,7 @@ describe(readQuestSteps, () => {
 
     expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
       notes: [],
+      offerTalkIds: [],
       steps: [
         {
           id: "100",
@@ -60,6 +61,7 @@ describe(readQuestSteps, () => {
 
     expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
       notes: [],
+      offerTalkIds: [],
       steps: [
         {
           id: "100",
@@ -82,7 +84,38 @@ describe(readQuestSteps, () => {
 
     expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
       notes: ["1's step 100 asks nothing of the Traveler its conditions name"],
+      offerTalkIds: [],
       steps: [],
+    });
+  });
+
+  test("reads the talks a first step with no words finishes on as the talks offering the quest", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        {
+          B: 100,
+          C: 1,
+          E: [
+            { F: "QUEST_CONTENT_COMPLETE_TALK", G: [10, 0] },
+            { F: "QUEST_CONTENT_COMPLETE_TALK", G: [11, 0] },
+          ],
+        },
+        { B: 101, C: 2, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [12, 0] }] },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      offerTalkIds: ["10", "11"],
+      steps: [
+        {
+          id: "101",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "12" }],
+          textId: String(TEXT_HASH),
+        },
+      ],
     });
   });
 });

@@ -11,6 +11,7 @@ describe("questSchema", () => {
     descriptionTextId: "descriptionTextId",
     id: "id",
     kind: QuestKind.World,
+    offerTalkIds: [],
     steps: [
       { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: TALK.id }], textId: "textId" },
     ],
@@ -28,5 +29,11 @@ describe("questSchema", () => {
     expect.hasAssertions();
 
     expect(questSchema.safeParse({ ...quest, talks: [] }).success).toBe(false);
+  });
+
+  test("refuses an offer naming a talk the quest does not run", () => {
+    expect.hasAssertions();
+
+    expect(questSchema.safeParse({ ...quest, offerTalkIds: ["offer"] }).success).toBe(false);
   });
 });

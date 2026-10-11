@@ -11,6 +11,7 @@ describe(advanceQuest, () => {
     descriptionTextId: "descriptionTextId",
     id: "id",
     kind: QuestKind.World,
+    offerTalkIds: [],
     steps: [
       {
         id: "0",
