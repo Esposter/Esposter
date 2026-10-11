@@ -25,10 +25,10 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
   },
   WorldScreen: {
     gameDataBytes: 4444324,
-    geometries: 288,
+    geometries: 242,
     machine: "DESKTOP-B9KPH2V",
     objects: 322,
-    programs: 115,
+    programs: 107,
     readyMs: 13610,
     requests: 95,
     textures: 39,
