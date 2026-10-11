@@ -7,12 +7,12 @@ import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
-  readPublishedGameData: vi.fn<(key: string) => Promise<unknown>>(),
+  readPublishedGameData: vi.fn<(...args: unknown[]) => Promise<never>>(),
 }));
 vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces"), () => ({
   readMondstadtExpeditionPlaces: vi.fn<() => never[]>(() => []),
 }));
-vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(path: string, encoding: string) => Promise<string>>() }));
+vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 
 const TREE_ITEM_ID = 107010;
 const TREE_REWARD_ITEM_ID = 2000;
