@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
+import type { InteractionState } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import MenuExit from "#src/components/Menu/Exit/Index.vue";
@@ -18,7 +19,7 @@ import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen, InteractionState } from "genshin-interface";
+import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -95,7 +96,7 @@ onBeforeUnmount(() => {
     role="dialog"
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
-    :interaction-state="interactionState"
+    :interaction-state
     :style="{
       '--menu-ease': GAME_SMOOTHSTEP_EASING,
       '--menu-fade': `${PAIMON_MENU_FADE_MS}ms`,

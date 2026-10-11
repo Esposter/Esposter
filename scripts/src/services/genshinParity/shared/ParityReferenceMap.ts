@@ -336,17 +336,6 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: "File:Inazuma City.png",
   },
-  // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a public
-  // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the prompt list, so only the list's own
-  // Pieces can differ, and the scene the list's pills show through is the game's own; the streamer's camera sits outside
-  // The region
-  "interaction-prompts-pickup": {
-    capture: "world-pickup.mkv",
-    isBackdrop: true,
-    region: { height: 220, width: 370, x: 1095, y: 430 },
-    screen: "InteractionPromptList",
-    seconds: 9,
-  },
   // The English PC client's pickup at 1080 high over plain grass, three Jueyun Chili rows with the third selected, from a
   // Public recording at 23 seconds, within the half second the selection rests on that row before the pickup. The pills'
   // Right ends fade out over the grass clear of the scene, where `interaction-prompts-pickup`'s run onto a rock. Its
@@ -376,6 +365,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     region: { height: 220, width: 400, x: 1095, y: 430 },
     screen: "InteractionPromptList",
     seconds: 23,
+  },
+  // The English PC client's pickup at 1080 high: three drops in reach, the first row selected with its F cap, from a public
+  // Tutorial's recording at 9 seconds with no caption over it, the cap held on that row from 7 to 13 seconds. Drawn behind the prompt list, so only the list's own
+  // Pieces can differ, and the scene the list's pills show through is the game's own; the streamer's camera sits outside
+  // The region
+  "interaction-prompts-pickup": {
+    capture: "world-pickup.mkv",
+    isBackdrop: true,
+    region: { height: 220, width: 370, x: 1095, y: 430 },
+    screen: "InteractionPromptList",
+    seconds: 9,
   },
   // The food tab of the bag, from the same account tour's recording of the English PC client 58 seconds in: the foot's
   // Primogems and Mora where the sort's dropdown stands on an equipment tab, drawn behind the bag so only its foot can differ

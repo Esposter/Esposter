@@ -34,7 +34,7 @@ export const useAccountCharacterPacks = () => {
       Array.from(files, async ([path, blob]) => ({
         blob,
         path,
-        sha256: await getSha256Hex(await blob.arrayBuffer()),
+        sha256: await getSha256Hex(await blob.bytes()),
         size: blob.size,
       })),
     );

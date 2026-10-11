@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { InteractionState } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
 import { MenuPromptGlyphMap } from "#src/services/menu/MenuPromptGlyphMap";
-import { GameButton, GameButtonKind, GameScreen, InteractionState } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -32,7 +33,7 @@ onMounted(() => {
     role="dialog"
     aria-modal="true"
     :aria-label="gameText[GameTextKey.QuitGame]"
-    :interaction-state="interactionState"
+    :interaction-state
   >
     <div class="stack">
       <GameButton ref="continueButton" class="prompt" :kind="GameButtonKind.Pill" @click="emit('close')">

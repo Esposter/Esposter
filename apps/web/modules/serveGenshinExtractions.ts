@@ -17,7 +17,7 @@ export default defineNuxtModule({
     for (const [handler, baseUrl] of [
       ["genshinCharacterPacks.ts", GENSHIN_CHARACTER_PACK_BASE_URL],
       ["genshinSceneExports.ts", GENSHIN_SCENE_EXPORT_BASE_URL],
-    ])
+    ] as const)
       addServerHandler({
         handler: join(nuxt.options.serverDir, "development", handler),
         method: "get",

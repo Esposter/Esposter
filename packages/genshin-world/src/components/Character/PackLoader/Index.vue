@@ -49,8 +49,8 @@ const pickCharacterPacks = (input: HTMLInputElement | null) => {
   errorMessages.value = [];
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject
   getResultAsync(async () => {
-    const { pickedCharacterPacks, failures: unreadFailures } = input.webkitdirectory
-      ? { pickedCharacterPacks: readCharacterPackFolders(files), failures: [] }
+    const { failures: unreadFailures, pickedCharacterPacks } = input.webkitdirectory
+      ? { failures: [], pickedCharacterPacks: readCharacterPackFolders(files) }
       : await readCharacterPackZips(files);
     const characterIdNamesMap = await readCharacterIdNamesMap(gameDataBaseUrl);
     const { characterPacks: newCharacterPacks, failures } = await readPickedCharacterPacks(

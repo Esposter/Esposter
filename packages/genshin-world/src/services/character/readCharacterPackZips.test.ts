@@ -7,7 +7,7 @@ describe(readCharacterPackZips, () => {
     expect.hasAssertions();
 
     const goodZip = zipSync({ "Pack/a.pmx": new Uint8Array([1]) });
-    const { pickedCharacterPacks, failures } = await readCharacterPackZips([
+    const { failures, pickedCharacterPacks } = await readCharacterPackZips([
       new File([new Uint8Array([0, 1, 2, 3])], "bad.zip"),
       new File([goodZip], "good.zip"),
     ]);

@@ -44,7 +44,7 @@ describe(createCharacterPackStore, () => {
 
     expect(index).toStrictEqual([{ characterId, packHash }]);
     await expect(store.readIndex()).resolves.toStrictEqual(index);
-    await expect(blob.text()).resolves.toBe(packHash);
+    await expect(blob?.text()).resolves.toBe(packHash);
   });
 
   test("puts a pack in place of its character's last one, whose files it removes", async () => {
@@ -88,7 +88,7 @@ describe(createCharacterPackStore, () => {
     const blob = await store.readFile({ characterId, packHash }, path);
 
     expect(index).toStrictEqual([{ characterId, packHash }]);
-    await expect(blob.text()).resolves.toBe(packHash);
+    await expect(blob?.text()).resolves.toBe(packHash);
   });
 
   test.each<[string, (storage: CharacterPackStorage) => Promise<CharacterPackStorage>]>([

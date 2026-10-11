@@ -7,7 +7,7 @@ import { getResultAsync } from "@esposter/shared";
 // Corrupt archive never stops the rest of the pick from being read
 export const readCharacterPackZips = async (
   files: readonly File[],
-): Promise<{ pickedCharacterPacks: PickedCharacterPack[]; failures: string[] }> => {
+): Promise<{ failures: string[]; pickedCharacterPacks: PickedCharacterPack[] }> => {
   const results = await Promise.all(
     files.map((file) =>
       getResultAsync(async () => readCharacterPackZip(file.name, new Uint8Array(await file.arrayBuffer()))).match(
@@ -20,9 +20,9 @@ export const readCharacterPackZips = async (
     ),
   );
   return {
+    failures: results.flatMap((result) => ("failure" in result ? [result.failure] : [])),
     pickedCharacterPacks: results.flatMap((result) =>
       "pickedCharacterPack" in result ? [result.pickedCharacterPack] : [],
     ),
-    failures: results.flatMap((result) => ("failure" in result ? [result.failure] : [])),
   };
 };

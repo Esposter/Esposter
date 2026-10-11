@@ -793,7 +793,7 @@ defineExpose({ jumpTo, readCameraPosition });
               :character-pack-reader="getCharacterPackReader(characterId)"
               :game-data-base-url
               :is-character-pack-kept="isCharacterPackKept(characterId)"
-              :keep-character-pack="keepCharacterPack"
+              :keep-character-pack
               :confirm-removal="() => removeCharacterPack(characterId)"
             />
           </template>

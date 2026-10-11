@@ -12,9 +12,6 @@ export interface WorldScreenProps {
   // Draws its character ahead of the host's
   accountCharacterPacks?: AccountCharacterPack[];
   accountFileBaseUrl?: string;
-  // Keeps a pack for the account and drops one from it, given while the player is signed in
-  keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
-  removeAccountCharacterPack?: (characterId: number) => Promise<void>;
   cameraPose?: WorldCameraPose;
   // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
   // Pack's model, terms and textures. Without it a character is drawn only from a pack the player loaded
@@ -30,11 +27,14 @@ export interface WorldScreenProps {
   isPaused?: true;
   // Whether the development tuning panel is shown, which the host decides
   isTuning?: true;
+  // Keeps a pack for the account and drops one from it, given while the player is signed in
+  keepAccountCharacterPack?: (characterPack: CharacterPack) => Promise<void>;
   // The reader's game language, whose names the world loads
   language: GameLanguage;
   qualityTier: QualityTier;
   // Where the host serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  removeAccountCharacterPack?: (characterId: number) => Promise<void>;
   // The player's save the world's systems start from, a new player's when there is none
   save?: GenshinSave;
   // Where the host serves the developer's own exports of the game's scenes: the index of the components it holds, and
