@@ -28,7 +28,8 @@ Miliastra Wonderland meters a stage's load as its author builds it: every placed
    - Leave the far terrain rings out of `ready`, so the first frame waits on the near tiles only. Built as the finest level only, `checkIsFirstFrameSettled`, as the [as-built page](/docs/genshin/load-budget) gives.
    - Next, measured on the production build: the terrain's tiles are the longest step of the world's ready. The next trim is chosen from that measure. A worker that imports only the terrain functions is the candidate, to be measured on the build before and after. A tile's compile is not the cost, so it is not a candidate.
    - Compile the first view's materials before ready, and the rest after. Built as the view alone: the rest, compiled after ready, was a frame of seconds and built programs no turn or walk then drew, so nothing compiles it, as the [as-built page](/docs/genshin/load-budget) gives.
-   - Read each name-text and stat table when its first reader needs it, rather than all of them at the world gate.
+   - Read each name-text and stat table when its first reader needs it, rather than all of them at the world gate. Built: the Frostbearing Tree's levels are read by the offer, the tables an artifact is rolled and enhanced from by nothing yet, and the names and the other stat tables stay at the gate, since the first frame's bag and combatants read them, as the [as-built page](/docs/genshin/load-budget) gives.
+   - Read each region's palette with its region's data, as the region comes in reach, rather than every region's at the gate. Only Mondstadt's buildings are in reach of Windrise, so every other region's palette is read for nothing. The region's read carries its palette, so the world's ready still waits on the palette its buildings are drawn in.
 2. **Hold.** Each trim lowers its screen's budget in the same commit, so the meter only tightens.
 
 ## Key files

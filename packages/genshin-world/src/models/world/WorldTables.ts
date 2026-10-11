@@ -5,7 +5,6 @@ import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
-import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
@@ -20,8 +19,6 @@ export interface WorldTables {
   catalogue: Catalogue;
   // The game's enemy tables, which the camps spawn their enemies from and every strike reads
   enemyTables: EnemyTables;
-  // The Frostbearing Tree's offering levels, which an offer reaches and pays from
-  frostbearingTreeLevels: OfferingLevel[];
   // The Frostbearing Trees' places in Mondstadt, each stood in the world
   frostbearingTreePlaces: FrostbearingTreePlace[];
   // The HUD's pieces' rects as the game's tree places them
