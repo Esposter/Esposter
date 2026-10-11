@@ -2,7 +2,7 @@ import type { Talk } from "genshin-world";
 
 import { TalkLineKind } from "genshin-world";
 
-// A talk with its wordless lines skipped. A spoken line no language holds words for is one the game shows nothing of, a
+// A talk with its wordless lines skipped. A spoken line the check finds no words for is one the game shows nothing of, a
 // Step its scene acts on, so it is taken out and each line it followed goes on to its follower instead. A talk with a
 // Wordless reply or a wordless line that branches cannot be read so, and neither can one left with no line: each is none
 export const skipWordlessTalkLines = (talk: Talk, checkHasWords: (textId: string) => boolean): Talk | undefined => {
