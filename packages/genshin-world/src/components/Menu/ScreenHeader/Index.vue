@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
+import type { VNode } from "vue";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MENU_LIST_CLOSE_GLYPH } from "#src/services/menu/constants";
@@ -14,15 +15,17 @@ interface Props {
 
 defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+defineSlots<{ tabs?: () => VNode }>();
 </script>
 
 <template>
-  <!-- The title across the top of a screen and the close mark at its right, placed against the screen's own box as a
-       fragment so the screen keeps the two as its children -->
+  <!-- The title across the top of a screen, its tabs if it has any, and the close mark at its right, placed against the
+       screen's own box as a fragment so the screen keeps them as its children. The tabs come before the close mark in
+       focus order, the WAI-ARIA order for a dialog's header -->
   <p class="title">{{ title }}</p>
+  <slot name="tabs" />
   <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')">×</button>
 </template>
-
 <style scoped>
 .title,
 .close {
