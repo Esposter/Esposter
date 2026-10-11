@@ -64,14 +64,15 @@ await runMain(
         const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
         writeFileSync(workspacePath, workspaceWithTypesNode);
         console.info(`✔ ${WORKSPACE_FILE} @types/node → ^${typesVersion}`);
-        // 4. Move every manifest's node floor with the pin, and each npm lockfile's root entry beside one.
-        for (const { path } of readManifestFiles(REPOSITORY_ROOT)) {
-          updateNodeFloorFile(path, version, (text) => setManifestNodeVersion(text, version));
-          const lockfilePath = resolve(dirname(path), PACKAGE_LOCK_JSON_FILENAME);
-          if (existsSync(lockfilePath))
-            updateNodeFloorFile(lockfilePath, version, (text) => setLockfileNodeVersion(text, version));
-        }
       } else console.info(`node is already ${version} in ${NODE_VERSION_FILENAME} — ensuring it is installed.\n`);
+      // 4. Move every manifest's node floor to the pin, and each npm lockfile's root entry beside one. It runs on an
+      // Unchanged pin too, since Renovate's node branch moves the pin alone and a floor it left behind is caught up here
+      for (const { path } of readManifestFiles(REPOSITORY_ROOT)) {
+        updateNodeFloorFile(path, version, (text) => setManifestNodeVersion(text, version));
+        const lockfilePath = resolve(dirname(path), PACKAGE_LOCK_JSON_FILENAME);
+        if (existsSync(lockfilePath))
+          updateNodeFloorFile(lockfilePath, version, (text) => setLockfileNodeVersion(text, version));
+      }
       // 5. Hand the install to the global `vp`, which reads `.node-version` and `packageManager` itself and shims
       // Pnpm in place of Corepack; `clean` then removes the versions no pin or default names any more.
       for (const vpArgs of [
