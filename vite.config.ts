@@ -29,7 +29,7 @@ const createTask = (
 
 const PACKAGES_DIRECTORY = "packages";
 
-// The files a package's build rewrites, relative to the package
+// The files a package's build rewrites, or another task writes into the package, relative to the package
 const PACKAGE_REWRITTEN_PATTERNS = [
   "auto-imports.d.ts",
   "dist/**",
@@ -40,6 +40,8 @@ const PACKAGE_REWRITTEN_PATTERNS = [
   "src/generated/**",
   // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
   "node_modules/.cache/**",
+  // The parity page's production build, written into the world package by `build:parity`
+  "parity-build/**",
 ];
 
 // Each package with a build script is a task of its own, run in its directory and ordered after the builds of the
@@ -134,16 +136,15 @@ const configuration: UserConfig = defineConfig({
           input: [
             { auto: true },
             ...PNPM_STATE_PATTERNS,
-            // A package build's rewritten files, the auto-imports declaration among them, and the build's own output
-            ...[...PACKAGE_REWRITTEN_PATTERNS, "parity-build/**"].map((pattern) => ({
+            // A package build's rewritten files, the auto-imports declaration and this build's own output among them
+            ...PACKAGE_REWRITTEN_PATTERNS.map((pattern) => ({
               base: "workspace" as const,
               pattern: `!${PACKAGES_DIRECTORY}/genshin-world/${pattern}`,
             })),
           ],
           output: [{ auto: true }, ...PNPM_STATE_PATTERNS],
         },
-        command:
-          "pnpm exec vite build --config parity/vite.config.ts --mode production --outDir parity-build --emptyOutDir",
+        command: "pnpm run build:parity",
         cwd: `${PACKAGES_DIRECTORY}/genshin-world`,
         dependsOn: [getBuildTaskName("genshin-world")],
       },
