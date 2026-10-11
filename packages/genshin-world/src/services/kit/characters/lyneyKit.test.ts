@@ -13,32 +13,6 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LYNEY_KIT = createLyneyKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNEY_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createLyneyCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: LYNEY_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: LYNEY_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects a start adds to the team's, which its owner holds
-const startAction = (action: KitAction): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant: createLyneyCombatant(),
-    kitEffectState,
-    party: createParty([LYNEY_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 const getSummonHitmarkSeconds = (kitEffectState: KitEffectState): number | undefined => {
   const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
@@ -46,6 +20,34 @@ const getSummonHitmarkSeconds = (kitEffectState: KitEffectState): number | undef
 };
 
 describe(createLyneyKit, () => {
+  // The effects a start adds to the team's, which its owner holds
+  const startAction = (action: KitAction): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant: createLyneyCombatant(),
+      kitEffectState,
+      party: createParty([LYNEY_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createLyneyCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: LYNEY_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: LYNEY_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', Prop Arrow's and plunges' multipliers from his proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

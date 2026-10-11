@@ -19,53 +19,55 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const SKIRK_KIT = createSkirkKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SKIRK_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createSkirkCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: SKIRK_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: SKIRK_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createSkirkCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([SKIRK_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
 
-// The Seven-Phase Flash's state after its press, entered by the field's tick 19 frames on
-const enterSevenPhaseFlash = (combatant = createSkirkCombatant()): KitEffectState => {
-  const kitEffectState = castAction(SKIRK_KIT.elementalSkill, combatant);
-  findField(kitEffectState)?.onTick({
-    activeCombatant: combatant,
-    characterIdCombatantMap: new Map(),
-    enemyMap: new Map(),
-    kitEffectState,
-    party: createParty([SKIRK_CHARACTER_ID]),
-    tickIndex: 0,
-  });
-  return kitEffectState;
-};
-
 describe(createSkirkKit, () => {
+  // The Seven-Phase Flash's state after its press, entered by the field's tick 19 frames on
+  const enterSevenPhaseFlash = (combatant = createSkirkCombatant()): KitEffectState => {
+    const kitEffectState = castAction(SKIRK_KIT.elementalSkill, combatant);
+    findField(kitEffectState)?.onTick({
+      activeCombatant: combatant,
+      characterIdCombatantMap: new Map(),
+      enemyMap: new Map(),
+      kitEffectState,
+      party: createParty([SKIRK_CHARACTER_ID]),
+      tickIndex: 0,
+    });
+    return kitEffectState;
+  };
+
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createSkirkCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([SKIRK_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createSkirkCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: SKIRK_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: SKIRK_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's and plunges' multipliers from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const YOIMIYA_KIT = createYoimiyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YOIMIYA_CHARACTER_ID]));
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 10_000_003;
 
 const createYoimiyaCombatant = (): Combatant => ({
   ascension: 0,
@@ -49,6 +48,8 @@ const createDamageTakenEvent = (enemy: Enemy, hit: KitHit, striker: Combatant, a
 });
 
 describe(createYoimiyaKit, () => {
+  const OTHER_CHARACTER_ID = 10_000_003;
+
   test("niwabi Fire-Dance is a stance for the table's seconds whose strikes deal Pyro at the skill's multiplier", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };

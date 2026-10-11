@@ -2,9 +2,6 @@ import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { describe, expect, test } from "vitest";
 
-const VALUE = 1;
-const MESSAGE = "failed";
-
 // The details of the measures a step of this name left in the browser's own entries
 const getMeasureDetails = (name: string) =>
   performance
@@ -13,6 +10,10 @@ const getMeasureDetails = (name: string) =>
     .map(({ detail }) => detail);
 
 describe(measureLoadStep, () => {
+  const VALUE = 1;
+
+  const MESSAGE = "failed";
+
   test("keeps a resolved step's result and measures it", async () => {
     expect.hasAssertions();
     const name = "resolved";

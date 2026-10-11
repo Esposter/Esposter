@@ -39,25 +39,27 @@ const createRaidenCombatant = (): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
 // The Resolve stacks she holds among the team's effects
 const readResolveStacks = ({ effects }: KitEffectState): number | undefined =>
   effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === "raiden-resolve")?.stacks;
 
-// The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
-const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
-  const kitEffectState: KitEffectState = {
-    effects: [{ characterId: RAIDEN_CHARACTER_ID, id: "raiden-resolve", kind: "status", secondsRemaining: 1, stacks }],
-  };
-  RAIDEN_KIT.elementalBurst.onStart?.(createKitStepContext(createRaidenCombatant(), { body, kitEffectState }));
-  return {
-    kitEffectState,
-    stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
-  };
-};
-
 describe(createRaidenKit, () => {
+  // The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
+  const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
+    const kitEffectState: KitEffectState = {
+      effects: [
+        { characterId: RAIDEN_CHARACTER_ID, id: "raiden-resolve", kind: "status", secondsRemaining: 1, stacks },
+      ],
+    };
+    RAIDEN_KIT.elementalBurst.onStart?.(createKitStepContext(createRaidenCombatant(), { body, kitEffectState }));
+    return {
+      kitEffectState,
+      stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
+    };
+  };
+
+  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("the burst spends resolve's stacks into musou no hitotachi and each musou isshin strike", () => {
     expect.hasAssertions();
     const { kitEffectState, stance } = castBurst(1);

@@ -24,52 +24,56 @@ import { describe, expect, test } from "vitest";
 
 const FURINA_KIT = createFurinaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FURINA_CHARACTER_ID]));
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const MAX_HEALTH = 20_000;
-const TEAMMATE_CHARACTER_ID = 1;
-const LOW_TEAMMATE_CHARACTER_ID = 2;
-const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createFurinaCombatant = (combatant: Partial<Combatant> = {}): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: FURINA_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: FURINA_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-  ...combatant,
-});
 
 const createEnemyAt = (x: number): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   position: { x, z: 0 },
 });
 
-// Runs the team's effects a frame at a time, Furina on the field and every combatant given in the deployed team
-const stepFrames = (
-  frames: number,
-  kitEffectState: KitEffectState,
-  party: Party,
-  combatants: Combatant[],
-  enemies: Enemy[] = [],
-): void => {
-  const [activeCombatant] = combatants;
-  if (!activeCombatant) return;
-  for (let frame = 0; frame < frames; frame++)
-    stepKitEffects(kitEffectState, 1 / 60, {
-      activeCombatant,
-      body: body.position,
-      characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
-      enemyMap: new Map(enemies.map((enemy, index) => [`${index}`, enemy])),
-      party,
-    });
-};
-
 const getFieldIds = ({ effects }: KitEffectState): (string | undefined)[] =>
   effects.flatMap((effect) => (effect.kind === "field" ? [effect.id] : []));
 
 describe(createFurinaKit, () => {
+  // Runs the team's effects a frame at a time, Furina on the field and every combatant given in the deployed team
+  const stepFrames = (
+    frames: number,
+    kitEffectState: KitEffectState,
+    party: Party,
+    combatants: Combatant[],
+    enemies: Enemy[] = [],
+  ): void => {
+    const [activeCombatant] = combatants;
+    if (!activeCombatant) return;
+    for (let frame = 0; frame < frames; frame++)
+      stepKitEffects(kitEffectState, 1 / 60, {
+        activeCombatant,
+        body: body.position,
+        characterIdCombatantMap: new Map(combatants.map((combatant) => [combatant.characterId, combatant])),
+        enemyMap: new Map(enemies.map((enemy, index) => [`${index}`, enemy])),
+        party,
+      });
+  };
+
+  const createFurinaCombatant = (combatant: Partial<Combatant> = {}): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: FURINA_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: FURINA_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+    ...combatant,
+  });
+
+  const MAX_HEALTH = 20_000;
+
+  const TEAMMATE_CHARACTER_ID = 1;
+
+  const LOW_TEAMMATE_CHARACTER_ID = 2;
+
+  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("the charged attack turns her to Pneuma a frame after its hit, handing Salon Solitaire's members to the Singer", () => {
     expect.hasAssertions();
     const combatant = createFurinaCombatant();

@@ -19,59 +19,63 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const AYATO_KIT = createAyatoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AYATO_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const NAMISEN_SHARE = 0.005611;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createAyatoCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
-  ascension,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: AYATO_CHARACTER_ID,
-  constellationCount,
-  elementalResonances: [],
-  kit: AYATO_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createAyatoCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([AYATO_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 // The stance Kamisato Art: Kyouka leaves on the team, and the Shunsuiken strike at an index of its string
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit =>
   takeOne(findStance(kitEffectState)?.actions.normalAttacks[index]?.hits ?? []);
-// The Namisen stacks a Shunsuiken strike's DMG reads, from its flat share of Max HP per stack
-const readStacks = (hit: KitHit, combatant: Combatant): number =>
-  Math.round((hit.additiveBaseDamageBonus?.(combatant) ?? 0) / (MAX_HEALTH * NAMISEN_SHARE));
 
-const stacksAfterStrikes = (constellationCount: number): number => {
-  const combatant = createAyatoCombatant(0, constellationCount);
-  const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
-  const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-  for (let strike = 0; strike < 6; strike++)
-    shunsuikenHit.onStrike?.({
+describe(createAyatoKit, () => {
+  const stacksAfterStrikes = (constellationCount: number): number => {
+    const combatant = createAyatoCombatant(0, constellationCount);
+    const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
+    const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
+    for (let strike = 0; strike < 6; strike++)
+      shunsuikenHit.onStrike?.({
+        body: kitBody,
+        combatant,
+        kitEffectState,
+        party: createParty([AYATO_CHARACTER_ID]),
+        random: () => 0,
+      });
+    return readStacks(shunsuikenHit, combatant);
+  };
+
+  // The Namisen stacks a Shunsuiken strike's DMG reads, from its flat share of Max HP per stack
+  const readStacks = (hit: KitHit, combatant: Combatant): number =>
+    Math.round((hit.additiveBaseDamageBonus?.(combatant) ?? 0) / (MAX_HEALTH * NAMISEN_SHARE));
+
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createAyatoCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
       body: kitBody,
       combatant,
       kitEffectState,
       party: createParty([AYATO_CHARACTER_ID]),
       random: () => 0,
     });
-  return readStacks(shunsuikenHit, combatant);
-};
+    return kitEffectState;
+  };
 
-describe(createAyatoKit, () => {
+  const createAyatoCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
+    ascension,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: AYATO_CHARACTER_ID,
+    constellationCount,
+    elementalResonances: [],
+    kit: AYATO_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const NAMISEN_SHARE = 0.005611;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -13,34 +13,36 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const BAIZHU_KIT = createBaizhuKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BAIZHU_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createBaizhuCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: BAIZHU_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: BAIZHU_KIT,
-  level: 90,
-  weaponType: WeaponType.Catalyst,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant: createBaizhuCombatant(),
-    kitEffectState,
-    party: createParty([BAIZHU_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 describe(createBaizhuKit, () => {
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant: createBaizhuCombatant(),
+      kitEffectState,
+      party: createParty([BAIZHU_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createBaizhuCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: BAIZHU_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: BAIZHU_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

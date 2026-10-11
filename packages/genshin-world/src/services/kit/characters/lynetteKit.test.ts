@@ -12,34 +12,36 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LYNETTE_KIT = createLynetteKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNETTE_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createLynetteCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: LYNETTE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: LYNETTE_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects the burst's start adds to the team's, which its owner holds
-const castBurst = (): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  LYNETTE_KIT.elementalBurst.onStart?.({
-    body: kitBody,
-    combatant: createLynetteCombatant(),
-    kitEffectState,
-    party: createParty([LYNETTE_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 describe(createLynetteKit, () => {
+  // The effects the burst's start adds to the team's, which its owner holds
+  const castBurst = (): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    LYNETTE_KIT.elementalBurst.onStart?.({
+      body: kitBody,
+      combatant: createLynetteCombatant(),
+      kitEffectState,
+      party: createParty([LYNETTE_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createLynetteCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: LYNETTE_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: LYNETTE_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

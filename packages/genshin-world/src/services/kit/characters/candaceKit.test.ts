@@ -27,43 +27,9 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const CANDACE_KIT = createCandaceKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CANDACE_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createCombatant = (characterId: number, weaponType: WeaponType, constellationCount = 0): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId,
-  constellationCount,
-  elementalResonances: [],
-  kit: CANDACE_KIT,
-  level: 90,
-  weaponType,
-});
-const createCandaceCombatant = (constellationCount = 0): Combatant =>
-  createCombatant(CANDACE_CHARACTER_ID, WeaponType.Polearm, constellationCount);
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createCandaceCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([CANDACE_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 const countSummons = (kitEffectState: KitEffectState): number =>
   kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
-
-// The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given constellations
-const getPrayerSeconds = (constellationCount: number): number | undefined =>
-  castAction(CANDACE_KIT.elementalBurst, createCandaceCombatant(constellationCount)).effects.find(
-    (effect): effect is KitField => effect.kind === "field",
-  )?.secondsRemaining;
 
 const swapTo = (kitEffectState: KitEffectState, combatant: Combatant, incoming: Combatant): void =>
   CANDACE_KIT.onKitEvent?.(
@@ -93,6 +59,43 @@ const createNormalAttackDamageTaken = (striker: Combatant): KitDamageTakenEvent 
 });
 
 describe(createCandaceKit, () => {
+  // The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given constellations
+  const getPrayerSeconds = (constellationCount: number): number | undefined =>
+    castAction(CANDACE_KIT.elementalBurst, createCandaceCombatant(constellationCount)).effects.find(
+      (effect): effect is KitField => effect.kind === "field",
+    )?.secondsRemaining;
+
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createCandaceCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CANDACE_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createCandaceCombatant = (constellationCount = 0): Combatant =>
+    createCombatant(CANDACE_CHARACTER_ID, WeaponType.Polearm, constellationCount);
+
+  const createCombatant = (characterId: number, weaponType: WeaponType, constellationCount = 0): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId,
+    constellationCount,
+    elementalResonances: [],
+    kit: CANDACE_KIT,
+    level: 90,
+    weaponType,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

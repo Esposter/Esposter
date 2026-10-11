@@ -11,20 +11,21 @@ import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
 const KOKOMI_KIT = createKokomiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KOKOMI_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-
-const createKokomiCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: KOKOMI_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KOKOMI_KIT,
-  level: 90,
-  weaponType: WeaponType.Catalyst,
-});
 
 describe(createKokomiKit, () => {
+  const createKokomiCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: KOKOMI_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: KOKOMI_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  });
+
+  const MAX_HEALTH = 10_000;
+
   test("nereid's ascension's garment gives Kokomi's normal attacks a share of her Max HP to their damage, for ten seconds", () => {
     expect.hasAssertions();
     const combatant = createKokomiCombatant();

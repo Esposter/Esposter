@@ -21,39 +21,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const CYNO_KIT = createCynoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CYNO_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const ELEMENTAL_MASTERY = 200;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-    { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
-  ]),
-  characterId: CYNO_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: CYNO_KIT,
-  level: 90,
-  weaponType: WeaponType.Polearm,
-  ...overrides,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([CYNO_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
@@ -62,6 +30,42 @@ const findField = (kitEffectState: KitEffectState): KitField | undefined =>
 const roundToThousandth = (value: number): number => Math.round(value * 1000) / 1000;
 
 describe(createCynoKit, () => {
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([CYNO_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+      { attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY },
+    ]),
+    characterId: CYNO_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: CYNO_KIT,
+    level: 90,
+    weaponType: WeaponType.Polearm,
+    ...overrides,
+  });
+
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  const MAX_HEALTH = 10_000;
+
+  const ELEMENTAL_MASTERY = 200;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill group", () => {
     expect.hasAssertions();
     const multipliers = [

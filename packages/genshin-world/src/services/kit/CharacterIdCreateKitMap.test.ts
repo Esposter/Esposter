@@ -1,11 +1,13 @@
 import { CharacterIdCreateKitMap } from "#src/generated/characterKitMap/CharacterIdCreateKitMap";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID_SUFFIX = "_CHARACTER_ID";
-const CREATE_KIT_PREFIX = "create";
-const CREATE_KIT_SUFFIX = "Kit";
-
 describe("generated character kit map", () => {
+  const CHARACTER_ID_SUFFIX = "_CHARACTER_ID";
+
+  const CREATE_KIT_PREFIX = "create";
+
+  const CREATE_KIT_SUFFIX = "Kit";
+
   test("holds every kit module keyed by the character id it declares, with no duplicate ids", () => {
     expect.hasAssertions();
 
