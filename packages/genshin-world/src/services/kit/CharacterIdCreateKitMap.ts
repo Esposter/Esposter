@@ -26,6 +26,7 @@ import {
   NINGGUANG_CHARACTER_ID,
   NOELLE_CHARACTER_ID,
   QIQI_CHARACTER_ID,
+  RAIDEN_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
   ROSARIA_CHARACTER_ID,
   SAYU_CHARACTER_ID,
@@ -64,6 +65,7 @@ import { createMonaKit } from "#src/services/kit/characters/monaKit";
 import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
 import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createQiqiKit } from "#src/services/kit/characters/qiqiKit";
+import { createRaidenKit } from "#src/services/kit/characters/raidenKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createRosariaKit } from "#src/services/kit/characters/rosariaKit";
 import { createSayuKit } from "#src/services/kit/characters/sayuKit";
@@ -105,6 +107,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [NINGGUANG_CHARACTER_ID]: createNingguangKit,
   [NOELLE_CHARACTER_ID]: createNoelleKit,
   [QIQI_CHARACTER_ID]: createQiqiKit,
+  [RAIDEN_CHARACTER_ID]: createRaidenKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [ROSARIA_CHARACTER_ID]: createRosariaKit,
   [SAYU_CHARACTER_ID]: createSayuKit,

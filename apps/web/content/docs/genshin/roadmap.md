@@ -186,6 +186,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Sayu's short hold begin at 0.5 seconds?** No table or wiki page gives the seconds a press must be held to become a hold, so her short hold and roll levels start at Venti's 0.5 seconds, as Kazuha's hold does: yes if a recording of her Skill held for half a second plays the short hold, no if it plays the press.
 - **Are Sayu's charged attack and plunges right?** gcsim gives her neither, as its charged attack's hitbox is unimplemented, so her two charged hits are read from the table's charged slots at half a second and a second, with 40 flat stamina, and her plunges land at half a second on the reaches the other kits' use: yes if a recording of them matches, no if not.
 - **Do Kokomi's plunges land at half a second?** gcsim gives her plunges no timing, so they land at half a second on the reaches the other kits use: yes if a recording of her plunge lands at that point, no if it lands elsewhere.
+- **Do the Raiden Shogun's strikes, charged attacks, skill, coordinated attack, burst and collision deal no poise?** Provisional, as gcsim gives them none, so the kit sets each at 0: yes if a recording of them against a poised enemy shows none staggering it, no if one does, with the poise a source states, which the kit then takes.
 
 ## References sought
 
