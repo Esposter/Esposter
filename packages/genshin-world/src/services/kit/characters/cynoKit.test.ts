@@ -38,7 +38,7 @@ const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => (
   elementalResonances: [],
   kit: CYNO_KIT,
   level: 90,
-  weaponType: WeaponType.Pole,
+  weaponType: WeaponType.Polearm,
   ...overrides,
 });
 

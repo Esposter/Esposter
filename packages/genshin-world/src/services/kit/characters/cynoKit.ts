@@ -14,6 +14,7 @@ import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -459,6 +460,15 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           elementalBurst,
           elementalSkill: mortuaryRite,
           normalAttacks: pactswornNormalAttacks,
+        },
+        // The Pactsworn Pathclearer strikes stay Normal Attack DMG though they deal Electro, gcsim's AttackTagNormal in
+        // Cyno/attack.go's attackB, beside AttackTagExtra in cyno/charge.go's chargeB and AttackTagElementalArt in
+        // Cyno/skill.go's skillB
+        attackTags: {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.NormalAttack,
         },
         characterId,
         elapsedSeconds: 0,

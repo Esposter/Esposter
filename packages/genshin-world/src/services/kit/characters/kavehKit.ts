@@ -3,6 +3,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitStance } from "#src/models/kit/KitStance";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -155,6 +156,13 @@ export const createKavehKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           elementalBurst,
           elementalSkill,
           normalAttacks: burstNormalAttacks,
+        },
+        // The widened strikes stay Normal Attack DMG, gcsim's AttackTagNormal in kaveh/attack.go's Attack
+        attackTags: {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.NormalAttack,
         },
         characterId: combatant.characterId,
         elapsedSeconds: 0,

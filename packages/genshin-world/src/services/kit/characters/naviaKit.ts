@@ -43,7 +43,7 @@ const NORMAL_ATTACKS = [
 // Provisional: gcsim has no charged attack for Navia, so these are the claymore charge Razor's kit reads, two hits at half
 // A second and a second, ending at 1.2 seconds, drained at its stamina a second. Its reach is her first strike's circle
 // Until a recording measures it, and its poise is none
-const CHARGED_ATTACK_HITMARK_FRAMES = [30, 60];
+const CHARGED_ATTACK_HITMARK_FRAMES = [30, 60] as const;
 const CHARGED_ATTACK_FRAMES = 72;
 const CHARGED_ATTACK_HIT_AREA = createCircleReach(0.5, 2);
 
