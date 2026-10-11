@@ -32,3 +32,16 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Windrise](/docs/genshin/compute/windrise)       | the first scene: the oak, the surface and the sun                                       |
 | [Wish](/docs/genshin/compute/wish)               | the single pull and the ten results, frame by frame                                     |
 | [World](/docs/genshin/compute/world)             | teleports, weather, thunderstorms, lightning, the ores and the scripted props           |
+
+## Bars
+
+The bars the region passes and the area pages' pass items share, each gate named by its constant.
+
+- **Layout**: each family's part within 0.02 m (`PART_GATE_METRES`) and its pixel gap within 2 px (`FRAME_GATE_PIXELS`).
+- **Surface**: each family's mean colour within 2.3 DeltaE (`COLOUR_GATE`) and its structure within the outline gate.
+- **Shape**: outline within 1 px (`SHAPE_OUTLINE_GATE_PIXELS`), depth within 0.01 (`SHAPE_DEPTH_GATE`), normals within 10 degrees (`SHAPE_NORMAL_GATE_DEGREES`).
+- **Camera**: root mean square and reprojection 2 px (`FRAME_GATE_PIXELS`).
+- **Sun**: the solved edges within 2 px (`FRAME_GATE_PIXELS`); on a hit the held minute, read through `computeSunDirection`, replaces the provisional noon in the reference's `heldMinutes` (a call).
+- **Light**: shadow edges within 2 px (`FRAME_GATE_PIXELS`) and the stone's colour within 2.3 DeltaE (`COLOUR_GATE`).
+- **Atmosphere**: the sky's statistics within the spread of the reference's own sky halves, and its clear sky within 2.3 DeltaE (`COLOUR_GATE`).
+- **Display**: the shipped contrast's excess within 0.1 (`DISPLAY_CONTRAST_GATE`).

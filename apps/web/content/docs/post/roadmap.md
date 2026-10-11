@@ -5,7 +5,7 @@ description: Open work for posts — prioritized checkboxes linking their propos
 
 # Roadmap
 
-Open work only. Decided ideas live in [deferred](/docs/post/deferred) and [rejected](/docs/post/rejected) — check both before adding an item.
+Open work only. Settled ideas are listed in [deferred](/docs/post/deferred) and [rejected](/docs/post/rejected); check both before adding one.
 
 ## Next
 
