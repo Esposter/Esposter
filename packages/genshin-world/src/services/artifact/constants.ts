@@ -7,6 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 export const INSTRUCTOR_ARTIFACT_SET_ID = 10_007;
 // The Exile's id in the set table
 export const EXILE_ARTIFACT_SET_ID = 10_009;
+// Traveling Doctor's id in the set table
+export const TRAVELING_DOCTOR_ARTIFACT_SET_ID = 10_013;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
