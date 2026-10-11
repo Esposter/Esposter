@@ -144,8 +144,8 @@ gcsim's regularity at v2.47.2, counted over every character folder. The tag is f
 | Skill and burst                          | a hitmark constant, and `InitAbilSlice`                                              | hitmarks in 90 and 85 of 110, frames in 110 of 110; the rest are scheduled tasks            |
 | Attack tag, ICD tag, element, durability | each `AttackInfo` literal                                                            | 848, 845, 831 and 828 of 856                                                                |
 | Poise                                    | `PoiseDMG`                                                                           | 87 of 856, so poise is read from the wiki                                                   |
-| Max HP or DEF scaling                    | `FlatDmg`                                                                            | 41 of 111 on the same line; the rest go through a local variable, so they go in the overlay |
-| Nightsoul                                | one shared template, and `AttackTagNightsoul` in a hit's `AdditionalTags`            | the Natlan characters, as Kinich's `skill.go` shows                                         |
+| Max HP or DEF scaling                    | gcsim's FlatDmg                                                                      | 41 of 111 on the same line; the rest go through a local variable, so they go in the overlay |
+| Nightsoul                                | one shared template, and gcsim's Nightsoul tag among a hit's additional tags         | the Natlan characters, as Kinich's `skill.go` shows                                         |
 
 ```mermaid
 flowchart LR
