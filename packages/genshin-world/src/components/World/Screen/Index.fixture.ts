@@ -21,8 +21,8 @@ import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 // Windrise at its first hour, drawn every frame, so the visual suite's screenshot never settles on it. No reference of
-// The game's compares clean on it yet, so it is on the page to be looked at and shot, never approved. The page's root is the
-// Package, so its region data is served from where it is kept
+// The game's compares clean on it yet, so it is on the page to be looked at and shot, never approved. The region data is
+// Served from the parity page's public directory, which is its `src/data`
 export const isMotionOnly = true;
 export const props = {
   createTerrainWorker: () => new TerrainTileWorker(),
@@ -30,7 +30,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   language: GameLanguage.English,
   qualityTier: QualityTier.High,
-  regionDataBaseUrl: "src/data/regions",
+  regionDataBaseUrl: "regions",
 };
 export const readyEvent = "ready";
 // Each capital's own claims on its region's exports, so no renderer of theirs falls to Windrise's families below, whose
