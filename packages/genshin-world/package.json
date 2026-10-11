@@ -91,7 +91,6 @@
     "@types/node": "catalog:",
     "@types/three": "catalog:",
     "@webgpu/types": "catalog:",
-    "playwright": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
