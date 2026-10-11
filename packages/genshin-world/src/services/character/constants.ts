@@ -94,6 +94,7 @@ export const KAZUHA_CHARACTER_ID = 10_000_047;
 export const YANFEI_CHARACTER_ID = 10_000_048;
 export const YOIMIYA_CHARACTER_ID = 10_000_049;
 export const THOMA_CHARACTER_ID = 10_000_050;
+export const SAYU_CHARACTER_ID = 10_000_053;
 export const EULA_CHARACTER_ID = 10_000_051;
 // The Attributes tab's advanced attributes and the game's name for each, in the order its details list them
 export const ADVANCED_ATTRIBUTE_GAME_TEXT_KEYS: readonly (readonly [Attribute, GameTextKey])[] = [

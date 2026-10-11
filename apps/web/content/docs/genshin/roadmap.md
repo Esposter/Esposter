@@ -182,6 +182,9 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 
 - **Does Eula's charged attack land its spinning hit at half a second and its final hit at one second, in 1.5 seconds?** Provisional, as gcsim leaves the charged attack unimplemented: yes if a recording of it reads those seconds, no if it reads others, which the kit then takes.
 - **Does Eula's hold become a hold at half a second of holding?** Provisional, as gcsim takes any hold from the input alone: yes if a recording of the skill's input shows the hold starts at half a second, no if it starts at another length, which the kit then takes.
+- **Does Sayu's short hold begin at 0.5 seconds?** No table or wiki page gives the seconds a press must be held to become a hold, so her short hold and roll levels start at Venti's 0.5 seconds, as Kazuha's hold does: yes if a recording of her Skill held for half a second plays the short hold, no if it plays the press.
+- **Are Sayu's charged attack and plunges right?** gcsim gives her neither, as its charged attack's hitbox is unimplemented, so her two charged hits are read from the table's charged slots at half a second and a second, with 40 flat stamina, and her plunges land at half a second on the reaches the other kits' use: yes if a recording of them matches, no if not.
+- **Does Mujina Flurry cost 80 energy?** The table and gcsim's energy maximum give 80, while gcsim consumes 7 at the cast, which the kit does not read: yes if the game's burst costs 80 energy, no if another value.
 
 ## References sought
 
