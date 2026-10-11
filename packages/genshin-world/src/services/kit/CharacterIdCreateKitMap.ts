@@ -16,6 +16,7 @@ import {
   FISCHL_CHARACTER_ID,
   GANYU_CHARACTER_ID,
   HEIZOU_CHARACTER_ID,
+  GOROU_CHARACTER_ID,
   HU_TAO_CHARACTER_ID,
   ITTO_CHARACTER_ID,
   JEAN_CHARACTER_ID,
@@ -44,6 +45,8 @@ import {
   YELAN_CHARACTER_ID,
   YOIMIYA_CHARACTER_ID,
   YANFEI_CHARACTER_ID,
+  XINYAN_CHARACTER_ID,
+  YAE_MIKO_CHARACTER_ID,
   ZHONGLI_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAlbedoKit } from "#src/services/kit/characters/albedoKit";
@@ -60,6 +63,7 @@ import { createEulaKit } from "#src/services/kit/characters/eulaKit";
 import { createFischlKit } from "#src/services/kit/characters/fischlKit";
 import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
 import { createHeizouKit } from "#src/services/kit/characters/heizouKit";
+import { createGorouKit } from "#src/services/kit/characters/gorouKit";
 import { createHuTaoKit } from "#src/services/kit/characters/huTaoKit";
 import { createIttoKit } from "#src/services/kit/characters/ittoKit";
 import { createJeanKit } from "#src/services/kit/characters/jeanKit";
@@ -88,6 +92,8 @@ import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
 import { createYelanKit } from "#src/services/kit/characters/yelanKit";
 import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
 import { createYanfeiKit } from "#src/services/kit/characters/yanfeiKit";
+import { createXinyanKit } from "#src/services/kit/characters/xinyanKit";
+import { createYaeMikoKit } from "#src/services/kit/characters/yaeMikoKit";
 import { createZhongliKit } from "#src/services/kit/characters/zhongliKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
@@ -107,6 +113,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [FISCHL_CHARACTER_ID]: createFischlKit,
   [GANYU_CHARACTER_ID]: createGanyuKit,
   [HEIZOU_CHARACTER_ID]: createHeizouKit,
+  [GOROU_CHARACTER_ID]: createGorouKit,
   [HU_TAO_CHARACTER_ID]: createHuTaoKit,
   [ITTO_CHARACTER_ID]: createIttoKit,
   [JEAN_CHARACTER_ID]: createJeanKit,
@@ -135,5 +142,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [YELAN_CHARACTER_ID]: createYelanKit,
   [YANFEI_CHARACTER_ID]: createYanfeiKit,
   [YOIMIYA_CHARACTER_ID]: createYoimiyaKit,
+  [XINYAN_CHARACTER_ID]: createXinyanKit,
+  [YAE_MIKO_CHARACTER_ID]: createYaeMikoKit,
   [ZHONGLI_CHARACTER_ID]: createZhongliKit,
 };
