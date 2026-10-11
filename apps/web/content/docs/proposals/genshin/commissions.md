@@ -1,6 +1,6 @@
 ---
 title: Commissions
-description: Proposal — the parts of the daily commissions still unbuilt: a scene task swapping its area's camp, a quest task finishing with its quest, the day kept between visits, the handbook's Commissions tab with its words, the other regions' pools, and the sources of Encounter Points. Mondstadt's daily tasks, their dealing, claims, Katheryne's bonus and Encounter Point claims are built, as the commissions page describes.
+description: Proposal — the parts of the daily commissions still unbuilt: a scene task swapping its area's camp, a quest task finishing with its quest, the day kept between visits, the handbook's Commissions tab with its words, the other regions' pools, and the sources of Encounter Points.
 model: claude-haiku-5-5
 touches:
   [
@@ -13,13 +13,13 @@ touches:
 
 # Commissions
 
-The daily tasks, their dealing, their claims and Katheryne's bonus are built ([commissions](/docs/genshin/commissions)), on the four a day the [quests](/docs/proposals/genshin/quests) proposal deals and the [Adventure Rank](/docs/proposals/genshin/adventure-rank) that opens them. What remains is what a commission does in the world once it is dealt: the area it swaps, the quest it finishes with, the day the player keeps, and the handbook that shows the four.
+The as-built [commissions](/docs/genshin/commissions) page holds the daily tasks, their dealing, their claims and Katheryne's bonus. What remains is what a commission does in the world once it is dealt: the area it swaps, the quest it finishes with, the day the player keeps, and the handbook that shows the four.
 
 ## Decisions
 
 - **The scene swap is the [commissions page](/docs/genshin/commissions)'s rule.** Its old groups stand aside for its new ones until it is done and the area reloads, so a commission replaces the enemies, objects and chests that stood there. The camps and objects a scene task swaps in stand where the [spawned places](/docs/proposals/genshin/spawned-places) fit them, around the task's own named point.
 - **A commission is blocked where a quest stands.** A task whose place a quest in progress holds is never dealt. Dealing takes that set of places, and the set is read from the quests in progress.
-- **Each region's pool joins once its quest is done.** Only Mondstadt's pool is read so far, and each other region's joins when its daily tasks are read.
+- **Each region's pool joins once its quest is done.** Each other region's pool joins when its daily tasks are read.
 - **The handbook shows the day's four.** The Adventurer Handbook's Commissions tab lists them with the preferred region, as the game shows them, each title and description the game's own words by text id.
 - **Kept with the player's progress**, and every unfinished one replaced at the daily reset, which the world reads from the game's day as the enemies' respawn does.
 - **The kept day is the moment it was dealt.** The save holds the day's four, their counts, the claimed ids and the instant they were dealt, and nothing derived; a day dealt before the latest daily reset (`DAILY_RESET_TIME`, 04:00 in `GAME_TIME_ZONE`) is stale and is dealt again, as the weekly count reads its week from `computeWeeklyResetTime`.
@@ -27,8 +27,6 @@ The daily tasks, their dealing, their claims and Katheryne's bonus are built ([c
 - **Encounter Points come from quests, chests and certain items.** Each of those pages gives them and the claim is built, so only the sources wait.
 
 ## Scope and order
-
-**Built:** the daily tasks read for Mondstadt, dealt four a day from the reached areas, claimed for the reward of the rank each was dealt at, Katheryne's bonus on the day's fourth claim, and an Encounter Point's claim of an unfinished one ([commissions](/docs/genshin/commissions)).
 
 **This adds, in order:**
 
