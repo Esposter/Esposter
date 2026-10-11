@@ -24,10 +24,7 @@ const { answer } = useDialogAnswer(isOpen);
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Rename resource" w="[min(32rem,90vw)]">
     <UiForm v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="answer(() => rename(editedName), true)">
       <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
-      </footer>
+      <UiFormDialogFooter v-model="isOpen" :is-valid="isValid" />
     </UiForm>
   </UiDialog>
 </template>

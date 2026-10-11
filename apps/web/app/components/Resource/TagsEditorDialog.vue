@@ -50,10 +50,7 @@ const { answer } = useDialogAnswer(isOpen);
         Add tag
       </UiButton>
       <p v-else text-muted>A resource can have at most {{ MAX_TAGS_COUNT }} tags.</p>
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
-      </footer>
+      <UiFormDialogFooter v-model="isOpen" :is-valid="isValid" />
     </UiForm>
   </UiDialog>
 </template>
