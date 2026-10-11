@@ -11,7 +11,7 @@ import { DENDRO_CORE_LIFETIME_SECONDS, HYPERBLOOM_FLIGHT_SECONDS } from "#src/se
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { createParty } from "#src/services/party/createParty";
