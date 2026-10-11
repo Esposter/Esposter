@@ -13,7 +13,7 @@ Mizuki's kit is one module, `createMizukiKit`, on avatar 10000109: her three str
 - **Her charged attack is a circle of 3.5 metres centred on the primary target at 39 frames, in an animation of 81.** gcsim delays it 14 frames when it is cast out of the air, a windup the kit does not hold: a kit's action has no hook that times it by the state it starts from, so the kit times it from idle, as gcsim does.
 - **Her skill's activation hit is a circle of 5.5 metres round the body at 2 frames, with 30 poise, in an animation of 50 frames.** It is Anemo at one unit of gauge.
 - **Her burst's hit is a circle of 8 metres centred on the primary target at 93 frames, with 100 poise, in an animation of 94 frames.** It is Anemo at two units of gauge, as gcsim's 50 durability gives it.
-- **Her plunges are provisional.** gcsim has no plunge file for Mizuki, so her plunges borrow the kit constants' reach, each hits as its action starts, and their seconds of 0.4 and poise of 100, 150 and 25 are the standard other plunges borrow, not measured for her. Each is listed on the [roadmap](/docs/genshin/roadmap) as a yes-or-no question for a recording.
+- **Her plunges are provisional.** gcsim has no plunge file for Mizuki, so the gap is her plunges' reach, timing and poise. The kit shares the kit constants' reach, lands each plunge as its action starts, and takes the standard 0.4 seconds and 100, 150 and 25 poise the other plunges borrow. A recording of her plunges settles the three, and the question is on the [roadmap](/docs/genshin/roadmap).
 
 ## Not built
 
