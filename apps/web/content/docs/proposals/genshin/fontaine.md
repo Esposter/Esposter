@@ -4,6 +4,7 @@ description: Proposal — Fontaine, the Hydro nation of justice, on a raised con
 model: claude-opus-5-5
 needs: [game-exports, parity-page]
 touches: ["packages/genshin-world/src/services/fontaine/**"]
+waiting: "the Court's camera pose the generators are fitted at (court-of-fontaine-location), solved on the landmarks' meshes, which wait on the genshin-landmark-closure unit and its asset-map change on the PC, as the clock tower and the station have no OBJ exports yet"
 ---
 
 # Fontaine
