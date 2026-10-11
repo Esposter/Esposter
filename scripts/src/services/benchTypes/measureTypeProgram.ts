@@ -2,7 +2,7 @@ import type { TypeBenchCounts } from "#src/models/benchTypes/TypeBenchCounts";
 
 import { TSC_PATH } from "#src/services/benchTypes/constants";
 import { parseCompilerCounts } from "#src/services/benchTypes/parseCompilerCounts";
-import { InvalidOperationError } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
@@ -20,7 +20,8 @@ export const measureTypeProgram = (programPath: string, flags: string[], text: s
     [TSC_PATH, ...flags, "--noEmit", "--extendedDiagnostics", "--ignoreConfig", programPath],
     { encoding: "utf8" },
   );
-  if (DIAGNOSTIC_REGEX.test(stdout)) throw new InvalidOperationError(`${programPath} does not compile:\n${stdout}`);
+  if (DIAGNOSTIC_REGEX.test(stdout))
+    throw new InvalidOperationError(Operation.Read, programPath, `does not compile:\n${stdout}`);
 
   return parseCompilerCounts(stdout);
 };
