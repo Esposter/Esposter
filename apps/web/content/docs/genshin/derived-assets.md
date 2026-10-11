@@ -5,7 +5,7 @@ description: Where each of the recreation's shapes, colours and glyphs comes fro
 
 # Derived assets
 
-Nothing the game draws ships. Every shape, colour and glyph the recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot. This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](/docs/genshin/game-text)).
+Nothing the game draws ships. Every shape, colour and glyph the deployed recreation draws is ours, measured off the game and built by our own code, and the game's own files are references like any screenshot, drawn only on a developer's own machine under `nuxt dev` ([development exports](/docs/genshin/derived-assets/development-exports)). This page is which reference each part is measured from, how a measurement becomes ours, and how far each component has come. The game's words are the one thing of its own carried as they are, quoted as text the way the screen shows them ([game text](/docs/genshin/game-text)).
 
 ## Which source a part is measured from
 
@@ -24,7 +24,7 @@ flowchart TD
 
 - **The interface comes from screenshots.** The game's interface is mostly drawn at run time from atlases whose names say little, while the wiki and recordings show every screen in every language. An interface component is compared over the recording's own frame, which holds it exactly ([parity](/docs/genshin/parity)).
 - **The world comes from the game's own assets.** A tower's profile, a door's outline and a stone's palette are read off the game's mesh, texture and material exports, and where each stands from the blocks' own layout, which pin a measure a picture can only estimate: a tower's depth, its true diameter, a moulding's height.
-- **Only our parameters ship.** A transform reads an export and writes the numbers our kit takes, such as a lathe's section shares, a door's outline points or a palette. It publishes them as the world's data for the component that reads them, and never a vertex, a pixel or a converted file of the game's. The exports stay in `~/Esposter/genshin-parity/extracted` with every other reference and never enter the repository or a build. So there is one render path, our kits, and nothing to keep in step between a local mode and the deployed one. How a scene grows past its kits' few parameters, each loss priced against the exports before it is closed, is [proposed](/docs/genshin/scene-derivation).
+- **Only our parameters ship.** A transform reads an export and writes the numbers our kit takes, such as a lathe's section shares, a door's outline points or a palette. It publishes them as the world's data for the component that reads them, and never a vertex, a pixel or a converted file of the game's. The exports stay in `~/Esposter/genshin-parity/extracted` with every other reference and never enter the repository, a build or a deployment. So what ships has one render path, our kits. The development server draws the developer's own exports in place of the kits' stand-ins through the witness's own loader, so a local world shows the target the kits are fitted to rather than a second product to keep in step ([development exports](/docs/genshin/derived-assets/development-exports)). How a scene grows past its kits' few parameters, each loss priced against the exports before it is closed, is [proposed](/docs/genshin/scene-derivation).
 
 ## The pipeline
 
@@ -135,7 +135,7 @@ Every step runs AnimeStudio through one runner, which fails a run that exits 0 y
 
 ## AnimeStudio
 
-The CLI that exports the game's blocks is built on macOS by its own page, [AnimeStudio on macOS](/docs/genshin/derived-assets/animestudio-macos), and the decoder defects that build found are drafted on [AnimeStudio upstream defects](/docs/genshin/derived-assets/animestudio-upstream).
+The CLI that exports the game's blocks is built on macOS by its own page, [AnimeStudio on macOS](/docs/genshin/derived-assets/animestudio-macos), and the decoder defects that build found are drafted on [AnimeStudio upstream defects](/docs/genshin/derived-assets/animestudio-upstream). What the development server draws of the exports, and how it keeps them off every build, is [development exports](/docs/genshin/derived-assets/development-exports).
 
 ## Inventory
 

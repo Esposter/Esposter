@@ -17,10 +17,10 @@ A row stands where the exports lay it; only its phase along the glide is the ref
 
 ## Key files
 
-| File                                                                  | Role                                                                                                                |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `scripts/src/services/genshinParity/witness/solveCameraPose.ts`       | The camera pose from correspondences: the direct linear transform, then Levenberg–Marquardt                         |
-| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts` | The sun's direction priced, and solved, on a reference's shadows' edges over flat receivers                         |
-| `scripts/src/services/genshinParity/witness/getSkyGridDirections.ts`  | The sun directions the shadows solve prices first, laid over the whole sky at a fixed step of azimuth and elevation |
-| `packages/genshin-world/parity/witness/claimWitnessRenderers.ts`      | Each renderer of the exports with what of the scene claims it                                                       |
-| `packages/genshin-world/parity/witness/loadWitness.ts`                | The exports laid out as the scene's parts, on the parity page, loading only the meshes a family draws               |
+| File                                                                  | Role                                                                                                                 |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/witness/solveCameraPose.ts`       | The camera pose from correspondences: the direct linear transform, then Levenberg–Marquardt                          |
+| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts` | The sun's direction priced, and solved, on a reference's shadows' edges over flat receivers                          |
+| `scripts/src/services/genshinParity/witness/getSkyGridDirections.ts`  | The sun directions the shadows solve prices first, laid over the whole sky at a fixed step of azimuth and elevation  |
+| `packages/genshin-world/parity/witness/claimWitnessRenderers.ts`      | Each renderer of the exports with what of the scene claims it                                                        |
+| `packages/genshin-world/src/services/scene/loadWitness.ts`            | The exports laid out as the scene's parts, loading only the meshes a family draws, shared with the development world |
