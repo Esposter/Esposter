@@ -20,7 +20,9 @@ type HighlightKind = keyof typeof HighlightStyleMap;
 
 const HIGHLIGHT_KINDS = Object.keys(HighlightStyleMap) as HighlightKind[];
 // Longest first, so ORDER is never taken for a prefix of a longer keyword the alternation has yet to try
-const KEYWORD_PATTERN = POSTGRES_KEYWORDS.toSorted((a, b) => b.length - a.length).join("|");
+const KEYWORD_PATTERN = POSTGRES_KEYWORDS.toSorted(
+  (firstKeyword, secondKeyword) => secondKeyword.length - firstKeyword.length,
+).join("|");
 // One alternation read left to right. A word is consumed whole by the last alternative, so a keyword is only ever
 // Matched at the start of a word, and no lookbehind is needed. Doubled quotes are the only escape inside a string or
 // An identifier, as Postgres reads them: a backslash is an ordinary character
