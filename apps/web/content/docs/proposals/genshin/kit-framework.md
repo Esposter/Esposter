@@ -353,7 +353,7 @@ flowchart TD
    - It holds the join, the overlay's schema and `KitProvisionalCause`, and `--compare` seeds each overlay with every module value a source lacks or disagrees with, classifying a shared provisional constant by its cause, a disagreement as `DiffersFromSource` and the rest as `Unclassified`.
    - `kits` and `kitSources` are published for every built character, each record reproducing its module's values, and the builder's tests take their oracles from gcsim's and the wiki's own text.
    - The record was completed ahead of step 7, so that it holds every value a module reads. A module is read for its record rather than given one: its text is analysed for the values its behaviours read, and it is built under a probe twice, once from its multipliers and once from encoded ones. What its slots do not hold, named bags hold. The Traveler has a record, read from her composite gcsim folder at Lumine's gender. Holds and presses are read from gcsim's names, and an arrow's box on its target by rule. The gap against the committed overlays went from 5,013 values in 85 kits to none in 107.
-   - Corrections to the shape above, as built. `burstEnergyCost` is optional, since Mavuika's burst draws on none. `cancelFrames` is `animationFrames`, since a kit's action ends where its animation does, not where it may be cancelled. A hit holds no `name`: a behaviour reads a hit by its key in a bag, and a slot's hits by their place. `isNightsoul` is not recorded, as no kit's hit carries it. The `hits` and `stances` the shape had are two of the bags, and a stance holds only the actions that differ from its kit's.
+   - Corrections to the shape above, as built. `burstEnergyCost` is optional, since Mavuika's burst draws on none. `cancelFrames` is `animationFrames`, since a kit's action ends where its animation does, not where it may be cancelled. A hit holds no `name`: a behaviour reads a hit by its key in a bag, and a slot's hits by their place. `isNightsoul` is not recorded, as no kit's hit carries it. The `hits` and `stances` the shape had are two of the bags, and a stance records just the actions it plays in place of its kit's.
    - What is not a value is not recorded. A behaviour's own numbers, its status ids, an omen's id and its functions stay in its module. A talent read whose group or index the behaviour picks has no one value to record, so step 7 records its candidates as a list for the behaviour to pick from.
    - gcsim names its skill and burst hitboxes by no convention, and a burst's variant or a hold's is no constant of its own, so variants, Kazuha's and Razor's frames as arrays, Lynette's hold end and Zhongli's press hitmark are not read from gcsim. Their values stand in the overlays, as Bennett's hold frames, which gcsim does not give, and Kirara's and Sayu's holds, which gcsim models as two levels against the modules' eleven.
 2. **The guard and the bench.** Landed.
@@ -438,22 +438,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                                                         |
-| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved                |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                                           |
-| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                                         |
-| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                                             |
-| `packages/genshin-world/src/services/kit/readCharacterKit.ts`       | A joining member's module, record and multipliers read together, and its kit built once                      |
-| `packages/genshin-world/src/services/kit/buildKit.ts`               | A kit from its record, its multipliers and its behaviour, its frames, areas and talent indices resolved once |
-| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                                     |
-| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                                |
-| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes                      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `character-kits` step reads the starting team's kits                                          |
-| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                                      |
-| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels               |
-| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                                     |
-| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`                             |
+| File                                                                | Role                                                                                                        |
+| :------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved               |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                                          |
+| `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                                        |
+| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                                            |
+| `packages/genshin-world/src/services/kit/readCharacterKit.ts`       | A joining member's module, record and multipliers read together, and its kit built once                     |
+| `packages/genshin-world/src/services/kit/buildKit.ts`               | The slot kit its record builds, joined to its behaviour, its frames, areas and talent indices resolved once |
+| `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                                    |
+| `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                               |
+| `packages/genshin-world/src/composables/useWorldCombat.ts`          | Builds the world's one `KitContext`, and awaits `readCharacterKits` as the team changes                     |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`      | The gate whose `character-kits` step reads the starting team's kits                                         |
+| `packages/genshin-world/src/index.test.ts`                          | The entry's size snapshot, held at or under its ceiling                                                     |
+| `scripts/src/services/genshinAssets/stats/writeTalentTables.ts`     | The precedent for one index entry per avatar, and for values published apart from their labels              |
+| `scripts/src/services/sweeps/duplicateCode/constants.ts`            | The finder whose zero holds the kit tree                                                                    |
+| `apps/web/content/docs/genshin/kits/index.md`                       | The framework's page, its provisional causes rendered from `KitProvisionalCause`                            |
 
 ## Sources
 

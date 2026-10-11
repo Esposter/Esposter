@@ -10,36 +10,36 @@ import { buildKit } from "#src/services/kit/buildKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const PROUD_SKILL_GROUP_ID = 1;
-const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5, 15] }] };
-const HIT_RECORD: KitHitRecord = {
-  area: { angle: 2 * Math.PI, height: 2, radius: 1 },
-  hitmarkFrames: 12,
-  multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-  poiseDamage: 0,
-};
-const createActionRecord = (hits: KitHitRecord[] = [HIT_RECORD]): KitActionRecord => ({
-  animationFrames: 30,
-  hits,
-  targeting: KitTargeting.Strike,
-});
-const RECORD: KitRecord = {
-  burst: createActionRecord(),
-  burstCooldownSeconds: { index: 1, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-  chargedAttack: createActionRecord(),
-  chargedAttackStamina: 20,
-  frames: { cast: 90 },
-  hits: { explosion: HIT_RECORD },
-  normalAttacks: [createActionRecord()],
-  plungeCollision: HIT_RECORD,
-  plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
-  skill: createActionRecord(),
-  skillCooldownSeconds: 6,
-  skillHolds: [],
-  stances: { dance: { normalAttacks: [createActionRecord([])] } },
-};
-
 describe(buildKit, () => {
+  const PROUD_SKILL_GROUP_ID = 1;
+  const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5, 15] }] };
+  const HIT_RECORD: KitHitRecord = {
+    area: { angle: 2 * Math.PI, height: 2, radius: 1 },
+    hitmarkFrames: 12,
+    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
+    poiseDamage: 0,
+  };
+  const createActionRecord = (hits: KitHitRecord[] = [HIT_RECORD]): KitActionRecord => ({
+    animationFrames: 30,
+    hits,
+    targeting: KitTargeting.Strike,
+  });
+  const RECORD: KitRecord = {
+    burst: createActionRecord(),
+    burstCooldownSeconds: { index: 1, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
+    chargedAttack: createActionRecord(),
+    chargedAttackStamina: 20,
+    frames: { cast: 90 },
+    hits: { explosion: HIT_RECORD },
+    normalAttacks: [createActionRecord()],
+    plungeCollision: HIT_RECORD,
+    plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
+    skill: createActionRecord(),
+    skillCooldownSeconds: 6,
+    skillHolds: [],
+    stances: { dance: { normalAttacks: [createActionRecord([])] } },
+  };
+
   test("resolves each frame count into seconds and each parameter off its talent's table, and tags each hit", () => {
     expect.hasAssertions();
 
