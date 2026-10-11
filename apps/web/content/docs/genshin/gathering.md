@@ -46,7 +46,7 @@ A point is kept as picked with the instant of the pick, and stands again once it
 
 ## The ores' rules
 
-An ore is struck until it breaks. The character's landed hits feed it from the strike loop, beside the enemies: each hit reaches the ores in its area as an enemy's capsule is reached, at the ore's ground point. A hit is melee when it is a normal or charged attack of a character wielding a sword, a claymore or a polearm, read off the weapon type its combatant carries from the roster's table, so no kit carries a flag. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks once its shares reach one, and a hit that is neither blunt nor melee adds nothing. The hits are read before an infusion copies them, so an infusion's converted poise does not reach an ore. A broken ore drops its certain piece where it lay, and one more for each of two draws that comes under 10%. It comes back two days after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
+An ore is struck until it breaks. The character's landed hits feed it from the strike loop, beside the enemies: each hit reaches the ores in its area as an enemy's capsule is reached, at the ore's ground point. A hit is melee when it sits in a normal or charged attack of a character wielding a sword, a claymore or a polearm, read off the kind of action its kit was built with it in and the weapon type its combatant carries from the roster's table, so no kit carries a flag. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks once its shares reach one, and a hit that is neither blunt nor melee adds nothing. The hits are read before an infusion copies them, so an infusion's converted poise does not reach an ore. A broken ore drops its certain piece where it lay, and one more for each of two draws that comes under 10%. It comes back two days after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
 
 ## The pick
 
@@ -54,23 +54,23 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 
 ## Key files
 
-| File                                                                             | Role                                                             |
-| :------------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gathering/readGatheringItems.ts`             | The items the gather table picks, matched to their map labels    |
-| `scripts/src/services/genshinAssets/gathering/buildGatheringPlaces.ts`           | Each region's points built as a slice, and the items table       |
-| `scripts/src/services/genshinAssets/gathering/constants.ts`                      | The categories and their respawns                                |
-| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`       | The instant a picked point is back                               |
-| `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`        | Each ore's poise to break from blunt and from melee hits         |
-| `packages/genshin-world/src/services/gathering/strikeOre.ts`                     | An ore's broken share after one hit                              |
-| `packages/genshin-world/src/services/gathering/readOreHits.ts`                   | The hits an ore takes from a step's landed hits, melee by weapon |
-| `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`              | The pieces an ore drops                                          |
-| `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                             |
-| `packages/genshin-world/src/composables/useGatheringPoints.ts`                   | Mondstadt's points and items, read as the world opens            |
-| `packages/genshin-world/src/composables/useWorldPickups.ts`                      | Each ore's broken share, and the pieces a broken ore drops       |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits, fed to the ores beside the enemies  |
-| `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops   |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag            |
-| `packages/genshin-world/src/services/gathering/readMondstadtGatheringPlaces.ts`  | Mondstadt's points, fetched by their `gathering/mondstadt` key   |
+| File                                                                             | Role                                                            |
+| :------------------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gathering/readGatheringItems.ts`             | The items the gather table picks, matched to their map labels   |
+| `scripts/src/services/genshinAssets/gathering/buildGatheringPlaces.ts`           | Each region's points built as a slice, and the items table      |
+| `scripts/src/services/genshinAssets/gathering/constants.ts`                      | The categories and their respawns                               |
+| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`       | The instant a picked point is back                              |
+| `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`        | Each ore's poise to break from blunt and from melee hits        |
+| `packages/genshin-world/src/services/gathering/strikeOre.ts`                     | An ore's broken share after one hit                             |
+| `packages/genshin-world/src/services/gathering/readOreHit.ts`                    | The hit an ore takes from a step's landed hit, melee by weapon  |
+| `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`              | The pieces an ore drops                                         |
+| `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                            |
+| `packages/genshin-world/src/composables/useGatheringPoints.ts`                   | Mondstadt's points and items, read as the world opens           |
+| `packages/genshin-world/src/composables/useWorldPickups.ts`                      | Each ore's broken share, and the pieces a broken ore drops      |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits, fed to the ores beside the enemies |
+| `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops  |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag           |
+| `packages/genshin-world/src/services/gathering/readMondstadtGatheringPlaces.ts`  | Mondstadt's points, fetched by their `gathering/mondstadt` key  |
 
 ## Notes
 
