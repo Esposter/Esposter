@@ -15,6 +15,9 @@ export interface ScreenFixture {
   stillProps?: Record<string, unknown>;
   // Other states the screen is approved in, each its props over `props` by a name its image is kept under
   variants?: Record<string, Record<string, unknown>>;
+  // For a scene drawing more than one component's exports, each component's own claims by its name, read in place of
+  // The screen's when the witness draws that component: the world screen's capitals each claim their region's exports
+  witnessComponents?: Record<string, Pick<ScreenFixture, "witnessFamilies" | "witnessStandIns" | "witnessUndrawn">>;
   // For a scene, the game's meshes each family of its parts stands in for, which a witness render groups its exports by
   witnessFamilies?: Record<string, RegExp>;
   // For a scene, the game's renderers it draws by its own shaders rather than a family's kit, and those it does not draw
