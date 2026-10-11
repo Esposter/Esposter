@@ -5,7 +5,7 @@ description: The agent console's host as one Windows file carrying its own runti
 
 # Host Installer
 
-The [host](/docs/infra/claude-interface/agent-console/host) started only as `pnpm dlx agent-console-server` in a terminal, which asked a reader to have Node and pnpm and to know what a terminal is. A web page cannot install or start a program on the reader's machine — the browser's sandbox exists to forbid exactly that — so the one step that cannot be removed is a single download, and it is made as small as it can be for the least technical reader ([simplest reader first](/docs/architecture/simplest-reader)). T3 Code makes the same split: an app runs its backend, and the command stays for anyone who wants it ([T3 Code](https://github.com/pingdotgg/t3code)).
+The [host](/docs/infra/claude-interface/agent-console/host) runs as `pnpm dlx agent-console-server` in a terminal, which asks a reader to have Node and pnpm and to know what a terminal is. A web page cannot install or start a program on the reader's machine — the browser's sandbox exists to forbid exactly that — so the one step that cannot be removed is a single download, and it is made as small as it can be for the least technical reader ([simplest reader first](/docs/architecture/simplest-reader)). T3 Code makes the same split: an app runs its backend, and the command stays for anyone who wants it ([T3 Code](https://github.com/pingdotgg/t3code)).
 
 ## How it works
 
@@ -37,7 +37,7 @@ flowchart TD
 
 - **No signing, and no macOS or Linux build.** Each costs a yearly fee; both are [deferred](/docs/infra/deferred/signed-host-installers).
 - **No desktop window and no background service.** The console is the page and the host's console window is its only other surface, where T3 Code's desktop app is its whole interface. It does not start at login or hide in a tray, since a process the reader cannot see is one they cannot stop.
-- **No updater of its own yet.** Opening a newer download installs over the old one once the old host's window is closed; an updater comes when releases are frequent enough to make that a chore.
+- **No updater of its own.** Opening a newer download installs over the old one once the old host's window is closed; an updater comes when releases are frequent enough to make that a chore.
 
 ## Key files
 
