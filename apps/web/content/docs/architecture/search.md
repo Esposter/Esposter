@@ -68,7 +68,7 @@ Two settings carry most of that relevance and are easy to omit:
 - **`combineWith: "AND"`** — the default unions terms, so a two-word query returns nearly everything instead of the intersection.
 - **`prefix: true`** — an as-you-type query is a prefix, not a whole word.
 
-Boost the field a user is most likely to be naming — the title in docs search, the shortcode in the emoji index. Where that field is a canonical identifier rather than prose, pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up; a prose title has no exact form to pin. `fuzzy` is a per-index call: off for short canonical names, where it manufactures noise, and on (docs search runs `0.2`) where the indexed body is prose long enough for a typo to cost the whole query.
+Boost the field a user is most likely to be naming — the title in docs search, the shortcode in the emoji index. Where that field is a canonical identifier rather than prose, pin an exact hit on it ahead of the ranked results rather than trusting the score to float it up; a prose title has no exact form to pin. `fuzzy` is a per-index call: off for short canonical names, where it manufactures noise, and on (docs search turns it on) where the indexed body is prose long enough for a typo to cost the whole query.
 
 A small list searched as a whole — the slash commands, the explorer's pages and services, a friend picker — goes through `searchItems` (`app/services/search/searchItems.ts`), which builds that index over the fields a caller names and ranks the hits; an index tuned to its data (docs, emoji) or kept in registration order (the command palette) builds its own.
 
