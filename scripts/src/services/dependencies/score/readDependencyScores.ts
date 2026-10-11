@@ -18,6 +18,7 @@ import { getStabilityPoints } from "#src/services/dependencies/score/getStabilit
 import { LEDGER_PATH, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";
+import { readTypeShims } from "#src/services/dependencies/score/readTypeShims";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
 import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
@@ -69,6 +70,7 @@ export const readDependencyScores = async (): Promise<DependencyScoreReport> => 
   for (const { manifestPath, packageName } of getManifestDependencies(readManifestFiles(REPOSITORY_ROOT)))
     getOrCreate(packageNameManifestPathsMap, packageName, () => new Set<string>()).add(manifestPath);
   const packageNameImportersMap = readImportingFiles();
+  const packageNameShimCountMap = readTypeShims();
   const today = Temporal.Now.plainDateISO();
 
   const { errors, packuments } = await readPackuments(catalogEntries.map(({ packageName }) => packageName));
@@ -99,6 +101,7 @@ export const readDependencyScores = async (): Promise<DependencyScoreReport> => 
       packageName,
       releaseCount,
       selfContainmentPoints,
+      shimCount: packageNameShimCountMap.get(packageName) ?? 0,
       sizePoints,
       sourceLines,
       stabilityPoints,

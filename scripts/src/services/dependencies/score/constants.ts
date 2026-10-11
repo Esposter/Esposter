@@ -56,3 +56,11 @@ export const NODE_MODULES_DIRECTORY = "node_modules";
 // One `git grep` finds every import of a package in the tracked source, matching `from "<name>"` and `import("<name>"`
 export const IMPORT_GREP_PATTERN = String.raw`(from|import\()\s*"[^"]+"`;
 export const IMPORT_GREP_PATHSPECS: string[] = ["*.ts", "*.vue", "*.mjs", "*.js"];
+
+// The type workarounds a package forces on us, one `git grep` finding each of the three: a module declared over it, a
+// Directive suppressing an error at its import, and a cast at its call
+export const TYPE_SHIM_PATTERN = `@ts-expect-error|as unknown as|declare module "`;
+// The lines either side of a directive or a cast that an import or a call must fall within to be counted against a package
+export const SHIM_LINE_WINDOW = 3;
+// The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
+export const SHIM_EXEMPT_REASONS: string[] = ["engine", "SDK", "framework", "tooling"];
