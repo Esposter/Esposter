@@ -33,7 +33,7 @@ export const getCleanPlatePath = async (
   const platePath = join(REFERENCES_DIRECTORY, `${referenceId}.plate-${digest}.png`);
   if (existsSync(platePath)) return platePath;
   const { data } = await sharp(referencePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const plate = regions.reduce(
+  const plate = regions.reduce<Uint8Array>(
     (pixels, region) => fillRegionHarmonically(pixels, width, height, region),
     new Uint8Array(data.buffer, data.byteOffset, data.byteLength),
   );
