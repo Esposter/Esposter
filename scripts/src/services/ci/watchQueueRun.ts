@@ -13,6 +13,7 @@ import { selectRunToWatch } from "#src/services/ci/selectRunToWatch";
 import { CI_WORKFLOW_FILE, QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { runToolAsync } from "#src/services/resume/runToolAsync";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { getResultAsync } from "@esposter/shared";
 import { setTimeout as sleep } from "node:timers/promises";
 
 interface CiJob {
@@ -61,6 +62,21 @@ const readBranchRuns = async (): Promise<CiRun[]> =>
     ]),
   );
 
+// The failed steps' lines of a job. `gh` reads them out of the run's log archive, which GitHub sometimes serves broken,
+// So the job's whole log, the same lines with the passing steps' among them, is read in its place
+const readFailedJobLog = async (jobId: string): Promise<string> => {
+  const failedStepsLog = await getResultAsync(() =>
+    runToolAsync("gh", ["run", "view", "--job", jobId, "--log-failed"]),
+  ).match(
+    (log) => log,
+    (error) => {
+      console.log(`Job ${jobId}'s failed steps could not be read (${error.message}), so its whole log is read`);
+      return undefined;
+    },
+  );
+  return failedStepsLog ?? runToolAsync("gh", ["api", `repos/{owner}/{repo}/actions/jobs/${jobId}/logs`]);
+};
+
 // Waits for the run until it completes, `--exit-status` left off so the watch ends whatever the conclusion, then reads it
 const readCompletedRun = async (runId: string): Promise<{ conclusion: string; jobs: CiJob[] }> => {
   await runToolAsync("gh", ["run", "watch", runId, "--interval", String(RUN_WATCH_INTERVAL_SECONDS)]);
@@ -94,11 +110,7 @@ export const watchQueueRun = async (): Promise<boolean> => {
   const { conclusion, jobs } = completedRun;
   console.log(`CI run ${run.databaseId} for ${sha.slice(0, 10)}: ${conclusion}`);
   const failedJobs = jobs.filter((job) => job.conclusion === "failure");
-  const failedLogs = await Promise.all(
-    failedJobs.map(({ databaseId }) =>
-      runToolAsync("gh", ["run", "view", "--job", String(databaseId), "--log-failed"]),
-    ),
-  );
+  const failedLogs = await Promise.all(failedJobs.map(({ databaseId }) => readFailedJobLog(String(databaseId))));
   for (const [index, { name }] of failedJobs.entries()) {
     console.log(`\n✖ ${name}`);
     for (const line of getErrorLines(failedLogs[index] ?? "")) console.log(`  ${line}`);
