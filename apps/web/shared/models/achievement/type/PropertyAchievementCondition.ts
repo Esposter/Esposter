@@ -1,13 +1,14 @@
 import type { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import type { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
+import type { PropertyPathValue } from "#shared/models/achievement/type/PropertyPathValue";
 import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
 import type { BinaryOperator } from "@esposter/azure";
-import type { GetProperties, ItemEntityType } from "@esposter/shared";
+import type { ItemEntityType } from "@esposter/shared";
 import type { Get } from "type-fest";
 
 export type PropertyAchievementCondition<TPath extends TRPCPaths> =
-  GetProperties<Get<TRPCRouterInputs, TPath>> extends infer R
+  PropertyPathValue<Get<TRPCRouterInputs, TPath>> extends infer R
     ? R extends { path: infer Path extends string; value: infer Value }
       ? ItemEntityType<AchievementConditionType.Property> &
           (
