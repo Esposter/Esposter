@@ -3,7 +3,7 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
@@ -108,7 +108,7 @@ const createNormalAttack = (
 // Each later tick heals the character on the field by the regeneration
 const createFieldTick =
   (owner: Combatant, activationHeal: number, regenerationHeal: number) =>
-  ({ activeCombatant, party, tickIndex }: KitFieldTick): void => {
+  ({ activeCombatant, party }: KitContext, tickIndex: number): void => {
     const isActivation = tickIndex === 0;
     const heal = isActivation ? activationHeal : regenerationHeal;
     healPartyMember(party, activeCombatant.characterId, heal / activeCombatant.attributes.maxHealth);
@@ -227,7 +227,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, JEAN_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
         },
       ],
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,
@@ -262,7 +262,7 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         variant: {
           action: {
             ...galeBlade,
-            onStart: ({ combatant, kitEffectState }) =>
+            onStart: ({ activeCombatant: combatant, kitEffectState }) =>
               addKitEffect(kitEffectState, {
                 amount: SPIRALING_TEMPEST_DAMAGE_BONUS,
                 attribute: Attribute.AnemoDamageBonus,
@@ -271,7 +271,8 @@ export const createJeanKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
                 secondsRemaining: galeBlade.seconds,
               }),
           },
-          checkIsActive: ({ combatant }) => combatant.constellationCount >= SPIRALING_TEMPEST_CONSTELLATION,
+          checkIsActive: ({ activeCombatant: combatant }) =>
+            combatant.constellationCount >= SPIRALING_TEMPEST_CONSTELLATION,
         },
       },
     ],

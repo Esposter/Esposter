@@ -242,12 +242,12 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst: spiritSoother,
     elementalBurstVariant: {
       action: lowHealthSpiritSoother,
-      checkIsActive: ({ combatant, party }) =>
+      checkIsActive: ({ activeCombatant: combatant, party }) =>
         getPartyMember(party, combatant.characterId).healthShare <= burstTalentMultiplier(6),
     },
     elementalSkill: {
       hits: [],
-      onStart: ({ combatant, kitEffectState, party }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
         // Guide to Afterlife takes its HP share of her current HP, but never below GUIDE_MINIMUM_HP
         const { healthShare } = getPartyMember(party, combatant.characterId);
         const minimumHealthShare = GUIDE_MINIMUM_HP / combatant.attributes.maxHealth;
@@ -295,7 +295,7 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       targetingArea: STRIKE_TARGETING_AREA,
     },
     normalAttacks,
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
       const tick = createKitSummon({ facing: 0, height: 0, position: event.enemy.position }, combatant, [
         bloodBlossomHit,

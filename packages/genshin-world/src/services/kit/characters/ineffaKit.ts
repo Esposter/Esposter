@@ -191,7 +191,7 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: burstMultiplier(BURST_INDEX_DAMAGE),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         summonBirgitta(kitEffectState, body, combatant, BURST_HITMARK_FRAMES),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -208,7 +208,7 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       ],
       // The shield is a field that places it once, 4 frames in, and reads the caster's ATK as it stands then. Its element is
       // Electro, and it lasts the seconds gcsim gives it from its placement
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, {
           centre: { x: body.position.x, z: body.position.z },
           characterId: combatant.characterId,

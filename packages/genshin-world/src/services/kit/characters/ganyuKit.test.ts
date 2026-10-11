@@ -11,8 +11,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGanyuKit, GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,20 +29,28 @@ const createGanyuCombatant = (ascension = 0, constellationCount = 0): Combatant 
   weaponType: WeaponType.Bow,
 });
 
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction, combatant = createGanyuCombatant()): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects;
+};
+
+// The buffs a field's tick gives the active character, from the field its caster of the given ascension cast
+const getTickBuffs = (ascension: number): KitEffect[] => {
+  const field = castEffects(GANYU_KIT.elementalBurst, createGanyuCombatant(ascension)).find(
+    (effect): effect is KitField => effect.kind === "field",
+  );
+  const kitEffectState: KitEffectState = { effects: [] };
+  field?.onTick(
+    createKitTestContext(createGanyuCombatant(), { characterIdCombatantMap: new Map(), kitEffectState }),
+    0,
+  );
+  return kitEffectState.effects.filter((effect) => effect.kind === "buff");
+};
+
 describe(createGanyuKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction, combatant = createGanyuCombatant()): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([GANYU_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -71,14 +79,11 @@ describe(createGanyuKit, () => {
   test("the arrows after the first get Undivided Heart's CRIT Rate, from Ascension 1", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    const strike = (ascension: number): void =>
-      takeOne(GANYU_KIT.chargedAttack.hits).onStrike?.({
-        body: kitBody,
-        combatant: createGanyuCombatant(ascension),
-        kitEffectState,
-        party: createParty([GANYU_CHARACTER_ID]),
-        random: () => 0,
-      });
+    const hit = takeOne(GANYU_KIT.chargedAttack.hits);
+    const strike = (ascension: number): void => {
+      const combatant = createGanyuCombatant(ascension);
+      hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
+    };
 
     strike(0);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -107,14 +112,10 @@ describe(createGanyuKit, () => {
     expect.hasAssertions();
     const field = castEffects(GANYU_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createGanyuCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([GANYU_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field?.onTick(
+      createKitTestContext(createGanyuCombatant(), { characterIdCombatantMap: new Map(), kitEffectState }),
+      0,
+    );
 
     expect(field?.tickIntervalSeconds).toBeCloseTo(18 / 60);
     expect(field?.radius).toBe(10);
@@ -122,23 +123,6 @@ describe(createGanyuKit, () => {
 
     expect(tickSummon?.hits[0]?.hitmarkSeconds).toBeCloseTo(8 / 60);
   });
-
-  // The buffs a field's tick gives the active character, from the field its caster of the given ascension cast
-  const getTickBuffs = (ascension: number): KitEffect[] => {
-    const field = castEffects(GANYU_KIT.elementalBurst, createGanyuCombatant(ascension)).find(
-      (effect): effect is KitField => effect.kind === "field",
-    );
-    const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createGanyuCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([GANYU_CHARACTER_ID]),
-      tickIndex: 0,
-    });
-    return kitEffectState.effects.filter((effect) => effect.kind === "buff");
-  };
 
   test("the Harmony between Heaven and Earth gives the active character 20% Cryo DMG Bonus from Ascension 4", () => {
     expect.hasAssertions();

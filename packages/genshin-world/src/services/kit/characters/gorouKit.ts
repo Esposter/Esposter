@@ -4,8 +4,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -121,7 +121,7 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // The buffs a General's War Banner or General's Glory gives the active character on each tick: its DEF at the table's
   // Value, and the Geo DMG Bonus as well when the team holds the Crunch count of Geo characters
-  const addFieldBuffs = ({ activeCombatant, characterIdCombatantMap, kitEffectState }: KitFieldTick): void => {
+  const addFieldBuffs = ({ activeCombatant, characterIdCombatantMap, kitEffectState }: KitContext): void => {
     addKitEffect(kitEffectState, {
       amount: defenseBonus,
       attribute: Attribute.Defense,
@@ -239,7 +239,7 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       // Juuga takes the banner's place, so a banner standing is put out, and from Ascension 1 the party's DEF rises
-      onStart: ({ body, combatant, kitEffectState, party }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "field" && effect.id === WAR_BANNER_ID) effect.secondsRemaining = 0;
         addKitEffect(kitEffectState, createJuugaField(body, combatant));
@@ -271,7 +271,7 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       // The banner is not placed while Juuga's field stands
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const isJuugaStanding = kitEffectState.effects.some(
           (effect) => effect.kind === "field" && effect.id === JUUGA_ID && effect.secondsRemaining > 0,
         );

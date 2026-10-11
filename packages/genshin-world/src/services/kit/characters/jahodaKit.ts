@@ -4,6 +4,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -149,15 +150,7 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     addKitEffect(kitEffectState, createKitSummon(body, combatant, [hit]));
   };
 
-  const startPursuit = ({
-    body,
-    combatant,
-    kitEffectState,
-  }: {
-    body: KitBody;
-    combatant: Combatant;
-    kitEffectState: KitEffectState;
-  }): void => {
+  const startPursuit = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId } = combatant;
     const pursuitSeconds = (SKILL_WINDUP_FRAMES + PURSUIT_FRAMES) / 60;
     const pursuit: KitField = {
@@ -268,7 +261,7 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       followUps: [
         {
           hits: [],
-          onStart: ({ body, combatant, kitEffectState }) =>
+          onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
             drainFlask(kitEffectState, body, combatant, FILLED_PRESS_HIT_FRAMES),
           seconds: SKILL_DRAIN_PRESS_FRAMES / 60,
           targetingArea: SKILL_TARGETING_AREA,

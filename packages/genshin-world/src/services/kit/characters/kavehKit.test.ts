@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKavehKit, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const KAVEH_KIT = createKavehKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAVEH_CHARACTER_ID]));
@@ -17,13 +17,7 @@ describe(createKavehKit, () => {
   // The effects the burst's start adds to the team's, which its owner holds
   const castBurst = (): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    KAVEH_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant: createKavehCombatant(),
-      kitEffectState,
-      party: createParty([KAVEH_CHARACTER_ID]),
-      random: () => 0,
-    });
+    KAVEH_KIT.elementalBurst.onStart?.(createKitTestContext(createKavehCombatant(), { kitEffectState }));
     return kitEffectState;
   };
 
@@ -39,8 +33,6 @@ describe(createKavehKit, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's, plunges', skill's and burst's multipliers from his proud skill groups", () => {
     expect.hasAssertions();

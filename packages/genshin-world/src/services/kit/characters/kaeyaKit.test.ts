@@ -1,10 +1,10 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKaeyaKit, KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -44,22 +44,13 @@ describe("kaeya kit", () => {
 
   test("its Glacial Waltz icicles land thirteen Cryo ticks at the wiki's 77.6%, and end with the summon", () => {
     expect.hasAssertions();
-    const combatant = createKaeyaCombatant();
-    const party = createParty([KAEYA_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
-    const kitEffectState: KitEffectState = { effects: [] };
-    KAEYA_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createKaeyaCombatant());
+    KAEYA_KIT.elementalBurst.onStart?.(context);
 
-    const icicles = stepKitEffects(kitEffectState, 9, { activeCombatant: combatant, body, party });
+    const icicles = stepKitEffects(9, context);
     expect(icicles).toHaveLength(13);
     expect(icicles.every(({ hit }) => hit.talentMultiplier === 0.776 && hit.element === "Ice")).toBe(true);
-    expect(kitEffectState.effects).toStrictEqual([]);
+    expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
   test("ascension 1 heals Kaeya by 15% of his ATK for each enemy Frostgnaw strikes, and gives none before it", () => {

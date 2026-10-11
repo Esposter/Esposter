@@ -7,8 +7,8 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createJahodaKit, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -26,9 +26,6 @@ const createJahodaCombatant = (): Combatant => ({
 });
 
 describe(createJahodaKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const party = createParty([JAHODA_CHARACTER_ID]);
-
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -61,11 +58,11 @@ describe(createJahodaKit, () => {
   test("the press starts the pursuit with no hit, and its second press drains an unfilled flask at 4 frames", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    const combatant = createJahodaCombatant();
-    JAHODA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(createJahodaCombatant(), { kitEffectState });
+    JAHODA_KIT.elementalSkill.onStart?.(context);
     expect(kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["field", "status", "field"]);
     const drain = takeOne(JAHODA_KIT.elementalSkillChain?.followUps ?? []);
-    drain.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    drain.onStart?.(context);
     expect(kitEffectState.effects).toHaveLength(1);
     const [summon] = kitEffectState.effects;
     expect(summon?.kind === "summon" && takeOne(summon.hits)).toStrictEqual({

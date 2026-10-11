@@ -141,7 +141,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     gauge: 1,
     hitArea: ARROW_HIT_AREA,
     hitmarkSeconds: FROSTFLAKE_ARROW_HITMARK_FRAMES / 60,
-    onStrike: ({ combatant, kitEffectState }) => {
+    onStrike: ({ kitEffectState }, { combatant }) => {
       if (combatant.ascension < UNDIVIDED_HEART_ASCENSION) return;
       addKitEffect(kitEffectState, {
         amount: UNDIVIDED_HEART_CRITICAL_RATE,
@@ -199,7 +199,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const field: KitField = {
           centre: { x: body.position.x, z: body.position.z },
           characterId: combatant.characterId,
@@ -232,11 +232,10 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     },
     elementalSkill: {
       hits: [iceLotusFlowerHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const taunt: KitTaunt = {
           body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
           combatant,
-          damagesTaken: [],
           explosion: iceLotusExplosion,
           health: ICE_LOTUS_HEALTH,
           kind: "taunt",

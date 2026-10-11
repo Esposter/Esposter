@@ -243,7 +243,7 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // The burst counts the enemies its aura check tags afresh each cast
     elementalBurst: {
       hits: [irisCheckHit, burstHit],
-      onStart: ({ combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           id: IRIS_TAG_STATUS_ID,

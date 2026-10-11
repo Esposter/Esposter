@@ -239,7 +239,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     internalCooldownTag: InternalCooldownTag.ElementalSkill,
     isBlunt: true,
     // Ushi's hit gives a stack the first time it strikes, however many enemies it strikes
-    onStrike: ({ combatant: { characterId }, kitEffectState }) => {
+    onStrike: ({ kitEffectState }, { combatant: { characterId } }) => {
       if (checkHasKitStatus(kitEffectState.effects, characterId, USHI_STRUCK_STATUS_ID)) return;
       addKitEffect(kitEffectState, {
         characterId,
@@ -256,7 +256,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // HP's share for its seconds from the hit. A second Ushi sends the first away
   const elementalSkill: KitAction = {
     hits: [skillHit],
-    onStart: ({ body, combatant, kitEffectState, target }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }, target) => {
       for (const effect of kitEffectState.effects)
         if (effect.kind === "taunt" && effect.combatant.characterId === combatant.characterId)
           effect.secondsRemaining = 0;
@@ -264,7 +264,6 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       addKitEffect(kitEffectState, {
         body: { facing: body.facing, height: body.height, position: { x, z } },
         combatant,
-        damagesTaken: [],
         health: skillTalentMultiplier(ITTO_USHI_HEALTH_SHARE_INDEX) * combatant.attributes.maxHealth,
         kind: "taunt",
         secondsRemaining: SKILL_HITMARK_FRAMES / 60 + skillTalentMultiplier(ITTO_USHI_SECONDS_INDEX),
@@ -277,7 +276,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Converted, with the burst's Normal ATK SPD, for its seconds from the cast
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       addKitEffect(kitEffectState, {
         amount: burstTalentMultiplier(ITTO_BURST_DEFENSE_BONUS_INDEX) * combatant.attributes.defense,
         attribute: Attribute.Attack,
@@ -342,7 +341,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     const seconds = (startFrames + FINAL_SLASH_FRAMES - finalWindupFrames) / 60;
     return {
       hits,
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const stance = findKesagiriStance(kitEffectState.effects, combatant.characterId);
         if (stance) stance.secondsRemaining = seconds;
         kitEffectState.effects = kitEffectState.effects.filter(
@@ -438,7 +437,7 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // A normal attack of his gives him its stacks as it lands, more as the Raging Oni King, and Ushi one as it takes an
     // Enemy's strike, off its cooldown, and one as it leaves. An Arataki Kesagiri that ends with stacks gained while it
     // Played readies the next
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.TauntDamaged) {
         if (
