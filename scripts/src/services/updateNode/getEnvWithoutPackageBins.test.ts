@@ -17,7 +17,7 @@ describe(getEnvWithoutPackageBins, () => {
   test("reads the path under Windows' key", () => {
     expect.hasAssertions();
 
-    expect(getEnvWithoutPackageBins({ Path: String.raw`C:\a\node_modules\.bin` })).toStrictEqual({ Path: "" });
+    expect(getEnvWithoutPackageBins({ Path: String.raw`\a\node_modules\.bin` })).toStrictEqual({ Path: "" });
   });
 
   test("leaves every other variable as it is", () => {
