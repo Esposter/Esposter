@@ -211,6 +211,7 @@ flowchart TD
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Diluc](/docs/genshin/kits/diluc)                   | Searing Onslaught and Dawn                                           |
 | [Diona](/docs/genshin/kits/diona)                   | Icy Paws and Signature Mix's field                                   |
+| [Dori](/docs/genshin/kits/dori)                     | Alcazarzaray's Exactitude's Connector field and Troubleshooter Shot  |
 | [Eula](/docs/genshin/kits/eula)                     | Grimheart stacks, Icewhirls and Glacial Illumination                 |
 | [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                  |
 | [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution               |
@@ -252,6 +253,7 @@ flowchart TD
 | [Xinyan](/docs/genshin/kits/xinyan)                 | Sweeping Fervor and Riff Revolution                                  |
 | [Yae Miko](/docs/genshin/kits/yae-miko)             | Sesshou Sakura totems and Great Secret Art: Tenko Kenshin            |
 | [Yanfei](/docs/genshin/kits/yanfei)                 | Scarlet Seals, Signed Edict and Done Deal                            |
+| [Yaoyao](/docs/genshin/kits/yaoyao)                 | Yuegui radishes and Moonjade Descent                                 |
 | [Yelan](/docs/genshin/kits/yelan)                   | Lingering Lifeline and Depth-Clarion Dice                            |
 | [Yoimiya](/docs/genshin/kits/yoimiya)               | Niwabi Fire-Dance and Naganohara Meteor Swarm                        |
 | [Yun Jin](/docs/genshin/kits/yun-jin)               | Opening Flourish and Cliffbreaker's Banner                           |
