@@ -1,5 +1,5 @@
-import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
 import { checkIsTypeBenchDrifted } from "#src/services/benchTypes/checkIsTypeBenchDrifted";
+import { TYPE_BENCH_GLOB } from "#src/services/benchTypes/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { describe, expect, test } from "vitest";
 

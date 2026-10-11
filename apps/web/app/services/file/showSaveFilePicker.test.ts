@@ -45,7 +45,9 @@ describe(showSaveFilePicker, () => {
     await writable.close();
 
     expect(downloads).toStrictEqual([{ download: "a.png", href: "blob:a" }]);
-    expect(createObjectURL.mock.calls[0]?.[0]?.type).toBe("image/png");
+    expect(createObjectURL.mock.calls.map(([object]) => object instanceof Blob && object.type)).toStrictEqual([
+      "image/png",
+    ]);
   });
 
   test("downloads nothing until the writable closes", async () => {

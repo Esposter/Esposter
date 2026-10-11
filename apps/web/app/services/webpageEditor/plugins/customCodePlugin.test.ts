@@ -2,6 +2,7 @@
 import type { Component, Editor } from "grapesjs";
 
 import { customCodePlugin } from "@/services/webpageEditor/plugins/customCodePlugin";
+import { takeOne } from "@esposter/shared";
 import grapesJS from "grapesjs";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -22,7 +23,7 @@ describe(customCodePlugin, () => {
   const SCRIPT_CODE = "<script>alert(1)</script><p>ok</p>";
   const PLAIN_CODE = "<p>ok</p>";
 
-  const addCustomCode = (editor: Editor) => editor.addComponents({ type: CUSTOM_CODE_ID })[0];
+  const addCustomCode = (editor: Editor) => takeOne(editor.addComponents({ type: CUSTOM_CODE_ID }));
 
   // The canvas mounts no view headless, so the view's own methods run on a stand-in carrying the same members
   const mountStandInView = (editor: Editor, component: Component) => {
@@ -139,7 +140,7 @@ describe(customCodePlugin, () => {
 
     const editor = createEditor();
     const component = addCustomCode(editor);
-    const scriptComponent = component.append({ tagName: "script", type: "script" })[0];
+    const scriptComponent = takeOne(component.append({ tagName: "script", type: "script" }));
     const scriptElement = document.createElement("script");
     scriptElement.textContent = "alert(1)";
     const prototype = readViewPrototype(editor, "script");

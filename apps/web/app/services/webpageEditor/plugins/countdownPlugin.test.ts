@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
+import { takeOne } from "@esposter/shared";
 import grapesJS from "grapesjs";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -30,7 +31,7 @@ describe(countdownPlugin, () => {
   // Mounts a countdown the way the canvas does: its markup, then its script bound to the element
   const mountCountdown = (startfrom: string, endText = "EXPIRED") => {
     const editor = createEditor();
-    const [component] = editor.addComponents({ endText, startfrom, type: COUNTDOWN_ID });
+    const component = takeOne(editor.addComponents({ endText, startfrom, type: COUNTDOWN_ID }));
     const script = component.get("script");
     const element = document.createElement("div");
     element.innerHTML = COUNTDOWN_MARKUP;
@@ -59,7 +60,7 @@ describe(countdownPlugin, () => {
     expect.hasAssertions();
 
     const editor = createEditor();
-    const [component] = editor.addComponents({ type: COUNTDOWN_ID });
+    const component = takeOne(editor.addComponents({ type: COUNTDOWN_ID }));
 
     expect(component.getTraits().map((trait) => ({ label: trait.getLabel(), name: trait.getName() }))).toStrictEqual([
       { label: "Start", name: "startfrom" },
