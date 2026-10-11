@@ -85,7 +85,9 @@ export const replayOwed = async ({
     });
     return true;
   });
-  if (isReplayed) return ReplayOutcome.Replayed;
+  // A pick git refused before it started leaves no sequence open, so the stop reads as a run to its end. Only the
+  // Carry check says it landed, and a replay that did not carry what it owed falls through to name the state
+  if (isReplayed && checkIsCarried(sourceSha, cwd)) return ReplayOutcome.Replayed;
 
   const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
   const conflictedPaths = readUnmergedPaths(cwd);
