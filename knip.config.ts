@@ -19,6 +19,10 @@ const knipConfiguration: KnipConfig = {
         // @TODO: no upstream issue — unstorage 2's fs driver loads `chokidar` without declaring it, so the app declares
         // It for Nitro 3's server bundle and nothing in the app imports it (nitrojs/nitro)
         "chokidar",
+        // @TODO: no upstream issue — `@nuxt/scripts` mounts its `nuxt-scripts-cache` storage on unstorage's lru-cache
+        // Driver, which loads `lru-cache` without declaring it, so the app declares it and nothing in the app imports
+        // It; without it `nuxt prepare` installs it itself and rewrites the catalog under CI's install (nuxt/scripts)
+        "lru-cache",
         // @TODO: no upstream issue — `@nuxt/nitro-server` aliases `bufferutil` to `mocked-exports/proxy`, which Nitro 3
         // Resolves from the app, so nothing in the app imports it (nuxt/nuxt)
         "mocked-exports",
