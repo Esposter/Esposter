@@ -10,6 +10,7 @@ import {
   PARITY_FRAME_MS,
   PARITY_PAGE_URL,
   PARITY_READY_TIMEOUT_MS,
+  RESOURCE_TIMING_BUFFER_SIZE,
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
@@ -66,6 +67,7 @@ export const openParityPage = async ({
   const missingFiles: string[] = [];
   return getResultAsync(async () => {
     const page = await context.newPage();
+    await page.addInitScript((size) => performance.setResourceTimingBufferSize(size), RESOURCE_TIMING_BUFFER_SIZE);
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
     const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";

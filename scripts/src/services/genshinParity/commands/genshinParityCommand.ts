@@ -22,6 +22,7 @@ import { instrumentsCommand } from "#src/services/genshinParity/commands/instrum
 import { launchCommand } from "#src/services/genshinParity/commands/launchCommand";
 import { layerCommand } from "#src/services/genshinParity/commands/layerCommand";
 import { listenCommand } from "#src/services/genshinParity/commands/listenCommand";
+import { loadCommand } from "#src/services/genshinParity/commands/loadCommand";
 import { lostCommand } from "#src/services/genshinParity/commands/lostCommand";
 import { lumaCommand } from "#src/services/genshinParity/commands/lumaCommand";
 import { measureCommand } from "#src/services/genshinParity/commands/measureCommand";
@@ -82,6 +83,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     instruments: instrumentsCommand,
     solos: solosCommand,
     bench: benchCommand,
+    load: loadCommand,
     expression: expressionCommand,
     listen: listenCommand,
     noise: noiseCommand,
