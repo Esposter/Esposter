@@ -125,7 +125,6 @@
     "diff": "catalog:",
     "drizzle-orm": "catalog:",
     "emojilib": "catalog:",
-    "eventemitter3": "catalog:",
     "fast-deep-equal": "catalog:",
     "fflate": "catalog:",
     "genshin-engine": "workspace:*",
