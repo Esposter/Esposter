@@ -279,6 +279,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, O Tears, I Shall Repay and O Tides, I Have Returned   |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                              |
 | [Noelle](/docs/genshin/kits/noelle)                 | Breastplate and Sweeping Time                                        |
+| [Ororon](/docs/genshin/kits/ororon)                 | Three strikes, Aimed Shot, Spirit Orb and Dark Voices' Echo          |
 | [Qiqi](/docs/genshin/kits/qiqi)                     | Herald of Frost and Fortune-Preserving Talisman                      |
 | [Raiden Shogun](/docs/genshin/kits/raiden-shogun)   | The Eye and Musou Isshin                                             |
 | [Razor](/docs/genshin/kits/razor)                   | Electro Sigils, the Wolf Within and Lightning Fang                   |
