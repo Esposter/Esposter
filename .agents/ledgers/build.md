@@ -9,7 +9,7 @@ Each package's tsdown configuration, tsconfig and manifest placement — externa
 | `packages/db-schema`, `packages/db`, `packages/db-mock`                                                    | 2026-10-05 · Opus 5.5 |       |
 | `packages/azure`, `packages/azure-mock`                                                                    | 2026-10-05 · Opus 5.5 |       |
 | `packages/virrun`                                                                                          | 2026-10-05 · Opus 5.5 |       |
-| `packages/keyframe-store`, `packages/parse-tmx`, `packages/xml2js`                                         | 2026-10-05 · Opus 5.5 |       |
+| `packages/keyframe-store`, `packages/parse-tmx`                                                            | 2026-10-05 · Opus 5.5 |       |
 | `packages/vue-phaserjs`                                                                                    | 2026-10-05 · Opus 5.5 |       |
 | `packages/agent-console-server`, `packages/genshin-persona`                                                | 2026-10-05 · Opus 5.5 |       |
 | `apps/functions`, `apps/infra`                                                                             | 2026-10-05 · Opus 5.5 |       |

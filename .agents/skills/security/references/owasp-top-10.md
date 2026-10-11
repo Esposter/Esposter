@@ -63,7 +63,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 
 - Is every payload crossing a boundary parsed by a Zod schema, never cast (the `zod` skill, `references/boundary-payloads.md`; the `error-handling` skill, `references/json-parsing.md`)?
 - Does a deep merge or a key-by-key copy take keys from input, which is prototype pollution? `__proto__`, `constructor` and `prototype` must not reach an object's prototype.
-- Does XML parsing (`packages/xml2js`) resolve no external entity?
+- Does XML parsing (`packages/parse-tmx`) resolve no external entity?
 - Does a content save check the version it was based on, so a stale client cannot overwrite a newer one (`apps/web/content/docs/resource/resource-save-state.md`)?
 
 ## A09 Security Logging and Alerting Failures

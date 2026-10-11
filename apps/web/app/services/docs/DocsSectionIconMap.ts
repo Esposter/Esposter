@@ -22,5 +22,4 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   user: "i-mdi:account-group",
   virrun: "i-mdi:console",
   "vue-phaserjs": "i-mdi:gamepad-variant",
-  xml2js: "i-mdi:code-tags",
 };

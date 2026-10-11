@@ -125,7 +125,6 @@ catalog:
   "@types/three": ^0.186.0
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.2
-  "@types/xml2js": ^0.4.14
   "@typesafe-ai/sdk": ^0.6.0
   "@unocss/eslint-config": ^66.10.5
   "@unocss/nuxt": ^66.10.5
@@ -286,7 +285,6 @@ catalog:
   web-push: ^3.6.7
   write-excel-file: ^4.1.1
   ws: ^8.22.0
-  xmlbuilder2: ^4.0.3
   xss: ^1.0.15
   zod: ^4.6.5
 catalogMode: strict

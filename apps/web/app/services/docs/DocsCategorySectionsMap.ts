@@ -12,7 +12,6 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
     "trpc-nuxt-module",
     "virrun",
     "vue-phaserjs",
-    "xml2js",
   ],
   [DocsCategory.Products]: [
     "achievement",

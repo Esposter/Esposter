@@ -7,7 +7,7 @@ description: A sax reader for Tiled Map Editor .tmx files — one pass that buil
 
 `packages/parse-tmx` (npm `parse-tmx`) reads a [Tiled Map Editor](http://www.mapeditor.org/) `.tmx` map into the tilemap shape Phaser's own JSON export produces, so a game loads a Tiled map without running Tiled. Its entry point is `parseTmx(xml, translateFlips)`, which resolves to a `Result` of a `TMXParsed` map. `parseTileset(xml)` reads a tileset file on its own, as the [vue-phaserjs](/docs/vue-phaserjs) Tiled plugin does for an external tileset, and returns a `Result` of the embedded tileset it holds.
 
-This is a rewrite. The reader used to walk the generic object [@esposter/xml2js](/docs/xml2js) built from the document, one function for each function of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser). It now makes one sax pass and builds the typed models as the document opens, so no generic tree sits between the file and the map. The upstream's issues are still the ones it was judged by, below.
+This is a rewrite. The reader used to walk the generic object a separate XML package built from the document, one function for each function of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser). It now makes one sax pass and builds the typed models as the document opens, so no generic tree sits between the file and the map. The upstream's issues are still the ones it was judged by, below.
 
 ## How a document becomes a tilemap
 
