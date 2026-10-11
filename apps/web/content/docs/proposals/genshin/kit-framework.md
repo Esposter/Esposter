@@ -38,7 +38,7 @@ The frame reads what the build resolved once, and a module loads only when its c
     - the named hits a behaviour casts: a summon's ticks, an explosion, a coordinated attack;
     - a resource's maximum.
   - The behaviour module holds what no value can: what an action's start sets going, what a passive or constellation answers, and how a field ticks.
-  - `buildKit(record, multipliers, behaviour)` joins the two once per member into the `Kit` that the step, the strike and the HUD already read. No reader of a kit changes; each action gains a `slot` and each hit an `attackTag`.
+  - `buildKit(record, multipliers, behaviour)` joins the two once per member into the `Kit` that the step, the strike and the HUD already read. No reader of a kit changes; each hit carries its `attackTag`.
 - **The record is generated wherever a source holds the value, and each source is read where it is exact.**
   - **gcsim** gives frames, hitmarks, areas, tags, element and gauge.
   - **The game's tables** give multipliers, cooldowns, energy, stamina and durations, already published as `talentMultipliers`. Where a constellation row's `paramList` holds a constellation's value, it comes from there too.
@@ -185,9 +185,8 @@ What `stepActiveKit` and its callees do today:
 What it does after:
 
 - **What the build can resolve is resolved once.**
-  - `buildKit` gives each action its `slot` (`KitActionSlot`: normal attack, charged attack, plunge, skill, burst).
-  - Each hit gets its `attackTag`, read from gcsim's `AttackInfo` for that hit, including a stance's and a summon's.
-  - That removes `getKitAttackTag`, the skill-or-burst search, the infusable and melee Sets, and the stance's hand-written `attackTags`.
+  - Each hit gets its `attackTag`: its action's kind, unless gcsim's `AttackInfo` for that hit names another, including a stance's.
+  - That removes `getKitAttackTag` and the stance's hand-written `attackTags`. No action needs a slot: the step already tells its actions apart by which of the kit's lists holds them, and the infusable and melee Sets stay, since an infusion and the ores follow the list a hit sits in, not its kind of attack.
   - A stance's kit is built once, when the stance starts.
 - **A cursor lands the hits.** An action and a summon each keep the index of their next hit. A step compares one hitmark rather than the whole list, and a summon with nothing to land does nothing.
 - **The effects are stepped by index, in today's order, and compacted in place.**
@@ -300,14 +299,14 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  BUILD["buildKit, once per member as it joins: each action's slot, each hit's tag"]
+  BUILD["buildKit, once per member as it joins: each hit's tag"]
   IN["the frame's KitInput, read once by the world"] --> DRAIN["the outbox drained in order, each event sent to every deployed kit"]
   DRAIN --> EFFECTS["the team's effects stepped in place, noting stance, infusion, shield and buffs"]
   EFFECTS --> ENEMIES["enemy statuses tick, elemental ticks strike, Dendro Cores burst"]
   ENEMIES --> STEP["stepKit on the stance's kit: the cursor lands hits, or presses start an action"]
   BUILD -.-> STEP
   STEP -->|"an action starts"| START["the body turns to its target, BurstUsed is sent, then onStart"]
-  STEP --> STRIKES["the strikes: the step's hits and each summon's, tag and slot read off the hit"]
+  STEP --> STRIKES["the strikes: the step's hits and each summon's, the tag read off the hit"]
   EFFECTS --> STRIKES
   START --> STRIKES
   STRIKES --> PRICE["strikeKitEnemies: priced from the noted buffs, reactions and damage sent"]
@@ -316,7 +315,7 @@ flowchart TD
 
 ## Scope and order
 
-**Every kit moves at once, in a series of whole-tree refactors.** There is no compatibility path and no phase that converts one kit at a time: nothing is kept to spare old code the cost of moving ([no compatibility debt](/docs/architecture/no-compatibility-debt)). Each commit moves every kit, every caller and every suite to the new form together, scripted where the move is mechanical and finished by hand, and deletes the old form in the same commit, so `ai/queue` never holds two kit shapes side by side. Every replay digest stays byte-equal at every commit: a digest that moves means the commit is wrong, not the snapshot. A step that finds the record lacking a value stops and extends the builder first, in a commit of its own that publishes only the keys it changes (`genshin:assets kits --only <character>`), rather than half-landing.
+**Every kit moves at once, in a series of whole-tree refactors.** There is no compatibility path and no phase that converts one kit at a time: nothing is kept to spare old code the cost of moving ([no compatibility debt](/docs/architecture/no-compatibility-debt)). Each commit moves every kit, every caller and every suite to the new form together, scripted where the move is mechanical and finished by hand, and deletes the old form in the same commit, so `ai/queue` never holds two kit shapes side by side. Every replay digest stays byte-equal at every refactor: a digest that moves means the commit is wrong, not the snapshot, unless the commit means to change behaviour and says which digests move and why. A step that finds the record lacking a value stops and extends the builder first, in a commit of its own that publishes only the keys it changes (`genshin:assets kits --only <character>`), rather than half-landing.
 
 1. **The builder.** Landed.
    - `genshin:assets kits` is a citty command with three readers: gcsim at v2.47.2 (the YAML hitboxes, a constant evaluator for the action files' literals and integer sums, the `AttackInfo` fields and the talent file's indices), the wiki through the MediaWiki API at each page's revision, and the published tables through the lock.
@@ -328,7 +327,11 @@ flowchart TD
 3. **`KitContext` and its outbox replace the partial contexts.** Landed.
    - `KitStepContext`, `KitEventContext`, `KitFieldTick`, `KitStrikeContext` and `ActiveKitStepContext` go, with `createKitStepContext` and `createKitEventContext`; every hook takes the world's one context, and every suite builds it with `createKitTestContext`.
    - The taunt's own damage queue goes into the outbox, which the step drains after a swap is sent.
-4. **The slot and the attack tag set at build.** Each action's slot and each hit's attack tag are set as its kit is built, and a stance's kit is built once as the stance starts. `getKitAttackTag`, `getStancedKit` and `KitStance.attackTags` go.
+4. **The attack tag set at build.** Landed.
+   - A stance's kit is built once as the stance starts (`enterKitStance`), and `getStancedKit` goes.
+   - Each hit's attack tag is set as its kit or its stance's kit is built (`tagKitHits`), unless the hit names its own, and `getKitAttackTag` and `KitStance.attackTags` go.
+   - The tag is the one step whose digests move, in a commit of its own that means to: a hit tagged as it is built keeps its kind through a stance that starts or ends while its action plays, where the read at landing left it untagged. Eight kits' digests move between tags (Tartaglia, Hu Tao, Yoimiya, Raiden, Nilou, Skirk, Flins and Durin), and no strike count or total does.
+   - No action carries a slot, for the reasons under the per-frame path.
 5. **The cursors.** An action and a summon each keep the index of their next hit.
 6. **The effects stepped in place,** in today's order and compacted in place, the expired and strike lists held on the context.
 7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
@@ -378,10 +381,10 @@ flowchart TD
 | File                                                                | Role                                                                                           |
 | :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved  |
-| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses, reading each action's slot                                 |
+| `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                             |
 | `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                           |
 | `packages/genshin-world/src/services/kit/getKitAttackTag.ts`        | Deleted: a hit's tag is set when its kit is built                                              |
-| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, gaining each action's slot and each hit's attack tag           |
+| `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                               |
 | `packages/genshin-world/src/models/kit/KitStepContext.ts`           | One of the five partial contexts `KitContext` replaces                                         |
 | `packages/genshin-world/src/services/kit/createCharacterKit.ts`     | Replaced by `buildKit` and `readCharacterKits`                                                 |
 | `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                       |

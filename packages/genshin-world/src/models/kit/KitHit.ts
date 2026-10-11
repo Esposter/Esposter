@@ -1,3 +1,4 @@
+import type { AttackTag } from "#src/models/combat/AttackTag";
 import type { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import type { Element } from "#src/models/Element";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
@@ -16,6 +17,9 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 export interface KitHit {
   // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats
   additiveBaseDamageBonus?: (combatant: Combatant) => number;
+  // The kind of attack the hit is dealt as, set as its kit or its stance is built from the action it sits in, unless it
+  // Names its own. None for a hit no action holds, such as a summon's
+  attackTag?: AttackTag;
   // The bubble it holds each enemy it strikes in, if it casts one
   bubble?: KitBubbleSpec;
   // The cylinder the hit reaches while its attacks are converted by an infusion that converts them, if it reaches another

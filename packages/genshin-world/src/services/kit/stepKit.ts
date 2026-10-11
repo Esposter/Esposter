@@ -104,7 +104,7 @@ export const stepKit = (
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
         return undefined;
       }
-      queueKitHits(action, kitState.actionSeconds, kit, context);
+      queueKitHits(action, kitState.actionSeconds, context);
       isStrikeEnded = kit.normalAttacks.includes(action);
     } else kitState.isAttackQueued = false;
     endKitAction(kitState, kit);

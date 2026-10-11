@@ -95,22 +95,23 @@ describe(createSkirkKit, () => {
     }).toStrictEqual({ hits: 0, nextTickFrames: 19, stance: undefined });
   });
 
-  test("seven-phase Flash's stance lasts 754 frames, with Normal, Charged, Elemental Skill and Elemental Burst attack tags", () => {
+  // Its skill and burst land no hit, so only its strikes and charged attack carry an attack tag
+  test("seven-phase Flash's stance lasts 754 frames, with Normal and Charged attack tags", () => {
     expect.hasAssertions();
     const stance = findStance(enterSevenPhaseFlash());
 
     expect({
-      attackTags: stance?.attackTags,
+      attackTags: {
+        chargedAttack: [...new Set(stance?.kit.chargedAttack.hits.map(({ attackTag }) => attackTag))],
+        normalAttacks: [
+          ...new Set(stance?.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ attackTag }) => attackTag))),
+        ],
+      },
       normalAttacks: stance?.kit.normalAttacks.length,
       secondsRemaining: Math.round((stance?.secondsRemaining ?? 0) * 1000) / 1000,
       strikeElements: [...new Set(stance?.kit.normalAttacks.flatMap(({ hits }) => hits.map(({ element }) => element)))],
     }).toStrictEqual({
-      attackTags: {
-        chargedAttack: AttackTag.ChargedAttack,
-        elementalBurst: AttackTag.ElementalBurst,
-        elementalSkill: AttackTag.ElementalSkill,
-        normalAttacks: AttackTag.NormalAttack,
-      },
+      attackTags: { chargedAttack: [AttackTag.ChargedAttack], normalAttacks: [AttackTag.NormalAttack] },
       normalAttacks: 5,
       secondsRemaining: 12.567,
       strikeElements: [Element.Cryo],

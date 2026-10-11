@@ -168,10 +168,13 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     targetingArea: STRIKE_TARGETING_AREA,
   });
 
-  // The sword dance's three steps, each hit kept whole so Constellation 1 finds the Luminous Illusion among the strikes
+  // The sword dance's three steps, each hit kept whole so Constellation 1 finds the Luminous Illusion among the strikes.
+  // They play as a stance's normal attacks but are Elemental Skill DMG, as the Whirling Steps the stance's skill plays
+  // Are, gcsim's AttackTagElementalArt in nilou/skill.go's SwordDance and WhirlingSteps
   const swordDanceSteps = SWORD_DANCE_STEPS.map(({ cancelFrames, hitArea, hitmarkFrames, index }) => ({
     cancelSeconds: cancelFrames / 60,
     hit: {
+      attackTag: AttackTag.ElementalSkill,
       element: Element.Hydro,
       gauge: 1,
       hitArea,
@@ -238,14 +241,6 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         normalAttacks: normalAttacksOfStance,
       },
       secondsRemaining,
-      // The sword dance's steps and Luminous Illusion, and the Whirling Steps, are Elemental Skill DMG, gcsim's
-      // AttackTagElementalArt in nilou/skill.go's SwordDance and WhirlingSteps
-      {
-        chargedAttack: AttackTag.ChargedAttack,
-        elementalBurst: AttackTag.ElementalBurst,
-        elementalSkill: AttackTag.ElementalSkill,
-        normalAttacks: AttackTag.ElementalSkill,
-      },
     );
 
   // Lunar Prayer replaces the sword dance's normal attacks for eight seconds, and the dance is cast again as the skill
