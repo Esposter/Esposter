@@ -37,7 +37,13 @@ import map from "map.tmx";
 const translateFlips = true;
 
 const loadMap = async () => {
-  const data = await parseTmx(map, translateFlips);
+  // parseTmx resolves to a neverthrow Result, so the map is taken from its Ok branch and an error is rethrown
+  const data = (await parseTmx(map, translateFlips)).match(
+    (tmxParsed) => tmxParsed.map,
+    (error) => {
+      throw error;
+    },
+  );
   ...
 };
 ```

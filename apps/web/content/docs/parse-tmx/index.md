@@ -1,75 +1,83 @@
 ---
 title: parse-tmx
-description: A parser for Tiled Map Editor .tmx files — the xml2js-read map, its walk in document order, the layers and tilesets it decodes, and the Phaser tilemap shape it produces — and the upstream tmx-map-parser issues it was judged by.
+description: A sax reader for Tiled Map Editor .tmx files — one pass that builds the typed map as the document opens, the tile data decoded after it, the Phaser tilemap shape it produces, and the upstream tmx-map-parser issues it was judged by.
 ---
 
 # parse-tmx
 
-`packages/parse-tmx` (npm `parse-tmx`) reads a [Tiled Map Editor](http://www.mapeditor.org/) `.tmx` file into the tilemap shape Phaser's own JSON export produces, so a game loads a Tiled map without running Tiled. Its entry point is `parseTmx(xml, translateFlips)`, which resolves to a `TMXParsed` map; `parseTileset` and `parseXmlString` are exported beside it for a caller that reads one tileset or the raw XML tree.
+`packages/parse-tmx` (npm `parse-tmx`) reads a [Tiled Map Editor](http://www.mapeditor.org/) `.tmx` map into the tilemap shape Phaser's own JSON export produces, so a game loads a Tiled map without running Tiled. Its entry point is `parseTmx(xml, translateFlips)`, which resolves to a `Result` of a `TMXParsed` map. `parseTileset(xml)` reads a tileset file on its own, as the [vue-phaserjs](/docs/vue-phaserjs) Tiled plugin does for an external tileset, and returns a `Result` of the embedded tileset it holds.
 
-It follows the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) pipeline, one function for each of the upstream's functions, and the upstream's dependency on xml2js is the reading layer under it. It is the reader the app's Tiled scripts and the [vue-phaserjs](/docs/vue-phaserjs) Tiled plugin use.
+This is a rewrite. The reader used to walk the generic object [@esposter/xml2js](/docs/xml2js) built from the document, one function for each function of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser). It now makes one sax pass and builds the typed models as the document opens, so no generic tree sits between the file and the map. The upstream's issues are still the ones it was judged by, below.
 
-## How a map becomes a tilemap
+## How a document becomes a tilemap
 
-`parseTmx` reads the file through [@esposter/xml2js](/docs/xml2js) into the `map` element's tree, then walks the map's children in the order the document gives them. Each child is dispatched on its tag name: a tileset becomes a parsed tileset, the map's properties its property list, and each layer or group goes through the node dispatch, where a group recurses into its own children and a tile layer's data is decoded.
+`parseTmx` writes the text through sax once. Each element opens a frame that builds its own model and attaches it to its parent's model at that moment, so the map is complete as the reading ends. A frame closes only to read the character data it owns: a property's value, a text object's content and a layer's encoded cells. Tile data is decoded after the pass, because gzip and zlib decompression is asynchronous and sax is not.
 
 ```mermaid
 flowchart TD
-  xml["The .tmx text"]
-  read["parseXmlString<br/>xml2js, attribute values read as numbers and booleans"]
-  walk["parseTmx walk<br/>the map's children in document order"]
-  tileset["parseTileset<br/>external keeps its source,<br/>embedded keeps its image and tiles"]
-  node["parseNode<br/>dispatch on the layer's tag"]
-  group["parseGroup<br/>recurses into the group's children"]
-  tile["parseTileLayer<br/>decodeTileData, then parseFlips<br/>when translateFlips is set"]
-  object["parseLayer<br/>object groups and image layers"]
+  xml["The .tmx text<br/>a byte order mark stripped"]
+  sax["sax, one write and one close<br/>strict well-formedness"]
+  root["openTmxRoot<br/>a map, or a tileset file"]
+  open["openTmxFrame<br/>each element builds its model and attaches it to its parent"]
+  close["closeTmxFrame<br/>a property's value, a text's content, a data's text"]
+  pending["pending tile data<br/>one entry per layer or chunk"]
+  decode["decodeTileData<br/>csv, base64, gzip, zlib or tile elements"]
+  assign["assignTileData<br/>cell count checked, flips translated"]
   parsed["TMXParsed<br/>the Phaser tilemap shape"]
-  xml --> read --> walk
-  walk -->|tileset| tileset --> parsed
-  walk -->|layer or group| node
-  node -->|group| group --> node
-  node -->|tile layer| tile --> parsed
-  node -->|object group or image| object --> parsed
-  walk -->|properties| parsed
+  failed["Err<br/>a malformed document or a refused element"]
+  xml --> sax --> root --> open
+  open --> close
+  open --> pending --> decode --> assign --> parsed
+  sax -->|malformed| failed
+  open -->|refused| failed
+  assign -->|cells do not fill the map| failed
 ```
 
-- **The map's data.** A tile layer's data is one of Tiled's encodings: base64 with no compression, gzip or zlib, or a list of `<tile>` elements from the form Tiled deprecated and still writes into old maps. Each cell is a global tile id, and the high bits of an id are its flips; `translateFlips` turns those bits into the parsed tile's flip flags, and without it the id is kept as written.
-- **Tilesets.** An embedded tileset keeps its attributes, its image's attributes and its tiles, each with its id, type and properties. An external tileset is a reference to another file, so its attributes are returned as read and the file itself is not opened.
-- **Groups.** A group's layers are parsed in document order, with each layer's own tile count, so a group nested in a group is read the same way as one at the top.
-- **The output's order.** Layers keep the order the document gives them, since a map's draw order is that order.
+- **One pass, one model.** Every model the reader fills is a `src/models` type, so the parsed map is the TMX model itself and no copy of it is made.
+- **The map's data.** A tile layer's cells are one of Tiled's encodings: csv, or base64 with no compression, gzip or zlib, or the `<tile>` elements of the form Tiled deprecated. Each cell is a global tile id, whose high bits are its flips. `translateFlips` turns those bits into the flip flags, and without it the id is kept as written. A finite layer must hold one cell per tile of its map; an infinite map's layers hold their cells in chunks, each with its own size.
+- **Tilesets.** A tileset that names a file is kept as the reference it is, with its `firstgid` and `source`. An embedded tileset keeps its attributes, its image when it has one, and its tiles. A tileset with no image is an image collection, and its tiles carry their own.
+- **Objects.** An object is a rectangle until a shape child says otherwise: an ellipse, a point, a polygon or a polyline, whose points are read off the element. A text object's content is its `text`, and its styling attributes read as its properties.
+- **Properties.** A property's value is its attribute, or its character data when it has no attribute, read as its type says: a `bool` is a boolean, an `int` or `float` is a number, and every other type stays a string. A `class` property holds nested properties in place of a value.
+- **The output's order.** Layers keep the order the document gives them, since a map's draw order is that order, and a group's layers keep theirs.
+
+## What it reads
+
+The elements the reader models are the map, its `editorsettings` and `export`, tilesets with their `image` and `tile`, `animation` and `frame`, `layer`, `data` and `chunk`, `objectgroup`, `object` with its shapes and `text`, `imagelayer`, `group`, and `properties` with `property`. Tileset children the reader does not model (grids, tile offsets, wang sets, terrain types) are skipped, and so is any child of an element that is not modelled. A child of the map that is not a Tiled map element is refused by name, and so is a compression the reader does not decode: zstd, which no browser ships a decompressor for.
 
 ## Decisions
 
-- **The reader is xml2js and nothing else.** Every element's attributes, text and child order come from `@esposter/xml2js` with the attribute processor that reads numbers and booleans; `parseXmlValue` is the one function here that reads a value. The model types under `src/models` name each node's shape rather than checking it, since the XML is the trust boundary and xml2js is what parses it.
-- **A document with no root element is an error.** `parseXmlString` rejects a document xml2js resolves to null for, rather than handing the walk nothing to destructure.
-- **The output is Phaser's shape.** The parsed map keeps the names Phaser's own tilemap export uses, so a game loading the parsed map reads it the way it reads Tiled's JSON.
-- **The Tiled format is a spec that changes without us.** The reader follows the Tiled version the maps are written in; a new layer or encoding Tiled adds is a node the dispatch does not know, and it fails with an `InvalidOperationError` naming the tag, not with a silent skip.
+- **sax reads the document, and nothing reads it generically.** A document is checked by sax's strict well-formedness rules; the first error sax reports is the error the caller receives. The reader builds the typed models directly and keeps no object shaped like the XML.
+- **Failures are `Result`s.** `parseTmx` and `parseTileset` return a `Result` whose error is an `InvalidOperationError` naming the step that refused the document, so a caller handles a bad map with `.match` and the reader never throws out of a call.
+- **The output is Phaser's shape, with the types it actually holds.** The parsed map keeps the names Phaser's tilemap export uses. A layer's `type` is its element name, and numeric attributes such as `visible` and `opacity` stay numbers as Phaser reads them. A property's value follows its type, which is the one place the output changed: a string property holding `"1"` stays a string, where the upstream read it as a number.
+- **Image collections are tilesets.** A tileset without an image is valid in Tiled, and its tiles carry their own images, so it parses rather than failing for want of one.
+- **The Tiled format is a spec that changes without us.** The reader follows the TMX Map Format reference. A new element Tiled adds under the map is refused by name rather than skipped, since a map child carries layers, and skipping one would draw a map without its content.
 
 ## Upstream
 
 Every issue of the upstream [tmx-map-parser](https://github.com/praghus/tmx-map-parser) repository, open and closed, graded by the [dependency admission triage](/docs/architecture/dependency-admission). The repository has three issues, and its pull requests are dependency updates, which the catalog owns.
 
-| Upstream                                                                                | Verdict            | Proof                                                                                                                                                      |
-| --------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [#1](https://github.com/praghus/tmx-map-parser/issues/1) — modify and save `.tmx` files | Out of scope       | Declined by the maintainer, who called the upstream "a rather simple reader"; writing a map is a different product, and this package stays a reader        |
-| [#2](https://github.com/praghus/tmx-map-parser/issues/2) — handle groups                | In scope — feature | Built: a group's layers are parsed through `parseGroup`, and "parses a group's layers" in `parseNode.test.ts` proves it                                    |
-| [#4](https://github.com/praghus/tmx-map-parser/issues/4) — can't resolve `xml2js`       | False positive     | The build leaves `@esposter/xml2js` external and declares it in `dependencies`, so the install provides it; the bundled `dist/index.js` imports it by name |
+| Upstream                                                                                | Verdict            | Proof                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#1](https://github.com/praghus/tmx-map-parser/issues/1) — modify and save `.tmx` files | Out of scope       | Declined by the maintainer, who called the upstream "a rather simple reader"; writing a map is a different product, and this package stays a reader                                                                                                              |
+| [#2](https://github.com/praghus/tmx-map-parser/issues/2) — handle groups                | In scope — feature | Built: a group's layers, and a group within a group, are read in document order; "parses a group's layers" in `parseTmx.test.ts` proves it                                                                                                                       |
+| [#4](https://github.com/praghus/tmx-map-parser/issues/4) — can't resolve `xml2js`       | False positive     | The upstream bundle imported an xml2js it did not declare. This package reads through sax and declares no xml2js, so the module the issue could not resolve is not a dependency here; the verdict is the upstream's, and this package has no such import to fail |
 
 ## Sources
 
-- The upstream repository, [praghus/tmx-map-parser](https://github.com/praghus/tmx-map-parser), whose pipeline this package follows, and its 1.3.1 release.
-- The [Tiled map format](https://doc.mapeditor.org/en/stable/reference/tmx-map-format/), the specification the reader's node shapes follow.
+- The upstream repository, [praghus/tmx-map-parser](https://github.com/praghus/tmx-map-parser), whose issues the verdicts above answer.
+- The [Tiled map format](https://doc.mapeditor.org/en/stable/reference/tmx-map-format/), the specification the reader's models follow.
 - Phaser's tilemap JSON export, the shape `parseTmx` produces.
 
 ## Key Files
 
-| File                                                | Role                                                       |
-| :-------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/parse-tmx/src/parseTmx.ts`                | The map walk and the `TMXParsed` it returns                |
-| `packages/parse-tmx/src/services/parseXmlString.ts` | The xml2js read, rejecting a document with no root element |
-| `packages/parse-tmx/src/services/parseNode.ts`      | The layer and group dispatch on the node's tag             |
-| `packages/parse-tmx/src/services/parseTileset.ts`   | The embedded and external tileset shapes                   |
-| `packages/parse-tmx/src/services/decodeTileData.ts` | The tile layer's encodings and compression                 |
-| `packages/parse-tmx/src/services/parseFlips.ts`     | The flip bits of a global tile id                          |
-| `packages/parse-tmx/src/models/tmx/node`            | The XML node shapes the dispatch reads                     |
-| `packages/parse-tmx/src/models/tmx/parsed`          | The parsed Phaser tilemap shapes the walk returns          |
+| File                                                 | Role                                                               |
+| :--------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/parse-tmx/src/parseTmx.ts`                 | The map entry point: the sax pass, then the decoded tile data      |
+| `packages/parse-tmx/src/services/parseTileset.ts`    | The tileset-file entry point, for an external tileset              |
+| `packages/parse-tmx/src/services/readTmxDocument.ts` | The sax driver: opens, closes and reads text into the frames       |
+| `packages/parse-tmx/src/services/openTmxFrame.ts`    | Which child an element may hold, and the frame each one opens      |
+| `packages/parse-tmx/src/services/closeTmxFrame.ts`   | The character data each element owns, read on close                |
+| `packages/parse-tmx/src/services/decodeTileData.ts`  | The tile layer's encodings and compression                         |
+| `packages/parse-tmx/src/services/assignTileData.ts`  | The cell count check and the flip translation of decoded tile data |
+| `packages/parse-tmx/src/models/tmx/parsed`           | The parsed Phaser tilemap shapes the reader builds                 |
+| `packages/parse-tmx/src/models/tmx/TMXFrame.ts`      | The frame each open element holds, typed by its tag                |
