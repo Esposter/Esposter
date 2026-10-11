@@ -247,6 +247,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Kuki](/docs/genshin/kits/kuki)                     | Grass Ring of Sanctification                                         |
 | [Layla](/docs/genshin/kits/layla)                   | Nights of Formal Focus and Starlight Slug                            |
 | [Lisa](/docs/genshin/kits/lisa)                     | Violet Arc and Lightning Rose                                        |
+| [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                  |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
 | [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi              |
