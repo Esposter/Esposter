@@ -41,7 +41,7 @@ flowchart TD
 
 ## The drops and the residents
 
-- **A defeated enemy's drops lie where it fell.** The enemy's defeat reaches the world screen through Windrise, and `placeEnemyDrops` lays them at its ground point: its Mora as one pile under item id `MORA_ITEM_ID`, and each material piece as a drop of its own. A drop's id is its spawn's and the count of drops the page has placed, so no two share one. Drops last the page's life.
+- **A defeated enemy's drops lie where it fell.** The enemy's defeat reaches the world screen through Windrise, and `getEnemyDroppedItems` gives what it leaves, its Mora as one pile under item id `MORA_ITEM_ID` and each material piece on its own, which `placeWorldDrops` lays at its ground point. Every source drops through it, an enemy, a broken ore and an offering's rewards the bag has no room for, each item a drop at the source's point (`placeDroppedItems`). A drop's id is its source's and the count of drops the page has placed, so no two share one. Drops last the page's life.
 - **A pick up takes it into the wallet or the bag.** `pickUpDroppedItem` puts a currency into the wallet, by the currency `getWalletCurrency` files its item under, and any other item into the bag through `addInventoryItem` by its definition, which `getItemDefinition` reads from the world's materials table ([inventory](/docs/genshin/inventory)). What the bag has no room for stays where it lay as a smaller drop.
 - **A resident is a talk in reach.** Every resident of the regions in reach whose talk the world holds is a `Talk` row, named from the world's names. A resident whose talk is not held is a row for the first quest talk open to them, and one with neither is neither drawn nor offered a prompt, since F on it would have no talk to open.
 - **A locked statue is an activation in reach.** Each Statue of The Seven whose landmark is not yet unlocked is an `Activate` row named by its statue, and F on it unlocks it; an unlocked statue has no row ([map unlocking](/docs/genshin/map-unlocking)).
@@ -70,7 +70,8 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 | `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts` | The rows in reach, the selection kept by id, and the scrolled window                |
 | `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`  | The mouse wheel's step through the rows                                             |
 | `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`             | What each repeat of a held F picks up                                               |
-| `packages/genshin-world/src/services/interaction/placeEnemyDrops.ts`           | A defeat's drops, laid where the enemy fell                                         |
+| `packages/genshin-world/src/services/interaction/placeDroppedItems.ts`         | The items a source drops, laid at its point                                         |
+| `packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`            | What a defeat leaves: its Mora as one pile and each material piece                  |
 | `packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`         | A pick up into the wallet or the bag, and what the bag leaves behind                |
 | `packages/genshin-world/src/services/interaction/constants.ts`                 | The reach, the window's rows, the held F's interval and the stand-ins               |
 | `packages/genshin-world/src/composables/useInteraction.ts`                     | The prompts read each frame, a press and a held F's repeat                          |

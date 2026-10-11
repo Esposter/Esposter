@@ -1,5 +1,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -8,6 +9,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -15,6 +17,7 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
+import { getEnemyDroppedItems } from "#src/services/enemy/getEnemyDroppedItems";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
@@ -30,7 +33,7 @@ import { getElementalResonances } from "#src/services/party/getElementalResonanc
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
 
@@ -50,7 +53,7 @@ export const useWorldCombat = ({
   events: WorldEvents;
   gameDataBaseUrl: string;
   onPartyRevived: () => void;
-  placeWorldDrops: (enemy: Enemy, enemyDrops: EnemyDrops) => void;
+  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
 }) => {
@@ -164,7 +167,10 @@ export const useWorldCombat = ({
   // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
   // The quests in progress count
   const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
-    placeWorldDrops(enemy, enemyDrops);
+    placeWorldDrops(
+      { id: [enemy.campId, enemy.id].join(ID_SEPARATOR), position: enemy.position },
+      getEnemyDroppedItems(enemyDrops),
+    );
     events.emit("defeatEnemy", enemy);
     events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
   };

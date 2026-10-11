@@ -176,18 +176,6 @@ const {
   setWallet,
   wallet,
 });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to
-const { offerFrostbearingTree } = useWorldOfferings({
-  frostbearingTreeProgress,
-  gainWorldAdventureExp,
-  gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
-  setInventory,
-  setWallet,
-  wallet,
-});
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading, readBook } = useWorldArchive({
   enemyKindMap: enemyTables.enemyKindMap,
@@ -275,6 +263,20 @@ const {
   materialDataMap,
   nameText,
   serverClockOffsetMs,
+  setInventory,
+  setWallet,
+  wallet,
+});
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
+// Whose rewards the bag has no room for drop at the tree
+const { offerFrostbearingTree } = useWorldOfferings({
+  frostbearingTreeProgress,
+  gainWorldAdventureExp,
+  gameDataBaseUrl,
+  inventory,
+  materialDataMap,
+  nameText,
+  placeWorldDrops,
   setInventory,
   setWallet,
   wallet,
@@ -507,13 +509,11 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused && screenKind === ScreenKind.World) {
             const interactable = readInteraction(inputState, context.delta);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
+            const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
-            else if (
-              interactable?.kind === InteractionKind.Activate &&
-              frostbearingTreePlaces.some(({ id }) => id === interactable.id)
-            )
-              offerFrostbearingTree();
+            else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
+              offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
             } else if (interactable?.kind === InteractionKind.Talk) {

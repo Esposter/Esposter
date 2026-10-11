@@ -49,10 +49,32 @@ describe(offerBagItems, () => {
     ).toStrictEqual({
       adventureExp: 1,
       inventory: { items: [], nextId: 1 },
-      overflow: 0,
+      overflowItems: [],
       progress: { heldCount: 1, level: 3, levels },
       wallet: { ...EMPTY_WALLET, [Currency.AcquaintFate]: 1, [Currency.Mora]: 1 },
     });
+  });
+
+  test("a reward the bag has no room for is returned to be dropped", () => {
+    expect.hasAssertions();
+
+    const rewardItemId = 112_006;
+    const rewardDefinition = getItemDefinition(rewardItemId, englishNameText, materialDataMap);
+    const fullStack: InventoryItem = { definition: rewardDefinition, id: 1, quantity: rewardDefinition.stackLimit };
+    const rewardLevels: OfferingLevel[] = [
+      { itemCount: 0, itemId: 0, level: 1, rewards: [] },
+      { itemCount: 1, itemId: offeringItemId, level: 2, rewards: [{ itemCount: 2, itemId: rewardItemId }] },
+    ];
+
+    expect(
+      offerBagItems(
+        { items: [{ definition, id: 0, quantity: 1 }, fullStack], nextId: 2 },
+        EMPTY_WALLET,
+        { heldCount: 0, level: 1, levels: rewardLevels },
+        englishNameText,
+        materialDataMap,
+      ).overflowItems,
+    ).toStrictEqual([{ count: 2, itemId: rewardItemId }]);
   });
 
   test("items past the last level are taken out of the bag and held", () => {
@@ -71,7 +93,7 @@ describe(offerBagItems, () => {
     ).toStrictEqual({
       adventureExp: 0,
       inventory: { items: [], nextId: 1 },
-      overflow: 0,
+      overflowItems: [],
       progress: { heldCount: 3, level: 3, levels },
       wallet: EMPTY_WALLET,
     });

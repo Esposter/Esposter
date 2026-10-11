@@ -1,7 +1,6 @@
 import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
-import type { Enemy } from "#src/models/enemy/Enemy";
-import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
+import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -23,13 +22,12 @@ import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPo
 import { rollOreDropCount } from "#src/services/gathering/rollOreDropCount";
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
-import { placeEnemyDrops } from "#src/services/interaction/placeEnemyDrops";
+import { placeDroppedItems } from "#src/services/interaction/placeDroppedItems";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -110,9 +108,9 @@ export const useWorldPickups = ({
     });
     return [...drops, ...gatherings];
   });
-  // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them
-  const placeWorldDrops = (enemy: Enemy, enemyDrops: EnemyDrops) => {
-    const drops = placeEnemyDrops(enemy, enemyDrops, placedDropCount);
+  // The items a source drops lie at its point, numbered on from the drops placed before them
+  const placeWorldDrops = (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => {
+    const drops = placeDroppedItems(source, droppedItems, placedDropCount);
     placedDropCount += drops.length;
     worldDrops.value = [...worldDrops.value, ...drops];
   };
@@ -171,13 +169,10 @@ export const useWorldPickups = ({
         oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value, [id, brokenShare]]);
         continue;
       }
-      const pieces = Array.from({ length: rollOreDropCount(random) }, (_value, index) => ({
-        count: 1,
-        id: [id, now.epochMilliseconds, index].join(ID_SEPARATOR),
-        itemId: kind,
-        position: { x: position.x, z: position.z },
-      }));
-      worldDrops.value = [...worldDrops.value, ...pieces];
+      placeWorldDrops(
+        { id, position },
+        Array.from({ length: rollOreDropCount(random) }, () => ({ count: 1, itemId: kind })),
+      );
       gatheringPlaceIdPickedAtMap.value = new Map([...gatheringPlaceIdPickedAtMap.value, [id, now]]);
       oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
     }
