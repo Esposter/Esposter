@@ -268,6 +268,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Traveler](/docs/genshin/kits/traveler)             | The Anemo form's attacks, Palm Vortex and Gust Surge                 |
 | [Venti](/docs/genshin/kits/venti)                   | Skyward Sonnet, Wind Domain and Stormeye                             |
 | [Wanderer](/docs/genshin/kits/wanderer)             | Hanega: Song of the Wind and Kyougen: Five Ceremonial Plays          |
+| [Wriothesley](/docs/genshin/kits/wriothesley)       | Darkgold Wolfbite and Icefang Rush                                   |
 | [Xiangling](/docs/genshin/kits/xiangling)           | Guoba, Pyronado and Oil Meets Fire                                   |
 | [Xiao](/docs/genshin/kits/xiao)                     | Lemniscatic Wind Cycling and Bane of All Evil                        |
 | [Xingqiu](/docs/genshin/kits/xingqiu)               | Fatal Rainscreen and Raincutter                                      |
