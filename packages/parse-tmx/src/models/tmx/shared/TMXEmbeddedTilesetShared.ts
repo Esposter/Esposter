@@ -2,8 +2,6 @@ import type { TMXBaseTilesetShared } from "#src/models/tmx/shared/TMXBaseTileset
 
 export interface TMXEmbeddedTilesetShared extends TMXBaseTilesetShared {
   columns: number;
-  imageheight: number;
-  imagewidth: number;
   margin?: number;
   name: string;
   spacing?: number;

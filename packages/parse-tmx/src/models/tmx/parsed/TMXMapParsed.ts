@@ -11,9 +11,4 @@ export class TMXMapParsed extends TMXMapShared {
   layers: (TMXGroupLayerParsed | TMXLayerParsed)[] = [];
   properties: TMXPropertiesParsed = [];
   tilesets: TMXTilesetParsed[] = [];
-
-  constructor(init?: Partial<TMXMapParsed>) {
-    super();
-    Object.assign(this, init);
-  }
 }

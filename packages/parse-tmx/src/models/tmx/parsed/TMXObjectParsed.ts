@@ -5,10 +5,8 @@ import type { TMXObjectShared } from "#src/models/tmx/shared/TMXObjectShared";
 
 export interface TMXObjectParsed extends TMXObjectShared {
   flips?: TMXFlipsParsed;
-  name: string;
   points?: [number, number][];
   properties?: TMXPropertiesParsed;
   shape: Shape;
   text?: string;
-  value: string;
 }

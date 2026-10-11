@@ -59,11 +59,13 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "@esposter/xml2js": "workspace:*"
+    "neverthrow": "catalog:",
+    "sax": "catalog:"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@types/sax": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

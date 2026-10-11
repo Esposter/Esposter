@@ -1,21 +1,17 @@
-import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTilesetNode";
-import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
-import type { TMXTilesetParsed } from "#src/models/tmx/parsed/TMXTilesetParsed";
-import type { TMXImageShared } from "#src/models/tmx/shared/TMXImageShared";
+import type { TMXEmbeddedTilesetParsed } from "#src/models/tmx/parsed/TMXEmbeddedTilesetParsed";
+import type { Result } from "neverthrow";
 
-import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { checkIsExternalTileset } from "#src/services/checkIsExternalTileset";
-import { parseTile } from "#src/services/parseTile";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TMXTagName } from "#src/models/tmx/TMXTagName";
+import { readTmxDocument } from "#src/services/readTmxDocument";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
-export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
-  if (checkIsExternalTileset(node.$)) return structuredClone(node.$);
-
-  const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
-  const imageNode = $$.find((childNode) => childNode["#name"] === TMXNodeType.Image);
-  if (!imageNode) throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);
-
-  const image = structuredClone(imageNode.$ as TMXImageShared);
-  const tiles = tile?.map((tileNode) => parseTile(tileNode)) ?? [];
-  return { ...$, image, tiles };
-};
+// A tileset file on its own, as Tiled writes an external tileset: the embedded tileset it holds, read without its map
+export const parseTileset = (xmlString: string): Result<TMXEmbeddedTilesetParsed, Error> =>
+  getResult(() => readTmxDocument(xmlString)).andThen((document) =>
+    getResult(() => {
+      const root = document.root;
+      if (root?.tag !== TMXTagName.Tileset)
+        throw new InvalidOperationError(Operation.Read, parseTileset.name, "has no embedded tileset root element");
+      return root.target;
+    }),
+  );

@@ -1,25 +1,21 @@
-import type { TMXDataNode } from "#src/models/tmx/node/TMXDataNode";
-import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTilesetNode";
+import type { TMXDataSource } from "#src/models/tmx/TMXDataSource";
 
 import { Compression } from "#src/models/Compression";
 import { Encoding } from "#src/models/Encoding";
-import { checkIsTMXEmbeddedTilesetNode } from "#src/services/checkIsTMXEmbeddedTilesetNode";
 import { getDecompressedBytes } from "#src/services/getDecompressedBytes";
 import { unpackTileBytes } from "#src/services/unpackTileBytes";
 import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 
-export const decodeTileData = async (nodeData: TMXDataNode | TMXEmbeddedTilesetNode): Promise<number[]> => {
-  // A tile layer written as one `<tile>` element per cell — the form Tiled deprecated in favour of the
-  // Encoded ones below, and still reads.
-  if (checkIsTMXEmbeddedTilesetNode(nodeData)) return nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
+// Every form the cells are written in decodes to one gid per cell
+export const decodeTileData = async (source: TMXDataSource): Promise<number[]> => {
+  const { compression, encoding, gids, text } = source;
+  // The form Tiled deprecated, one `<tile>` element per cell, has no encoding and is read as the gids it already holds
+  if (encoding === undefined) return gids;
 
-  const { $, _ } = nodeData;
-  const { compression, encoding } = $;
-  const layerData = normalizeString(_);
-
+  const data = normalizeString(text);
   switch (encoding) {
     case Encoding.Base64: {
-      const bytes = Uint8Array.fromBase64(layerData);
+      const bytes = Uint8Array.fromBase64(data);
       switch (compression) {
         case Compression.Gzip:
         case Compression.Zlib:
@@ -31,7 +27,7 @@ export const decodeTileData = async (nodeData: TMXDataNode | TMXEmbeddedTilesetN
       }
     }
     case Encoding.Csv:
-      return layerData.split(",").map(Number);
+      return data.split(",").map(Number);
     default:
       return exhaustiveGuard(encoding);
   }
