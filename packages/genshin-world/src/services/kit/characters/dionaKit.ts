@@ -13,9 +13,9 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
@@ -192,7 +192,7 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        const field = createKitField(combatant.characterId, body.position, {
+        castKitField(kitEffectState, combatant.characterId, body.position, {
           id: SIGNATURE_MIX_FIELD_ID,
           nextTickSeconds: SIGNATURE_MIX_HITMARK_FRAMES / 60 + SIGNATURE_MIX_TICK_SECONDS,
           onTick: (tick) =>
@@ -206,7 +206,6 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           secondsRemaining: signatureMixSeconds,
           tickIntervalSeconds: SIGNATURE_MIX_TICK_SECONDS,
         });
-        addKitEffect(kitEffectState, field);
         castKitSummon(kitEffectState, body, combatant, signatureMixTickHits, { secondsRemaining: signatureMixSeconds });
       },
       seconds: SIGNATURE_MIX_ANIMATION_FRAMES / 60,

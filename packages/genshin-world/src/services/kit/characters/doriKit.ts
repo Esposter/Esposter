@@ -9,9 +9,8 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Dori's proud skill groups, read at her talent level. The attack group holds her three strikes at 0, 1 and 2, the second
@@ -158,7 +157,7 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         // The connector ticks in the circle five metres ahead of the body, where the burst was cast, and each tick strikes
         // From that spot whatever the body does after
         const spot = createAheadBody(body, CONNECTOR_AHEAD_METRES);
-        const field = createKitField(combatant.characterId, spot.position, {
+        castKitField(kitEffectState, combatant.characterId, spot.position, {
           nextTickSeconds: CONNECTOR_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, spot, combatant, [connectorHit]);
@@ -167,7 +166,6 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           secondsRemaining: (CONNECTOR_LAST_TICK_FRAMES + 1) / 60,
           tickIntervalSeconds: CONNECTOR_TICK_INTERVAL_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, field);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

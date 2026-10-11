@@ -17,10 +17,8 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -333,11 +331,10 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           (combatant.constellationCount >= RAINBOW_UPON_THE_AZURE_SKY_CONSTELLATION
             ? RAINBOW_UPON_THE_AZURE_SKY_SECONDS
             : 0);
-        const raincutter: KitSummon = createKitSummon(body, combatant, [], {
+        const raincutter = castKitSummon(kitEffectState, body, combatant, [], {
           onNormalAttackStart: (context) => castSwordRain(raincutter, context),
           secondsRemaining: seconds + RAINCUTTER_EXTRA_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, raincutter);
         standRainSwords(kitEffectState, body, combatant, seconds, RAIN_SWORDS_BURST_FIRST_TICK_FRAMES / 60);
       },
       seconds: BURST_FRAMES / 60,

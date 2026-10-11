@@ -17,7 +17,6 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -198,11 +197,10 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       ],
       // The burst stands the Ooyoroi for its seconds, which the normal attacks of the character on the field set off
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        const ooyoroi: KitSummon = createKitSummon(body, combatant, [], {
+        const ooyoroi = castKitSummon(kitEffectState, body, combatant, [], {
           onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
           secondsRemaining: burstTalentMultiplier(THOMA_BURST_SECONDS_INDEX),
         });
-        addKitEffect(kitEffectState, ooyoroi);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

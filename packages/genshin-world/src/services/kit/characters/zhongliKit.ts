@@ -23,9 +23,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -243,11 +242,12 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       kind: "shield",
       secondsRemaining: shieldSeconds,
     };
-    const resistanceCut: KitSummon = createKitSummon(body, combatant, jadeShieldHits, {
+    addKitEffect(kitEffectState, shield);
+    const resistanceCut = castKitSummon(kitEffectState, body, combatant, jadeShieldHits, {
       isFollowing: true,
       secondsRemaining: shieldSeconds,
     });
-    const end = createKitField(characterId, body.position, {
+    const end = castKitField(kitEffectState, characterId, body.position, {
       nextTickSeconds: 0,
       onTick: ({ kitEffectState: tickKitEffectState }) => {
         if (shield.secondsRemaining > 0 && tickKitEffectState.effects.includes(shield)) return;
@@ -258,9 +258,6 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       secondsRemaining: shieldSeconds,
       tickIntervalSeconds: FIXED_STEP_SECONDS,
     });
-    addKitEffect(kitEffectState, shield);
-    addKitEffect(kitEffectState, resistanceCut);
-    addKitEffect(kitEffectState, end);
   };
   // A hold casts a Stone Stele unless the most stand, and its Jade Shield at its hitmark, through a task run then
   const castHold = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {

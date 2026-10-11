@@ -19,8 +19,8 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -238,7 +238,7 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           });
         const tickSeconds =
           (combatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_TICK_FRAMES : SOUNDWAVE_TICK_FRAMES) / 60;
-        const field = createKitField(combatant.characterId, position, {
+        const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: tickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
             castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [soundwaveHit]);
@@ -247,7 +247,6 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           secondsRemaining: getTalentMultiplier(talentMultiplierMap, ORORON_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
           tickIntervalSeconds: tickSeconds,
         });
-        addKitEffect(kitEffectState, field);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

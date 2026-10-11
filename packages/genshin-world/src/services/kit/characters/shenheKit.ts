@@ -13,10 +13,9 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -196,7 +195,7 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       // The field is cast ahead of the body and its DoT and buff are summoned there, so it stands where gcsim places it
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
-        const field = createKitField(combatant.characterId, centreBody.position, {
+        castKitField(kitEffectState, combatant.characterId, centreBody.position, {
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }, tickIndex) => {
             if (combatant.ascension >= BURST_ASCENSION)
@@ -215,7 +214,6 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           secondsRemaining: burstDurationSeconds + BURST_START_FRAMES / 60 + 0.1,
           tickIntervalSeconds: fieldTickIntervalSeconds,
         });
-        addKitEffect(kitEffectState, field);
       },
       seconds: BURST_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

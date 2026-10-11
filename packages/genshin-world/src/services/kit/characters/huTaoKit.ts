@@ -14,7 +14,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
@@ -286,10 +286,13 @@ export const createHuTaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Blood Blossom's tick strikes the enemy it is on
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
-      const tick = createKitSummon({ facing: 0, height: 0, position: event.enemy.position }, combatant, [
-        bloodBlossomHit,
-      ]);
-      addKitEffect(kitEffectState, { ...tick, target: event.enemy });
+      castKitSummon(
+        kitEffectState,
+        { facing: 0, height: 0, position: event.enemy.position },
+        combatant,
+        [bloodBlossomHit],
+        { target: event.enemy },
+      );
     },
     plungeCollision: {
       hitArea: createFanReach(360, 1),

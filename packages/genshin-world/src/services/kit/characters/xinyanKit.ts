@@ -20,9 +20,9 @@ import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -193,7 +193,7 @@ const setShield = (
     if (effect.kind === "field" && effect.id === SHIELD_DOT_FIELD_ID) effect.secondsRemaining = 0;
   const centre = { x: body.position.x, z: body.position.z };
   const shieldDotHit = createShieldDotHit(talentMultiplierMap);
-  const dotField = createKitField(characterId, centre, {
+  castKitField(kitEffectState, characterId, centre, {
     id: SHIELD_DOT_FIELD_ID,
     nextTickSeconds: SHIELD_DOT_INTERVAL_SECONDS,
     onTick: ({ kitEffectState: tickState }) => {
@@ -205,7 +205,6 @@ const setShield = (
     secondsRemaining: shieldSeconds + FIELD_LINGER_SECONDS,
     tickIntervalSeconds: SHIELD_DOT_INTERVAL_SECONDS,
   });
-  addKitEffect(kitEffectState, dotField);
 };
 
 export const XINYAN_CHARACTER_ID = 10_000_044;

@@ -16,11 +16,10 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { createKitField } from "#src/services/kit/effects/createKitField";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -206,7 +205,7 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         const secondsRemaining = durationSeconds + BURST_LAST_TICK_MARGIN_FRAMES / 60 + FIELD_LINGER_SECONDS;
         let absorbedElement: Element | undefined;
         const centre = { x: centreBody.position.x, z: centreBody.position.z };
-        const tickField = createKitField(combatant.characterId, centre, {
+        castKitField(kitEffectState, combatant.characterId, centre, {
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickState }) => {
             castKitSummon(tickState, centreBody, combatant, [burstTickHit]);
@@ -216,7 +215,7 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           secondsRemaining,
           tickIntervalSeconds: BURST_TICK_INTERVAL_FRAMES / 60,
         });
-        const absorbField = createKitField(combatant.characterId, centre, {
+        castKitField(kitEffectState, combatant.characterId, centre, {
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap, kitEffectState: tickState, party }) => {
             if (absorbedElement !== undefined) return;
@@ -234,8 +233,6 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           secondsRemaining,
           tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
         });
-        addKitEffect(kitEffectState, tickField);
-        addKitEffect(kitEffectState, absorbField);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
