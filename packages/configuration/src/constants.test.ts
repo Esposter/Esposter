@@ -32,7 +32,7 @@ describe("nonSourceSuffixes", () => {
   // A recursive suffix glob and nothing else. `${configDir}/*.config.ts` excludes one root-level file and
   // `${configDir}/scripts/**/*.ts` a whole directory, so neither is a claim about what a non-source file is, and
   // Matching them here would make this assert the rest of an exclude list it has no opinion on.
-  const NON_SOURCE_GLOB_REGEX = /\*\*\/\*(?<suffix>\.[\w-]+\.ts)$/u;
+  const NON_SOURCE_GLOB_REGEX = /\*\*\/\*(?<suffix>(?:\.[\w-]+)+\.ts)$/u;
 
   test("are the suffixes the build program excludes", () => {
     expect.hasAssertions();
