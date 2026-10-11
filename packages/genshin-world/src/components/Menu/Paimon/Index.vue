@@ -45,7 +45,8 @@ const {
 const emit = defineEmits<{ close: []; open: [screenKind: TitledScreenKind]; quit: []; toggleWorldLevel: [] }>();
 const backButton = useTemplateRef("backButton");
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
-// The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it
+// The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
+// Behind it is inert until it closes, so focus stays in the dialog
 const isWorldLevelDialogOpen = ref(false);
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
@@ -67,76 +68,84 @@ onMounted(() => {
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
   >
-    <div class="side-bar" />
-    <button
-      ref="backButton"
-      class="back"
-      :aria-label="gameText[GameTextKey.Back]"
-      type="button"
-      @click="emit('close')"
-    />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
-    <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
+    <div class="menu" :inert="isWorldLevelDialogOpen">
+      <div class="side-bar" />
+      <button
+        ref="backButton"
+        class="back"
+        :aria-label="gameText[GameTextKey.Back]"
+        type="button"
+        @click="emit('close')"
+      />
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
+      <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
+        <button
+          class="side-entry"
+          :aria-label="gameText[ScreenKindGameTextKeyMap[screenKind]]"
+          :disabled="!checkIsBuilt(screenKind)"
+          :style="getMenuGlyphStyle(MenuFrameGlyphMap[icon])"
+          type="button"
+          @click="emit('open', screenKind)"
+        />
+        <MenuGlyph :class="{ unbuilt: !checkIsBuilt(screenKind) }" :glyph="MenuFrameGlyphMap[icon]" />
+      </template>
       <button
         class="side-entry"
-        :aria-label="gameText[ScreenKindGameTextKeyMap[screenKind]]"
-        :disabled="!checkIsBuilt(screenKind)"
-        :style="getMenuGlyphStyle(MenuFrameGlyphMap[icon])"
+        :aria-label="gameText[GameTextKey.QuitGame]"
+        :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
         type="button"
-        @click="emit('open', screenKind)"
+        @click="isExitPrompted = true"
       />
-      <MenuGlyph :class="{ unbuilt: !checkIsBuilt(screenKind) }" :glyph="MenuFrameGlyphMap[icon]" />
-    </template>
-    <button
-      class="side-entry"
-      :aria-label="gameText[GameTextKey.QuitGame]"
-      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
-      type="button"
-      @click="isExitPrompted = true"
-    />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
-    <div class="panel" />
-    <div class="card" />
-    <div class="avatar" />
-    <div class="edit" />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
-    <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
-    <div class="uid-pill" />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
-    <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
-    <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
-    <p class="rank-title value">{{ adventureRank }}</p>
-    <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
-    <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
-    <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
-    <p class="world-level value">{{ worldLevel }}</p>
-    <button
-      ref="worldLevelInfoButton"
-      class="info"
-      :aria-label="gameText[GameTextKey.WorldLevel]"
-      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
-      type="button"
-      @click="isWorldLevelDialogOpen = true"
-    />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
-    <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
-    <div class="contents">
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
+      <div class="panel" />
+      <div class="card" />
+      <div class="avatar" />
+      <div class="edit" />
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
+      <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
+      <div class="uid-pill" />
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
+      <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
+      <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
+      <p class="rank-title value">{{ adventureRank }}</p>
+      <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
+      <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
+      <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
+      <p class="world-level value">{{ worldLevel }}</p>
       <button
-        v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
-        :key="screenKind"
-        class="entry"
-        :disabled="!checkIsBuilt(screenKind)"
+        ref="worldLevelInfoButton"
+        class="info"
+        :aria-label="gameText[GameTextKey.WorldLevel]"
+        :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
         type="button"
-        @click="emit('open', screenKind)"
-      >
-        <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
-        <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-      </button>
-      <button v-for="{ icon, labelKey } of PAIMON_MENU_LINKS" :key="labelKey" class="entry link" disabled type="button">
-        <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
-        <span class="label">{{ gameText[labelKey] }}</span>
-      </button>
+        @click="isWorldLevelDialogOpen = true"
+      />
+      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
+      <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
+      <div class="contents">
+        <button
+          v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
+          :key="screenKind"
+          class="entry"
+          :disabled="!checkIsBuilt(screenKind)"
+          type="button"
+          @click="emit('open', screenKind)"
+        >
+          <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+          <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
+        </button>
+        <button
+          v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
+          :key="labelKey"
+          class="entry link"
+          disabled
+          type="button"
+        >
+          <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+          <span class="label">{{ gameText[labelKey] }}</span>
+        </button>
+      </div>
     </div>
     <MenuWorldLevelDialog
       v-if="isWorldLevelDialogOpen"
@@ -162,6 +171,11 @@ onMounted(() => {
 .paimon-menu {
   --reference-pixel: calc(var(--unit) * 0.75);
   color: #ece5d7;
+}
+
+/* The menu's own pieces, placed against the screen as if the wrapper that makes them inert under the dialog were not there */
+.menu {
+  display: contents;
 }
 
 .side-bar {
