@@ -6,6 +6,8 @@ export const MAX_EMOJI_SUGGESTIONS = 20;
 export const MAX_REACTION_HOVER_NAMES = 3;
 // Two full rows of the picker grid
 export const MAX_RECENT_EMOJIS = 18;
+// The picker grid's columns, which its arrow keys walk a row by
+export const EMOJI_GRID_COLUMN_COUNT = 8;
 // Discord pins its recents category first and calls it this; the clock is the icon it uses for it
 export const RECENT_EMOJI_CATEGORY_ICON = "i-mdi:clock-outline";
 export const RECENT_EMOJI_CATEGORY_TITLE = "Frequently Used";
