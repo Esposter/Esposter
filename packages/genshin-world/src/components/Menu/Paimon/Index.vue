@@ -6,7 +6,15 @@ import MenuExit from "#src/components/Menu/Exit/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuWorldLevelDialog from "#src/components/Menu/WorldLevelDialog/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
-import { PAIMON_MENU_CONTENTS, PAIMON_MENU_LINKS, PAIMON_MENU_SIDE_BAR } from "#src/services/menu/constants";
+import {
+  PAIMON_MENU_CLOSE_MS,
+  PAIMON_MENU_CONTENTS,
+  PAIMON_MENU_EASING,
+  PAIMON_MENU_FADE_MS,
+  PAIMON_MENU_LINKS,
+  PAIMON_MENU_PANEL_DELAY_MS,
+  PAIMON_MENU_SIDE_BAR,
+} from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuEntryGlyphMap } from "#src/services/menu/MenuEntryGlyphMap";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
@@ -50,9 +58,20 @@ const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 const isWorldLevelDialogOpen = ref(false);
 // Quit Game opens the prompt over the world in place of the menu, and only its own Continue or exit ends it
 const isExitPrompted = ref(false);
+// Back plays the menu's closing before it closes the world, the side bar and the panel fading out as they came in
+const isClosing = ref(false);
+let closeTimeout: ReturnType<typeof setTimeout> | undefined;
+const closeMenu = () => {
+  if (isClosing.value) return;
+  isClosing.value = true;
+  closeTimeout = setTimeout(() => emit("close"), PAIMON_MENU_CLOSE_MS);
+};
 // The menu is a dialog over the world, so focus starts inside it, on its way back
 onMounted(() => {
   backButton.value?.focus();
+});
+onBeforeUnmount(() => {
+  clearTimeout(closeTimeout);
 });
 </script>
 
@@ -63,20 +82,20 @@ onMounted(() => {
        Yet is drawn disabled, and the links out to web pages are drawn disabled whole -->
   <GameScreen
     v-if="!isExitPrompted"
+    :class="{ closing: isClosing }"
     class="paimon-menu"
     role="dialog"
     aria-modal="true"
     :aria-label="gameText[GameTextKey.Paimon]"
+    :style="{
+      '--menu-ease': PAIMON_MENU_EASING,
+      '--menu-fade': `${PAIMON_MENU_FADE_MS}ms`,
+      '--menu-panel-delay': `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
+    }"
   >
     <div class="menu" :inert="isWorldLevelDialogOpen">
       <div class="side-bar" />
-      <button
-        ref="backButton"
-        class="back"
-        :aria-label="gameText[GameTextKey.Back]"
-        type="button"
-        @click="emit('close')"
-      />
+      <button ref="backButton" class="back" :aria-label="gameText[GameTextKey.Back]" type="button" @click="closeMenu" />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <template v-for="{ icon, screenKind } of PAIMON_MENU_SIDE_BAR" :key="screenKind">
         <button
@@ -97,54 +116,57 @@ onMounted(() => {
         @click="isExitPrompted = true"
       />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Quit]" />
-      <div class="panel" />
-      <div class="card" />
-      <div class="avatar" />
-      <div class="edit" />
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
-      <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
-      <div class="uid-pill" />
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
-      <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
-      <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
-      <p class="rank-title value">{{ adventureRank }}</p>
-      <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
-      <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
-      <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
-      <p class="world-level value">{{ worldLevel }}</p>
-      <button
-        ref="worldLevelInfoButton"
-        class="info"
-        :aria-label="gameText[GameTextKey.WorldLevel]"
-        :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
-        type="button"
-        @click="isWorldLevelDialogOpen = true"
-      />
-      <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
-      <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
-      <div class="contents">
+      <!-- The panel and everything on it, one layer so it is revealed on its own, after the side bar -->
+      <div class="panel-layer">
+        <div class="panel" />
+        <div class="card" />
+        <div class="avatar" />
+        <div class="edit" />
+        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Edit]" class="edit-glyph" />
+        <p class="uid-label">{{ gameText[GameTextKey.Uid] }}</p>
+        <div class="uid-pill" />
+        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Copy]" class="copy-glyph" />
+        <button class="copy" disabled type="button">{{ gameText[GameTextKey.Copy] }}</button>
+        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.ExpBadge]" />
+        <p class="rank-title">{{ gameText[GameTextKey.AdventureRank] }}</p>
+        <p class="rank-title value">{{ adventureRank }}</p>
+        <p class="exp-label">{{ gameText[GameTextKey.AdventureExp] }}</p>
+        <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
+        <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
+        <p class="world-level value">{{ worldLevel }}</p>
         <button
-          v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
-          :key="screenKind"
-          class="entry"
-          :disabled="!checkIsBuilt(screenKind)"
+          ref="worldLevelInfoButton"
+          class="info"
+          :aria-label="gameText[GameTextKey.WorldLevel]"
+          :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info])"
           type="button"
-          @click="emit('open', screenKind)"
-        >
-          <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
-          <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-        </button>
-        <button
-          v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
-          :key="labelKey"
-          class="entry link"
-          disabled
-          type="button"
-        >
-          <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
-          <span class="label">{{ gameText[labelKey] }}</span>
-        </button>
+          @click="isWorldLevelDialogOpen = true"
+        />
+        <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
+        <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
+        <div class="contents">
+          <button
+            v-for="{ icon, screenKind } of PAIMON_MENU_CONTENTS"
+            :key="screenKind"
+            class="entry"
+            :disabled="!checkIsBuilt(screenKind)"
+            type="button"
+            @click="emit('open', screenKind)"
+          >
+            <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+            <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
+          </button>
+          <button
+            v-for="{ icon, labelKey } of PAIMON_MENU_LINKS"
+            :key="labelKey"
+            class="entry link"
+            disabled
+            type="button"
+          >
+            <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
+            <span class="label">{{ gameText[labelKey] }}</span>
+          </button>
+        </div>
       </div>
     </div>
     <MenuWorldLevelDialog
@@ -176,6 +198,43 @@ onMounted(() => {
 /* The menu's own pieces, placed against the screen as if the wrapper that makes them inert under the dialog were not there */
 .menu {
   display: contents;
+}
+
+/* The opening fades the side bar in and the panel in once PAIMON_MENU_PANEL_DELAY_MS has passed; closing runs the same
+   Two in reverse, the panel first. The layer takes no pointer, its children do, so the side bar under it still answers */
+.panel-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: menu-fade-in var(--menu-fade) var(--menu-ease) var(--menu-panel-delay) both;
+}
+
+.panel-layer > * {
+  pointer-events: auto;
+}
+
+.menu > :not(.panel-layer) {
+  animation: menu-fade-in var(--menu-fade) var(--menu-ease) both;
+}
+
+.closing .panel-layer {
+  animation: menu-fade-out var(--menu-fade) var(--menu-ease) both;
+}
+
+.closing .menu > :not(.panel-layer) {
+  animation: menu-fade-out var(--menu-fade) var(--menu-ease) var(--menu-panel-delay) both;
+}
+
+@keyframes menu-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-fade-out {
+  to {
+    opacity: 0;
+  }
 }
 
 .side-bar {
