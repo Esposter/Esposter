@@ -11,6 +11,10 @@ The charged attack is provisional. gcsim gives Freminet no charged attack, so it
 
 Not built: Pressurized Floe's Pers Time stance, which holds the frost of each strike and the stacks it gains, and the detonation that replaces the skill on its next press; Spiritbreath Thorn, which hits at 62 frames, past the skill's animation; Shadowhunter's Ambush's stalking state, which lowers the skill's cooldown to three seconds and resets it; and his ascension and constellation passives. The fandom wiki was out of reach for the elemental gauge of each hit, so no gauge is set.
 
+## Decisions
+
+- **Freminet's charged attack is provisional at 42 frames, in a circle of radius 2.4 round the target, for 40 stamina.** gcsim gives him none ("action charge not implemented"), so `freminetKit.ts` takes the fourth strike's hitmark, animation and reach, the table's attack multiplier at index 4 and its stamina at index 6; a recording of the attack showing another timing, reach or stamina would replace them.
+
 ## Key files
 
 | File                                                                | Role                                                                                                                                      |

@@ -7,6 +7,10 @@ description: Layla's kit as built, with her strikes, charged attack, plunges, Ni
 
 Layla's kit is one module, `createLaylaKit`, on avatar 10000074: three strikes, a charged attack of two slashes, a collision and two plunges, Nights of Formal Focus with its Cryo hit and the shield it sets on the team, and Starlight Slug's field, which strikes from the body's place every 1.5 seconds for twelve seconds. Her multipliers are read from proud skill groups 7431, 7432 and 7439; the charged attack's stamina, the skill's cooldown and shield, and the burst's cooldown and energy cost are read from the same groups. The burst's strike is its share of her Max HP as flat damage, which her talent multiplier does not scale. Starlight Slug's tick reaches every enemy within 13.5 metres of the body, where gcsim picks the closest one, which overstates a tick against several enemies. Her Night Stars are not built, nor are her Ascension and Constellation passives. Her plunges take Bennett's timings and poise.
 
+## Decisions
+
+- **Layla's plunges take Bennett's timings and poise.** Her gcsim folder has no plunge file, so her collision, low and high plunge land at Bennett's frames (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `laylaKit.ts` writes them; her animation showing otherwise would move them.
+
 ## Key files
 
 | File                                                             | Role                                                                                                                                                            |

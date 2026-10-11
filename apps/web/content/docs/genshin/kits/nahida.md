@@ -7,6 +7,10 @@ description: Nahida's kit as built, with her strikes, charged attack, plunges, A
 
 Nahida's kit is one module, `createNahidaKit`, on avatar 10000073: four strikes, a charged attack, a collision and two plunges, and All Schemes to Know with its press and its full hold, which strike the enemies within their reach as Dendro. Her multipliers are read from proud skill groups 7331, 7332 and 7339; the charged attack's stamina, the skill's cooldowns, and the burst's cooldown and energy cost are read from the same groups. Her hold is gcsim's full hold of 300 frames, and a shorter hold has no level of its own, so its release plays the press. Illusory Heart's field is not built, as it deals no damage of its own and its buffs and Tri-Karma's cooldown wait on the kit's party effects. Tri-Karma Purification, which strikes on each reaction of an enemy marked by her skill, is not built, and neither are her Ascension and Constellation passives. Bennett's timings and poise are borrowed for the plunges.
 
+## Decisions
+
+- **Nahida's plunges take Bennett's timings and poise.** Her gcsim folder has no plunge file, so her collision, low and high plunge land at Bennett's frames (36 and 38 frames for the low and high hits, 100 and 150 poise) with her own multipliers, as `nahidaKit.ts` writes them; her animation showing otherwise would move them.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                     |
