@@ -7,8 +7,6 @@ description: Nod-Krai's region: its base ground, renderers, landmarks, camera, s
 
 ## Queue
 
-- [ ] `[page]` {nod-krai-every-renderer} needs game-exports, parity-page — **Nod-Krai: every renderer claimed.** `pnpm -C scripts genshin:parity passes nod-krai --pass Inventory`. Reads the witness and the `WorldScreen` fixture's `witnessComponents["nod-krai"]` claims: the families (`packages/genshin-world/src/services/nod-krai/NodKraiPartFamilyMeshRegexMap.ts`) and what is not drawn yet (`packages/genshin-world/src/services/nod-krai/NodKraiUndrawnMeshRegexMap.ts`), which claim each renderer of the capital's witness once when run over its names offline. Writes `scripts/src/services/genshinParity/passes/snapshots/nod-krai.snapshot.md`. Bar: renderers unclaimed 0.
-
 ## Waiting
 
 - [ ] `[cpu]` {nod-krai-landmarks-meshes} needs game-exports — **Nod-Krai: the landmarks' meshes named from the extraction.** Reads `~/Esposter/genshin-parity/extracted/nod-krai/` and the landmarks of `nasha-town-location` in `ParityReferenceMap` (their pixels), read off the extracted meshes' names and positions near each landmark, and written as the nod-krai entries of `DerivedAssetLandmarkMap` (each a `mesh` and its `share`). Waits on the prefab whose pieces the layout dumps name "Area_Ndkl_Build_NXZ_Paota_A_01" and "_03" to "_08" being named and rooted: they are children of one prefab in block 08678580 that no OBJ exports, its one exported piece ("Area_Ndkl_Build_NXZ_Paota_A_02") a ring 6.8 metres across, and no exported mesh matches the central tower's plinth, collar or column edges with confidence. Until then `DerivedAssetLandmarkMap[nod-krai]` stays empty.
