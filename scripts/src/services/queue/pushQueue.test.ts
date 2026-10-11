@@ -92,16 +92,15 @@ git -C ../clone commit --quiet --message ${path}`);
     expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
   });
 
-  test("leaves a commit that landed while the push ran on the branch, for the push it queued", async () => {
+  test("carries a commit that landed while the push ran onto the synced branch", async () => {
     expect.hasAssertions();
 
     setupMovedRemote("a", "b");
-    const head = readSha("HEAD");
     writeFileSync(join(getCwd(), ".gitignore"), "a");
     landCommit("landed", "landed");
 
     await expect(pushQueue(getCwd())).resolves.toBe(QueuePushOutcome.Pushed);
-    expect(readSha("HEAD~1")).toBe(head);
+    expect(readSha("HEAD~1")).toBe(readSha(remoteQueueRef));
     expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("landed\n");
     expect(readFileSync(join(getCwd(), ".gitignore"), "utf8")).toBe("a");
   });
