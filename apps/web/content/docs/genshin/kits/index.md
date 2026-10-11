@@ -226,7 +226,6 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Charlotte](/docs/genshin/kits/charlotte)           | Framing's press, its Snappy Silhouette marks, Still Photo and Kamera |
 | [Chevreuse](/docs/genshin/kits/chevreuse)           | Rapid Interdiction Fire's hold and Ring of Bursting Grenades         |
 | [Chiori](/docs/genshin/kits/chiori)                 | Fluttering Hasode's Tamoto doll and Hiyoku: Twin Blades              |
-| [Sigewinne](/docs/genshin/kits/sigewinne)           | Bolstering Bubblebalm's bubbles and Super Saturated Syringing        |
 | [Chongyun](/docs/genshin/kits/chongyun)             | Layered Frost's field and Rimechaser Blade                           |
 | [Collei](/docs/genshin/kits/collei)                 | Floral Brush and Trump-Card Kitty's explosion and leap               |
 | [Cyno](/docs/genshin/kits/cyno)                     | Chasmic Soulfarer and Pactsworn Pathclearer's Mortuary Rite          |
@@ -238,6 +237,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Faruzan](/docs/genshin/kits/faruzan)               | Wind Realm of Nasamjnin and the Dazzling Polyhedron                  |
 | [Fischl](/docs/genshin/kits/fischl)                 | Oz, Midnight Phantasmagoria and Thundering Retribution               |
 | [Freminet](/docs/genshin/kits/freminet)             | Pressurized Floe's Upward Thrust and Shadowhunter's Ambush           |
+| [Gaming](/docs/genshin/kits/gaming)                 | Stellar Rend, Bestial Ascent and Suanni's Gilded Dance               |
 | [Ganyu](/docs/genshin/kits/ganyu)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                     |
 | [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                            |
 | [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris              |
