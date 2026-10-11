@@ -1,0 +1,31 @@
+{
+  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 } },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.0.isBlunt": { "source": "Wiki" },
+  "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 36 },
+  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.cancelFrames": { "cause": "Unclassified", "value": 26 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
+  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "skill.hits.0.poiseDamage": { "cause": "Unclassified", "value": 150 },
+  "skillHolds.length": { "cause": "Unclassified", "value": 1 },
+  "skillHolds.0.action.cancelFrames": { "cause": "Unclassified", "value": 113 },
+  "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
+  "skillHolds.0.action.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.3 }
+  },
+  "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Water" },
+  "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 91 },
+  "skillHolds.0.action.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "skillHolds.0.action.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unclassified", "value": 300 },
+  "normalAttacks.0.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.1.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.2.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "normalAttacks.3.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+}

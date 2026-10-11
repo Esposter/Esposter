@@ -1,0 +1,73 @@
+{
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 3.490658503988659, "height": 2, "radius": 3.2 }
+  },
+  "chargedAttack.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 180 },
+  "normalAttacks.0.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 2.6179938779914944, "height": 2, "radius": 1.9 }
+  },
+  "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 37.62 },
+  "normalAttacks.0.hits.1.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1048349392520045 }
+  },
+  "normalAttacks.0.hits.1.convertedPoiseDamage": { "cause": "Unclassified", "value": 37.62 },
+  "normalAttacks.0.hits.1.multiplier": { "source": "Tables" },
+  "normalAttacks.1.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.8 }
+  },
+  "normalAttacks.1.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 77.64 },
+  "normalAttacks.2.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 5.235987755982989, "height": 2, "radius": 2.9000000000000004 }
+  },
+  "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 93.48 },
+  "normalAttacks.3.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.505538513813742 }
+  },
+  "normalAttacks.3.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.7055385138137416 }
+  },
+  "normalAttacks.3.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 51.42 },
+  "normalAttacks.3.hits.1.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 5.585053606381854, "height": 2, "radius": 2.8 }
+  },
+  "normalAttacks.3.hits.1.convertedPoiseDamage": { "cause": "Unclassified", "value": 51.42 },
+  "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
+  "normalAttacks.4.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.310966626228661 }
+  },
+  "normalAttacks.4.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 97.56 },
+  "normalAttacks.5.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
+  },
+  "normalAttacks.5.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 130.68 },
+  "plungeCollision.convertedPoiseDamage": { "cause": "Unclassified", "value": 37.5 },
+  "plungeCollision.element": { "cause": "Unclassified", "value": "Wind" },
+  "plunges.high.cancelFrames": { "cause": "Unclassified", "value": 66 },
+  "plunges.high.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
+  },
+  "plunges.high.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 225 },
+  "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
+  "plunges.low.cancelFrames": { "cause": "Unclassified", "value": 62 },
+  "plunges.low.hits.0.convertedArea": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "plunges.low.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 150 },
+  "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "skillCharges": { "cause": "Unclassified", "value": 2 },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" }
+}

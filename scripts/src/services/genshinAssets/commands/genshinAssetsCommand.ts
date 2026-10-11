@@ -28,6 +28,7 @@ import { imaginariumCommand } from "#src/services/genshinAssets/commands/imagina
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
+import { kitsCommand } from "#src/services/genshinAssets/commands/kitsCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
@@ -94,6 +95,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     palette: paletteCommand,
     friendship: friendshipCommand,
     stats: statsCommand,
+    kits: kitsCommand,
     enemies: enemiesCommand,
     items: itemsCommand,
     outcrops: leyLineCommand,

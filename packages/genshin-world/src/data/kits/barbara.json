@@ -1,0 +1,22 @@
+{
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.cancelFrames": { "cause": "DiffersFromSource", "value": 75 },
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 41 },
+  "normalAttacks.0.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.1.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.2.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
+  },
+  "normalAttacks.3.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
+  },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+}

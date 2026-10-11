@@ -1,0 +1,6 @@
+{
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource" },
+  "plunges.high.hits.0.isBlunt": { "cause": "DiffersFromSource" },
+  "burst.hits.0.internalCooldownTag": { "source": "Wiki" }
+}

@@ -1,0 +1,7 @@
+{
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
+  "normalAttacks.4.hits.1.multiplier": { "source": "Tables" },
+  "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
+}
