@@ -4,7 +4,7 @@ import type { Editor, EditorConfig } from "grapesjs";
 import { usePlugin } from "grapesjs";
 import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
 import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
-import grapesJSCustomCode from "grapesjs-custom-code";
+import { customCodePlugin } from "@/services/webpageEditor/plugins/customCodePlugin";
 import grapesJSParserPostcss from "grapesjs-parser-postcss";
 import grapesJSPluginExport from "grapesjs-plugin-export";
 import grapesJSPluginForms from "grapesjs-plugin-forms";
@@ -25,7 +25,7 @@ export const WebpageEditorPlugins: EditorConfig["plugins"] = [
   countdownPlugin,
   grapesJSPluginExport,
   usePlugin(grapesJSTabs, { tabsBlock: { category: "Extra" } }),
-  grapesJSCustomCode,
+  customCodePlugin,
   grapesJSTouch,
   grapesJSParserPostcss,
   grapesJSTooltip,

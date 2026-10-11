@@ -139,7 +139,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `fast-check`                            | —     | Keep — engine     | property testing: arbitraries and shrinking are the product                                            |
 | `fflate`                                | —     | Keep — spec       | the zip format, which `CompressionStream` does not write                                               |
 | `grapesjs`                              | —     | Keep — engine     | the page-builder engine                                                                                |
-| `grapesjs-custom-code`                  | —     | Absorb — own code | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
 | `grapesjs-mjml`                         | —     | Keep — engine     | the MJML compiler's integration                                                                        |
 | `grapesjs-parser-postcss`               | —     | Keep — engine     | the PostCSS parser's integration                                                                       |
 | `grapesjs-plugin-export`                | —     | Keep — engine     | the exporter (the admission doc's large plugins)                                                       |
