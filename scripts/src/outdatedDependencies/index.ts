@@ -17,6 +17,7 @@ import { printHeldDependencies } from "#src/services/outdatedDependencies/print/
 import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";
 import { printOutdatedDependencies } from "#src/services/outdatedDependencies/print/printOutdatedDependencies";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
+import { printSupersededRepositories } from "#src/services/outdatedDependencies/print/printSupersededRepositories";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
 import { printUnpinnedReferences } from "#src/services/outdatedDependencies/print/printUnpinnedReferences";
 import { DOCKERFILE, GITHUB_DIRECTORY } from "#src/services/outdatedDependencies/reference/constants";
@@ -26,6 +27,7 @@ import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/ge
 import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
 import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
+import { readSupersededRepositories } from "#src/services/outdatedDependencies/supersession/readSupersededRepositories";
 import { getOverrideEntries } from "#src/services/outdatedDependencies/workspace/getOverrideEntries";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
@@ -112,7 +114,7 @@ printUnpinnedReferences(unpinnedReferences, color);
 const distTagCatalogEntries = applyDistTags(catalogEntries, lockCatalogVersions);
 const followedTagEntries = getFollowedTagEntries(distTagCatalogEntries, renovateRules);
 const followedPackages = new Set(followedTagEntries.map((entry) => getRegistryPackageName(entry)));
-const [regularChecks, registryChecks, referenceChecks] = await Promise.all([
+const [regularChecks, registryChecks, referenceChecks, supersession] = await Promise.all([
   regularChecksPromise,
   readRegistryOutdatedDependencies([
     ...applyDistTags(configDependencyEntries, lockConfigDependencyVersions),
@@ -126,6 +128,8 @@ const [regularChecks, registryChecks, referenceChecks] = await Promise.all([
   // Each is a different repository or image, and each costs a whole handshake (`git ls-remote`, a registry token),
   // So all of them run at once rather than queueing behind the npm registry's bound
   readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
+  // A repository's rename or archive is GitHub's word rather than the registry's, so it is read beside them
+  readSupersededRepositories(catalogEntries),
 ]);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
 const { held, outdated } = partitionHeldDependencies(
@@ -139,11 +143,12 @@ const { held, outdated } = partitionHeldDependencies(
   ],
   renovateRules,
 );
-const errors = [...regularChecks.errors, ...registryChecks.errors, ...referenceChecks.errors];
+const errors = [...regularChecks.errors, ...registryChecks.errors, ...referenceChecks.errors, ...supersession.errors];
 const hasBlockingIssues =
   uncatalogedManifestDependencies.length > 0 || unpinnedReferences.length > 0 || errors.length > 0;
 printOutdatedDependencies(outdated, color);
 printHeldDependencies(held, color);
 printRegistryErrors(errors, color);
+printSupersededRepositories(supersession.repositories, color);
 printExecutionTime(startedAt);
 if (hasBlockingIssues) process.exitCode = 1;
