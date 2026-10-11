@@ -5,11 +5,12 @@ import { defineNuxtModule, useLogger } from "nuxt/kit";
 const BUILD_CACHE_SCRIPT_PATH = ".agents/skills/throughput/scripts/build-cached.sh";
 const logger = useLogger("build-packages");
 
-// Under `nuxt dev` the app's workspace packages are brought up to date once, at start, through the build cache, and no
-// Tsdown watcher runs: every package edit by any session sharing the checkout used to rebuild and reload the page, and
-// Competed with the agents for CPU and memory. A start with nothing changed restores every `dist` instantly, and a
-// Package edit reaches the page on the next start. The build starts in `setup` and is awaited at `build:before`, so it
-// Overlaps Nuxt's own app preparation instead of running ahead of it; a failed build is logged and does not stop Nuxt.
+// Under `nuxt dev` the app's workspace packages are brought up to date once, at start, through the build cache.
+// No tsdown watcher runs: every package edit by any session sharing the checkout used to rebuild and reload the page.
+// That competed with the agents for CPU and memory.
+// A start with nothing changed restores every `dist` instantly, and a package edit reaches the page on the next start.
+// The build starts in `setup` and is awaited at `build:before`, so it overlaps Nuxt's own app preparation.
+// A failed build is logged and does not stop Nuxt.
 export default defineNuxtModule({
   meta: { name: "build-packages" },
   setup: (_options, nuxt) => {

@@ -9,6 +9,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 const MACHINE_STATE_STALE_MS = 3 * 60 * 1000;
+// oxlint-disable-next-line naming/no-site-name-literal -- the pulse is a plugin script shipped without @esposter/shared, so the folder is written out
 const MACHINE_DIRECTORY = join(homedir(), ".esposter", "machine");
 const STATE_PATH = join(MACHINE_DIRECTORY, "state.json");
 const LOG_PATH = join(MACHINE_DIRECTORY, "watch.log");
@@ -39,8 +40,10 @@ const startWatcher = (repositoryRoot) => {
   closeSync(logDescriptor);
 };
 
+// oxlint-disable-next-line no-restricted-properties -- the hook passes the repository root as its one argument, and a plugin ships without citty
 const [repositoryRoot] = process.argv.slice(2);
 if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, WATCHER_SCRIPT))) {
+  // oxlint-disable-next-line no-restricted-properties -- the state's `at` is compared as the string it was written as, so no date is revived
   const state = existsSync(STATE_PATH) ? JSON.parse(readFileSync(STATE_PATH, "utf8")) : undefined;
   const isStale = state === undefined || Date.now() - Date.parse(state.at) >= MACHINE_STATE_STALE_MS;
   if (state === undefined || !isProcessRunning(state.processId)) startWatcher(repositoryRoot);

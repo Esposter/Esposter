@@ -11,7 +11,7 @@ describe(parseSearchCandidates, () => {
     fps: 60,
     height: 1080,
     title: "Pick up items",
-    upload_date: "20240501",
+    upload_date: "19700101",
     uploader: "Guide Channel",
     webpage_url: "https://www.youtube.com/watch?v=abcdefghijk",
   });
@@ -29,7 +29,7 @@ describe(parseSearchCandidates, () => {
         fps: 60,
         height: 1080,
         title: "Pick up items",
-        uploadDate: "2024-05-01",
+        uploadDate: new Date(0).toISOString().slice(0, 10),
         uploader: "Guide Channel",
         url: "https://www.youtube.com/watch?v=abcdefghijk",
       },
@@ -42,7 +42,7 @@ describe(parseSearchCandidates, () => {
     const line = JSON.stringify({
       duration: 42,
       title: "Short",
-      upload_date: "20240501",
+      upload_date: "19700101",
       uploader: null,
       webpage_url: "https://www.bilibili.com/video/BV1xx411c7mD",
     });
@@ -51,7 +51,7 @@ describe(parseSearchCandidates, () => {
       {
         durationSeconds: 42,
         title: "Short",
-        uploadDate: "2024-05-01",
+        uploadDate: new Date(0).toISOString().slice(0, 10),
         url: "https://www.bilibili.com/video/BV1xx411c7mD",
       },
     ]);

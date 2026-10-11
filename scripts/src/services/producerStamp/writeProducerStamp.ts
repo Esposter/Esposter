@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 // Stamps an output written now with the commit HEAD names, and whether its producer's paths hold changes no commit
 // Describes yet
-export const writeProducerStamp = async (directory: string, producerPaths: string[]): Promise<void> => {
+export const writeProducerStamp = (directory: string, producerPaths: string[]): void => {
   const commit = runGit(["rev-parse", "HEAD"]).trim();
   const status = runGit(["status", "--porcelain", "--", ...producerPaths]).trim();
   writeJsonFile(join(directory, PRODUCER_STAMP_NAME), { commit, isDirty: Boolean(status), producerPaths });

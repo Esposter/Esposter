@@ -11,7 +11,7 @@ import {
   MIN_DUPLICATE_TOKENS,
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -47,7 +47,7 @@ const toDuplicateCodeFragment = (fragment: JscpdReportFragment): DuplicateCodeFr
 });
 
 // The JSON report goes into a temporary directory that is removed once it is read, so the scan leaves nothing behind.
-export const readDuplicateCodeFindings = async (): Promise<DuplicateCodeFinding[]> => {
+export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {
   const outputDirectory = mkdtempSync(join(tmpdir(), "duplicate-code-"));
   const scopes = DUPLICATE_CODE_SCOPES.map((scope) => resolve(REPOSITORY_ROOT, scope).split(sep).join("/"));
   const result = spawnSync(
@@ -79,7 +79,7 @@ export const readDuplicateCodeFindings = async (): Promise<DuplicateCodeFinding[
     throw new InvalidOperationError(Operation.Read, "jscpd", result.stderr || result.stdout);
   }
 
-  const report = JSON.parse(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8")) as JscpdReport;
+  const report = jsonDateParse<JscpdReport>(readFileSync(join(outputDirectory, "jscpd-report.json"), "utf8"));
   rmSync(outputDirectory, { force: true, recursive: true });
   const clones: DuplicateCodeClone[] = report.duplicates.map(({ firstFile, secondFile }) => ({
     duplicationA: toDuplicateCodeFragment(firstFile),

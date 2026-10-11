@@ -30,7 +30,7 @@ describe(readProducerStaleness, () => {
   test("lists no commits for an output stamped at HEAD", async () => {
     expect.hasAssertions();
 
-    await writeProducerStamp(directory, [producerPath]);
+    writeProducerStamp(directory, [producerPath]);
 
     const { commits, stamp } = await readProducerStaleness(directory);
 
