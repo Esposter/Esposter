@@ -159,6 +159,7 @@ export const createKavehKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           normalAttacks: burstNormalAttacks,
         },
         BURST_STANCE_SECONDS,
+        { isEndedOnSwap: true },
       ),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

@@ -184,6 +184,7 @@ export const createFlinsKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             normalAttacks: stanceNormalAttacks,
           },
           skillMultiplier(8),
+          { isEndedOnSwap: true },
         ),
       seconds: SKILL_PRESS_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
