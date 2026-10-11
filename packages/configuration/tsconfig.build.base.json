@@ -7,6 +7,8 @@
     "${configDir}/**/*.fixture.ts",
     "${configDir}/**/*.reference.ts",
     "${configDir}/**/*.test.ts",
-    "${configDir}/**/*.test-d.ts"
+    "${configDir}/**/*.test-d.ts",
+    "${configDir}/**/*.typebench.program.ts",
+    "${configDir}/**/*.typebench.ts"
   ]
 }

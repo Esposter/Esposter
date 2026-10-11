@@ -65,7 +65,15 @@ export const SOURCE_CONDITION = "source";
 // The barrel generator reads this list, and `tsconfig.build.base.json` repeats it as the excludes of the one
 // Declaration program loaded from a tsconfig's file list — JSON with no import mechanism, so `constants.test.ts` is
 // The only thing holding that copy to this one. Drift is silent: that program compiles every test again.
-export const NON_SOURCE_SUFFIXES = [".bench.ts", ".fixture.ts", ".reference.ts", ".test-d.ts", ".test.ts"] as const;
+export const NON_SOURCE_SUFFIXES = [
+  ".bench.ts",
+  ".fixture.ts",
+  ".reference.ts",
+  ".test-d.ts",
+  ".test.ts",
+  ".typebench.program.ts",
+  ".typebench.ts",
+] as const;
 // `pnpm`'s workspace manifest, at the repository root — the one list of members every tool that runs across the
 // Workspace derives its own from, since a copy is a member the tool silently stops covering the day one is added.
 // `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict

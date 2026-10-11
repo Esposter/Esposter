@@ -63,3 +63,5 @@ scheduled_tasks.lock
 .DS_Store
 # A crashed MSYS bash (Git Bash) writes its stack trace into the working directory
 *.stackdump
+# The program `pnpm bench:types` writes beside a type bench while it measures one case, removed after each run
+*.typebench.program.ts
