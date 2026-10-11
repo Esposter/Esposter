@@ -29,13 +29,13 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
-// The last step, the team's effects that run out and the statuses on the enemies that fall due are sent to the deployed
-// Team's kits, the Crystallize shards in reach of the body are picked up, the ticks the enemies' elements brought since
-// Are struck and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses as its stance, if it
-// Holds one, plays them, an action that starts turns the body to the enemy it targets, or to the camera's aim for an
-// Aimed shot, and every hit the step lands strikes the ores, the Dendro Cores and the enemies in its area, a normal or
-// Charged attack's that struck an enemy rolling for its energy. A character whose combatant is not built yet, its
-// Talent multipliers still in flight, plays nothing until they arrive
+// The last step, the team's effects that run out, the statuses on the enemies that fall due and a burst that starts are
+// Sent to the deployed team's kits, the Crystallize shards in reach of the body are picked up, the ticks the enemies'
+// Elements brought since are struck and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses
+// As its stance, if it holds one, plays them, an action that starts turns the body to the enemy it targets, or to the
+// Camera's aim for an aimed shot, and every hit the step lands strikes the ores, the Dendro Cores and the enemies in its
+// Area, a normal or charged attack's that struck an enemy rolling for its energy. A character whose combatant is not
+// Built yet, its talent multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -121,6 +121,9 @@ export const stepActiveKit = (
     }
   }
 
+  // A burst is sent to the team's kits as it starts, ahead of its own start, as gcsim announces a burst before it plays
+  if (action && (action === kit.elementalBurst || action === kit.elementalBurstVariant?.action))
+    emit({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed });
   action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, target });
   if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party });
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);

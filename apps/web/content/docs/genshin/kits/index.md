@@ -48,7 +48,7 @@ Each effect is on the party, in the list a `KitEffectState` holds, so a switch l
 - **Infusion** makes the character's normal attacks, charged attack and plunges deal its element at the gauge the hit gives it, 1U for a strike and 0U for a collision. One that converts the attacks gives each hit its converted poise and reach where it has them, and one with a DMG Bonus adds it to each hit it infuses, as Bane of All Evil's does to Xiao's Normal, Charged and Plunging Attacks alone. It is refreshed by a second one of its kind on the same character, not stacked.
 - **Buff** adds a stat bonus to the character's pricing for its seconds: a flat ATK adds to its attack and any other bonus to its attribute total. It is refreshed by one of its attribute from the same source on the same character, not stacked: a source names the effect that gives it, so two effects on one attribute run side by side, as Sprawling Greenery's two Elemental Mastery buffs do.
 - **Heal** is `healPartyMember`: a share of a standing member's max HP, never above all of it. A downed member stays down, as only a revive brings one back.
-- **Energy** is the party's `gainPartyEnergy`, which an enemy's drop already calls.
+- **Energy** is the party's `gainPartyEnergy`, which an enemy's drop calls through `collectKitEnergyDrops`.
 - **Field** is a circle placed where its character casts, for its seconds, with a tick on a schedule. Each tick runs while the body stands inside it, reading the character on the field and the team, and a tick's own buffs and infusions start at their full seconds.
 - **Summon** is an entity cast where its character stands, which lands its own hits on the seconds their hitmarks fall at, for its seconds. It is priced by the combatant that cast it, as it stood then, and its hits land from its own body, not the character's. A summon may travel: its body moves forward at its speed from its start on its clock, and its hits are reached from where it is then. A summon may follow the body on the field instead: its body stands where that body stands on each step, whoever is on the field, and its hits are reached from there. A summon whose seconds end on its last hitmark lives `SUMMON_LINGER_SECONDS` past it, so the step that lands its last hit still has it on the field however its clock and its seconds left round.
 - **A coordinated summon** is set going by the character on the field, whoever that is: as that character starts a normal attack, `coordinateKitSummons` runs each summon's `onNormalAttackStart` from that character's body and combatant, called by the character component beside the action's own start. Any other action sets none going, and the summon's hook decides what it casts.
@@ -72,15 +72,19 @@ flowchart TD
   STEP -->|"stepKitEffects drops an effect that ran out"| EXPIRED["EffectExpired"]
   STEP -->|"tickEnemyStatuses: a status's tick falls due"| TICK["StatusTicked"]
   STEP -->|"a normal attack's first hitmark falls"| LANDED["NormalAttackLanded"]
+  STEP -->|"a burst starts, ahead of its own start"| BURST["BurstUsed"]
   STEP --> STRIKES["strikeKitEnemies: each strike on each enemy it reaches"]
   STRIKES -->|"the hit triggered reactions"| REACTION["ReactionTriggered"]
   STRIKES -->|"the enemy took its damage, CRIT or not, defeated or not"| DAMAGE["DamageTaken"]
+  STRIKES -->|"collectKitEnergyDrops: the enemy dropped energy, which the team took"| PARTICLE["EnergyParticleCollected"]
   SWAP --> EMIT["emitKitEvent: every deployed member's kit, as its own combatant"]
   EXPIRED --> EMIT
   TICK --> EMIT
   LANDED --> EMIT
+  BURST --> EMIT
   REACTION --> EMIT
   DAMAGE --> EMIT
+  PARTICLE --> EMIT
   EMIT --> EFFECTS["the kit's handler: summons, statuses, heals, energy, cooldowns"]
   EFFECTS -->|"its summons' hits, on a later step"| STEP
 ```
@@ -91,6 +95,8 @@ flowchart TD
 - **ReactionTriggered** carries an enemy, the reactions a hit triggered on it and the combatant that dealt the hit. Thundering Retribution answers an Electro-related one the character on the field triggers while Oz stands.
 - **DamageTaken** carries an enemy, the hit as it struck, its kind of attack when it is one of its kit's own actions (`getKitAttackTag`), the combatant that dealt it, whether it was a CRIT hit and whether it defeated the enemy. The Talisman's heal, A Glimpse into Arcanum, Ascetics of Frost, Frozen Skies, and Riptide's application and every strike it sets off answer it.
 - **StatusTicked** carries an enemy and the status on it whose tick fell due. Hydrospout answers Riptide's.
+- **BurstUsed** carries the member that used its Elemental Burst and the burst's energy cost, sent as the burst starts and ahead of the burst's own start, as gcsim announces a burst before it plays.
+- **EnergyParticleCollected** carries the particles or orbs an enemy dropped: how many, which of the two, their element, none for a clear one, and the member on the field, who collects them. It is sent once the team has taken their energy, every standing member by the game's rule, the one on the field in full and the others a share by the party's size, as gcsim distributes a particle before announcing it. Every drop is collected where it falls, a strike's, a reaction's reach or an elemental tick's alike (`collectKitEnergyDrops`).
 
 ## Framework decisions
 
@@ -174,6 +180,7 @@ flowchart TD
 | `packages/genshin-world/src/models/kit/KitEvent.ts`                                   | The events of combat a kit answers, one per `KitEventKind`                                                                                                                      |
 | `packages/genshin-world/src/models/kit/KitEventContext.ts`                            | What a kit reads and writes as an event reaches it, as its own character                                                                                                        |
 | `packages/genshin-world/src/services/kit/emitKitEvent.ts`                             | Sends an event to the kit of each deployed member whose combatant is built                                                                                                      |
+| `packages/genshin-world/src/services/kit/collectKitEnergyDrops.ts`                    | An enemy's energy drops, taken by the team and sent to its kits as collected by the member on the field                                                                         |
 | `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`                         | A step's strikes on the enemies they reach, priced, and the reactions and damage they cause sent as events                                                                      |
 | `packages/genshin-world/src/services/kit/tickEnemyStatuses.ts`                        | The ticks of the enemies' statuses that strike on their own schedule, as events                                                                                                 |
 | `packages/genshin-world/src/services/kit/getKitAttackTag.ts`                          | A hit's kind of attack, read off the kit's action it belongs to                                                                                                                 |
