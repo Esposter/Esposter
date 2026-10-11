@@ -170,7 +170,7 @@ export const createColumbinaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     elementalBurst: { hits: [burstHit], seconds: BURST_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     elementalSkill: {
       hits: [skillPressHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // A press while the DoT runs restarts its duration, as gcsim restarts the status and keeps its ticks
         const standingField = kitEffectState.effects.find(
           (effect): effect is KitField =>

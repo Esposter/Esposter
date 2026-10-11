@@ -2,8 +2,8 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
@@ -92,7 +92,7 @@ const OVERCHARGED_BALL_STATUS_ID = "chevreuse-overcharged-ball";
 
 const hitmark = (frames: number): number => frames / 60;
 // The Overcharged Ball's hold spends the ball as it starts, so the next hold is a plain one again
-const consumeOverchargedBall = ({ kitEffectState }: KitStepContext): void => {
+const consumeOverchargedBall = ({ kitEffectState }: KitContext): void => {
   kitEffectState.effects = kitEffectState.effects.filter(
     (effect) => !(effect.kind === "status" && effect.id === OVERCHARGED_BALL_STATUS_ID),
   );
@@ -217,7 +217,7 @@ export const createChevreuseKit = (talentMultiplierMap: TalentMultiplierMap): Ki
             seconds: hitmark(HOLD_FRAMES),
             targetingArea: SKILL_TARGETING_AREA,
           },
-          checkIsActive: ({ combatant, kitEffectState }) =>
+          checkIsActive: ({ activeCombatant: combatant, kitEffectState }) =>
             checkHasKitStatus(kitEffectState.effects, combatant.characterId, OVERCHARGED_BALL_STATUS_ID),
         },
       },
@@ -241,7 +241,7 @@ export const createChevreuseKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     normalAttacks,
     // Overloaded from any source sets the ball going on the team's Chevreuse, as gcsim's subscription does, until a hold
     // Casts it. The status has no end, so it stands until a hold spends it
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         !event.reactions.some(({ reactionType }) => reactionType === ReactionType.Overloaded)

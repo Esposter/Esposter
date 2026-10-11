@@ -2,15 +2,14 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitEventContext } from "#src/models/kit/KitEventContext";
 import type { KitField } from "#src/models/kit/KitField";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Party } from "#src/models/party/Party";
 import type { GroundPoint } from "genshin-engine";
 
@@ -231,11 +230,7 @@ const endSalon = (kitEffectState: KitEffectState, characterId: number): void => 
 };
 
 // Constellation 4's energy, once each five seconds
-const gainConstellation4Energy = ({
-  combatant,
-  kitEffectState,
-  party,
-}: Pick<KitStepContext, "combatant" | "kitEffectState" | "party">): void => {
+const gainConstellation4Energy = ({ kitEffectState, party }: KitContext, combatant: Combatant): void => {
   const { characterId, constellationCount } = combatant;
   if (
     constellationCount < CONSTELLATION_4 ||
@@ -284,7 +279,8 @@ const createEndlessWaltzField = (combatant: Combatant, { x, z }: GroundPoint): K
 // Ascension 1: another character's heal past full HP on the character on the field starts Endless Waltz unless it runs,
 // A new one ending the regeneration of the one that ran out, and restarts its four seconds either way
 const startEndlessWaltz = (
-  { activeCombatant, body, combatant, kitEffectState }: KitEventContext,
+  { activeCombatant, body, kitEffectState }: KitContext,
+  combatant: Combatant,
   event: KitHealthChangedEvent,
 ): void => {
   const { ascension, characterId } = combatant;
@@ -329,7 +325,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     talentMultiplier: attackMultiplier(9),
   };
   // A strike that lands opens the Arkhe's hit from where the body stands, unless that Arkhe's cooldown runs
-  const openArkheHit = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const openArkheHit = ({ kitEffectState }: KitContext, { body, combatant }: KitStrike): void => {
     const { characterId } = combatant;
     const isPneuma = checkHasKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
     const cooldownStatusId = isPneuma ? SURGING_BLADE_COOLDOWN_STATUS_ID : SPIRITBREATH_THORN_COOLDOWN_STATUS_ID;
@@ -350,7 +346,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Round that enemy once its attack has travelled, a tenth harder for each member it drained. With no enemy in reach it
   // Neither drains nor strikes
   const attackWithSalonMember = (
-    tick: KitFieldTick,
+    tick: KitContext,
     combatant: Combatant,
     { drainIndex, internalCooldownTag, radius, talentIndex, travelFrames }: SalonMember,
     centre: GroundPoint,
@@ -378,7 +374,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hitArea: createCircleReach(0, radius),
       hitmarkSeconds: travelFrames / 60,
       internalCooldownTag,
-      onStrike: gainConstellation4Energy,
+      onStrike: (context, strike) => gainConstellation4Energy(context, strike.combatant),
       poiseDamage: 0,
       talentMultiplier: 0,
     };
@@ -435,7 +431,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           tick.activeCombatant.characterId,
           skillMultiplier(9) + skillMultiplier(8) * combatant.attributes.maxHealth,
         );
-        gainConstellation4Energy({ combatant, kitEffectState: tick.kitEffectState, party: tick.party });
+        gainConstellation4Energy(tick, combatant);
       },
       radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining,
@@ -512,7 +508,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         });
   };
   // A change to a member's HP while the Fanfare lasts gives Fanfare by the share changed, after the debounce's delay
-  const gainFanfare = ({ body, combatant, kitEffectState }: KitEventContext, healthShare: number): void => {
+  const gainFanfare = ({ body, kitEffectState }: KitContext, combatant: Combatant, healthShare: number): void => {
     const { characterId, constellationCount } = combatant;
     if (healthShare === 0 || !checkIsKitStatusActive(kitEffectState.effects, characterId, FANFARE_STATUS_ID)) return;
     const fanfare =
@@ -568,7 +564,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: attackMultiplier(4),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createDelayedKitField(combatant.characterId, body.position, ARKHE_SWITCH_FRAMES / 60, (tick) =>
@@ -612,7 +608,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Its summons', so the action holds none of its own
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId } = combatant;
       const isPneuma = checkHasKitStatus(kitEffectState.effects, characterId, PNEUMA_STATUS_ID);
       const delayFrames = isPneuma ? PNEUMA_SUMMON_DELAY_FRAMES : OUSIA_BUBBLE_HITMARK_FRAMES;
@@ -643,7 +639,7 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId, constellationCount } = combatant;
       for (const effect of kitEffectState.effects)
         if (
@@ -699,10 +695,10 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     ),
     normalAttacks,
     // Each change to a member's HP feeds the Fanfare and may start Endless Waltz
-    onKitEvent: (event, context) => {
+    onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.HealthChanged) return;
-      gainFanfare(context, event.healthShare);
-      startEndlessWaltz(context, event);
+      gainFanfare(context, combatant, event.healthShare);
+      startEndlessWaltz(context, combatant, event);
     },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,

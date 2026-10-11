@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createXianglingKit, XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -28,18 +29,13 @@ const createXianglingCombatant = (ascension: number, constellationCount: number)
 });
 
 describe(createXianglingKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
-
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
-    const combatant = createXianglingCombatant(0, 0);
-    const party = createParty([XIANGLING_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(createXianglingCombatant(0, 0));
+    XIANGLING_KIT.elementalSkill.onStart?.(context);
+    XIANGLING_KIT.elementalBurst.onStart?.(context);
     // Guoba's first breath lands at 126 frames and the Pyronado's first tick at 56, its next falling at 129
-    const summonStrikes = stepKitEffects(kitEffectState, 2.12, { activeCombatant: combatant, body, party });
+    const summonStrikes = stepKitEffects(2.12, context);
     const multipliers = [
       ...XIANGLING_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(XIANGLING_KIT.chargedAttack.hits).talentMultiplier,
@@ -76,10 +72,10 @@ describe(createXianglingKit, () => {
     (ascension, constellationCount, radius, status) => {
       expect.hasAssertions();
       const combatant = createXianglingCombatant(ascension, constellationCount);
-      const party = createParty([XIANGLING_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const breaths = stepKitEffects(kitEffectState, 8, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(combatant, { kitEffectState });
+      XIANGLING_KIT.elementalSkill.onStart?.(context);
+      const breaths = stepKitEffects(8, context);
 
       expect(
         breaths.map(({ body: { position }, hit }) => [position, hit.hitArea.radius, hit.enemyStatus?.(combatant)]),
@@ -105,13 +101,13 @@ describe(createXianglingKit, () => {
     ],
   ])("at Ascension %i, the body on the field picks up Guoba's chili pepper for %j", (ascension, effects) => {
     expect.hasAssertions();
-    const combatant = createXianglingCombatant(ascension, 0);
-    const party = createParty([XIANGLING_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
-    XIANGLING_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(createXianglingCombatant(ascension, 0), { kitEffectState });
+    XIANGLING_KIT.elementalSkill.onStart?.(context);
     // Guoba disappears at 451 frames, 1.3 metres ahead, past the pepper's reach of the body
-    stepKitEffects(kitEffectState, 7.6, { activeCombatant: combatant, body, party });
-    stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body: { x: 0, z: -1.3 }, party });
+    stepKitEffects(7.6, context);
+    context.body = { facing: 0, height: 0, position: { x: 0, z: -1.3 } };
+    stepKitEffects(1, context);
 
     expect(kitEffectState.effects).toStrictEqual(effects);
   });
@@ -123,12 +119,12 @@ describe(createXianglingKit, () => {
     "with %i constellations, the Pyronado lands %i ticks from wherever the body on the field stands",
     (constellationCount, tickCount) => {
       expect.hasAssertions();
-      const combatant = createXianglingCombatant(0, constellationCount);
-      const party = createParty([XIANGLING_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(createXianglingCombatant(0, constellationCount), { kitEffectState });
       const movedBody = { x: 3, z: 4 };
-      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const ticks = stepKitEffects(kitEffectState, 15, { activeCombatant: combatant, body: movedBody, party });
+      XIANGLING_KIT.elementalBurst.onStart?.(context);
+      context.body = { facing: 0, height: 0, position: movedBody };
+      const ticks = stepKitEffects(15, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.element])).toStrictEqual(
         Array.from({ length: tickCount }, () => [movedBody, Element.Pyro]),
@@ -144,12 +140,9 @@ describe(createXianglingKit, () => {
     "with %i constellations, her strikes leave %i Implode explosions 2 seconds past the fifth's hit",
     (constellationCount, explosionCount) => {
       expect.hasAssertions();
-      const combatant = createXianglingCombatant(0, constellationCount);
-      const party = createParty([XIANGLING_CHARACTER_ID]);
-      const kitEffectState: KitEffectState = { effects: [] };
-      for (const strike of XIANGLING_KIT.normalAttacks)
-        strike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const explosions = stepKitEffects(kitEffectState, 3, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(createXianglingCombatant(0, constellationCount));
+      for (const strike of XIANGLING_KIT.normalAttacks) strike.onStart?.(context);
+      const explosions = stepKitEffects(3, context);
 
       expect(explosions.map(({ hit }) => [hit.element, hit.hitmarkSeconds, hit.talentMultiplier])).toStrictEqual(
         Array.from({ length: explosionCount }, () => [Element.Pyro, (21 + 120) / 60, 0.75]),
@@ -174,11 +167,13 @@ describe(createXianglingKit, () => {
     "with %i constellations, the Pyronado gives each member of the team the Pyro DMG Bonuses %j",
     (constellationCount, buffs) => {
       expect.hasAssertions();
-      const combatant = createXianglingCombatant(0, constellationCount);
-      const party = createParty([XIANGLING_CHARACTER_ID, JEAN_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      XIANGLING_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(createXianglingCombatant(0, constellationCount), {
+        kitEffectState,
+        party: createParty([XIANGLING_CHARACTER_ID, JEAN_CHARACTER_ID]),
+      });
+      XIANGLING_KIT.elementalBurst.onStart?.(context);
+      stepKitEffects(1, context);
 
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(buffs);
     },

@@ -1,12 +1,10 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { ActiveKitStepContext } from "#src/models/kit/ActiveKitStepContext";
-import type { KitBody } from "#src/models/kit/KitBody";
+import type { ActiveKitControls } from "#src/models/kit/ActiveKitControls";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHits } from "#src/services/gathering/readOreHits";
@@ -17,7 +15,6 @@ import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { takeKitTauntDamages } from "#src/services/kit/effects/takeKitTauntDamages";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
@@ -36,72 +33,51 @@ import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
 import { stepMoondrifts } from "#src/services/party/stepMoondrifts";
 import { stepVerdantDew } from "#src/services/party/stepVerdantDew";
 
-// One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
-// The last step, the strikes the team's taunts took since, the team's effects that run out, the statuses on the enemies
-// That fall due and a burst that starts are sent to the deployed team's kits, the party's Verdant Dew gathers and its
-// Moondrifts run down, the Crystallize shards in reach of the body are picked up, the ticks the enemies' elements brought
-// Since, the party's Lunar-Charged cloud and the Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran
-// Out burst, the kit plays the step's presses as its stance, if it holds one, plays them, a skill or burst that starts
-// Lights Ascendant Gleam, an action that starts turns the body to the enemy it targets, or to the camera's aim for an
-// Aimed shot, and every hit the step lands strikes the Ores, the Dendro Cores and the enemies in its area, a normal or
-// Charged attack's that struck an enemy rolling for its Energy, and the changes to the members' HP are sent last. A
-// Character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they arrive
+// One fixed step of the kit of the character on the field, after its body has stepped, written in place on the world's
+// Combat state: a swap since the last step and the events raised since, the strikes the team's taunts took among them,
+// The team's effects that run out, the statuses on the enemies that fall due and a burst that starts are sent to the
+// Deployed team's kits, the party's Verdant Dew gathers and its Moondrifts run down, the Crystallize shards in reach of
+// The body are picked up, the ticks the enemies' elements brought since, the party's Lunar-Charged cloud and the
+// Moondrift Harmony hits due strike and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses as
+// Its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that starts
+// Turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes
+// The Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for
+// Its Energy, and the changes to the members' HP are sent last. A character whose combatant is not built yet, its talent
+// Multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
   stepSeconds: number,
-  context: ActiveKitStepContext,
+  context: KitContext,
+  { aimYaw, characterController, isAimHeld, landedHits, strikeOre }: ActiveKitControls,
 ): void => {
-  const {
-    aimYaw,
-    characterController,
-    characterIdCombatantMap,
-    enemyMap,
-    isAimHeld,
-    kitEffectState,
-    landedHits,
-    party,
-    random,
-    strikeOre,
-  } = context;
+  const { characterIdCombatantMap, enemyMap, kitEffectState, outbox, party, random } = context;
   const characterId = getActiveCharacterId(party);
   const fieldCombatant = characterIdCombatantMap.get(characterId);
   if (!fieldCombatant) return;
   const kit = getStancedKit(fieldCombatant.kit, kitEffectState.effects, characterId);
   const combatant = kit === fieldCombatant.kit ? fieldCombatant : { ...fieldCombatant, kit };
   const { position } = characterController;
-  const kitBody: KitBody = { facing: characterController.facing, height: input.height, position };
-  const emit = (event: KitEvent): void =>
-    emitKitEvent(event, characterIdCombatantMap, {
-      activeCombatant: combatant,
-      body: kitBody,
-      enemyMap,
-      kitEffectState,
-      party,
-      random,
-    });
+  const kitBody = { facing: characterController.facing, height: input.height, position };
+  context.activeCombatant = combatant;
+  context.body = kitBody;
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== undefined && fieldCharacterId !== characterId)
-    emit({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId });
-  for (const event of takeKitTauntDamages(kitEffectState.effects)) emit(event);
+    emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
+  for (const event of outbox) emitKitEvent(event, context);
+  outbox.length = 0;
   const expiredEffects: KitEffect[] = [];
-  const summonStrikes = stepKitEffects(
-    kitEffectState,
-    stepSeconds,
-    { activeCombatant: combatant, body: kitBody.position, characterIdCombatantMap, enemyMap, party },
-    expiredEffects,
-  );
-  for (const effect of expiredEffects) emit({ effect, kind: KitEventKind.EffectExpired });
+  const summonStrikes = stepKitEffects(stepSeconds, context, expiredEffects);
+  for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
   pickUpCrystallizeShards(kitEffectState, position);
-  for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emit(event);
-  const strikeContext: KitStrikeContext = { ...context, emit };
-  strikeElementalTicks(strikeContext);
-  strikeLunarChargedCloud(stepSeconds, position, strikeContext);
-  strikeMoondriftHarmonyHits(stepSeconds, strikeContext);
-  burstKitDendroCores(expiredEffects, strikeContext);
+  for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emitKitEvent(event, context);
+  strikeElementalTicks(context);
+  strikeLunarChargedCloud(stepSeconds, position, context);
+  strikeMoondriftHarmonyHits(stepSeconds, context);
+  burstKitDendroCores(expiredEffects, context);
   const infusion = getKitInfusion(kitEffectState.effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
@@ -112,7 +88,7 @@ export const stepActiveKit = (
     characterController.stamina,
     stepSeconds,
     landedHits,
-    { body: kitBody, combatant, kitEffectState, party, random },
+    context,
   );
   // The ores are struck by the hits as the kit gives them, and each hit's kind of attack is read, before an infusion
   // Copies them
@@ -139,18 +115,18 @@ export const stepActiveKit = (
   // A burst is sent to the team's kits as it starts, ahead of its own start, as gcsim announces a burst before it plays
   const isBurst =
     action !== undefined && (action === kit.elementalBurst || action === kit.elementalBurstVariant?.action);
-  if (isBurst) emit({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed });
+  if (isBurst) emitKitEvent({ characterId, energyCost: kit.burstEnergyCost, kind: KitEventKind.BurstUsed }, context);
   if (action && (isBurst || getKitSkillActions(kit).includes(action)))
     lightAscendantGleam(kitEffectState, combatant, characterIdCombatantMap, party);
-  action?.onStart?.({ body: kitBody, combatant, kitEffectState, party, random, target });
-  if (action) coordinateKitSummons(action, { body: kitBody, combatant, kitEffectState, party, random });
+  action?.onStart?.(context, target);
+  if (action) coordinateKitSummons(action, context);
   for (const oreHit of landedOreHits) strikeOre(kitBody, oreHit);
   // A normal attack's first hit lands in the attack's seconds or, past them, from the summon its end queued it on
   const landedFirstHits = new Set([...stepHits, ...summonStrikes.map(({ hit }) => hit)]);
   for (const normalAttack of kit.normalAttacks) {
     const [firstHit] = normalAttack.hits;
     if (firstHit && landedFirstHits.has(firstHit))
-      emit({ action: normalAttack, kind: KitEventKind.NormalAttackLanded });
+      emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
   }
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their infusions,
   // And the step's own hits from the turned body and the character on the field
@@ -159,10 +135,11 @@ export const stepActiveKit = (
     ...landedHits.map((hit, index): KitStrike => ({ attackTag: attackTags[index], body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
-  gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, strikeContext), party, random);
+  gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, context), party, random);
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
   // And a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;
   party.healthChanges = [];
-  for (const healthChange of healthChanges) emit({ ...healthChange, kind: KitEventKind.HealthChanged });
+  for (const healthChange of healthChanges)
+    emitKitEvent({ ...healthChange, kind: KitEventKind.HealthChanged }, context);
 };

@@ -3,10 +3,10 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element } from "#src/models/Element";
@@ -136,7 +136,7 @@ export const createKiraraKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   };
 
   // Tail-Flicking Flying Kick, its press and each hold cast the shield and the Dendro self-infusion as they start
-  const addSkillStart = ({ combatant, kitEffectState }: KitStepContext): void => {
+  const addSkillStart = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
     addKitEffect(kitEffectState, createShield(combatant));
     addKitEffect(kitEffectState, {
       characterId: combatant.characterId,
@@ -267,7 +267,7 @@ export const createKiraraKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: burstTalentMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createCardamomSummon(body, combatant)),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

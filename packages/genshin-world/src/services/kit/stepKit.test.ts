@@ -9,10 +9,10 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -57,13 +57,7 @@ describe(stepKit, () => {
         stamina,
         STEP_SECONDS,
         landedHits,
-        {
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-          combatant: TRAVELER_COMBATANT,
-          kitEffectState: { effects: [] },
-          party: createParty([TRAVELER_CHARACTER_ID]),
-          random: () => 0,
-        },
+        createKitTestContext(TRAVELER_COMBATANT),
       );
     };
     return { kitState, landedHits, partyMember, stamina, step };
@@ -138,13 +132,7 @@ describe(stepKit, () => {
     const partyMember = createPartyMember();
     const stamina = createStamina(STAMINA_MAX);
     stamina.value = 0;
-    const context = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: TRAVELER_COMBATANT,
-      kitEffectState: { effects: [] },
-      party: createParty([TRAVELER_CHARACTER_ID]),
-      random: () => 0,
-    };
+    const context = createKitTestContext(TRAVELER_COMBATANT);
     const step = (input: Partial<KitInput>) =>
       stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
@@ -182,13 +170,7 @@ describe(stepKit, () => {
       createStamina(STAMINA_MAX),
       STEP_SECONDS,
       [],
-      {
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-        combatant: { ...TRAVELER_COMBATANT, elementalResonances: [Element.Anemo] },
-        kitEffectState: { effects: [] },
-        party: createParty([TRAVELER_CHARACTER_ID]),
-        random: () => 0,
-      },
+      createKitTestContext({ ...TRAVELER_COMBATANT, elementalResonances: [Element.Anemo] }),
     );
 
     expect(partyMember.skillCooldownSeconds).toBeCloseTo(
@@ -211,13 +193,7 @@ describe(stepKit, () => {
         createStamina(STAMINA_MAX),
         STEP_SECONDS,
         [],
-        {
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-          combatant: TRAVELER_COMBATANT,
-          kitEffectState: { effects: [] },
-          party: createParty([TRAVELER_CHARACTER_ID]),
-          random: () => 0,
-        },
+        createKitTestContext(TRAVELER_COMBATANT),
       );
     const actions = [press(), press(), press()];
     partyMember.skillCooldownSeconds -= kit.skillCooldownSeconds;
@@ -314,13 +290,7 @@ describe(stepKit, () => {
           createStamina(STAMINA_MAX),
           stepSeconds,
           landedHits,
-          {
-            body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-            combatant: TRAVELER_COMBATANT,
-            kitEffectState,
-            party: createParty([TRAVELER_CHARACTER_ID]),
-            random: () => 0,
-          },
+          createKitTestContext(TRAVELER_COMBATANT, { kitEffectState }),
         );
       };
       step(true, 0);

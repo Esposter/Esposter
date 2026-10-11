@@ -7,9 +7,9 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AYAKA_CHARACTER_ID, createAyakaKit } from "#src/services/kit/characters/ayakaKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -52,20 +52,10 @@ describe(createAyakaKit, () => {
     (constellationCount, damageShares) => {
       expect.hasAssertions();
       const combatant = createAyakaCombatant(constellationCount);
-      const body = { x: 0, z: 0 };
       const kitEffectState: KitEffectState = { effects: [] };
-      AYAKA_KIT.elementalBurst.onStart?.({
-        body: { facing: 0, height: 0, position: body },
-        combatant,
-        kitEffectState,
-        party: createParty([AYAKA_CHARACTER_ID]),
-        random: () => 0,
-      });
-      const strikes = stepKitEffects(kitEffectState, 7, {
-        activeCombatant: combatant,
-        body,
-        party: createParty([AYAKA_CHARACTER_ID]),
-      });
+      const context = createKitTestContext(combatant, { kitEffectState });
+      AYAKA_KIT.elementalBurst.onStart?.(context);
+      const strikes = stepKitEffects(7, context);
 
       expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual(
         damageShares.flatMap((damageShare) => [
@@ -82,20 +72,10 @@ describe(createAyakaKit, () => {
     expect.hasAssertions();
     const combatant = createAyakaCombatant(0);
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-      party: createParty([AYAKA_CHARACTER_ID]),
-      random: () => 0,
-    };
+    const context = createKitTestContext(combatant, { kitEffectState });
     const kitState = createKitState();
     AYAKA_KIT.onSprint?.(context, kitState);
-    stepKitEffects(kitEffectState, 1, {
-      activeCombatant: combatant,
-      body: context.body.position,
-      party: createParty([AYAKA_CHARACTER_ID]),
-    });
+    stepKitEffects(1, context);
     AYAKA_KIT.onSprint?.(context, kitState);
 
     expect(kitEffectState.effects).toStrictEqual([

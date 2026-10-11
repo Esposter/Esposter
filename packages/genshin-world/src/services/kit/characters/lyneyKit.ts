@@ -135,7 +135,7 @@ export const createLyneyKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       },
     ],
     isAimed: true,
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       addKitEffect(kitEffectState, createHatSummon(body, combatant, PYROTECHNIC_STRIKE_AIMED_HITMARK_FRAMES));
     },
     seconds: PROP_ARROW_FRAMES / 60,
@@ -168,7 +168,7 @@ export const createLyneyKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: burstMultiplier(1),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       addKitEffect(kitEffectState, createHatSummon(body, combatant, PYROTECHNIC_STRIKE_BURST_HITMARK_FRAMES));
     },
     seconds: BURST_FRAMES / 60,

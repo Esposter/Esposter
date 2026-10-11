@@ -19,7 +19,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CANDACE_CHARACTER_ID, createCandaceKit } from "#src/services/kit/characters/candaceKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -38,13 +38,14 @@ const swapTo = (kitEffectState: KitEffectState, combatant: Combatant, incoming: 
       kind: KitEventKind.CharacterSwapped,
       previousCharacterId: CANDACE_CHARACTER_ID,
     },
-    createKitEventContext(combatant, {
+    createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([
         [combatant.characterId, combatant],
         [incoming.characterId, incoming],
       ]),
       kitEffectState,
     }),
+    combatant,
   );
 
 // A hit a party member's elemental normal attack lands on an enemy, as the event reports it
@@ -68,13 +69,7 @@ describe(createCandaceKit, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createCandaceCombatant()): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CANDACE_CHARACTER_ID]),
-      random: () => 0,
-    });
+    action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return kitEffectState;
   };
 
@@ -93,8 +88,6 @@ describe(createCandaceKit, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -170,14 +163,14 @@ describe(createCandaceKit, () => {
     const kitEffectState = castAction(CANDACE_KIT.elementalBurst, combatant);
     const prayer = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
     for (const activeCombatant of [swordMember, bowMember])
-      prayer?.onTick({
-        activeCombatant,
-        characterIdCombatantMap: new Map(),
-        enemyMap: new Map(),
-        kitEffectState,
-        party: createParty([CANDACE_CHARACTER_ID]),
-        tickIndex: 0,
-      });
+      prayer?.onTick(
+        createKitTestContext(activeCombatant, {
+          characterIdCombatantMap: new Map(),
+          kitEffectState,
+          party: createParty([CANDACE_CHARACTER_ID]),
+        }),
+        0,
+      );
     const infusions = kitEffectState.effects.filter((effect): effect is KitInfusion => effect.kind === "infusion");
 
     expect(infusions.map(({ characterId, element }) => ({ characterId, element }))).toStrictEqual([
@@ -210,7 +203,7 @@ describe(createCandaceKit, () => {
     const landAttack = (): void =>
       CANDACE_KIT.onKitEvent?.(
         createNormalAttackDamageTaken(swordMember),
-        createKitEventContext(combatant, {
+        createKitTestContext(combatant, {
           activeCombatant: swordMember,
           characterIdCombatantMap: new Map([
             [combatant.characterId, combatant],
@@ -218,6 +211,7 @@ describe(createCandaceKit, () => {
           ]),
           kitEffectState,
         }),
+        combatant,
       );
     landAttack();
     const afterFirst = countSummons(kitEffectState);

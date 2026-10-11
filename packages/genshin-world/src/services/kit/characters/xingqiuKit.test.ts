@@ -7,6 +7,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createXingqiuKit, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -45,30 +46,20 @@ const createTravelerCombatant = (): Combatant => ({
 
 describe(createXingqiuKit, () => {
   const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
 
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const combatant = createXingqiuCombatant(0, 0);
-    const party = createParty([XINGQIU_CHARACTER_ID]);
-    const context = { activeCombatant: combatant, body, party };
-    const skillKitEffectState: KitEffectState = { effects: [] };
-    XINGQIU_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState: skillKitEffectState,
-      party: createParty([XINGQIU_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const skillContext = createKitTestContext(combatant);
+    XINGQIU_KIT.elementalSkill.onStart?.(skillContext);
     // Fatal Rainscreen's hits land at 12 and 31 frames, ahead of the Rain Swords' first Hydro at 44
-    const rainscreenStrikes = stepKitEffects(skillKitEffectState, 0.6, context);
-    const burstKitEffectState: KitEffectState = { effects: [] };
-    const burstStart = { body: kitBody, combatant, kitEffectState: burstKitEffectState, party, random: () => 0 };
-    XINGQIU_KIT.elementalBurst.onStart?.(burstStart);
-    coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstStart);
+    const rainscreenStrikes = stepKitEffects(0.6, skillContext);
+    const burstContext = createKitTestContext(combatant);
+    XINGQIU_KIT.elementalBurst.onStart?.(burstContext);
+    coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstContext);
     // The Rain Swords' first Hydro lands at 19 frames, and the first wave's two swords at 20
-    stepKitEffects(burstKitEffectState, 0.32, context);
-    const swordStrikes = stepKitEffects(burstKitEffectState, 0.02, context);
+    stepKitEffects(0.32, burstContext);
+    const swordStrikes = stepKitEffects(0.02, burstContext);
     const multipliers = [
       ...XINGQIU_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       ...XINGQIU_KIT.chargedAttack.hits.map(({ talentMultiplier }) => talentMultiplier),
@@ -90,11 +81,13 @@ describe(createXingqiuKit, () => {
   test("the skill's Rain Swords put Hydro of no damage round the body on the field every 2.25 seconds for 15", () => {
     expect.hasAssertions();
     const combatant = createXingqiuCombatant(0, 0);
-    const party = createParty([XINGQIU_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const movedBody = { x: 3, z: 4 };
-    XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    const strikes = stepKitEffects(kitEffectState, 15, { activeCombatant: combatant, body: movedBody, party });
+    XINGQIU_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const strikes = stepKitEffects(
+      15,
+      createKitTestContext(combatant, { body: { facing: 0, height: 0, position: movedBody }, kitEffectState }),
+    );
 
     expect(strikes.map(({ body: { position }, hit }) => [position, hit.element, hit.talentMultiplier])).toStrictEqual([
       [body, Element.Hydro, 1.68],
@@ -125,22 +118,19 @@ describe(createXingqiuKit, () => {
       const travelerCombatant = createTravelerCombatant();
       const party = createParty([XINGQIU_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      const context = { activeCombatant: travelerCombatant, body, party };
-      const travelerStart = { body: kitBody, combatant: travelerCombatant, kitEffectState, party, random: () => 0 };
+      const context = createKitTestContext(travelerCombatant, { kitEffectState, party });
       const normalAttack = takeOne(TRAVELER_KIT.normalAttacks);
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+      XINGQIU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
       const waves = Array.from({ length: swordCounts.length }, () => {
-        coordinateKitSummons(normalAttack, travelerStart);
-        const strikes = stepKitEffects(kitEffectState, 0.5, context);
+        coordinateKitSummons(normalAttack, context);
+        const strikes = stepKitEffects(0.5, context);
         // A normal attack within the second of the last wave sets none off
-        coordinateKitSummons(normalAttack, travelerStart);
-        return [...strikes, ...stepKitEffects(kitEffectState, 0.5, context)].filter(
-          ({ hit }) => hit.talentMultiplier > 0,
-        );
+        coordinateKitSummons(normalAttack, context);
+        return [...strikes, ...stepKitEffects(0.5, context)].filter(({ hit }) => hit.talentMultiplier > 0);
       });
       // Raincutter ends, so a normal attack after it sets no wave off
-      stepKitEffects(kitEffectState, 20, context);
-      coordinateKitSummons(normalAttack, travelerStart);
+      stepKitEffects(20, context);
+      coordinateKitSummons(normalAttack, context);
 
       expect(waves.map((wave) => wave.length)).toStrictEqual(swordCounts);
       expect(takeOne(takeOne(waves)).hit.enemyStatus?.(combatant)).toStrictEqual(status);
@@ -156,12 +146,10 @@ describe(createXingqiuKit, () => {
     "with %i constellations, Fatal Rainscreen cast in Raincutter deals %f and %f",
     (constellationCount, first, second) => {
       expect.hasAssertions();
-      const combatant = createXingqiuCombatant(0, constellationCount);
-      const party = createParty([XINGQIU_CHARACTER_ID]);
-      const kitEffectState: KitEffectState = { effects: [] };
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const strikes = stepKitEffects(kitEffectState, 0.6, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(createXingqiuCombatant(0, constellationCount));
+      XINGQIU_KIT.elementalBurst.onStart?.(context);
+      XINGQIU_KIT.elementalSkill.onStart?.(context);
+      const strikes = stepKitEffects(0.6, context);
 
       expect(
         strikes.map(({ hit }) => hit.talentMultiplier).filter((talentMultiplier) => talentMultiplier > 0),
@@ -180,15 +168,16 @@ describe(createXingqiuKit, () => {
       const combatant = createXingqiuCombatant(ascension, constellationCount);
       const party = createParty([TRAVELER_CHARACTER_ID, XINGQIU_CHARACTER_ID]);
       const kitEffectState: KitEffectState = { effects: [] };
-      const context = { activeCombatant: createTravelerCombatant(), body, party };
+      const context = createKitTestContext(createTravelerCombatant(), { kitEffectState, party });
+      const xingqiuContext = createKitTestContext(combatant, { kitEffectState, party });
       getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare = 0.5;
-      XINGQIU_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      stepKitEffects(kitEffectState, 10, context);
-      XINGQIU_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+      XINGQIU_KIT.elementalSkill.onStart?.(xingqiuContext);
+      stepKitEffects(10, context);
+      XINGQIU_KIT.elementalBurst.onStart?.(xingqiuContext);
       // The skill's Rain Swords would end at 15 seconds, and the burst at 10 stands them until 25
-      stepKitEffects(kitEffectState, 5.5, context);
+      stepKitEffects(5.5, context);
       const lengthenedHealthShare = getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare;
-      stepKitEffects(kitEffectState, 11, context);
+      stepKitEffects(11, context);
 
       expect(lengthenedHealthShare).toBe(0.5);
       expect(getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(healthShare, 10);

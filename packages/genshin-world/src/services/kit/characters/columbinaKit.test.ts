@@ -9,8 +9,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKit } from "#src/services/kit/characters/columbinaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -30,12 +30,10 @@ const createColumbinaCombatant = (): Combatant => ({
 });
 
 describe(createColumbinaKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const combatant = createColumbinaCombatant();
-  const party = createParty([COLUMBINA_CHARACTER_ID]);
   // The effects a skill's press adds, as the kit's effects hold them
   const startEffects = (kitEffectState: KitEffectState): void =>
-    COLUMBINA_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    COLUMBINA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -96,14 +94,7 @@ describe(createColumbinaKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     startEffects(kitEffectState);
     const [field] = kitEffectState.effects as KitField[];
-    field?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map([[COLUMBINA_CHARACTER_ID, combatant]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
     const summons = kitEffectState.effects.filter((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
     expect(summons).toHaveLength(1);
     expect(summons[0]?.combatant).toBe(combatant);

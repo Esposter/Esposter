@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLanYanKit, LAN_YAN_CHARACTER_ID } from "#src/services/kit/characters/lanYanKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LAN_YAN_KIT = createLanYanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LAN_YAN_CHARACTER_ID]));
@@ -23,6 +23,14 @@ const createLanYanCombatant = (constellationCount: number): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
+
+const castEffects = (constellationCount: number): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  LAN_YAN_KIT.elementalBurst.onStart?.(
+    createKitTestContext(createLanYanCombatant(constellationCount), { kitEffectState }),
+  );
+  return kitEffectState.effects;
+};
 
 describe(createLanYanKit, () => {
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
@@ -64,18 +72,6 @@ describe(createLanYanKit, () => {
 
   test("adds 60 Elemental Mastery to each member of the deployed team for 12 seconds from Constellation 4", () => {
     expect.hasAssertions();
-    const party = createParty([LAN_YAN_CHARACTER_ID]);
-    const castEffects = (constellationCount: number): KitEffect[] => {
-      const kitEffectState: KitEffectState = { effects: [] };
-      LAN_YAN_KIT.elementalBurst.onStart?.({
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-        combatant: createLanYanCombatant(constellationCount),
-        kitEffectState,
-        party,
-        random: () => 0,
-      });
-      return kitEffectState.effects;
-    };
 
     expect(castEffects(3)).toStrictEqual([]);
     expect(castEffects(4)).toStrictEqual([

@@ -14,9 +14,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKit } from "#src/services/kit/characters/albedoKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -43,29 +42,22 @@ const createDamageTaken = (position: { x: number; z: number }): KitDamageTakenEv
   striker: createAlbedoCombatant(),
 });
 
-describe(createAlbedoKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds to the effects given, as the kit's effects hold them
-  const castEffects = (
-    action: KitAction,
-    effects: KitEffect[] = [],
-    combatant = createAlbedoCombatant(),
-  ): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ALBEDO_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
-  // The Solar Isotoma as the press casts it, and as it stands once its hit has landed
-  const castSolarIsotoma = (): KitSummon =>
-    takeOne(castEffects(ALBEDO_KIT.elementalSkill).filter((effect): effect is KitSummon => effect.kind === "summon"));
-  const createStandingSolarIsotoma = (): KitSummon => ({ ...castSolarIsotoma(), elapsedSeconds: 1 });
+// The effects an action's start adds to the effects given, as the kit's effects hold them
+const castEffects = (
+  action: KitAction,
+  effects: KitEffect[] = [],
+  combatant = createAlbedoCombatant(),
+): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects;
+};
+// The Solar Isotoma as the press casts it, and as it stands once its hit has landed
+const castSolarIsotoma = (): KitSummon =>
+  takeOne(castEffects(ALBEDO_KIT.elementalSkill).filter((effect): effect is KitSummon => effect.kind === "summon"));
+const createStandingSolarIsotoma = (): KitSummon => ({ ...castSolarIsotoma(), elapsedSeconds: 1 });
 
+describe(createAlbedoKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const [fatalBlossom] =
@@ -101,7 +93,11 @@ describe(createAlbedoKit, () => {
     const combatant = createAlbedoCombatant();
     const solarIsotoma = createStandingSolarIsotoma();
     const kitEffectState: KitEffectState = { effects: [solarIsotoma] };
-    ALBEDO_KIT.onKitEvent?.(createDamageTaken({ x: 0, z: 0 }), createKitEventContext(combatant, { kitEffectState }));
+    ALBEDO_KIT.onKitEvent?.(
+      createDamageTaken({ x: 0, z: 0 }),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
     const blossom = kitEffectState.effects.findLast(
       (effect): effect is KitSummon => effect.kind === "summon" && effect !== solarIsotoma,
     );
@@ -116,7 +112,11 @@ describe(createAlbedoKit, () => {
     expect.hasAssertions();
     const combatant = createAlbedoCombatant();
     const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
-    ALBEDO_KIT.onKitEvent?.(createDamageTaken({ x: 0, z: 30 }), createKitEventContext(combatant, { kitEffectState }));
+    ALBEDO_KIT.onKitEvent?.(
+      createDamageTaken({ x: 0, z: 30 }),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
 
     expect(kitEffectState.effects).toHaveLength(1);
   });

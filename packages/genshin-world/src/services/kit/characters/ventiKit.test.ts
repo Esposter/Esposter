@@ -1,14 +1,13 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createVentiKit, VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -26,17 +25,12 @@ const createVentiCombatant = (ascension: number, constellationCount: number): Co
 });
 
 describe(createVentiKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
-
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
-    const combatant = createVentiCombatant(0, 0);
-    const party = createParty([VENTI_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(createVentiCombatant(0, 0));
+    VENTI_KIT.elementalBurst.onStart?.(context);
     // The Stormeye's first tick lands at 106 frames, the next falling past 2 seconds
-    const summonStrikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
+    const summonStrikes = stepKitEffects(2, context);
     const multipliers = [
       ...VENTI_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(VENTI_KIT.chargedAttack.hits).talentMultiplier,
@@ -62,17 +56,15 @@ describe(createVentiKit, () => {
     "at Ascension %i, the Stormeye lands its twenty ticks 5 metres ahead and leaves Venti %i energy once it ends",
     (ascension, energy) => {
       expect.hasAssertions();
-      const combatant = createVentiCombatant(ascension, 0);
-      const party = createParty([VENTI_CHARACTER_ID]);
+      const context = createKitTestContext(createVentiCombatant(ascension, 0));
+      const { kitEffectState, party } = context;
       const partyMember = getPartyMember(party, VENTI_CHARACTER_ID);
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context = { activeCombatant: combatant, body, party };
-      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const ticks = stepKitEffects(kitEffectState, 9.5, context);
+      VENTI_KIT.elementalBurst.onStart?.(context);
+      const ticks = stepKitEffects(9.5, context);
 
       expect(partyMember.energy).toBe(0);
 
-      stepKitEffects(kitEffectState, 0.2, context);
+      stepKitEffects(0.2, context);
 
       expect(ticks.map(({ body: { position }, hit }) => [position, hit.element])).toStrictEqual(
         Array.from({ length: 20 }, () => [{ x: 0, z: -5 }, Element.Anemo]),
@@ -89,11 +81,9 @@ describe(createVentiKit, () => {
     "with %i constellations, the aimed shot looses %i split arrows at the wiki's share of it",
     (constellationCount, arrowCount) => {
       expect.hasAssertions();
-      const combatant = createVentiCombatant(0, constellationCount);
-      const party = createParty([VENTI_CHARACTER_ID]);
-      const kitEffectState: KitEffectState = { effects: [] };
-      VENTI_KIT.chargedAttack.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const arrows = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(createVentiCombatant(0, constellationCount));
+      VENTI_KIT.chargedAttack.onStart?.(context);
+      const arrows = stepKitEffects(2, context);
 
       expect(arrows.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual(
         Array.from({ length: arrowCount }, () => [
@@ -136,10 +126,9 @@ describe(createVentiKit, () => {
     (constellationCount, skillStatus, burstStatus) => {
       expect.hasAssertions();
       const combatant = createVentiCombatant(0, constellationCount);
-      const party = createParty([VENTI_CHARACTER_ID]);
-      const kitEffectState: KitEffectState = { effects: [] };
-      VENTI_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      const strikes = stepKitEffects(kitEffectState, 2, { activeCombatant: combatant, body, party });
+      const context = createKitTestContext(combatant);
+      VENTI_KIT.elementalBurst.onStart?.(context);
+      const strikes = stepKitEffects(2, context);
 
       expect(
         [takeOne(VENTI_KIT.elementalSkill.hits), ...strikes.map(({ hit }) => hit)].map(({ enemyStatus }) =>

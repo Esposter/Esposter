@@ -8,8 +8,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYaeMikoKit, YAE_MIKO_CHARACTER_ID } from "#src/services/kit/characters/yaeMikoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -32,29 +32,16 @@ const createYaeMikoCombatant = (): Combatant => ({
 });
 
 describe(createYaeMikoKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const combatant = createYaeMikoCombatant();
   // Casts the skill, or the burst, into the effects the team holds, as the kit's start adds them
   const castSkill = (effects: KitEffect[]): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects };
-    YAE_MIKO_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([YAE_MIKO_CHARACTER_ID]),
-      random: () => 0,
-    });
+    YAE_MIKO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return kitEffectState.effects;
   };
   const castBurst = (effects: KitEffect[]): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects };
-    YAE_MIKO_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([YAE_MIKO_CHARACTER_ID]),
-      random: () => 0,
-    });
+    YAE_MIKO_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return kitEffectState.effects;
   };
 

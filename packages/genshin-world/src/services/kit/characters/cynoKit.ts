@@ -5,12 +5,13 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -211,7 +212,7 @@ const addDayOfTheJackal = (kitEffectState: KitEffectState, characterId: number, 
 
 // Constellation 2's Electro DMG bonus and Constellation 6's bolts are struck by each normal attack that hits an enemy, the
 // Constellation 2 stacks rising once every 0.1 seconds and Constellation 6's bolt once every 0.4, both only in Pactsworn
-const onNormalAttackStrike = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant }: KitStrike): void => {
   const { characterId, constellationCount } = combatant;
   if (
     constellationCount >= CONSTELLATION_2 &&
@@ -380,7 +381,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   };
   const mortuaryRite: KitAction = {
     hits: [mortuaryRiteHit],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId } = combatant;
       const stance = findStance(kitEffectState.effects, characterId);
       if (!stance) return;
@@ -447,7 +448,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { ascension, characterId, constellationCount } = combatant;
       const stance: KitStance = {
         actions: {
@@ -533,7 +534,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     elementalSkill,
     // Mortuary Rite's cooldown is the factor of Secret Rite's while Pactsworn Pathclearer holds, so the stance's skill press
     // Waits out three seconds rather than seven and a half
-    getSkillCooldownMultiplier: ({ combatant, kitEffectState }) =>
+    getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
       findStance(kitEffectState.effects, combatant.characterId)
         ? mortuaryRiteCooldownSeconds / skillCooldownSeconds
         : 1,
@@ -553,7 +554,7 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     ),
     normalAttacks,
     // Leaving the field ends Pactsworn Pathclearer, its Elemental Mastery and Judication, as gcsim's exit deletes the burst
-    onKitEvent: (event, { characterIdCombatantMap, combatant, kitEffectState, party }) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId !== characterId) return;

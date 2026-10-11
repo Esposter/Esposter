@@ -147,7 +147,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         gauge: 1,
         hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, NORMAL_ATTACK_RADIUS),
         hitmarkSeconds: (hitmarkFrames + NORMAL_ATTACK_TRAVEL_FRAMES) / 60,
-        onStrike: ({ combatant, kitEffectState }) => gainSeals(kitEffectState, combatant, 1),
+        onStrike: ({ kitEffectState }, { combatant }) => gainSeals(kitEffectState, combatant, 1),
         poiseDamage: 0,
         talentMultiplier: attackMultiplier(talentIndex),
       },
@@ -161,7 +161,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, SKILL_RADIUS),
     hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
     isBlunt: true,
-    onStrike: ({ combatant, kitEffectState }) =>
+    onStrike: ({ kitEffectState }, { combatant }) =>
       setSeals(kitEffectState, combatant.characterId, getMaximumSeals(combatant)),
     poiseDamage: SKILL_POISE_DAMAGE,
     talentMultiplier: skillMultiplier(0),
@@ -172,7 +172,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     hitArea: createFanReach(360, BURST_RADIUS),
     hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
     isBlunt: true,
-    onStrike: ({ combatant, kitEffectState }) =>
+    onStrike: ({ kitEffectState }, { combatant }) =>
       setSeals(kitEffectState, combatant.characterId, getMaximumSeals(combatant)),
     poiseDamage: BURST_POISE_DAMAGE,
     talentMultiplier: burstMultiplier(0),
@@ -185,7 +185,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // 1's bonus is set from them too
     chargedAttack: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const seals = countSeals(kitEffectState, combatant.characterId);
         if (combatant.ascension >= SEAL_PYRO_BONUS_ASCENSION)
           addKitEffect(kitEffectState, {
@@ -222,7 +222,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Battlefield holds, as gcsim's tick runs wherever Yanfei is
     elementalBurst: {
       hits: [burstHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           id: DONE_DEAL_STATUS_ID,
@@ -245,7 +245,7 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkill: { hits: [skillHit], seconds: SKILL_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
-    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) => {
+    getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant, kitEffectState }) => {
       const reduction =
         combatant.constellationCount >= CHARGED_ATTACK_STAMINA_CONSTELLATION
           ? CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION

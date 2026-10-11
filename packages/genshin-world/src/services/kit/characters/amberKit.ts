@@ -138,7 +138,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Arrows are a summon's hits, landing from where Amber cast it
   elementalBurst: {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createKitSummon(
@@ -155,7 +155,7 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // Gauge of its own, the bunny's explosion carries the 2U of Pyro
   elementalSkill: {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const explosion: KitHit = {
         element: Element.Pyro,
         gauge: 2,
@@ -168,7 +168,6 @@ export const createAmberKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       const taunt: KitTaunt = {
         body: { facing: body.facing, height: body.height, position: { x: body.position.x, z: body.position.z } },
         combatant,
-        damagesTaken: [],
         explosion,
         // Baron Bunny's HP is the table's share of Amber's Max HP
         health:

@@ -19,7 +19,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createQiqiKit, QIQI_CHARACTER_ID } from "#src/services/kit/characters/qiqiKit";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -44,17 +44,10 @@ const createQiqiCombatant = (ascension = 0, constellationCount = 0): Combatant =
 });
 
 describe(createQiqiKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant: createQiqiCombatant(),
-      kitEffectState,
-      party: createParty([QIQI_CHARACTER_ID]),
-      random: () => 0,
-    });
+    action.onStart?.(createKitTestContext(createQiqiCombatant(), { kitEffectState }));
     return kitEffectState.effects;
   };
   const castHerald = (): { field?: KitField; summon?: KitSummon } => {
@@ -177,7 +170,8 @@ describe(createQiqiKit, () => {
           kind: KitEventKind.DamageTaken,
           striker: travelerCombatant,
         },
-        createKitEventContext(combatant, { activeCombatant, party }),
+        createKitTestContext(combatant, { activeCombatant, party }),
+        combatant,
       );
     takeDamage(combatant);
 
@@ -192,7 +186,7 @@ describe(createQiqiKit, () => {
   test("ascension 4's Normal Attack hit gives the enemy a Talisman, once in 30 seconds", () => {
     expect.hasAssertions();
     const combatant = createQiqiCombatant(4);
-    const context = createKitEventContext(combatant);
+    const context = createKitTestContext(combatant);
     const enemies = [
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
@@ -209,6 +203,7 @@ describe(createQiqiKit, () => {
           striker: combatant,
         },
         context,
+        combatant,
       );
 
     expect(enemies.map(({ statuses }) => statuses.map(({ secondsRemaining }) => secondsRemaining))).toStrictEqual([
@@ -220,16 +215,9 @@ describe(createQiqiKit, () => {
   test("one constellation's Herald hit on an enemy holding the Talisman gives Qiqi 2 energy", () => {
     expect.hasAssertions();
     const combatant = createQiqiCombatant(0, 1);
-    const context = createKitEventContext(combatant);
-    const kitEffectState: KitEffectState = { effects: [] };
-    QIQI_KIT.elementalSkill.onStart?.({
-      body: context.body,
-      combatant,
-      kitEffectState,
-      party: createParty([QIQI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    const herald = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    const context = createKitTestContext(combatant);
+    QIQI_KIT.elementalSkill.onStart?.(context);
+    const herald = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     QIQI_KIT.onKitEvent?.(
       {
         enemy: createTalismanEnemy(),
@@ -240,6 +228,7 @@ describe(createQiqiKit, () => {
         striker: combatant,
       },
       context,
+      combatant,
     );
 
     expect(getPartyMember(context.party, QIQI_CHARACTER_ID).energy).toBe(2);
@@ -278,17 +267,11 @@ describe(createQiqiKit, () => {
     const combatant = createQiqiCombatant(0, 6);
     const party = createParty([QIQI_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const travelerMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
-    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { party });
     const castBurst = (): void => {
       travelerMember.healthShare = 0;
-      QIQI_KIT.elementalBurst.onStart?.({
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-        combatant,
-        kitEffectState,
-        party,
-        random: () => 0,
-      });
-      stepKitEffects(kitEffectState, 0.1, { activeCombatant: combatant, body: { x: 0, z: 0 }, party });
+      QIQI_KIT.elementalBurst.onStart?.(context);
+      stepKitEffects(0.1, context);
     };
     castBurst();
 

@@ -234,7 +234,7 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // The Seven-Phase Flash's press lands no hit: its state is entered on the field 19 frames on, through a field that ticks once
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createDelayedField(body, combatant.characterId, SKILL_DELAY_FRAMES / 60, ({ kitEffectState: tickState }) =>
@@ -256,7 +256,7 @@ export const createSkirkKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, LOW_PLUNGE_POISE_DAMAGE, attackMultiplier(9)),
     normalAttacks,
     // Leaving the field ends the Seven-Phase Flash, as gcsim's exit from the field does
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       for (const effect of kitEffectState.effects)
         if (effect.kind === "stance" && effect.characterId === combatant.characterId) effect.secondsRemaining = 0;

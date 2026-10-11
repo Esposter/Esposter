@@ -3,8 +3,8 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -168,7 +168,7 @@ export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   });
 
   // The Frostgrove Sanctuary the press and the hold each plant where she stands
-  const plantSanctuary = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const plantSanctuary = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     addKitEffect(
       kitEffectState,
       createKitSummon(
@@ -227,7 +227,7 @@ export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       plantSanctuary(context);
       const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
       addKitEffect(context.kitEffectState, {
-        ...createKitSummon(context.body, context.combatant, [createHoldLunarBloomHit(dewCount)]),
+        ...createKitSummon(context.body, context.activeCombatant, [createHoldLunarBloomHit(dewCount)]),
         isFollowing: true,
       });
     },

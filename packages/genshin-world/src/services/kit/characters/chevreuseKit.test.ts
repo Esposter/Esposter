@@ -10,10 +10,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHEVREUSE_CHARACTER_ID, createChevreuseKit } from "#src/services/kit/characters/chevreuseKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -34,7 +32,6 @@ const createChevreuseCombatant = (): Combatant => ({
 
 describe(createChevreuseKit, () => {
   const combatant = createChevreuseCombatant();
-  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const holdLevel = takeOne(CHEVREUSE_KIT.elementalSkillHolds ?? []);
 
   test("reads the burst's cooldown and energy cost, and each strike's multiplier, from her proud skill groups", () => {
@@ -53,26 +50,20 @@ describe(createChevreuseKit, () => {
     expect.hasAssertions();
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(combatant, { kitEffectState });
-    const checkIsOvercharged = (): boolean =>
-      holdLevel.variant?.checkIsActive(createKitStepContext(combatant, { kitEffectState })) ?? false;
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const checkIsOvercharged = (): boolean => holdLevel.variant?.checkIsActive(context) ?? false;
     const triggerReaction = (reactionType: ReactionType): void =>
       CHEVREUSE_KIT.onKitEvent?.(
         { enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker: combatant },
         context,
+        combatant,
       );
 
     triggerReaction(ReactionType.Melt);
     const meltOnly = checkIsOvercharged();
     triggerReaction(ReactionType.Overloaded);
     const afterOverload = checkIsOvercharged();
-    holdLevel.variant?.action.onStart?.({
-      body,
-      combatant,
-      kitEffectState,
-      party: createParty([CHEVREUSE_CHARACTER_ID]),
-      random: () => 0,
-    });
+    holdLevel.variant?.action.onStart?.(context);
 
     expect({ afterOverload, afterSpend: checkIsOvercharged(), meltOnly }).toStrictEqual({
       afterOverload: true,

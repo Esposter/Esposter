@@ -1,6 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -10,9 +8,9 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHARLOTTE_CHARACTER_ID, createCharlotteKit } from "#src/services/kit/characters/charlotteKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const CHARLOTTE_KIT = createCharlotteKit(
@@ -41,23 +39,12 @@ describe(createCharlotteKit, () => {
 
   const THORN_HITMARK_SECONDS = 97 / 60;
 
-  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   test("the charged attack's Spiritbreath Thorn strikes once, and a thorn within its six-second cooldown is not opened", () => {
     expect.hasAssertions();
-    const combatant = createCharlotteCombatant();
-    const party = createParty([CHARLOTTE_CHARACTER_ID]);
     const target = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context: KitStepContext = { body, combatant, kitEffectState, party, random: () => 0 };
-    const castCharged = (): void => CHARLOTTE_KIT.chargedAttack.onStart?.({ ...context, target });
-    const stepThorn = (stepSeconds: number): number =>
-      stepKitEffects(kitEffectState, stepSeconds, {
-        activeCombatant: combatant,
-        body: body.position,
-        characterIdCombatantMap: new Map([[CHARLOTTE_CHARACTER_ID, combatant]]),
-        party,
-      }).length;
+    const context = createKitTestContext(createCharlotteCombatant());
+    const castCharged = (): void => CHARLOTTE_KIT.chargedAttack.onStart?.(context, target);
+    const stepThorn = (stepSeconds: number): number => stepKitEffects(stepSeconds, context).length;
 
     castCharged();
     const firstThorn = stepThorn(THORN_HITMARK_SECONDS);
@@ -74,13 +61,7 @@ describe(createCharlotteKit, () => {
     expect.hasAssertions();
     const combatant = createCharlotteCombatant();
     const press = CHARLOTTE_KIT.elementalSkill.hits[0]?.enemyStatus;
-    CHARLOTTE_KIT.elementalSkill.onStart?.({
-      body,
-      combatant,
-      kitEffectState: { effects: [] },
-      party: createParty([CHARLOTTE_CHARACTER_ID]),
-      random: () => 0,
-    });
+    CHARLOTTE_KIT.elementalSkill.onStart?.(createKitTestContext(combatant));
     const marks = Array.from({ length: 6 }, () => press?.(combatant) !== undefined);
 
     expect(marks).toStrictEqual([true, true, true, true, true, false]);
@@ -88,21 +69,13 @@ describe(createCharlotteKit, () => {
 
   test("still photo's cast heals every member of the party at its strike's frame, by its flat HP and a share of the caster's ATK", () => {
     expect.hasAssertions();
-    const combatant = createCharlotteCombatant();
-    const party = createParty([CHARLOTTE_CHARACTER_ID]);
-    const member = party.characterIdMemberMap.get(CHARLOTTE_CHARACTER_ID);
+    const context = createKitTestContext(createCharlotteCombatant());
+    const member = context.party.characterIdMemberMap.get(CHARLOTTE_CHARACTER_ID);
     if (!member) throw new Error("Charlotte is not in her party");
     member.healthShare = 0.5;
-    const kitEffectState: KitEffectState = { effects: [] };
-    CHARLOTTE_KIT.elementalBurst.onStart?.({ body, combatant, kitEffectState, party, random: () => 0 });
-    const characterIdCombatantMap = new Map([[CHARLOTTE_CHARACTER_ID, combatant]]);
+    CHARLOTTE_KIT.elementalBurst.onStart?.(context);
     const stepBurst = (stepSeconds: number): void => {
-      stepKitEffects(kitEffectState, stepSeconds, {
-        activeCombatant: combatant,
-        body: body.position,
-        characterIdCombatantMap,
-        party,
-      });
+      stepKitEffects(stepSeconds, context);
     };
 
     stepBurst(52 / 60);

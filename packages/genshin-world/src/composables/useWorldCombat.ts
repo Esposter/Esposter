@@ -7,7 +7,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
@@ -30,13 +30,13 @@ import { getElementalResonances } from "#src/services/party/getElementalResonanc
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom } from "genshin-engine";
 
-// The party the player fields, the characters it is made of and their combat, the enemies the world holds and the kit's
-// Effects on the team. A defeat places its drops and is a doing the quests count, and a team that falls revives where the
-// Host places it
+// The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
+// Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
+// Doing the quests count, and a team that falls revives where the host places it
 export const useWorldCombat = ({
   enemyTables,
   events,
@@ -138,17 +138,30 @@ export const useWorldCombat = ({
       weaponType: combatant.weaponType,
     };
   });
-  // The enemies in the world by their spawn key, which the enemies write as their camps load and as they die, and which
-  // The character's kit strikes and an enemy's strike lands from
-  const enemyMap = new Map<string, Enemy>();
-  // The effects on the deployed team, the shields and taunts an enemy's strike is taken by, which the character on the field
-  // Steps and the enemies read, and which the character clears on a drown or a jump
-  const kitEffectState: KitEffectState = { effects: [] };
-  const clearKitEffects = () => {
-    kitEffectState.effects = [];
+  const startingCombatant = activeCombatant.value;
+  if (!startingCombatant)
+    throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${getActiveCharacterId(party)}`);
+  // The world's combat state, which the character on the field steps and writes its combatant and body into: the deployed
+  // Team's combatants as they are built, the enemies in the world by their spawn key, which the enemies write as their
+  // Camps load and as they die, the effects on the team, the shields and taunts an enemy's strike is taken by, which the
+  // Character clears on a drown or a jump, the events an enemy's strike raises for the next step, and the world's one
+  // Seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
+  const kitContext: KitContext = {
+    activeCombatant: startingCombatant,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    get characterIdCombatantMap() {
+      return characterIdCombatantMap.value;
+    },
+    enemyMap: new Map<string, Enemy>(),
+    enemyTables,
+    kitEffectState: { effects: [] },
+    outbox: [],
+    party,
+    random: createSeededRandom(WORLD_RANDOM_SEED),
   };
-  // The world's one seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
-  const worldRandom = createSeededRandom(WORLD_RANDOM_SEED);
+  const clearKitEffects = () => {
+    kitContext.kitEffectState.effects = [];
+  };
   // A defeated enemy's drops lie where it fell, numbered on from the drops placed before them, and the defeat is a doing
   // The quests in progress count
   const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
@@ -168,25 +181,22 @@ export const useWorldCombat = ({
     const combatant = activeCombatant.value;
     if (!combatant) return;
     if (taunt) {
-      damageKitTaunt(taunt, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
+      damageKitTaunt(kitContext.outbox, taunt, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
       return;
     }
 
-    strikePartyMember(enemyTables, party, enemy, combatant, kitEffectState);
+    strikePartyMember(enemyTables, party, enemy, combatant, kitContext.kitEffectState);
     respawnParty();
   };
   return {
-    characterIdCombatantMap,
     characters,
     clearKitEffects,
     defeatEnemy,
-    enemyMap,
     hudMember,
-    kitEffectState,
+    kitContext,
     locomotion,
     party,
     respawnParty,
     strikeParty,
-    worldRandom,
   };
 };

@@ -1,11 +1,11 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -235,7 +235,7 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     effect.hits.some((hit) => dashHits.includes(hit));
   // The dash lands from a summon cast where Xiao stands, so its start can choose its bonus. From Ascension 4 that summon
   // Stands as long as its Heaven Fall stack, so a dash reads its stacks off those standing and restarts them
-  const castDash = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const castDash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     if (combatant.ascension < HEAVEN_FALL_ASCENSION) {
       addKitEffect(kitEffectState, createKitSummon(body, combatant, [dashHit]));
       return;
@@ -249,7 +249,7 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Ends. A field checks each step that he is on the field and ends the burst's effects once he is not, ahead of the
   // Fields that drain his current HP each second and give Tamer of Demons' bonus from Ascension 1, which each run only
   // While the infusion stands
-  const castBaneOfAllEvil = ({ body: { position }, combatant, kitEffectState }: KitStepContext): void => {
+  const castBaneOfAllEvil = ({ activeCombatant: combatant, body: { position }, kitEffectState }: KitContext): void => {
     const { characterId } = combatant;
     const centre = { x: position.x, z: position.z };
     const infusion: KitInfusion = {
@@ -301,7 +301,7 @@ export const createXiaoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         characterId,
         kind: "field",
         nextTickSeconds: 0,
-        onTick: ({ kitEffectState: tickKitEffectState, tickIndex }) => {
+        onTick: ({ kitEffectState: tickKitEffectState }, tickIndex) => {
           if (!tickKitEffectState.effects.includes(infusion)) return;
           addKitEffect(tickKitEffectState, {
             amount: TAMER_OF_DEMONS_DAMAGE_BONUS * (tickIndex + 1),

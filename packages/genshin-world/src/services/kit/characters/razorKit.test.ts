@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -7,6 +6,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
 import { createRazorKit, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -27,9 +27,6 @@ const createRazorCombatant = (ascension: number, constellationCount: number): Co
 });
 
 describe(createRazorKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
-
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -52,30 +49,21 @@ describe(createRazorKit, () => {
 
   test("each press gives an Electro Sigil up to three, and the hold clears them into 5 energy each at its hit", () => {
     expect.hasAssertions();
-    const combatant = createRazorCombatant(0, 0);
-    const party = createParty([RAZOR_CHARACTER_ID]);
+    const context = createKitTestContext(createRazorCombatant(0, 0));
+    const { kitEffectState, party } = context;
     const partyMember = getPartyMember(party, RAZOR_CHARACTER_ID);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = { activeCombatant: combatant, body, party };
-    for (let press = 0; press < 4; press++)
-      RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    for (let press = 0; press < 4; press++) RAZOR_KIT.elementalSkill.onStart?.(context);
 
     expect(kitEffectState.effects.flatMap((effect) => (effect.kind === "buff" ? [effect.amount] : []))).toStrictEqual([
       0.2 * 3,
     ]);
 
-    takeOne(RAZOR_KIT.elementalSkillHolds ?? []).action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    stepKitEffects(kitEffectState, 54 / 60, context);
+    takeOne(RAZOR_KIT.elementalSkillHolds ?? []).action.onStart?.(context);
+    stepKitEffects(54 / 60, context);
 
     expect(partyMember.energy).toBe(0);
 
-    stepKitEffects(kitEffectState, 0.2, context);
+    stepKitEffects(0.2, context);
 
     expect(partyMember.energy).toBe(15);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -88,13 +76,11 @@ describe(createRazorKit, () => {
     "at Ascension %i, Lightning Fang's hit leaves the skill's cooldown at %i seconds",
     (ascension, cooldownSeconds) => {
       expect.hasAssertions();
-      const combatant = createRazorCombatant(ascension, 0);
-      const party = createParty([RAZOR_CHARACTER_ID]);
-      const partyMember = getPartyMember(party, RAZOR_CHARACTER_ID);
+      const context = createKitTestContext(createRazorCombatant(ascension, 0));
+      const partyMember = getPartyMember(context.party, RAZOR_CHARACTER_ID);
       partyMember.skillCooldownSeconds = 6;
-      const kitEffectState: KitEffectState = { effects: [] };
-      RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-      stepKitEffects(kitEffectState, 33 / 60, { activeCombatant: combatant, body, party });
+      RAZOR_KIT.elementalBurst.onStart?.(context);
+      stepKitEffects(33 / 60, context);
 
       expect(partyMember.skillCooldownSeconds).toBe(cooldownSeconds);
     },
@@ -105,15 +91,15 @@ describe(createRazorKit, () => {
     const combatant = createRazorCombatant(0, 0);
     const party = createParty([RAZOR_CHARACTER_ID, BARBARA_CHARACTER_ID]);
     const partyMember = getPartyMember(party, RAZOR_CHARACTER_ID);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = { activeCombatant: combatant, body, party };
+    const context = createKitTestContext(combatant, { party });
+    const { kitEffectState } = context;
     const firstStrike = takeOne(RAZOR_KIT.normalAttacks);
-    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    RAZOR_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    RAZOR_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    stepKitEffects(kitEffectState, 33 / 60, context);
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    const soulCompanionStrikes = stepKitEffects(kitEffectState, 1, context);
+    RAZOR_KIT.elementalSkill.onStart?.(context);
+    RAZOR_KIT.elementalSkill.onStart?.(context);
+    RAZOR_KIT.elementalBurst.onStart?.(context);
+    stepKitEffects(33 / 60, context);
+    firstStrike.onStart?.(context);
+    const soulCompanionStrikes = stepKitEffects(1, context);
 
     expect(partyMember.energy).toBe(10);
     expect(soulCompanionStrikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
@@ -121,11 +107,8 @@ describe(createRazorKit, () => {
     ]);
 
     // Switching Barbara in ends the Wolf Within, so a strike after it casts no Soul Companion
-    stepKitEffects(kitEffectState, 1 / 60, {
-      ...context,
-      activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID },
-    });
-    firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    stepKitEffects(1 / 60, { ...context, activeCombatant: { ...combatant, characterId: BARBARA_CHARACTER_ID } });
+    firstStrike.onStart?.(context);
 
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -135,17 +118,9 @@ describe(createRazorKit, () => {
     [1, 0.82],
   ])("at Ascension %i, the skill's cooldown is multiplied by %f", (ascension, cooldownMultiplier) => {
     expect.hasAssertions();
-    const combatant = createRazorCombatant(ascension, 0);
-
-    expect(
-      RAZOR_KIT.getSkillCooldownMultiplier?.({
-        body: kitBody,
-        combatant,
-        kitEffectState: { effects: [] },
-        party: createParty([RAZOR_CHARACTER_ID]),
-        random: () => 0,
-      }),
-    ).toBe(cooldownMultiplier);
+    expect(RAZOR_KIT.getSkillCooldownMultiplier?.(createKitTestContext(createRazorCombatant(ascension, 0)))).toBe(
+      cooldownMultiplier,
+    );
   });
 
   test.each([
@@ -162,14 +137,12 @@ describe(createRazorKit, () => {
     "with %i constellations, strikes 0, 1 and 11 seconds apart release the lightning %j and leave the sigils' Energy Recharge %j",
     (constellationCount, lightningStrikes, sigilEnergyRecharges) => {
       expect.hasAssertions();
-      const combatant = createRazorCombatant(0, constellationCount);
-      const party = createParty([RAZOR_CHARACTER_ID]);
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context = { activeCombatant: combatant, body, party };
+      const context = createKitTestContext(createRazorCombatant(0, constellationCount));
+      const { kitEffectState } = context;
       const firstStrike = takeOne(RAZOR_KIT.normalAttacks);
       const strikes = [1, 10, 1].flatMap((stepSeconds) => {
-        firstStrike.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-        return stepKitEffects(kitEffectState, stepSeconds, context);
+        firstStrike.onStart?.(context);
+        return stepKitEffects(stepSeconds, context);
       });
 
       expect(strikes.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual(lightningStrikes);

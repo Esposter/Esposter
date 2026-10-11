@@ -1,4 +1,4 @@
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { GroundPoint } from "genshin-engine";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
@@ -11,11 +11,7 @@ import { LUNAR_CHARGED_CLOUD_RADIUS, LUNAR_CHARGED_CLOUD_TICK_SECONDS } from "#s
 // The party's Lunar-Charged cloud some seconds on, written in place: each tick that falls due while it stands strikes
 // Every standing enemy within its radius of the character on the field, measured to the enemy's edge, whose Electro and
 // Hydro lie together as Lunar-Charged, once every 2 seconds on each, and the cloud's seconds run down
-export const strikeLunarChargedCloud = (
-  stepSeconds: number,
-  position: GroundPoint,
-  context: KitStrikeContext,
-): void => {
+export const strikeLunarChargedCloud = (stepSeconds: number, position: GroundPoint, context: KitContext): void => {
   const { lunarChargedCloud } = context.party;
   if (lunarChargedCloud.secondsRemaining <= 0) return;
   let { tickSeconds } = lunarChargedCloud;

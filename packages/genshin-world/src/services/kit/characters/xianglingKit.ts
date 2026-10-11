@@ -209,7 +209,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         poiseDamage,
         talentMultiplier,
       })),
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         if (index < XIANGLING_STRIKES.length - 1 || combatant.constellationCount < OIL_MEETS_FIRE_CONSTELLATION) return;
         addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, [IMPLODE_HIT]));
       },
@@ -288,7 +288,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         poiseDamage: 30,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, XIANGLING_BURST_GROUP_ID, TALENT_START_LEVEL, index),
       })),
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         const isSlowbake = combatant.constellationCount >= SLOWBAKE_CONSTELLATION;
         const seconds = isSlowbake ? SLOWBAKE_DURATION_MULTIPLIER * pyronadoSeconds : pyronadoSeconds;
         addKitEffect(kitEffectState, {
@@ -331,7 +331,7 @@ export const createXianglingKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Ascension 1. From Ascension 4, it leaves its chili pepper where it stood as its seconds end
     elementalSkill: {
       hits: [],
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         // Ahead of a body at its facing lies the bearing -sin and -cos of that facing, as computeFacingAngle reads it
         const guobaPosition = {
           x: position.x - Math.sin(facing) * GUOBA_OFFSET,

@@ -12,8 +12,8 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIneffaKit, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -30,27 +30,20 @@ const createIneffaCombatant = (): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-describe(createIneffaKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds to the effects given, as the kit's effects hold them
-  const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects };
-    action.onStart?.({
-      body: kitBody,
-      combatant: createIneffaCombatant(),
-      kitEffectState,
-      party: createParty([INEFFA_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
-  const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
-    takeOne(
-      castEffects(action, effects).filter(
-        (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
-      ),
-    );
+// The effects an action's start adds to the effects given, as the kit's effects hold them
+const castEffects = (action: KitAction, effects: KitEffect[] = []): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects };
+  action.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
+const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =>
+  takeOne(
+    castEffects(action, effects).filter(
+      (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
+    ),
+  );
 
+describe(createIneffaKit, () => {
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -111,13 +104,7 @@ describe(createIneffaKit, () => {
     expect.hasAssertions();
     const skillBirgitta = castBirgitta(INEFFA_KIT.elementalSkill);
     const kitEffectState: KitEffectState = { effects: [skillBirgitta] };
-    INEFFA_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant: createIneffaCombatant(),
-      kitEffectState,
-      party: createParty([INEFFA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    INEFFA_KIT.elementalBurst.onStart?.(createKitTestContext(createIneffaCombatant(), { kitEffectState }));
     const birgittas = kitEffectState.effects.filter(
       (effect): effect is KitSummon => effect.kind === "summon" && effect.id === "birgitta",
     );
@@ -130,24 +117,12 @@ describe(createIneffaKit, () => {
     expect.hasAssertions();
     const combatant = createIneffaCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    INEFFA_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([INEFFA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant, { kitEffectState });
+    INEFFA_KIT.elementalSkill.onStart?.(context);
     const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
     expect(field.nextTickSeconds).toBeCloseTo(4 / 60);
 
-    field.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map([[INEFFA_CHARACTER_ID, combatant]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([INEFFA_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field.onTick(context, 0);
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
     expect(shield.secondsRemaining).toBe(20);

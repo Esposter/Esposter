@@ -2,7 +2,6 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -12,12 +11,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createLisaKit, LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
-import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -55,19 +54,11 @@ describe("lisa kit", () => {
 
   test("its Lightning Rose discharges thirty times for 15 seconds from its first, then ends", () => {
     expect.hasAssertions();
-    const combatant = createLisaCombatant();
-    const party = createParty([LISA_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    LISA_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createLisaCombatant(), { kitEffectState });
+    LISA_KIT.elementalBurst.onStart?.(context);
 
-    const discharges = stepKitEffects(kitEffectState, 17, { activeCombatant: combatant, body, party });
+    const discharges = stepKitEffects(17, context);
     expect(discharges).toHaveLength(30);
     expect(discharges.every(({ hit }) => hit.talentMultiplier === 0.3656)).toBe(true);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -103,13 +94,7 @@ describe("lisa kit", () => {
     const partyMember = createPartyMember();
     const stamina = createStamina(STAMINA_MAX);
     const landedHits: KitHit[] = [];
-    const context: KitStepContext = {
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: createLisaCombatant(),
-      kitEffectState: { effects: [] },
-      party: createParty([LISA_CHARACTER_ID]),
-      random: () => 0,
-    };
+    const context = createKitTestContext(createLisaCombatant());
     const idleInput: KitInput = {
       height: 0,
       isAttackHeld: false,

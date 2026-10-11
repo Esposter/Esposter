@@ -152,7 +152,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Where Ayaka cast them and priced by her
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon(body, combatant, frostflakeHits));
         if (combatant.constellationCount < BLIZZARD_BLADE_SEKI_NO_TO_CONSTELLATION) return;
         addKitEffect(kitEffectState, createKitSummon(body, combatant, smallFrostflakeHits));
@@ -268,7 +268,7 @@ export const createAyakaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         targetingArea: STRIKE_TARGETING_AREA,
       },
     ],
-    onSprint: ({ combatant, kitEffectState }) =>
+    onSprint: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Cryo,

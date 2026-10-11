@@ -8,8 +8,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDahliaKit, DAHLIA_CHARACTER_ID } from "#src/services/kit/characters/dahliaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -27,8 +27,6 @@ const createDahliaCombatant = (): Combatant => ({
 });
 
 describe(createDahliaKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -83,24 +81,12 @@ describe(createDahliaKit, () => {
     expect.hasAssertions();
     const combatant = createDahliaCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    DAHLIA_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([DAHLIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant, { kitEffectState });
+    DAHLIA_KIT.elementalBurst.onStart?.(context);
     const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
     expect(field.nextTickSeconds).toBeCloseTo(31 / 60);
 
-    field.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map([[DAHLIA_CHARACTER_ID, combatant]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([DAHLIA_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field.onTick(context, 0);
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(0.0336 * combatant.attributes.maxHealth + 323.5577);
     expect(shield.secondsRemaining).toBe(12);

@@ -150,7 +150,7 @@ export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           talentMultiplier: burstMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState, random }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) =>
         addKitEffect(kitEffectState, {
           ...createKitSummon(body, combatant, createDragonBreathHits(random)),
           attackTag: AttackTag.ElementalBurst,

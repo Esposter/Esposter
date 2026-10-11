@@ -7,7 +7,7 @@ import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/crea
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -45,7 +45,8 @@ describe(createTravelingDoctorSetModule, () => {
     getPartyMember(party, wearer.characterId).healthShare = 0.5;
     travelingDoctorSetModule.onKitEvent?.(
       { characterId, energyCost: TRAVELER_KIT.burstEnergyCost, kind: KitEventKind.BurstUsed },
-      createKitEventContext(wearer, { party }),
+      createKitTestContext(wearer, { party }),
+      wearer,
     );
 
     expect(getPartyMember(party, wearer.characterId).healthShare).toStrictEqual(healthShare);

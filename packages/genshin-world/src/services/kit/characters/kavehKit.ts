@@ -147,7 +147,7 @@ export const createKavehKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: burstMultiplier(0),
       },
     ],
-    onStart: ({ combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       // Painted Dome's stance widens his strikes for its duration, and plays the rest of his kit as it stands
       const stance: KitStance = {
         actions: {

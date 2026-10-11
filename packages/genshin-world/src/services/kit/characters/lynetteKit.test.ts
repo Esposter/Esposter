@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLynetteKit, LYNETTE_CHARACTER_ID } from "#src/services/kit/characters/lynetteKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LYNETTE_KIT = createLynetteKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNETTE_CHARACTER_ID]));
@@ -17,13 +17,7 @@ describe(createLynetteKit, () => {
   // The effects the burst's start adds to the team's, which its owner holds
   const castBurst = (): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    LYNETTE_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant: createLynetteCombatant(),
-      kitEffectState,
-      party: createParty([LYNETTE_CHARACTER_ID]),
-      random: () => 0,
-    });
+    LYNETTE_KIT.elementalBurst.onStart?.(createKitTestContext(createLynetteCombatant(), { kitEffectState }));
     return kitEffectState;
   };
 
@@ -39,8 +33,6 @@ describe(createLynetteKit, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from her proud skill groups", () => {
     expect.hasAssertions();

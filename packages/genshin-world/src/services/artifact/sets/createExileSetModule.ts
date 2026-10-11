@@ -19,7 +19,7 @@ export const createExileSetModule = ({ params }: ArtifactSetBonus): ArtifactSetM
   const energy = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   return {
-    onKitEvent: (event, { body: { position }, combatant, kitEffectState }) => {
+    onKitEvent: (event, { body: { position }, kitEffectState }, combatant) => {
       if (
         event.kind !== KitEventKind.BurstUsed ||
         event.characterId !== combatant.characterId ||

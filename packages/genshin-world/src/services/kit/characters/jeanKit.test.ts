@@ -9,6 +9,7 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createJeanKit, JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -59,33 +60,21 @@ describe(createJeanKit, () => {
 
   test("heals the character on Dandelion Breeze's field at its activation and each second after, and lands the field's entering and exiting damage", () => {
     expect.hasAssertions();
-    const combatant = createJeanCombatant(0, 0);
-    const party = createParty([JEAN_CHARACTER_ID]);
-    const partyMember = getPartyMember(party, JEAN_CHARACTER_ID);
-    partyMember.healthShare = 0.1;
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    JEAN_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    const context = { activeCombatant: combatant, body, party };
+    const context = createKitTestContext(createJeanCombatant(0, 0), { kitEffectState });
+    const partyMember = getPartyMember(context.party, JEAN_CHARACTER_ID);
+    partyMember.healthShare = 0.1;
+    JEAN_KIT.elementalBurst.onStart?.(context);
 
     // The activation, at 40 frames, heals by 251.2% of Jean's ATK plus 1540, and lands the entering damage of 78.4%
-    const enteringStrikes = stepKitEffects(kitEffectState, 40 / 60, context);
+    const enteringStrikes = stepKitEffects(40 / 60, context);
     const activationHealthShare = 0.1 + (1540.3248 + 2.512 * BASE_ATTACK) / MAX_HEALTH;
 
     expect(partyMember.healthShare).toBeCloseTo(activationHealthShare, 4);
 
     // Ten regenerations, a second apart, each heal by 25.12% of her ATK plus 154, and the field's end lands the exiting
     // Damage, after which neither the field nor its damage stands
-    const exitingStrikes = [
-      ...stepKitEffects(kitEffectState, 10, context),
-      ...stepKitEffects(kitEffectState, 0.2, context),
-    ];
+    const exitingStrikes = [...stepKitEffects(10, context), ...stepKitEffects(0.2, context)];
 
     expect(partyMember.healthShare).toBeCloseTo(
       activationHealthShare + (10 * (154.0325 + 0.2512 * BASE_ATTACK)) / MAX_HEALTH,
@@ -105,20 +94,11 @@ describe(createJeanKit, () => {
     [4, 16],
   ])("at Ascension %i, the field's activation gives Jean back %i energy", (ascension, energy) => {
     expect.hasAssertions();
-    const combatant = createJeanCombatant(ascension, 0);
-    const party = createParty([JEAN_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
-    const kitEffectState: KitEffectState = { effects: [] };
-    JEAN_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    stepKitEffects(kitEffectState, 40 / 60, { activeCombatant: combatant, body, party });
+    const context = createKitTestContext(createJeanCombatant(ascension, 0));
+    JEAN_KIT.elementalBurst.onStart?.(context);
+    stepKitEffects(40 / 60, context);
 
-    expect(getPartyMember(party, JEAN_CHARACTER_ID).energy).toBe(energy);
+    expect(getPartyMember(context.party, JEAN_CHARACTER_ID).energy).toBe(energy);
   });
 
   test.each([
@@ -167,15 +147,8 @@ describe(createJeanKit, () => {
         isSkillPressed: false,
         locomotionState: LocomotionState.Idle,
       };
-      const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
       const kitEffectState: KitEffectState = { effects: [] };
-      const context = {
-        body,
-        combatant: createJeanCombatant(0, constellationCount),
-        kitEffectState,
-        party: createParty([JEAN_CHARACTER_ID]),
-        random: () => 0,
-      };
+      const context = createKitTestContext(createJeanCombatant(0, constellationCount), { kitEffectState });
       for (let step = 0; step < 12; step++)
         stepKit(kitState, JEAN_KIT, input, partyMember, stamina, 0.1, landedHits, context);
       const action = stepKit(

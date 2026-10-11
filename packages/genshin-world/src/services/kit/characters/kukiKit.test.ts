@@ -10,8 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKukiKit, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -32,28 +32,22 @@ const createKukiCombatant = (ascension = 0, constellationCount = 0, elementalMas
   weaponType: WeaponType.Catalyst,
 });
 
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction, combatant = createKukiCombatant()): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects;
+};
+
+const castSummon = (action: KitAction): KitSummon | undefined =>
+  castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
+
+const ringSeconds = (constellationCount: number): number =>
+  castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
+    .filter((effect): effect is KitField => effect.kind === "field")
+    .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
+
 describe(createKukiKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction, combatant = createKukiCombatant()): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([KUKI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
-  const castSummon = (action: KitAction): KitSummon | undefined =>
-    castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
-
-  const ringSeconds = (constellationCount: number): number =>
-    castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
-      .filter((effect): effect is KitField => effect.kind === "field")
-      .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
-
   test("reads the strikes', charged slashes' and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -104,22 +98,14 @@ describe(createKukiKit, () => {
     const ring = castEffects(KUKI_KIT.elementalSkill)
       .filter((effect): effect is KitField => effect.kind === "field")
       .find((field) => field.tickIntervalSeconds > 1);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty([KUKI_CHARACTER_ID]);
-    getPartyMember(party, KUKI_CHARACTER_ID).healthShare = 0.5;
-    ring?.onTick({
-      activeCombatant: createKukiCombatant(),
-      characterIdCombatantMap: new Map([[KUKI_CHARACTER_ID, createKukiCombatant()]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
-    const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    const context = createKitTestContext(createKukiCombatant());
+    getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare = 0.5;
+    ring?.onTick(context, 0);
+    const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(ring?.nextTickSeconds).toBeCloseTo(113 / 60);
     expect(ring?.tickIntervalSeconds).toBeCloseTo(90 / 60);
-    expect(getPartyMember(party, KUKI_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + 0.2524 + 288.8908 / 10_000);
+    expect(getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + 0.2524 + 288.8908 / 10_000);
     expect(takeOne(tickSummon?.hits ?? []).hitmarkSeconds).toBeCloseTo(2 / 60);
   });
 
@@ -129,17 +115,10 @@ describe(createKukiKit, () => {
       (effect): effect is KitField => effect.kind === "field" && effect.tickIntervalSeconds === 1,
     );
     const drainTo = (healthShare: number): number => {
-      const party = createParty([KUKI_CHARACTER_ID]);
-      getPartyMember(party, KUKI_CHARACTER_ID).healthShare = healthShare;
-      drain?.onTick({
-        activeCombatant: createKukiCombatant(),
-        characterIdCombatantMap: new Map([[KUKI_CHARACTER_ID, createKukiCombatant()]]),
-        enemyMap: new Map(),
-        kitEffectState: { effects: [] },
-        party,
-        tickIndex: 0,
-      });
-      return getPartyMember(party, KUKI_CHARACTER_ID).healthShare;
+      const context = createKitTestContext(createKukiCombatant());
+      getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare = healthShare;
+      drain?.onTick(context, 0);
+      return getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare;
     };
 
     expect(drainTo(1)).toBeCloseTo(0.7);

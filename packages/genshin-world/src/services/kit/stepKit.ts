@@ -1,9 +1,9 @@
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
@@ -35,7 +35,7 @@ export const stepKit = (
   stamina: Stamina,
   stepSeconds: number,
   landedHits: KitHit[],
-  context: KitStepContext,
+  context: KitContext,
 ): KitAction | undefined => {
   const { height, isAttackHeld, isAttackPressed, isSkillHeld, locomotionState } = input;
   const wasPlunging = kitState.locomotionState === LocomotionState.Plunge;
@@ -94,7 +94,8 @@ export const stepKit = (
     if (isAllowed) {
       const fromSeconds = kitState.actionSeconds;
       const speedBonus = kit.normalAttacks.includes(action)
-        ? (getKitInfusion(context.kitEffectState.effects, context.combatant.characterId)?.normalAttackSpeedBonus ?? 0)
+        ? (getKitInfusion(context.kitEffectState.effects, context.activeCombatant.characterId)
+            ?.normalAttackSpeedBonus ?? 0)
         : 0;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);

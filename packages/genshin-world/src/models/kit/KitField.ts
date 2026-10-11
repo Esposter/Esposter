@@ -1,4 +1,4 @@
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { GroundPoint } from "genshin-engine";
 
 // A circle placed in the world by a character for the seconds left of it, which ticks on a schedule while the body stands
@@ -14,7 +14,7 @@ export interface KitField {
   isFollowing?: true;
   kind: "field";
   nextTickSeconds: number;
-  onTick: (tick: KitFieldTick) => void;
+  onTick: (context: KitContext, tickIndex: number) => void;
   radius: number;
   secondsRemaining: number;
   tickIndex: number;

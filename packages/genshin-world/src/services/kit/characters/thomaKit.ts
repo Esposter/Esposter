@@ -2,9 +2,9 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -124,7 +124,7 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       hitArea: FIERY_COLLAPSE_HIT_AREA,
       hitmarkSeconds: FIERY_COLLAPSE_HITMARK_FRAMES / 60,
       internalCooldownTag: InternalCooldownTag.ElementalBurst,
-      onStrike: ({ combatant: { attributes, characterId }, kitEffectState }) => {
+      onStrike: ({ kitEffectState }, { combatant: { attributes, characterId } }) => {
         if (isShielded) return;
         isShielded = true;
         const standingHealth =
@@ -154,7 +154,7 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   };
   // Sets off a Fiery Collapse from the body on the field, priced by Thoma as he cast the burst, unless one was set off
   // Within the table's seconds
-  const setOffFieryCollapse = (ooyoroi: KitSummon, { body, kitEffectState }: KitStepContext): void => {
+  const setOffFieryCollapse = (ooyoroi: KitSummon, { body, kitEffectState }: KitContext): void => {
     const { combatant } = ooyoroi;
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, FIERY_COLLAPSE_COOLDOWN_STATUS_ID)) return;
     addKitEffect(kitEffectState, {
@@ -194,7 +194,7 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         },
       ],
       // The burst stands the Ooyoroi for its seconds, which the normal attacks of the character on the field set off
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const ooyoroi: KitSummon = {
           ...createKitSummon(body, combatant, [], burstTalentMultiplier(THOMA_BURST_SECONDS_INDEX)),
           onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
@@ -217,7 +217,7 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       ],
       // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its seconds.
       // It also infuses his own attacks with Pyro for the infusion's seconds
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,
           element: Element.Pyro,

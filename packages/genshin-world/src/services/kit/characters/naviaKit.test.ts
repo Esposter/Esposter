@@ -10,8 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNaviaKit, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -45,6 +45,10 @@ const getCannonSummon = (kitEffectState: KitEffectState): KitSummon =>
 // The Geo RES cut a burst hit applies to an enemy, from a constellation count
 const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(createNaviaCombatant(constellationCount));
 
+// The effects an action's start adds to the team's, given the team's effects it starts on
+const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
 describe(createNaviaKit, () => {
   // The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
   const shrapnelAfterShot = (constellationCount: number): number => {
@@ -63,23 +67,7 @@ describe(createNaviaKit, () => {
 
   // A hit landing on one enemy from the team's effects
   const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-    hit.onStrike?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([NAVIA_CHARACTER_ID]),
-      random: () => 0,
-    });
-
-  // The effects an action's start adds to the team's, given the team's effects it starts on
-  const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([NAVIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
 
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 

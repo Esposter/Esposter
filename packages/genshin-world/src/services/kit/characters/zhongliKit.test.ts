@@ -8,10 +8,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Elements } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createZhongliKit, ZHONGLI_CHARACTER_ID } from "#src/services/kit/characters/zhongliKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -27,22 +27,15 @@ const createZhongliCombatant = (ascension: number, constellationCount: number): 
   level: 90,
 });
 
+// The summons an action's start casts, as the kit's effects hold them
+const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects.filter((effect) => effect.kind === "summon");
+};
+
 describe(createZhongliKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
   const holdAction = takeOne(ZHONGLI_KIT.elementalSkillHolds ?? []).action;
-  // The summons an action's start casts, as the kit's effects hold them
-  const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ZHONGLI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects.filter((effect) => effect.kind === "summon");
-  };
 
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
@@ -95,18 +88,11 @@ describe(createZhongliKit, () => {
     "at %i constellations, three presses a second apart leave the steles cast %j seconds ago, the newest replaced",
     (constellationCount, elapsedSeconds) => {
       expect.hasAssertions();
-      const combatant = createZhongliCombatant(0, constellationCount);
-      const context = { activeCombatant: combatant, body, party: createParty([ZHONGLI_CHARACTER_ID]) };
       const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(createZhongliCombatant(0, constellationCount), { kitEffectState });
       for (let press = 0; press < 3; press++) {
-        ZHONGLI_KIT.elementalSkill.onStart?.({
-          body: kitBody,
-          combatant,
-          kitEffectState,
-          party: createParty([ZHONGLI_CHARACTER_ID]),
-          random: () => 0,
-        });
-        stepKitEffects(kitEffectState, 1, context);
+        ZHONGLI_KIT.elementalSkill.onStart?.(context);
+        stepKitEffects(1, context);
       }
 
       expect(
@@ -118,24 +104,12 @@ describe(createZhongliKit, () => {
   test("a hold with a stele standing casts none, and its Jade Shield cuts every RES until its health is spent", () => {
     expect.hasAssertions();
     const combatant = createZhongliCombatant(0, 0);
-    const context = { activeCombatant: combatant, body, party: createParty([ZHONGLI_CHARACTER_ID]) };
     const kitEffectState: KitEffectState = { effects: [] };
-    ZHONGLI_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ZHONGLI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    stepKitEffects(kitEffectState, 1, context);
-    holdAction.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ZHONGLI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    const cutStrikes = stepKitEffects(kitEffectState, 0.8, context).filter(({ hit }) => hit.enemyStatus);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    ZHONGLI_KIT.elementalSkill.onStart?.(context);
+    stepKitEffects(1, context);
+    holdAction.onStart?.(context);
+    const cutStrikes = stepKitEffects(0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
     absorbKitShield(kitEffectState.effects, combatant, Number.POSITIVE_INFINITY);
@@ -151,7 +125,7 @@ describe(createZhongliKit, () => {
         secondsRemaining: 1,
       })),
     );
-    expect(stepKitEffects(kitEffectState, 0.5, context)).toStrictEqual([]);
+    expect(stepKitEffects(0.5, context)).toStrictEqual([]);
   });
 
   test.each([
@@ -162,15 +136,10 @@ describe(createZhongliKit, () => {
     "at %i constellations, Planet Befall's meteor lands 5 metres ahead at a radius of %d, casting %i Jade Shields",
     (constellationCount, radius, shieldCount) => {
       expect.hasAssertions();
-      const combatant = createZhongliCombatant(0, constellationCount);
       const kitEffectState: KitEffectState = { effects: [] };
-      ZHONGLI_KIT.elementalBurst.onStart?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([ZHONGLI_CHARACTER_ID]),
-        random: () => 0,
-      });
+      ZHONGLI_KIT.elementalBurst.onStart?.(
+        createKitTestContext(createZhongliCombatant(0, constellationCount), { kitEffectState }),
+      );
       const meteor = takeOne(kitEffectState.effects.filter((effect) => effect.kind === "summon"));
 
       expect(meteor.body.position).toStrictEqual({ x: 0, z: -5 });

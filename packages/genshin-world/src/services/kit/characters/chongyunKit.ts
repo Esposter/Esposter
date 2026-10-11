@@ -285,7 +285,7 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: burstBladeHits,
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= RALLY_OF_FOUR_BLADES_CONSTELLATION)
           addKitEffect(kitEffectState, createKitSummon(body, combatant, [rallyOfFourBladesHit]));
       },
@@ -294,7 +294,7 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     },
     elementalSkill: {
       hits: [skillHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // A press ends the field standing, which disappears on the next step, and places its own as the press's hit is, a
         // Metre and a half ahead of the body
         for (const effect of kitEffectState.effects) if (checkIsFrostField(effect)) effect.secondsRemaining = 0;
@@ -356,7 +356,7 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     normalAttacks,
     // A swap brings the field's infusion on whoever comes on while it stands, its end strikes Rimechaser Blade from
     // Ascension 4, and the fourth strike's ice blades and the energy on a Cryo enemy come from one and four constellations
-    onKitEvent: (event, { activeCombatant, body, combatant, enemyMap, kitEffectState, party }) => {
+    onKitEvent: (event, { activeCombatant, body, enemyMap, kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (kitEffectState.effects.some((effect) => checkIsFrostField(effect)))

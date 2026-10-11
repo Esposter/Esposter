@@ -1,6 +1,7 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
@@ -120,7 +121,7 @@ const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 const INFUSION_CONSTELLATION = 6;
 const INFUSION_SECONDS = 5;
 // Kazuha's Anemo infusion from Constellation 6 lasts for the seconds after each press, hold or slash that gives it
-const addInfusion = ({ combatant, kitEffectState }: Parameters<NonNullable<KitAction["onStart"]>>[0]) => {
+const addInfusion = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
   if (combatant.constellationCount < INFUSION_CONSTELLATION) return;
   addKitEffect(kitEffectState, {
     characterId: combatant.characterId,
@@ -211,8 +212,9 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Tick ahead of each tick still to come
     elementalBurst: {
       hits: [slashHit],
-      onStart: ({ body, combatant, kitEffectState, party, random }) => {
-        addInfusion({ body, combatant, kitEffectState, party, random });
+      onStart: (context) => {
+        addInfusion(context);
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         const whirlwind = createKitSummon(body, combatant, tickHits);
         let isAbsorbed = false;
         const absorbField: KitField = {
@@ -253,7 +255,7 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: SKILL_TARGETING_AREA,
     },
     elementalSkillHolds: [hold],
-    getSkillCooldownMultiplier: ({ combatant }) =>
+    getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= PRESS_AND_HOLD_CONSTELLATION ? COOLDOWN_CONSTELLATION_MULTIPLIER : 1,
     highPlunge: {
       hits: [

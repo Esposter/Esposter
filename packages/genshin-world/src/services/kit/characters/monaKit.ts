@@ -4,9 +4,9 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBubbleSpec } from "#src/models/kit/KitBubbleSpec";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitState } from "#src/models/kit/KitState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -230,7 +230,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Is cast where Mona stands, and its hits are the summon's
   elementalSkill: {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createKitSummon(
@@ -303,7 +303,7 @@ export const createMonaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     ),
   ],
   // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes
-  onSprint: ({ body, combatant, kitEffectState }: KitStepContext, kitState: KitState): void => {
+  onSprint: ({ activeCombatant: combatant, body, kitEffectState }: KitContext, kitState: KitState): void => {
     if (combatant.ascension < 1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
     kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
     addKitEffect(

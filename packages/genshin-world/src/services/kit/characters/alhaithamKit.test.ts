@@ -13,8 +13,8 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ALHAITHAM_CHARACTER_ID, createAlhaithamKit } from "#src/services/kit/characters/alhaithamKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -31,28 +31,20 @@ const readMirrors = (kitEffectState: KitEffectState): number =>
 // The hit of a normal attack's first strike, which a Projection Attack triggers from
 const getFirstStrikeHit = (): KitHit => takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits);
 
-describe(createAlhaithamKit, () => {
-  // Ticks the field of a delayed effect, one that makes its Mirrors once its delay has passed
-  const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatant: Combatant): void => {
-    const field = kitEffectState.effects.find(
-      (effect): effect is KitField =>
-        effect.kind === "field" && Math.round(effect.nextTickSeconds * 60) === delayFrames,
-    );
-    field?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
-  };
+// Ticks the field of a delayed effect, one that makes its Mirrors once its delay has passed
+const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatant: Combatant): void => {
+  const field = kitEffectState.effects.find(
+    (effect): effect is KitField => effect.kind === "field" && Math.round(effect.nextTickSeconds * 60) === delayFrames,
+  );
+  field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
+};
 
+describe(createAlhaithamKit, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    return kitEffectState;
+    const context = createKitTestContext(combatant);
+    action.onStart?.(context);
+    return context.kitEffectState;
   };
 
   const createAlhaithamCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
@@ -69,8 +61,6 @@ describe(createAlhaithamKit, () => {
   const ELEMENTAL_MASTERY = 1000;
 
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-  const party = createParty([ALHAITHAM_CHARACTER_ID]);
 
   test("reads his strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
@@ -129,10 +119,11 @@ describe(createAlhaithamKit, () => {
     const combatant = createAlhaithamCombatant();
     const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
     tickField(kitEffectState, 15, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
     const hit = getFirstStrikeHit();
-    const strike = { body: kitBody, combatant, kitEffectState, party, random: () => 0 };
-    hit.onStrike?.(strike);
-    hit.onStrike?.(strike);
+    const strike = { body: kitBody, combatant, hit };
+    hit.onStrike?.(context, strike);
+    hit.onStrike?.(context, strike);
     const summons = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(summons.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)))).toStrictEqual([
@@ -146,7 +137,7 @@ describe(createAlhaithamKit, () => {
     const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
     tickField(kitEffectState, 15, combatant);
     const mirrorsBeforeBurst = readMirrors(kitEffectState);
-    ALHAITHAM_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    ALHAITHAM_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const burstSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect({
@@ -170,16 +161,8 @@ describe(createAlhaithamKit, () => {
         kind: KitEventKind.CharacterSwapped,
         previousCharacterId: ALHAITHAM_CHARACTER_ID,
       },
-      {
-        activeCombatant: combatant,
-        body: kitBody,
-        characterIdCombatantMap: new Map(),
-        combatant,
-        enemyMap: new Map(),
-        kitEffectState,
-        party,
-        random: () => 0,
-      },
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
     );
 
     expect({

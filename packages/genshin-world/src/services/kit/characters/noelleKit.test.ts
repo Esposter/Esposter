@@ -1,12 +1,12 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNoelleKit, NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -55,15 +55,9 @@ describe("noelle kit", () => {
   test("its Breastplate shields her for 160% of her DEF plus 769 for 12 seconds", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    NOELLE_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-      party: createParty([NOELLE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    expect(kitEffectState.effects).toStrictEqual([
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalSkill.onStart?.(context);
+    expect(context.kitEffectState.effects).toStrictEqual([
       {
         characterId: NOELLE_CHARACTER_ID,
         element: Element.Geo,
@@ -77,15 +71,9 @@ describe("noelle kit", () => {
   test("its Sweeping Time converts her attacks to Geo and adds 40% of her DEF to her ATK", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    NOELLE_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-      party: createParty([NOELLE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    expect(kitEffectState.effects).toStrictEqual([
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+    expect(context.kitEffectState.effects).toStrictEqual([
       {
         amount: 0.4 * combatant.attributes.defense,
         attribute: Attribute.Attack,
@@ -123,19 +111,12 @@ describe("noelle kit", () => {
   test("its Breastplate heal reaches the party through healKitParty, 21.28% of her DEF plus 102.7 HP as a share of each member's Max HP", () => {
     expect.hasAssertions();
     const combatant = createNoelleCombatant();
-    const party = createParty([NOELLE_CHARACTER_ID]);
+    const context = createKitTestContext(combatant);
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     const partyMember = getPartyMember(party, NOELLE_CHARACTER_ID);
     partyMember.healthShare = 0.5;
-    const characterIdCombatantMap = new Map([[NOELLE_CHARACTER_ID, combatant]]);
-    const kitEffectState: KitEffectState = { effects: [] };
     const hit = takeOne(NOELLE_KIT.elementalSkill.hits);
-    NOELLE_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    NOELLE_KIT.elementalSkill.onStart?.(context);
 
     expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.6)).toBe(false);
     expect(healKitParty(party, characterIdCombatantMap, kitEffectState.effects, combatant, hit, () => 0.4)).toBe(true);
@@ -147,15 +128,15 @@ describe("noelle kit", () => {
 
   test("with To Be Cleaned, her shield explodes as it ends for 4 times her ATK of Geo, on the character on the field, from four constellations", () => {
     expect.hasAssertions();
-    const castBody = { facing: 0, height: 0, position: { x: 10, z: 0 } };
-    const fieldPosition = { x: -4, z: 7 };
     const party = createParty([NOELLE_CHARACTER_ID]);
     const explodeAfterShield = (constellationCount: number) => {
-      const kitEffectState: KitEffectState = { effects: [] };
-      const combatant = { ...createNoelleCombatant(), constellationCount };
-      NOELLE_KIT.elementalSkill.onStart?.({ body: castBody, combatant, kitEffectState, party, random: () => 0 });
+      const context = createKitTestContext(
+        { ...createNoelleCombatant(), constellationCount },
+        { body: { facing: 0, height: 0, position: { x: 10, z: 0 } }, party },
+      );
+      NOELLE_KIT.elementalSkill.onStart?.(context);
       // Breastplate lasts 12 seconds, so 13 seconds run it out
-      return stepKitEffects(kitEffectState, 13, { activeCombatant: combatant, body: fieldPosition, party });
+      return stepKitEffects(13, { ...context, body: { facing: 0, height: 0, position: { x: -4, z: 7 } } });
     };
 
     expect(explodeAfterShield(3)).toStrictEqual([]);
@@ -167,26 +148,11 @@ describe("noelle kit", () => {
 
   test("recasting Breastplate ends the shield she holds, whose explosion goes off on the next step", () => {
     expect.hasAssertions();
-    const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-    const combatant = { ...createNoelleCombatant(), constellationCount: 4 };
-    const kitEffectState: KitEffectState = { effects: [] };
-    NOELLE_KIT.elementalSkill.onStart?.({
-      body,
-      combatant,
-      kitEffectState,
-      party: createParty([NOELLE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    NOELLE_KIT.elementalSkill.onStart?.({
-      body,
-      combatant,
-      kitEffectState,
-      party: createParty([NOELLE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    const context = { activeCombatant: combatant, body: body.position, party: createParty([NOELLE_CHARACTER_ID]) };
+    const context = createKitTestContext({ ...createNoelleCombatant(), constellationCount: 4 });
+    NOELLE_KIT.elementalSkill.onStart?.(context);
+    NOELLE_KIT.elementalSkill.onStart?.(context);
 
-    expect(stepKitEffects(kitEffectState, 0.1, context)).toHaveLength(1);
-    expect(kitEffectState.effects).toHaveLength(1);
+    expect(stepKitEffects(0.1, context)).toHaveLength(1);
+    expect(context.kitEffectState.effects).toHaveLength(1);
   });
 });

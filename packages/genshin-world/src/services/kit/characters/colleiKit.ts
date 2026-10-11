@@ -143,7 +143,7 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalBurst: {
       // The explosion lands 25 frames in, from the body the kitty was cast at
       hits: [explosionHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // The leap's field ticks from the kitty's first leap at 68 frames, every 30 frames while its status lasts, and each
         // Tick's hit is cast where the kitty was cast, so it lands from there whatever the body does after
         const field: KitField = {

@@ -2,9 +2,9 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -109,7 +109,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     };
     return {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createKitSummon(body, combatant, [bomb])),
       seconds: frames / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -177,7 +177,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Them once another character is on the field, as gcsim ends the burst on a swap. From four constellations that end
   // Sets off Sparkly Explosion where Klee left, priced as she cast the burst, and from six a field with no edge ticks once
   // And gives each member of the deployed team Blazing Delight's bonus
-  const castSparksNSplash = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const castSparksNSplash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { characterId, constellationCount } = combatant;
     const centre = { x: body.position.x, z: body.position.z };
     const sparks: KitSummon = { ...createKitSummon(body, combatant, sparkHits, burstSeconds), isFollowing: true };
@@ -230,7 +230,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     burstEnergyCost: getTalentMultiplier(talentMultiplierMap, KLEE_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
     chargedAttack: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createKitSummon(body, combatant, [chargedAttackBomb])),
       seconds: (CHARGED_ATTACK_FRAMES - CHARGED_ATTACK_WINDUP_FRAMES) / 60,
       targetingArea: STRIKE_TARGETING_AREA,
@@ -246,7 +246,7 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // The bounces and mines land from a summon cast where Klee stands as the skill starts
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createKitSummon(body, combatant, jumpyDumptyHits)),
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

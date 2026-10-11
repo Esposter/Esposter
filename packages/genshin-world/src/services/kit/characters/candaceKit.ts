@@ -286,7 +286,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, createShield(combatant, TAP_HITMARK_FRAMES / 60)),
     seconds: TAP_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -305,7 +305,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, createShield(combatant, CHARGED_HITMARK_FRAMES / 60)),
     seconds: CHARGED_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -326,7 +326,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const { characterId, constellationCount } = combatant;
       const prayerSeconds =
         BURST_HITMARK_FRAMES / 60 +
@@ -378,7 +378,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     normalAttacks,
     // Each swap while the Prayer stands infuses the one coming on and sets a wave off round the body, up to the waves' count.
     // Constellation 6 sets a wave off when a party member's elemental normal attack strikes an enemy, once per cooldown
-    onKitEvent: (event, { activeCombatant, body, characterIdCombatantMap, combatant, kitEffectState }) => {
+    onKitEvent: (event, { activeCombatant, body, characterIdCombatantMap, kitEffectState }, combatant) => {
       const { characterId, constellationCount } = combatant;
       const { effects } = kitEffectState;
       if (!findPrayerField(effects, characterId)) return;

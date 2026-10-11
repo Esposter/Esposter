@@ -7,7 +7,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYanfeiKit, YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
@@ -38,7 +38,7 @@ describe(createYanfeiKit, () => {
       ],
     };
 
-    YANFEI_KIT.chargedAttack.onStart?.(createKitStepContext(createYanfeiCombatant(), { kitEffectState }));
+    YANFEI_KIT.chargedAttack.onStart?.(createKitTestContext(createYanfeiCombatant(), { kitEffectState }));
 
     expect(countSealStatuses(kitEffectState.effects)).toBe(0);
     const [summon] = kitEffectState.effects;
@@ -51,9 +51,11 @@ describe(createYanfeiKit, () => {
     expect.hasAssertions();
     const hit = YANFEI_KIT.elementalSkill.hits[0];
     if (!hit?.onStrike) throw new Error("Signed Edict has no seal on hit");
+    const combatant = createYanfeiCombatant(6);
     const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
 
-    hit.onStrike(createKitStepContext(createYanfeiCombatant(6), { kitEffectState }));
+    hit.onStrike(context, { body: context.body, combatant, hit });
 
     expect(countSealStatuses(kitEffectState.effects)).toBe(4);
   });

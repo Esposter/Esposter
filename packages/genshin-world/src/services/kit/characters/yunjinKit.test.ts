@@ -10,8 +10,8 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYunjinKit, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -31,20 +31,13 @@ const createYunjinCombatant = (): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
-describe(createYunjinKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([YUNJIN_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState;
-  };
+const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitEffectState => {
+  const context = createKitTestContext(combatant);
+  action.onStart?.(context);
+  return context.kitEffectState;
+};
 
+describe(createYunjinKit, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

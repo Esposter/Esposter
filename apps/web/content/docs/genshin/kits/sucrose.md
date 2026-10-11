@@ -9,7 +9,7 @@ Sucrose's kit is one module, `createSucroseKit`, on avatar 10000043: four strike
 
 ## Decisions
 
-- **Sucrose's field runs its absorb check on a schedule of its own, and its tick reads the enemies it is given.** gcsim checks for the absorbed element every 18 frames from 136 until one is taken, while the Anemo tick lands at 137 frames and then every 113. Each is its own field, and the absorb check reads the enemies through the field's tick, which now receives them (`KitFieldTick.enemyMap`). The absorbed element strikes on each Anemo tick after it is taken, and the aura stays on the enemy, as gcsim leaves it.
+- **Sucrose's field runs its absorb check on a schedule of its own, and its tick reads the enemies it is given.** gcsim checks for the absorbed element every 18 frames from 136 until one is taken, while the Anemo tick lands at 137 frames and then every 113. Each is its own field, and the absorb check reads the enemies through the field's tick, which is given them on the world's context (`KitContext.enemyMap`). The absorbed element strikes on each Anemo tick after it is taken, and the aura stays on the enemy, as gcsim leaves it.
 
 ## Key files
 

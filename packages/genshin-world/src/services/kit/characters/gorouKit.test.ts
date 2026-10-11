@@ -11,9 +11,9 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createGorouKit, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -32,16 +32,13 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
 });
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction, kitEffectState: KitEffectState = { effects: [] }): KitEffect[] => {
+  action.onStart?.(createKitTestContext(createGorouCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
 
 describe(createGorouKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const party = createParty([GOROU_CHARACTER_ID]);
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction, kitEffectState: KitEffectState = { effects: [] }): KitEffect[] => {
-    action.onStart?.({ body: kitBody, combatant: createGorouCombatant(), kitEffectState, party, random: () => 0 });
-    return kitEffectState.effects;
-  };
-
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const crystalCollapse = castEffects(GOROU_KIT.elementalBurst).find(
@@ -68,18 +65,17 @@ describe(createGorouKit, () => {
     const banner = castEffects(GOROU_KIT.elementalSkill).find((effect) => checkIsField(effect));
     const combatant = createGorouCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    banner?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map([
-        [1, createGorouCombatant(1)],
-        [2, createGorouCombatant(2)],
-        [GOROU_CHARACTER_ID, combatant],
-      ]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
+    banner?.onTick(
+      createKitTestContext(combatant, {
+        characterIdCombatantMap: new Map([
+          [1, createGorouCombatant(1)],
+          [2, createGorouCombatant(2)],
+          [GOROU_CHARACTER_ID, combatant],
+        ]),
+        kitEffectState,
+      }),
+      0,
+    );
 
     expect(kitEffectState.effects).toStrictEqual([
       {
@@ -108,14 +104,7 @@ describe(createGorouKit, () => {
       stepKitField(
         field,
         0,
-        { x: 3, z: -2 },
-        {
-          activeCombatant: createGorouCombatant(),
-          characterIdCombatantMap: new Map(),
-          enemyMap: new Map(),
-          kitEffectState: { effects: [] },
-          party,
-        },
+        createKitTestContext(createGorouCombatant(), { body: { facing: 0, height: 0, position: { x: 3, z: -2 } } }),
       );
 
     expect(field?.centre).toStrictEqual({ x: 3, z: -2 });

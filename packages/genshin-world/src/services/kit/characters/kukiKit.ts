@@ -198,7 +198,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     chargedAttackStamina: attackTalentMultiplier(6),
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const radius =
           combatant.constellationCount >= BURST_CONSTELLATION ? BURST_CONSTELLATION_HIT_RADIUS : BURST_HIT_RADIUS;
         const hits: KitHit[] = Array.from({ length: BURST_HIT_COUNT }, (_hit, index) => ({
@@ -228,7 +228,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           talentMultiplier: skillTalentMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;
         // The cast's drain runs once, on the field's first tick, as the interval is past the field's life
         const drain: KitField = {

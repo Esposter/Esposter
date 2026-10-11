@@ -10,8 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXinyanKit, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,39 +29,20 @@ const createXinyanCombatant = (ascension = 0): Combatant => ({
 });
 
 describe(createXinyanKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const skillHit = takeOne(XINYAN_KIT.elementalSkill.hits);
   // Casts Sweeping Fervor, then strikes the given number of enemies with its hit, as the hit's strikes are read
   const castSkill = (combatant: Combatant, strikeCount: number): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    XINYAN_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([XINYAN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant);
+    XINYAN_KIT.elementalSkill.onStart?.(context);
     for (let strike = 0; strike < strikeCount; strike++)
-      skillHit.onStrike?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([XINYAN_CHARACTER_ID]),
-        random: () => 0,
-      });
-    return kitEffectState;
+      skillHit.onStrike?.(context, { body: context.body, combatant, hit: skillHit });
+    return context.kitEffectState;
   };
 
   // Riff Revolution's DoT is the summon its burst casts, read from the effects the cast adds
   const castBurstSummon = (combatant: Combatant): KitSummon | undefined => {
     const kitEffectState: KitEffectState = { effects: [] };
-    XINYAN_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([XINYAN_CHARACTER_ID]),
-      random: () => 0,
-    });
+    XINYAN_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return kitEffectState.effects.find((effect: KitEffect): effect is KitSummon => effect.kind === "summon");
   };
 

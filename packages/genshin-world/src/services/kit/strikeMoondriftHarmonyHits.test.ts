@@ -1,6 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -15,11 +15,11 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeMoondriftHarmonyHits } from "#src/services/kit/strikeMoondriftHarmonyHits";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -47,15 +47,8 @@ describe(strikeMoondriftHarmonyHits, () => {
       { contributorIds: new Set([combatant.characterId]), ownerId: combatant.characterId, secondsRemaining: 0.3 },
     ],
   });
-  const createContext = (enemy: Enemy): KitStrikeContext => ({
-    characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
-    emit: noop,
-    enemyMap: new Map([["", enemy]]),
-    enemyTables,
-    kitEffectState: { effects: [] },
-    party: createParty([combatant.characterId]),
-    random: () => 0,
-  });
+  const createContext = (enemy: Enemy): KitContext =>
+    createKitTestContext(combatant, { enemyMap: new Map([["", enemy]]), enemyTables });
 
   test("lands a hit once its seconds run out, as Lunar-Crystallize's against Geo RES", () => {
     expect.hasAssertions();

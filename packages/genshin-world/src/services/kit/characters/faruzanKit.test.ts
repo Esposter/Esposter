@@ -10,9 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createFaruzanKit, FARUZAN_CHARACTER_ID } from "#src/services/kit/characters/faruzanKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,16 +28,14 @@ const createFaruzanCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
-describe(createFaruzanKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const party = createParty([FARUZAN_CHARACTER_ID]);
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.(createKitStepContext(createFaruzanCombatant(), { body: kitBody, kitEffectState, party }));
-    return kitEffectState.effects;
-  };
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(createFaruzanCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
 
+describe(createFaruzanKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -85,14 +82,7 @@ describe(createFaruzanKit, () => {
     expect.hasAssertions();
     const field = castEffects(FARUZAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createFaruzanCombatant(),
-      characterIdCombatantMap: new Map([[FARUZAN_CHARACTER_ID, createFaruzanCombatant()]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(createFaruzanCombatant(), { kitEffectState }), 0);
     const pulse = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     const buff = kitEffectState.effects.find((effect) => effect.kind === "buff");
 

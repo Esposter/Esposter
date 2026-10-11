@@ -186,7 +186,7 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           talentMultiplier: burstTalentMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const field: KitField = {
           centre: { x: body.position.x, z: body.position.z },
           characterId: combatant.characterId,
@@ -213,7 +213,8 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     },
     elementalSkill: {
       hits: createPaws(TAP_PAW_COUNT, TAP_HITMARK_FRAMES),
-      onStart: ({ combatant, kitEffectState }) => addKitEffect(kitEffectState, createShield(combatant, 1)),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+        addKitEffect(kitEffectState, createShield(combatant, 1)),
       seconds: TAP_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -221,7 +222,7 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       {
         action: {
           hits: createPaws(HOLD_PAW_COUNT, HOLD_HITMARK_FRAMES),
-          onStart: ({ combatant, kitEffectState }) =>
+          onStart: ({ activeCombatant: combatant, kitEffectState }) =>
             addKitEffect(kitEffectState, createShield(combatant, skillTalentMultiplier(5))),
           seconds: HOLD_ANIMATION_FRAMES / 60,
           targetingArea: SKILL_TARGETING_AREA,
@@ -257,7 +258,7 @@ export const createDionaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     },
     normalAttacks,
     // Constellation 1 returns 15 energy to Diona as her field ends, as the game's text gives it
-    onKitEvent: (event, { combatant, party }) => {
+    onKitEvent: (event, { party }, combatant) => {
       if (
         event.kind === KitEventKind.EffectExpired &&
         event.effect.kind === "field" &&

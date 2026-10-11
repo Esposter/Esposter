@@ -8,8 +8,8 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ALOY_CHARACTER_ID, createAloyKit } from "#src/services/kit/characters/aloyKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -63,16 +63,11 @@ describe(createAloyKit, () => {
 
   test("the fourth Chillwater Bomblet coil gives Cryo infusion and Rushing Ice, which holds off more coils", () => {
     expect.hasAssertions();
+    const combatant = createAloyCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
     const bomblet = takeOne(bombletHits());
-    const strike = (): void =>
-      bomblet.onStrike?.({
-        body: kitBody,
-        combatant: createAloyCombatant(),
-        kitEffectState,
-        party: createParty([ALOY_CHARACTER_ID]),
-        random: () => 0,
-      });
+    const strike = (): void => bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet });
 
     for (let index = 0; index < 3; index++) strike();
     expect(kitEffectState.effects).toStrictEqual([

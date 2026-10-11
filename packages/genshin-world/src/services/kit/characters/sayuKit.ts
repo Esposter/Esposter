@@ -229,7 +229,7 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       ],
       // The initial heal lands at the cast, on the active character, from the ATK the cast reads, and the Daruma is a field
       // Of its ticks, each a strike and a heal, cast where Sayu stands and priced by her as she stood then
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const atk = combatant.attributes.attack;
         const initialHeal = burstInitialHealFlat + atk * burstInitialHealAttackShare;
         addKitEffect(kitEffectState, {

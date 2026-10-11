@@ -1,5 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEventContext } from "#src/models/kit/KitEventContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -11,11 +11,7 @@ import { healPartyMember } from "#src/services/party/healPartyMember";
 // Negative one drains it as it is, as gcsim's Heal and Drain price them. The change is recorded with the source's
 // Character, so every kit of the team hears it. A member whose combatant is not built yet has no Max HP to take it by
 export const changeKitMemberHealth = (
-  {
-    characterIdCombatantMap,
-    kitEffectState: { effects },
-    party,
-  }: Pick<KitEventContext, "characterIdCombatantMap" | "kitEffectState" | "party">,
+  { characterIdCombatantMap, kitEffectState: { effects }, party }: KitContext,
   source: Combatant,
   characterId: number,
   health: number,

@@ -3,12 +3,14 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -191,7 +193,7 @@ const setMirrorCount = (kitEffectState: KitEffectState, characterId: number, mir
 
 // Starts the decay of the Mirrors, one every 233 frames, or restarts it if one is running, which is gcsim's chain: a new
 // Chain supersedes the one before it, so the one field is moved to its first tick rather than a second added
-const startMirrorDecay = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+const startMirrorDecay = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): void => {
   const { characterId } = combatant;
   const field = findKitField(kitEffectState.effects, MIRROR_DECAY_FIELD_ID);
   if (field) {
@@ -272,13 +274,12 @@ const addConstellation6Buffs = (kitEffectState: KitEffectState, characterId: num
 
 // Makes Mirrors as gcsim's mirror gain does: a run's first Mirror, or one that overflows past three, starts the decay, and
 // Constellation 2 and 6 answer each one made
-const gainMirrors = (context: KitStepContext, generated: number): void => {
+const gainMirrors = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant, generated: number): void => {
   if (generated <= 0) return;
-  const { combatant, kitEffectState } = context;
   const { characterId, constellationCount } = combatant;
   const count = getMirrorCount(kitEffectState.effects, characterId);
   const total = count + generated;
-  if (count === 0 || total > MIRRORS_MAX) startMirrorDecay(context);
+  if (count === 0 || total > MIRRORS_MAX) startMirrorDecay(kitEffectState, body, combatant);
   setMirrorCount(kitEffectState, characterId, Math.min(total, MIRRORS_MAX));
   if (constellationCount >= CONSTELLATION_2)
     for (let made = 0; made < generated; made++) addConstellation2Buff(kitEffectState, characterId);
@@ -311,8 +312,11 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   // A Projection Attack triggers on a normal attack, charged attack or plunge that strikes an enemy. An Ascension 1 charged
   // Attack or plunge makes a Mirror first, so the projection counts it, and Projection Attack's own cooldown holds it to once
   // Each 1.6 seconds, as gcsim's projection does
-  const triggerProjection = (context: KitStepContext, isMirrorSource: boolean): void => {
-    const { body, combatant, kitEffectState } = context;
+  const triggerProjection = (
+    { kitEffectState }: KitContext,
+    { body, combatant }: KitStrike,
+    isMirrorSource: boolean,
+  ): void => {
     const { ascension, characterId } = combatant;
     if (
       isMirrorSource &&
@@ -325,7 +329,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         kind: "status",
         secondsRemaining: ASCENSION_1_ICD_SECONDS,
       });
-      gainMirrors(context, 1);
+      gainMirrors(kitEffectState, body, combatant, 1);
     }
     const count = getMirrorCount(kitEffectState.effects, characterId);
     if (count === 0 || findKitStatus(kitEffectState.effects, characterId, PROJECTION_ICD_STATUS_ID)) return;
@@ -365,7 +369,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     hitArea,
     hitmarkSeconds: hitmarkFrames / 60,
     internalCooldownTag,
-    onStrike: (context) => triggerProjection(context, isMirrorSource),
+    onStrike: (context, strike) => triggerProjection(context, strike, isMirrorSource),
     poiseDamage: 0,
     talentMultiplier,
   });
@@ -379,7 +383,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     hitArea,
     hitmarkSeconds: hitmarkFrames / 60,
     isBlunt: true,
-    onStrike: (context) => triggerProjection(context, true),
+    onStrike: (context, strike) => triggerProjection(context, strike, true),
     poiseDamage,
     talentMultiplier,
   });
@@ -414,12 +418,14 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: skillMultiplier(0),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState, random }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createDelayedKitField(combatant.characterId, body.position, mirrorFrames / 60, (tick) =>
           gainMirrors(
-            { body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random },
+            tick.kitEffectState,
+            body,
+            combatant,
             getSkillMirrorGain(tick.kitEffectState.effects, combatant.characterId),
           ),
         ),
@@ -443,7 +449,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState, party, random }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
       const { characterId, constellationCount } = combatant;
       const consumed = getMirrorCount(kitEffectState.effects, characterId);
       addKitEffect(
@@ -469,7 +475,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       if (generated <= 0) return;
       addKitEffect(kitEffectState, {
         ...createDelayedKitField(characterId, body.position, BURST_MIRROR_REGEN_FRAMES / 60, (tick) => {
-          gainMirrors({ body, combatant, kitEffectState: tick.kitEffectState, party: tick.party, random }, generated);
+          gainMirrors(tick.kitEffectState, body, combatant, generated);
           if (constellationCount >= CONSTELLATION_4)
             addKitEffect(tick.kitEffectState, {
               amount: CONSTELLATION_4_DENDRO_DAMAGE_BONUS_PER_MIRROR * generated,
@@ -573,7 +579,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     },
     normalAttacks,
     // Leaving the field clears the Mirrors and the Mirror a rush or a burst has yet to make, as gcsim's swap does
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       setMirrorCount(kitEffectState, combatant.characterId, 0);
       for (const effect of kitEffectState.effects)
@@ -582,7 +588,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,
       hitmarkSeconds: PLUNGE_COLLISION_HITMARK_FRAMES / 60,
-      onStrike: (context) => triggerProjection(context, true),
+      onStrike: (context, strike) => triggerProjection(context, strike, true),
       poiseDamage: 0,
       talentMultiplier: attackMultiplier(9),
     },

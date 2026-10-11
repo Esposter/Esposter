@@ -1,6 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 import type { GroundPoint } from "genshin-engine";
 
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
@@ -29,7 +29,7 @@ const selectNearestEnemy = ({ x, z }: GroundPoint, enemies: Iterable<Enemy>, rad
 // The Dendro Cores whose seconds ran out bursting on the enemies round them, each priced from its character as the
 // Team's buffs leave it: a Bloom's own core about itself, only while the character whose Bloom left it stands in the
 // Deployed team, a Burgeon about itself, and a Hyperbloom about the enemy nearest the core within 15 metres
-export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], context: KitStrikeContext): void => {
+export const burstKitDendroCores = (expiredEffects: readonly KitEffect[], context: KitContext): void => {
   const { characterIdCombatantMap, enemyMap, kitEffectState, party } = context;
   for (const effect of expiredEffects) {
     if (effect.kind !== "dendroCore") continue;

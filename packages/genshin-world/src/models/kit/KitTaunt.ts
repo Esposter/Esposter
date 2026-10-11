@@ -8,8 +8,6 @@ import type { KitHit } from "#src/models/kit/KitHit";
 export interface KitTaunt {
   body: KitBody;
   combatant: Combatant;
-  // The damage each enemy's strike dealt it since the last step, which the step sends to the kits and empties
-  damagesTaken: number[];
   explosion?: KitHit;
   health: number;
   kind: "taunt";

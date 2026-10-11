@@ -3,7 +3,7 @@ import type { TransformativeReaction } from "#src/models/combat/TransformativeRe
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
@@ -27,7 +27,7 @@ const strikeOwnedTicks = (
   kind: EnemyKind,
   reactions: Reaction[],
   combatant: Combatant | undefined,
-  context: KitStrikeContext,
+  context: KitContext,
 ): void => {
   if (!combatant || reactions.length === 0) return;
   const { characterId, level } = combatant;
@@ -62,7 +62,7 @@ const strikeOwnedTicks = (
 // Electro-Charged ticks are dealt from the combatant whose element last charged the enemy, and the Burning ticks, with
 // What their Pyro triggered there, from the one whose element last lit or fed its Burning, each dropping the enemy's
 // Energy to the team and reaching on as its reach does. A tick no combatant owns deals nothing
-export const strikeElementalTicks = (context: KitStrikeContext): void => {
+export const strikeElementalTicks = (context: KitContext): void => {
   const { enemyMap, enemyTables } = context;
   for (const enemy of enemyMap.values()) {
     const { burningCombatant, electroChargedCombatant, elementalReactions: reactions } = enemy;

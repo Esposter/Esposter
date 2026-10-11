@@ -10,7 +10,7 @@ Citlali's kit is one module, `createCitlaliKit`, avatar 10000107: her three stri
 ## Not yet built
 
 - **Itzpapa and the Opal Shield wait on the Nightsoul hook.** Obsidian Tzitzimitl summons Itzpapa and gives the party's active character a shield that scales with Elemental Mastery, and the Opal Fire state those start is the Nightsoul state the framework does not hold. The skill's hit is built; the summon and the shield are not, so the skill has no shield in this kit.
-- **The Spirit Vessel skulls wait on the burst's start reading the enemies.** Ice Storm summons a skull on each of the first three enemies within 7 of Citlali as it is cast, and each lands at a random time between 87 and 117 frames after the burst's hit. The start can draw those times from the world's random source, but it reads no enemies but the one it turned to, so the skulls are not built, and the burst's hit is Ice Storm alone.
+- **The Spirit Vessel skulls are not built.** Ice Storm summons a skull on each of the first three enemies within 7 of Citlali as it is cast, and each lands at a random time between 87 and 117 frames after the burst's hit. The start is given the world's context, so it can read the enemies and draw those times from its random source, but no skull is written yet, and the burst's hit is Ice Storm alone.
 - **Citlali's Ascension 1 and 4 and Constellations 1, 2, 4 and 6 wait on the Nightsoul hook.** Each reads the Nightsoul points, the Nightsoul burst, the Opal Fire state, Itzpapa or the Opal Shield, so none is built.
 
 ## Decisions

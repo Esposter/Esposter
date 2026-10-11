@@ -1,6 +1,7 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
@@ -16,8 +17,6 @@ import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-
-type RecastStart = Parameters<NonNullable<KitAction["onStart"]>>[0];
 
 // Durin's proud skill groups, read at his talent level. The attack group holds his four strikes at 0 to 4 (the second strike's
 // Two hits at 2 and 3), the charged attack at 5 and its stamina at 6, and the plunges' collision, low and high at 7, 8 and 9.
@@ -122,7 +121,7 @@ const HIGH_PLUNGE_FRAMES = 68;
 const HIGH_PLUNGE_POISE_DAMAGE = 150;
 
 // The recasts end the window's stance, as gcsim deletes the window when either is cast
-const endWindow = ({ combatant, kitEffectState }: RecastStart): void => {
+const endWindow = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
   for (const effect of kitEffectState.effects)
     if (effect.kind === "stance" && effect.characterId === combatant.characterId) effect.secondsRemaining = 0;
 };
@@ -170,7 +169,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   };
 
   // Each recast gives the skill's energy once every six seconds, as gcsim's energy ICD does, and the energy is the table's
-  const gainRecastEnergy = ({ combatant, kitEffectState, party }: RecastStart): void => {
+  const gainRecastEnergy = ({ activeCombatant: combatant, kitEffectState, party }: KitContext): void => {
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, SKILL_ENERGY_ICD_STATUS_ID)) return;
     gainPartyMemberEnergy(party, combatant, skillMultiplier(4));
     addKitEffect(kitEffectState, {
@@ -200,7 +199,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         if (
           effect.kind === "status" &&
           effect.id === BLACK_STATUS_ID &&
-          effect.characterId === start.combatant.characterId
+          effect.characterId === start.activeCombatant.characterId
         )
           effect.secondsRemaining = 0;
     },
@@ -223,7 +222,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       endWindow(start);
       gainRecastEnergy(start);
       addKitEffect(start.kitEffectState, {
-        characterId: start.combatant.characterId,
+        characterId: start.activeCombatant.characterId,
         id: BLACK_STATUS_ID,
         kind: "status",
         secondsRemaining: BLACK_STATUS_SECONDS,
@@ -258,7 +257,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, createWindowStance(combatant.characterId, elementalSkill)),
     seconds: SKILL_PRESS_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -271,7 +270,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     initialHits: KitHit[],
   ): KitAction => ({
     hits: initialHits,
-    onStart: ({ body, combatant, kitEffectState, target }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }, target) => {
       for (const effect of kitEffectState.effects)
         if (
           effect.kind === "summon" &&
@@ -321,7 +320,7 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     elementalBurst,
     elementalBurstVariant: {
       action: blackBurst,
-      checkIsActive: ({ combatant, kitEffectState }) =>
+      checkIsActive: ({ activeCombatant: combatant, kitEffectState }) =>
         checkHasKitStatus(kitEffectState.effects, combatant.characterId, BLACK_STATUS_ID),
     },
     elementalSkill,

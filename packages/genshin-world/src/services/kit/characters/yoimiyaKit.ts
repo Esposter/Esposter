@@ -149,7 +149,7 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // The burst readies Aurous Blaze for the first enemy its hit strikes
   const elementalBurst: KitAction = {
     hits: [burstHit],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         id: AUROUS_BLAZE_PENDING_STATUS_ID,
@@ -172,7 +172,7 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // Niwabi Fire-Dance is a stance for the table's seconds whose normal attacks are the Blazing Arrows
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         actions: { chargedAttack, chargedAttackStamina, elementalBurst, elementalSkill, normalAttacks: blazingArrows },
         // The Blazing Arrows stay Normal Attack DMG, gcsim's AttackTagNormal in yoimiya/attack.go's Attack
@@ -225,7 +225,7 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     normalAttacks,
     // Niwabi Fire-Dance ends as she leaves the field. The burst's hit marks the first enemy it strikes with Aurous Blaze,
     // And a hit another member deals a marked enemy as a kind of attack off its cooldown sets off the explosion on it
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
         if (event.previousCharacterId !== characterId) return;

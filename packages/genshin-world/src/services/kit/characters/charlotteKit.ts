@@ -170,7 +170,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: attackMultiplier(3),
       },
     ],
-    onStart: ({ combatant, kitEffectState, target }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }, target) => {
       if (!target) return;
       const { characterId } = combatant;
       const { position } = target;
@@ -265,7 +265,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         talentMultiplier: burstMultiplier(2),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState, party }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
       const { characterId } = combatant;
       const castCentre = createAheadBody(body, BURST_OFFSET_METRES).position;
       addKitEffect(kitEffectState, createKitSummon(body, combatant, kameraHits));
@@ -323,7 +323,7 @@ export const createCharlotteKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     lowPlunge,
     normalAttacks: createNormalAttacks(),
     // Each Snappy Silhouette tick is a hit on the enemy it ticks on, priced by the press's multiplier at index 2
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== SNAPPY_MARK_STATUS_ID) return;
       const { enemy } = event;
       const tick = createKitSummon(

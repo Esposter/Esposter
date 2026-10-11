@@ -155,7 +155,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     });
     return {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { maxHealth } = combatant.attributes;
         addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits, SKILL_DURATION_SECONDS));
         const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
@@ -200,7 +200,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         actions: {
           chargedAttack: garmentChargedAttack,

@@ -2,9 +2,10 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
@@ -94,7 +95,7 @@ export const createAloyKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more coils
   // Until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
-  const addCoilStack = ({ combatant, kitEffectState }: KitStepContext): void => {
+  const addCoilStack = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, RUSHING_ICE_STATUS_ID)) return;
     const coil = kitEffectState.effects.find(
       (effect): effect is KitStatus =>

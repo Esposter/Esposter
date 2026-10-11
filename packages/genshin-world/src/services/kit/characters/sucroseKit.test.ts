@@ -1,6 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
@@ -16,7 +15,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { GANYU_CHARACTER_ID } from "#src/services/kit/characters/ganyuKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createSucroseKit, SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -42,20 +41,13 @@ const findTickField = (effects: KitEffect[]): KitField => {
   return field;
 };
 
-describe(createSucroseKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const castEffects = (combatant: Combatant): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    SUCROSE_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([SUCROSE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
+const castEffects = (combatant: Combatant): KitEffect[] => {
+  const context = createKitTestContext(combatant);
+  SUCROSE_KIT.elementalBurst.onStart?.(context);
+  return context.kitEffectState.effects;
+};
 
+describe(createSucroseKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -85,7 +77,7 @@ describe(createSucroseKit, () => {
     const ganyu = { ...createSucroseCombatant(), characterId: GANYU_CHARACTER_ID, element: Element.Cryo };
     const mona = { ...createSucroseCombatant(), characterId: MONA_CHARACTER_ID, element: Element.Hydro };
     const party = createParty([SUCROSE_CHARACTER_ID, GANYU_CHARACTER_ID, MONA_CHARACTER_ID]);
-    const context = createKitEventContext(sucrose, {
+    const context = createKitTestContext(sucrose, {
       characterIdCombatantMap: new Map([
         [GANYU_CHARACTER_ID, ganyu],
         [MONA_CHARACTER_ID, mona],
@@ -102,6 +94,7 @@ describe(createSucroseKit, () => {
         striker: sucrose,
       },
       context,
+      sucrose,
     );
 
     expect(context.kitEffectState.effects).toStrictEqual([
@@ -121,7 +114,7 @@ describe(createSucroseKit, () => {
     const sucrose = createSucroseCombatant(4, 0, 400);
     const ganyu = { ...createSucroseCombatant(), characterId: GANYU_CHARACTER_ID, element: Element.Cryo };
     const party = createParty([SUCROSE_CHARACTER_ID, GANYU_CHARACTER_ID]);
-    const context = createKitEventContext(sucrose, {
+    const context = createKitTestContext(sucrose, {
       characterIdCombatantMap: new Map([
         [GANYU_CHARACTER_ID, ganyu],
         [SUCROSE_CHARACTER_ID, sucrose],
@@ -133,6 +126,7 @@ describe(createSucroseKit, () => {
     SUCROSE_KIT.onKitEvent?.(
       { enemy, hit: skillHit, isCritical: false, isDefeated: false, kind: KitEventKind.DamageTaken, striker: sucrose },
       context,
+      sucrose,
     );
 
     expect(context.kitEffectState.effects).toStrictEqual([

@@ -15,6 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createCynoKit, CYNO_CHARACTER_ID } from "#src/services/kit/characters/cynoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -32,15 +33,9 @@ const roundToThousandth = (value: number): number => Math.round(value * 1000) / 
 describe(createCynoKit, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CYNO_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState;
+    const context = createKitTestContext(combatant);
+    action.onStart?.(context);
+    return context.kitEffectState;
   };
 
   const createCynoCombatant = (overrides: Partial<Combatant> = {}): Combatant => ({
@@ -63,8 +58,6 @@ describe(createCynoKit, () => {
   const MAX_HEALTH = 10_000;
 
   const ELEMENTAL_MASTERY = 200;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill group", () => {
     expect.hasAssertions();
@@ -120,23 +113,11 @@ describe(createCynoKit, () => {
     const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
     const stanceSeconds = findStance(kitEffectState)?.secondsRemaining ?? 0;
     const mortuaryRite = findStance(kitEffectState)?.actions.elementalSkill;
-    for (let cast = 0; cast < 3; cast++)
-      mortuaryRite?.onStart?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([CYNO_CHARACTER_ID]),
-        random: () => 0,
-      });
+    const context = createKitTestContext(combatant, { kitEffectState });
+    for (let cast = 0; cast < 3; cast++) mortuaryRite?.onStart?.(context);
 
     expect({
-      cooldownMultiplier: CYNO_KIT.getSkillCooldownMultiplier?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([CYNO_CHARACTER_ID]),
-        random: () => 0,
-      }),
+      cooldownMultiplier: CYNO_KIT.getSkillCooldownMultiplier?.(context),
       extensionSeconds: roundToThousandth((findStance(kitEffectState)?.secondsRemaining ?? 0) - stanceSeconds),
     }).toStrictEqual({ cooldownMultiplier: 0.4, extensionSeconds: 8 });
   });
@@ -145,15 +126,7 @@ describe(createCynoKit, () => {
     expect.hasAssertions();
     const combatant = createCynoCombatant();
 
-    expect(
-      CYNO_KIT.getSkillCooldownMultiplier?.({
-        body: kitBody,
-        combatant,
-        kitEffectState: { effects: [] },
-        party: createParty([CYNO_CHARACTER_ID]),
-        random: () => 0,
-      }),
-    ).toBe(1);
+    expect(CYNO_KIT.getSkillCooldownMultiplier?.(createKitTestContext(combatant))).toBe(1);
   });
 
   test("judication's Endseer lands on the first tick at 328 frames, and only while the stance holds", () => {
@@ -161,15 +134,7 @@ describe(createCynoKit, () => {
     const combatant = createCynoCombatant({ ascension: 1 });
     const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
     const field = findField(kitEffectState);
-    const party = createParty([CYNO_CHARACTER_ID]);
-    field?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
 
     expect({
       endseer: kitEffectState.effects.some((effect) => effect.kind === "status" && effect.id === "cyno-endseer"),
@@ -190,15 +155,9 @@ describe(createCynoKit, () => {
     const combatant = createCynoCombatant({ constellationCount: 2 });
     const kitEffectState: KitEffectState = { effects: [] };
     const hit = takeOne(takeOne(CYNO_KIT.normalAttacks).hits);
-    const context = {
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([CYNO_CHARACTER_ID]),
-      random: () => 0,
-    };
-    hit.onStrike?.(context);
-    hit.onStrike?.(context);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(context, { body: context.body, combatant, hit });
     const bonus = kitEffectState.effects.find((effect) => effect.kind === "buff");
 
     expect(
@@ -218,20 +177,15 @@ describe(createCynoKit, () => {
       reactions: [{ element: Element.Electro, reactionType: ReactionType.Superconduct }],
       striker: combatant,
     };
-    for (let event = 0; event < 6; event++)
-      CYNO_KIT.onKitEvent?.(reaction, {
-        activeCombatant: combatant,
-        body: kitBody,
-        characterIdCombatantMap: new Map([
-          [CYNO_CHARACTER_ID, combatant],
-          [other.characterId, other],
-        ]),
-        combatant,
-        enemyMap: new Map(),
-        kitEffectState,
-        party,
-        random: () => 0,
-      });
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [CYNO_CHARACTER_ID, combatant],
+        [other.characterId, other],
+      ]),
+      kitEffectState,
+      party,
+    });
+    for (let event = 0; event < 6; event++) CYNO_KIT.onKitEvent?.(reaction, context, combatant);
 
     expect(party.characterIdMemberMap.get(other.characterId)?.energy).toBe(15);
   });

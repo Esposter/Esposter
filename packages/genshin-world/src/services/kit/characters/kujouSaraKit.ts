@@ -4,9 +4,10 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -105,7 +106,7 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   const atkBonusSeconds = skillTalentMultiplier(2);
 
   // The ATK Bonus Tengu Stormcall gives the character on the field as a hit lands, a share of Sara's base ATK
-  const addAtkBonus = ({ combatant, kitEffectState, party }: KitStepContext): void =>
+  const addAtkBonus = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void =>
     addKitEffect(kitEffectState, {
       amount: atkBonusRatio * combatant.attributes.attributeTotalMap[Attribute.BaseAttack],
       attribute: Attribute.Attack,
@@ -187,7 +188,7 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       ],
       isAimed: true,
       // A fully charged shot under the Cover from Ascension 1 drops the crowfeather and spends the Cover
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.ascension < 1) return;
         const cover = kitEffectState.effects.find(
           (effect): effect is KitStatus =>
@@ -213,7 +214,7 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           talentMultiplier: burstTalentMultiplier(0),
         },
       ],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createStormclusters(body, combatant)),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -221,7 +222,7 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     elementalSkill: {
       hits: [],
       // The Cover lasts 18 seconds, and from Constellation 2 a weaker crowfeather is set out where Sara stands
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const cover: KitStatus = {
           characterId: combatant.characterId,
           id: COVER_ID,

@@ -186,7 +186,7 @@ export const createWandererKit = (talentMultiplierMap: TalentMultiplierMap): Kit
         talentMultiplier: skillMultiplier(0),
       },
     ],
-    onStart: ({ combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       const stance: KitStance = {
         actions: {
           chargedAttack: windfavoredChargedAttack,

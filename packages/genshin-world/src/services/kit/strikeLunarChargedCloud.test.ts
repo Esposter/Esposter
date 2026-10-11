@@ -1,6 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -12,13 +12,12 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeLunarChargedCloud } from "#src/services/kit/strikeLunarChargedCloud";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { LUNAR_CHARGED_CLOUD_SECONDS } from "#src/services/party/constants";
-import { createParty } from "#src/services/party/createParty";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
-import { noop } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -49,15 +48,11 @@ describe(strikeLunarChargedCloud, () => {
     applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: combatant.characterId });
     return enemy;
   };
-  const createContext = (enemies: Enemy[]): KitStrikeContext => ({
-    characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
-    emit: noop,
-    enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
-    enemyTables,
-    kitEffectState: { effects: [] },
-    party: createParty([combatant.characterId]),
-    random: () => 0,
-  });
+  const createContext = (enemies: Enemy[]): KitContext =>
+    createKitTestContext(combatant, {
+      enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
+      enemyTables,
+    });
 
   test("first ticks 9 frames on, striking Lunar-Charged enemies within 8 metres to their edge, each once in 2 seconds", () => {
     expect.hasAssertions();

@@ -147,7 +147,7 @@ export const createDahliaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       ],
       // Radiant Psalter's shield comes SHIELD_FRAMES in and holds the Favonian Favor's seconds. It is a field that ticks once,
       // Since a shield is placed when its tick falls, and the shield then reads the caster's Max HP as it stands then
-      onStart: ({ body: { position }, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           centre: { x: position.x, z: position.z },
           characterId: combatant.characterId,

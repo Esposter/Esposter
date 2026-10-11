@@ -6,10 +6,10 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test, vi } from "vitest";
 
 const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
@@ -28,29 +28,19 @@ describe(emitKitEvent, () => {
       level: 90,
     });
     const deployedCombatant = createCombatant(TRAVELER_CHARACTER_ID);
-    const context = {
-      activeCombatant: deployedCombatant,
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      enemyMap: new Map(),
-      kitEffectState: { effects: [] },
-      party: createParty([TRAVELER_CHARACTER_ID]),
-      random: () => 0,
-    };
     const event: KitCharacterSwappedEvent = {
       characterId: 0,
       kind: KitEventKind.CharacterSwapped,
       previousCharacterId: 0,
     };
-    const characterIdCombatantMap = new Map([
-      [0, createCombatant(0)],
-      [TRAVELER_CHARACTER_ID, deployedCombatant],
-    ]);
-    emitKitEvent(event, characterIdCombatantMap, context);
-
-    expect(onKitEvent).toHaveBeenCalledExactlyOnceWith(event, {
-      ...context,
-      characterIdCombatantMap,
-      combatant: deployedCombatant,
+    const context = createKitTestContext(deployedCombatant, {
+      characterIdCombatantMap: new Map([
+        [0, createCombatant(0)],
+        [TRAVELER_CHARACTER_ID, deployedCombatant],
+      ]),
     });
+    emitKitEvent(event, context);
+
+    expect(onKitEvent).toHaveBeenCalledExactlyOnceWith(event, context, deployedCombatant);
   });
 });

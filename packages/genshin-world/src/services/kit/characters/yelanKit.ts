@@ -141,7 +141,7 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     gauge: 1,
     hitArea: SKILL_TARGETING_AREA,
     hitmarkSeconds: LIFELINE_HITMARK_FRAMES / 60,
-    onStrike: ({ body, combatant, kitEffectState }) => {
+    onStrike: ({ kitEffectState }, { body, combatant }) => {
       if (!kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === DEPTH_CLARION_DICE_ID))
         return;
       addKitEffect(kitEffectState, createExquisiteThrowSummon(body, combatant));
@@ -200,7 +200,7 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [burstHit],
-      onStart: ({ body, combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createDepthClarionDiceField(body, combatant)),
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

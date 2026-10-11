@@ -16,9 +16,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createOroronKit, ORORON_CHARACTER_ID } from "#src/services/kit/characters/ororonKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -37,21 +36,14 @@ const createOroronCombatant = (ascension = 0, constellationCount = 0): Combatant
   weaponType: WeaponType.Bow,
 });
 
-describe(createOroronKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction, combatant = createOroronCombatant()): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ORORON_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction, combatant = createOroronCombatant()): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects;
+};
 
+describe(createOroronKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -114,14 +106,7 @@ describe(createOroronKit, () => {
     expect.hasAssertions();
     const field = castEffects(ORORON_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createOroronCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([ORORON_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(createOroronCombatant(), { kitEffectState }), 0);
     const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(tickSummon?.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([0]);
@@ -130,24 +115,12 @@ describe(createOroronKit, () => {
   test("constellation 2's Electro DMG Bonus starts at 8% with the burst and gains 8% for each enemy struck, up to 32%", () => {
     expect.hasAssertions();
     const combatant = createOroronCombatant(0, 2);
-    const kitEffectState: KitEffectState = { effects: [] };
-    ORORON_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([ORORON_CHARACTER_ID]),
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant);
+    ORORON_KIT.elementalBurst.onStart?.(context);
     const ritualHit = takeOne(ORORON_KIT.elementalBurst.hits);
     const amounts = [0, 1, 2, 3].map(() => {
-      ritualHit.onStrike?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([ORORON_CHARACTER_ID]),
-        random: () => 0,
-      });
-      return kitEffectState.effects.find((effect) => effect.kind === "buff")?.amount;
+      ritualHit.onStrike?.(context, { body: context.body, combatant, hit: ritualHit });
+      return context.kitEffectState.effects.find((effect) => effect.kind === "buff")?.amount;
     });
 
     expect(amounts).toStrictEqual([0.16, 0.24, 0.32, 0.32]);
@@ -156,16 +129,10 @@ describe(createOroronKit, () => {
   test("ascension 4 gives 3 energy to the active character on each Normal Attack after the Spirit Orb's hit, a second apart", () => {
     expect.hasAssertions();
     const combatant = createOroronCombatant(4);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty([ORORON_CHARACTER_ID]);
-    takeOne(ORORON_KIT.elementalSkill.hits).onStrike?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
-    getPartyMember(party, ORORON_CHARACTER_ID).energy = 0;
+    const context = createKitTestContext(combatant);
+    const spiritOrbHit = takeOne(ORORON_KIT.elementalSkill.hits);
+    spiritOrbHit.onStrike?.(context, { body: context.body, combatant, hit: spiritOrbHit });
+    getPartyMember(context.party, ORORON_CHARACTER_ID).energy = 0;
     const normalAttackEvent: KitDamageTakenEvent = {
       attackTag: AttackTag.NormalAttack,
       enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
@@ -175,10 +142,10 @@ describe(createOroronKit, () => {
       kind: KitEventKind.DamageTaken,
       striker: combatant,
     };
-    ORORON_KIT.onKitEvent?.(normalAttackEvent, createKitEventContext(combatant, { kitEffectState, party }));
-    const energyAfterFirst = getPartyMember(party, ORORON_CHARACTER_ID).energy;
-    ORORON_KIT.onKitEvent?.(normalAttackEvent, createKitEventContext(combatant, { kitEffectState, party }));
+    ORORON_KIT.onKitEvent?.(normalAttackEvent, context, combatant);
+    const energyAfterFirst = getPartyMember(context.party, ORORON_CHARACTER_ID).energy;
+    ORORON_KIT.onKitEvent?.(normalAttackEvent, context, combatant);
 
-    expect([energyAfterFirst, getPartyMember(party, ORORON_CHARACTER_ID).energy]).toStrictEqual([3, 3]);
+    expect([energyAfterFirst, getPartyMember(context.party, ORORON_CHARACTER_ID).energy]).toStrictEqual([3, 3]);
   });
 });

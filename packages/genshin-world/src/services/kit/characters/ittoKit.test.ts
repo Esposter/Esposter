@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
@@ -9,8 +10,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIttoKit, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
@@ -36,23 +36,20 @@ const readSuperstrengthStacks = ({ effects }: KitEffectState): number | undefine
   )?.stacks;
 
 // Lands each of Itto's four strikes once
-const landNormalAttacks = (combatant: Combatant, kitEffectState: KitEffectState): void => {
+const landNormalAttacks = (context: KitContext): void => {
   for (const action of ITTO_KIT.normalAttacks)
-    ITTO_KIT.onKitEvent?.(
-      { action, kind: KitEventKind.NormalAttackLanded },
-      createKitEventContext(combatant, { kitEffectState }),
-    );
+    ITTO_KIT.onKitEvent?.({ action, kind: KitEventKind.NormalAttackLanded }, context, context.activeCombatant);
 };
 
 describe(createIttoKit, () => {
   test("the burst, Royal Descent, adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD for its seconds", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant);
 
-    ITTO_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    ITTO_KIT.elementalBurst.onStart?.(context);
 
-    expect(kitEffectState.effects).toStrictEqual([
+    expect(context.kitEffectState.effects).toStrictEqual([
       {
         amount: 0.576 * combatant.attributes.defense,
         attribute: Attribute.Attack,
@@ -74,23 +71,23 @@ describe(createIttoKit, () => {
   test("his strikes give Superlative Superstrength as they land, the first and third too as the Raging Oni King", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    landNormalAttacks(combatant, kitEffectState);
+    const context = createKitTestContext(combatant);
+    landNormalAttacks(context);
 
-    expect(readSuperstrengthStacks(kitEffectState)).toBe(3);
+    expect(readSuperstrengthStacks(context.kitEffectState)).toBe(3);
 
-    const burstEffectState: KitEffectState = { effects: [] };
-    ITTO_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState: burstEffectState }));
-    landNormalAttacks(combatant, burstEffectState);
+    const burstContext = createKitTestContext(combatant);
+    ITTO_KIT.elementalBurst.onStart?.(burstContext);
+    landNormalAttacks(burstContext);
 
-    expect(readSuperstrengthStacks(burstEffectState)).toBe(5);
+    expect(readSuperstrengthStacks(burstContext.kitEffectState)).toBe(5);
   });
 
   test("his stacks turn the charged attack into the Arataki Kesagiri, one slash a stack at no stamina, spent as it starts", () => {
     expect.hasAssertions();
-    const combatant = createIttoCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    landNormalAttacks(combatant, kitEffectState);
+    const context = createKitTestContext(createIttoCombatant());
+    const { kitEffectState } = context;
+    landNormalAttacks(context);
     const { chargedAttack, chargedAttackStamina } = getStancedKit(ITTO_KIT, kitEffectState.effects, ITTO_CHARACTER_ID);
 
     expect(chargedAttackStamina).toBe(0);
@@ -102,7 +99,7 @@ describe(createIttoKit, () => {
       [(57 + 32 + 71 - 25) / 60, 1.9092],
     ]);
 
-    chargedAttack.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    chargedAttack.onStart?.(context);
 
     expect(readSuperstrengthStacks(kitEffectState)).toBeUndefined();
     expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => ({ kind, secondsRemaining }))).toStrictEqual([
@@ -114,9 +111,9 @@ describe(createIttoKit, () => {
   test("the skill's Ushi holds Itto's Max HP for its seconds, and gives a stack the first time its hit strikes and another as it leaves", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    const stepContext = createKitStepContext(combatant, { kitEffectState });
-    ITTO_KIT.elementalSkill.onStart?.(stepContext);
+    const context = createKitTestContext(combatant);
+    const { kitEffectState } = context;
+    ITTO_KIT.elementalSkill.onStart?.(context);
     const [ushi] = kitEffectState.effects;
 
     expect(ushi?.kind === "taunt" && [ushi.health, ushi.secondsRemaining]).toStrictEqual([
@@ -124,15 +121,12 @@ describe(createIttoKit, () => {
       14 / 60 + 6,
     ]);
 
-    for (let index = 0; index < 2; index++) ITTO_KIT.elementalSkill.hits[0]?.onStrike?.(stepContext);
+    const hit = takeOne(ITTO_KIT.elementalSkill.hits);
+    for (let index = 0; index < 2; index++) hit.onStrike?.(context, { body: context.body, combatant, hit });
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(1);
 
-    if (ushi)
-      ITTO_KIT.onKitEvent?.(
-        { effect: ushi, kind: KitEventKind.EffectExpired },
-        createKitEventContext(combatant, { kitEffectState }),
-      );
+    if (ushi) ITTO_KIT.onKitEvent?.({ effect: ushi, kind: KitEventKind.EffectExpired }, context, combatant);
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(2);
   });
@@ -140,13 +134,13 @@ describe(createIttoKit, () => {
   test("the skill's Ushi gives a stack as it takes an enemy's strike, at most once in 2 seconds", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    ITTO_KIT.elementalSkill.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    const context = createKitTestContext(combatant);
+    const { kitEffectState } = context;
+    ITTO_KIT.elementalSkill.onStart?.(context);
     const ushi = takeOne(kitEffectState.effects);
     assert(ushi.kind === "taunt");
-    const context = createKitEventContext(combatant, { kitEffectState });
     for (let index = 0; index < 2; index++)
-      ITTO_KIT.onKitEvent?.({ damage: 1, kind: KitEventKind.TauntDamaged, taunt: ushi }, context);
+      ITTO_KIT.onKitEvent?.({ damage: 1, kind: KitEventKind.TauntDamaged, taunt: ushi }, context, combatant);
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(1);
     expect(

@@ -151,7 +151,7 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   // Damage, as the wiki gives it 0U and poise alone, and the rose's discharges are a summon's hits, landing from her body
   elementalBurst: {
     hits: [{ hitArea: LIGHTNING_ROSE_HIT_AREA, hitmarkSeconds: 56 / 60, poiseDamage: 10, talentMultiplier: 0 }],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(
         kitEffectState,
         createKitSummon(body, combatant, createDischarges(talentMultiplierMap), LIGHTNING_ROSE_SECONDS),

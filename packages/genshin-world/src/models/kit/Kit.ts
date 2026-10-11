@@ -2,14 +2,13 @@ import type { Attribute } from "#src/models/character/Attribute";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
-import type { KitEventContext } from "#src/models/kit/KitEventContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
 import type { KitSkillChain } from "#src/models/kit/KitSkillChain";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitVariant } from "#src/models/kit/KitVariant";
 import type { Party } from "#src/models/party/Party";
@@ -36,12 +35,12 @@ export interface Kit {
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
-  getChargedAttackStaminaMultiplier?: (context: KitStepContext) => number;
+  getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
   // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
   getPassiveBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
-  getSkillCooldownMultiplier?: (context: KitStepContext) => number;
+  getSkillCooldownMultiplier?: (context: KitContext) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands and the deployed team
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
@@ -50,11 +49,11 @@ export interface Kit {
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
   moonsignBenediction?: KitMoonsignBenediction;
   normalAttacks: KitAction[];
-  // Run on each event of combat while the character is in the deployed team, on the field or off it, if its passives or
-  // Constellations answer any
-  onKitEvent?: (event: KitEvent, context: KitEventContext) => void;
-  // Run on each step the body sprints, to spend the sprint's seconds from the kit's state
-  onSprint?: (context: KitStepContext, kitState: KitState) => void;
+  // Run on each event of combat while the character is in the deployed team, on the field or off it, given its own
+  // Combatant, if its passives or Constellations answer any
+  onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
+  // Run on each step the character on the field sprints, to spend the sprint's seconds from the kit's state
+  onSprint?: (context: KitContext, kitState: KitState) => void;
   plungeCollision: KitHit;
   skillCooldownSeconds: number;
 }

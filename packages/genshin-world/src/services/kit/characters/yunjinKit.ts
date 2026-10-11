@@ -118,7 +118,7 @@ export const createYunjinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Hit lands, as gcsim expires it at that frame. Its hit is the skill's tap or charge, DEF-scaled
   const createSkillAction = (hit: KitHit, hitmarkFrames: number, animationFrames: number): KitAction => ({
     hits: [hit],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Geo,

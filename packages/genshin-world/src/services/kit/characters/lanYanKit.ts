@@ -141,7 +141,7 @@ export const createLanYanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         poiseDamage: 0,
         talentMultiplier: burstMultiplier(0),
       })),
-      onStart: ({ combatant, kitEffectState, party }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
         if (combatant.constellationCount < CONSTELLATION_4) return;
         for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
           addKitEffect(kitEffectState, {

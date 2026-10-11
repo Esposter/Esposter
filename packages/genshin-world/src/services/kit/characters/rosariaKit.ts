@@ -171,7 +171,7 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     chargedAttackStamina: attackTalentMultiplier(7),
     elementalBurst: {
       hits: [ritesSlashHit, ritesLanceHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const field: KitField = {
           centre: { x: body.position.x, z: body.position.z },
           characterId: combatant.characterId,

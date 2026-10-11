@@ -20,7 +20,6 @@ export const createKitTaunt = (health: number, secondsRemaining: number): KitTau
     kit: AMBER_KIT,
     level: 90,
   },
-  damagesTaken: [],
   explosion: {
     hitArea: { angle: 2 * Math.PI, height: 2, radius: 3 },
     hitmarkSeconds: 0,

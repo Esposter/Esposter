@@ -270,7 +270,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const createPirouetteStance = (characterId: number, dance: KitAction): KitStance =>
     createNilouStance(
       characterId,
-      createSwordDanceActions(({ body, combatant, kitEffectState }) =>
+      createSwordDanceActions(({ activeCombatant: combatant, body, kitEffectState }) =>
         addKitEffect(kitEffectState, createPirouetteEndField(body, combatant.characterId, dance)),
       ),
       whirlingSteps,
@@ -289,7 +289,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: 0,
       },
     ],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, createPirouetteStance(combatant.characterId, elementalSkill)),
     seconds: SKILL_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
@@ -312,7 +312,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, LOW_PLUNGE_POISE_DAMAGE, 7),
     normalAttacks,
     // Leaving the field ends Pirouette and Lunar Prayer, and the field that would have handed the team Lunar Prayer
-    onKitEvent: (event, { combatant, kitEffectState }) => {
+    onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       for (const effect of kitEffectState.effects) {
         if (effect.kind === "stance" && effect.characterId === combatant.characterId) effect.secondsRemaining = 0;

@@ -1,9 +1,9 @@
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { PartyMember } from "#src/models/party/PartyMember";
 import type { Stamina } from "genshin-engine";
 
@@ -31,7 +31,7 @@ export const startNextKitAction = (
   stamina: Stamina,
   isStrikeEnded: boolean,
   landedHits: KitHit[],
-  context: KitStepContext,
+  context: KitContext,
 ): KitAction | undefined => {
   const isOnFoot = ON_FOOT_LOCOMOTION_STATES.includes(locomotionState);
   const isSkillOrBurstState = isOnFoot || AIRBORNE_LOCOMOTION_STATES.includes(locomotionState);
@@ -57,7 +57,7 @@ export const startNextKitAction = (
 
   // A press inside a skill chain's window plays its follow-up whatever the cooldown, which the chain's first press set
   const isSkillReady =
-    getSkillReadySeconds(kit, context.combatant.elementalResonances, partyMember.skillCooldownSeconds) <= 0;
+    getSkillReadySeconds(kit, context.activeCombatant.elementalResonances, partyMember.skillCooldownSeconds) <= 0;
   const isChaining = kitState.skillChainCount > 0;
   const isSkillTriggered = kit.elementalSkillHolds ? kitState.skillReleasedSeconds > 0 : isSkillPressed;
   if (isSkillTriggered && isSkillOrBurstState && (isChaining || isSkillReady)) {
@@ -78,7 +78,7 @@ export const startNextKitAction = (
       cooldownSeconds *
       (kit.getSkillCooldownMultiplier?.(context) ?? 1) *
       getKitFieldCooldownMultiplier(context.kitEffectState.effects, context.body.position) *
-      getImpetuousWindsSkillCooldownMultiplier(context.combatant.elementalResonances);
+      getImpetuousWindsSkillCooldownMultiplier(context.activeCombatant.elementalResonances);
     kitState.skillChainCount = kit.elementalSkillChain ? 1 : 0;
     kitState.skillChainSeconds = 0;
     const holdAction = hold?.variant?.checkIsActive(context) ? hold.variant.action : hold?.action;

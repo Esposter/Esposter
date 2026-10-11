@@ -2,7 +2,6 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitInput } from "#src/models/kit/KitInput";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -12,6 +11,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createMonaKit, MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
@@ -63,20 +63,12 @@ describe("mona kit", () => {
 
   test("its Mirror Reflection lands four ticks and then its explosion, and ends with the explosion", () => {
     expect.hasAssertions();
-    const combatant = createMonaCombatant();
-    const party = createParty([MONA_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    MONA_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createMonaCombatant(), { kitEffectState });
+    MONA_KIT.elementalSkill.onStart?.(context);
 
     // A single step past the explosion at 329 frames lands every hit of the summon, and the summon then ends
-    const strikes = stepKitEffects(kitEffectState, 6, { activeCombatant: combatant, body, party });
+    const strikes = stepKitEffects(6, context);
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.32, 0.32, 0.32, 0.32, 1.328]);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
@@ -96,7 +88,6 @@ describe("mona kit", () => {
 
   test("ascension 1 casts a phantom for every 2 seconds of sprint, which explodes at half of Mirror Reflection's", () => {
     expect.hasAssertions();
-    const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
     const sprint: KitInput = {
       height: 0,
       isAttackHeld: false,
@@ -107,34 +98,22 @@ describe("mona kit", () => {
       locomotionState: LocomotionState.Sprint,
     };
     const sprintFor = (ascension: number) => {
-      const combatant = { ...createMonaCombatant(), ascension };
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context: KitStepContext = {
-        body,
-        combatant,
-        kitEffectState,
-        party: createParty([MONA_CHARACTER_ID]),
-        random: () => 0,
-      };
+      const context = createKitTestContext({ ...createMonaCombatant(), ascension });
       const kitState = createKitState();
       const partyMember = createPartyMember();
       const stamina = createStamina(STAMINA_MAX);
       // 2.17 seconds of sprint at the fixed step, past the first 2 seconds
       for (let step = 0; step < 130; step++)
         stepKit(kitState, MONA_KIT, sprint, partyMember, stamina, 1 / 60, [], context);
-      return { combatant, kitEffectState };
+      return context;
     };
 
     expect(sprintFor(0).kitEffectState.effects).toStrictEqual([]);
-    const { combatant, kitEffectState } = sprintFor(1);
-    expect(kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
+    const context = sprintFor(1);
+    expect(context.kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon"]);
 
     // The phantom's explosion lands once its 2 seconds run out, at 0.5 of the explosion's multiplier of 1.328
-    const strikes = stepKitEffects(kitEffectState, 2, {
-      activeCombatant: combatant,
-      body: body.position,
-      party: createParty([MONA_CHARACTER_ID]),
-    });
+    const strikes = stepKitEffects(2, context);
     expect(strikes.map(({ hit }) => hit.talentMultiplier)).toHaveLength(1);
     expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.664, 3);
   });
@@ -162,11 +141,7 @@ describe("mona kit", () => {
 
     // The Omen's 4 seconds and 42% DMG taken, from the burst at index 3 and 9 of the burst group
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "mona-omen", secondsRemaining: 4 }]);
-    const strikes = stepKitEffects(kitEffectState, 0.5, {
-      activeCombatant: combatant,
-      body: { x: 0, z: 0 },
-      party: createParty([MONA_CHARACTER_ID]),
-    });
+    const strikes = stepKitEffects(0.5, createKitTestContext(combatant, { kitEffectState }));
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
     expect(strikes[0]?.hit.talentMultiplier).toBeCloseTo(4.424, 3);
     expect(kitEffectState.effects).toStrictEqual([]);
@@ -178,13 +153,11 @@ describe("mona kit", () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const enemy = createSturdyEnemy();
     strikeKitBubble(kitEffectState, enemy, combatant, takeOne(MONA_KIT.elementalBurst.hits));
-    const party = createParty([MONA_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, { kitEffectState });
 
-    expect(
-      stepKitEffects(kitEffectState, 7.9, { activeCombatant: combatant, body: { x: 0, z: 0 }, party }),
-    ).toStrictEqual([]);
+    expect(stepKitEffects(7.9, context)).toStrictEqual([]);
     expect(enemy.statuses).toStrictEqual([]);
-    const strikes = stepKitEffects(kitEffectState, 0.2, { activeCombatant: combatant, body: { x: 0, z: 0 }, party });
+    const strikes = stepKitEffects(0.2, context);
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
     expect(enemy.statuses.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([4]);
   });

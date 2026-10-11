@@ -11,7 +11,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
@@ -50,16 +50,16 @@ describe(createExileSetModule, () => {
   // Them at the world's fixed step
   const stepEnergies = (kitEffectState: KitEffectState, party: Party, secondsList: number[]) =>
     secondsList.map((seconds) => {
+      const context = createKitTestContext(wearer, {
+        characterIdCombatantMap: new Map([
+          [ally.characterId, ally],
+          [wearer.characterId, wearer],
+        ]),
+        kitEffectState,
+        party,
+      });
       for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
-        stepKitEffects(kitEffectState, FIXED_STEP_SECONDS, {
-          activeCombatant: wearer,
-          body: { x: 0, z: 0 },
-          characterIdCombatantMap: new Map([
-            [ally.characterId, ally],
-            [wearer.characterId, wearer],
-          ]),
-          party,
-        });
+        stepKitEffects(FIXED_STEP_SECONDS, context);
       return PARTY_CHARACTER_IDS.map((characterId) => getPartyMember(party, characterId).energy);
     });
 
@@ -70,7 +70,8 @@ describe(createExileSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     exileSetModule.onKitEvent?.(
       createBurstUsedEvent(wearer.characterId),
-      createKitEventContext(wearer, { kitEffectState, party }),
+      createKitTestContext(wearer, { kitEffectState, party }),
+      wearer,
     );
 
     expect(stepEnergies(kitEffectState, party, [1.5, 1, 2, 2, 4])).toStrictEqual([
@@ -87,10 +88,10 @@ describe(createExileSetModule, () => {
 
     const party = createParty(PARTY_CHARACTER_IDS);
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(wearer, { kitEffectState, party });
-    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context);
+    const context = createKitTestContext(wearer, { kitEffectState, party });
+    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context, wearer);
     stepEnergies(kitEffectState, party, [2.5]);
-    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context);
+    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context, wearer);
 
     expect(stepEnergies(kitEffectState, party, [8])).toStrictEqual([[0, 6]]);
   });
@@ -101,7 +102,8 @@ describe(createExileSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     exileSetModule.onKitEvent?.(
       createBurstUsedEvent(ally.characterId),
-      createKitEventContext(wearer, { kitEffectState, party: createParty(PARTY_CHARACTER_IDS) }),
+      createKitTestContext(wearer, { kitEffectState, party: createParty(PARTY_CHARACTER_IDS) }),
+      wearer,
     );
 
     expect(kitEffectState.effects).toStrictEqual([]);

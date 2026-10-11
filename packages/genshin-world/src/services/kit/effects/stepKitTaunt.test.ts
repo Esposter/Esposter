@@ -8,7 +8,7 @@ describe(stepKitTaunt, () => {
     expect.hasAssertions();
     const taunt = createKitTaunt(100, 5);
     expect(stepKitTaunt(taunt)).toStrictEqual([]);
-    damageKitTaunt(taunt, 150);
+    damageKitTaunt([], taunt, 150);
     expect(taunt.health).toBe(0);
     expect(stepKitTaunt(taunt)).toHaveLength(1);
     expect(taunt.secondsRemaining).toBe(0);

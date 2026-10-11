@@ -1,7 +1,7 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
-import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -15,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
@@ -58,18 +59,16 @@ describe(burstKitDendroCores, () => {
     maxHealth: STURDY_HEALTH,
   });
 
-  const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitStrikeContext => ({
-    characterIdCombatantMap: new Map([
-      [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
-      [TRAVELER_CHARACTER_ID, combatant],
-    ]),
-    emit: noop,
-    enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
-    enemyTables,
-    kitEffectState: { effects: [] },
-    party,
-    random: () => 0,
-  });
+  const createContext = (enemies: Enemy[], party = createParty([TRAVELER_CHARACTER_ID])): KitContext =>
+    createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [BENCHED_CHARACTER_ID, { ...combatant, characterId: BENCHED_CHARACTER_ID }],
+        [TRAVELER_CHARACTER_ID, combatant],
+      ]),
+      enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
+      enemyTables,
+      party,
+    });
 
   test("bursts a Bloom's core on every enemy within 5 metres of its edge, and none past them", () => {
     expect.hasAssertions();

@@ -3,8 +3,7 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -182,7 +181,7 @@ const createChargeLevel2 = (talentMultiplierMap: TalentMultiplierMap): KitAction
 
 // Whether Bennett stands in a field of his own at Ascension 4, the condition Fearnaught's two effects read: Passion
 // Overload's cooldown is halved, and Bennett is not launched by the Level 2 explosion
-const checkIsFearnaughtActive = ({ body, combatant, kitEffectState }: KitStepContext): boolean =>
+const checkIsFearnaughtActive = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): boolean =>
   combatant.ascension >= 4 &&
   kitEffectState.effects.some(
     (effect) =>
@@ -195,9 +194,9 @@ const checkIsFearnaughtActive = ({ body, combatant, kitEffectState }: KitStepCon
 // Ascension 1 lowers every Passion Overload's cooldown by 20%
 // Measured: gcsim v2.47.2 (MIT) bennett/asc.go, the A1 factor of 0.8 and the A4 factor of 0.5 within the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/asc.go
-const getSkillCooldownMultiplier = (context: KitStepContext): number => {
+const getSkillCooldownMultiplier = (context: KitContext): number => {
   let multiplier = 1;
-  if (context.combatant.ascension >= 1) multiplier *= 0.8;
+  if (context.activeCombatant.ascension >= 1) multiplier *= 0.8;
   if (checkIsFearnaughtActive(context)) multiplier *= 0.5;
   return multiplier;
 };
@@ -209,7 +208,7 @@ const getSkillCooldownMultiplier = (context: KitStepContext): number => {
 // Healing Bonus is not read
 const createFieldTick =
   (talentMultiplierMap: TalentMultiplierMap, owner: Combatant) =>
-  ({ activeCombatant, kitEffectState, party, tickIndex }: KitFieldTick): void => {
+  ({ activeCombatant, kitEffectState, party }: KitContext, tickIndex: number): void => {
     const { characterId, weaponType } = activeCombatant;
     const { healthShare } = getPartyMember(party, characterId);
     const flatHeal = getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 2);
@@ -291,7 +290,7 @@ export const createBennettKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         centre: { x: body.position.x, z: body.position.z },
         characterId: combatant.characterId,

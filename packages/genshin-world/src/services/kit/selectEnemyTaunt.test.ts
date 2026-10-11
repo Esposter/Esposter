@@ -27,7 +27,6 @@ const createTaunt = (x: number, health: number): KitTaunt => ({
     kit: TRAVELER_KIT,
     level: 90,
   },
-  damagesTaken: [],
   explosion: {
     hitArea: { angle: 2 * Math.PI, height: 2, radius: 3 },
     hitmarkSeconds: 0,
@@ -61,7 +60,7 @@ describe(selectEnemyTaunt, () => {
     const taunt = createTaunt(3, 100);
     expect(selectEnemyTaunt(enemy, [taunt])).toBe(taunt);
 
-    damageKitTaunt(taunt, 100);
+    damageKitTaunt([], taunt, 100);
 
     expect(stepKitTaunt(taunt)).toHaveLength(1);
     expect(selectEnemyTaunt(enemy, [taunt])).toBeUndefined();

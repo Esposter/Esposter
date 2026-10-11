@@ -13,8 +13,8 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createSkirkKit, SKIRK_CHARACTER_ID } from "#src/services/kit/characters/skirkKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,28 +29,15 @@ describe(createSkirkKit, () => {
   // The Seven-Phase Flash's state after its press, entered by the field's tick 19 frames on
   const enterSevenPhaseFlash = (combatant = createSkirkCombatant()): KitEffectState => {
     const kitEffectState = castAction(SKIRK_KIT.elementalSkill, combatant);
-    findField(kitEffectState)?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([SKIRK_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    findField(kitEffectState)?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
     return kitEffectState;
   };
 
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createSkirkCombatant()): KitEffectState => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([SKIRK_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState;
+    const context = createKitTestContext(combatant);
+    action.onStart?.(context);
+    return context.kitEffectState;
   };
 
   const createSkirkCombatant = (): Combatant => ({
@@ -65,8 +52,6 @@ describe(createSkirkKit, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', charged attack's and plunges' multipliers from her proud attack group", () => {
     expect.hasAssertions();
@@ -147,16 +132,8 @@ describe(createSkirkKit, () => {
     const kitEffectState = enterSevenPhaseFlash(combatant);
     SKIRK_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: SKIRK_CHARACTER_ID },
-      {
-        activeCombatant: combatant,
-        body: kitBody,
-        characterIdCombatantMap: new Map(),
-        combatant,
-        enemyMap: new Map(),
-        kitEffectState,
-        party: createParty([SKIRK_CHARACTER_ID]),
-        random: () => 0,
-      },
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
     );
 
     expect(findStance(kitEffectState)?.secondsRemaining).toBe(0);

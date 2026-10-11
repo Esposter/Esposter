@@ -1,13 +1,13 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
@@ -25,7 +25,7 @@ describe(coordinateKitSummons, () => {
       kit: TRAVELER_KIT,
       level: 90,
     };
-    const onNormalAttackStart = vi.fn<(context: KitStepContext) => void>();
+    const onNormalAttackStart = vi.fn<NonNullable<KitSummon["onNormalAttackStart"]>>();
     const kitEffectState: KitEffectState = {
       effects: [
         {
@@ -39,13 +39,10 @@ describe(coordinateKitSummons, () => {
         },
       ],
     };
-    const context = {
+    const context = createKitTestContext(combatant, {
       body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
-      combatant,
       kitEffectState,
-      party: createParty([TRAVELER_CHARACTER_ID]),
-      random: () => 0,
-    };
+    });
     coordinateKitSummons(TRAVELER_KIT.elementalSkill, context);
     coordinateKitSummons(TRAVELER_KIT.chargedAttack, context);
     coordinateKitSummons(takeOne(TRAVELER_KIT.normalAttacks, 1), context);

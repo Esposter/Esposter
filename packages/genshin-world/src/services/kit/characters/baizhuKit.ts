@@ -165,7 +165,7 @@ export const createBaizhuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       addKitEffect(kitEffectState, createShield(combatant, BURST_FIRST_SHIELD_SECONDS));
       addKitEffect(kitEffectState, createRefreshField(body, combatant));
     },

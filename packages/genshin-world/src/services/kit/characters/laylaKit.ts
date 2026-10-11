@@ -133,7 +133,7 @@ export const createLaylaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         talentMultiplier: skillMultiplier(0),
       },
     ],
-    onStart: ({ combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Cryo,
@@ -182,7 +182,8 @@ export const createLaylaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => addKitEffect(kitEffectState, createBurstField(body, combatant)),
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      addKitEffect(kitEffectState, createBurstField(body, combatant)),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };

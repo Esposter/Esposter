@@ -5,9 +5,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { AMBER_CHARACTER_ID, createAmberKit } from "#src/services/kit/characters/amberKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -41,40 +41,24 @@ describe("amber kit", () => {
 
   test("its Baron Bunny strikes nothing while it stands, then explodes once when its seconds run out", () => {
     expect.hasAssertions();
-    const combatant = createAmberCombatant();
-    const party = createParty([AMBER_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    AMBER_KIT.elementalSkill.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createAmberCombatant(), { kitEffectState });
+    AMBER_KIT.elementalSkill.onStart?.(context);
 
     // Landing and the eight seconds after it leave the bunny standing until its timer runs out
-    expect(stepKitEffects(kitEffectState, 8, { activeCombatant: combatant, body, party })).toStrictEqual([]);
-    const explosions = stepKitEffects(kitEffectState, 1, { activeCombatant: combatant, body, party });
+    expect(stepKitEffects(8, context)).toStrictEqual([]);
+    const explosions = stepKitEffects(1, context);
     expect(explosions.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.232]);
     expect(kitEffectState.effects).toStrictEqual([]);
   });
 
   test("its Fiery Rain lands its eighteen arrows by the last wave, and nothing after", () => {
     expect.hasAssertions();
-    const combatant = createAmberCombatant();
-    const party = createParty([AMBER_CHARACTER_ID]);
-    const body = { x: 0, z: 0 };
     const kitEffectState: KitEffectState = { effects: [] };
-    AMBER_KIT.elementalBurst.onStart?.({
-      body: { facing: 0, height: 0, position: body },
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(createAmberCombatant(), { kitEffectState });
+    AMBER_KIT.elementalBurst.onStart?.(context);
 
-    const arrows = stepKitEffects(kitEffectState, 4, { activeCombatant: combatant, body, party });
+    const arrows = stepKitEffects(4, context);
     expect(arrows).toHaveLength(18);
     expect(arrows.every(({ hit }) => hit.talentMultiplier === 0.2808)).toBe(true);
     expect(kitEffectState.effects).toStrictEqual([]);

@@ -13,7 +13,7 @@ export const createInstructorSetModule = ({ params }: ArtifactSetBonus): Artifac
   const seconds = takeOne(params, 0);
   const elementalMastery = takeOne(params, 1);
   return {
-    onKitEvent: (event, { activeCombatant, combatant, kitEffectState, party }) => {
+    onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         event.striker.characterId !== combatant.characterId ||

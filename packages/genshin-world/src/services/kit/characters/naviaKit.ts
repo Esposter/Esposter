@@ -3,9 +3,10 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
@@ -243,8 +244,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // And fires the Surging Blade, unless its ICD still holds, which the kit sets on the shot and never clears early
   const castShot =
     (firingFrames: number) =>
-    (context: KitStepContext): void => {
-      const { body, combatant, kitEffectState } = context;
+    ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
       const { characterId } = combatant;
       const shrapnel = findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID);
       if (shrapnel) {
@@ -291,7 +291,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   };
 
   // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
-  const onCannonStrike = ({ combatant, kitEffectState }: KitStepContext): void => {
+  const onCannonStrike = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
     const { characterId } = combatant;
     if (checkIsKitStatusActive(kitEffectState.effects, characterId, BURST_SHRAPNEL_ICD_STATUS_ID)) return;
     addKitEffect(kitEffectState, {
@@ -348,7 +348,7 @@ export const createNaviaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   const elementalBurst: KitAction = {
     hits: [blastHit],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(kitEffectState, createKitSummon(body, combatant, cannonHits)),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

@@ -1,6 +1,6 @@
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -15,13 +15,18 @@ export const queueKitHits = (
   action: KitAction,
   actionSeconds: number,
   kit: Kit,
-  { body, combatant, kitEffectState }: KitStepContext,
+  { activeCombatant, body, kitEffectState }: KitContext,
 ): void => {
   const queuedHits = action.hits.filter(({ hitmarkSeconds }) => hitmarkSeconds > actionSeconds);
   const lastHit = queuedHits.at(-1);
   if (!lastHit) return;
   addKitEffect(kitEffectState, {
-    ...createKitSummon(body, combatant, queuedHits, lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS),
+    ...createKitSummon(
+      body,
+      activeCombatant,
+      queuedHits,
+      lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS,
+    ),
     attackTag: getKitAttackTag(kit, lastHit, kitEffectState.effects),
     elapsedSeconds: actionSeconds,
   });

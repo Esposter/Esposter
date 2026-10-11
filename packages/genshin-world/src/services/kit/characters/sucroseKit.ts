@@ -193,7 +193,7 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Element's hit on every tick once an enemy's aura is taken, and which takes one only once
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
         const absorbBody = createAheadBody(body, ABSORB_CHECK_OFFSET_METRES);
         const isConstellation2 = combatant.constellationCount >= FORBIDDEN_CREATION_CONSTELLATION;
@@ -254,7 +254,7 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     highPlunge: plungeAction(HIGH_PLUNGE_HIT_AREA, HIGH_PLUNGE_POISE_DAMAGE, 8),
     lowPlunge: plungeAction(LOW_PLUNGE_HIT_AREA, LOW_PLUNGE_POISE_DAMAGE, 7),
     normalAttacks: NORMAL_ATTACK_STRIKES.map((strike, index) => createNormalAttack(strike, index)),
-    onKitEvent: (event, { characterIdCombatantMap, combatant, kitEffectState, party }) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const members = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (combatant.ascension < SWIRL_ASCENSION || event.striker.characterId !== combatant.characterId) return;

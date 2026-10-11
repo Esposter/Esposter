@@ -102,7 +102,7 @@ type KitParameter = number | { index: number; proudSkillGroupId: number };
 
 // What a character alone does, each call given the world's one context and the kit's own combatant
 interface KitBehaviour {
-  burst?: KitActionBehaviour; // { onStart?: (context, combatant, target?) => void }
+  burst?: KitActionBehaviour; // { onStart?: (context, target?) => void }
   hits?: Record<string, KitHitBehaviour>; // by the record's hit name: enemyStatus, onStrike, partyHeal
   normalAttacks?: KitActionBehaviour[];
   onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
@@ -150,13 +150,13 @@ Each primitive absorbs one family of the finder's kit pairs, or one shape a hand
 - **One context for every call.**
   - Today a kit's step, an action's start, a field's tick and an event each get a different partial context. A field tick cannot draw at random, an action's start cannot see the enemies, and adding one field breaks every test that builds a context by hand.
   - `KitContext` is the world's combat state, built once by `useWorldCombat` and written in place each step. It holds the party, every built combatant by id, the enemies with their tables, the team's effects, the seeded random source, the outbox, and the field member's body and combatant.
-  - Every behaviour call takes the context and its own character's combatant: `onStart(context, combatant, target)`, `onKitEvent(event, context, combatant)`, `onTick(context, combatant, tickIndex)`. No call builds an object.
+  - Every behaviour call takes the context: `onStart(context, target)`, `onTick(context, tickIndex)`, and a strike's `onStrike(context, strike)`. A call made for the character on the field reads it as `context.activeCombatant`, so only an event, which reaches every deployed member, is given the kit's own combatant as well: `onKitEvent(event, context, combatant)`. No call builds an object.
+  - What only the step of the character on the field reads beyond the context, the controller, the camera's aim, the landed hits and the ores, is passed beside it (`ActiveKitControls`).
   - One test builder, `createKitTestContext`, makes the context for every suite.
 - **One outbox for what happens between steps.**
   - Events raised inside the active step are sent as they happen, as today.
-  - Events raised outside it each have an ad-hoc queue today, drained at different points of the step: a member's HP change and a taunt's damage. They become one `outbox` on the context.
-  - The outbox is drained in queue order at the start of the next step, ahead of the effects running down. So a strike that spends a taunt's health is still heard before the taunt ends.
-  - The one timing this moves is an HP change from an enemy's strike between steps: it is now heard at the start of the next step rather than its end, one frame earlier. Phase 1 makes that change in a commit of its own.
+  - Events raised outside it each had an ad-hoc queue, drained at different points of the step. A taunt's damage becomes the `outbox` on the context, drained in queue order at the start of the next step, after a swap and ahead of the effects running down, so a strike that spends a taunt's health is still heard before the taunt ends.
+  - A member's HP change stays on the party's own record, sent last in the step as before, since every heal and every strike already records it there and moving it would move no digest's cause but its timing.
 
 ### The per-frame path
 
@@ -197,11 +197,11 @@ What it does after:
 - **A frame where nothing lands allocates nothing.** The body, the outbox, and the strike and expired lists belong to the context and are emptied by setting their length to zero. A frame that lands hits allocates only its strikes.
 - **No typed arrays.** A kit holds at most a few dozen hits and the team a few dozen effects, and scanning that many costs no more than the objects a typed array would replace. They wait until the bench shows a hot loop.
 - **`stepActiveKit.bench.ts` proves it.**
-  - **The workload:** one minute of the fixed step for a party of four (Raiden, Xiangling, Noelle and the Traveler, the proof kits).
+  - **The workload:** one minute of the fixed step for a party of four (Raiden, Xiangling, Noelle and the Traveler, the proof party).
   - **The input:** scripted, at a fixed seed: the string, a charged attack, each skill, each burst once charged, and a swap every few seconds.
   - **Two scales:** idle (no enemies, no effects) and in combat (enemies standing in reach, the party's effects up). Each is one `bench.compare` with `BENCHMARK_RUN_OPTIONS` and a small iteration count.
   - **The fixture:** the world state is rebuilt inside the callback; the records and multipliers are read once, at module scope, from the mirror.
-  - **When it runs:** it lands first, on today's path, and is re-run on the same machine after phase 1 and after phase 3. The diff of its committed `.bench.md` is the before against after.
+  - **When it runs:** it lands first, on today's path, and is re-run on the same machine once the tree has moved. The diff of its committed `.bench.md` is the before against after.
   - Its input script is the same fixture the replay guard drives.
 
 ### Provenance and the docs
@@ -228,9 +228,9 @@ What it does after:
 - **The barrel leaves the kit modules out.**
   - The source barrel lists every module and the entry re-exports it, so a dynamic import alone would load nothing lazily.
   - `generateExports` gains an option naming the directories a package loads on demand, and leaves them out of its barrel.
-  - Rolldown should then split each `import()` into its own chunk. genshin-world has no dynamic-import chunk yet (its only extra chunk is shared between two entries), so phase 1 confirms the split in the `dist` listing.
+  - Rolldown should then split each `import()` into its own chunk. genshin-world has no dynamic-import chunk yet (its only extra chunk is shared between two entries), so the loader map's commit confirms the split in the `dist` listing.
 - **The entry has a ceiling.**
-  - Phase 1 lands genshin-world's `index.js` size snapshot at or under 1,350,000 bytes, down from about 2 MB. The kit modules, about a third of the entry's code, leave it; the loader map and the primitives come in. The snapshot holds the figure after that.
+  - The loader map's commit lands genshin-world's `index.js` size snapshot at or under 1,350,000 bytes, down from about 2 MB. The kit modules, about a third of the entry's code, leave it; the loader map and the primitives come in. The snapshot holds the figure after that.
   - A record is a hosted read of a few kilobytes, fetched alongside the multipliers; the builder's dry run reports its size.
 
 ## Measured
@@ -274,7 +274,7 @@ In total:
 - the modules go from about twenty-nine thousand lines to about six or seven thousand, about 65 a kit;
 - the framework stays about three thousand lines in the package, as the reach helpers and the attack-tag search leave and the primitives and `buildKit` come in;
 - the builder adds about a thousand lines in `scripts`;
-- the overlays are expected at a few hundred lines of JSON, with most kits needing none. The compare report gives the real count in phase 1.
+- the overlays are expected at a few hundred lines of JSON, with most kits needing none. The compare report gives the real count.
 
 **The bundle.** genshin-world's entry is about 2 MB. The kit modules' code is about a third of it (comments are stripped in the build). The framework under them is about 60 KB.
 
@@ -316,72 +316,35 @@ flowchart TD
 
 ## Scope and order
 
-**Phase 1: the record and the primitives, proven on three kits.** Each step lands green.
+**Every kit moves at once, in a series of whole-tree refactors.** There is no compatibility path and no phase that converts one kit at a time: nothing is kept to spare old code the cost of moving ([no compatibility debt](/docs/architecture/no-compatibility-debt)). Each commit moves every kit, every caller and every suite to the new form together, scripted where the move is mechanical and finished by hand, and deletes the old form in the same commit, so `ai/queue` never holds two kit shapes side by side. Every replay digest stays byte-equal at every commit: a digest that moves means the commit is wrong, not the snapshot. A step that finds the record lacking a value stops and extends the builder first, in a commit of its own that publishes only the keys it changes (`genshin:assets kits --only <character>`), rather than half-landing.
 
-1. **The builder.**
-   - `genshin:assets kits` is a citty command with three readers:
-     - a gcsim reader at v2.47.2: the YAML hitboxes, a constant evaluator for the action files' literals and integer sums, the `AttackInfo` fields, and the talent file's indices;
-     - a wiki reader through the MediaWiki API that records each page's revision;
-     - the published tables, read through the lock.
-   - It also holds the join, the overlay's schema, and `KitProvisionalCause`.
-   - `--compare` builds every module as it stands. It seeds each overlay with the module's value wherever a source lacks the value or disagrees with it, and classifies what it can:
-     - a value equal to a shared provisional constant takes that cause;
-     - a value a source disagrees with is `DiffersFromSource`;
-     - the rest are `Unclassified`.
-   - One publish of `kits` and `kitSources` for every built character, so each record reproduces its module's values exactly.
-   - Its tests take their oracles from gcsim's and the wiki's own text.
-2. **The guard and the bench.**
-   - A replay test drives each kit alone, and the bench's party together, through the scripted minute at a fixed seed.
-   - It snapshots a digest of each strike log, with the count of strikes and the sum of multipliers by attack tag, so a failure shows where behaviour moved.
-   - It records today's behaviour, bugs included, which is why phase 3 deletes it rather than keeping it as an oracle.
+1. **The builder.** Landed.
+   - `genshin:assets kits` is a citty command with three readers: gcsim at v2.47.2 (the YAML hitboxes, a constant evaluator for the action files' literals and integer sums, the `AttackInfo` fields and the talent file's indices), the wiki through the MediaWiki API at each page's revision, and the published tables through the lock.
+   - It holds the join, the overlay's schema and `KitProvisionalCause`, and `--compare` seeds each overlay with every module value a source lacks or disagrees with, classifying a shared provisional constant by its cause, a disagreement as `DiffersFromSource` and the rest as `Unclassified`.
+   - `kits` and `kitSources` are published for every built character, each record reproducing its module's values, and the builder's tests take their oracles from gcsim's and the wiki's own text.
+2. **The guard and the bench.** Landed.
+   - A replay test drives each kit alone, and the proof party together, through the scripted minute at a fixed seed, and snapshots each strike log's count and its multipliers by attack tag, bugs included.
    - The bench lands beside it, on today's path.
-3. **The framework, alongside today's.**
-   - It adds `KitContext` and its outbox, the cursors, the slot and attack tag set at build, the effects stepped in place, `buildKit`, `readCharacterKits`, the loader map with the barrel option, and the primitives the proof kits need.
-   - A module still in today's shape runs through a compatibility path that builds today's partial contexts for it, so every replay digest stays as it was.
-   - The finder drops any clone that reaches a file's leading import block, so no clone includes an import line, which removes the false positives among the kit pairs.
-4. **The proof kits,** each in its own commit with its digest unchanged:
-   - **Xiangling:** summons, a following summon, scheduled tasks, a team buff;
-   - **Noelle:** a shield, a converting infusion, a party heal on a hit, an explosion as the shield ends;
-   - **Raiden:** a stance with gcsim's own attack tags, events, cooldown statuses, and Resolve as a resource;
-   - **the Traveler's** framework-owned kit.
+3. **`KitContext` and its outbox replace the partial contexts.** Landed.
+   - `KitStepContext`, `KitEventContext`, `KitFieldTick`, `KitStrikeContext` and `ActiveKitStepContext` go, with `createKitStepContext` and `createKitEventContext`; every hook takes the world's one context, and every suite builds it with `createKitTestContext`.
+   - The taunt's own damage queue goes into the outbox, which the step drains after a swap is sent.
+4. **The slot and the attack tag set at build.** Each action's slot and each hit's attack tag are set as its kit is built, and a stance's kit is built once as the stance starts. `getKitAttackTag`, `getStancedKit` and `KitStance.attackTags` go.
+5. **The cursors.** An action and a summon each keep the index of their next hit.
+6. **The effects stepped in place,** in today's order and compacted in place, the expired and strike lists held on the context.
+7. **`buildKit` and `readCharacterKits`, each module reading its record.** The frames, areas and talent indices leave the modules, and the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`) go as builder rules. The kits index's framework sections are rewritten for the record.
+8. **The loader map on `lazyDirectories`.** `CharacterIdCreateKitMap` becomes a map of `import()` calls, the barrel leaves the kit modules out, and the entry's size snapshot lands at or under its ceiling.
+9. **The guard and the bench's entry for today's path deleted,** once nothing moves anymore, with the bench re-run on the same machine for the before against after. The zero test turns on.
 
-   The bench is re-run for the before against after, and the size snapshot lands at or under its ceiling.
-
-**Phase 2: every other kit, in parallel.**
-
-- One commit per kit, behaviour-preserving:
-  - its module becomes its behaviour;
-  - its suite's scaffolding moves to `createKitTestContext`, with no expected value changed;
-  - its overlay's `Unclassified` entries are classified from the module's own comments;
-  - its page's sections are rendered.
-- Its suite and its replay digest guard the commit.
-- A primitive not yet built lands with the first kit that needs it:
-  - a taunt with Amber or Itto;
-  - a bubble with Mona;
-  - `ResourceChanged` with Mavuika;
-  - `NightsoulBurst` with the first Natlan kit that answers it;
-  - Bond of Life's draw on heals with Arlecchino.
-
-**Phase 3: the old shapes deleted.**
-
-- These go:
-  - the compatibility path and today's partial contexts (`KitStepContext`, `KitEventContext`, `KitFieldTick`, `KitStrikeContext`, `ActiveKitStepContext`);
-  - `getKitAttackTag`, `getStancedKit` and `KitStance.attackTags`;
-  - the reach helpers (`createBoxReach`, `createCircleReach`, `createFanReach`, `createTargetedHitArea`), which are now builder rules;
-  - `createKitStepContext` and `createKitEventContext`;
-  - the replay guard, and the bench's entry for today's path.
-- The kits index's framework sections are rewritten for the record.
-- The zero test turns on.
+**Per kit, after the tree has moved.** What no whole-tree commit can do is a sweep: classifying each overlay's `Unclassified` entries from its module's own comments, and rendering each page's Provisional and Sources sections. The kit-records ledger is opened for it, in the `sweeps` skill's shape, only if such work remains.
 
 **After: the sources win.** Each overlay entry marked `DiffersFromSource` is settled one value per commit: its suite is updated to the source's value, with the source cited. An `Unclassified` or provisional entry stays on the References sought list until a source answers it.
 
 ### Keeping both machines building
 
-- **The migration is a sweep with a ledger.** the kit-records ledger has one row per kit, ticked by each commit's `Ledger:` trailer. A machine claims its rows through the fleet before converting them, and neither machine edits a kit the other has claimed.
-- **From phase 1's framework commit, a new kit is written in the new shape**, as the index's template shows. A kit not yet converted still takes edits in today's shape, a passive or a hook, and its conversion carries them over. Its replay digest moves only in a commit that means to change its behaviour.
-- **A conversion publishes nothing.**
-  - Phase 1 publishes every record once, with the same values as today's modules.
-  - A conversion edits only its overlay's classifications, which the page check reads from the repo.
+- **The tree moves under one claim.** A whole-tree refactor runs under the `genshin--kit-framework` claim, and no kit is claimed on its own. The other machine edits a kit in the shape `ai/queue` holds when it starts, and the refactor that lands after it carries the edit across, as any whole-tree change carries a concurrent edit.
+- **Nothing lands in an old shape,** because each refactor deletes its old form as it lands. A new kit or hook is written in the shape `ai/queue` holds. Its replay digest moves only in a commit that means to change its behaviour.
+- **A refactor publishes nothing.**
+  - The builder's publish holds every record with the same values as today's modules.
   - A test holds the committed overlay's values to the published record's, so a value changed without a publish fails.
   - A value that moves is a fix, in its own commit with a publish of its own key (`genshin:assets kits --only <character>`).
 - **The hooks pass's landed work is kept:**

@@ -280,7 +280,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Stance's cooldown
     elementalBurst: {
       hits: [lightOfObliterationHit],
-      onStart: ({ combatant: { characterId, constellationCount }, kitEffectState }) => {
+      onStart: ({ activeCombatant: { characterId, constellationCount }, kitEffectState }) => {
         if (constellationCount >= HAVOC_ANNIHILATION_CONSTELLATION)
           addKitEffect(kitEffectState, {
             characterId,
@@ -295,7 +295,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // A press back to the Ranged Stance ends the stance, whose end sets the skill's cooldown
     elementalSkill: {
       hits: [],
-      onStart: ({ combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         const stance = findMeleeStance(kitEffectState.effects, combatant.characterId);
         if (stance) stance.secondsRemaining = 0;
       },
@@ -340,7 +340,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Flash of Havoc lands on the enemy the body turned to, or round the body with none, and gives energy back
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState, target }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }, target) => {
         addKitEffect(
           kitEffectState,
           createKitSummon(
@@ -379,7 +379,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
           talentMultiplier: skillTalentMultiplier(0),
         },
       ],
-      onStart: ({ combatant, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         addKitEffect(kitEffectState, {
           actions: meleeStanceActions,
           // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
@@ -438,7 +438,7 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Held, or its longest cooldown once it held its longest, cut from one constellation, or ends the cooldown from six
     // Once the burst was cast in it. Hydrospout's tick sets off a Slash in the Melee Stance or a Flash out of it, outside
     // Their intervals, and each hit Tartaglia lands gives and sets off Riptide
-    onKitEvent: (event, { combatant, kitEffectState, party }) => {
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const meleeStance = findMeleeStance(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.CharacterSwapped) {

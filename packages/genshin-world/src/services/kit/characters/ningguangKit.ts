@@ -2,10 +2,10 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { GroundPoint } from "genshin-engine";
 
@@ -174,20 +174,20 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     const piercingFragmentsGem: KitHit = { ...gem, hitArea: PIERCING_FRAGMENTS_HIT_AREA };
     return {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         let isStarJadeGiven = false;
         const strikeGem: KitHit = {
           ...(combatant.constellationCount >= PIERCING_FRAGMENTS_CONSTELLATION ? piercingFragmentsGem : gem),
-          onStrike: (strikeContext) => {
+          onStrike: (strikeContext, strike) => {
             if (isStarJadeGiven) return;
             isStarJadeGiven = true;
             const starJadeCount = strikeContext.kitEffectState.effects.filter((effect) =>
-              checkIsStarJade(effect, strikeContext.combatant.characterId),
+              checkIsStarJade(effect, strike.combatant.characterId),
             ).length;
             if (starJadeCount < STAR_JADE_MAX_COUNT)
               addKitEffect(
                 strikeContext.kitEffectState,
-                createStarJade(strikeContext.combatant.characterId, strikeContext.body.position),
+                createStarJade(strike.combatant.characterId, strike.body.position),
               );
           },
         };
@@ -232,7 +232,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   };
   // The charged attack's gem and a shot for each Star Jade Ningguang holds land from a summon cast where she stands, and the
   // Jades are spent
-  const fireChargedAttack = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const fireChargedAttack = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const starJades = kitEffectState.effects.filter((effect) => checkIsStarJade(effect, combatant.characterId));
     kitEffectState.effects = kitEffectState.effects.filter((effect) => !starJades.includes(effect));
     const shot = starJades.length === GRANDEUR_STAR_JADE_COUNT ? grandeurStarJadeShot : starJadeShot;
@@ -252,7 +252,11 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     effect.kind === "summon" && effect.combatant.characterId === characterId && effect.hits.includes(jadeScreenHit);
   // Shatters the screen Ningguang has standing, if any, and returns it. From two constellations the shatter sets Shock
   // Effect going unless one already stands
-  const shatterJadeScreen = ({ body, combatant, kitEffectState }: KitStepContext): KitSummon | undefined => {
+  const shatterJadeScreen = ({
+    activeCombatant: combatant,
+    body,
+    kitEffectState,
+  }: KitContext): KitSummon | undefined => {
     const jadeScreen = kitEffectState.effects.find((effect) => checkIsJadeScreen(effect, combatant.characterId));
     if (jadeScreen === undefined) return undefined;
     kitEffectState.effects = kitEffectState.effects.filter((effect) => effect !== jadeScreen);
@@ -265,11 +269,11 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   };
   // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit round it.
   // Only one stands, so a recast shatters the one before
-  const castJadeScreen = (context: KitStepContext): void => {
+  const castJadeScreen = (context: KitContext): void => {
     shatterJadeScreen(context);
     const {
+      activeCombatant: combatant,
       body: { facing, height, position },
-      combatant,
       kitEffectState,
     } = context;
     // Ahead of a body at its facing lies the bearing -sin and -cos of that facing, as computeFacingAngle reads it
@@ -301,8 +305,8 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   // Starshatter's gems land from a summon cast where Ningguang stands. A screen standing shatters into its own gems, priced
   // As she stood when she cast it, as gcsim snapshots them with the skill. From six constellations the burst replaces the
   // Star Jades she holds with 7, which her strikes add none to
-  const castStarshatter = (context: KitStepContext): void => {
-    const { body, combatant, kitEffectState } = context;
+  const castStarshatter = (context: KitContext): void => {
+    const { activeCombatant: combatant, body, kitEffectState } = context;
     addKitEffect(kitEffectState, createKitSummon(body, combatant, burstGemHits));
     const jadeScreen = shatterJadeScreen(context);
     if (jadeScreen !== undefined)
@@ -335,7 +339,7 @@ export const createNingguangKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
-    getChargedAttackStaminaMultiplier: ({ combatant, kitEffectState }) =>
+    getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
       combatant.ascension >= BACKUP_PLAN_ASCENSION &&
       kitEffectState.effects.some((effect) => checkIsStarJade(effect, combatant.characterId))
         ? 0

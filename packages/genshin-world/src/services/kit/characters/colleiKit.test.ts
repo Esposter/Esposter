@@ -10,8 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { COLLEI_CHARACTER_ID, createColleiKit } from "#src/services/kit/characters/colleiKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -28,20 +28,13 @@ const createColleiCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
-describe(createColleiKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const castEffects = (action: KitAction): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant: createColleiCombatant(),
-      kitEffectState,
-      party: createParty([COLLEI_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects;
-  };
+const castEffects = (action: KitAction): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(createColleiCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
 
+describe(createColleiKit, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -86,14 +79,10 @@ describe(createColleiKit, () => {
     expect.hasAssertions();
     const field = castEffects(COLLEI_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createColleiCombatant(),
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([COLLEI_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field?.onTick(
+      createKitTestContext(createColleiCombatant(), { characterIdCombatantMap: new Map(), kitEffectState }),
+      0,
+    );
     const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(Math.round(takeOne(COLLEI_KIT.elementalBurst.hits).hitmarkSeconds * 60)).toBe(25);

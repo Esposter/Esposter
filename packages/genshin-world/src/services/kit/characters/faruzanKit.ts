@@ -209,7 +209,7 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     characterId: combatant.characterId,
     kind: "field",
     nextTickSeconds: (BURST_TICKER_START_FRAMES + BURST_FIRST_PULSE_FRAMES) / 60,
-    onTick: ({ kitEffectState, party, tickIndex }) => {
+    onTick: ({ kitEffectState, party }, tickIndex) => {
       addPrayerfulWindsGift(kitEffectState, party);
       const gadgetOffset = WHIRLWIND_GADGET_OFFSETS[tickIndex % WHIRLWIND_GADGET_OFFSETS.length];
       if (gadgetOffset)
@@ -246,7 +246,7 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [burstHit],
-      onStart: ({ body, combatant, kitEffectState, party }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         addKitEffect(kitEffectState, createDazzlingPolyhedron(body, combatant));
         addPrayerfulWindsGift(kitEffectState, party);
       },

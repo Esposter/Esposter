@@ -157,7 +157,7 @@ export const createMikaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     chargedAttackStamina: attackMultiplier(7),
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createInitialHealField(body, combatant));
       },
       seconds: BURST_FRAMES / 60,

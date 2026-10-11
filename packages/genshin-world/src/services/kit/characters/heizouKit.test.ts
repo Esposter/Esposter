@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -14,8 +13,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHeizouKit, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -90,8 +88,8 @@ describe(createHeizouKit, () => {
   test("the burst's Windmuster Iris explodes 40 frames on where an enemy the burst tags stands, in the first aura it holds, for 4 at most", () => {
     expect.hasAssertions();
     const combatant = createHeizouCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
-    HEIZOU_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    const context = createKitTestContext(combatant);
+    HEIZOU_KIT.elementalBurst.onStart?.(context);
     const auraElements = [[Element.Electro, Element.Hydro], [], [Element.Pyro], [Element.Cryo], [Element.Pyro]];
     for (const elements of auraElements) {
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -106,12 +104,13 @@ describe(createHeizouKit, () => {
           kind: KitEventKind.DamageTaken,
           striker: combatant,
         },
-        createKitEventContext(combatant, { kitEffectState }),
+        context,
+        combatant,
       );
     }
 
     expect(
-      kitEffectState.effects.flatMap((effect) =>
+      context.kitEffectState.effects.flatMap((effect) =>
         effect.kind === "summon"
           ? effect.hits.map(({ element, hitmarkSeconds, talentMultiplier }) => [
               element,

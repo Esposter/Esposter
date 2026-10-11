@@ -197,7 +197,8 @@ export const createAinoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
 
   const elementalBurst: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => addKitEffect(kitEffectState, createBurstField(body, combatant)),
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      addKitEffect(kitEffectState, createBurstField(body, combatant)),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,
   };
