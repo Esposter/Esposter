@@ -50,11 +50,11 @@ const NORMAL_ATTACKS: {
   },
   { frames: 63, hits: [{ hitArea: createFanReach(240, 0.5 + 2.4), hitmarkFrames: 40, talentIndex: 5 }] },
 ];
-// Measured: gcsim (MIT) lanyan/charge.go, three hits at 42, 49 and 56 frames, each a circle of 2.5 metres round the body,
-// With the animation at 70 frames
+// Measured: gcsim (MIT) lanyan/charge.go, three hits at 42, 49 and 56 frames, each a circle of 2.5 metres centred on the
+// Primary target, with the animation at 70 frames
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/lanyan/charge.go
 const CHARGED_ATTACK_HITMARK_FRAMES = [42, 49, 56];
-const CHARGED_ATTACK_HIT_AREA = createCircleReach(0, 2.5);
+const CHARGED_ATTACK_HIT_AREA = createTargetedHitArea(STRIKE_TARGETING_AREA, 2.5);
 const CHARGED_ATTACK_FRAMES = 70;
 // Measured: gcsim (MIT) lanyan/plunge.go, the low plunge's hit at 44 frames on a circle of 3 metres, the high's at 46 on
 // A circle of 3.5 metres, both in a 67-frame animation, and the collision 38 frames in on a circle of 1.5 metres
