@@ -48,10 +48,10 @@ export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_
 export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
 // The world package, whose parity page a load run builds for production and serves beside the dev server
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
-// The production build of the parity page: a folder inside that package, which git ignores, and the key it was built under
+// The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
 export const PARITY_BUILD_DIRECTORY_NAME = "parity-build";
 export const PARITY_BUILD_DIRECTORY: string = join(GENSHIN_WORLD_DIRECTORY, PARITY_BUILD_DIRECTORY_NAME);
-export const PARITY_BUILD_KEY_FILE_NAME = ".build-key";
+export const PARITY_BUILD_TASK = "build:parity";
 // The config the build and its preview read, relative to the package
 export const PARITY_CONFIG_PATH = "parity/vite.config.ts";
 // Vite's own entry, run by node from the world package's install, so neither a shell nor a package manager stands between
