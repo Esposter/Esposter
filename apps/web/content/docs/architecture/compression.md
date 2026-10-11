@@ -23,7 +23,7 @@ flowchart TD
   dictionary -->|no| standalone["A standalone frame"]
 ```
 
-Four call sites use something other than zstd, and none of them is a choice we are free to revisit — each is reading or writing a format whose codec another party already fixed. They are listed because the reason differs per row, which is exactly what a hand-maintained table has to carry:
+The call sites that use something other than zstd are none of them a choice we are free to revisit — each reads or writes a format whose codec another party already fixed. They are listed because the reason differs per row, which is exactly what a hand-maintained table has to carry:
 
 | Call site                                                     | Codec                  | Why it cannot be zstd                                                            |
 | ------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
@@ -36,7 +36,7 @@ The test for a new site is therefore not "which codec is best" but **"does anyth
 
 ## What the rule buys the build
 
-Compressing on the server through a node builtin, and decompressing in the browser through the platform's own `DecompressionStream`, means **no bundler polyfill exists anywhere in the repo, and none is needed**. Two historical configurations injected a `node:zlib` shim; both are gone, and the build now refuses to let one back in by accident: `getTsdownConfiguration` sets `platform: "neutral"`, so a package reaching for a node builtin fails its own build. A package that genuinely compresses server-side says so by calling `getTsdownConfigurationNode` instead — `keyframe-store` and `db` are the ones that do, and `parse-tmx` stays neutral precisely because the browser gives it the decoder.
+Compressing on the server through a node builtin, and decompressing in the browser through the platform's own `DecompressionStream`, means **no bundler polyfill exists anywhere in the repo, and none is needed**. No bundle injects a `node:zlib` shim, and the build refuses one by accident: `getTsdownConfiguration` sets `platform: "neutral"`, so a package reaching for a node builtin fails its own build. A package that genuinely compresses server-side says so by calling `getTsdownConfigurationNode` instead — `keyframe-store` and `db` are the ones that do, and `parse-tmx` stays neutral precisely because the browser gives it the decoder.
 
 ## Key Files
 

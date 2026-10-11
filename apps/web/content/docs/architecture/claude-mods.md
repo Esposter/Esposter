@@ -5,7 +5,7 @@ description: How a Claude Code mod (a plugin of function hooks) is written in th
 
 # Claude Code mods
 
-A **mod** is a Claude Code plugin whose hooks live in one TypeScript module, loaded into the engine's own process: `hooks/hooks.json` names the module under `modules`, and the module exports `register(on)`. A hook receives `$`, the engine's interface (`$.ui`, `$.session`, `$.model`, `$.fs` and the rest), the event's input, and `next`, which runs the rest of the chain. The repository's mods are [genshin mods](/docs/infra/claude-interface/genshin-mods)' five and the [persona plugin](/docs/infra/claude-interface/persona-plugin)'s surfaces, and the `claude-mods` skill holds the rules below as one line each.
+A **mod** is a Claude Code plugin whose hooks live in one TypeScript module, loaded into the engine's own process: `hooks/hooks.json` names the module under `modules`, and the module exports `register(on)`. A hook receives `$`, the engine's interface (`$.ui`, `$.session`, `$.model`, `$.fs` and the rest), the event's input, and `next`, which runs the rest of the chain. The repository's mods are the [genshin mods](/docs/infra/claude-interface/genshin-mods) and the [persona plugin](/docs/infra/claude-interface/persona-plugin)'s surfaces, and the `claude-mods` skill holds the rules below as one line each.
 
 The engine reads a module's source before it runs anything, and refuses a module that breaks one of its rules. Almost none of those rules are in its documentation; each was found by `claude plugin validate` refusing a first draft. This page records every one, with the shape it forces, so the next mod is written that shape from the start.
 
