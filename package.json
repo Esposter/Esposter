@@ -50,6 +50,7 @@
     "ai:fleet:status": "pnpm -C scripts ai:fleet:status",
     "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
     "ai:machine:watch": "pnpm -C scripts ai:machine:watch",
+    "ai:package:new": "pnpm -C scripts ai:package:new",
     "ai:proposals:report": "pnpm -C scripts ai:proposals:report",
     "ai:queue:push": "pnpm -C scripts ai:queue:push",
     "ai:resume": "pnpm -C scripts ai:resume",

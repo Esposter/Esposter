@@ -45,7 +45,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 ## Packages and the repo's own layout
 
 - **A shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another (`references/cross-package-placement.md`); `scripts/src/workspace/sharedExportConsumers.test.ts` holds `packages/shared` to it.
-- **A new package follows the existing setup**, and a `bin` entrypoint carries no shebang — pnpm generates the shim (`references/new-package.md`).
+- **A package is created by `pnpm ai:package:new`** — the manifest, configs, inventory rows and docs section are written there, and the invariant each one meets is the suite that reads it (`references/new-package.md`).
 - **`scripts/` is laid out by layer like the app, keyed by command** (`references/scripts-layout.md`).
 - **A symlink is made with PowerShell's `New-Item -ItemType SymbolicLink`, never `ln -s` on Windows**, which copies the file and commits duplicate content silently (`references/symlinks.md`).
 
@@ -75,7 +75,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 - `references/config-literals.md` — when a JSON config, `.gitignore` or a `postinstall`-evaluated file needs a value a package owns, or a walk reaches into `.agents/`.
 - `references/extraction-and-duplication.md` — when an extraction is about to be made, or argued for.
 - `references/cross-package-placement.md` — before adding a module or constant to a shared package, relocating one for symmetry, or implementing behaviour a second package needs.
-- `references/new-package.md` — when adding a package under `packages/`, a member that is only run, or a `bin` entrypoint.
+- `references/new-package.md` — when creating a package, or writing the purpose and docs prose the generator leaves open.
 - `references/scripts-layout.md` — when adding a command, a sub-command or a plugin under the repo-root `scripts/`.
 - `references/symlinks.md` — before creating or verifying a tracked symlink.
 - `references/constant-maps.md` — when adding a map keyed by an enum or discriminant, or deciding whether a second map may share its file.

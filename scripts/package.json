@@ -46,6 +46,7 @@
     "ai:fleet:status": "tsx src/fleet/status/index.ts",
     "ai:identifiers:rename": "node src/identifiers/rename/index.ts",
     "ai:machine:watch": "tsx src/machine/watch/index.ts",
+    "ai:package:new": "tsx src/package/new/index.ts",
     "ai:proposals:report": "tsx src/proposals/report/index.ts",
     "ai:queue:push": "tsx --conditions=source src/queue/push/index.ts",
     "ai:resume": "tsx src/resume/index.ts",
