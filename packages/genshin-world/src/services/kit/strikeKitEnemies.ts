@@ -24,9 +24,10 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 // Energy to the team, and the strike's bubbles, heals, Crystallize shards and reactions follow, the reactions it
 // Triggered and the damage the enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it
 // Reaches, each reaction that landed with a reach reaches the enemies round its own, whose energy and reactions follow in
-// Turn
-export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStrikeContext): void => {
+// Turn. It returns the strikes that struck an enemy
+export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStrikeContext): KitStrike[] => {
   const { characterIdCombatantMap, emit, enemyMap, enemyTables, kitEffectState, party, random } = context;
+  const struckStrikes: KitStrike[] = [];
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
     const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects);
@@ -40,6 +41,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
         (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, body, enemy))
       )
         continue;
+      if (struckStrikes.at(-1) !== strike) struckStrikes.push(strike);
       addEnduringRockStatus(enemy, pricedCombatant, kitEffectState.effects);
       const damageBonus = combatant.kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0;
       const pricedHit = damageBonus === 0 ? hit : { ...hit, damageBonus: (hit.damageBonus ?? 0) + damageBonus };
@@ -81,4 +83,5 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
 
     landKitReactionReaches(reaches, pricedCombatant, context);
   }
+  return struckStrikes;
 };

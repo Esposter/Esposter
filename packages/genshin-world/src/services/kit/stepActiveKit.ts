@@ -16,6 +16,7 @@ import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -31,8 +32,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Team's kits, the Crystallize shards in reach of the body are picked up, the Electro-Charged ticks the enemies' elements
 // Brought since are struck, the kit plays the step's presses as its stance, if it holds one, plays them, an action that
 // Starts turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands
-// Strikes the ores and the enemies in its area. A character whose combatant is not built yet, its talent multipliers
-// Still in flight, plays nothing until they arrive
+// Strikes the ores and the enemies in its area, a normal or charged attack's that struck one rolling for its energy. A
+// Character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -131,5 +132,5 @@ export const stepActiveKit = (
     ...landedHits.map((hit, index): KitStrike => ({ attackTag: attackTags[index], body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
-  strikeKitEnemies(strikes, strikeContext);
+  gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, strikeContext), party, random);
 };

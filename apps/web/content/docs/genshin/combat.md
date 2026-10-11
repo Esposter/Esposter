@@ -103,6 +103,8 @@ A Crystallize a kit's hit triggers drops a shard 23 frames on, half a metre out 
 
 `absorbShieldDamage` takes damage on a shield. Each point of its health absorbs its absorption times one plus the character's shield strength: a Geo shield's 150% of any damage, an elemental shield's 250% of its own element, and 100% otherwise. What it cannot absorb passes to the character. `getCrystallizeShieldHealth` is the shard's shield: its base for the crystallizing character's level, raised by 4.44 × EM / (EM + 1400).
 
+A normal or charged attack's hit that strikes an enemy has a chance to give its character 1 energy, which Energy Recharge does not raise. The chance starts at its weapon's base, a sword's 10% and every other's none, and rises with each such hit that gives none, by 5% for a sword and a bow, 10% for a claymore and a catalyst and 4% for a polearm, until one gives it and the chance falls back to the base (`WeaponTypeAttackEnergyChanceMap`). The roll is drawn from the world's random source, and the misses are counted on the kit's state, which a swap starts afresh (`rollKitAttackEnergy`). The strikes that struck an enemy roll once each, however many enemies they struck (`gainKitAttackEnergy`).
+
 `getEnergyGain` is the energy a party member gains from a particle or an orb. A particle gives 3 of their own element, 1 of another and 2 of none, and an orb three times that. A member off the field takes 80%, 70% or 60% in a party of two, three or four, and their energy recharge multiplies it.
 
 ## Calling in
@@ -131,6 +133,7 @@ flowchart TD
   REACH -->|"a reaction its Swirl triggers that reaches"| REACH
   TICKS["strikeElementalTicks: the enemies' Electro-Charged ticks, from the combatant that charged each"] -->|"its arc"| REACH
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
+  STRIKE -->|"a normal or charged attack's that struck"| ATTACK_ENERGY["gainKitAttackEnergy: its weapon's chance of 1 energy"]
   ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the team's shields, then getDamage over the member's Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
@@ -169,6 +172,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/combat/internalCooldown/applySimultaneousReactionInternalCooldown.ts` | Whether a Swirl, Superconduct or Overloaded lands, a tenth of a second after the last                                 |
 | `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`                                  | Damage taken on a shield                                                                                              |
 | `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                                       | Energy from a particle or an orb                                                                                      |
+| `packages/genshin-world/src/services/combat/energy/WeaponTypeAttackEnergyChanceMap.ts`                     | Each weapon's chance of energy from an attack's hit                                                                   |
 | `packages/genshin-world/src/models/combat/ReactionType.ts`                                                 | Every reaction, merged from the amplifying, catalyze and transformative                                               |
 | `packages/genshin-world/src/services/kit/stepKit.ts`                                                       | A kit's step: its action, its hits and what the presses start                                                         |
 | `packages/genshin-world/src/services/kit/stepActiveKit.ts`                                                 | The world's step of the kit on the field: aim, its stance, the kit events, and its strikes through `strikeKitEnemies` |
@@ -186,6 +190,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/kit/checkIsInAttackArea.ts`                                           | Whether a hit's cylinder reaches an enemy                                                                             |
 | `packages/genshin-world/src/services/kit/constants.ts`                                                     | The Traveler's kit, the kit's timings and its areas                                                                   |
 | `packages/genshin-world/src/services/party/gainPartyEnergy.ts`                                             | Particle energy, as [party](/docs/genshin/party) gives it                                                             |
+| `packages/genshin-world/src/services/kit/gainKitAttackEnergy.ts`                                           | The energy the normal and charged attacks that struck give, rolled by `rollKitAttackEnergy`                           |
 
 ## Notes
 
@@ -194,6 +199,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **Burning's first tick is a quarter second after it lights.** The library places its first Pyro between a quarter second and 0.42 seconds after the text, and the rules take the earliest.
 - **Electro-Charged's last tick is seen at the step.** An aura decaying out between two steps ends it at the step after, so a target advanced at the world's fixed step ends within a sixtieth of a second of the game's.
 - **Electro-Charged arcs to the nearest Wet enemy.** The wiki names a single other Wet enemy within 5 metres, marking the radius to verify, and says nothing of which one is taken when several stand there, so the nearest is a provisional choice.
+- **An attack's hit rolls once for energy, however many enemies it strikes.** The wiki has a hit roll as it hits an enemy and does not say what several enemies do; gcsim rolls for each enemy, with a fifth of a second after a pass in which none rolls, which its own source calls a guess. One roll a hit is the provisional choice, and a swap starting the misses afresh is gcsim's assumption.
 - **A Crystallize shard is picked up within 2 metres, and drawn by nothing yet.** No source gives the reach the game draws a shard to the character from, so it is gcsim's shard radius, provisionally. The shard lies unseen until the world draws it.
 - **An Overloaded's explosion staggers and shatters nothing yet.** The wiki calls its damage a blunt attack and gcsim gives it 90 poise, but the explosion deals no poise damage on its target or the enemies it reaches, and breaks no Freeze among them.
 - **The wiki's mastery scales are taken as written.** Its 2.78 and 4.44 are rounded, and its tables of the bonus they give read them as written.
@@ -212,7 +218,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [gcsim](https://github.com/genshinsim/gcsim)'s `pkg/reactable` (`swirl.go`, `overload.go`, `superconduct.go`): a Swirl's circle of 5 metres about its target and the explosions' of 3, the tenth of a second stopping a Swirl's spread too, and the spread applying under no internal cooldown; `electrocharged.go`, Electro-Charged taken over by each Electro or Hydro that refreshes it; and `internal/template/crystallize`, a shard dropping 23 frames on, half a metre past its target's edge, picked up no sooner than 31 frames after.
 - [Damage Sequence](https://genshin-impact.fandom.com/wiki/Damage_Sequence), Genshin Impact Wiki: each transformative reaction's damage sequence and reset, counted per source and target and per element for Swirl, and the tenth of a second in which a Swirl, Superconduct or Overloaded deals damage once.
 - [Shield](https://genshin-impact.fandom.com/wiki/Shield) and [Crystallize](https://genshin-impact.fandom.com/wiki/Crystallize), Genshin Impact Wiki: absorption by element and shield strength, the shard's shield and once-a-second limit, the shard's 15 seconds and the newest three kept, and the one Crystallize shield a new one overwrites.
-- [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, the shares off the field, and Energy Recharge.
+- [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, the shares off the field, Energy Recharge, and each weapon's chance of energy from a normal or charged attack's hit, with the average hits each takes.
 - [Foreign Ironwind](https://genshin-impact.fandom.com/wiki/Foreign_Ironwind), [Palm Vortex](https://genshin-impact.fandom.com/wiki/Palm_Vortex) and [Gust Surge](https://genshin-impact.fandom.com/wiki/Gust_Surge), Genshin Impact Wiki: the Traveler's multipliers, stamina, poise, tags and blunt plunges, and the Anemo skill's and burst's cooldowns and energy.
 - [Normal Attack](https://genshin-impact.fandom.com/wiki/Normal_Attack), [Charged Attack](https://genshin-impact.fandom.com/wiki/Charged_Attack) and [Plunging Attack](https://genshin-impact.fandom.com/wiki/Plunging_Attack), Genshin Impact Wiki: a string of strikes, the stamina each charged attack costs, and the low and high plunge either side of 2.4 metres.
 - [Area of Effect](https://genshin-impact.fandom.com/wiki/Area_of_Effect), [Targeting](https://genshin-impact.fandom.com/wiki/Targeting) and [Targeting/Data](https://genshin-impact.fandom.com/wiki/Targeting/Data), Genshin Impact Wiki: the hit cylinders, the targeting score and its altitude limit, and the swords' targeting zone.
