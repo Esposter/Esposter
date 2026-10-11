@@ -11,16 +11,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { ALHAITHAM_CHARACTER_ID, createAlhaithamKit } from "#src/services/kit/characters/alhaithamKit";
+import { ALHAITHAM_CHARACTER_ID, createAlhaithamKitBehaviour } from "#src/services/kit/characters/alhaithamKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ALHAITHAM_KIT = createAlhaithamKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ALHAITHAM_CHARACTER_ID]),
-);
+const ALHAITHAM_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALHAITHAM_CHARACTER_ID);
 
 // The Mirrors a character holds, as the status the kit keeps them in
 const readMirrors = (kitEffectState: KitEffectState): number =>
@@ -39,7 +37,7 @@ const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatan
   field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
 };
 
-describe(createAlhaithamKit, () => {
+describe(createAlhaithamKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
     const context = createKitTestContext(combatant);

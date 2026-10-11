@@ -6,12 +6,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKeqingKit, KEQING_CHARACTER_ID } from "#src/services/kit/characters/keqingKit";
+import { createKeqingKitBehaviour, KEQING_CHARACTER_ID } from "#src/services/kit/characters/keqingKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const KEQING_KIT = createKeqingKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KEQING_CHARACTER_ID]));
+const KEQING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KEQING_CHARACTER_ID);
 
 const createKeqingCombatant = (): Combatant => ({
   ascension: 0,
@@ -24,7 +24,7 @@ const createKeqingCombatant = (): Combatant => ({
   weaponType: WeaponType.Sword,
 });
 
-describe(createKeqingKit, () => {
+describe(createKeqingKitBehaviour, () => {
   test("the recast infuses Keqing with Electro as it starts, for the infusion's seconds", () => {
     expect.hasAssertions();
     const recast = KEQING_KIT.elementalSkillChain?.followUps[0];

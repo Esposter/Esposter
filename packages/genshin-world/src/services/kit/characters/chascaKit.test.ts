@@ -1,13 +1,13 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { CHASCA_CHARACTER_ID, createChascaKit } from "#src/services/kit/characters/chascaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { CHASCA_CHARACTER_ID, createChascaKitBehaviour } from "#src/services/kit/characters/chascaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const CHASCA_KIT = createChascaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHASCA_CHARACTER_ID]));
+const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-describe(createChascaKit, () => {
+describe(createChascaKitBehaviour, () => {
   test("reads her normal attacks and fully-charged Aimed Shot from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

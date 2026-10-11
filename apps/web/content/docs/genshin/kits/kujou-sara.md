@@ -5,7 +5,7 @@ description: Kujou Sara's kit as built: five strikes, a fully charged shot, Teng
 
 # Kujou Sara
 
-Kujou Sara's kit is one module, `createKujouSaraKit`, on avatar 10000056: five strikes, a fully charged shot, a collision and two plunges, Tengu Stormcall's Cover with the crowfeather a fully charged shot drops under it and its Ambush, Constellation 2's weaker crowfeather, and Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, four bouts of six ticks or six from Constellation 4. Her multipliers are read from proud skill groups 5631, 5632 and 5639; the skill's cooldown and the Ambush's seconds, and the burst's cooldown and energy cost, are read from the same groups. Her Electro hits give the character on the field an ATK Bonus of the table's share of her base ATK, for six seconds. The covered shot is built from Ascension 1, but its shorter charge is not, as a charged attack has one duration. Ascension 4's energy and Constellations 1 and 6 are not built, as no hit reaches the party's energy or the Electro CRIT DMG they need.
+Kujou Sara's kit is its record and one behaviour module, `createKujouSaraKitBehaviour`, on avatar 10000056: five strikes, a fully charged shot, a collision and two plunges, Tengu Stormcall's Cover with the crowfeather a fully charged shot drops under it and its Ambush, Constellation 2's weaker crowfeather, and Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, four bouts of six ticks or six from Constellation 4. Her multipliers are read from proud skill groups 5631, 5632 and 5639; the skill's cooldown and the Ambush's seconds, and the burst's cooldown and energy cost, are read from the same groups. Her Electro hits give the character on the field an ATK Bonus of the table's share of her base ATK, for six seconds. The covered shot is built from Ascension 1, but its shorter charge is not, as a charged attack has one duration. Ascension 4's energy and Constellations 1 and 6 are not built, as no hit reaches the party's energy or the Electro CRIT DMG they need.
 
 ## Decisions
 
@@ -14,6 +14,6 @@ Kujou Sara's kit is one module, `createKujouSaraKit`, on avatar 10000056: five s
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                      |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/kujouSaraKit.ts` | `createKujouSaraKit`, Kujou Sara's kit with the Cover and its Ambush, Constellation 2's crowfeather and the Stormclusters |
+| File                                                                 | Role                                                                                                                               |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/kujouSaraKit.ts` | `createKujouSaraKitBehaviour`, Kujou Sara's kit with the Cover and its Ambush, Constellation 2's crowfeather and the Stormclusters |

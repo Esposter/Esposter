@@ -2,11 +2,11 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { AMBER_CHARACTER_ID, createAmberKit } from "#src/services/kit/characters/amberKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe } from "vitest";
 
-const AMBER_KIT = createAmberKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AMBER_CHARACTER_ID]));
+const AMBER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AMBER_CHARACTER_ID);
 
 // Amber's Baron Bunny at the origin, with its health and seconds and the explosion it carries
 export const createKitTaunt = (health: number, secondsRemaining: number): KitTaunt => ({

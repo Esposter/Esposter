@@ -13,16 +13,16 @@ import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolv
 import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { getResult } from "@esposter/shared";
 
-// The overlay a kit module needs for its sources to reproduce it, each entry classified: first every value the module
-// Holds, against its sources and the rules over the module's own actions and hits, then every value the build would
-// Still give that the module lacks. The build from the overlay is then checked value by value against the module
+// The overlay a kit's published record needs for its sources to reproduce it, each entry classified: first every value
+// The record holds, against its sources and the rules over the record's own actions and hits, then every value the
+// Build would still give that the record lacks. The build from the overlay is then checked value by value against it
 export const compareKitRecord = (
-  moduleRecord: KitRecord,
+  publishedRecord: KitRecord,
   sourceCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   mainCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   isTagPredated: boolean,
 ): KitComparison => {
-  const moduleValueMap = flattenKitValues(moduleRecord);
+  const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
   const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
     const entry = classifyKitValue(
@@ -33,13 +33,13 @@ export const compareKitRecord = (
     );
     if (entry !== undefined) overlay[path] = entry;
   };
-  const candidateMap = mergeKitCandidates(sourceCandidateMap, getRuleKitCandidates(moduleValueMap));
-  for (const [path, value] of moduleValueMap) classify(path, value, candidateMap);
+  const candidateMap = mergeKitCandidates(sourceCandidateMap, getRuleKitCandidates(publishedValueMap));
+  for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
   const resolved = resolveKitValues(sourceCandidateMap, overlay);
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
-    if (!moduleValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
+    if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
   return getResult(() => buildKitRecord(sourceCandidateMap, overlay)).match(
-    (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, moduleRecord), overlay }),
+    (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );
 };

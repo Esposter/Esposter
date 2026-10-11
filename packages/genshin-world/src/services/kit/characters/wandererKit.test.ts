@@ -7,14 +7,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createWandererKit, WANDERER_CHARACTER_ID } from "#src/services/kit/characters/wandererKit";
+import { createWandererKitBehaviour, WANDERER_CHARACTER_ID } from "#src/services/kit/characters/wandererKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const WANDERER_KIT = createWandererKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [WANDERER_CHARACTER_ID]));
+const WANDERER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, WANDERER_CHARACTER_ID);
 
-describe(createWandererKit, () => {
+describe(createWandererKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction): KitEffectState => {
     const context = createKitTestContext(createWandererCombatant());

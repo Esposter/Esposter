@@ -5,7 +5,7 @@ description: Mualani's kit as built: her three strikes, charged attack, collisio
 
 # Mualani
 
-Mualani's kit is one module, `createMualaniKit`, on avatar 10000102: three strikes, a charged attack, a collision and two plunges, and Boomsharka-laka. Her multipliers are read from proud skill groups 10231, 10232 and 10239, and match gcsim's values to four decimal places. Boomsharka-laka's damage is her share of Max HP, read off her Max HP as the hit is priced, as Nilou's and Kokomi's are.
+Mualani's kit is its record and one behaviour module, `createMualaniKitBehaviour`, on avatar 10000102: three strikes, a charged attack, a collision and two plunges, and Boomsharka-laka. Her multipliers are read from proud skill groups 10231, 10232 and 10239, and match gcsim's values to four decimal places. Boomsharka-laka's damage is her share of Max HP, read off her Max HP as the hit is priced, as Nilou's and Kokomi's are.
 
 ## Decisions
 
@@ -23,9 +23,9 @@ Mualani's kit is one module, `createMualaniKit`, on avatar 10000102: three strik
 
 ## Key files
 
-| File                                                               | Role                                                                                            |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/mualaniKit.ts` | `createMualaniKit`, Mualani's kit with her strikes, charged attack, plunges and Boomsharka-laka |
+| File                                                               | Role                                                                                                     |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/mualaniKit.ts` | `createMualaniKitBehaviour`, Mualani's kit with her strikes, charged attack, plunges and Boomsharka-laka |
 
 ## Sources
 

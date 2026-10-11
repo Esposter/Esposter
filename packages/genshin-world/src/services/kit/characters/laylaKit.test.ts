@@ -8,14 +8,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createLaylaKit, LAYLA_CHARACTER_ID } from "#src/services/kit/characters/laylaKit";
+import { createLaylaKitBehaviour, LAYLA_CHARACTER_ID } from "#src/services/kit/characters/laylaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const LAYLA_KIT = createLaylaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LAYLA_CHARACTER_ID]));
+const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
 
-describe(createLaylaKit, () => {
+describe(createLaylaKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };

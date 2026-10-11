@@ -17,10 +17,10 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { CHONGYUN_CHARACTER_ID, createChongyunKit } from "#src/services/kit/characters/chongyunKit";
+import { CHONGYUN_CHARACTER_ID, createChongyunKitBehaviour } from "#src/services/kit/characters/chongyunKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
@@ -30,7 +30,7 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const CHONGYUN_KIT = createChongyunKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHONGYUN_CHARACTER_ID]));
+const CHONGYUN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHONGYUN_CHARACTER_ID);
 
 const createChongyunCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -43,7 +43,7 @@ const createChongyunCombatant = (ascension = 0, constellationCount = 0): Combata
   weaponType: WeaponType.Claymore,
 });
 
-describe(createChongyunKit, () => {
+describe(createChongyunKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {

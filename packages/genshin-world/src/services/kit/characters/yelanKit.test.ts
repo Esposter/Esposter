@@ -9,13 +9,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createYelanKit, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
+import { createYelanKitBehaviour, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const YELAN_KIT = createYelanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YELAN_CHARACTER_ID]));
+const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
 
 const createYelanCombatant = (): Combatant => ({
   ascension: 0,
@@ -35,7 +35,7 @@ const castEffects = (action: KitAction): KitEffect[] => {
   return kitEffectState.effects;
 };
 
-describe(createYelanKit, () => {
+describe(createYelanKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads each talent multiplier from its proud skill groups", () => {

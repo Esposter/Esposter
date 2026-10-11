@@ -1,14 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createEscoffierKit, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ESCOFFIER_KIT = createEscoffierKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ESCOFFIER_CHARACTER_ID]),
-);
+const ESCOFFIER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ESCOFFIER_CHARACTER_ID);
 
-describe(createEscoffierKit, () => {
+describe(createEscoffierKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

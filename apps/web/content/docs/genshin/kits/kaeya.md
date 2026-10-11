@@ -5,7 +5,7 @@ description: Kaeya's kit as built: five strikes, a charged attack, Frostgnaw wit
 
 # Kaeya
 
-Kaeya's kit is one module, `createKaeyaKit`, on avatar 10000015: five strikes, a charged attack, a collision and two plunges, Frostgnaw with its A1 heal, and Glacial Waltz's thirteen icicles. Its multipliers are read from proud skill groups 1531, 1532 and 1539, and match the wiki's Ceremonial Bladework, Frostgnaw and Glacial Waltz values to two decimal places. Glacial Waltz's icicles are a summon, built as the [shared effects](/docs/genshin/kits).
+Kaeya's kit is its record and one behaviour module, `createKaeyaKitBehaviour`, on avatar 10000015: five strikes, a charged attack, a collision and two plunges, Frostgnaw with its A1 heal, and Glacial Waltz's thirteen icicles. Its multipliers are read from proud skill groups 1531, 1532 and 1539, and match the wiki's Ceremonial Bladework, Frostgnaw and Glacial Waltz values to two decimal places. Glacial Waltz's icicles are a summon, built as the [shared effects](/docs/genshin/kits).
 
 ## Decisions
 
@@ -19,9 +19,9 @@ Kaeya's kit is one module, `createKaeyaKit`, on avatar 10000015: five strikes, a
 
 ## Key files
 
-| File                                                             | Role                                                       |
-| :--------------------------------------------------------------- | :--------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts` | `createKaeyaKit`, Kaeya's kit with Glacial Waltz's icicles |
+| File                                                             | Role                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/kaeyaKit.ts` | `createKaeyaKitBehaviour`, Kaeya's kit with Glacial Waltz's icicles |
 
 ## Sources
 

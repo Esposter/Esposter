@@ -7,19 +7,19 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createLyneyKit, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
+import { createLyneyKitBehaviour, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const LYNEY_KIT = createLyneyKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNEY_CHARACTER_ID]));
+const LYNEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LYNEY_CHARACTER_ID);
 
 const getSummonHitmarkSeconds = (kitEffectState: KitEffectState): number | undefined => {
   const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
   return summon?.hits[0]?.hitmarkSeconds;
 };
 
-describe(createLyneyKit, () => {
+describe(createLyneyKitBehaviour, () => {
   // The effects a start adds to the team's, which its owner holds
   const startAction = (action: KitAction): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };

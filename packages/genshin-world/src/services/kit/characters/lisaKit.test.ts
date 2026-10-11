@@ -9,12 +9,12 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createLisaKit, LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
+import { LISA_CHARACTER_ID } from "#src/services/kit/characters/lisaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { createPartyMember } from "#src/services/party/createPartyMember";
@@ -23,7 +23,7 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const LISA_KIT = createLisaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LISA_CHARACTER_ID]));
+const LISA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LISA_CHARACTER_ID);
 
 const createLisaCombatant = (): Combatant => ({
   ascension: 0,

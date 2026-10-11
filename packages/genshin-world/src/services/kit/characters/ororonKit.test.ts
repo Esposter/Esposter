@@ -15,15 +15,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createOroronKit, ORORON_CHARACTER_ID } from "#src/services/kit/characters/ororonKit";
+import { createOroronKitBehaviour, ORORON_CHARACTER_ID } from "#src/services/kit/characters/ororonKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const ORORON_KIT = createOroronKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ORORON_CHARACTER_ID]));
+const ORORON_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ORORON_CHARACTER_ID);
 
 const createOroronCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -43,7 +43,7 @@ const castEffects = (action: KitAction, combatant = createOroronCombatant()): Ki
   return kitEffectState.effects;
 };
 
-describe(createOroronKit, () => {
+describe(createOroronKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

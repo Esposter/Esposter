@@ -6,12 +6,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createYanfeiKit, YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
+import { createYanfeiKitBehaviour, YANFEI_CHARACTER_ID } from "#src/services/kit/characters/yanfeiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const YANFEI_KIT = createYanfeiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YANFEI_CHARACTER_ID]));
+const YANFEI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YANFEI_CHARACTER_ID);
 
 const createYanfeiCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -28,7 +28,7 @@ const createYanfeiCombatant = (constellationCount = 0): Combatant => ({
 const countSealStatuses = (effects: KitEffect[]): number =>
   effects.filter((effect) => effect.kind === "status" && effect.id.startsWith("yanfei-seal")).length;
 
-describe(createYanfeiKit, () => {
+describe(createYanfeiKitBehaviour, () => {
   test("the charged attack spends the Scarlet Seals it starts with, and their count sets its radius", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = {

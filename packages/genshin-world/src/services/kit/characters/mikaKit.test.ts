@@ -1,13 +1,13 @@
 import type { KitAction } from "#src/models/kit/KitAction";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createMikaKit, MIKA_CHARACTER_ID } from "#src/services/kit/characters/mikaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createMikaKitBehaviour, MIKA_CHARACTER_ID } from "#src/services/kit/characters/mikaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const MIKA_KIT = createMikaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MIKA_CHARACTER_ID]));
+const MIKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MIKA_CHARACTER_ID);
 
-describe(createMikaKit, () => {
+describe(createMikaKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

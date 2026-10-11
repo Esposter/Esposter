@@ -6,12 +6,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createLanYanKit, LAN_YAN_CHARACTER_ID } from "#src/services/kit/characters/lanYanKit";
+import { createLanYanKitBehaviour, LAN_YAN_CHARACTER_ID } from "#src/services/kit/characters/lanYanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const LAN_YAN_KIT = createLanYanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LAN_YAN_CHARACTER_ID]));
+const LAN_YAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAN_YAN_CHARACTER_ID);
 
 const createLanYanCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -32,7 +32,7 @@ const castEffects = (constellationCount: number): KitEffect[] => {
   return kitEffectState.effects;
 };
 
-describe(createLanYanKit, () => {
+describe(createLanYanKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

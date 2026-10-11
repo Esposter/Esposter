@@ -4,14 +4,14 @@
   "frames.raincutterExtra": { "cause": "Unclassified", "value": 33 },
   "frames.rainSwordsBurstFirstTick": { "cause": "Unclassified", "value": 19 },
   "frames.rainSwordsSkillFirstTick": { "cause": "Unclassified", "value": 44 },
-  "hitFields.rainSwordsTicks.area": {
+  "hitFields.rainSwordsTick.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
   },
-  "hitFields.rainSwordsTicks.element": { "cause": "Unclassified", "value": "Water" },
-  "hitFields.rainSwordsTicks.gauge": { "cause": "Unclassified", "value": 1 },
-  "hitFields.rainSwordsTicks.multiplier": { "cause": "Unclassified", "value": 0 },
-  "hitFields.rainSwordsTicks.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hitFields.rainSwordsTick.element": { "cause": "Unclassified", "value": "Water" },
+  "hitFields.rainSwordsTick.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.rainSwordsTick.multiplier": { "cause": "Unclassified", "value": 0 },
+  "hitFields.rainSwordsTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.evilsootherRainscreen.length": { "cause": "Unclassified", "value": 2 },
   "hits.evilsootherRainscreen.0.area": {
     "cause": "Unclassified",

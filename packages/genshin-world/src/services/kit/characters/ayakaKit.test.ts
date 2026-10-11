@@ -5,16 +5,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { AYAKA_CHARACTER_ID, createAyakaKit } from "#src/services/kit/characters/ayakaKit";
+import { AYAKA_CHARACTER_ID, createAyakaKitBehaviour } from "#src/services/kit/characters/ayakaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AYAKA_KIT = createAyakaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AYAKA_CHARACTER_ID]));
+const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
 
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -26,7 +26,7 @@ const createAyakaCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
-describe(createAyakaKit, () => {
+describe(createAyakaKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

@@ -5,7 +5,7 @@ description: Kamisato Ayaka's kit as built: her strikes, charged attack and plun
 
 # Kamisato Ayaka
 
-Kamisato Ayaka's kit is one module, `createAyakaKit`, avatar 10000002: five strikes, the fourth of three hits, a three-hit charged attack, a collision and two plunges, Kamisato Art: Hyouka, Kamisato Art: Soumetsu's storm and Kamisato Art: Senho's Cryo infusion. Her multipliers are read from proud skill groups 231, 232 and 239, and match the wiki's Kamisato Art: Kabuki, Hyouka and Soumetsu values to two decimal places. Soumetsu's storm is a summon of nineteen cuts and a bloom, built as the shared effects below, with Blizzard Blade Seki no To's two smaller storms from two constellations, and Senho's infusion is built on the kit's sprint hook. Senho's Cryo application and its movement, A1's and A4's effects and her other constellations are not built.
+Kamisato Ayaka's kit is its record and one behaviour module, `createAyakaKitBehaviour`, avatar 10000002: five strikes, the fourth of three hits, a three-hit charged attack, a collision and two plunges, Kamisato Art: Hyouka, Kamisato Art: Soumetsu's storm and Kamisato Art: Senho's Cryo infusion. Her multipliers are read from proud skill groups 231, 232 and 239, and match the wiki's Kamisato Art: Kabuki, Hyouka and Soumetsu values to two decimal places. Soumetsu's storm is a summon of nineteen cuts and a bloom, built as the shared effects below, with Blizzard Blade Seki no To's two smaller storms from two constellations, and Senho's infusion is built on the kit's sprint hook. Senho's Cryo application and its movement, A1's and A4's effects and her other constellations are not built.
 
 ## Decisions
 
@@ -20,9 +20,9 @@ Kamisato Ayaka's kit is one module, `createAyakaKit`, avatar 10000002: five stri
 
 ## Key files
 
-| File                                                             | Role                                                                      |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/ayakaKit.ts` | `createAyakaKit`, Ayaka's kit with Soumetsu's storms and Senho's infusion |
+| File                                                             | Role                                                                               |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ayakaKit.ts` | `createAyakaKitBehaviour`, Ayaka's kit with Soumetsu's storms and Senho's infusion |
 
 ## Sources
 

@@ -5,17 +5,17 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
-import { createRazorKit, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
+import { createRazorKitBehaviour, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const RAZOR_KIT = createRazorKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [RAZOR_CHARACTER_ID]));
+const RAZOR_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, RAZOR_CHARACTER_ID);
 
 const createRazorCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -27,7 +27,7 @@ const createRazorCombatant = (ascension: number, constellationCount: number): Co
   level: 90,
 });
 
-describe(createRazorKit, () => {
+describe(createRazorKitBehaviour, () => {
   test("reads each talent multiplier from his proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

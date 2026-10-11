@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createTighnariKit, TIGHNARI_CHARACTER_ID } from "#src/services/kit/characters/tighnariKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTighnariKitBehaviour, TIGHNARI_CHARACTER_ID } from "#src/services/kit/characters/tighnariKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TIGHNARI_KIT = createTighnariKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TIGHNARI_CHARACTER_ID]));
+const TIGHNARI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TIGHNARI_CHARACTER_ID);
 
-describe(createTighnariKit, () => {
+describe(createTighnariKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

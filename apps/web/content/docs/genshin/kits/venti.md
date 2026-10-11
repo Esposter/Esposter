@@ -5,7 +5,7 @@ description: Venti's kit as built, with Skyward Sonnet's Wind Domain, the Storme
 
 # Venti
 
-Venti's kit is one module, `createVentiKit`, on avatar 10000022: six shots, the first and fourth of two arrows each, a fully charged aimed shot, a collision and two plunges, Skyward Sonnet's press and its hold, and Wind's Grand Ode's Stormeye. His multipliers are read from proud skill groups 2231, 2232 and 2239, and match the wiki's Divine Marksmanship, Skyward Sonnet and Wind's Grand Ode values to two decimal places; the hold's and the press's cooldowns, the Stormeye's seconds and the burst's cooldown and cost are read from the same groups. The press's Wind Domain and the Stormeye are summons, built over the kit framework's shared effects, with the Stormeye passive's energy from Ascension 4, Splitting Gales' arrows from one constellation, and Breeze of Reminiscence's and Storm of Defiance's Anemo RES from two and six. Elemental Absorption, the Stormeye's pull, the hold's rise and Embrace of Winds' upcurrent, Breeze of Reminiscence's Physical RES, Hurricane of Freedom, his other constellations and his Hexerei kit are not built.
+Venti's kit is its record and one behaviour module, `createVentiKitBehaviour`, on avatar 10000022: six shots, the first and fourth of two arrows each, a fully charged aimed shot, a collision and two plunges, Skyward Sonnet's press and its hold, and Wind's Grand Ode's Stormeye. His multipliers are read from proud skill groups 2231, 2232 and 2239, and match the wiki's Divine Marksmanship, Skyward Sonnet and Wind's Grand Ode values to two decimal places; the hold's and the press's cooldowns, the Stormeye's seconds and the burst's cooldown and cost are read from the same groups. The press's Wind Domain and the Stormeye are summons, built over the kit framework's shared effects, with the Stormeye passive's energy from Ascension 4, Splitting Gales' arrows from one constellation, and Breeze of Reminiscence's and Storm of Defiance's Anemo RES from two and six. Elemental Absorption, the Stormeye's pull, the hold's rise and Embrace of Winds' upcurrent, Breeze of Reminiscence's Physical RES, Hurricane of Freedom, his other constellations and his Hexerei kit are not built.
 
 ## Decisions
 
@@ -28,9 +28,9 @@ Venti's kit is one module, `createVentiKit`, on avatar 10000022: six shots, the 
 
 ## Key files
 
-| File                                                             | Role                                                                                                                        |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/ventiKit.ts` | `createVentiKit`, Venti's kit with Skyward Sonnet's Wind Domain, the Stormeye and its passive's energy, and Splitting Gales |
+| File                                                             | Role                                                                                                                                 |
+| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ventiKit.ts` | `createVentiKitBehaviour`, Venti's kit with Skyward Sonnet's Wind Domain, the Stormeye and its passive's energy, and Splitting Gales |
 
 ## Sources
 

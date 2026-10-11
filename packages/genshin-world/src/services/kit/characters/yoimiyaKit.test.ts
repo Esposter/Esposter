@@ -14,14 +14,14 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createYoimiyaKit, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
+import { createYoimiyaKitBehaviour, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const YOIMIYA_KIT = createYoimiyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [YOIMIYA_CHARACTER_ID]));
+const YOIMIYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YOIMIYA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createYoimiyaCombatant = (): Combatant => ({
@@ -46,7 +46,7 @@ const createDamageTakenEvent = (enemy: Enemy, hit: KitHit, striker: Combatant, a
   striker,
 });
 
-describe(createYoimiyaKit, () => {
+describe(createYoimiyaKitBehaviour, () => {
   const OTHER_CHARACTER_ID = 10_000_003;
 
   test("niwabi Fire-Dance is a stance for the table's seconds whose strikes deal Pyro at the skill's multiplier", () => {

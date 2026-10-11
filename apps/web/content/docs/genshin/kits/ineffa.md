@@ -5,7 +5,7 @@ description: Ineffa's kit as built: her four strikes, charged attack, Cleaning M
 
 # Ineffa
 
-Ineffa's kit is one module, `createIneffaKit`, avatar 10000116: her four strikes, a charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her multipliers are read from proud skill groups 11631, 11632 and 11639, with the skill's damage, shield, Birgitta's damage and durations among them. The charged attack takes 25 stamina, the skill has a 16-second cooldown, and the burst has 60 energy and 15 seconds.
+Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`, avatar 10000116: her four strikes, a charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her multipliers are read from proud skill groups 11631, 11632 and 11639, with the skill's damage, shield, Birgitta's damage and durations among them. The charged attack takes 25 stamina, the skill has a 16-second cooldown, and the burst has 60 energy and 15 seconds.
 
 ## Not yet built
 
@@ -24,9 +24,9 @@ Ineffa's kit is one module, `createIneffaKit`, avatar 10000116: her four strikes
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                         |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/ineffaKit.ts` | `createIneffaKit`, Ineffa's four strikes, charged attack, Cleaning Mode and its shield, Birgitta and Cyclonic Exterminator, plunges and Moonsign Benediction |
+| File                                                              | Role                                                                                                                                                                  |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ineffaKit.ts` | `createIneffaKitBehaviour`, Ineffa's four strikes, charged attack, Cleaning Mode and its shield, Birgitta and Cyclonic Exterminator, plunges and Moonsign Benediction |
 
 ## Sources
 

@@ -9,14 +9,14 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createIttoKit, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
+import { createIttoKitBehaviour, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
-const ITTO_KIT = createIttoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ITTO_CHARACTER_ID]));
+const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
 
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
@@ -41,7 +41,7 @@ const landNormalAttacks = (context: KitContext): void => {
     ITTO_KIT.onKitEvent?.({ action, kind: KitEventKind.NormalAttackLanded }, context, context.activeCombatant);
 };
 
-describe(createIttoKit, () => {
+describe(createIttoKitBehaviour, () => {
   test("the burst, Royal Descent, adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD, ending on a swap", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();

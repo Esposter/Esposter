@@ -5,7 +5,7 @@ description: Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infus
 
 # Thoma
 
-Thoma's kit is one module, `createThomaKit`, on avatar 10000050: four strikes, a charged attack, a collision and two plunges, Blazing Blessing's hit with its shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses. His multipliers are read from proud skill groups 5031, 5032 and 5039; Blazing Blessing's shield seconds, most shield and cooldown, Fiery Collapse's shield, its seconds and the seconds between collapses, the burst's seconds, cooldown and energy cost, and the charged attack's stamina are read from the same groups. The shield is set from his Max HP and the table's share and flat HP, and his Pyro infusion lasts the 30 frames gcsim gives it.
+Thoma's kit is its record and one behaviour module, `createThomaKitBehaviour`, on avatar 10000050: four strikes, a charged attack, a collision and two plunges, Blazing Blessing's hit with its shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses. His multipliers are read from proud skill groups 5031, 5032 and 5039; Blazing Blessing's shield seconds, most shield and cooldown, Fiery Collapse's shield, its seconds and the seconds between collapses, the burst's seconds, cooldown and energy cost, and the charged attack's stamina are read from the same groups. The shield is set from his Max HP and the table's share and flat HP, and his Pyro infusion lasts the 30 frames gcsim gives it.
 
 For the burst's 15 seconds the Ooyoroi stands as a summon, and a normal attack the character on the field starts sets off a Fiery Collapse from its body, at most once a second: a box 4.5 metres wide and 8 long, 1U of Pyro at 11 frames. The first enemy a collapse strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield already standing, up to the most Blazing Blessing's shield may hold, for 8 seconds. His passives and his constellations are not built. The plunges' timing, the charged attack's stamina and the burst's energy cost are provisional.
 
@@ -18,9 +18,9 @@ For the burst's 15 seconds the Ooyoroi stands as a summon, and a normal attack t
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                             |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/thomaKit.ts` | `createThomaKit`, Thoma's kit with Blazing Blessing's hit, shield and Pyro infusion, Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, his charged attack and his plunges |
+| File                                                             | Role                                                                                                                                                                                                      |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/thomaKit.ts` | `createThomaKitBehaviour`, Thoma's kit with Blazing Blessing's hit, shield and Pyro infusion, Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, his charged attack and his plunges |
 
 ## Sources
 

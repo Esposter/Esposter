@@ -13,14 +13,13 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const NEVER_CRITICAL = (): number => 1;
 

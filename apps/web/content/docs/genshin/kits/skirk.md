@@ -5,7 +5,7 @@ description: Skirk's kit as built, with her five strikes, charged attack and plu
 
 # Skirk
 
-Skirk's kit is one module, `createSkirkKit`, on avatar 10000114: five strikes, a charged attack of two hits, a collision and two plunges, and Seven-Phase Flash, whose press enters a stance of its own strikes and charged attack. Her multipliers are read from proud skill groups 11431, 11432 and 11439, her normal strikes and charged attack from the first, her Seven-Phase Flash's from the second and Havoc: Ruin's from the third. Her skill's cooldown is 8 seconds, counted from the end of the Seven-Phase Flash as gcsim counts it, her burst's 15 seconds, and the charged attack costs 20 stamina. Her burst costs no energy, so its gate is her Serpent's Subtlety, which is not built.
+Skirk's kit is its record and one behaviour module, `createSkirkKitBehaviour`, on avatar 10000114: five strikes, a charged attack of two hits, a collision and two plunges, and Seven-Phase Flash, whose press enters a stance of its own strikes and charged attack. Her multipliers are read from proud skill groups 11431, 11432 and 11439, her normal strikes and charged attack from the first, her Seven-Phase Flash's from the second and Havoc: Ruin's from the third. Her skill's cooldown is 8 seconds, counted from the end of the Seven-Phase Flash as gcsim counts it, her burst's 15 seconds, and the charged attack costs 20 stamina. Her burst costs no energy, so its gate is her Serpent's Subtlety, which is not built.
 
 ## Decisions
 
@@ -30,9 +30,9 @@ Skirk's kit is one module, `createSkirkKit`, on avatar 10000114: five strikes, a
 
 ## Key files
 
-| File                                                             | Role                                                                                                       |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/skirkKit.ts` | `createSkirkKit`, Skirk's kit with her strikes, charged attack and plunges, and Seven-Phase Flash's stance |
+| File                                                             | Role                                                                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/skirkKit.ts` | `createSkirkKitBehaviour`, Skirk's kit with her strikes, charged attack and plunges, and Seven-Phase Flash's stance |
 
 ## Sources
 

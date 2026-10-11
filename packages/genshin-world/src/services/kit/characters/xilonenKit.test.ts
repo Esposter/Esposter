@@ -1,14 +1,14 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createXilonenKit, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createXilonenKitBehaviour, XILONEN_CHARACTER_ID } from "#src/services/kit/characters/xilonenKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XILONEN_KIT = createXilonenKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XILONEN_CHARACTER_ID]));
+const XILONEN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XILONEN_CHARACTER_ID);
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-describe(createXilonenKit, () => {
+describe(createXilonenKitBehaviour, () => {
   test("reads her strikes and charged attack from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

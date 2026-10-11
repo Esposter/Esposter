@@ -5,7 +5,7 @@ description: Jean's kit as built: five strikes, Gale Blade's press and hold, Dan
 
 # Jean
 
-Jean's kit is one module, `createJeanKit`, on avatar 10000003: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast. Her multipliers are read from proud skill groups 331, 332 and 339, and match the wiki's Favonius Bladework, Gale Blade and Dandelion Breeze values to two decimal places; the skill's cooldown and longest hold and the burst's cooldown and cost are read from the same groups. Dandelion Breeze's field, its activation heal and regeneration, and its entering and exiting damage are built as the [shared effects](/docs/genshin/kits), with A1's party heal on her strikes, A4's energy back and Spiraling Tempest's DMG bonus on a held Gale Blade from one constellation. The activation heal's off-field members, the field's Anemo on the character, Gale Blade's pull and its hold's stamina, and her other constellations are not built.
+Jean's kit is its record and one behaviour module, `createJeanKitBehaviour`, on avatar 10000003: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast. Her multipliers are read from proud skill groups 331, 332 and 339, and match the wiki's Favonius Bladework, Gale Blade and Dandelion Breeze values to two decimal places; the skill's cooldown and longest hold and the burst's cooldown and cost are read from the same groups. Dandelion Breeze's field, its activation heal and regeneration, and its entering and exiting damage are built as the [shared effects](/docs/genshin/kits), with A1's party heal on her strikes, A4's energy back and Spiraling Tempest's DMG bonus on a held Gale Blade from one constellation. The activation heal's off-field members, the field's Anemo on the character, Gale Blade's pull and its hold's stamina, and her other constellations are not built.
 
 ## Decisions
 
@@ -28,9 +28,9 @@ Jean's kit is one module, `createJeanKit`, on avatar 10000003: five strikes, a c
 
 ## Key files
 
-| File                                                            | Role                                                                                                         |
-| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/jeanKit.ts` | `createJeanKit`, Jean's kit with Gale Blade's hold, Dandelion Breeze's field and damage, and A1's party heal |
+| File                                                            | Role                                                                                                                  |
+| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/jeanKit.ts` | `createJeanKitBehaviour`, Jean's kit with Gale Blade's hold, Dandelion Breeze's field and damage, and A1's party heal |
 
 ## Sources
 

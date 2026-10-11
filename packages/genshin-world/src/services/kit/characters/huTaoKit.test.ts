@@ -13,15 +13,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createHuTaoKit, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
+import { createHuTaoKitBehaviour, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
-const HU_TAO_KIT = createHuTaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [HU_TAO_CHARACTER_ID]));
+const HU_TAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, HU_TAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createHuTaoCombatant = (): Combatant => ({
@@ -42,7 +42,7 @@ const createHuTaoParty = (healthShare: number) => {
   return party;
 };
 
-describe(createHuTaoKit, () => {
+describe(createHuTaoKitBehaviour, () => {
   test("guide to Afterlife holds the Paramita stance, its Pyro infusion and an ATK share of her Max HP", () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();

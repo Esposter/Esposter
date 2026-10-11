@@ -5,7 +5,7 @@ description: Freminet's kit as built, with his four strikes, charged attack, plu
 
 # Freminet
 
-Freminet's kit is one module, `createFreminetKit`, on avatar 10000085: four strikes, a charged attack, a collision and two plunges, Pressurized Floe's Upward Thrust, a cryo circle two metres ahead of the body, and Shadowhunter's Ambush, a cryo burst on the target. His multipliers are read from proud skill groups 8531, 8532 and 8539; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. Each strike, the plunges and the thrust deal physical or cryo damage as gcsim gives them, with their poise.
+Freminet's kit is its record and one behaviour module, `createFreminetKitBehaviour`, on avatar 10000085: four strikes, a charged attack, a collision and two plunges, Pressurized Floe's Upward Thrust, a cryo circle two metres ahead of the body, and Shadowhunter's Ambush, a cryo burst on the target. His multipliers are read from proud skill groups 8531, 8532 and 8539; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. Each strike, the plunges and the thrust deal physical or cryo damage as gcsim gives them, with their poise.
 
 The charged attack is provisional. gcsim gives Freminet no charged attack, so it takes the fourth strike's hitmark, animation and reach with the table's charged multiplier and stamina, and a yes-or-no question is on the roadmap.
 
@@ -17,9 +17,9 @@ Not built: Pressurized Floe's Pers Time stance, which holds the frost of each st
 
 ## Key files
 
-| File                                                                | Role                                                                                                                                      |
-| :------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/freminetKit.ts` | `createFreminetKit`, Freminet's kit with his strikes, charged attack, plunges, Pressurized Floe's upward thrust and Shadowhunter's Ambush |
+| File                                                                | Role                                                                                                                                               |
+| :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/freminetKit.ts` | `createFreminetKitBehaviour`, Freminet's kit with his strikes, charged attack, plunges, Pressurized Floe's upward thrust and Shadowhunter's Ambush |
 
 ## Sources
 

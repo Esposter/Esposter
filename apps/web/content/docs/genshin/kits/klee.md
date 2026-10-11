@@ -5,7 +5,7 @@ description: Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty'
 
 # Klee
 
-Klee's kit is one module, `createKleeKit`, on avatar 10000029: three strikes, a charged attack, a collision and two plunges, all Pyro catalyst bombs, Jumpy Dumpty's three bounces and its mines, and Sparks 'n' Splash's sparks. Her multipliers are read from proud skill groups 2931, 2932 and 2939, and match the wiki's Kaboom!, Jumpy Dumpty and Sparks 'n' Splash values to two decimal places; the charged attack's stamina, the skill's cooldown, and the burst's cooldown, cost and seconds are read from the same groups. Every bomb, bounce and mine lands from a summon cast as its action starts, and the skill holds its two charges, each thrown on its own and back one at a time on the skill's cooldown. Sparks 'n' Splash is a summon that follows the body on the field and ends as she leaves it, setting off Sparkly Explosion where she left from four constellations, and Blazing Delight gives the team its Pyro DMG Bonus from six. Pounding Surprise's Explosive Sparks, Sparkling Burst's energy, the sparks a wave adds by chance, the mines' contact and the six more of them, the skill's particles, the first strike's lag after a skill, a dash or a burst, Chained Reactions, Explosive Frags, Blazing Delight's energy and her Hexerei kit are not built.
+Klee's kit is its record and one behaviour module, `createKleeKitBehaviour`, on avatar 10000029: three strikes, a charged attack, a collision and two plunges, all Pyro catalyst bombs, Jumpy Dumpty's three bounces and its mines, and Sparks 'n' Splash's sparks. Her multipliers are read from proud skill groups 2931, 2932 and 2939, and match the wiki's Kaboom!, Jumpy Dumpty and Sparks 'n' Splash values to two decimal places; the charged attack's stamina, the skill's cooldown, and the burst's cooldown, cost and seconds are read from the same groups. Every bomb, bounce and mine lands from a summon cast as its action starts, and the skill holds its two charges, each thrown on its own and back one at a time on the skill's cooldown. Sparks 'n' Splash is a summon that follows the body on the field and ends as she leaves it, setting off Sparkly Explosion where she left from four constellations, and Blazing Delight gives the team its Pyro DMG Bonus from six. Pounding Surprise's Explosive Sparks, Sparkling Burst's energy, the sparks a wave adds by chance, the mines' contact and the six more of them, the skill's particles, the first strike's lag after a skill, a dash or a burst, Chained Reactions, Explosive Frags, Blazing Delight's energy and her Hexerei kit are not built.
 
 ## Decisions
 
@@ -23,9 +23,9 @@ Klee's kit is one module, `createKleeKit`, on avatar 10000029: three strikes, a 
 
 ## Key files
 
-| File                                                            | Role                                                                                                                     |
-| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/kleeKit.ts` | `createKleeKit`, Klee's kit with Jumpy Dumpty's bounces and mines, the following Sparks 'n' Splash and Sparkly Explosion |
+| File                                                            | Role                                                                                                                              |
+| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/kleeKit.ts` | `createKleeKitBehaviour`, Klee's kit with Jumpy Dumpty's bounces and mines, the following Sparks 'n' Splash and Sparkly Explosion |
 
 ## Sources
 

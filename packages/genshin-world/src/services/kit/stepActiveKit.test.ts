@@ -179,7 +179,6 @@ describe(stepActiveKit, () => {
           characterId: TRAVELER_CHARACTER_ID,
           combatant: { ...combatant, kit: { ...TRAVELER_KIT, normalAttacks: [stanceAttack] } },
           elapsedSeconds: 0,
-          isEndedOnSwap: false,
           kind: "stance",
           secondsRemaining: 1,
         },

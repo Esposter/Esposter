@@ -5,7 +5,7 @@ description: Wanderer's kit as built, with his strikes, charged attack, plunges,
 
 # Wanderer
 
-Wanderer's kit is one module, `createWandererKit`, on avatar 10000075: three strikes, a charged attack, a collision and two plunges, Hanega: Song of the Wind with its Anemo circle, which sets Windfavored on the team for ten seconds, and Kyougen: Five Ceremonial Plays, five strikes on the target from 92 frames. His multipliers are read from proud skill groups 7531, 7532 and 7539; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. While Windfavored holds, his strikes and charged attack take the skill's bonus, and his burst plays its falling animation. Windfavored's ten seconds are the skydweller points' hundred at six frames each, which the kit takes as the state's full length, with no drain for his Dash and Jump. Those, the swap lock on his skill, and his Ascension and Constellation passives are not built. His high plunge takes Bennett's timings and poise, as gcsim gives Wanderer no high plunge; this is provisional.
+Wanderer's kit is its record and one behaviour module, `createWandererKitBehaviour`, on avatar 10000075: three strikes, a charged attack, a collision and two plunges, Hanega: Song of the Wind with its Anemo circle, which sets Windfavored on the team for ten seconds, and Kyougen: Five Ceremonial Plays, five strikes on the target from 92 frames. His multipliers are read from proud skill groups 7531, 7532 and 7539; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. While Windfavored holds, his strikes and charged attack take the skill's bonus, and his burst plays its falling animation. Windfavored's ten seconds are the skydweller points' hundred at six frames each, which the kit takes as the state's full length, with no drain for his Dash and Jump. Those, the swap lock on his skill, and his Ascension and Constellation passives are not built. His high plunge takes Bennett's timings and poise, as gcsim gives Wanderer no high plunge; this is provisional.
 
 ## Decisions
 
@@ -13,9 +13,9 @@ Wanderer's kit is one module, `createWandererKit`, on avatar 10000075: three str
 
 ## Key files
 
-| File                                                                | Role                                                                                                                                                                |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/wandererKit.ts` | `createWandererKit`, Wanderer's kit with his strikes, charged attack and plunges, Hanega: Song of the Wind's Windfavored stance, and Kyougen: Five Ceremonial Plays |
+| File                                                                | Role                                                                                                                                                                         |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/wandererKit.ts` | `createWandererKitBehaviour`, Wanderer's kit with his strikes, charged attack and plunges, Hanega: Song of the Wind's Windfavored stance, and Kyougen: Five Ceremonial Plays |
 
 ## Sources
 

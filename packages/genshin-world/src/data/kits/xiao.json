@@ -38,12 +38,6 @@
   "hits.dash.3.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
   "hits.dash.3.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2632 } },
   "hits.dash.3.poiseDamage": { "cause": "Unclassified", "value": 100 },
-  "hits.dash2.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
-  "hits.dash2.element": { "cause": "Unclassified", "value": "Wind" },
-  "hits.dash2.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.dash2.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
-  "hits.dash2.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2632 } },
-  "hits.dash2.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "normalAttacks.0.hits.0.convertedArea": {
     "cause": "Unclassified",
     "value": { "angle": 2.6179938779914944, "height": 2, "radius": 1.9 }

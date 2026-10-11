@@ -6,12 +6,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createEulaKit, EULA_CHARACTER_ID } from "#src/services/kit/characters/eulaKit";
+import { createEulaKitBehaviour, EULA_CHARACTER_ID } from "#src/services/kit/characters/eulaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const EULA_KIT = createEulaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [EULA_CHARACTER_ID]));
+const EULA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EULA_CHARACTER_ID);
 
 const createEulaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -24,7 +24,7 @@ const createEulaCombatant = (constellationCount = 0): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-describe(createEulaKit, () => {
+describe(createEulaKitBehaviour, () => {
   test("a press's strike gains a Grimheart stack, and the hold spends the stacks into one Icewhirl each", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };

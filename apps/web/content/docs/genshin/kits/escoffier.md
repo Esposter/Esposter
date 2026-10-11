@@ -5,7 +5,7 @@ description: Escoffier's kit as built: her three normal attacks, charged attack,
 
 # Escoffier
 
-Escoffier's kit is one module, `createEscoffierKit`, avatar 10000112: her three normal attacks, a charged attack, and a low, high and collision plunge, with Low-Temperature Cooking as her skill, Scoring Cuts as her burst, and Rehab Diet from Ascension 1. Her multipliers are read from proud skill groups 11231, 11232 and 11239, the skill's press, tick, Surging Blade and interval among them and the burst's hit and heal. The charged attack costs 25 stamina, the skill cools for 15 seconds, and the burst costs 60 energy, cooling for 15 seconds.
+Escoffier's kit is its record and one behaviour module, `createEscoffierKitBehaviour`, avatar 10000112: her three normal attacks, a charged attack, and a low, high and collision plunge, with Low-Temperature Cooking as her skill, Scoring Cuts as her burst, and Rehab Diet from Ascension 1. Her multipliers are read from proud skill groups 11231, 11232 and 11239, the skill's press, tick, Surging Blade and interval among them and the burst's hit and heal. The charged attack costs 25 stamina, the skill cools for 15 seconds, and the burst costs 60 energy, cooling for 15 seconds.
 
 ## Not yet built
 
@@ -30,9 +30,9 @@ The framework holds no way for an enemy's status to read the party's elements, a
 
 ## Key files
 
-| File                                                                 | Role                                                                                                          |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/escoffierKit.ts` | `createEscoffierKit`, Escoffier's kit as built, with the Cryo RES shred and her constellations on their hooks |
+| File                                                                 | Role                                                                                                                   |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/escoffierKit.ts` | `createEscoffierKitBehaviour`, Escoffier's kit as built, with the Cryo RES shred and her constellations on their hooks |
 
 ## Sources
 

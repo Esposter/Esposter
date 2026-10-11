@@ -6,18 +6,16 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
-import { createXianglingKit, XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
+import { createXianglingKitBehaviour, XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XIANGLING_KIT = createXianglingKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XIANGLING_CHARACTER_ID]),
-);
+const XIANGLING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIANGLING_CHARACTER_ID);
 
 const createXianglingCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -29,7 +27,7 @@ const createXianglingCombatant = (ascension: number, constellationCount: number)
   level: 90,
 });
 
-describe(createXianglingKit, () => {
+describe(createXianglingKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createXianglingCombatant(0, 0));

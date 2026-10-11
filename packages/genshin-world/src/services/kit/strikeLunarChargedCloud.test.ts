@@ -13,15 +13,14 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarChargedCloud } from "#src/services/kit/strikeLunarChargedCloud";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { LUNAR_CHARGED_CLOUD_SECONDS } from "#src/services/party/constants";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(strikeLunarChargedCloud, () => {
   const STURDY_HEALTH = 1e9;

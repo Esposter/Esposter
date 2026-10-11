@@ -5,7 +5,7 @@ description: Ororon's kit as built: his three strikes, fully charged Aimed Shot,
 
 # Ororon
 
-Ororon's kit is one module, `createOroronKit`, avatar 10000105: three strikes, a fully charged Aimed Shot, the Spirit Orb's first hit, Dark Voices' Echo with its ritual and soundwave field, and a collision and two plunges. His multipliers are read from proud skill groups 10531, 10532 and 10539, the Spirit Orb's cooldown and the burst's seconds, cooldown and energy cost from the same groups. Ascension 4's energy on the active character's strikes and plunges comes after the Spirit Orb's hit, and Constellation 2's Electro DMG Bonus builds on each enemy the burst's hits strike. Constellation 4 shortens the soundwave's tick.
+Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`, avatar 10000105: three strikes, a fully charged Aimed Shot, the Spirit Orb's first hit, Dark Voices' Echo with its ritual and soundwave field, and a collision and two plunges. His multipliers are read from proud skill groups 10531, 10532 and 10539, the Spirit Orb's cooldown and the burst's seconds, cooldown and energy cost from the same groups. Ascension 4's energy on the active character's strikes and plunges comes after the Spirit Orb's hit, and Constellation 2's Electro DMG Bonus builds on each enemy the burst's hits strike. Constellation 4 shortens the soundwave's tick.
 
 ## Not yet built
 
@@ -25,9 +25,9 @@ Ororon's kit is one module, `createOroronKit`, avatar 10000105: three strikes, a
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                               |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/ororonKit.ts` | `createOroronKit`, Ororon's kit with his strikes, Aimed Shot, Spirit Orb, burst and soundwave field, and his Ascension 4 and Constellation 2 and 4 |
+| File                                                              | Role                                                                                                                                                        |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ororonKit.ts` | `createOroronKitBehaviour`, Ororon's kit with his strikes, Aimed Shot, Spirit Orb, burst and soundwave field, and his Ascension 4 and Constellation 2 and 4 |
 
 ## Sources
 

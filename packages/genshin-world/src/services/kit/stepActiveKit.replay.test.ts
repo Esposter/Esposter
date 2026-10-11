@@ -1,7 +1,7 @@
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { CharacterIdCreateKitMap } from "#src/generated/characterKitMap/CharacterIdCreateKitMap";
+import { CharacterIdCreateKitBehaviourMap } from "#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -9,7 +9,7 @@ import { PROOF_PARTY_CHARACTER_IDS } from "#src/services/kit/constants.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { replayScriptedMinute } from "#src/services/kit/replayScriptedMinute.test";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { createTravelerKitBehaviour } from "#src/services/kit/travelerKit";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
@@ -45,17 +45,17 @@ const toReplayDigest = (strikes: KitStrike[]): string => {
 // Kits are built for its own test, so no kit carries one minute's state into another's
 const teams: [string, number[], string][] = [
   ...(await Promise.all(
-    Object.entries(CharacterIdCreateKitMap).map(async ([characterId, loadCreateKit]) => {
-      const { name } = await loadCreateKit();
+    Object.entries(CharacterIdCreateKitBehaviourMap).map(async ([characterId, loadCreateBehaviour]) => {
+      const { name } = await loadCreateBehaviour();
       return [
         name,
         // oxlint-disable-next-line typescript/no-unnecessary-type-conversion -- Object.entries keys are strings at runtime, though the record types them as numbers
         [Number(characterId)],
-        `characters/${uncapitalize(name.replace(/^create/u, ""))}.replay.snapshot.md`,
+        `characters/${uncapitalize(name.replace(/^create/u, "").replace(/Behaviour$/u, ""))}.replay.snapshot.md`,
       ] satisfies [string, number[], string];
     }),
   )),
-  [createTravelerKit.name, [TRAVELER_CHARACTER_ID], "travelerKit.replay.snapshot.md"],
+  [createTravelerKitBehaviour.name, [TRAVELER_CHARACTER_ID], "travelerKit.replay.snapshot.md"],
   ["the proof party", PROOF_PARTY_CHARACTER_IDS, "stepActiveKit.replay.snapshot.md"],
 ];
 

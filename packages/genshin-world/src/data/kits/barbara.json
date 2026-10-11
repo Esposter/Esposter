@@ -8,7 +8,7 @@
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 41 },
   "frames.shiningMiracleHeal": { "cause": "Unclassified", "value": 77 },
   "frames.melodyLoopStart": { "cause": "Unclassified", "value": 3 },
-  "frames.melodyLoop": { "cause": "Unclassified", "value": 1 },
+  "frames.melodyLoopExtension": { "cause": "Unclassified", "value": 1 },
   "hits.droplet.length": { "cause": "Unclassified", "value": 2 },
   "hits.droplet.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
   "hits.droplet.0.element": { "cause": "Unclassified", "value": "Water" },

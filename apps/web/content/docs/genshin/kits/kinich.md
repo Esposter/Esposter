@@ -5,7 +5,7 @@ description: Kinich's kit as built, with his three strikes outside the Nightsoul
 
 # Kinich
 
-Kinich's kit is one module, `createKinichKit`, on avatar 10000101: his three strikes outside the Nightsoul Blessing, a charged attack of three thrusts, a plunge collision and two plunges, and the burst's hit with the Ajaw's Dragon Breath. His multipliers are read from proud skill groups 10131, 10132 and 10139, matching gcsim's to four decimal places. Skill cooldown 18 seconds; burst cooldown 18 seconds with an energy cost of 70; charged attack stamina 50.
+Kinich's kit is its record and one behaviour module, `createKinichKitBehaviour`, on avatar 10000101: his three strikes outside the Nightsoul Blessing, a charged attack of three thrusts, a plunge collision and two plunges, and the burst's hit with the Ajaw's Dragon Breath. His multipliers are read from proud skill groups 10131, 10132 and 10139, matching gcsim's to four decimal places. Skill cooldown 18 seconds; burst cooldown 18 seconds with an energy cost of 70; charged attack stamina 50.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                   |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/kinichKit.ts` | `createKinichKit`, Kinich's strikes outside the Nightsoul Blessing, his charged attack, provisional plunges and the burst's hit with the Ajaw's lasers |
+| File                                                              | Role                                                                                                                                                            |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/kinichKit.ts` | `createKinichKitBehaviour`, Kinich's strikes outside the Nightsoul Blessing, his charged attack, provisional plunges and the burst's hit with the Ajaw's lasers |
 
 ## Sources
 

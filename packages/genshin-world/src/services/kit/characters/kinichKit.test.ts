@@ -3,15 +3,15 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKinichKit, KINICH_CHARACTER_ID } from "#src/services/kit/characters/kinichKit";
+import { createKinichKitBehaviour, KINICH_CHARACTER_ID } from "#src/services/kit/characters/kinichKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
-const KINICH_KIT = createKinichKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KINICH_CHARACTER_ID]));
+const KINICH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KINICH_CHARACTER_ID);
 
-describe(createKinichKit, () => {
+describe(createKinichKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from his proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

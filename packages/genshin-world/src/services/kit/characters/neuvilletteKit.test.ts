@@ -1,14 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { createNeuvilletteKit, NEUVILLETTE_CHARACTER_ID } from "#src/services/kit/characters/neuvilletteKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createNeuvilletteKitBehaviour, NEUVILLETTE_CHARACTER_ID } from "#src/services/kit/characters/neuvilletteKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const NEUVILLETTE_KIT = createNeuvilletteKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NEUVILLETTE_CHARACTER_ID]),
-);
+const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILLETTE_CHARACTER_ID);
 
-describe(createNeuvilletteKit, () => {
+describe(createNeuvilletteKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and Spiritbreath Thorn's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

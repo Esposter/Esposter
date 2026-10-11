@@ -5,7 +5,7 @@ description: Dehya's kit as built, with her four strikes, a provisional charged 
 
 # Dehya
 
-Dehya's kit is one module, `createDehyaKit`, on avatar 10000079: four strikes, a charged attack, a collision and two plunges, and Molten Inferno's initial Pyro circle of radius 5, which lands at 20 frames. Her multipliers are read from proud skill groups 7931, 7932 and 7939; the skill's cooldown and the burst's cooldown and energy cost are read from the same groups. Her strikes are blunt, as gcsim gives them, and her plunges take gcsim's timings and poise.
+Dehya's kit is its record and one behaviour module, `createDehyaKitBehaviour`, on avatar 10000079: four strikes, a charged attack, a collision and two plunges, and Molten Inferno's initial Pyro circle of radius 5, which lands at 20 frames. Her multipliers are read from proud skill groups 7931, 7932 and 7939; the skill's cooldown and the burst's cooldown and energy cost are read from the same groups. Her strikes are blunt, as gcsim gives them, and her plunges take gcsim's timings and poise.
 
 Gcsim gives Dehya no charged attack, its attack file leaving it a TODO. The charged attack here takes the table's shape, as Dori's does: a spin at once and a final hit at the table's maximum duration, each a circle of radius 2 round the body, with the stamina per second the table gives. Its collision deals no poise, as gcsim gives none. Both are provisional until a recording settles them.
 
@@ -13,9 +13,9 @@ Not built yet: the Sanctum her skill leaves, its Molten Inferno DoT, which strik
 
 ## Key files
 
-| File                                                             | Role                                                                                                     |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/dehyaKit.ts` | `createDehyaKit`, Dehya's kit with her strikes, charged attack, plunges and Molten Inferno's initial hit |
+| File                                                             | Role                                                                                                              |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/dehyaKit.ts` | `createDehyaKitBehaviour`, Dehya's kit with her strikes, charged attack, plunges and Molten Inferno's initial hit |
 
 ## Sources
 

@@ -8,15 +8,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { COLUMBINA_CHARACTER_ID, createColumbinaKit } from "#src/services/kit/characters/columbinaKit";
+import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const COLUMBINA_KIT = createColumbinaKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [COLUMBINA_CHARACTER_ID]),
-);
+const COLUMBINA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, COLUMBINA_CHARACTER_ID);
 
 const createColumbinaCombatant = (): Combatant => ({
   ascension: 0,
@@ -29,7 +27,7 @@ const createColumbinaCombatant = (): Combatant => ({
   weaponType: WeaponType.Catalyst,
 });
 
-describe(createColumbinaKit, () => {
+describe(createColumbinaKitBehaviour, () => {
   const combatant = createColumbinaCombatant();
   // The effects a skill's press adds, as the kit's effects hold them
   const startEffects = (kitEffectState: KitEffectState): void =>

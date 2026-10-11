@@ -11,12 +11,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { SAME_ELEMENT_PARTICLE_ENERGY } from "#src/services/combat/energy/constants";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test, vi } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(collectKitEnergyDrops, () => {
   test("gives the team a drop's energy, then sends its kits the drop as the member on the field collected it", () => {

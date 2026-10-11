@@ -5,7 +5,7 @@ description: Varesa's kit as built outside her Nightsoul Blessing: her three str
 
 # Varesa
 
-Varesa's kit is one module, `createVaresaKit`, avatar 10000111: her three strikes, a charged attack, Rush as her skill with two charges, Flying Kick as her burst, and a low, high and collision plunge, all as she plays them outside her Nightsoul Blessing. Her multipliers are read from proud skill groups 11131, 11132 and 11139. Her charged attack costs 50 stamina, Rush cools for 9 seconds, and Flying Kick costs 70 energy with an 18-second cooldown.
+Varesa's kit is its record and one behaviour module, `createVaresaKitBehaviour`, avatar 10000111: her three strikes, a charged attack, Rush as her skill with two charges, Flying Kick as her burst, and a low, high and collision plunge, all as she plays them outside her Nightsoul Blessing. Her multipliers are read from proud skill groups 11131, 11132 and 11139. Her charged attack costs 50 stamina, Rush cools for 9 seconds, and Flying Kick costs 70 energy with an 18-second cooldown.
 
 ## Not yet built
 
@@ -27,9 +27,9 @@ Her Nightsoul Blessing and its Fiery Passion forms, the points each Rush, Flying
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                     |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/varesaKit.ts` | `createVaresaKit`, Varesa's three strikes, charged attack, Rush, Flying Kick and plunges outside her Nightsoul Blessing, with the blessing's forms on the Nightsoul hook |
+| File                                                              | Role                                                                                                                                                                              |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/varesaKit.ts` | `createVaresaKitBehaviour`, Varesa's three strikes, charged attack, Rush, Flying Kick and plunges outside her Nightsoul Blessing, with the blessing's forms on the Nightsoul hook |
 
 ## Sources
 

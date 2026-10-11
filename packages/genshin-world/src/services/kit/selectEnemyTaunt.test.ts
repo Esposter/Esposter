@@ -9,13 +9,12 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createTaunt = (x: number, health: number): KitTaunt => ({
   body: { facing: 0, height: 0, position: { x, z: 0 } },
   combatant: {

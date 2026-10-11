@@ -9,13 +9,13 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createMonaKit, MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
+import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { createParty } from "#src/services/party/createParty";
@@ -25,7 +25,7 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const MONA_KIT = createMonaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MONA_CHARACTER_ID]));
+const MONA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MONA_CHARACTER_ID);
 
 const NEVER_CRITICAL = (): number => 1;
 

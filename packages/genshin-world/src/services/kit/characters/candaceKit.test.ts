@@ -17,16 +17,16 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { CANDACE_CHARACTER_ID, createCandaceKit } from "#src/services/kit/characters/candaceKit";
+import { CANDACE_CHARACTER_ID, createCandaceKitBehaviour } from "#src/services/kit/characters/candaceKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const CANDACE_KIT = createCandaceKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CANDACE_CHARACTER_ID]));
+const CANDACE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CANDACE_CHARACTER_ID);
 
 const countSummons = (kitEffectState: KitEffectState): number =>
   kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
@@ -59,7 +59,7 @@ const createNormalAttackDamageTaken = (striker: Combatant): KitDamageTakenEvent 
   striker,
 });
 
-describe(createCandaceKit, () => {
+describe(createCandaceKitBehaviour, () => {
   // The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given constellations
   const getPrayerSeconds = (constellationCount: number): number | undefined =>
     castAction(CANDACE_KIT.elementalBurst, createCandaceCombatant(constellationCount)).effects.find(

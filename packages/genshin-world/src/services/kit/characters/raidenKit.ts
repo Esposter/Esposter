@@ -1,21 +1,12 @@
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttackTag } from "#src/models/combat/AttackTag";
-import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { createBoxReach } from "#src/services/kit/createBoxReach";
-import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -27,96 +18,25 @@ import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
-// The Raiden Shogun's proud skill groups, read at her talent level, each index matched to its level-1 value in the dm file
-// Of gcsim (MIT), raiden/zz_raidenshogun.dm.go. The attack group holds the five strikes at 0 to 5, the fourth of two hits
-// At 3 and 4, the charged attack at 6 and its stamina at 7, then the plunges' collision, low and high at 8, 9 and 10. The
-// Skill group holds Eye of Stormy Judgment's hit at 0, its coordinated attack at 1, the Eye's seconds at 2, the Elemental
-// Burst DMG Bonus it gives per point of a burst's energy cost at 3 and the skill's cooldown at 4. The burst group holds
-// Musou no Hitotachi at 0, Resolve's bonus per stack to it at 1 and to Musou Isshin's attacks at 2, the stacks another
-// Member's burst gives per point of energy at 3, Musou Isshin's five strikes at 4 to 9, the fourth of two hits at 7 and 8,
-// Its charged attack's two hits at 10 and 11 and its stamina at 12, its plunges' collision, low and high at 13, 14 and 15,
-// The energy its hits restore at 16, its seconds at 17, the burst's cooldown at 18 and its energy cost at 19. The plunges
-// At 13 to 15 are not read, as the kit builds none
-const RAIDEN_ATTACK_GROUP_ID = 5231;
-const RAIDEN_SKILL_GROUP_ID = 5232;
-const RAIDEN_BURST_GROUP_ID = 5239;
-
-// Provisional: gcsim gives her strikes, charged attacks, skill, coordinated attacks, burst and collision no poise, so they
-// Stand at 0 until a source gives them
-const UNMEASURED_POISE_DAMAGE = 0;
-
-// Measured: gcsim (MIT) raiden/attack.go, each polearm strike's hitmarks and animation, with its box priced to its far
-// Corner and its circle at its offset plus its radius. The fourth strike's two circles are priced at the farther of them
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/attack.go
-const NORMAL_ATTACKS = [
-  { animationFrames: 24, hitArea: createBoxReach(-0.2, 1.8, 2.8), hits: [{ hitmarkFrames: 14, index: 0 }] },
-  { animationFrames: 26, hitArea: createFanReach(270, 0.5 + 2.5), hits: [{ hitmarkFrames: 9, index: 1 }] },
-  { animationFrames: 36, hitArea: createBoxReach(-1.2, 1.8, 4), hits: [{ hitmarkFrames: 14, index: 2 }] },
-  {
-    animationFrames: 57,
-    hitArea: createFanReach(360, Math.hypot(0.5, 0.7) + 2.8),
-    hits: [
-      { hitmarkFrames: 14, index: 3 },
-      { hitmarkFrames: 27, index: 4 },
-    ],
-  },
-  { animationFrames: 50, hitArea: createFanReach(360, 3), hits: [{ hitmarkFrames: 34, index: 5 }] },
-];
-
-// Measured: gcsim (MIT) raiden/charge.go, the charged attack's box of 2.8 by 4.8 at 22 frames of 37
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/charge.go
-const CHARGED_ATTACK_FRAMES = 37;
-const CHARGED_ATTACK_HITMARK_FRAMES = 22;
-const CHARGED_ATTACK_HIT_AREA = createBoxReach(-0.1, 2.8, 4.8);
-
-// Measured: gcsim (MIT) raiden/plunge.go, the low plunge's circle of radius 3 at 47 frames of 96, the high plunge's of
-// Radius 5 at 49 frames of 99, their poise of 100 and 150, and the collision's circle of radius 1, each centred a metre
-// Ahead of the body and priced at that offset plus its radius
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/plunge.go
-const LOW_PLUNGE_FRAMES = 96;
-const LOW_PLUNGE_HITMARK_FRAMES = 47;
-const LOW_PLUNGE_HIT_AREA = createFanReach(360, 1 + 3);
-const LOW_PLUNGE_POISE_DAMAGE = 100;
-const HIGH_PLUNGE_FRAMES = 99;
-const HIGH_PLUNGE_HITMARK_FRAMES = 49;
-const HIGH_PLUNGE_HIT_AREA = createFanReach(360, 1 + 5);
-const HIGH_PLUNGE_POISE_DAMAGE = 150;
-const PLUNGE_COLLISION_HIT_AREA = createFanReach(360, 1 + 1);
-
-// Measured: gcsim (MIT) raiden/skill.go, Eye of Stormy Judgment's circle of radius 5 round the body at 51 frames, past the
-// Animation's 37, so it lands from a summon cast at the body. The Eye reaches the deployed team 66 frames after the cast
-// For the skill group's seconds, and a member holding it who deals damage sets off its coordinated attack, a circle of
-// Radius 4 round the enemy struck 5 frames on, once every 0.9 seconds across the team
+// Measured: gcsim (MIT) raiden/skill.go, the Eye reaching the deployed team from a task after the cast, and a member
+// Holding it who deals damage setting off its coordinated attack once every 0.9 seconds across the team
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/skill.go
-const SKILL_FRAMES = 37;
-const SKILL_HITMARK_FRAMES = 51;
-const SKILL_HIT_AREA = createFanReach(360, 5);
-const EYE_DELAY_FRAMES = 66;
 const EYE_STATUS_ID = "raiden-eye";
 const EYE_PENDING_TASK_ID = "raiden-eye-pending";
-const COORDINATED_ATTACK_HITMARK_FRAMES = 5;
-const COORDINATED_ATTACK_HIT_AREA = createFanReach(360, 4);
 const COORDINATED_ATTACK_ICD_SECONDS = 0.9;
 const COORDINATED_ATTACK_ICD_ID = "raiden-eye-icd";
 
-// Measured: gcsim (MIT) raiden/burst.go, Musou Shinsetsu's animation of 112 frames and Musou no Hitotachi's box of 13 by 8
-// At 98 frames, and the Musou Isshin state from the cast until the burst group's seconds past that hit, which leaving
-// The field ends. The Resolve stacks the burst spends raise both, and Musou Isshin's strikes restore the team's energy
-// Once a second, five times a cast
+// Measured: gcsim (MIT) raiden/burst.go, the Resolve stacks the burst spends, and Musou Isshin's strikes restoring the
+// Team's energy once a second, five times a cast
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/burst.go
-const BURST_FRAMES = 112;
-const BURST_HITMARK_FRAMES = 98;
-const BURST_HIT_AREA = createBoxReach(-0.1, 13, 8);
 const RESOLVE_RESOURCE_ID = "raiden-resolve";
-// Measured: gcsim (MIT) raiden/burst.go, the Resolve another member's burst gives her, the burst group's stacks per point of
-// The energy that burst cost, raised by Constellation 1 by 80% for an Electro member's burst and 20% for any other's, and
-// Resolve's cap of 60 stacks
+// Measured: gcsim (MIT) raiden/burst.go, Constellation 1 raising the Resolve another member's burst gives her by 80% for
+// An Electro member's burst and 20% for any other's, and Resolve's cap of 60 stacks
 const RESOLVE_MAX_STACKS = 60;
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_ELECTRO_RESOLVE_MULTIPLIER = 1.8;
@@ -125,29 +45,6 @@ const RESTORE_ICD_SECONDS = 1;
 const RESTORE_ICD_ID = "raiden-restore-icd";
 const RESTORE_COUNT_ID = "raiden-restore-count";
 const RESTORE_MAX_COUNT = 5;
-
-// Measured: gcsim (MIT) raiden/attack.go and charge.go, each Musou Isshin strike's hitmarks, animation and box, and its
-// Charged attack's two hits on a box of 7.5 by 8 at 24 and 32 frames of 56. A box set to one side is priced as one widened
-// By that offset on each side, to its far corner
-const MUSOU_ISSHIN_STRIKES = [
-  { animationFrames: 21, hits: [{ hitArea: createBoxReach(-0.1, 3.8, 4.8), hitmarkFrames: 12, index: 4 }] },
-  { animationFrames: 26, hits: [{ hitArea: createBoxReach(-1, 9.8 + 2 * 1, 4.5), hitmarkFrames: 13, index: 5 }] },
-  { animationFrames: 34, hits: [{ hitArea: createBoxReach(-0.1, 3.2, 4.3), hitmarkFrames: 11, index: 6 }] },
-  {
-    animationFrames: 67,
-    hits: [
-      { hitArea: createBoxReach(0, 11 + 2 * 1, 6.6), hitmarkFrames: 22, index: 7 },
-      { hitArea: createBoxReach(-1.5, 4.5 + 2 * 0.3, 8.5), hitmarkFrames: 33, index: 8 },
-    ],
-  },
-  { animationFrames: 59, hits: [{ hitArea: createBoxReach(-0.1, 11, 5.5), hitmarkFrames: 33, index: 9 }] },
-];
-const MUSOU_ISSHIN_CHARGED_FRAMES = 56;
-const MUSOU_ISSHIN_CHARGED_HIT_AREA = createBoxReach(-0.1, 7.5, 8);
-const MUSOU_ISSHIN_CHARGED_HITS = [
-  { hitmarkFrames: 24, index: 10 },
-  { hitmarkFrames: 32, index: 11 },
-];
 
 // Measured: gcsim (MIT) raiden/asc.go, Ascension 1's 2 Resolve stacks as the party gains particles or orbs, once every 3
 // Seconds
@@ -193,112 +90,53 @@ const getPassiveBonuses = (combatant: Combatant): { amount: number; attribute: A
 
 export const RAIDEN_CHARACTER_ID = 10_000_052;
 
-// The Raiden Shogun's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Eye of
-// Stormy Judgment with its Eye and coordinated attacks, and Musou Shinsetsu, whose Musou Isshin stance plays her Electro
-// Strikes and charged attack. Another member's burst gives her Resolve by its energy cost, and the burst spends her
-// Resolve stacks into Musou no Hitotachi and every Musou Isshin attack, whose strikes restore the team's energy. The Eye's
-// Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast. Ascension 1's Resolve from particles,
-// Ascension 4 and Constellations 1, 4 and 6 are built. The Eye's bonus to another member's burst, Constellation 2's DEF
-// Ignored, the Musou Isshin plunges and the skill's particles are not, as no kit reaches another kit's pricing, a hit's
-// DEF ignored, a stance's plunges or a particle a skill makes
-export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
-  const attackMultiplier = (index: number) =>
-    getTalentMultiplier(talentMultiplierMap, RAIDEN_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
-  const skillMultiplier = (index: number) =>
-    getTalentMultiplier(talentMultiplierMap, RAIDEN_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
-  const burstMultiplier = (index: number) =>
-    getTalentMultiplier(talentMultiplierMap, RAIDEN_BURST_GROUP_ID, TALENT_START_LEVEL, index);
-  const burstEnergyCost = burstMultiplier(19);
-  const resolveStackGain = burstMultiplier(3);
-  const eyeSeconds = skillMultiplier(2);
-  const eyeBurstDamageBonus = skillMultiplier(3) * burstEnergyCost;
-  const resolveAttackBonus = burstMultiplier(2);
-  const restoreEnergy = burstMultiplier(16);
-  const musouIsshinSeconds = burstMultiplier(17);
+// The Raiden Shogun's behaviour: Eye of Stormy Judgment's hit lands from a summon, and the Eye it gives the team sets off
+// Its coordinated attacks. Another member's burst gives her Resolve by its energy cost, and Musou Shinsetsu spends her
+// Resolve stacks into Musou no Hitotachi and every attack of the Musou Isshin stance it takes, whose strikes restore the
+// Team's energy. The Eye's Elemental Burst DMG Bonus raises her own burst hits, read as the burst is cast. Ascension 1's
+// Resolve from particles, Ascension 4 and Constellations 1, 4 and 6 are built. The Eye's bonus to another member's
+// Burst, Constellation 2's DEF ignored, the Musou Isshin plunges and the skill's particles are not, as no kit reaches
+// Another kit's pricing, a hit's DEF ignored, a stance's plunges or a particle a skill makes
+export const createRaidenKitBehaviour = ({
+  kit,
+  readHit,
+  readParameter,
+  readSeconds,
+  readStance,
+}: KitRecordReader): KitBehaviour => {
+  const skillHit = readHit("skill");
   // The Eye's coordinated attack, which sets off no other
-  const coordinatedAttackHit: KitHit = {
-    element: Element.Electro,
-    gauge: 1,
-    hitArea: COORDINATED_ATTACK_HIT_AREA,
-    hitmarkSeconds: COORDINATED_ATTACK_HITMARK_FRAMES / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalSkill,
-    poiseDamage: UNMEASURED_POISE_DAMAGE,
-    talentMultiplier: skillMultiplier(1),
-  };
-  const skillHit: KitHit = {
-    element: Element.Electro,
-    gauge: 1,
-    hitArea: SKILL_HIT_AREA,
-    hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
-    poiseDamage: UNMEASURED_POISE_DAMAGE,
-    talentMultiplier: skillMultiplier(0),
-  };
-  // Musou Isshin's strikes and charged attack, each multiplier raised by the Resolve stacks the burst spent and each DMG
-  // Bonus the Eye's, if she held it as she cast. Each is Elemental Burst DMG, gcsim's
-  // AttackTagElementalBurst in raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
-  const createMusouIsshinActions = (
-    stacks: number,
-    damageBonus: number,
-  ): Pick<KitStanceActions, "chargedAttack" | "chargedAttackStamina" | "normalAttacks"> => {
-    const createHit = (hitArea: AttackArea, hitmarkFrames: number, index: number): KitHit => ({
-      attackTag: AttackTag.ElementalBurst,
+  const coordinatedAttack = readHit("coordinatedAttack");
+  const eyeDelaySeconds = readSeconds("eyeDelay");
+  const eyeSeconds = readParameter("eyeSeconds");
+  // The Eye's Elemental Burst DMG Bonus is the table's bonus per point of the burst's energy cost
+  const eyeBurstDamageBonus = readParameter("eyeBurstDamageBonus") * kit.burstEnergyCost;
+  const musouNoHitotachi = readHit("musouNoHitotachi");
+  const resolveBurstBonus = readParameter("musouNoHitotachiResolveBonus");
+  const resolveAttackBonus = readParameter("resolveAttackBonus");
+  const resolveStackGain = readParameter("resolveStackGain");
+  const restoreEnergy = readParameter("restoreEnergy");
+  const musouIsshinSeconds = readParameter("musouIsshinSeconds");
+  // Musou Isshin's strikes and charged attack are Elemental Burst DMG, gcsim's AttackTagElementalBurst in
+  // Raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
+  const musouIsshin = readStance("musouIsshin");
+  // A Musou Isshin attack with each multiplier raised by the Resolve stacks the burst spent and each DMG Bonus the Eye's,
+  // If she held it as she cast
+  const raiseMusouIsshinAction = (action: KitAction, stacks: number, damageBonus: number): KitAction => ({
+    ...action,
+    hits: action.hits.map((hit) => ({
+      ...hit,
       damageBonus,
-      element: Element.Electro,
-      gauge: 1,
-      hitArea,
-      hitmarkSeconds: hitmarkFrames / 60,
-      internalCooldownTag: InternalCooldownTag.NormalAttack,
-      poiseDamage: UNMEASURED_POISE_DAMAGE,
-      talentMultiplier: burstMultiplier(index) + resolveAttackBonus * stacks,
-    });
-    return {
-      chargedAttack: {
-        hits: MUSOU_ISSHIN_CHARGED_HITS.map(({ hitmarkFrames, index }) =>
-          createHit(MUSOU_ISSHIN_CHARGED_HIT_AREA, hitmarkFrames, index),
-        ),
-        seconds: MUSOU_ISSHIN_CHARGED_FRAMES / 60,
-        targetingArea: STRIKE_TARGETING_AREA,
-      },
-      chargedAttackStamina: burstMultiplier(12),
-      normalAttacks: MUSOU_ISSHIN_STRIKES.map(({ animationFrames, hits }) => ({
-        hits: hits.map(({ hitArea, hitmarkFrames, index }) => createHit(hitArea, hitmarkFrames, index)),
-        seconds: animationFrames / 60,
-        targetingArea: STRIKE_TARGETING_AREA,
-      })),
-    };
-  };
-  const normalAttacks: KitAction[] = NORMAL_ATTACKS.map(({ animationFrames, hitArea, hits }) => ({
-    hits: hits.map(({ hitmarkFrames, index }) => ({
-      hitArea,
-      hitmarkSeconds: hitmarkFrames / 60,
-      poiseDamage: UNMEASURED_POISE_DAMAGE,
-      talentMultiplier: attackMultiplier(index),
+      talentMultiplier: hit.talentMultiplier + resolveAttackBonus * stacks,
     })),
-    seconds: animationFrames / 60,
-    targetingArea: STRIKE_TARGETING_AREA,
-  }));
+  });
   return {
-    burstCooldownSeconds: burstMultiplier(18),
-    burstEnergyCost,
-    chargedAttack: {
-      hits: [
-        {
-          hitArea: CHARGED_ATTACK_HIT_AREA,
-          hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
-          poiseDamage: UNMEASURED_POISE_DAMAGE,
-          talentMultiplier: attackMultiplier(6),
-        },
-      ],
-      seconds: CHARGED_ATTACK_FRAMES / 60,
-      targetingArea: STRIKE_TARGETING_AREA,
-    },
-    chargedAttackStamina: attackMultiplier(7),
     // The burst spends Resolve's stacks as it is cast, where gcsim spends them at the hit 98 frames on, Musou no Hitotachi
-    // Landing from a summon at the body, and takes the Musou Isshin stance, whose skill and burst stay the kit's own
-    elementalBurst: {
-      hits: [],
+    // Landing from a summon at the body, and takes the Musou Isshin stance from the cast until its seconds past that
+    // Hit, whose skill and burst stay the kit's own
+    burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        const { characterId, kit } = combatant;
+        const { characterId } = combatant;
         const stacks = spendKitResource(kitEffectState, characterId, RESOLVE_RESOURCE_ID);
         kitEffectState.effects = kitEffectState.effects.filter(
           (effect) =>
@@ -307,78 +145,27 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const damageBonus = checkHasEye(kitEffectState.effects, characterId) ? eyeBurstDamageBonus : 0;
         castKitSummon(kitEffectState, body, combatant, [
           {
+            ...musouNoHitotachi,
             damageBonus,
-            element: Element.Electro,
-            gauge: 2,
-            hitArea: BURST_HIT_AREA,
-            hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
-            poiseDamage: UNMEASURED_POISE_DAMAGE,
-            talentMultiplier: burstMultiplier(0) + burstMultiplier(1) * stacks,
+            talentMultiplier: musouNoHitotachi.talentMultiplier + resolveBurstBonus * stacks,
           },
         ]);
         enterKitStance(
           kitEffectState,
           combatant,
           {
-            ...createMusouIsshinActions(stacks, damageBonus),
-            elementalBurst: kit.elementalBurst,
-            elementalSkill: kit.elementalSkill,
+            ...musouIsshin,
+            chargedAttack: raiseMusouIsshinAction(musouIsshin.chargedAttack, stacks, damageBonus),
+            normalAttacks: musouIsshin.normalAttacks.map((action) =>
+              raiseMusouIsshinAction(action, stacks, damageBonus),
+            ),
           },
-          BURST_HITMARK_FRAMES / 60 + musouIsshinSeconds,
+          musouNoHitotachi.hitmarkSeconds + musouIsshinSeconds,
           { isEndedOnSwap: true },
         );
       },
-      seconds: BURST_FRAMES / 60,
-      targetingArea: SKILL_TARGETING_AREA,
-    },
-    // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a task
-    // That gives it as it runs
-    elementalSkill: {
-      hits: [],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        castKitSummon(kitEffectState, body, combatant, [skillHit]);
-        scheduleKitTask(
-          kitEffectState,
-          combatant.characterId,
-          EYE_DELAY_FRAMES / 60,
-          ({ kitEffectState: tickEffectState, party }) => {
-            for (const characterId of getDeployedCharacterIds(party))
-              addKitStatus(tickEffectState, characterId, { id: EYE_STATUS_ID, secondsRemaining: eyeSeconds });
-          },
-          { id: EYE_PENDING_TASK_ID },
-        );
-      },
-      seconds: SKILL_FRAMES / 60,
-      targetingArea: SKILL_TARGETING_AREA,
     },
     getPassiveBonuses,
-    highPlunge: {
-      hits: [
-        {
-          hitArea: HIGH_PLUNGE_HIT_AREA,
-          hitmarkSeconds: HIGH_PLUNGE_HITMARK_FRAMES / 60,
-          isBlunt: true,
-          poiseDamage: HIGH_PLUNGE_POISE_DAMAGE,
-          talentMultiplier: attackMultiplier(10),
-        },
-      ],
-      seconds: HIGH_PLUNGE_FRAMES / 60,
-      targetingArea: STRIKE_TARGETING_AREA,
-    },
-    lowPlunge: {
-      hits: [
-        {
-          hitArea: LOW_PLUNGE_HIT_AREA,
-          hitmarkSeconds: LOW_PLUNGE_HITMARK_FRAMES / 60,
-          isBlunt: true,
-          poiseDamage: LOW_PLUNGE_POISE_DAMAGE,
-          talentMultiplier: attackMultiplier(9),
-        },
-      ],
-      seconds: LOW_PLUNGE_FRAMES / 60,
-      targetingArea: STRIKE_TARGETING_AREA,
-    },
-    normalAttacks,
     // Another member's burst gives her Resolve, and from Ascension 1 the party's particles and orbs give her 2 stacks
     // Once every 3 seconds. The end of Musou Isshin, which leaving the field brings, gives the rest of the team
     // Constellation 4's ATK. A Musou Isshin attack that lands restores the team's energy, and from Constellation 6 cuts
@@ -386,7 +173,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // And count. A member holding the Eye who deals damage sets off its coordinated attack on the enemy struck
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
-      const musouIsshin = findKitStance(kitEffectState.effects, characterId);
+      const musouIsshinStance = findKitStance(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.BurstUsed) {
         if (event.characterId === characterId) return;
         const isElectro = characterIdCombatantMap.get(event.characterId)?.element === Element.Electro;
@@ -445,10 +232,10 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       const { enemy, hit, striker } = event;
       const restoreCount = findKitStatus(kitEffectState.effects, characterId, RESTORE_COUNT_ID)?.stacks ?? 0;
       if (
-        musouIsshin &&
+        musouIsshinStance &&
         striker.characterId === characterId &&
-        [...musouIsshin.combatant.kit.normalAttacks, musouIsshin.combatant.kit.chargedAttack].some(({ hits }) =>
-          hits.includes(hit),
+        [...musouIsshinStance.combatant.kit.normalAttacks, musouIsshinStance.combatant.kit.chargedAttack].some(
+          ({ hits }) => hits.includes(hit),
         ) &&
         restoreCount < RESTORE_MAX_COUNT &&
         startKitCooldown(kitEffectState, characterId, RESTORE_ICD_ID, RESTORE_ICD_SECONDS)
@@ -456,7 +243,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         // The count lasts as long as the stance, so the next cast starts its own
         addKitStatus(kitEffectState, characterId, {
           id: RESTORE_COUNT_ID,
-          secondsRemaining: musouIsshin.secondsRemaining,
+          secondsRemaining: musouIsshinStance.secondsRemaining,
           stacks: restoreCount + 1,
         });
         // Ascension 4 raises the energy by each whole 1% of her Energy Recharge past 100%
@@ -483,22 +270,30 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       }
       // A hit of no multiplier deals no damage of its own, and the coordinated attack sets off no other
       if (
-        hit === coordinatedAttackHit ||
+        hit === coordinatedAttack ||
         hit.talentMultiplier === 0 ||
         !checkHasKitStatus(kitEffectState.effects, striker.characterId, EYE_STATUS_ID) ||
         !startKitCooldown(kitEffectState, characterId, COORDINATED_ATTACK_ICD_ID, COORDINATED_ATTACK_ICD_SECONDS)
       )
         return;
-      castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, [
-        coordinatedAttackHit,
-      ]);
+      castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, [coordinatedAttack]);
     },
-    plungeCollision: {
-      hitArea: PLUNGE_COLLISION_HIT_AREA,
-      hitmarkSeconds: 0,
-      poiseDamage: UNMEASURED_POISE_DAMAGE,
-      talentMultiplier: attackMultiplier(8),
+    // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a task
+    // That gives it as it runs
+    skill: {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        castKitSummon(kitEffectState, body, combatant, [skillHit]);
+        scheduleKitTask(
+          kitEffectState,
+          combatant.characterId,
+          eyeDelaySeconds,
+          ({ kitEffectState: tickEffectState, party }) => {
+            for (const characterId of getDeployedCharacterIds(party))
+              addKitStatus(tickEffectState, characterId, { id: EYE_STATUS_ID, secondsRemaining: eyeSeconds });
+          },
+          { id: EYE_PENDING_TASK_ID },
+        );
+      },
     },
-    skillCooldownSeconds: skillMultiplier(4),
   };
 };

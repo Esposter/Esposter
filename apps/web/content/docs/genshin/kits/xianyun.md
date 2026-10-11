@@ -5,7 +5,7 @@ description: Xianyun's kit as built, with her four strikes, charged attack, plun
 
 # Xianyun
 
-Xianyun's kit is one module, `createXianyunKit`, on avatar 10000093: four strikes, a charged attack, a collision and two plunges, Skyladder's first press, and Stars Gather at Dusk's hit. Her multipliers are read from proud skill groups 9331, 9332 and 9339; its cooldowns and the burst's energy cost are the same groups' too. Driftcloud Wave, the plunges that replace hers while Skyladder's state stands, is not built, and neither are Starwicker, her burst's heals, the airborne buff the burst gives the party, her passives and her constellations. The poise is provisional at 0, as gcsim gives none.
+Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour`, on avatar 10000093: four strikes, a charged attack, a collision and two plunges, Skyladder's first press, and Stars Gather at Dusk's hit. Her multipliers are read from proud skill groups 9331, 9332 and 9339; its cooldowns and the burst's energy cost are the same groups' too. Driftcloud Wave, the plunges that replace hers while Skyladder's state stands, is not built, and neither are Starwicker, her burst's heals, the airborne buff the burst gives the party, her passives and her constellations. The poise is provisional at 0, as gcsim gives none.
 
 ## Not built
 
@@ -17,9 +17,9 @@ Xianyun's kit is one module, `createXianyunKit`, on avatar 10000093: four strike
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                     |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/xianyunKit.ts` | `createXianyunKit`, Xianyun's kit with her four strikes, charged attack, plunges, Skyladder's first press and Stars Gather at Dusk's hit |
+| File                                                               | Role                                                                                                                                              |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/xianyunKit.ts` | `createXianyunKitBehaviour`, Xianyun's kit with her four strikes, charged attack, plunges, Skyladder's first press and Stars Gather at Dusk's hit |
 
 ## Sources
 

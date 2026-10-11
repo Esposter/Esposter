@@ -8,15 +8,25 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // Every kit's record and sources from its sources and committed overlay, as the entries of the `kits` and `kitSources`
-// Indexes by avatar id. A record must reproduce its module's values exactly, so a kit whose overlay has fallen behind
-// Its module fails the publish, naming the paths that differ
-export const buildKitPublication = (inputs: readonly KitInput[]): GameDataPublication => {
+// Indexes by avatar id. A record must reproduce its published values exactly unless its kit is one the publish means to
+// Change, so a kit whose overlay or sources moved unasked fails the publish, naming the paths that differ. The kits are
+// The published ones, so a kit meant to change that none of them is fails it too: a kit's first publish is not built
+export const buildKitPublication = (
+  inputs: readonly KitInput[],
+  changedCharacterIds: readonly number[] = [],
+): GameDataPublication => {
+  const inputCharacterIds = new Set(inputs.map(({ characterId }) => characterId));
+  const unpublishedCharacterIds = changedCharacterIds.filter((characterId) => !inputCharacterIds.has(characterId));
+  if (unpublishedCharacterIds.length > 0)
+    throw new InvalidOperationError(Operation.Create, unpublishedCharacterIds.join(", "), "has no published kit");
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
-  for (const { characterId, moduleRecord, name, overlayName, sourceCandidateMap } of inputs) {
+  for (const { characterId, name, overlayName, publishedRecord, sourceCandidateMap } of inputs) {
     const { record, sources } = buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName));
-    const mismatchedPaths = getMismatchedKitPaths(record, moduleRecord);
+    const mismatchedPaths = changedCharacterIds.includes(characterId)
+      ? []
+      : getMismatchedKitPaths(record, publishedRecord);
     if (mismatchedPaths.length > 0) failures.push(`${name}: ${mismatchedPaths.join(", ")}`);
     kits[String(characterId)] = record;
     kitSources[String(characterId)] = sources;
@@ -25,7 +35,7 @@ export const buildKitPublication = (inputs: readonly KitInput[]): GameDataPublic
     throw new InvalidOperationError(
       Operation.Create,
       buildKitPublication.name,
-      `the records differ from their modules, so run --compare first:\n${failures.join("\n")}`,
+      `the records differ from their published ones, so name each kit meant to change in --only:\n${failures.join("\n")}`,
     );
   return { indexes: { [GameDataset.Kits]: kits, [GameDataset.KitSources]: kitSources }, objects: {} };
 };

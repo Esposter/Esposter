@@ -92,21 +92,21 @@
     "cause": "Unclassified",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "parameters.chance": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3432 } },
-  "parameters.seconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3439 } },
-  "parameters.elementalBurstOnStartAmount": {
+  "parameters.breastplateHealChance": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3432 } },
+  "parameters.sweepingTimeSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3439 } },
+  "parameters.sweepingTimeAttackDefenseShare": {
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 3439 }
   },
-  "parameters.elementalSkillOnStartHealth": {
+  "parameters.breastplateShieldFlatHealth": {
     "cause": "Unclassified",
     "value": { "index": 6, "proudSkillGroupId": 3432 }
   },
-  "parameters.elementalSkillOnStartHealth2": {
+  "parameters.breastplateShieldDefenseShare": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 3432 }
   },
-  "parameters.elementalSkillOnStartSecondsRemaining": {
+  "parameters.breastplateShieldSeconds": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 3432 }
   },

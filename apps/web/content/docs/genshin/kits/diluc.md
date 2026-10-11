@@ -5,7 +5,7 @@ description: Diluc's kit as built: his strikes, charged attack, collision and pl
 
 # Diluc
 
-Diluc's kit is one module, `createDilucKit`, avatar 10000016: four strikes, a charged attack, a collision and two plunges, Searing Onslaught's three presses, and Dawn's slashing hit with its phoenix's ticks and explosion. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion, its phoenix and the A4 passive are built, as the shared effects below.
+Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, avatar 10000016: four strikes, a charged attack, a collision and two plunges, Searing Onslaught's three presses, and Dawn's slashing hit with its phoenix's ticks and explosion. Its multipliers are read from proud skill groups 1631, 1632 and 1639, and match the wiki's Tempered Sword and gcsim's level-1 values to two decimal places. Dawn's infusion, its phoenix and the A4 passive are built, as the shared effects below.
 
 ## Decisions
 
@@ -25,9 +25,9 @@ Diluc's kit is one module, `createDilucKit`, avatar 10000016: four strikes, a ch
 
 ## Key files
 
-| File                                                             | Role                                                                                      |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/dilucKit.ts` | `createDilucKit`, Diluc's kit with Searing Onslaught's chain, Dawn's infusion and phoenix |
+| File                                                             | Role                                                                                               |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/dilucKit.ts` | `createDilucKitBehaviour`, Diluc's kit with Searing Onslaught's chain, Dawn's infusion and phoenix |
 
 ## Sources
 

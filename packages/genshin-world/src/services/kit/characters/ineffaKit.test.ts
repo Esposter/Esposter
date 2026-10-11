@@ -11,13 +11,13 @@ import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createIneffaKit, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
+import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const INEFFA_KIT = createIneffaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [INEFFA_CHARACTER_ID]));
+const INEFFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, INEFFA_CHARACTER_ID);
 
 const createIneffaCombatant = (): Combatant => ({
   ascension: 0,
@@ -43,7 +43,7 @@ const castBirgitta = (action: KitAction, effects: KitEffect[] = []): KitSummon =
     ),
   );
 
-describe(createIneffaKit, () => {
+describe(createIneffaKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

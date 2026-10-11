@@ -5,7 +5,7 @@ description: Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and
 
 # Candace
 
-Candace's kit is one module, `createCandaceKit`, on avatar 10000072: four strikes, a charged attack, a collision and two plunges; Sacred Rite: Heron's Sanctum, a tap and a charged hold that each set a shield on the team and deal a share of her Max HP as flat DMG; and Sacred Rite: Wagtail's Tide, whose initial hit sets the Prayer of the Crimson Crown going for nine seconds. Her multipliers come from proud skill groups 7231, 7232 and 7239 at level 1. The tap's cooldown is 6 seconds and the charged hold's 9, the burst's cooldown 15 seconds and its cost 60 energy, and the charged attack's stamina 25. Constellations 1 and 6 are built. Ascension 1 and 4, Constellations 2 and 4, the Prayer's DMG Bonus on the team's normal attacks, and the talent levels of Constellations 3 and 5 are not, as the sections below give.
+Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour`, on avatar 10000072: four strikes, a charged attack, a collision and two plunges; Sacred Rite: Heron's Sanctum, a tap and a charged hold that each set a shield on the team and deal a share of her Max HP as flat DMG; and Sacred Rite: Wagtail's Tide, whose initial hit sets the Prayer of the Crimson Crown going for nine seconds. Her multipliers come from proud skill groups 7231, 7232 and 7239 at level 1. The tap's cooldown is 6 seconds and the charged hold's 9, the burst's cooldown 15 seconds and its cost 60 energy, and the charged attack's stamina 25. Constellations 1 and 6 are built. Ascension 1 and 4, Constellations 2 and 4, the Prayer's DMG Bonus on the team's normal attacks, and the talent levels of Constellations 3 and 5 are not, as the sections below give.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Candace's kit is one module, `createCandaceKit`, on avatar 10000072: four strike
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                                                       |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/candaceKit.ts` | `createCandaceKit`, Candace's kit with her strikes, charged attack and plunges, Sacred Rite: Heron's Sanctum's shields, and Sacred Rite: Wagtail's Tide's Prayer and waves |
+| File                                                               | Role                                                                                                                                                                                |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/candaceKit.ts` | `createCandaceKitBehaviour`, Candace's kit with her strikes, charged attack and plunges, Sacred Rite: Heron's Sanctum's shields, and Sacred Rite: Wagtail's Tide's Prayer and waves |
 
 ## Sources
 

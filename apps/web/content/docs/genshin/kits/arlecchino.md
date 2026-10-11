@@ -5,7 +5,7 @@ description: Arlecchino's kit as built: her six strikes, charged attack, collisi
 
 # Arlecchino
 
-Arlecchino's kit is one module, `createArlecchinoKit`, on avatar 10000096: six strikes, a charged attack, a collision and two plunges, All Is Ash's Spike and Cleave, and Balemoon Rising. Her multipliers read proud groups 9631, 9632 and 9639 at her talent level, and match gcsim's values to four decimal places. Her strikes, shot and plunges are physical, as gcsim has them with the Bond of Life off.
+Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBehaviour`, on avatar 10000096: six strikes, a charged attack, a collision and two plunges, All Is Ash's Spike and Cleave, and Balemoon Rising. Her multipliers read proud groups 9631, 9632 and 9639 at her talent level, and match gcsim's values to four decimal places. Her strikes, shot and plunges are physical, as gcsim has them with the Bond of Life off.
 
 ## Decisions
 
@@ -27,9 +27,9 @@ Arlecchino's kit is one module, `createArlecchinoKit`, on avatar 10000096: six s
 
 ## Key files
 
-| File                                                                  | Role                                                                                                                  |
-| :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/arlecchinoKit.ts` | `createArlecchinoKit`, Arlecchino's kit with her six strikes, charged attack, plunges, All Is Ash and Balemoon Rising |
+| File                                                                  | Role                                                                                                                           |
+| :-------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/arlecchinoKit.ts` | `createArlecchinoKitBehaviour`, Arlecchino's kit with her six strikes, charged attack, plunges, All Is Ash and Balemoon Rising |
 
 ## Sources
 

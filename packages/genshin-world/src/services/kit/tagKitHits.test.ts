@@ -3,19 +3,14 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { BENNETT_CHARACTER_ID, createBennettKit } from "#src/services/kit/characters/bennettKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { tagKitHits } from "#src/services/kit/tagKitHits";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const BENNETT_KIT = tagKitHits(
-  createBennettKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BENNETT_CHARACTER_ID])),
-);
-const TRAVELER_KIT = tagKitHits(
-  createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID])),
-);
+const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(tagKitHits, () => {
   test.each([

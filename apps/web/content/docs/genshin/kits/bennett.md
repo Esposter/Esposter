@@ -5,7 +5,7 @@ description: Bennett's kit as built: his strikes, charged attack and plunges, Pa
 
 # Bennett
 
-Bennett's kit is one module, `createBennettKit`, avatar 10000032: five strikes, a charged attack, a collision and two plunges, Passion Overload's press and its two Charge Levels, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its constellations 1 and 6 are built, as the shared effects below, and A1's and A4's cooldown cuts, and A4's no-launch of the Level 2 hold, are built with them. Its self infusion is left.
+Bennett's kit is its record and one behaviour module, `createBennettKitBehaviour`, avatar 10000032: five strikes, a charged attack, a collision and two plunges, Passion Overload's press and its two Charge Levels, and Fantastic Voyage's damage. Its multipliers are read from proud skill groups 3231, 3232 and 3239, and match the wiki's Strike of Fortune, Passion Overload and Fantastic Voyage values to two decimal places. Fantastic Voyage's field, its heal, its ATK bonus and its constellations 1 and 6 are built, as the shared effects below, and A1's and A4's cooldown cuts, and A4's no-launch of the Level 2 hold, are built with them. Its self infusion is left.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Bennett's kit is one module, `createBennettKit`, avatar 10000032: five strikes, 
 
 ## Key files
 
-| File                                                               | Role                                                                                                 |
-| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/bennettKit.ts` | `createBennettKit`, Bennett's kit with Passion Overload's Charge Levels and Fantastic Voyage's field |
+| File                                                               | Role                                                                                                          |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/bennettKit.ts` | `createBennettKitBehaviour`, Bennett's kit with Passion Overload's Charge Levels and Fantastic Voyage's field |
 
 ## Sources
 

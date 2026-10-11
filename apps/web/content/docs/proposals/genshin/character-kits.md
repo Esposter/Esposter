@@ -19,7 +19,7 @@ Every character on the [character kits](/docs/genshin/kits) index has a module o
 
 ## Scope and order
 
-**Today:** a character without a module of its own fights with the Traveler's kit until one is written, as `readCharacterKits` falls back to `createTravelerKit`.
+**Today:** a character without a module of its own fights with the Traveler's kit until one is written, as `readCharacterKit` falls back to the Traveler's record and `createTravelerKitBehaviour`.
 
 **This adds, in order:**
 
@@ -43,9 +43,9 @@ Every character on the [character kits](/docs/genshin/kits) index has a module o
 
 ## Key files
 
-| File                                                     | Role                                                                                          |
-| :------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/travelerKit.ts` | `createTravelerKit`, the Traveler's Anemo kit and the fallback for a character with no module |
+| File                                                     | Role                                                                                                   |
+| :------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/travelerKit.ts` | `createTravelerKitBehaviour`, the Traveler's behaviour and the fallback for a character with no module |
 
 ## Sources
 

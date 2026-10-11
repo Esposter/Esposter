@@ -1,86 +1,29 @@
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
-import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
-import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
+import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
-import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
-import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { createBoxReach } from "#src/services/kit/createBoxReach";
-import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Lauma's proud skill groups, read at her talent level. The attack group holds the three strikes at 0 to 2, the charged
-// Attack, Spiritcall Prayer, at 8, and the plunges' collision, low and high at 9, 10 and 11. The skill group holds
-// Hymn of Hunting's press at 0, Hymn of Eternal Rest's hold hit and its Lunar-Bloom hit for each Verdant Dew at 1 and 2,
-// The Frostgrove Sanctuary's damage and Elemental Mastery at 3 and 4, the Elemental RES Decrease at 7 and the skill's
-// Cooldown at 9. The burst group holds Pale Hymn's cooldown at 5 and its energy cost at 6
-const LAUMA_ATTACK_GROUP_ID = 11931;
-const LAUMA_SKILL_GROUP_ID = 11932;
-const LAUMA_BURST_GROUP_ID = 11939;
-
-// Measured: gcsim (MIT) lauma/attack.go, each strike's hitmark, the frame its action cancels at by default, and its box of
-// Width and length round the body. The third strike's box is 2.8 metres wide
+// Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
+// RES below for 10 seconds
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
-const NORMAL_ATTACKS = [
-  { cancelFrames: 29, hitArea: createBoxReach(0, 2, 8), hitmarkFrames: 14 },
-  { cancelFrames: 33, hitArea: createBoxReach(0, 2, 8), hitmarkFrames: 11 },
-  { cancelFrames: 38, hitArea: createBoxReach(0, 2.8, 8), hitmarkFrames: 16 },
-];
-
-// Measured: gcsim (MIT) lauma/charge.go, Spiritcall Prayer's box of 2.8 by 8 metres, its hitmark at 73 frames, which lands
-// After its animation's 68 frames. Its stamina is not drained outside the Spirit Envoy state, so it costs none
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
-const CHARGED_ATTACK_FRAMES = 68;
-const CHARGED_ATTACK_HITMARK_FRAMES = 73;
-const CHARGED_ATTACK_HIT_AREA = createBoxReach(0, 2.8, 8);
-const CHARGED_ATTACK_STAMINA = 0;
-
-// Provisional: Lauma's gcsim folder has no plunge file, so her plunges take the timings and poise of Bennett's, as Nahida's
-// Do. Her multipliers are her own table's
-// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go
-const PLUNGE_COLLISION_HITMARK_FRAMES = 30;
-const LOW_PLUNGE_HITMARK_FRAMES = 36;
-const LOW_PLUNGE_FRAMES = 67;
-const LOW_PLUNGE_POISE_DAMAGE = 100;
-const HIGH_PLUNGE_HITMARK_FRAMES = 38;
-const HIGH_PLUNGE_FRAMES = 68;
-const HIGH_PLUNGE_POISE_DAMAGE = 150;
-
-// Measured: gcsim (MIT) lauma/skill.go, Hymn of Hunting's press with its circle of radius 6 round the body, its hitmark at 16
-// Frames and its animation at 42. Its Frostgrove Sanctuary plants a circle of radius 6 round the body where it is cast,
-// Ticking eight times from 62 frames at an interval of 117, for 15 seconds, and each of its ticks sheds the RES below
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
-const SKILL_PRESS_HITMARK_FRAMES = 16;
-const SKILL_PRESS_FRAMES = 42;
-const SKILL_HIT_AREA = createCircleReach(0, 6);
-const SANCTUARY_FIRST_TICK_FRAMES = 62;
-const SANCTUARY_TICK_INTERVAL_FRAMES = 117;
-const SANCTUARY_TICK_COUNT = 8;
 const SANCTUARY_SECONDS = 15;
 const SHRED_SECONDS = 10;
 const SHRED_STATUS_ID = "lauma-skill-shred";
 
-// Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold, a Dendro hit in the same circle at 45 frames, in an
-// Animation of 64. It spends up to three Verdant Dew, and a direct Lunar-Bloom hit of its multiplier of her Elemental
-// Mastery for each Dew spent lands on a circle of radius 6 round her at the same hitmark. The Dew is spent as the hold
-// Starts, where gcsim spends it at 29 frames, since the hit's multiplier is set as it is cast. A hold with no Dew plays
-// The press, as gcsim refuses it
+// Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold spends up to three Verdant Dew. The Dew is spent as
+// The hold starts, where gcsim spends it at 29 frames, since the hit's multiplier is set as it is cast. A hold with no
+// Dew plays the press, as gcsim refuses it
 // Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
-const SKILL_HOLD_HITMARK_FRAMES = 45;
-const SKILL_HOLD_FRAMES = 64;
 const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
-// Provisional: gcsim takes the hold as a parameter and gives no threshold for it, so a half second holds the skill, as the
-// Other kits' holds do, until a recording of the hold input measures it
-const HOLD_MINIMUM_HELD_SECONDS = 0.5;
 
 // Measured: gcsim (MIT) lauma/asc.go, her Moonsign Benediction turns the party's Bloom into Lunar-Bloom and adds 0.0175%
 // Base DMG Bonus to its Lunar-Bloom for each point of her Elemental Mastery, at most 14%
@@ -88,188 +31,52 @@ const HOLD_MINIMUM_HELD_SECONDS = 0.5;
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.000175;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
-// Measured: gcsim (MIT) lauma/burst.go, Pale Hymn's animation at 115 frames. Lauma's burst lands no hit of its own: its
-// Pale Hymn is a buff on the Bloom and Lunar-Bloom hits that follow it, which the kit does not yet hold
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
-const BURST_FRAMES = 115;
-
-// Not built yet: Pale Hymn's buff on Bloom and Lunar-Bloom hits, with the Moon Song Hymn of Eternal Rest's Dew gives it;
-// The Spirit Envoy state entered by the charged attack's first press, which waits on a stance that drains stamina; and
-// Lauma's passives and constellations.
 export const LAUMA_CHARACTER_ID = 10_000_119;
 
-// Lauma's first kit, at talent level 1: three strikes, Spiritcall Prayer, a collision and two plunges, Hymn of Hunting's
-// Press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants and the RES it sheds, the hold
-// Spending Verdant Dew on its Lunar-Bloom hit, and her Moonsign Benediction. Pale Hymn and the Spirit Envoy are not
-// Built, nor are her passives
-const createPlunge = (hit: KitHit, animationFrames: number): KitAction => ({
-  hits: [hit],
-  seconds: animationFrames / 60,
-  targetingArea: STRIKE_TARGETING_AREA,
-});
-
-export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
-  const attackMultiplier = (index: number): number =>
-    getTalentMultiplier(talentMultiplierMap, LAUMA_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
-  const skillMultiplier = (index: number): number =>
-    getTalentMultiplier(talentMultiplierMap, LAUMA_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
-  const burstMultiplier = (index: number): number =>
-    getTalentMultiplier(talentMultiplierMap, LAUMA_BURST_GROUP_ID, TALENT_START_LEVEL, index);
-
-  const normalAttacks: KitAction[] = NORMAL_ATTACKS.map(
-    ({ cancelFrames, hitArea, hitmarkFrames }, index): KitAction => ({
-      hits: [
-        {
-          hitArea,
-          hitmarkSeconds: hitmarkFrames / 60,
-          internalCooldownTag: InternalCooldownTag.NormalAttack,
-          poiseDamage: 0,
-          talentMultiplier: attackMultiplier(index),
-        },
-      ],
-      seconds: cancelFrames / 60,
-      targetingArea: STRIKE_TARGETING_AREA,
-    }),
-  );
-
-  const chargedAttack: KitAction = {
-    hits: [
-      {
-        hitArea: CHARGED_ATTACK_HIT_AREA,
-        hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
-        poiseDamage: 0,
-        talentMultiplier: attackMultiplier(8),
-      },
-    ],
-    seconds: CHARGED_ATTACK_FRAMES / 60,
-    targetingArea: STRIKE_TARGETING_AREA,
-  };
-
+// Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
+// Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
+// RES. Hymn of Eternal Rest plays while the party holds Verdant Dew, spending up to three on a direct Lunar-Bloom hit
+// Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
+// For her Elemental Mastery. Not built yet: Pale Hymn's buff on Bloom and Lunar-Bloom hits, with the Moon Song Hymn of
+// Eternal Rest's Dew gives it; the Spirit Envoy state her charged attack's first press enters, which waits on a stance
+// That drains stamina; and her passives and constellations
+export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
+  const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
+  const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
+  const holdLunarBloomMultiplier = readParameter("hymnOfEternalRestLunarBloomMultiplier");
   // The RES Dendro and Hydro enemies lose to a hit of the skill's, for its seconds
   const createShredStatus = (): EnemyStatus => ({
     damageTakenBonus: 0,
     id: SHRED_STATUS_ID,
-    resistanceReduction: { [Element.Dendro]: skillMultiplier(7), [Element.Hydro]: skillMultiplier(7) },
+    resistanceReduction: { [Element.Dendro]: shredResistanceReduction, [Element.Hydro]: shredResistanceReduction },
     secondsRemaining: SHRED_SECONDS,
   });
-
-  // The Frostgrove Sanctuary's tick, a Dendro hit of the sanctuary's ATK share and its Elemental Mastery, which sheds RES
-  const createSanctuaryTick = (tickIndex: number): KitHit => ({
-    additiveBaseDamageBonus: (striker: Combatant) =>
-      striker.attributes.attributeTotalMap[Attribute.ElementalMastery] * skillMultiplier(4),
-    element: Element.Dendro,
+  const shredBehaviour: KitHitBehaviour = { enemyStatus: createShredStatus };
+  // The Frostgrove Sanctuary's ticks, each a Dendro hit of the sanctuary's ATK share and its Elemental Mastery
+  const sanctuaryTicks = readHits("frostgroveSanctuaryTicks", {
+    additiveBaseDamageBonus: (striker) =>
+      striker.attributes.attributeTotalMap[Attribute.ElementalMastery] * sanctuaryTickElementalMasteryShare,
     enemyStatus: createShredStatus,
-    gauge: 1,
-    hitArea: SKILL_HIT_AREA,
-    hitmarkSeconds: (SANCTUARY_FIRST_TICK_FRAMES + SANCTUARY_TICK_INTERVAL_FRAMES * tickIndex) / 60,
-    poiseDamage: 0,
-    talentMultiplier: skillMultiplier(3),
   });
-
+  // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
+  const { hitArea, hitmarkSeconds, poiseDamage, ...holdLunarBloomFields } =
+    readHitFields("hymnOfEternalRestLunarBloom");
+  if (hitArea === undefined || hitmarkSeconds === undefined || poiseDamage === undefined)
+    throw new InvalidOperationError(Operation.Read, "hitFields.holdLunarBloom", "is not a hit short of its multiplier");
+  const createHoldLunarBloomHit = (dewCount: number): KitHit => ({
+    ...holdLunarBloomFields,
+    enemyStatus: createShredStatus,
+    hitArea,
+    hitmarkSeconds,
+    poiseDamage,
+    talentMultiplier: holdLunarBloomMultiplier * dewCount,
+  });
   // The Frostgrove Sanctuary the press and the hold each plant where she stands
   const plantSanctuary = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
-    castKitSummon(
-      kitEffectState,
-      body,
-      combatant,
-      Array.from({ length: SANCTUARY_TICK_COUNT }, (_tick, tickIndex) => createSanctuaryTick(tickIndex)),
-      { secondsRemaining: SANCTUARY_SECONDS },
-    );
+    castKitSummon(kitEffectState, body, combatant, sanctuaryTicks, { secondsRemaining: SANCTUARY_SECONDS });
   };
-
-  const elementalSkill: KitAction = {
-    hits: [
-      {
-        element: Element.Dendro,
-        enemyStatus: createShredStatus,
-        gauge: 1,
-        hitArea: SKILL_HIT_AREA,
-        hitmarkSeconds: SKILL_PRESS_HITMARK_FRAMES / 60,
-        poiseDamage: 0,
-        talentMultiplier: skillMultiplier(0),
-      },
-    ],
-    onStart: plantSanctuary,
-    seconds: SKILL_PRESS_FRAMES / 60,
-    targetingArea: SKILL_TARGETING_AREA,
-  };
-
-  // The hold's direct Lunar-Bloom hit, following her, its multiplier of her Elemental Mastery for each Dew it spent
-  const createHoldLunarBloomHit = (dewCount: number): KitHit => ({
-    element: Element.Dendro,
-    enemyStatus: createShredStatus,
-    hitArea: SKILL_HIT_AREA,
-    hitmarkSeconds: SKILL_HOLD_HITMARK_FRAMES / 60,
-    lunarHit: {
-      getScalingStat: (striker) => striker.attributes.attributeTotalMap[Attribute.ElementalMastery],
-      lunarReactionType: LunarReactionType.LunarBloom,
-    },
-    poiseDamage: 0,
-    talentMultiplier: skillMultiplier(2) * dewCount,
-  });
-
-  const elementalSkillHold: KitAction = {
-    hits: [
-      {
-        element: Element.Dendro,
-        enemyStatus: createShredStatus,
-        gauge: 1,
-        hitArea: SKILL_HIT_AREA,
-        hitmarkSeconds: SKILL_HOLD_HITMARK_FRAMES / 60,
-        poiseDamage: 0,
-        talentMultiplier: skillMultiplier(1),
-      },
-    ],
-    onStart: (context) => {
-      plantSanctuary(context);
-      const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
-      castKitSummon(
-        context.kitEffectState,
-        context.body,
-        context.activeCombatant,
-        [createHoldLunarBloomHit(dewCount)],
-        { isFollowing: true },
-      );
-    },
-    seconds: SKILL_HOLD_FRAMES / 60,
-    targetingArea: SKILL_TARGETING_AREA,
-  };
-
+  const pressBehaviour: KitActionBehaviour = { hits: [shredBehaviour], onStart: plantSanctuary };
   return {
-    burstCooldownSeconds: burstMultiplier(5),
-    burstEnergyCost: burstMultiplier(6),
-    chargedAttack,
-    chargedAttackStamina: CHARGED_ATTACK_STAMINA,
-    elementalBurst: { hits: [], seconds: BURST_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
-    elementalSkill,
-    elementalSkillHolds: [
-      {
-        action: elementalSkill,
-        cooldownSeconds: skillMultiplier(9),
-        minimumHeldSeconds: HOLD_MINIMUM_HELD_SECONDS,
-        variant: { action: elementalSkillHold, checkIsActive: ({ party }) => party.verdantDew.count > 0 },
-      },
-    ],
-    highPlunge: createPlunge(
-      {
-        hitArea: PLUNGE_HIT_AREAS.high,
-        hitmarkSeconds: HIGH_PLUNGE_HITMARK_FRAMES / 60,
-        isBlunt: true,
-        poiseDamage: HIGH_PLUNGE_POISE_DAMAGE,
-        talentMultiplier: attackMultiplier(11),
-      },
-      HIGH_PLUNGE_FRAMES,
-    ),
-    lowPlunge: createPlunge(
-      {
-        hitArea: PLUNGE_HIT_AREAS.low,
-        hitmarkSeconds: LOW_PLUNGE_HITMARK_FRAMES / 60,
-        isBlunt: true,
-        poiseDamage: LOW_PLUNGE_POISE_DAMAGE,
-        talentMultiplier: attackMultiplier(10),
-      },
-      LOW_PLUNGE_FRAMES,
-    ),
     moonsignBenediction: {
       getBaseDamageBonus: (combatant) =>
         Math.min(
@@ -277,16 +84,28 @@ export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY,
           BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
         ),
-      lunarReactionTypes: [LunarReactionType.LunarBloom],
     },
-    normalAttacks,
-    plungeCollision: {
-      gauge: 0,
-      hitArea: PLUNGE_HIT_AREAS.collision,
-      hitmarkSeconds: PLUNGE_COLLISION_HITMARK_FRAMES / 60,
-      poiseDamage: 0,
-      talentMultiplier: attackMultiplier(9),
-    },
-    skillCooldownSeconds: skillMultiplier(9),
+    skill: pressBehaviour,
+    // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
+    skillHolds: [
+      {
+        ...pressBehaviour,
+        variant: {
+          checkIsActive: ({ party }) => party.verdantDew.count > 0,
+          hits: [shredBehaviour],
+          onStart: (context) => {
+            plantSanctuary(context);
+            const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
+            castKitSummon(
+              context.kitEffectState,
+              context.body,
+              context.activeCombatant,
+              [createHoldLunarBloomHit(dewCount)],
+              { isFollowing: true },
+            );
+          },
+        },
+      },
+    ],
   };
 };

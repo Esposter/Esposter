@@ -1,11 +1,11 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AINO_CHARACTER_ID, createAinoKit } from "#src/services/kit/characters/ainoKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/characters/ainoKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const AINO_KIT = createAinoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AINO_CHARACTER_ID]));
+const AINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AINO_CHARACTER_ID);
 
-describe(createAinoKit, () => {
+describe(createAinoKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

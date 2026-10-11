@@ -1,22 +1,16 @@
 {
-  "areas.shunsuiken": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.06225774829855 }
-  },
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.constellation6Hitmark.length": { "cause": "Unclassified", "value": 2 },
-  "frames.constellation6Hitmark.0": { "cause": "Unclassified", "value": 20 },
-  "frames.constellation6Hitmark.1": { "cause": "Unclassified", "value": 22 },
-  "frames.shunsuikenHitmark": { "cause": "Unclassified", "value": 5 },
-  "frames.burstFirstTick": { "cause": "Unclassified", "value": 101 },
-  "frames.burstTickInterval": { "cause": "Unclassified", "value": 30 },
-  "frames.illusionDelay": { "cause": "Unclassified", "value": 35 },
-  "frames.shunsuiken": { "cause": "Unclassified", "value": 23 },
+  "frames.boundlessOriginHitmarks.length": { "cause": "Unclassified", "value": 2 },
+  "frames.boundlessOriginHitmarks.0": { "cause": "Unclassified", "value": 20 },
+  "frames.boundlessOriginHitmarks.1": { "cause": "Unclassified", "value": 22 },
+  "frames.bloomwaterBladeFirstTick": { "cause": "Unclassified", "value": 101 },
+  "frames.bloomwaterBladeInterval": { "cause": "Unclassified", "value": 30 },
+  "frames.shunsuikenStrike": { "cause": "Unclassified", "value": 23 },
   "hitFields.shunsuiken.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.06225774829855 }
@@ -25,12 +19,15 @@
   "hitFields.shunsuiken.gauge": { "cause": "Unclassified", "value": 1 },
   "hitFields.shunsuiken.hitmarkFrames": { "cause": "Unclassified", "value": 5 },
   "hitFields.shunsuiken.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.burst.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.5 } },
-  "hits.burst.element": { "cause": "Unclassified", "value": "Water" },
-  "hits.burst.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.burst.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "hits.burst.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 6639 } },
-  "hits.burst.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.bloomwaterBlade.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.5 }
+  },
+  "hits.bloomwaterBlade.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.bloomwaterBlade.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.bloomwaterBlade.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
+  "hits.bloomwaterBlade.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 6639 } },
+  "hits.bloomwaterBlade.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -38,11 +35,11 @@
   "normalAttacks.3.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.namisenShare": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 6632 } },
-  "parameters.burstSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 6639 } },
-  "parameters.elementalSkillOnStartChargedAttackStamina": {
-    "cause": "Unclassified",
-    "value": { "index": 6, "proudSkillGroupId": 6631 }
-  },
+  "parameters.gardenOfPuritySeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 6639 } },
+  "parameters.shunsuikenMultipliers.length": { "cause": "Unclassified", "value": 3 },
+  "parameters.shunsuikenMultipliers.0": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 6632 } },
+  "parameters.shunsuikenMultipliers.1": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 6632 } },
+  "parameters.shunsuikenMultipliers.2": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 6632 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 39 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "Unclassified", "value": 1 },

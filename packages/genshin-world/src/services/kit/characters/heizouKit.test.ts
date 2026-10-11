@@ -12,13 +12,13 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createHeizouKit, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
+import { createHeizouKitBehaviour, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const HEIZOU_KIT = createHeizouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [HEIZOU_CHARACTER_ID]));
+const HEIZOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, HEIZOU_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createHeizouCombatant = (): Combatant => ({
@@ -33,7 +33,7 @@ const createHeizouCombatant = (): Combatant => ({
   weaponType: WeaponType.Catalyst,
 });
 
-describe(createHeizouKit, () => {
+describe(createHeizouKitBehaviour, () => {
   test("the strikes, the fourth's three hits, the charged attack and the plunges read their table indexes at talent level 1", () => {
     expect.hasAssertions();
     const normalAttackMultipliers = HEIZOU_KIT.normalAttacks.map(({ hits }) =>

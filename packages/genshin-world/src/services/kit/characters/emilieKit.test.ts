@@ -4,11 +4,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createEmilieKit, EMILIE_CHARACTER_ID } from "#src/services/kit/characters/emilieKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createEmilieKitBehaviour, EMILIE_CHARACTER_ID } from "#src/services/kit/characters/emilieKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const EMILIE_KIT = createEmilieKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [EMILIE_CHARACTER_ID]));
+const EMILIE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EMILIE_CHARACTER_ID);
 
 const createEmilieCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -20,7 +20,7 @@ const createEmilieCombatant = (ascension: number, constellationCount: number): C
   level: 90,
 });
 
-describe(createEmilieKit, () => {
+describe(createEmilieKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

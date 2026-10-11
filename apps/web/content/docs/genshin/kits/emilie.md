@@ -5,7 +5,7 @@ description: Emilie's kit as built, with her four strikes, charged attack, colli
 
 # Emilie
 
-Emilie's kit is one module, `createEmilieKit`, on avatar 10000099: her four strikes, a charged attack, a plunge collision and two plunges, the Lumidouce Case's summon hit with Spiritbreath Thorn, and her Constellation 2 and Ascension 4. Her multipliers are read from proud skill groups 9931, 9932 and 9939, matching gcsim's to four decimal places. The skill cools for 14 seconds, the burst for 13.5 with an energy cost of 50, and the charged attack costs 25 stamina.
+Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`, on avatar 10000099: her four strikes, a charged attack, a plunge collision and two plunges, the Lumidouce Case's summon hit with Spiritbreath Thorn, and her Constellation 2 and Ascension 4. Her multipliers are read from proud skill groups 9931, 9932 and 9939, matching gcsim's to four decimal places. The skill cools for 14 seconds, the burst for 13.5 with an energy cost of 50, and the charged attack costs 25 stamina.
 
 ## Decisions
 
@@ -27,9 +27,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                          |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/emilieKit.ts` | `createEmilieKit`, Emilie's kit with her strikes, plunges, the Lumidouce Case's summon hit and Thorn, and her Constellation 2 and Ascension 4 |
+| File                                                              | Role                                                                                                                                                   |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/emilieKit.ts` | `createEmilieKitBehaviour`, Emilie's kit with her strikes, plunges, the Lumidouce Case's summon hit and Thorn, and her Constellation 2 and Ascension 4 |
 
 ## Sources
 

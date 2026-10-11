@@ -5,7 +5,7 @@ description: Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Sh
 
 # Sigewinne
 
-Sigewinne's kit is one module, `createSigewinneKit`, on avatar 10000095: three strikes, the Fully-Charged Aimed Shot, a collision and two plunges, Bolstering Bubblebalm's five bubbles, and Super Saturated Syringing's six waves. Her strikes, shot and plunges read proud attack group 9531, and her bubbles and waves are shares of her Max HP, priced as each hit's additive base damage on its striker, as Zhongli's Max HP share is.
+Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehaviour`, on avatar 10000095: three strikes, the Fully-Charged Aimed Shot, a collision and two plunges, Bolstering Bubblebalm's five bubbles, and Super Saturated Syringing's six waves. Her strikes, shot and plunges read proud attack group 9531, and her bubbles and waves are shares of her Max HP, priced as each hit's additive base damage on its striker, as Zhongli's Max HP share is.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Sigewinne's kit is one module, `createSigewinneKit`, on avatar 10000095: three s
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                                           |
-| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/sigewinneKit.ts` | `createSigewinneKit`, Sigewinne's kit with her strikes, Fully-Charged Aimed Shot, plunges, Bolstering Bubblebalm and Super Saturated Syringing |
+| File                                                                 | Role                                                                                                                                                    |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/sigewinneKit.ts` | `createSigewinneKitBehaviour`, Sigewinne's kit with her strikes, Fully-Charged Aimed Shot, plunges, Bolstering Bubblebalm and Super Saturated Syringing |
 
 ## Sources
 

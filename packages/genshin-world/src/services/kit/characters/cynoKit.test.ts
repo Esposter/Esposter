@@ -14,15 +14,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createCynoKit, CYNO_CHARACTER_ID } from "#src/services/kit/characters/cynoKit";
+import { createCynoKitBehaviour, CYNO_CHARACTER_ID } from "#src/services/kit/characters/cynoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const CYNO_KIT = createCynoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CYNO_CHARACTER_ID]));
+const CYNO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CYNO_CHARACTER_ID);
 
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
@@ -30,7 +30,7 @@ const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
 const roundToThousandth = (value: number): number => Math.round(value * 1000) / 1000;
 
-describe(createCynoKit, () => {
+describe(createCynoKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createCynoCombatant()): KitEffectState => {
     const context = createKitTestContext(combatant);

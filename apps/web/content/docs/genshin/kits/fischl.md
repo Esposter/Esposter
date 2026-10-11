@@ -5,7 +5,7 @@ description: Fischl's kit as built: her arrows, charged attack and plunges, and 
 
 # Fischl
 
-Fischl's kit is one module, `createFischlKit`, avatar 10000031: five arrows, a fully charged aimed shot, a collision and two plunges, Nightrider's Oz and Midnight Phantasmagoria. Her multipliers are read from proud skill groups 3131, 3132 and 3139, and match the wiki's Bolts of Downfall, Nightrider and Midnight Phantasmagoria values to two decimal places, Oz's attack at 3132's first parameter and its summoning damage at its second; the skill's duration and cooldown and the burst's cooldown and cost are read from the same groups. Oz is a summon that spawns 18 frames into the press, or 113 into the burst, and attacks every 59 frames while it stands; one stands at a time, a new one ending the one standing, and a swap during the burst spawns its Oz at once. Undone Be Thy Sinful Hex's Thundering Retribution from Ascension 4, and Gaze of the Deep's, Devourer of All Sins', Her Pilgrimage of Bleak's and Evernight Raven's effects from one, two, four and six constellations answer the kit events below. Stellar Predator, the skill's recast, the particles and her Hexerei kit are not built.
+Fischl's kit is its record and one behaviour module, `createFischlKitBehaviour`, avatar 10000031: five arrows, a fully charged aimed shot, a collision and two plunges, Nightrider's Oz and Midnight Phantasmagoria. Her multipliers are read from proud skill groups 3131, 3132 and 3139, and match the wiki's Bolts of Downfall, Nightrider and Midnight Phantasmagoria values to two decimal places, Oz's attack at 3132's first parameter and its summoning damage at its second; the skill's duration and cooldown and the burst's cooldown and cost are read from the same groups. Oz is a summon that spawns 18 frames into the press, or 113 into the burst, and attacks every 59 frames while it stands; one stands at a time, a new one ending the one standing, and a swap during the burst spawns its Oz at once. Undone Be Thy Sinful Hex's Thundering Retribution from Ascension 4, and Gaze of the Deep's, Devourer of All Sins', Her Pilgrimage of Bleak's and Evernight Raven's effects from one, two, four and six constellations answer the kit events below. Stellar Predator, the skill's recast, the particles and her Hexerei kit are not built.
 
 ## Decisions
 
@@ -18,9 +18,9 @@ Fischl's kit is one module, `createFischlKit`, avatar 10000031: five arrows, a f
 
 ## Key files
 
-| File                                                              | Role                                                                                                   |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/fischlKit.ts` | `createFischlKit`, Fischl's kit with Oz, its swap spawn, Thundering Retribution and her constellations |
+| File                                                              | Role                                                                                                            |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/fischlKit.ts` | `createFischlKitBehaviour`, Fischl's kit with Oz, its swap spawn, Thundering Retribution and her constellations |
 
 ## Sources
 

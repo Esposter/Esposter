@@ -5,7 +5,7 @@ description: Navia's kit as built, with Rosula Shardshot's press and hold and Su
 
 # Navia
 
-Navia's kit is one module, `createNaviaKit`, on avatar 10000091: four strikes, a charged attack, a collision and two plunges, Rosula Shardshot with its press and hold and the Surging Blade each shot fires, and As the Sunlit Sky's Singing Salute with its blast and its cannon's ticks. Her multipliers are read from proud skill groups 9131, 9132 and 9139, and her skill's charges, cooldown, and the burst's cooldown and energy cost are read from the same groups. Crystal Shrapnel is gained from the cannon's hits, up to six, and spent by each shot. Constellation 4 is built, and Constellation 6 keeps the Shrapnel past three. The charged attack has no source in gcsim, so its hits, reach and length are provisional. The shot prices five pellets landing on the target, the count with no Crystal Shrapnel, and each cannon tick strikes every enemy within 13 metres of her, not one random enemy.
+Navia's kit is its record and one behaviour module, `createNaviaKitBehaviour`, on avatar 10000091: four strikes, a charged attack, a collision and two plunges, Rosula Shardshot with its press and hold and the Surging Blade each shot fires, and As the Sunlit Sky's Singing Salute with its blast and its cannon's ticks. Her multipliers are read from proud skill groups 9131, 9132 and 9139, and her skill's charges, cooldown, and the burst's cooldown and energy cost are read from the same groups. Crystal Shrapnel is gained from the cannon's hits, up to six, and spent by each shot. Constellation 4 is built, and Constellation 6 keeps the Shrapnel past three. The charged attack has no source in gcsim, so its hits, reach and length are provisional. The shot prices five pellets landing on the target, the count with no Crystal Shrapnel, and each cannon tick strikes every enemy within 13 metres of her, not one random enemy.
 
 ## Not yet built
 
@@ -28,9 +28,9 @@ Navia's kit is one module, `createNaviaKit`, on avatar 10000091: four strikes, a
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                                          |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/naviaKit.ts` | `createNaviaKit`, Navia's kit with her strikes, charged attack and plunges, Rosula Shardshot's press and hold with Surging Blade, and As the Sunlit Sky's Singing Salute with its cannon and Crystal Shrapnel |
+| File                                                             | Role                                                                                                                                                                                                                   |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/naviaKit.ts` | `createNaviaKitBehaviour`, Navia's kit with her strikes, charged attack and plunges, Rosula Shardshot's press and hold with Surging Blade, and As the Sunlit Sky's Singing Salute with its cannon and Crystal Shrapnel |
 
 ## Sources
 

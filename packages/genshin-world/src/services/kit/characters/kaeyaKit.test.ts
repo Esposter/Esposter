@@ -3,17 +3,17 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKaeyaKit, KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
+import { KAEYA_CHARACTER_ID } from "#src/services/kit/characters/kaeyaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KAEYA_KIT = createKaeyaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAEYA_CHARACTER_ID]));
+const KAEYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAEYA_CHARACTER_ID);
 
 const createKaeyaCombatant = (): Combatant => ({
   ascension: 0,

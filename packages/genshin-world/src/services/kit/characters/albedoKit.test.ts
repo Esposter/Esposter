@@ -13,14 +13,14 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { ALBEDO_CHARACTER_ID, createAlbedoKit } from "#src/services/kit/characters/albedoKit";
+import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const ALBEDO_KIT = createAlbedoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ALBEDO_CHARACTER_ID]));
+const ALBEDO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALBEDO_CHARACTER_ID);
 
 const createAlbedoCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -57,7 +57,7 @@ const castSolarIsotoma = (): KitSummon =>
   takeOne(castEffects(ALBEDO_KIT.elementalSkill).filter((effect): effect is KitSummon => effect.kind === "summon"));
 const createStandingSolarIsotoma = (): KitSummon => ({ ...castSolarIsotoma(), elapsedSeconds: 1 });
 
-describe(createAlbedoKit, () => {
+describe(createAlbedoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const [fatalBlossom] =

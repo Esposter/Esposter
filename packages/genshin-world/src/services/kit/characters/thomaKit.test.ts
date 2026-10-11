@@ -7,12 +7,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createThomaKit, THOMA_CHARACTER_ID } from "#src/services/kit/characters/thomaKit";
+import { createThomaKitBehaviour, THOMA_CHARACTER_ID } from "#src/services/kit/characters/thomaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const THOMA_KIT = createThomaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [THOMA_CHARACTER_ID]));
+const THOMA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, THOMA_CHARACTER_ID);
 
 const createThomaCombatant = (): Combatant => ({
   ascension: 0,
@@ -56,7 +56,7 @@ const readShieldHealth = (standingShieldHealth: number | undefined, strikeCount:
   );
 };
 
-describe(createThomaKit, () => {
+describe(createThomaKitBehaviour, () => {
   test("blazing Blessing sets a shield of the table's share of Max HP and flat HP, and infuses Thoma with Pyro", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };

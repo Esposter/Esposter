@@ -5,7 +5,7 @@ description: Ningguang's kit as built: two strikes, a charged attack, her Star J
 
 # Ningguang
 
-Ningguang's kit is one module, `createNingguangKit`, on avatar 10000027: two strikes in turn, each of two gems, a charged attack, a collision and two plunges, Jade Screen's hit and its screen, and Starshatter's six gems. Her multipliers are read from proud skill groups 2731, 2732 and 2739, and match the wiki's Sparkling Scatter, Jade Screen and Starshatter values to two decimal places; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and cost are read from the same groups. Every gem lands from a summon, and each strike whose gems strike an enemy gives her a Star Jade up to three, a field that ends as she leaves the field, which her charged attack fires beside its own gem. The screen is a summon standing 3 metres ahead of her for 30 seconds, which lands the skill's hit round it, and Starshatter shatters it into six gems more, priced as she stood when she cast it. Backup Plan's free charged attack from Ascension 1 is built, and Piercing Fragments' wider gems, Shock Effect's cooldown reset and Grandeur Be the Seven Stars' seven Star Jades from one, two and six constellations. Strategic Reserve, the screen's endurance and its blocking of projectiles, the skill's particles, Exquisite be the Jade, Outshining All Beneath, and the seven jades' expiry are not built.
+Ningguang's kit is its record and one behaviour module, `createNingguangKitBehaviour`, on avatar 10000027: two strikes in turn, each of two gems, a charged attack, a collision and two plunges, Jade Screen's hit and its screen, and Starshatter's six gems. Her multipliers are read from proud skill groups 2731, 2732 and 2739, and match the wiki's Sparkling Scatter, Jade Screen and Starshatter values to two decimal places; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and cost are read from the same groups. Every gem lands from a summon, and each strike whose gems strike an enemy gives her a Star Jade up to three, a field that ends as she leaves the field, which her charged attack fires beside its own gem. The screen is a summon standing 3 metres ahead of her for 30 seconds, which lands the skill's hit round it, and Starshatter shatters it into six gems more, priced as she stood when she cast it. Backup Plan's free charged attack from Ascension 1 is built, and Piercing Fragments' wider gems, Shock Effect's cooldown reset and Grandeur Be the Seven Stars' seven Star Jades from one, two and six constellations. Strategic Reserve, the screen's endurance and its blocking of projectiles, the skill's particles, Exquisite be the Jade, Outshining All Beneath, and the seven jades' expiry are not built.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Ningguang's kit is one module, `createNingguangKit`, on avatar 10000027: two str
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                |
-| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/ningguangKit.ts` | `createNingguangKit`, Ningguang's kit with her Star Jades, Jade Screen, Starshatter's gems and Shock Effect's reset |
+| File                                                                 | Role                                                                                                                         |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ningguangKit.ts` | `createNingguangKitBehaviour`, Ningguang's kit with her Star Jades, Jade Screen, Starshatter's gems and Shock Effect's reset |
 
 ## Sources
 

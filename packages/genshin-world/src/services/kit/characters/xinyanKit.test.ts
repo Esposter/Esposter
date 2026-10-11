@@ -9,13 +9,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createXinyanKit, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
+import { createXinyanKitBehaviour, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const XINYAN_KIT = createXinyanKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XINYAN_CHARACTER_ID]));
+const XINYAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINYAN_CHARACTER_ID);
 
 const createXinyanCombatant = (ascension = 0): Combatant => ({
   ascension,
@@ -28,7 +28,7 @@ const createXinyanCombatant = (ascension = 0): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-describe(createXinyanKit, () => {
+describe(createXinyanKitBehaviour, () => {
   const skillHit = takeOne(XINYAN_KIT.elementalSkill.hits);
   // Casts Sweeping Fervor, then strikes the given number of enemies with its hit, as the hit's strikes are read
   const castSkill = (combatant: Combatant, strikeCount: number): KitEffectState => {

@@ -17,18 +17,18 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createQiqiKit, QIQI_CHARACTER_ID } from "#src/services/kit/characters/qiqiKit";
+import { createQiqiKitBehaviour, QIQI_CHARACTER_ID } from "#src/services/kit/characters/qiqiKit";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const QIQI_KIT = createQiqiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [QIQI_CHARACTER_ID]));
+const QIQI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, QIQI_CHARACTER_ID);
 
 const createQiqiCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
@@ -43,7 +43,7 @@ const createQiqiCombatant = (ascension = 0, constellationCount = 0): Combatant =
   level: 90,
 });
 
-describe(createQiqiKit, () => {
+describe(createQiqiKitBehaviour, () => {
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction): KitEffect[] => {
     const kitEffectState: KitEffectState = { effects: [] };

@@ -1,22 +1,17 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { createDilucKit, DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
-import { createNoelleKit, NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
-import { createXiaoKit, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
 import { infuseKitHit } from "#src/services/kit/effects/infuseKitHit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { tagKitHits } from "#src/services/kit/tagKitHits";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 // Each kit's hits tagged with their actions' kinds, which an infusion reads, as a kit is built
-const DILUC_KIT = tagKitHits(
-  createDilucKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DILUC_CHARACTER_ID])),
-);
-const NOELLE_KIT = tagKitHits(
-  createNoelleKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NOELLE_CHARACTER_ID])),
-);
-const XIAO_KIT = tagKitHits(createXiaoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [XIAO_CHARACTER_ID])));
+const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACTER_ID);
+const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARACTER_ID);
+const XIAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIAO_CHARACTER_ID);
 
 describe(infuseKitHit, () => {
   test("infuses a normal attack and a collision at their gauges, and leaves a skill's hit as it was", () => {

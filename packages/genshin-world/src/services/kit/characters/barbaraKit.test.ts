@@ -5,21 +5,21 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { BARBARA_CHARACTER_ID, createBarbaraKit } from "#src/services/kit/characters/barbaraKit";
+import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const BARBARA_KIT = createBarbaraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [BARBARA_CHARACTER_ID]));
+const BARBARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BARBARA_CHARACTER_ID);
 
-describe(createBarbaraKit, () => {
+describe(createBarbaraKitBehaviour, () => {
   const MAX_HEALTH = 10_000;
   const createBarbaraCombatant = (constellationCount: number): Combatant => ({
     ascension: 0,

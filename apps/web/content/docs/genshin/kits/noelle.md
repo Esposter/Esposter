@@ -5,7 +5,7 @@ description: Noelle's kit as built: four strikes, a charged attack, Breastplate'
 
 # Noelle
 
-Noelle's kit is one module, `createNoelleKit`, on avatar 10000034: four strikes, a charged attack, a collision and two plunges, Breastplate's press and Sweeping Time's two slashes. Her multipliers are read from proud skill groups 3431, 3432 and 3439, and match the wiki's Favonius Bladework - Maid, Breastplate and Sweeping Time values to two decimal places. Breastplate's shield, its heal, and its constellations I Got Your Back and To Be Cleaned, and Sweeping Time's converted Geo attacks and ATK bonus are built, as the [shared effects](/docs/genshin/kits).
+Noelle's kit is its record and one behaviour module, `createNoelleKitBehaviour`, on avatar 10000034: four strikes, a charged attack, a collision and two plunges, Breastplate's press and Sweeping Time's two slashes. Her multipliers are read from proud skill groups 3431, 3432 and 3439, and match the wiki's Favonius Bladework - Maid, Breastplate and Sweeping Time values to two decimal places. Breastplate's shield, its heal, and its constellations I Got Your Back and To Be Cleaned, and Sweeping Time's converted Geo attacks and ATK bonus are built, as the [shared effects](/docs/genshin/kits).
 
 ## Decisions
 
@@ -16,9 +16,9 @@ Noelle's kit is one module, `createNoelleKit`, on avatar 10000034: four strikes,
 
 ## Key files
 
-| File                                                              | Role                                                                                                                              |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/noelleKit.ts` | `createNoelleKit`, Noelle's kit with Breastplate's shield, heal and constellations, and Sweeping Time's buffs and converted poise |
+| File                                                              | Role                                                                                                                                       |
+| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/noelleKit.ts` | `createNoelleKitBehaviour`, Noelle's kit with Breastplate's shield, heal and constellations, and Sweeping Time's buffs and converted poise |
 
 ## Sources
 

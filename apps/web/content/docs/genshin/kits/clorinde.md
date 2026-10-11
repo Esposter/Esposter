@@ -5,7 +5,7 @@ description: Clorinde's kit as built, with her five strikes, her charged attack,
 
 # Clorinde
 
-Clorinde's kit is one module, `createClorindeKit`, on avatar 10000098: five normal attacks, the fourth of three boxes and the fifth of one circle, a charged attack, a collision and two plunges, and Last Lightfall's five strikes. Her multipliers are read from proud skill groups 9831 and 9839, matching gcsim's to three decimal places, and the burst's cooldown and cost and the charged attack's 20 stamina come from them. Hunter's Vigil's press plays its 33-frame animation and starts its 16-second cooldown, with no hit of its own.
+Clorinde's kit is its record and one behaviour module, `createClorindeKitBehaviour`, on avatar 10000098: five normal attacks, the fourth of three boxes and the fifth of one circle, a charged attack, a collision and two plunges, and Last Lightfall's five strikes. Her multipliers are read from proud skill groups 9831 and 9839, matching gcsim's to three decimal places, and the burst's cooldown and cost and the charged attack's 20 stamina come from them. Hunter's Vigil's press plays its 33-frame animation and starts its 16-second cooldown, with no hit of its own.
 
 ## Decisions
 
@@ -24,9 +24,9 @@ Clorinde's kit is one module, `createClorindeKit`, on avatar 10000098: five norm
 
 ## Key files
 
-| File                                                                | Role                                                                       |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/clorindeKit.ts` | `createClorindeKit`, Clorinde's strikes, charged attack and Last Lightfall |
+| File                                                                | Role                                                                                |
+| :------------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/clorindeKit.ts` | `createClorindeKitBehaviour`, Clorinde's strikes, charged attack and Last Lightfall |
 
 ## Sources
 

@@ -1,16 +1,14 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ARLECCHINO_CHARACTER_ID, createArlecchinoKit } from "#src/services/kit/characters/arlecchinoKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { ARLECCHINO_CHARACTER_ID, createArlecchinoKitBehaviour } from "#src/services/kit/characters/arlecchinoKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ARLECCHINO_KIT = createArlecchinoKit(
-  await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ARLECCHINO_CHARACTER_ID]),
-);
+const ARLECCHINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ARLECCHINO_CHARACTER_ID);
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-describe(createArlecchinoKit, () => {
+describe(createArlecchinoKitBehaviour, () => {
   test("reads her six strikes, charged attack and plunges from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

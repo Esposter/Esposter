@@ -4,14 +4,14 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { AMBER_CHARACTER_ID, createAmberKit } from "#src/services/kit/characters/amberKit";
+import { AMBER_CHARACTER_ID } from "#src/services/kit/characters/amberKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AMBER_KIT = createAmberKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AMBER_CHARACTER_ID]));
+const AMBER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AMBER_CHARACTER_ID);
 
 const createAmberCombatant = (): Combatant => ({
   ascension: 0,

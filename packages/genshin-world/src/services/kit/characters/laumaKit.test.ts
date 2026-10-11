@@ -4,13 +4,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createLaumaKit, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
+import { createLaumaKitBehaviour, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const LAUMA_KIT = createLaumaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LAUMA_CHARACTER_ID]));
+const LAUMA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAUMA_CHARACTER_ID);
 
 const createCombatant = (elementalMastery: number): Combatant => ({
   ascension: 0,
@@ -22,7 +22,7 @@ const createCombatant = (elementalMastery: number): Combatant => ({
   level: 90,
 });
 
-describe(createLaumaKit, () => {
+describe(createLaumaKitBehaviour, () => {
   // Hymn of Eternal Rest's Lunar-Bloom multiplier of her Elemental Mastery for each Dew, at talent level 1
   const LUNAR_BLOOM_MULTIPLIER = 1.52;
 

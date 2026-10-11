@@ -11,14 +11,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { AYATO_CHARACTER_ID, createAyatoKit } from "#src/services/kit/characters/ayatoKit";
+import { AYATO_CHARACTER_ID, createAyatoKitBehaviour } from "#src/services/kit/characters/ayatoKit";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AYATO_KIT = createAyatoKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [AYATO_CHARACTER_ID]));
+const AYATO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYATO_CHARACTER_ID);
 
 // The stance Kamisato Art: Kyouka leaves on the team, and the Shunsuiken strike at an index of its string
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
@@ -26,7 +26,7 @@ const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
 const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit =>
   takeOne(findStance(kitEffectState)?.combatant.kit.normalAttacks[index]?.hits ?? []);
 
-describe(createAyatoKit, () => {
+describe(createAyatoKitBehaviour, () => {
   const stacksAfterStrikes = (constellationCount: number): number => {
     const combatant = createAyatoCombatant(0, constellationCount);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);

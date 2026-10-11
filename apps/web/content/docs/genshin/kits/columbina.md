@@ -5,7 +5,7 @@ description: Columbina's kit as built: her three strikes, charged attack, plunge
 
 # Columbina
 
-Columbina's kit is one module, `createColumbinaKit`, avatar 10000125: three strikes, a charged attack, a collision and two plunges, her skill's press with the DoT field it sets going, and the burst's hit. Her multipliers are read from proud skill groups 12531, 12532 and 12539, with the skill's duration among them. Every hit is Hydro and deals its gauge of one.
+Columbina's kit is its record and one behaviour module, `createColumbinaKitBehaviour`, avatar 10000125: three strikes, a charged attack, a collision and two plunges, her skill's press with the DoT field it sets going, and the burst's hit. Her multipliers are read from proud skill groups 12531, 12532 and 12539, with the skill's duration among them. Every hit is Hydro and deals its gauge of one.
 
 Her skill and burst deal their multiplier on her max HP, as gcsim's `UseHP` gives them, so their talent multiplier is zero and the share of max HP is each hit's flat damage. A press while the DoT runs restarts its duration rather than stacking a second field, as gcsim restarts its status and keeps its ticks.
 
@@ -28,9 +28,9 @@ gcsim sources: `columbina/attack.go`, `charge.go`, `skill.go` and `burst.go`, wi
 
 ## Key files
 
-| File                                                                 | Role                                                                                                                    |
-| :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts` | `createColumbinaKit`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, and burst hit |
+| File                                                                 | Role                                                                                                                             |
+| :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/columbinaKit.ts` | `createColumbinaKitBehaviour`, Columbina's three strikes, charged attack, plunges, skill press with its DoT field, and burst hit |
 
 ## Sources
 

@@ -7,13 +7,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKiraraKit, KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
+import { createKiraraKitBehaviour, KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KIRARA_KIT = createKiraraKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KIRARA_CHARACTER_ID]));
+const KIRARA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KIRARA_CHARACTER_ID);
 
 const createKiraraCombatant = (): Combatant => ({
   ascension: 0,
@@ -26,7 +26,7 @@ const createKiraraCombatant = (): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-describe(createKiraraKit, () => {
+describe(createKiraraKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

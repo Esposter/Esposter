@@ -5,7 +5,7 @@ description: Ifa's kit as built outside her Nightsoul Blessing: her three normal
 
 # Ifa
 
-Ifa's kit is one module, `createIfaKit`, avatar 10000113: her three normal attacks, a charged attack, Compound Sedation Field's hit as her burst, and the low plunge with its collision, all played outside her Blessing. Her multipliers are read from proud skill groups 11331, 11332 and 11339. The charged attack costs 50 stamina, the burst 60 energy with a 15-second cooldown, and the skill cools for 7.5 seconds.
+Ifa's kit is its record and one behaviour module, `createIfaKitBehaviour`, avatar 10000113: her three normal attacks, a charged attack, Compound Sedation Field's hit as her burst, and the low plunge with its collision, all played outside her Blessing. Her multipliers are read from proud skill groups 11331, 11332 and 11339. The charged attack costs 50 stamina, the burst 60 energy with a 15-second cooldown, and the skill cools for 7.5 seconds.
 
 ## Not yet built
 
@@ -27,9 +27,9 @@ Ifa's kit is built around the Nightsoul Blessing, so most of it waits on the Nig
 
 ## Key files
 
-| File                                                           | Role                                                                                                                                                                     |
-| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/ifaKit.ts` | `createIfaKit`, Ifa's three normal attacks, charged attack, Compound Sedation Field's hit, and her plunges outside her Nightsoul Blessing, with the blessing on its hook |
+| File                                                           | Role                                                                                                                                                                              |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ifaKit.ts` | `createIfaKitBehaviour`, Ifa's three normal attacks, charged attack, Compound Sedation Field's hit, and her plunges outside her Nightsoul Blessing, with the blessing on its hook |
 
 ## Sources
 

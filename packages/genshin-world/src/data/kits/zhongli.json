@@ -1,9 +1,8 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.pressStele": { "cause": "Unclassified", "value": 24 },
-  "frames.castPressSteleSecondsRemaining": { "cause": "Unclassified", "value": 1884 },
-  "frames.castHoldSecondsRemaining": { "cause": "Unclassified", "value": 1908 },
-  "frames.holdHitmark": { "cause": "Unclassified", "value": 48 },
+  "frames.pressSteleLanding": { "cause": "Unclassified", "value": 24 },
+  "frames.pressSteleEnd": { "cause": "Unclassified", "value": 1884 },
+  "frames.holdSteleEnd": { "cause": "Unclassified", "value": 1908 },
   "hits.pressStele.length": { "cause": "Unclassified", "value": 16 },
   "hits.pressStele.0.area": {
     "cause": "Unclassified",

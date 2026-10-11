@@ -5,7 +5,7 @@ description: Faruzan's kit as built, with Wind Realm of Nasamjnin, The Wind's Se
 
 # Faruzan
 
-Faruzan's kit is one module, `createFaruzanKit`, on avatar 10000076: four strikes, a fully charged shot, a collision and two plunges, Wind Realm of Nasamjnin's polyhedron hit, and The Wind's Secret Ways' initial hit with its Dazzling Polyhedron. Her multipliers are read from proud skill groups 7631, 7632 and 7639, and the skill's and burst's cooldowns and the burst's energy cost from the same groups. The polyhedron's Whirlwind Pulses, six through its duration, each shred the enemies near their gadget and give every member of the team Prayerful Wind's Anemo DMG Bonus. The Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive and her constellations are not built, listed below.
+Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour`, on avatar 10000076: four strikes, a fully charged shot, a collision and two plunges, Wind Realm of Nasamjnin's polyhedron hit, and The Wind's Secret Ways' initial hit with its Dazzling Polyhedron. Her multipliers are read from proud skill groups 7631, 7632 and 7639, and the skill's and burst's cooldowns and the burst's energy cost from the same groups. The polyhedron's Whirlwind Pulses, six through its duration, each shred the enemies near their gadget and give every member of the team Prayerful Wind's Anemo DMG Bonus. The Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive and her constellations are not built, listed below.
 
 ## Decisions
 
@@ -26,9 +26,9 @@ Faruzan's kit is one module, `createFaruzanKit`, on avatar 10000076: four strike
 
 ## Key files
 
-| File                                                               | Role                                                                                                                                                                                         |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/faruzanKit.ts` | `createFaruzanKit`, Faruzan's kit with her four strikes, charged shot and plunges, Wind Realm of Nasamjnin's hit, and The Wind's Secret Ways with its Dazzling Polyhedron's Whirlwind Pulses |
+| File                                                               | Role                                                                                                                                                                                                  |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/faruzanKit.ts` | `createFaruzanKitBehaviour`, Faruzan's kit with her four strikes, charged shot and plunges, Wind Realm of Nasamjnin's hit, and The Wind's Secret Ways with its Dazzling Polyhedron's Whirlwind Pulses |
 
 ## Sources
 

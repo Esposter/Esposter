@@ -1,23 +1,21 @@
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
+import type { KitRecord } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { readPublishedGameDataEntries } from "#src/services/gameData/readPublishedGameDataEntries";
 import { mergeKitCandidates } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidates";
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimTagCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTagCharacters";
-import { adoptKitParameters } from "#src/services/genshinAssets/kits/module/adoptKitParameters";
-import { buildKitModule } from "#src/services/genshinAssets/kits/module/buildKitModule";
-import { encodeTalentMultiplierMap } from "#src/services/genshinAssets/kits/module/encodeTalentMultiplierMap";
-import { readKitModules } from "#src/services/genshinAssets/kits/module/readKitModules";
-import { toModuleKitRecord } from "#src/services/genshinAssets/kits/module/toModuleKitRecord";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
 import { readKitTables } from "#src/services/genshinAssets/kits/tables/readKitTables";
 import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getWikiKitCandidates";
 import { readWikiTalentPages } from "#src/services/genshinAssets/kits/wiki/readWikiTalentPages";
 import { InvalidOperationError, Operation, toKebabCase } from "@esposter/shared";
+import { GameDataset } from "genshin-world";
 
 // The values gcsim is expected to give every kit, each by the constant that gives it, so a kit missing one names what
 // The reader could not read
@@ -30,10 +28,9 @@ const GcsimExpectedPathConstantMap: Record<string, string> = {
   "skill.animationFrames": "skillFrames",
 };
 
-// What the builder reads for every character with a kit module, or the named ones: the record each module holds today,
-// Built from the published multipliers and again from encoded ones with its literals a table holds at every level taken
-// As the table's, and the candidates gcsim's tag, the wiki and the tables give its record. gcsim's tag is read from its
-// Clone and the wiki's answers from their cache, each fetched first where it is absent
+// What the builder reads for every character with a published kit, or the named ones: the record published for it, and
+// The candidates gcsim's tag, the wiki and the tables give its record. gcsim's tag is read from its clone and the wiki's
+// Answers from their cache, each fetched first where it is absent
 export const readKitInputs = async ({
   characterIds,
   gcsimDirectory,
@@ -47,18 +44,11 @@ export const readKitInputs = async ({
   const plungeFallback = tagCharacterMap.get(GCSIM_PLUNGE_FALLBACK_FOLDER);
   if (plungeFallback === undefined)
     throw new InvalidOperationError(Operation.Read, GCSIM_PLUNGE_FALLBACK_FOLDER, `has no folder at ${GCSIM_TAG}`);
-  const allModules = await readKitModules();
-  const moduleCharacterIds = new Set(allModules.map(({ characterId }) => characterId));
-  const unknownCharacterIds = characterIds?.filter((characterId) => !moduleCharacterIds.has(characterId)) ?? [];
-  if (unknownCharacterIds.length > 0)
-    throw new InvalidOperationError(Operation.Read, unknownCharacterIds.join(", "), "has no kit module");
-  const modules = allModules.filter(
-    ({ characterId }) => characterIds === undefined || characterIds.includes(characterId),
-  );
-  const tablesMap = await readKitTables(modules.map(({ characterId }) => characterId));
+  const publishedRecordMap = await readPublishedGameDataEntries<KitRecord>(GameDataset.Kits, characterIds?.map(String));
+  const tablesMap = await readKitTables(Array.from(publishedRecordMap.keys(), Number));
   const inputs: KitInput[] = [];
-  for (const module of modules) {
-    const { characterId } = module;
+  for (const [id, publishedRecord] of publishedRecordMap) {
+    const characterId = Number(id);
     const tables = tablesMap.get(characterId);
     if (tables === undefined) throw new InvalidOperationError(Operation.Read, String(characterId), "has no tables");
     const notes: string[] = [];
@@ -76,13 +66,6 @@ export const readKitInputs = async ({
           notes.push(`gcsim gives no ${constant}`);
     const tableCandidateMap = getTableKitCandidates(tables);
     const gcsimTableCandidateMap = mergeKitCandidates(gcsimCandidateMap, tableCandidateMap);
-    const { record, unreadSites } = toModuleKitRecord(
-      module,
-      buildKitModule(module, tables.talentMultiplierMap),
-      buildKitModule(module, encodeTalentMultiplierMap(tables.talentMultiplierMap)),
-      tables.element,
-      tables.talentMultiplierMap,
-    );
     const sourceCandidateMap = mergeKitCandidates(
       gcsimCandidateMap,
       getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables)),
@@ -91,13 +74,12 @@ export const readKitInputs = async ({
     inputs.push({
       characterId,
       gcsimFolder,
-      moduleRecord: adoptKitParameters(record, sourceCandidateMap, tables.talentMultiplierMap),
       name: tables.name,
       notes,
       overlayName: toKebabCase(tables.name),
+      publishedRecord,
       sourceCandidateMap,
       tables,
-      unreadSites,
     });
   }
   return inputs;

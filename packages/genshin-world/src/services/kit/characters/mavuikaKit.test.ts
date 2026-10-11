@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createMavuikaKit, MAVUIKA_CHARACTER_ID } from "#src/services/kit/characters/mavuikaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createMavuikaKitBehaviour, MAVUIKA_CHARACTER_ID } from "#src/services/kit/characters/mavuikaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const MAVUIKA_KIT = createMavuikaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [MAVUIKA_CHARACTER_ID]));
+const MAVUIKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MAVUIKA_CHARACTER_ID);
 
-describe(createMavuikaKit, () => {
+describe(createMavuikaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

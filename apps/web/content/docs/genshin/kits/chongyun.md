@@ -5,7 +5,7 @@ description: Chongyun's kit as built: his strikes, charged attack and plunges, S
 
 # Chongyun
 
-Chongyun's kit is one module, `createChongyunKit`, avatar 10000036: four strikes, a charged attack of two slashes with its stamina a second, a collision and two plunges, Spirit Blade: Chonghua's Layered Frost with its field, and Spirit Blade: Cloud-Parting Star's three blades. His multipliers are read from proud skill groups 3631, 3632 and 3639, and match the wiki's Demonbane, Spirit Blade: Chonghua's Layered Frost and Cloud-Parting Star values to two decimal places; the skill's infusion seconds, cooldown and field seconds, and the burst's cooldown and energy cost are read from the same groups. The field is a circle of radius 8 centred 1.5 metres ahead of him, which infuses a sword, claymore or polearm wielder on the field with Cryo each second while it stands in the field, and whoever a swap brings on while it stands, as the shared infusion above; a press ends the field standing. Steady Breathing's Normal ATK SPD from Ascension 1 rides the infusion, Rimechaser Blade strikes as the field ends from Ascension 4, and Ice Unleashed's blades, Atmospheric Revolution's cooldown cut, Frozen Skies' energy and Rally of Four Blades' fourth blade and DMG Bonus come from one, two, four and six constellations. The charged attack is provisional, and the particles are not built.
+Chongyun's kit is its record and one behaviour module, `createChongyunKitBehaviour`, avatar 10000036: four strikes, a charged attack of two slashes with its stamina a second, a collision and two plunges, Spirit Blade: Chonghua's Layered Frost with its field, and Spirit Blade: Cloud-Parting Star's three blades. His multipliers are read from proud skill groups 3631, 3632 and 3639, and match the wiki's Demonbane, Spirit Blade: Chonghua's Layered Frost and Cloud-Parting Star values to two decimal places; the skill's infusion seconds, cooldown and field seconds, and the burst's cooldown and energy cost are read from the same groups. The field is a circle of radius 8 centred 1.5 metres ahead of him, which infuses a sword, claymore or polearm wielder on the field with Cryo each second while it stands in the field, and whoever a swap brings on while it stands, as the shared infusion above; a press ends the field standing. Steady Breathing's Normal ATK SPD from Ascension 1 rides the infusion, Rimechaser Blade strikes as the field ends from Ascension 4, and Ice Unleashed's blades, Atmospheric Revolution's cooldown cut, Frozen Skies' energy and Rally of Four Blades' fourth blade and DMG Bonus come from one, two, four and six constellations. The charged attack is provisional, and the particles are not built.
 
 ## Decisions
 
@@ -21,9 +21,9 @@ Chongyun's kit is one module, `createChongyunKit`, avatar 10000036: four strikes
 
 ## Key files
 
-| File                                                                | Role                                                                                                         |
-| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/chongyunKit.ts` | `createChongyunKit`, Chongyun's kit with the frost field's infusion, Rimechaser Blade and his constellations |
+| File                                                                | Role                                                                                                                  |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/chongyunKit.ts` | `createChongyunKitBehaviour`, Chongyun's kit with the frost field's infusion, Rimechaser Blade and his constellations |
 
 ## Sources
 

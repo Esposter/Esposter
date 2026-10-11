@@ -7,12 +7,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createRosariaKit, ROSARIA_CHARACTER_ID } from "#src/services/kit/characters/rosariaKit";
+import { createRosariaKitBehaviour, ROSARIA_CHARACTER_ID } from "#src/services/kit/characters/rosariaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const ROSARIA_KIT = createRosariaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ROSARIA_CHARACTER_ID]));
+const ROSARIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ROSARIA_CHARACTER_ID);
 
 const createRosariaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -35,7 +35,7 @@ const getFieldSeconds = (constellationCount: number): number => {
   return field.secondsRemaining;
 };
 
-describe(createRosariaKit, () => {
+describe(createRosariaKitBehaviour, () => {
   test("the field Rites of Termination places lasts four seconds longer from Constellation 2", () => {
     expect.hasAssertions();
     expect(getFieldSeconds(2) - getFieldSeconds(0)).toBe(4);

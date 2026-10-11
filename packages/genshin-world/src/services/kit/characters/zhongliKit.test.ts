@@ -7,16 +7,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Elements } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createZhongliKit, ZHONGLI_CHARACTER_ID } from "#src/services/kit/characters/zhongliKit";
+import { createZhongliKitBehaviour, ZHONGLI_CHARACTER_ID } from "#src/services/kit/characters/zhongliKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const ZHONGLI_KIT = createZhongliKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ZHONGLI_CHARACTER_ID]));
+const ZHONGLI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ZHONGLI_CHARACTER_ID);
 
 const createZhongliCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
@@ -35,7 +35,7 @@ const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
   return kitEffectState.effects.filter((effect) => effect.kind === "summon");
 };
 
-describe(createZhongliKit, () => {
+describe(createZhongliKitBehaviour, () => {
   const holdAction = takeOne(ZHONGLI_KIT.elementalSkillHolds ?? []).action;
 
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {

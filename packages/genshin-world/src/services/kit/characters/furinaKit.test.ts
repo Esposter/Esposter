@@ -13,17 +13,17 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createFurinaKit, FURINA_CHARACTER_ID } from "#src/services/kit/characters/furinaKit";
+import { createFurinaKitBehaviour, FURINA_CHARACTER_ID } from "#src/services/kit/characters/furinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const FURINA_KIT = createFurinaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [FURINA_CHARACTER_ID]));
+const FURINA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, FURINA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createEnemyAt = (x: number): Enemy => ({
@@ -39,7 +39,7 @@ const stepFrames = (frames: number, context: KitContext): void => {
   for (let frame = 0; frame < frames; frame++) stepKitEffects(1 / 60, context);
 };
 
-describe(createFurinaKit, () => {
+describe(createFurinaKitBehaviour, () => {
   const createFurinaCombatant = (combatant: Partial<Combatant> = {}): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),

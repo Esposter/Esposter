@@ -6,14 +6,14 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createKavehKit, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
+import { createKavehKitBehaviour, KAVEH_CHARACTER_ID } from "#src/services/kit/characters/kavehKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
-const KAVEH_KIT = createKavehKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KAVEH_CHARACTER_ID]));
+const KAVEH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAVEH_CHARACTER_ID);
 
-describe(createKavehKit, () => {
+describe(createKavehKitBehaviour, () => {
   // The effects the burst's start adds to the team's, which its owner holds
   const castBurst = (): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };

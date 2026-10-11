@@ -5,7 +5,7 @@ description: Shenhe's kit as built: Spring Spirit Summoning's press and hold and
 
 # Shenhe
 
-Shenhe's kit is one module, `createShenheKit`, on avatar 10000063: five strikes, a charged attack, a collision and two plunges, Spring Spirit Summoning's press and its hold, and Divine Maiden's Deliverance with its initial hit, the field's DoT ticks, the Ascension 1 Cryo DMG Bonus for an active character inside it, and the RES Decrease its DoT gives. Her multipliers are read from proud skill groups 6331, 6332 and 6339; the charged attack's stamina, the press's and hold's cooldowns, and the burst's energy cost and cooldown are read from the same groups. The field stands 2 metres ahead of the body, and each DoT tick's two hits are summoned there. The RES Decrease holds for one tick interval, where gcsim refreshes it every 18 frames. Her Quill is not built, as it adds Shenhe's ATK to another member's hits. Her passives and constellations sit outside the kit. Her poise and the hold's threshold are provisional.
+Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`, on avatar 10000063: five strikes, a charged attack, a collision and two plunges, Spring Spirit Summoning's press and its hold, and Divine Maiden's Deliverance with its initial hit, the field's DoT ticks, the Ascension 1 Cryo DMG Bonus for an active character inside it, and the RES Decrease its DoT gives. Her multipliers are read from proud skill groups 6331, 6332 and 6339; the charged attack's stamina, the press's and hold's cooldowns, and the burst's energy cost and cooldown are read from the same groups. The field stands 2 metres ahead of the body, and each DoT tick's two hits are summoned there. The RES Decrease holds for one tick interval, where gcsim refreshes it every 18 frames. Her Quill is not built, as it adds Shenhe's ATK to another member's hits. Her passives and constellations sit outside the kit. Her poise and the hold's threshold are provisional.
 
 ## Decisions
 
@@ -15,9 +15,9 @@ Shenhe's kit is one module, `createShenheKit`, on avatar 10000063: five strikes,
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                        |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/shenheKit.ts` | `createShenheKit`, Shenhe's kit with Spring Spirit Summoning's press and hold, Divine Maiden's Deliverance's field and its DoT, and her strikes and plunges |
+| File                                                              | Role                                                                                                                                                                 |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/shenheKit.ts` | `createShenheKitBehaviour`, Shenhe's kit with Spring Spirit Summoning's press and hold, Divine Maiden's Deliverance's field and its DoT, and her strikes and plunges |
 
 ## Sources
 

@@ -5,7 +5,7 @@ description: Furina's kit as built, with her four strikes and the Arkhe hits the
 
 # Furina
 
-Furina's kit is one module, `createFurinaKit`, on avatar 10000089: four strikes, a charged attack that turns her Arkhe, a collision and two plunges, Salon Solitaire and Let the People Rejoice. Her multipliers are read from proud skill groups 8931, 8932 and 8939. The charged attack's stamina, the Arkhe hits' cooldowns, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups.
+Furina's kit is its record and one behaviour module, `createFurinaKitBehaviour`, on avatar 10000089: four strikes, a charged attack that turns her Arkhe, a collision and two plunges, Salon Solitaire and Let the People Rejoice. Her multipliers are read from proud skill groups 8931, 8932 and 8939. The charged attack's stamina, the Arkhe hits' cooldowns, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups.
 
 She starts in Ousia, a status she holds for as long as she is not in Pneuma. Each strike that lands opens her Arkhe's own hit, Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a normal attack's Hydro hit with no gauge that strikes 30 frames on, once within each one's six-second cooldown. The charged attack's circle strikes at 33 frames, and a frame on her Arkhe turns; while Salon Solitaire lasts, the other Arkhe's summons take over from the ones out, for the seconds it has left.
 
@@ -30,9 +30,9 @@ Gcsim gives her strikes, charged attack and the Salon's hits no poise, so each d
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                                                                       |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/furinaKit.ts` | `createFurinaKit`, Furina's kit with her strikes and Arkhe hits, the charged attack's turn, plunges, Salon Solitaire's members and Singer, Let the People Rejoice's Fanfare, Endless Waltz and Ascension 4 |
+| File                                                              | Role                                                                                                                                                                                                                |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/furinaKit.ts` | `createFurinaKitBehaviour`, Furina's kit with her strikes and Arkhe hits, the charged attack's turn, plunges, Salon Solitaire's members and Singer, Let the People Rejoice's Fanfare, Endless Waltz and Ascension 4 |
 
 ## Sources
 

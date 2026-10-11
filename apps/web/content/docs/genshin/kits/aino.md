@@ -5,7 +5,7 @@ description: Aino's kit as built, with her three strikes, a provisional charged 
 
 # Aino
 
-Aino's kit is one module, `createAinoKit`, on avatar 10000121: her three strikes and charged attack, a plunge collision and two plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with the Ascension 4 Elemental Mastery bonus. Her multipliers are read from proud skill groups 12131, 12132 and 12139. Her skill's cooldown of 10 seconds, the burst's cooldown of 13.5 and energy cost of 50 are read from the same groups, and they match gcsim's values.
+Aino's kit is its record and one behaviour module, `createAinoKitBehaviour`, on avatar 10000121: her three strikes and charged attack, a plunge collision and two plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with the Ascension 4 Elemental Mastery bonus. Her multipliers are read from proud skill groups 12131, 12132 and 12139. Her skill's cooldown of 10 seconds, the burst's cooldown of 13.5 and energy cost of 50 are read from the same groups, and they match gcsim's values.
 
 ## Decisions
 
@@ -27,9 +27,9 @@ Aino's kit is one module, `createAinoKit`, on avatar 10000121: her three strikes
 
 ## Key files
 
-| File                                                            | Role                                                                                                                                          |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/ainoKit.ts` | `createAinoKit`, Aino's strikes, provisional charged attack and plunges, Musecatcher, and Cool Your Jets Ducky's Water Balls with Ascension 4 |
+| File                                                            | Role                                                                                                                                                   |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/ainoKit.ts` | `createAinoKitBehaviour`, Aino's strikes, provisional charged attack and plunges, Musecatcher, and Cool Your Jets Ducky's Water Balls with Ascension 4 |
 
 ## Sources
 

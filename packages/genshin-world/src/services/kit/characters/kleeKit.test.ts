@@ -6,18 +6,17 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createKleeKit, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
+import { createKleeKitBehaviour, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const KLEE_KIT = createKleeKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KLEE_CHARACTER_ID]));
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const KLEE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KLEE_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createKleeCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -29,7 +28,7 @@ const createKleeCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
-describe(createKleeKit, () => {
+describe(createKleeKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const combatant = createKleeCombatant(0);

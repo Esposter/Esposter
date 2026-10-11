@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createVaresaKit, VARESA_CHARACTER_ID } from "#src/services/kit/characters/varesaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createVaresaKitBehaviour, VARESA_CHARACTER_ID } from "#src/services/kit/characters/varesaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const VARESA_KIT = createVaresaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [VARESA_CHARACTER_ID]));
+const VARESA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VARESA_CHARACTER_ID);
 
-describe(createVaresaKit, () => {
+describe(createVaresaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

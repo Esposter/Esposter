@@ -5,15 +5,14 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { ASCENDANT_GLEAM_SECONDS, ASCENDANT_GLEAM_STATUS_ID } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { lightAscendantGleam } from "#src/services/party/lightAscendantGleam";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   ascension: 0,

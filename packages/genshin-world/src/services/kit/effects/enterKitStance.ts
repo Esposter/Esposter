@@ -1,7 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
+import type { KitSwapEndable } from "#src/models/kit/KitSwapEndable";
 
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { tagKitHits } from "#src/services/kit/tagKitHits";
@@ -15,13 +15,13 @@ export const enterKitStance = (
   combatant: Combatant,
   actions: KitStanceActions,
   secondsRemaining: number,
-  { isEndedOnSwap = false }: Partial<Pick<KitStance, "isEndedOnSwap">> = {},
+  { isEndedOnSwap }: KitSwapEndable = {},
 ): void =>
   addKitEffect(kitEffectState, {
     characterId: combatant.characterId,
     combatant: { ...combatant, kit: tagKitHits({ ...combatant.kit, ...actions }) },
     elapsedSeconds: 0,
-    isEndedOnSwap,
+    ...(isEndedOnSwap && { isEndedOnSwap }),
     kind: "stance",
     secondsRemaining,
   });

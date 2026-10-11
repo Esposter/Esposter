@@ -1,12 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { createIfaKit, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createIfaKitBehaviour, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const IFA_KIT = createIfaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [IFA_CHARACTER_ID]));
+const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
 
-describe(createIfaKit, () => {
+describe(createIfaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

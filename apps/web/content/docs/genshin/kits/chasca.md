@@ -5,7 +5,7 @@ description: Chasca's kit as built: her four normal attacks, fully-charged Aimed
 
 # Chasca
 
-Chasca's kit is one module, `createChascaKit`, on avatar 10000104: four normal attacks with the third of two hits, the fully-charged Aimed Shot, a collision and a low plunge, Spirit Reins' Resonance, and Galesplitting Soulseeker Shell's first hit. Her multipliers are read from proud skill groups 10431, 10432 and 10439, and match gcsim's values to four decimal places.
+Chasca's kit is its record and one behaviour module, `createChascaKitBehaviour`, on avatar 10000104: four normal attacks with the third of two hits, the fully-charged Aimed Shot, a collision and a low plunge, Spirit Reins' Resonance, and Galesplitting Soulseeker Shell's first hit. Her multipliers are read from proud skill groups 10431, 10432 and 10439, and match gcsim's values to four decimal places.
 
 ## Decisions
 
@@ -25,9 +25,9 @@ Chasca's kit is one module, `createChascaKit`, on avatar 10000104: four normal a
 
 ## Key files
 
-| File                                                              | Role                                                                                                                         |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/chascaKit.ts` | `createChascaKit`, Chasca's kit with her strikes, fully-charged Aimed Shot, plunges, Resonance and Galesplitting's first hit |
+| File                                                              | Role                                                                                                                                  |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/chascaKit.ts` | `createChascaKitBehaviour`, Chasca's kit with her strikes, fully-charged Aimed Shot, plunges, Resonance and Galesplitting's first hit |
 
 ## Sources
 

@@ -6,14 +6,20 @@
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "frames.shield": { "cause": "Unclassified", "value": 31 },
+  "frames.radiantPsalterShield": { "cause": "Unclassified", "value": 31 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "parameters.burstShieldShare": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 11539 } },
-  "parameters.burstShieldFlat": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 11539 } },
+  "parameters.radiantPsalterShieldMaxHealthShare": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 11539 }
+  },
+  "parameters.radiantPsalterShieldFlatHealth": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 11539 }
+  },
   "parameters.favonianFavorSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 11539 } },
   "skill.animationFrames": { "cause": "Unclassified", "value": 53 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },

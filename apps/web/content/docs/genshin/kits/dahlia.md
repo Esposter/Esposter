@@ -5,7 +5,7 @@ description: Dahlia's kit as built: her four strikes, charged attack, Immersive 
 
 # Dahlia
 
-Dahlia's kit is one module, `createDahliaKit`, avatar 10000115: her four strikes, a charged attack, Immersive Ordinance as her skill with its tap and hold, Radiant Psalter as her burst with its shield, and a low, high and collision plunge. Her multipliers are read from proud skill groups 11531, 11532 and 11539, the burst's shield, Favonian Favor's seconds and its multiplier among them. The charged attack costs 20 stamina, the skill cools for 9 seconds, and the burst takes 60 energy and a 15-second cooldown.
+Dahlia's kit is its record and one behaviour module, `createDahliaKitBehaviour`, avatar 10000115: her four strikes, a charged attack, Immersive Ordinance as her skill with its tap and hold, Radiant Psalter as her burst with its shield, and a low, high and collision plunge. Her multipliers are read from proud skill groups 11531, 11532 and 11539, the burst's shield, Favonian Favor's seconds and its multiplier among them. The charged attack costs 20 stamina, the skill cools for 9 seconds, and the burst takes 60 energy and a 15-second cooldown.
 
 ## Not yet built
 
@@ -25,9 +25,9 @@ The framework holds no Benison stacks and no attack-speed buff for the party, so
 
 ## Key files
 
-| File                                                              | Role                                                                                                                |
-| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/dahliaKit.ts` | `createDahliaKit`, Dahlia's four strikes, charged attack, Immersive Ordinance, Radiant Psalter's shield and plunges |
+| File                                                              | Role                                                                                                                         |
+| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/dahliaKit.ts` | `createDahliaKitBehaviour`, Dahlia's four strikes, charged attack, Immersive Ordinance, Radiant Psalter's shield and plunges |
 
 ## Sources
 

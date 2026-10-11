@@ -7,13 +7,13 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createDahliaKit, DAHLIA_CHARACTER_ID } from "#src/services/kit/characters/dahliaKit";
+import { createDahliaKitBehaviour, DAHLIA_CHARACTER_ID } from "#src/services/kit/characters/dahliaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const DAHLIA_KIT = createDahliaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [DAHLIA_CHARACTER_ID]));
+const DAHLIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DAHLIA_CHARACTER_ID);
 
 const createDahliaCombatant = (): Combatant => ({
   ascension: 0,
@@ -26,7 +26,7 @@ const createDahliaCombatant = (): Combatant => ({
   weaponType: WeaponType.Sword,
 });
 
-describe(createDahliaKit, () => {
+describe(createDahliaKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

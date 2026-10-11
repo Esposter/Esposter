@@ -5,17 +5,17 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createNoelleKit, NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
+import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const NOELLE_KIT = createNoelleKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NOELLE_CHARACTER_ID]));
+const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARACTER_ID);
 
 describe("noelle kit", () => {
   const DEFENSE = 800;

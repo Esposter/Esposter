@@ -5,7 +5,7 @@ description: Lauma's kit as built, with her three strikes, charged attack, provi
 
 # Lauma
 
-Lauma's kit is one module, `createLaumaKit`, on avatar 10000119: her three strikes, a charged attack, a plunge collision and two plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, and the Moonsign Benediction that turns the party's Bloom into [Lunar-Bloom](/docs/genshin/combat#lunar-reactions). Her multipliers are read from proud skill groups 11931, 11932 and 11939, and match gcsim's values to six decimal places. The press's cooldown of 12 seconds, the burst's cooldown of 15 and energy cost of 60 are read from the same groups. Her burst lands no hit of its own, so its action has none, and its Pale Hymn is listed below.
+Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, on avatar 10000119: her three strikes, a charged attack, a plunge collision and two plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, and the Moonsign Benediction that turns the party's Bloom into [Lunar-Bloom](/docs/genshin/combat#lunar-reactions). Her multipliers are read from proud skill groups 11931, 11932 and 11939, and match gcsim's values to six decimal places. The press's cooldown of 12 seconds, the burst's cooldown of 15 and energy cost of 60 are read from the same groups. Her burst lands no hit of its own, so its action has none, and its Pale Hymn is listed below.
 
 ## Decisions
 
@@ -28,9 +28,9 @@ Talent levels and constellations are read at the level the kit is built at: rais
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                                                       |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/laumaKit.ts` | `createLaumaKit`, Lauma's strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with its Frostgrove Sanctuary, RES shred and Lunar-Bloom hit, and her Moonsign Benediction |
+| File                                                             | Role                                                                                                                                                                                                                                |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/laumaKit.ts` | `createLaumaKitBehaviour`, Lauma's strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with its Frostgrove Sanctuary, RES shred and Lunar-Bloom hit, and her Moonsign Benediction |
 
 ## Sources
 

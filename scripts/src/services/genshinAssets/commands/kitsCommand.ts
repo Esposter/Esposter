@@ -14,7 +14,7 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
   args: {
     ...dryRunArgs,
     compare: {
-      description: "Build every kit module as it stands, seed each overlay with what its sources lack, and report",
+      description: "Build every kit's published record, seed each overlay with what its sources lack, and report",
       type: "boolean",
     },
     docs: { description: "Render each kit page's Provisional and Sources sections (phase 2)", type: "boolean" },
@@ -24,7 +24,8 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
       type: "string",
     },
     only: {
-      description: "Comma-separated avatar ids to compare, every kit module's by default; a publish takes every kit",
+      description:
+        "Comma-separated avatar ids: the kits --compare reads, every published kit's by default, or the kits a publish may change",
       type: "string",
     },
     "wiki-cache": {
@@ -40,26 +41,22 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     if (args.docs)
       throw new InvalidOperationError(Operation.Create, "kits --docs", "renders the kit pages from phase 2 on");
-    // The publish replaces the whole `kits` index, so a publish of some kits would drop every other kit's record
-    else if (args.only !== undefined && !args.compare)
-      throw new InvalidOperationError(
-        Operation.Create,
-        "kits --only",
-        "narrows --compare, as a publish takes every kit",
-      );
-    const inputs = await readKitInputs({
-      characterIds: args.only?.split(",").map(Number),
-      gcsimDirectory: args.gcsim,
-      wikiCacheDirectory: args["wiki-cache"],
-    });
+    const characterIds = args.only?.split(",").map(Number);
     if (args.compare) {
+      const inputs = await readKitInputs({
+        characterIds,
+        gcsimDirectory: args.gcsim,
+        wikiCacheDirectory: args["wiki-cache"],
+      });
       for (const line of await compareKits(inputs)) console.log(line);
       return;
     }
+    // The publish replaces the whole `kits` index, so it builds every kit, and only the named ones may change
+    const inputs = await readKitInputs({ gcsimDirectory: args.gcsim, wikiCacheDirectory: args["wiki-cache"] });
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: buildKitPublication(inputs),
+        publication: buildKitPublication(inputs, characterIds),
         scopes: [GameDataset.Kits, GameDataset.KitSources],
       }),
     );

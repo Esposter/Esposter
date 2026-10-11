@@ -5,7 +5,7 @@ description: Xingqiu's kit as built, with the Rain Swords, Raincutter's sword ra
 
 # Xingqiu
 
-Xingqiu's kit is one module, `createXingqiuKit`, on avatar 10000025: five strikes, the third and fifth of two hits each, a charged attack of two hits, a collision and two plunges, Guhua Sword: Fatal Rainscreen's two hits with its Rain Swords, and Guhua Sword: Raincutter's sword rain. His multipliers are read from proud skill groups 2531, 2532 and 2539, and match the wiki's Guhua Style, Guhua Sword: Fatal Rainscreen and Guhua Sword: Raincutter values to two decimal places; the charged attack's stamina, the Rain Swords' seconds, the skill's cooldown, Raincutter's seconds and the burst's cooldown and cost are read from the same groups. The Rain Swords are a summon that follows the body on the field, putting Hydro on what touches it, and Raincutter a summon that the normal attacks of whoever is on the field set off, through the kit framework's coordinated summons, with Hydropathic's heal from Ascension 1 and Blades Amidst Raindrops' Hydro DMG Bonus from Ascension 4, and The Scent Remained's fourth sword, Rainbow Upon the Azure Sky's longer Raincutter and Hydro RES cut, Evilsoother's stronger Fatal Rainscreen and Hence, Call Them My Own Verses' five-sword wave and energy from one, two, four and six constellations are built. The Rain Swords' DMG reduction, interruption resistance and shattering, the skill's Wet on Xingqiu and its particles, the burst's activation knockback, and Raincutter's end as Xingqiu falls are not built.
+Xingqiu's kit is its record and one behaviour module, `createXingqiuKitBehaviour`, on avatar 10000025: five strikes, the third and fifth of two hits each, a charged attack of two hits, a collision and two plunges, Guhua Sword: Fatal Rainscreen's two hits with its Rain Swords, and Guhua Sword: Raincutter's sword rain. His multipliers are read from proud skill groups 2531, 2532 and 2539, and match the wiki's Guhua Style, Guhua Sword: Fatal Rainscreen and Guhua Sword: Raincutter values to two decimal places; the charged attack's stamina, the Rain Swords' seconds, the skill's cooldown, Raincutter's seconds and the burst's cooldown and cost are read from the same groups. The Rain Swords are a summon that follows the body on the field, putting Hydro on what touches it, and Raincutter a summon that the normal attacks of whoever is on the field set off, through the kit framework's coordinated summons, with Hydropathic's heal from Ascension 1 and Blades Amidst Raindrops' Hydro DMG Bonus from Ascension 4, and The Scent Remained's fourth sword, Rainbow Upon the Azure Sky's longer Raincutter and Hydro RES cut, Evilsoother's stronger Fatal Rainscreen and Hence, Call Them My Own Verses' five-sword wave and energy from one, two, four and six constellations are built. The Rain Swords' DMG reduction, interruption resistance and shattering, the skill's Wet on Xingqiu and its particles, the burst's activation knockback, and Raincutter's end as Xingqiu falls are not built.
 
 ## Decisions
 
@@ -28,9 +28,9 @@ Xingqiu's kit is one module, `createXingqiuKit`, on avatar 10000025: five strike
 
 ## Key files
 
-| File                                                               | Role                                                                                                                      |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/xingqiuKit.ts` | `createXingqiuKit`, Xingqiu's kit with Fatal Rainscreen's Rain Swords and Hydropathic's heal, and Raincutter's sword rain |
+| File                                                               | Role                                                                                                                               |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/xingqiuKit.ts` | `createXingqiuKitBehaviour`, Xingqiu's kit with Fatal Rainscreen's Rain Swords and Hydropathic's heal, and Raincutter's sword rain |
 
 ## Sources
 
