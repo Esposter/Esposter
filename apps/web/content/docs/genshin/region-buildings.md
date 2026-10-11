@@ -15,7 +15,7 @@ flowchart TD
   SC -->|no| ERR[The region is logged and left undrawn]
   SC -->|yes| MAP["BuildingKitPartsMap: the kit's geometries, each with its region's colour"]
   MAP --> MAT[One toon material per part]
-  GD["The world's gate: Windrise's, the regions' grounds and their palettes, read from the hosted game data"] --> G
+  GD["The world's gate: grounds and palettes from hosted data"] --> G
   G["createWorldHeight: every region's ground laid over Windrise's"] --> F{"Has a fit drawn the region's ground?"}
   F -->|"yes"| FH["Its hills, features and residual on its own base"]
   F -->|"no"| PL["Its plateaus over the world's base"]
