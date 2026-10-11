@@ -8,13 +8,15 @@ import { describe, expect, test } from "vitest";
 const { baseGround, regionGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createWorldHeight, () => {
-  test("raises every region's ground at its plateaus, within the heights every tile is bounded by", () => {
+  test("raises every region no fit has drawn at its plateaus, within the heights every tile is bounded by", () => {
     expect.hasAssertions();
 
     const getGroundHeight = createWorldHeight(baseGround, regionGrounds);
     const getWindriseHeight = createTerrainShapeHeight(baseGround);
-    const plateaus = regionGrounds.flatMap(({ features }) => features);
-    const { maxHeight, minHeight } = createWindriseTerrainOptions(baseGround);
+    const plateaus = regionGrounds
+      .filter(({ hills }) => hills.length === 0)
+      .flatMap(({ features }) => features.filter((feature) => feature.kind === TerrainFeatureKind.Plateau));
+    const { maxHeight, minHeight } = createWindriseTerrainOptions([baseGround, ...regionGrounds]);
 
     expect(plateaus).not.toHaveLength(0);
 
@@ -32,7 +34,7 @@ describe(createWorldHeight, () => {
 
     const getGroundHeight = createWorldHeight(baseGround, []);
     const getWindriseHeight = createTerrainShapeHeight(baseGround);
-    const cliffs = (baseGround.features ?? []).filter((feature) => feature.kind === TerrainFeatureKind.Cliff);
+    const cliffs = baseGround.features.filter((feature) => feature.kind === TerrainFeatureKind.Cliff);
 
     expect(cliffs).not.toHaveLength(0);
 

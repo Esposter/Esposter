@@ -201,7 +201,7 @@ lightUniforms.rimStrength.value = RIM_STRENGTH;
 const { baseGround, groundLayers, oak, paving, plants, regionGrounds, statue, surfaces, water } = windriseData;
 // The ground's quadtree, which the terrain streams and the grass reads, and the records each terrain worker computes
 // Its tiles over
-const terrainOptions = createWindriseTerrainOptions(baseGround);
+const terrainOptions = createWindriseTerrainOptions([baseGround, ...regionGrounds]);
 const terrainWorkerGround: TerrainWorkerGround = {
   baseGround,
   groundLayers,
