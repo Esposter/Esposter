@@ -1,0 +1,18 @@
+---
+title: Yelan
+description: Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and her passives and constellations.
+---
+
+# Yelan
+
+Yelan's kit is one module, `createYelanKit`, on avatar 10000060: four strikes, a fully charged shot with its arrow, a collision and two plunges, Lingering Lifeline's hit, and Depth-Clarion Dice's field, which waves an Exquisite Throw each second and throws one on each Lingering Lifeline hit while it stands. Her multipliers are read from proud skill groups 6031, 6032 and 6039, and the Lifeline's cooldown, and the burst's cooldown and energy cost, from the same groups; each hit's share of her Max HP is priced as flat damage on the caster's Max HP. Breakthrough Barb is not built, as the 34% roll that gives it on each Lifeline hit is a random draw a kit does not take, and her passives and constellations are not built either. The poise, the plunges' seconds and the wave's phase are provisional.
+
+## Key files
+
+| File                                                             | Role                                                                                                                                                  |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/yelanKit.ts` | `createYelanKit`, Yelan's kit with Lingering Lifeline, Depth-Clarion Dice's field and its Exquisite Throws, and her strikes, charged shot and plunges |
+
+## Sources
+
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/yelan), MIT: Yelan's strikes' hitmarks and cancel frames, the fully charged shot's frames, Lingering Lifeline's frames and hit, Depth-Clarion Dice's initial hit, its Exquisite Throws' travel and interval, and the wave's ticker.
