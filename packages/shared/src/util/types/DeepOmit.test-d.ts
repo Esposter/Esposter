@@ -101,4 +101,35 @@ describe("deepOmit type", () => {
       a: { b: { c: { e: number } } };
     }>();
   });
+
+  test("keeps a readonly array and omits key from its elements", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ a: readonly { b: string; c: number }[] }, "c">>().toEqualTypeOf<{
+      a: readonly { b: string }[];
+    }>();
+  });
+
+  test("keeps a readonly tuple and omits key from its elements", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ a: readonly [{ b: string }, { c: number; d: boolean }] }, "c">>().toEqualTypeOf<{
+      a: readonly [{ b: string }, { d: boolean }];
+    }>();
+  });
+
+  test("omits key from a nested array of objects", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ a: { b: string; c: number }[][] }, "c">>().toEqualTypeOf<{ a: { b: string }[][] }>();
+  });
+
+  test("keeps Map and Set by reference rather than walking their keys", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<DeepOmit<{ a: Map<string, { c: number }>; b: Set<string>; c: number }, "c">>().toEqualTypeOf<{
+      a: Map<string, { c: number }>;
+      b: Set<string>;
+    }>();
+  });
 });
