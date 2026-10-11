@@ -3,14 +3,12 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
-// Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers, the first 253 frames after the burst is
-// Cast
+// Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kinich/burst.go
-const DRAGON_BREATH_FIRST_HITMARK_FRAMES = 253;
 const DRAGON_BREATH_COUNT = 6;
 
 export const KINICH_CHARACTER_ID = 10_000_101;
@@ -20,21 +18,24 @@ export const KINICH_CHARACTER_ID = 10_000_101;
 // Frames, as gcsim counts it. Not built: the Nightsoul Blessing the press enters, with its Scalespiker Cannon and Loop
 // Shots and its Nightsoul Points. The blessing is a stance that runs on those points, which wait on the Nightsoul hook, so
 // The press deals nothing until then
-export const createKinichKitBehaviour = ({ readHitFields, readSecondsList }: KitRecordReader): KitBehaviour => {
+export const createKinichKitBehaviour = ({
+  readFrames,
+  readFramesList,
+  readHitFields,
+}: KitRecordReader): KitBehaviour => {
   const dragonBreathFields = readHitFields("dragonBreath", ["hitmarkSeconds"]);
-  const dragonBreathIntervalFramesList = readSecondsList("dragonBreathInterval").map(
-    (seconds) => seconds * KIT_FRAMES_PER_SECOND,
-  );
+  const dragonBreathFirstHitmarkFrames = readFrames("dragonBreathFirstHitmark");
+  const dragonBreathIntervalFramesList = readFramesList("dragonBreathInterval");
   // The Ajaw's lasers, each landing the interval drawn for it after the one before
   const createDragonBreathHits = (random: () => number): KitHit[] => {
-    let hitmarkFrames = DRAGON_BREATH_FIRST_HITMARK_FRAMES;
+    let hitmarkFrames = dragonBreathFirstHitmarkFrames;
     return Array.from({ length: DRAGON_BREATH_COUNT }, (_value, index) => {
       if (index > 0)
         hitmarkFrames += takeOne(
           dragonBreathIntervalFramesList,
           Math.floor(random() * dragonBreathIntervalFramesList.length),
         );
-      return { ...dragonBreathFields, hitmarkSeconds: hitmarkFrames / KIT_FRAMES_PER_SECOND };
+      return { ...dragonBreathFields, hitmarkSeconds: toKitSeconds(hitmarkFrames) };
     });
   };
   return {

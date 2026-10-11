@@ -19,6 +19,10 @@ export interface KitRecordReader {
   readActions: (name: string, behaviour?: KitActionBehaviour) => KitAction[];
   readArea: (name: string) => AttackArea;
   readAreas: (name: string) => AttackArea[];
+  // A count of frames as the record holds it, for a schedule its kit counts in whole frames as it plays, as gcsim counts
+  // It, each sum converted by `toKitSeconds`
+  readFrames: (name: string) => number;
+  readFramesList: (name: string) => number[];
   readHit: (name: string, behaviour?: KitHitBehaviour) => KitHit;
   readHitFields: <K extends RequiredKeysOf<KitHit>>(name: string, shortFields: readonly K[]) => Except<KitHit, K>;
   readHits: (name: string, behaviour?: KitHitBehaviour) => KitHit[];

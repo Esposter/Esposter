@@ -4,7 +4,6 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
 
@@ -12,12 +11,6 @@ const SESSHOU_SAKURA_ID = "yae-sesshou-sakura";
 
 // Measured: gcsim v2.47.2 (MIT) yaemiko/kitsune.go, the totems stand at most three, and a fourth pops the oldest
 const MAXIMUM_TOTEMS = 3;
-// Measured: gcsim v2.47.2 (MIT) yaemiko/kitsune.go, a totem's first strike lands 120 frames after the press
-const TOTEM_FIRST_STRIKE_FRAMES = 120;
-
-// Provisional: gcsim gives Yae Miko's Tenko Thunderbolts no poise, so each deals none until the wiki's Advanced properties
-// Are measured
-const NO_POISE_DAMAGE = 0;
 
 // A character's totems still standing, oldest first, as the effects are kept in the order they were added
 const findStandingTotems = (effects: KitEffect[], characterId: number): KitSummon[] =>
@@ -32,37 +25,31 @@ const findStandingTotems = (effects: KitEffect[], characterId: number): KitSummo
 export const YAE_MIKO_CHARACTER_ID = 10_000_058;
 
 // Yae Miko's behaviour: Sesshou Sakura's totems, which strike on their own schedule at a level by how many stand, and
-// Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. Each schedule is counted in
-// Frames, as gcsim counts it. Her passives and constellations are not built, as the kit's events reach none of them yet
+// Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. Her passives and
+// Constellations are not built, as the kit's events reach none of them yet
 export const createYaeMikoKitBehaviour = ({
-  readArea,
   readHitFields,
-  readParameter,
+  readHits,
   readParameters,
   readSeconds,
+  readSecondsList,
 }: KitRecordReader): KitBehaviour => {
   const totemSeconds = readSeconds("totem");
-  const totemFrames = totemSeconds * KIT_FRAMES_PER_SECOND;
-  const totemStrikeIntervalFrames = readSeconds("totemStrikeInterval") * KIT_FRAMES_PER_SECOND;
+  // A totem's strikes over its life, gcsim v2.47.2's (MIT) yaemiko/kitsune.go schedule from the press
+  const totemStrikeSecondsList = readSecondsList("totemStrikes");
   const skillSpawnSeconds = readSeconds("sesshouSakuraSpawn");
   const totemStrikeFields = readHitFields("totemStrikes", ["hitmarkSeconds", "talentMultiplier"]);
   // A totem's strike multiplier at each of its levels, which the totems standing pick as it is cast
   const totemStrikeMultipliers = readParameters("totemStrikeMultipliers");
-  const thunderboltArea = readArea("tenkoThunderbolt");
-  const thunderboltFirstHitmarkFrames = readSeconds("thunderboltFirstHitmark") * KIT_FRAMES_PER_SECOND;
-  const thunderboltIntervalFrames = readSeconds("thunderboltInterval") * KIT_FRAMES_PER_SECOND;
-  const thunderboltMultiplier = readParameter("tenkoThunderboltMultiplier");
+  // A Tenko Thunderbolt for each totem the burst can destroy, in the order it destroys them
+  const thunderbolts = readHits("tenkoThunderbolts");
   // Each totem's strikes are fixed when it is cast, so its multiplier is the one its level gives then, as the level is
   // Read from the totems standing as it is cast
   const createTotemStrikes = (level: number): KitHit[] => {
     const talentMultiplier = takeOne(totemStrikeMultipliers, level - 1);
     const hits: KitHit[] = [];
-    for (
-      let strikeFrames = TOTEM_FIRST_STRIKE_FRAMES;
-      strikeFrames < totemFrames;
-      strikeFrames += totemStrikeIntervalFrames
-    )
-      hits.push({ ...totemStrikeFields, hitmarkSeconds: strikeFrames / KIT_FRAMES_PER_SECOND, talentMultiplier });
+    for (const hitmarkSeconds of totemStrikeSecondsList)
+      hits.push({ ...totemStrikeFields, hitmarkSeconds, talentMultiplier });
     return hits;
   };
   return {
@@ -72,13 +59,7 @@ export const createYaeMikoKitBehaviour = ({
         const standingTotems = findStandingTotems(kitEffectState.effects, combatant.characterId);
         for (const totem of standingTotems) totem.secondsRemaining = 0;
         if (standingTotems.length === 0) return;
-        const thunderbolts: KitHit[] = standingTotems.map((_value, index) => ({
-          hitArea: thunderboltArea,
-          hitmarkSeconds: (thunderboltFirstHitmarkFrames + index * thunderboltIntervalFrames) / KIT_FRAMES_PER_SECOND,
-          poiseDamage: NO_POISE_DAMAGE,
-          talentMultiplier: thunderboltMultiplier,
-        }));
-        castKitSummon(kitEffectState, body, combatant, thunderbolts);
+        castKitSummon(kitEffectState, body, combatant, thunderbolts.slice(0, standingTotems.length));
       },
     },
     skill: {

@@ -18,15 +18,9 @@ import { takeOne } from "@esposter/shared";
 const DISCHARGE_INTERVAL_SECONDS = 1;
 // Bane of Evil, from six constellations, takes 15% off the Electro RES of the enemies round the body on the field while
 // Stormbreaker stands, as the wiki's constellation page gives it, and gcsim v2.47.2 (MIT) beidou/burst.go gives the
-// Enemies within reach of it the cut for 90 frames
+// Enemies within reach of it the cut for the frames its record holds
 // https://genshin-impact.fandom.com/wiki/Bane_of_Evil
 const BANE_OF_EVIL_CONSTELLATION = 6;
-const BANE_OF_EVIL_STATUS: EnemyStatus = {
-  damageTakenBonus: 0,
-  id: "beidou-bane-of-evil",
-  resistanceReduction: { [Element.Electro]: 0.15 },
-  secondsRemaining: 90 / 60,
-};
 
 // Whether an effect is the Thunderbeast's Targe of a character's, still standing the given seconds from now: the Targe
 // Is her summon that follows the body on the field
@@ -46,12 +40,19 @@ export const createBeidouKitBehaviour = ({
   readHitFields,
   readHits,
   readParameter,
+  readSeconds,
 }: KitRecordReader): KitBehaviour => {
   const targeSeconds = readParameter("thunderbeastsTargeSeconds");
   const shieldMaxHealthShare = readParameter("tidecallerShieldMaxHealthShare");
   const shieldFlatHealth = readParameter("tidecallerShieldFlatHealth");
   const tidecallerHitmarkSeconds = takeOne(kit.elementalSkill.hits).hitmarkSeconds;
-  const baneOfEvilTicks = readHits("baneOfEvilTicks", { enemyStatus: () => BANE_OF_EVIL_STATUS });
+  const baneOfEvilStatus: EnemyStatus = {
+    damageTakenBonus: 0,
+    id: "beidou-bane-of-evil",
+    resistanceReduction: { [Element.Electro]: 0.15 },
+    secondsRemaining: readSeconds("baneOfEvil"),
+  };
+  const baneOfEvilTicks = readHits("baneOfEvilTicks", { enemyStatus: () => baneOfEvilStatus });
   // The Targe's lightning discharge beside each hit of her strikes and charged attack, landing its delay past the hit.
   // Gcsim chains it from the enemy struck to a random other within 8 metres, which an area cannot pick, so it reaches what
   // Its hit reaches, and the record's fields hold the rest of it

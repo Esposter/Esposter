@@ -10,6 +10,7 @@ import { applyKitActionBehaviour } from "#src/services/kit/build/applyKitActionB
 import { applyKitHitBehaviour } from "#src/services/kit/build/applyKitHitBehaviour";
 import { checkIsKitHitIncomplete } from "#src/services/kit/build/checkIsKitHitIncomplete";
 import { checkIsKitHitShortOf } from "#src/services/kit/build/checkIsKitHitShortOf";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const readEntry = <T>(bag: string, bagValueMap: Record<string, T> | undefined, name: string): T => {
@@ -35,7 +36,7 @@ const readList = <T>(bag: string, bagValueMap: Record<string, T | T[]> | undefin
 // The slots are, failing on a name the bag does not hold or holds in the other shape
 export const createKitRecordReader = (
   record: KitRecord,
-  { toAction, toHit, toHitFields, toParameter, toSeconds }: ReturnType<typeof createKitRecordResolver>,
+  { toAction, toHit, toHitFields, toParameter }: ReturnType<typeof createKitRecordResolver>,
   kit: Kit,
 ): KitRecordReader => {
   const buildAction = (actionRecord: KitActionRecord, behaviour: KitActionBehaviour | undefined, path: string) =>
@@ -75,6 +76,8 @@ export const createKitRecordReader = (
       ),
     readArea: (name) => readOne("areas", record.areas, name),
     readAreas: (name) => readList("areas", record.areas, name),
+    readFrames: (name) => readOne("frames", record.frames, name),
+    readFramesList: (name) => readList("frames", record.frames, name),
     readHit: (name, behaviour = {}) =>
       applyKitHitBehaviour(toHit(readOne("hits", record.hits, name)), behaviour, `hits.${name}`),
     readHitFields: (name, shortFields) => {
@@ -94,8 +97,8 @@ export const createKitRecordReader = (
     readParameter: (name) => toParameter(readOne("parameters", record.parameters, name)),
     readParameters: (name) =>
       readList("parameters", record.parameters, name).map((parameter) => toParameter(parameter)),
-    readSeconds: (name) => toSeconds(readOne("frames", record.frames, name)),
-    readSecondsList: (name) => readList("frames", record.frames, name).map((frames) => toSeconds(frames)),
+    readSeconds: (name) => toKitSeconds(readOne("frames", record.frames, name)),
+    readSecondsList: (name) => readList("frames", record.frames, name).map((frames) => toKitSeconds(frames)),
     readStance,
   };
 };

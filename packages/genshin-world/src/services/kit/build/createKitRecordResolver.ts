@@ -14,8 +14,9 @@ import { KitTargeting } from "#src/models/kit/record/KitTargeting";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { MISSING_KIT_BEHAVIOUR_ID } from "#src/services/kit/build/constants";
 import { missingKitBehaviour } from "#src/services/kit/build/missingKitBehaviour";
-import { KIT_FRAMES_PER_SECOND, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 
 // The field of a striker's attributes each stat a hit scales with is read from, its total where none holds it
 const ScalingAttributeFieldMap: Partial<Record<Attribute, "attack" | "defense" | "maxHealth">> = {
@@ -33,8 +34,6 @@ const getScalingStat = (attribute: Attribute, { attributes }: Combatant): number
   const field = ScalingAttributeFieldMap[attribute];
   return field === undefined ? attributes.attributeTotalMap[attribute] : attributes[field];
 };
-
-const toSeconds = (frames: number): number => frames / KIT_FRAMES_PER_SECOND;
 
 // A hit's stat other than ATK, where its multiplier is a share of one that is no Lunar hit's
 const getAdditiveScalingAttribute = ({ lunarReactionType, scalingAttribute }: Partial<KitHitRecord>) =>
@@ -87,7 +86,7 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
         },
       }),
       ...(hitRecord.area && { hitArea: hitRecord.area }),
-      ...(hitRecord.hitmarkFrames !== undefined && { hitmarkSeconds: toSeconds(hitRecord.hitmarkFrames) }),
+      ...(hitRecord.hitmarkFrames !== undefined && { hitmarkSeconds: toKitSeconds(hitRecord.hitmarkFrames) }),
       ...(hitRecord.internalCooldownTag && { internalCooldownTag: hitRecord.internalCooldownTag }),
       ...(hitRecord.isBlunt && { isBlunt: true }),
       ...(lunarReactionType !== undefined && {
@@ -114,14 +113,14 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
   const toHit = (hitRecord: KitHitRecord): KitHit => ({
     ...toHitFields(hitRecord),
     hitArea: hitRecord.area,
-    hitmarkSeconds: toSeconds(hitRecord.hitmarkFrames),
+    hitmarkSeconds: toKitSeconds(hitRecord.hitmarkFrames),
     poiseDamage: hitRecord.poiseDamage,
     talentMultiplier: getAdditiveScalingAttribute(hitRecord) === undefined ? toParameter(hitRecord.multiplier) : 0,
   });
   const toAction = ({ animationFrames, hits, isAimed, staminaPerSecond, targeting }: KitActionRecord): KitAction => ({
     hits: hits.map((hitRecord) => toHit(hitRecord)),
     ...(isAimed && { isAimed }),
-    seconds: toSeconds(animationFrames),
+    seconds: toKitSeconds(animationFrames),
     ...(staminaPerSecond !== undefined && { staminaPerSecond: toParameter(staminaPerSecond) }),
     targetingArea: KitTargetingAreaMap[targeting],
   });
@@ -164,5 +163,5 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     plungeCollision: toHit(record.plungeCollision),
     skillCooldownSeconds: toParameter(record.skillCooldownSeconds),
   });
-  return { toAction, toHit, toHitFields, toKit, toParameter, toSeconds };
+  return { toAction, toHit, toHitFields, toKit, toParameter };
 };

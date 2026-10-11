@@ -15,7 +15,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -29,6 +28,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -191,6 +191,7 @@ const startEndlessWaltz = (
 // Constellation 2's Max HP, 3, 5 and 6 are not
 export const createFurinaKitBehaviour = ({
   kit,
+  readFrames,
   readHit,
   readHits,
   readParameter,
@@ -223,7 +224,7 @@ export const createFurinaKitBehaviour = ({
   const singerFlatHealth = readParameter("singerHealFlatHealth");
   const singerMaxHealthShare = readParameter("singerHealMaxHealthShare");
   const singerInitialTickSeconds = readSeconds("singerInitialTick");
-  const singerIntervalSeconds = readSeconds("singerInterval");
+  const singerIntervalFrames = readFrames("singerInterval");
   const fanfareMax = readParameter("fanfareMax");
   const fanfareHealthShare = readParameter("fanfareHealthSharePerPoint");
   const fanfareDamageBonusPerPoint = readParameter("fanfareDamageBonusPerPoint");
@@ -332,9 +333,7 @@ export const createFurinaKitBehaviour = ({
         },
         secondsRemaining,
         // Ascension 4's cut is taken off the interval in whole frames, as gcsim rounds it
-        tickIntervalSeconds:
-          Math.round(singerIntervalSeconds * KIT_FRAMES_PER_SECOND * (1 - getSingerIntervalCut(combatant))) /
-          KIT_FRAMES_PER_SECOND,
+        tickIntervalSeconds: toKitSeconds(Math.round(singerIntervalFrames * (1 - getSingerIntervalCut(combatant)))),
       },
     );
   };
