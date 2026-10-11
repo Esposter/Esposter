@@ -20,6 +20,7 @@ export const GCSIM_ABILITY_FRAMES_CALLEE = "frames.InitAbilSlice";
 export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // A value's path in a kit's record: its keys and array indexes joined by dots, `normalAttacks.0.hits.1.poiseDamage`,
 // Where a last key of `length` is an array's length
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z]+(?:\.(?:\d+|[A-Za-z]+))*$/u;
 export const KIT_LENGTH_KEY = "length";
 // An encoded build's parameter stands for its group and index as `(group * span + index + 1) * unit`, which keeps a
