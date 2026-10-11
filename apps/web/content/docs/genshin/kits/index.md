@@ -229,7 +229,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Gorou](/docs/genshin/kits/gorou)                   | General's War Banner and Crystal Collapse                            |
 | [Heizou](/docs/genshin/kits/heizou)                 | Heartstopper Strike and Fudou Style Vacuum Slugger                   |
 | [Hu Tao](/docs/genshin/kits/hu-tao)                 | Her string, charged attack and Guide to Afterlife's Paramita stance  |
-| [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi and the Saichimonji Slash                            |
+| [Itto](/docs/genshin/kits/itto)                     | Masatsu Zetsugi, Ushi and the Arataki Kesagiri                       |
 | [Jean](/docs/genshin/kits/jean)                     | Gale Blade and Dandelion Breeze's field                              |
 | [Kaeya](/docs/genshin/kits/kaeya)                   | Frostgnaw and Glacial Waltz's icicles                                |
 | [Kamisato Ayaka](/docs/genshin/kits/kamisato-ayaka) | Soumetsu's storms and Senho's infusion                               |
