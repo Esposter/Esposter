@@ -129,6 +129,10 @@ export enum GameTextKey {
   ExitToDesktop = "UI_LOGOUT_CONFIRM_EXIT_TO_DESKTOP",
   // The quit prompt's button that leaves the world for the login interface
   ExitToLoginInterface = "UI_LOGOUT_CONFIRM_EXIT_TO_TITLE_SCREEN",
+  // The map's line under an area's name, its percentage filled in, and the same line once the area is fully explored,
+  // Its percentage in the game's gold
+  ExplorationProgress = "UI_EXPLORE_COUNT",
+  ExplorationProgressComplete = "UI_EXPLORE_COUNT_MAX",
   // The Exquisite Chest, the middle tier, as the game names it
   ExquisiteChest = "3981652399",
   // The feedback link, a web page the Paimon menu opens

@@ -245,6 +245,8 @@
   "UI_COMMON_LEVEL_FORMAT": "Lv. {0}",
   "UI_COOKING_Cooking_Quantity": "Quantity",
   "UI_ELDERTREE_MAINUI_TITLE": "Frostbearing Tree",
+  "UI_EXPLORE_COUNT": "Exploration Progress: {0}%",
+  "UI_EXPLORE_COUNT_MAX": "Exploration Progress: <color=#FFCC33>{0}%</color>",
   "UI_FLYING_ACTIVITY_TIME_RAMAIN": "Time Remaining: {0}",
   "UI_FORGE_PAGE_AVATAR_TITLE": "Support Character",
   "UI_FORGE_PAGE_ITEM_TIME": "Forge Time: {0}",

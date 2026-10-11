@@ -245,6 +245,8 @@
   "UI_COMMON_LEVEL_FORMAT": "St. {0}",
   "UI_COOKING_Cooking_Quantity": "Menge",
   "UI_ELDERTREE_MAINUI_TITLE": "Permafrostbaum",
+  "UI_EXPLORE_COUNT": "Erkundungsfortschritt: {0} %",
+  "UI_EXPLORE_COUNT_MAX": "Erkundungsfortschritt: <color=#FFCC33>{0} %</color>",
   "UI_FLYING_ACTIVITY_TIME_RAMAIN": "Verbleibende Aktionszeit: {0}",
   "UI_FORGE_PAGE_AVATAR_TITLE": "Helfende Figuren",
   "UI_FORGE_PAGE_ITEM_TIME": "Schmiedezeit: {0}",

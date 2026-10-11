@@ -245,6 +245,8 @@
   "UI_COMMON_LEVEL_FORMAT": "Lv. {0}",
   "UI_COOKING_Cooking_Quantity": "Jumlah",
   "UI_ELDERTREE_MAINUI_TITLE": "Frostbearing Tree",
+  "UI_EXPLORE_COUNT": "Kemajuan Eksplorasi: {0}%",
+  "UI_EXPLORE_COUNT_MAX": "Kemajuan Eksplorasi: <color=#FFCC33>{0}%</color>",
   "UI_FLYING_ACTIVITY_TIME_RAMAIN": "Sisa waktu: {0}",
   "UI_FORGE_PAGE_AVATAR_TITLE": "Karakter Pendukung",
   "UI_FORGE_PAGE_ITEM_TIME": "Waktu forge: {0}",

@@ -245,6 +245,8 @@
   "UI_COMMON_LEVEL_FORMAT": "Niv. {0}",
   "UI_COOKING_Cooking_Quantity": "Cantidad a cocinar",
   "UI_ELDERTREE_MAINUI_TITLE": "Árbol frioeterno",
+  "UI_EXPLORE_COUNT": "Progreso de exploración: {0}%",
+  "UI_EXPLORE_COUNT_MAX": "Progreso de exploración: <color=#FFCC33>{0}%</color>",
   "UI_FLYING_ACTIVITY_TIME_RAMAIN": "Tiempo restante del evento: {0}",
   "UI_FORGE_PAGE_AVATAR_TITLE": "Personaje de apoyo",
   "UI_FORGE_PAGE_ITEM_TIME": "Tiempo de forja: {0}",

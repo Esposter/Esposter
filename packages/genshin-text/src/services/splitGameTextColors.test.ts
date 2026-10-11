@@ -24,7 +24,13 @@ describe(splitGameTextColors, () => {
     expect(splitGameTextColors("<color=#F39000FF>1\n2</color>")).toStrictEqual([{ color: "#F39000FF", text: "1\n2" }]);
   });
 
-  test("a tag without eight hex digits stays plain text", () => {
+  test("a tag of six hex digits colours its run as one of eight does", () => {
+    expect.hasAssertions();
+
+    expect(splitGameTextColors("<color=#F39000>1</color>")).toStrictEqual([{ color: "#F39000", text: "1" }]);
+  });
+
+  test("a tag of neither six nor eight hex digits stays plain text", () => {
     expect.hasAssertions();
 
     expect(splitGameTextColors("<color=#123>1</color>")).toStrictEqual([{ text: "<color=#123>1</color>" }]);

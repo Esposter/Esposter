@@ -245,6 +245,8 @@
   "UI_COMMON_LEVEL_FORMAT": "Sv. {0}",
   "UI_COOKING_Cooking_Quantity": "Miktar",
   "UI_ELDERTREE_MAINUI_TITLE": "Buztutan Ağacı",
+  "UI_EXPLORE_COUNT": "Keşif İlerlemesi: %{0}",
+  "UI_EXPLORE_COUNT_MAX": "Keşif İlerlemesi: <color=#FFCC33>%{0}</color>",
   "UI_FLYING_ACTIVITY_TIME_RAMAIN": "Kalan Süre: {0}",
   "UI_FORGE_PAGE_AVATAR_TITLE": "Destek Karakteri",
   "UI_FORGE_PAGE_ITEM_TIME": "İşleme Süresi: {0}",
