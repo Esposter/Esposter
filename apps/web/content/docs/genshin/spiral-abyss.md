@@ -89,4 +89,4 @@ flowchart TD
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TowerScheduleExcelConfigData`, `TowerFloorExcelConfigData`, `TowerLevelExcelConfigData` and `TowerRewardExcelConfigData`, the tables the slices are written from. "TowerBuffExcelConfigData" is fetched beside them but not read.
-- [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: the source the proposal's clock, unlock rank and reset statements cite. The page refused the read when this was built, so those statements are the proposal's, checked only against the tables' marks, and the clock and the rank are provisional until a recording measures them.
+- [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: the source the proposal's clock, unlock rank and reset statements cite. The page could not be read, so those statements are the proposal's, checked only against the tables' marks, and the clock and the rank are provisional until a recording measures them.

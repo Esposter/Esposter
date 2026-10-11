@@ -48,7 +48,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 - **The level floors are the table's, and the lower difficulties are levels one and two.** The table's floor column reads 60 for levels one and two and 70 above, as the proposal settles, so the floor is read from the column and not written in.
 - **The opening bonus rounds down.** The game's stats are whole units, and the bonus is taken on each stat in whole units, rounded down, rather than kept as a fraction.
 - **The Blessing Level's required count is an input.** The table field that holds each difficulty's required count is not yet named, so the caller states the count, and the rule is built against it.
-- **One latest-begun search.** The search for the item that began latest before a moment is `findLatestBegun`, which the Theater's season uses and the Spiral Abyss's period will use. The Abyss's own period finder, which had no caller yet, is replaced by it, so the two schedules share one rule and one test.
+- **One latest-begun search.** The search for the item that began latest before a moment is `findLatestBegun`, which the Theater's season uses. The Spiral Abyss's period is to use it too, so the two schedules share one rule and one test.
 
 ## Key files
 
@@ -73,17 +73,16 @@ A season names its difficulties by id, and the writer refuses a season that name
 - **The cast's composition.** Which characters an Alternate Cast may hold, by element or as a special guest, and the season's elements and guests, are not named in the schedule's fields yet, so no cast is checked against a season.
 - **The opening characters and the trial versions.** The characters each season names are not read yet, so an owned opening character is given its bonus by the caller, and a trial version is not told apart from the character.
 - **The stage.** Nothing fights a stage, its enemies, or the health and energy every member starts it with.
-- **The acts, the events and their costs.** The events between battles, the Battle Event, Companion, Brilliant Blessing and Mystery Cache, their Fantasia Flower costs and the rerolls are not read or built. The wiki could not be read when this was built, so their costs are the proposal's to settle.
+- **The acts, the events and their costs.** The events between battles, the Battle Event, Companion, Brilliant Blessing and Mystery Cache, their Fantasia Flower costs and the rerolls are not read or built. The wiki could not be read, so their costs are the proposal's to settle.
 - **The rewind and the other limits.** The rewind to a boss stage and the limit on it are not built, nor the Vigor a Mystery Cache restores.
 - **The Stella challenges and the rewards' items.** A run's star challenges are not tracked, and the reward group's items are not resolved.
 - **The screen.** Nothing enters the Theater or returns from it, and the Mondstadt Library's Theater Lobby waits on the library's interior.
 
 ## Notes
 
-- **The schedule ends with a season scheduled ahead.** It is never played until its date passes, so the dump's last season is played until a newer dump holds one.
 - **The wiki's numbers are unverified.** The Vigor, the Blessing Level stats, the opening bonus and the three-Stella reward are the proposal's statements, from the wiki, which could not be read when this was built. They are constants in `services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source refused the read when this was built, so these are the proposal's statements.
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source could not be read, so these are the proposal's statements.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.

@@ -106,7 +106,7 @@ The five are judged over their clean plate, the reference frame with its scored 
 | `dialogue-line`            | 10.47%, FLIP 0.3740      | 10.80%, FLIP 0.3844  | 11.65%      |
 | `dialogue-paimon-line`     | 9.73%, FLIP 0.3121       | 9.98%, FLIP 0.3151   | 11.86%      |
 
-Every state now beats its bare render, by 0.4 to 4.8 points, which is not yet the roadmap's 2% bar. What moved each figure, in the order it was fixed:
+Every state beats its bare render, by 0.4 to 4.8 points, which is not yet the roadmap's 2% bar. What moved each figure:
 
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without.
 - **Size and letter spacing.** The line is 26 units with 2.3 units of letter spacing, where it was 32 units. Its x-height and ascender then match the recording's, and its width matches within four pixels.
