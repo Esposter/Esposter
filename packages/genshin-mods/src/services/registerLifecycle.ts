@@ -8,6 +8,7 @@ import {
   CACHE_WARNING_MS,
   CLOCK_TICK_MS,
   IDLE_WAKE_PROMPT,
+  MACHINE_WATCHER_SCRIPT,
   QUEUE_SYNC_TOAST_MILLISECONDS,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
@@ -16,11 +17,8 @@ import {
 } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
-import { checkIsIdle } from "./pulse/checkIsIdle";
-import { getIdleMinutes } from "./pulse/getIdleMinutes";
 import { getPulseWake } from "./pulse/getPulseWake";
-import { getQueueSyncDue } from "./pulse/getQueueSyncDue";
-import { parseMachinePulse } from "./pulse/parseMachinePulse";
+import { takeWatcherLines } from "./pulse/takeWatcherLines";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
 import { getReserveWindow } from "./resin/getReserveWindow";
@@ -33,17 +31,7 @@ const isCommissionExpandedAtom = atom(
   { key: "isCommissionExpanded", plugin: "genshin-mods" } as const,
   InitialState.isCommissionExpanded,
 );
-const idleMinutesAtom = atom({ key: "idleMinutes", plugin: "genshin-mods" } as const, InitialState.idleMinutes);
-const idleReadingAtAtom = atom({ key: "idleReadingAt", plugin: "genshin-mods" } as const, InitialState.idleReadingAt);
-const lastIdleWakeMsAtom = atom(
-  { key: "lastIdleWakeMs", plugin: "genshin-mods" } as const,
-  InitialState.lastIdleWakeMs,
-);
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
-const lastQueueSyncMsAtom = atom(
-  { key: "lastQueueSyncMs", plugin: "genshin-mods" } as const,
-  InitialState.lastQueueSyncMs,
-);
 const lastQueueSyncToastMsAtom = atom(
   { key: "lastQueueSyncToastMs", plugin: "genshin-mods" } as const,
   InitialState.lastQueueSyncToastMs,
@@ -86,44 +74,33 @@ const suggestWaypoints = async ($: EngineInterface) => {
   if (answer.isAnswered) await update($, waypointsAtom, () => parseWaypoints(answer.text));
 };
 
-// Reads the machine's pulse and wakes the session with the next fleet work once the machine has been idle long enough. Each
-// New reading counts once, a reading at or over the line ends the idle episode, and no wake lands during a turn or while
-// A usage reserve winds down
-const pulseMachine = async ($: EngineInterface) => {
+// Starts the machine watcher as this session's child and reads what it prints as each chunk arrives. Its idle line wakes the
+// Session with the next fleet work, unless a turn runs or a usage reserve winds down then. The watcher prints the idle line
+// Again on each reminder it keeps while the machine stays idle, so the reminder is what wakes an idle session again
+const watchPulse = async ($: EngineInterface) => {
   if (!(await read($, enabledModsAtom)).pulse) return;
 
-  const output = await $.process.run(["node", `${$.plugin.root}/scripts/machinePulse.mjs`, await $.session.cwd()]);
-  const reading = parseMachinePulse(output.stdout);
-  if (output.exitCode !== 0 || reading === undefined) return;
+  const cwd = await $.session.cwd();
+  if (!(await $.fs.exists(`${cwd}/${MACHINE_WATCHER_SCRIPT}`))) return;
 
-  const isNewReading = reading.at !== (await read($, idleReadingAtAtom));
-  const idleMinutes = isNewReading
-    ? await update($, idleMinutesAtom, (value) => getIdleMinutes(reading, value))
-    : await read($, idleMinutesAtom);
-  if (isNewReading) {
-    await update($, idleReadingAtAtom, () => reading.at);
-    if (!checkIsIdle(reading)) await update($, lastIdleWakeMsAtom, () => InitialState.lastIdleWakeMs);
+  let pending = "";
+  for await (const chunk of $.process.spawn({ argv: ["pnpm", "ai:machine:watch"], cwd })) {
+    const taken = takeWatcherLines(pending, chunk.text);
+    pending = taken.pending;
+    const { isWindDown } = await read($, reserveWindowAtom);
+    const wakeOptions = { isTurnRunning, isWindDown };
+    if (taken.lines.some((line) => getPulseWake(line, wakeOptions))) await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
   }
-
-  const nowMs = await $.clock.now();
-  const { isWindDown } = await read($, reserveWindowAtom);
-  const lastWakeMs = await read($, lastIdleWakeMsAtom);
-  if (!getPulseWake({ ...reading, idleMinutes }, { isTurnRunning, isWindDown, lastWakeMs, nowMs })) return;
-
-  await update($, lastIdleWakeMsAtom, () => nowMs);
-  await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
 };
 
-// Pushes the queue on the pulse's tick once each sync interval, outside a turn, under the pulse's own switch. A sync shows
-// Nothing unless it fails, and a failure's toast carries the sync's last line, at most once each toast interval
+// Pushes the queue at a turn's end, under the pulse's own switch. The push takes its own lock, so a turn ending while one
+// Runs only queues one more. A sync shows nothing unless it fails, and a failure's toast carries the sync's last line, at
+// Most once each toast interval
 const syncQueue = async ($: EngineInterface) => {
   if (!(await read($, enabledModsAtom)).pulse) return;
 
-  const nowMs = await $.clock.now();
-  if (!getQueueSyncDue(await read($, lastQueueSyncMsAtom), nowMs, isTurnRunning)) return;
-
-  await update($, lastQueueSyncMsAtom, () => nowMs);
   const output = await $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()]);
+  const nowMs = await $.clock.now();
   const lastToastMs = await read($, lastQueueSyncToastMsAtom);
   if (output.exitCode === 0 || nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS) return;
 
@@ -161,13 +138,9 @@ export const registerLifecycle = (on: On): void => {
     $.clock.every(CLOCK_TICK_MS, () => {
       // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and every call in the tick resolves
       tick($);
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a run that exits non-zero returns with nothing to show
-      pulseMachine($);
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
-      syncQueue($);
     });
-    // oxlint-disable-next-line typescript/no-floating-promises -- The session start takes no promise, and a run that exits non-zero returns with nothing to show
-    pulseMachine($);
+    // oxlint-disable-next-line typescript/no-floating-promises -- The session start takes no promise, and the watcher's lines are read as they come
+    watchPulse($);
     return next(e);
   });
 
@@ -236,6 +209,11 @@ export const registerLifecycle = (on: On): void => {
 
     const now = await $.clock.now();
     await update($, nowAtom, () => now);
+    // The queue is pushed once the turn has ended, off its own dispatch, so the push never holds the turn
+    $.clock.after(0, () => {
+      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
+      syncQueue($);
+    });
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {
         // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a fork resolves every outcome rather than rejecting

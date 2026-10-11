@@ -15,6 +15,8 @@ Every wait must be one of:
 
 Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the autosave interval, and animation timers run **because time passed**, not to check whether something else finished. The test is the purpose of the timer — "do the thing every N seconds" is scheduling; "check every N seconds whether the thing happened" is polling and gets rewritten around the signal that already exists.
 
+A sync on a timer is polling even when the period is minutes: a timer that asks whether the remote moved is the same check as one that asks whether a test flipped. The trigger is the event that moves the remote instead, a commit (the `post-commit` hook) or a session turn's end, and the queue push takes a lock rather than waiting on either.
+
 If a dependency genuinely exposes no signal — no promise, no event, no webhook — that is an integration-design problem to fix at the boundary (add the completion handle, subscribe to the service's events), never a license to poll around it.
 
 **An exception granted to an interactive command does not transfer to an unattended one.** A bounded wait can be right when a person is watching and has nothing else to wait on — a terminal cannot subscribe to a webhook. The moment the same code runs inside a runner, the premise is gone: the runner _is_ a webhook consumer, and the wait stops being a convenience and becomes a job holding a concurrency group. So the caller's context is part of the rule. The [review collector](/docs/infra/review-collector/runner) is the worked case — the cycle asks and exits, and the answer arrives as the event it always was.

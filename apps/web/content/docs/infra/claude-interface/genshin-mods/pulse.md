@@ -1,19 +1,19 @@
 ---
 title: Pulse
-description: A minute clock that keeps the machine watcher running from any session with the plugin, and wakes an idle session to fill the machine with the next fleet work once it has been under 80% CPU and GPU for five minutes, then again every fifteen minutes while it stays idle, with no turn running and no usage reserve winding down, and pushes the queue every ten minutes outside a turn.
+description: A session-scoped machine watcher whose idle line wakes the session to fill the machine with the next fleet work, with no turn running and no usage reserve winding down, and a queue push at every turn's end, a commit's push by the post-commit hook, one push at a time.
 ---
 
 # Pulse
 
-Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The machine watcher, `pnpm ai:machine:watch`, reads the machine's CPU, GPU and free memory each minute, and the fleet's idle time is what it measures. A session that ran the watcher under Monitor lost it at the Monitor's expiry, which comes within thirty minutes and with the session, so a machine could sit idle for a day with nothing to wake the session that would have started its work. Pulse removes the arming: any session with the plugin keeps the watcher running, and wakes an idle session to fill the machine with the work the fleet has ready.
+Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The machine watcher, `pnpm ai:machine:watch`, reads the machine's CPU, GPU and free memory each minute, and the fleet's idle time is what it measures. A session that ran the watcher under Monitor lost it at the Monitor's expiry, which comes within thirty minutes and with the session, so a machine could sit idle for a day with nothing to wake the session. The pulse runs the watcher as the session's own child and reads the lines it prints, so an idle machine wakes the session by the watcher's own event rather than by a clock asking the state file.
 
 Pulse draws no row above the prompt. Its visible acts are a prompt the session takes as a turn of its own, and a toast when a queue push fails.
 
 ## How it works
 
-Each minute, and once at session start, the plugin runs `packages/genshin-mods/scripts/machinePulse.mjs` with the session's directory. Outside the repository the script prints nothing, since the watcher's script is not there. Inside it, the script reads the watcher's latest reading from `~/.esposter/machine/state.json`, which the watcher writes each minute, and starts `pnpm ai:machine:watch` detached when that reading is missing, older than three minutes, or written by a process that has exited. The watcher's output is appended to `~/.esposter/machine/watch.log`. The script then prints the reading, and the plugin counts it.
+At session start, with pulse on, the plugin starts `pnpm ai:machine:watch` in the session's directory as a child process and reads its output as it arrives, a whole line at a time. Outside the repository the watcher's script is not there, so nothing starts. The watcher writes each reading to `~/.esposter/machine/state.json`, and it refuses to start while another watcher's reading is fresh and that watcher's process is alive, so a second session never samples the machine twice. The watcher is the session's: it ends with the Claude Code process that started it.
 
-A reading is idle when the CPU is under 80% and the GPU is under 80% or unread. Each new reading counts once, so the count is of readings, and a reading at or over the line starts the count again at zero. The session is woken when the count reaches five, no turn is running, and no usage reserve is winding down. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku. The first wake of an idle episode is immediate once those hold, and while the machine stays idle the session is woken again at most every fifteen minutes.
+The watcher prints one line when the machine goes idle, `machine idle: …`, and repeats that line on each reminder interval while the machine stays idle. Idle is a full three-minute window of CPU under 80% with free memory above its room share. Each idle line wakes the session, unless a turn is running or a usage reserve is winding down, in which case the line is dropped and nothing wakes the session for it. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku.
 
 The wake is a prompt, `IDLE_WAKE_PROMPT`, that tells the session to run `pnpm ai:fleet:fill`, then to launch one background haiku agent per brief it printed, with the brief as its prompt, and to report what started. A brief names the entry, its spec, the command that releases it and the standing rules. When the command prints `nothing ready`, the session reports that instead.
 
@@ -21,54 +21,55 @@ The session also runs `pnpm ai:fleet:fill` before anything else when an agent re
 
 ## Queue sync
 
-On the same minute tick, every ten minutes and only outside a turn, the plugin runs `packages/genshin-mods/scripts/queueSync.mjs` with the session's directory. The script does nothing outside the repository, and nothing while a previous sync still runs: a lock file at `~/.esposter/queue/sync.lock` holds the pid of the sync that took it, and a sync is skipped while that pid is alive. Inside the repository, the script runs `pnpm ai:queue:push` in its root, spawned without a shell, and appends the output to `~/.esposter/queue/sync.log`.
+Each turn's end runs `packages/genshin-mods/scripts/queueSync.mjs` with the session's directory, once the turn has returned, so the push never holds the turn. The script runs `pnpm ai:queue:push` in the repository, and does nothing outside it. The push itself holds the lock: a turn ending while a push runs only marks one more pass, so a sync never starts a second push beside a running one.
 
-A sync is silent when it succeeds. When it exits non-zero, one toast carries the last line of its output, and a further failure is not toasted until an hour has passed. The pulse switch covers the sync as it covers the watcher, so `/pulse off` stops both. The push records itself in `~/.esposter/queue/last-push.json`, which each machine's heartbeat carries, so the other machines see its progress in `pnpm ai:fleet:status` without any message.
+A sync is silent when it succeeds. When it exits non-zero, one toast carries the last line of its output, and a further failure is not toasted until an hour has passed. The pulse switch covers the sync as it covers the watcher, so `/pulse off` stops both. The push records itself in `~/.esposter/queue/last-push.json`, which each machine's heartbeat carries.
+
+The push is triggered by a commit as well: the repository's `post-commit` hook starts `pnpm ai:queue:push` detached when a commit lands on `ai/queue`, its output appended to `~/.esposter/queue/sync.log`. The hook is the one trigger a session needs, and a turn's end is the second, so a session never pushes by hand except to retry.
 
 ```mermaid
 flowchart TD
-  Tick["Session start, then each minute"] --> Script["machinePulse.mjs in the session's directory"]
-  Script -->|no watcher script in it| Silent["Nothing printed"]
-  Script --> Fresh{"State file fresh, its process alive?"}
-  Fresh -->|no| Start["Start pnpm ai:machine:watch detached, output to watch.log"]
-  Fresh -->|yes| Reading["Print the reading"]
-  Start --> Reading
-  Reading --> New{"A reading not yet counted?"}
-  New -->|yes| Count["Idle readings in a row: one more under the line, else zero"]
-  Count --> Gate{"Five idle readings, no turn running, no wind-down, and no wake in fifteen minutes"}
-  New -->|no| Gate
+  Start["Session start, pulse on"] --> Watch["pnpm ai:machine:watch as a child, lines read as they arrive"]
+  Watch --> Line{"A line starting machine idle"}
+  Line -->|no| Line
+  Line -->|yes| Gate{"No turn running and no wind-down"}
   Gate -->|yes| Wake["Submit the idle prompt"]
-  Tick --> SyncDue{"Pulse on, no turn running, ten minutes since the last sync"}
-  SyncDue -->|yes| Sync["queueSync.mjs in the repository, unless a sync's lock is held by a live pid"]
-  Sync --> Push["pnpm ai:queue:push, output appended to sync.log"]
-  Push -->|exit non-zero| Toast["Toast the last line, at most once an hour"]
+  Gate -->|no| Drop["Dropped, nothing wakes the session"]
+  Turn["A turn ends"] --> Sync["queueSync.mjs in the repository"]
+  Commit["A commit lands on ai/queue"] --> Hook["post-commit starts pnpm ai:queue:push detached"]
+  Sync --> Lock{"Push lock held by a live pid?"}
+  Hook --> Lock
+  Lock -->|yes| Pending["Mark a pending pass, the holder runs it once more"]
+  Lock -->|no| Push["Hold the lock and push, pass by pass while marks are left"]
+  Sync -->|push failed| Toast["Toast the last line, at most once an hour"]
 ```
 
 ## How to use it
 
-Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on, and the switch is kept as every mod's is, on the [Genshin mods](/docs/infra/claude-interface/genshin-mods) page. With pulse off nothing starts the watcher, and `pnpm ai:resume` reports the watcher as not running until one is started by hand or a session with pulse on runs.
+Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on, and the switch is kept as every mod's is, on the [Genshin mods](/docs/infra/claude-interface/genshin-mods) page. The switch is read at session start, so a change takes effect in the next session. With pulse off nothing starts the watcher, and `pnpm ai:resume` reports the watcher as not running until one is started by hand or a session with pulse on runs.
 
 `pnpm ai:resume` has a `watcher` row for this: it is satisfied while the watcher's reading is fresh and its process is alive, and otherwise names `pnpm ai:machine:watch`, or starting a session with the plugin, as its action.
 
 ## Notes
 
-- The idle count is the pulse's own. The watcher's `minutesInState` classifies a machine as busy, idle or tight by its memory gate and its CPU average over three minutes, which is a different line from the 80% that wakes a session.
-- A watcher is started only when none is alive: no reading exists, or the process that wrote the last one has exited. A live watcher is never started twice. A reading older than three minutes from a live watcher, which a machine whose memory reader returns nothing would leave, is read as no reading, so the pulse wakes nothing on it, and `pnpm ai:resume` shows it.
-- A run whose script exits non-zero is silent and the next tick tries again. A run that cannot start `node` at all rejects, and the timer slot leaves that rejection unhandled.
+- The idle line is the watcher's, decided by its own window of CPU and by its memory room, and it does not read the GPU. The earlier pulse counted five idle readings of CPU and GPU together, so a session now wakes after about three minutes of idle, not five.
+- A watcher stops with its session, so a machine with no session open reports no reading and its heartbeat pauses until one starts.
+- The idle line repeats on the watcher's reminder interval while the machine stays idle, so an idle session is woken again at each reminder rather than on the pulse's own timer.
 
 ## Key files
 
-| File                                                            | Role                                                                       |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `packages/genshin-mods/scripts/machinePulse.mjs`                | Reads the watcher's reading, starts the watcher when none is alive         |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`       | The minute clock and session start that run the pulse, and the wake itself |
-| `packages/genshin-mods/scripts/queueSync.mjs`                   | Runs `pnpm ai:queue:push` in the repository, under the sync lock           |
-| `packages/genshin-mods/src/services/pulse/getQueueSyncDue.ts`   | The sync decision, a pure function over the last sync, the clock and turns |
-| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`      | The wake decision, a pure function over the reading and the session        |
-| `packages/genshin-mods/src/services/pulse/getIdleMinutes.ts`    | The count of idle readings in a row                                        |
-| `packages/genshin-mods/src/services/pulse/checkIsIdle.ts`       | Under the line on the CPU, and on the GPU or unread                        |
-| `packages/genshin-mods/src/services/pulse/parseMachinePulse.ts` | The script's stdout as a reading, or nothing outside the repository        |
-| `packages/genshin-mods/src/services/constants.ts`               | The line, the wait, the repeat interval and the wake prompt                |
-| `scripts/src/services/machine/writeMachineState.ts`             | The watcher's write of its reading, renamed over the file it replaces      |
-| `scripts/src/services/queue/writeLastPush.ts`                   | The record of each push, which the heartbeat carries                       |
-| `scripts/src/services/resume/getWatcherItems.ts`                | The `watcher` row of `pnpm ai:resume`                                      |
+| File                                                           | Role                                                                         |
+| :------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`      | Session start starts the watcher's lines, turn end runs the queue sync       |
+| `packages/genshin-mods/src/services/pulse/getPulseWake.ts`     | The wake decision, a pure function over one watcher line and the session     |
+| `packages/genshin-mods/src/services/pulse/takeWatcherLines.ts` | Splits the watcher's chunks into whole lines, holding a partial one          |
+| `packages/genshin-mods/src/services/constants.ts`              | The idle line's prefix, the watcher's script path and the wake prompt        |
+| `packages/genshin-mods/scripts/queueSync.mjs`                  | Runs `pnpm ai:queue:push` in the repository at a turn's end                  |
+| `.githooks/post-commit`                                        | Starts `pnpm ai:queue:push` detached when a commit lands on `ai/queue`       |
+| `scripts/src/queue/push/index.ts`                              | The one push entry the hook and the mod share, under its lock                |
+| `scripts/src/queue/push/runQueuePush.ts`                       | The lock and pending loop, one push at a time, a marked commit run once more |
+| `scripts/src/services/machine/watchMachine.ts`                 | The watcher's loop, which refuses to start while another watcher is alive    |
+| `scripts/src/services/machine/checkIsWatching.ts`              | Whether another watcher's reading is fresh and its process alive             |
+| `scripts/src/services/machine/writeMachineState.ts`            | The watcher's write of its reading, renamed over the file it replaces        |
+| `scripts/src/services/queue/writeLastPush.ts`                  | The record of each push, which the heartbeat carries                         |
+| `scripts/src/services/resume/getWatcherItems.ts`               | The `watcher` row of `pnpm ai:resume`                                        |
