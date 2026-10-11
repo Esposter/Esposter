@@ -24,17 +24,20 @@ flowchart TD
 - **Capital halls step back as they rise.** `createHallGeometry` stacks its storeys as boxes, each inset by the setback from the one below, so a palace's tiers are its options and nothing more.
 - **Kresnik's Torch is two geometries for two materials.** The stone is a faceted lathe stack of a stepped plinth, a tapering shaft and a cup brazier, and the flame is a lathe of its silhouette standing in the cup at the brazier's rim, 2.15 metres up.
 - **Region data holds the capital.** `src/data/regions/snezhnaya.json` holds Snezhnograd's hall, and Everfrozen Earth's outline is a provisional square round it, so a camera that comes within reach fetches it and draws the hall.
+- **The witness claims Everfrozen Earth's export by its ground alone.** The [parity](/docs/genshin/parity) inventory claims the terrain tiles as the one family, since the export holds no house of Snezhnograd's for the capital kit to stand in for, and every other mesh as not drawn yet, one entry a kind: common buildings, props, rocks, stage planes and effects.
 
 ## Key files
 
-| File                                                                          | Role                                                    |
-| :---------------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-world/src/services/snezhnaya/createFactoryGeometry.ts`      | The industrial kit: a factory hall with its chimney     |
-| `packages/genshin-world/src/services/snezhnaya/createHallGeometry.ts`         | The capital kit: a hall of storeys set back as it rises |
-| `packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts` | A Kresnik's Torch as its stone and its flame            |
-| `packages/genshin-world/src/models/snezhnaya/FactoryOptions.ts`               | A factory's options                                     |
-| `packages/genshin-world/src/models/snezhnaya/HallOptions.ts`                  | A hall's options                                        |
-| `packages/genshin-world/src/data/regions/snezhnaya.json`                      | Snezhnaya's region data: Snezhnograd's hall             |
+| File                                                                               | Role                                                      |
+| :--------------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| `packages/genshin-world/src/services/snezhnaya/createFactoryGeometry.ts`           | The industrial kit: a factory hall with its chimney       |
+| `packages/genshin-world/src/services/snezhnaya/createHallGeometry.ts`              | The capital kit: a hall of storeys set back as it rises   |
+| `packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`      | A Kresnik's Torch as its stone and its flame              |
+| `packages/genshin-world/src/models/snezhnaya/FactoryOptions.ts`                    | A factory's options                                       |
+| `packages/genshin-world/src/models/snezhnaya/HallOptions.ts`                       | A hall's options                                          |
+| `packages/genshin-world/src/data/regions/snezhnaya.json`                           | Snezhnaya's region data: Snezhnograd's hall               |
+| `packages/genshin-world/src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap.ts` | The game's meshes the ground family stands in for         |
+| `packages/genshin-world/src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap.ts`    | The rest of the export, claimed as not drawn yet, by kind |
 
 ## Notes
 
