@@ -12,7 +12,7 @@ touches:
 
 # HUD
 
-The [HUD](/docs/genshin/hud) is built with its stamina meter, its quest tracker, the deployed team's portraits, the member on the field's health and its skill and burst buttons, beside the Paimon button, the [minimap](/docs/genshin/minimap) and the [touch controls](/docs/genshin/touch-controls). Each piece but the quest tracker stands in its fitted rect of the game's own tree, the tracker having no rect there and staying at its provisional place, and every size and colour of those is provisional. This page keeps what is still unbuilt. It builds on [interface layout](/docs/genshin/interface-layout), which places every screen by the game's own rect tree.
+The [HUD](/docs/genshin/hud) is built with its stamina meter, its quest tracker, the deployed team's portraits, the member on the field's health and its skill and burst buttons, beside the Paimon button, the [minimap](/docs/genshin/minimap) and the [touch controls](/docs/genshin/touch-controls). Each piece but the quest tracker stands in its fitted rect of the game's own tree, the tracker having no rect there and staying at its provisional place, and each size and colour of those is provisional until its look below is measured. This page keeps what is still unbuilt. It builds on [interface layout](/docs/genshin/interface-layout), which places every screen by the game's own rect tree.
 
 ## Decisions
 
@@ -33,7 +33,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** the HUD's block is exported and fitted, and every piece but the quest tracker stands in its fitted rect of the game's tree ([as-built page](/docs/genshin/hud)), the stamina meter on the screen beside the character; the touch layout's buttons and the meter's arc are measured, and the rest of the looks are still provisional: the party's portraits, the member's health and the keys' skill and burst buttons. The quest tracker has no rect in the HUD's tree and stays at its provisional place until one is found.
+**Today:** the HUD's block is exported and fitted, and every piece but the quest tracker stands in its fitted rect of the game's tree ([as-built page](/docs/genshin/hud)), the stamina meter on the screen beside the character; the touch layout's buttons, the keys' skill and burst buttons with their caps (on `hud-world-keys`) and the meter's arc are measured, and the rest of the looks are still provisional: the party's portraits, the member's health and the keys' uncharged burst, which no PC frame shows. The quest tracker has no rect in the HUD's tree and stays at its provisional place until one is found.
 
 **This adds, in order:**
 
