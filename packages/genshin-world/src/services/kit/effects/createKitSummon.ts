@@ -20,5 +20,6 @@ export const createKitSummon = (
   elapsedSeconds: 0,
   hits,
   kind: "summon",
+  nextHitIndex: 0,
   secondsRemaining,
 });

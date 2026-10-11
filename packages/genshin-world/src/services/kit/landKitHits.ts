@@ -1,13 +1,14 @@
-import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
-// The hits of an action whose hitmark falls after the seconds it was at and no later than the seconds it is now at,
-// Pushed into the step's landed hits
+// The hits from the next to land on, in the order their hitmarks fall, whose hitmarks fall no later than the seconds
+// Now reached, pushed into the landed hits. It returns the index of the next hit still to land
 export const landKitHits = (
-  { hits }: KitAction,
-  fromSeconds: number,
+  hits: readonly KitHit[],
+  nextHitIndex: number,
   toSeconds: number,
   landedHits: KitHit[],
-): void => {
-  for (const hit of hits) if (hit.hitmarkSeconds > fromSeconds && hit.hitmarkSeconds <= toSeconds) landedHits.push(hit);
+): number => {
+  let index = nextHitIndex;
+  for (let hit = hits[index]; hit && hit.hitmarkSeconds <= toSeconds; hit = hits[++index]) landedHits.push(hit);
+  return index;
 };

@@ -21,6 +21,8 @@ export interface KitSummon {
   // Whether the summon moves with the body on the field, standing where that body stands on each step, whoever it is
   isFollowing?: true;
   kind: "summon";
+  // The index of its next hit to land, its hits being in the order their hitmarks fall
+  nextHitIndex: number;
   // Run as the character on the field starts a normal attack, if the summon coordinates with the normal attacks of
   // Whoever is on the field
   onNormalAttackStart?: (context: KitContext) => void;

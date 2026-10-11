@@ -29,6 +29,7 @@ describe(stepKitSummon, () => {
       elapsedSeconds: 0,
       hits: [{ hitArea: HIT_AREA, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier: 1 }],
       kind: "summon",
+      nextHitIndex: 0,
       secondsRemaining: 1,
     };
 
@@ -50,6 +51,7 @@ describe(stepKitSummon, () => {
       ],
       isFollowing: true,
       kind: "summon",
+      nextHitIndex: 0,
       secondsRemaining: 2,
     };
     const firstStrikes = stepKitSummon(summon, 1, { x: 3, z: 4 });
