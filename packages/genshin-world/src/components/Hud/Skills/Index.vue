@@ -3,6 +3,7 @@ import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
+import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
 import { GameTextKey } from "genshin-text";
@@ -50,16 +51,19 @@ onUnmounted(() => {
 <template>
   <!-- The skill and burst buttons at the bottom right. A cooldown darkens its button by the share left and counts its
        Seconds down to a tenth, and the burst fills with its energy from the foot, lit once full.
-       Pressing and holding one holds its key, as the touch controls hold theirs -->
+       Pressing and holding one holds its key, as the touch controls hold theirs, and Enter or Space holds a focused one's,
+       Stopped before the world's own keys hear them -->
   <div class="skills" :class="{ touch: isTouch }">
     <button
       class="skill"
       :aria-label="gameText[GameTextKey.ElementalSkill]"
       :style="{ '--cooldown': getCooldownShare(skillCooldown, skillCooldownSeconds) }"
       type="button"
-      @pointercancel="input.release(skillCode)"
-      @pointerdown="input.press(skillCode)"
-      @pointerup="input.release(skillCode)"
+      @blur="input.release(skillCode)"
+      @keydown.enter.space.stop="input.press(skillCode)"
+      @keyup.enter.space.stop="input.release(skillCode)"
+      @lostpointercapture="input.release(skillCode)"
+      @pointerdown="(event) => pressCapturedPointer(input, skillCode, event)"
     >
       <span v-if="skillCooldown > 0" class="cooldown">{{ skillCooldown.toFixed(1) }}</span>
     </button>
@@ -72,9 +76,11 @@ onUnmounted(() => {
         '--energy': Math.min(energy / energyCost, 1),
       }"
       type="button"
-      @pointercancel="input.release(burstCode)"
-      @pointerdown="input.press(burstCode)"
-      @pointerup="input.release(burstCode)"
+      @blur="input.release(burstCode)"
+      @keydown.enter.space.stop="input.press(burstCode)"
+      @keyup.enter.space.stop="input.release(burstCode)"
+      @lostpointercapture="input.release(burstCode)"
+      @pointerdown="(event) => pressCapturedPointer(input, burstCode, event)"
     >
       <span v-if="burstCooldown > 0" class="cooldown">{{ burstCooldown.toFixed(1) }}</span>
     </button>

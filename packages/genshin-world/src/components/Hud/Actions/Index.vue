@@ -6,6 +6,7 @@ import type { GameText } from "genshin-text";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
 import { InputActionGlyphLayersMap } from "#src/services/hud/InputActionGlyphLayersMap";
+import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { WeaponTypeGlyphLayersMap } from "#src/services/hud/WeaponTypeGlyphLayersMap";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
@@ -73,16 +74,19 @@ onUnmounted(() => {
 <template>
   <!-- The touch layout's action buttons at the bottom right beside the skill and the burst: the normal attack carrying its
        Weapon's glyph, the aim a bow's wielder has, the jump and the sprint, each holding its action's key while pressed,
-       So a press passes the same checks as the key -->
+       So a press passes the same checks as the key. A focused button holds it on Enter or Space, stopped before the
+       World's own keys hear them -->
   <button
     v-for="{ code, glyphLayers, label, name } of buttons"
     :key="name"
     :class="['action', name]"
     :aria-label="label"
     type="button"
-    @pointercancel="input.release(code)"
-    @pointerdown="input.press(code)"
-    @pointerup="input.release(code)"
+    @blur="input.release(code)"
+    @keydown.enter.space.stop="input.press(code)"
+    @keyup.enter.space.stop="input.release(code)"
+    @lostpointercapture="input.release(code)"
+    @pointerdown="(event) => pressCapturedPointer(input, code, event)"
   >
     <svg class="glyph" aria-hidden="true" viewBox="0 0 128 128">
       <path

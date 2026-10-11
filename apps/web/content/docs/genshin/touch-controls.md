@@ -17,7 +17,7 @@ flowchart LR
   STICK -->|"moves"| AXES["Its offset over its reach, at most a full push"]
   AXES --> SET["input.setTouchStick: read with the gamepad's left stick"]
   DRAG -->|"moves"| TURN["input.turn: added to the pointer's look"]
-  JUMP["An action button of the HUD held: attack, aim, jump or sprint"] --> PRESS["input.press of its action's key, released on lifting"]
+  JUMP["An action button of the HUD held: attack, aim, jump or sprint"] --> PRESS["input.press of its action's key, released as its pointer's capture ends"]
   SET --> READ["The frame's one read of the input"]
   TURN --> READ
   PRESS --> READ
