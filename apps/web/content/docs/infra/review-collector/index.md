@@ -15,7 +15,6 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one stack without racing: the collector writes `develop` and each window branch, the session writes `ai/queue`.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
 6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of its own, last in the pass so no window waits on it — first in the run after one the run's budget could not hold; a red the queue already passes — or a CodeQL red whose every alerted file the queue already changes — is a transit gap its windows heal, and spends nothing, and one it passes over `main`'s own tree is a flake whose failed jobs run again once.
-7. [Realign](/docs/infra/review-collector/realign) — the queue rebased onto `develop` on request, when a hand repair outside the collector has left its diff counting files the base already holds.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
