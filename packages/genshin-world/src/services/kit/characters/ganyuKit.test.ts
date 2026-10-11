@@ -107,7 +107,6 @@ describe(createGanyuKit, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
       characterIdCombatantMap: new Map(),
-      characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
       enemyMap: new Map(),
       kitEffectState,
@@ -129,7 +128,6 @@ describe(createGanyuKit, () => {
     );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       characterIdCombatantMap: new Map(),
       activeCombatant: createGanyuCombatant(),
       enemyMap: new Map(),
