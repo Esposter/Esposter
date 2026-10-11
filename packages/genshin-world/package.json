@@ -47,6 +47,10 @@
       "source": "./src/save.ts",
       "default": "./dist/save.js"
     },
+    "./sceneExport": {
+      "source": "./src/sceneExport.ts",
+      "default": "./dist/sceneExport.js"
+    },
     "./terrainTileWorker": {
       "source": "./src/workers/terrainTile.worker.ts",
       "default": "./dist/terrainTileWorker.js"
@@ -62,6 +66,7 @@
       ".": "./dist/index.js",
       "./characterPack": "./dist/characterPack.js",
       "./save": "./dist/save.js",
+      "./sceneExport": "./dist/sceneExport.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
       "./package.json": "./package.json",
       "./style.css": "./dist/style.css"

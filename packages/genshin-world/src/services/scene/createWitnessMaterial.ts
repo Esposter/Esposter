@@ -1,12 +1,12 @@
+import type { WitnessMaterial } from "#src/models/scene/WitnessMaterial";
+import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneMaterial } from "genshin-engine";
 import type { Texture } from "three";
 import type { Node } from "three/webgpu";
 
-import { WitnessKeyword } from "#parity/models/witness/WitnessKeyword";
-import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
-import { LEAF_SHADER } from "#parity/witness/constants";
-import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
-import { StoneNodeMaterial } from "genshin-engine";
+import { WitnessKeyword } from "#src/models/scene/WitnessKeyword";
+import { WitnessProperty } from "#src/models/scene/WitnessProperty";
+import { LEAF_SHADER } from "#src/services/scene/constants";
 import { DoubleSide } from "three";
 import { color, float, mix, normalMap, normalView, positionViewDirection, step, texture, vec3 } from "three/tsl";
 
@@ -15,22 +15,29 @@ import { color, float, mix, normalMap, normalView, positionViewDirection, step, 
 // Emission in alpha where the material turns it on. Where its variant compiles the rim glow, by its keyword rather than
 // Its toggle's float, the emission grades into the glow's colour at its strength by one less the facing ratio raised to
 // Its power, as the program mixes them, and is drawn only where its length reaches the material's emission range, the
-// Program writing every glow under it as none. It is lit as our stone is, by the game's deferred pass from the login's
-// Stone light, so a stand-in and its export differ only in what each draws; the mask's smoothness and metal wait on the
-// Pass's highlight
+// Program writing every glow under it as none. It is laid over a material of the host's, whose colour it multiplies and
+// Whose emission it adds to, so it is lit as the host's own stand-ins are: the login's by the game's deferred pass from
+// Its stone light, the world's by the ramp with their wetness and rim, and a stand-in and its export differ only in
+// What each draws; the mask's smoothness and metal wait on the pass's highlight
 export const createWitnessMaterial = (
-  { colors, floats, keywords, shader, textures }: SceneMaterial,
+  sceneMaterial: SceneMaterial,
   nameTextureMap: ReadonlyMap<string, Texture>,
-): StoneNodeMaterial => {
-  const material = new StoneNodeMaterial(loginStoneLight);
+  createMaterial: WitnessMaterialFactory,
+): WitnessMaterial => {
+  const { colors, floats, keywords, shader, textures } = sceneMaterial;
+  const material = createMaterial(sceneMaterial);
   const getTexture = (slot: WitnessProperty): Texture | undefined => {
     const slotTexture = textures[slot];
     return slotTexture ? nameTextureMap.get(slotTexture.name) : undefined;
   };
   const [red = 1, green = 1, blue = 1] = colors[WitnessProperty.Color] ?? [];
   const diffuse = getTexture(WitnessProperty.MainTexture);
-  const tint = color(red, green, blue);
-  material.colorNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
+  const tint = vec3(red, green, blue);
+  const albedoNode = diffuse ? texture(diffuse).rgb.mul(tint) : tint;
+  // The host's colour and emission are the vectors its own stand-ins draw with, which three types as any node
+  const colorNode = material.colorNode as Node<"vec3"> | null;
+  const emissiveNode = material.emissiveNode as Node<"vec3"> | null;
+  material.colorNode = colorNode ? colorNode.mul(albedoNode) : albedoNode;
   // The leaf cards are cut where their texture's alpha falls under the material's cutoff, as the game's foliage shader
   // Clips them, and drawn from both sides: the leaf mesh holds no back face for any card and its normals are a field
   // Over the crown at right angles to the cards, so a card culled from behind would vanish from every view behind it
@@ -67,6 +74,7 @@ export const createWitnessMaterial = (
       rimNode,
     );
   }
-  material.emissiveNode = emissionNode.mul(step(floats[WitnessProperty.EmissionRange] ?? 0, emissionNode.length()));
+  const glowNode = emissionNode.mul(step(floats[WitnessProperty.EmissionRange] ?? 0, emissionNode.length()));
+  material.emissiveNode = emissiveNode ? emissiveNode.add(glowNode) : glowNode;
   return material;
 };

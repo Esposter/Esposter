@@ -1,26 +1,28 @@
+import type { LoadedWitness } from "#src/models/scene/LoadedWitness";
+import type { WitnessMaterialFactory } from "#src/models/scene/WitnessMaterialFactory";
 import type { SceneLayout } from "genshin-engine";
-import type { Material, Texture } from "three";
+import type { BufferGeometry, Material, Texture } from "three";
 
-import { WitnessProperty } from "#parity/models/witness/WitnessProperty";
-import { SUBMESH_INDEX_REGEX } from "#parity/witness/constants";
-import { createWitnessMaterial } from "#parity/witness/createWitnessMaterial";
-import { SCENE_TEXTURE_ANISOTROPY } from "#src/services/scene/constants";
+import { WitnessProperty } from "#src/models/scene/WitnessProperty";
+import { SCENE_TEXTURE_ANISOTROPY, SUBMESH_INDEX_REGEX } from "#src/services/scene/constants";
+import { createWitnessMaterial } from "#src/services/scene/createWitnessMaterial";
 import { Group, Mesh, MeshStandardMaterial, NoColorSpace, RepeatWrapping, SRGBColorSpace, TextureLoader } from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 // The slots whose textures are colours; every other slot holds data (a normal, a mask) and is read linearly
 const COLOR_SLOTS = new Set<string>([WitnessProperty.MainTexture]);
-// The witness render's parts: the component's exports laid out as `genshin:assets witness` wrote them, each mesh
-// Turned from the export's axes into three's (the export negates x, three negates z, together half a turn about y) and
-// Drawn at every placement with the material each of its submeshes names, in a group per family of the scene's parts
-// Its mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and
-// Without them every mesh is drawn in one unnamed family. The meshes and textures are served beside the layout, by
-// Their export folders, and only those of the meshes drawn are loaded, each texture once however many slots name it:
-// A capital's exports run to over a gigabyte, most of it in meshes no family draws
+// A component's exports laid out as `genshin:assets witness` wrote them, each mesh turned from the export's axes into
+// Three's (the export negates x, three negates z, together half a turn about y) and drawn at every placement with the
+// Material each of its submeshes names, laid over one the host makes, in a group per family of the scene's parts its
+// Mesh's name falls in, each part named by its mesh; given families, a mesh none of them names is left out, and without
+// Them every mesh is drawn in one unnamed family. The meshes and textures are served beside the layout, by their export
+// Folders, and only those of the meshes drawn are loaded, each texture once however many slots name it: a capital's
+// Exports run to over a gigabyte, most of it in meshes no family draws
 export const loadWitness = async (
   layoutUrl: string,
+  createMaterial: WitnessMaterialFactory,
   familyMeshRegexMap: Readonly<Record<string, RegExp>> = {},
-): Promise<Group> => {
+): Promise<LoadedWitness> => {
   const getUrl = (path: string): string => new URL(path, new URL(layoutUrl, window.location.href)).href;
   const response = await fetch(layoutUrl);
   const layout = (await response.json()) as SceneLayout;
@@ -57,7 +59,7 @@ export const loadWitness = async (
   ]);
   const nameTextureMap = new Map<string, Texture>(textures);
   const nameMaterialMap = new Map<string, Material>(
-    drawnMaterials.map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap)]),
+    drawnMaterials.map(([name, material]) => [name, createWitnessMaterial(material, nameTextureMap, createMaterial)]),
   );
   const fallbackMaterial = new MeshStandardMaterial();
   const nameSubmeshesMap = new Map(
@@ -95,5 +97,19 @@ export const loadWitness = async (
     part.scale.set(...scale);
     getFamilyGroup(family).add(part);
   }
-  return witness;
+  const geometries = [...nameSubmeshesMap.values()].flatMap((submeshes) =>
+    submeshes.map(({ geometry }): BufferGeometry => geometry),
+  );
+  return {
+    dispose: () => {
+      for (const disposable of [
+        ...geometries,
+        ...nameMaterialMap.values(),
+        fallbackMaterial,
+        ...nameTextureMap.values(),
+      ])
+        disposable.dispose();
+    },
+    parts: witness,
+  };
 };

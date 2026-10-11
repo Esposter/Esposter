@@ -1,7 +1,6 @@
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { Page } from "playwright";
 
-import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import {
   DEVICE_SCALE_MARGIN,
@@ -15,6 +14,7 @@ import {
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright";

@@ -24,12 +24,14 @@ import { claimWitnessRenderers } from "#parity/witness/claimWitnessRenderers";
 import { computeWitnessParts } from "#parity/witness/computeWitnessParts";
 import { computeWitnessPoints } from "#parity/witness/computeWitnessPoints";
 import { getWitnessFamilyOffsets } from "#parity/witness/getWitnessFamilyOffsets";
-import { loadWitness } from "#parity/witness/loadWitness";
 import { renderWitnessTargets } from "#parity/witness/renderWitnessTargets";
 import { setWitnessView } from "#parity/witness/setWitnessView";
+import { loginStoneLight } from "#src/services/login/scene/loginStoneLight";
+import { loadWitness } from "#src/services/scene/loadWitness";
 import { SceneContextKey } from "#src/services/scene/SceneContextKey";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, jsonDateParse } from "@esposter/shared";
+import { StoneNodeMaterial } from "genshin-engine";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
@@ -96,8 +98,15 @@ if (screen && root) {
   if (!screen.readyEvent) resolveReady();
   const witnessLayoutUrl = searchParameters.get("witness");
   const getClaims = (witnessComponent: string) => screen.witnessComponents?.[witnessComponent] ?? screen;
+  // Lit as the login's stone is, by the game's deferred pass from its stone light, whichever scene draws the exports
   const parts = witnessLayoutUrl
-    ? await loadWitness(witnessLayoutUrl, getClaims(searchParameters.get("witnessComponent") ?? "").witnessFamilies)
+    ? (
+        await loadWitness(
+          witnessLayoutUrl,
+          () => new StoneNodeMaterial(loginStoneLight),
+          getClaims(searchParameters.get("witnessComponent") ?? "").witnessFamilies,
+        )
+      ).parts
     : undefined;
   const witness: SceneWitness | undefined = parts
     ? {

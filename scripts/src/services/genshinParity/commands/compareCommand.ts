@@ -3,7 +3,6 @@ import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ComparisonFailureRecovery } from "#src/models/genshinParity/reference/ComparisonFailureRecovery";
-import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { classifyComparisonFailure } from "#src/services/genshinParity/reference/classifyComparisonFailure";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
@@ -15,6 +14,7 @@ import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferen
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { getResultAsync } from "@esposter/shared";
 import { defineCommand } from "citty";
+import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

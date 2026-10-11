@@ -3,13 +3,13 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 import type { SceneLayout, ScenePlacement } from "genshin-engine";
 import type { WitnessClaim } from "genshin-world/parity/models/witness/WitnessClaim";
 
-import { WITNESS_LAYOUT_FILE_NAME } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { getComponentReferenceIds } from "#src/services/genshinParity/passes/getComponentReferenceIds";
 import { UNDRAWN_PAGE_SIZE } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { InvalidOperationError, jsonDateParse, Operation, withFinalizerAsync } from "@esposter/shared";
+import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 

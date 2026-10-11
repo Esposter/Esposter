@@ -6,10 +6,10 @@ import { generateExports, getTsdownConfigurationVue } from "@esposter/configurat
 import { templateCompilerOptions } from "@tresjs/core";
 import { mergeConfig } from "tsdown";
 
-// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save` and
-// `characterPack` are the app server's, which reach none of the world's components. The parity page's shapes
-// Are what the tooling in `scripts` reads back off the page, so the workspace resolves them from source under
-// `./parity/*`, and the published map, which ships no page, never carries the arm
+// `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`, `characterPack`
+// And `sceneExport` are the app server's, which reach none of the world's components. The parity page's shapes are what
+// The tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/*`, and
+// The published map, which ships no page, never carries the arm
 // The `build:prepare` hook replaces the base's rather than joining it, so it writes the barrels the base writes, and
 // Writes the kit map first, so the barrel lists it on a fresh clone too. The barrel leaves the kit modules out, since
 // The kit map loads each through an `import()` of its own as its character joins the party
@@ -18,6 +18,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(te
     characterPack: "src/characterPack.ts",
     index: "src/index.ts",
     save: "src/save.ts",
+    sceneExport: "src/sceneExport.ts",
     terrainTileWorker: "src/workers/terrainTile.worker.ts",
   },
   exports: {

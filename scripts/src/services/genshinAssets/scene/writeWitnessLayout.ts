@@ -6,7 +6,6 @@ import {
   MAIN_TEXTURE_SLOT,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_SIZE,
-  WITNESS_LAYOUT_FILE_NAME,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
@@ -19,6 +18,7 @@ import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRigh
 import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
+import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
