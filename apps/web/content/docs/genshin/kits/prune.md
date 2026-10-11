@@ -25,7 +25,7 @@ gcsim sources: `prune/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 | File                                                             | Role                                                                                             |
 | :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, built on her record and with no behaviour yet         |
+| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now                  |
 | `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the skill and burst's hits, which the record's hitmark and hitboxes do not give |
 
 ## Sources

@@ -5,16 +5,16 @@ description: Nicole's kit as built: her three strikes, charged attack, plunges, 
 
 # Nicole
 
-Nicole's kit is its record and one behaviour module, `createNicoleKitBehaviour`, avatar 10000131: three normal attacks, a charged attack, a collision and two plunges, her skill's hit, and the burst's hit. Her skill and burst are Pyro.
+Nicole's kit is its record and one behaviour module, `createNicoleKitBehaviour`, avatar 10000131: her three strikes, the charged attack, the collision, the two plunges, the skill's hit and the burst's hit. Both her skill and her burst are Pyro.
 
-Her skill and burst are read from proud skill groups as their talent multipliers, and her cooldowns, energy cost and charged stamina are read from the table: 16 seconds, 15 seconds, 60 energy and 50 stamina.
+Her cooldowns are 16 and 15 seconds, her energy cost 60 and her charged stamina 50, all read from the table, and her skill and burst take their talent multipliers from proud skill groups.
 
 gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Nicole data file.
 
 ## Decisions
 
 - **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as `TargetCentred`.
-- **The skill's hit is a circle of 5 metres round her body**, recorded by hand as `Unclassified` as its hitbox is not named as gcsim's press names are.
+- **The skill's hit is a circle of 5 metres round her body**, recorded by hand as `Unclassified` as its hitbox has no name in gcsim's press list.
 
 ## Not built
 
@@ -25,9 +25,9 @@ gcsim sources: `nicole/attack.go`, `charge.go`, `skill.go` and `burst.go`, with 
 
 | File                                                              | Role                                                                                       |
 | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module, built on her record and with no behaviour yet |
-| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: the areas gcsim's hitboxes do not give by name                           |
+| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module; it reads her record and adds no behaviour yet |
+| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: the areas gcsim leaves unnamed                                           |
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/nicole), MIT: her strikes' hitmarks and cancels, the charged attack, the skill, the burst and their elements, and her table data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/nicole), MIT: the timings of her strikes, her charged attack, skill, burst and elements, and her table data file.

@@ -78,10 +78,12 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `nahida`             | —     |                                                                          |
 | `navia`              | —     |                                                                          |
 | `neuvillette`        | —     |                                                                          |
+| `nicole`             | —     |                                                                          |
 | `nilou`              | —     |                                                                          |
 | `ningguang`          | —     |                                                                          |
 | `noelle`             | —     |                                                                          |
 | `ororon`             | —     |                                                                          |
+| `prune`              | —     |                                                                          |
 | `qiqi`               | —     |                                                                          |
 | `raiden-shogun`      | —     |                                                                          |
 | `razor`              | —     |                                                                          |
@@ -99,6 +101,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' apps/web/content/docs/genshin/kits/<page>.md
 | `tighnari`           | —     |                                                                          |
 | `traveler`           | —     |                                                                          |
 | `varesa`             | —     |                                                                          |
+| `varka`              | —     |                                                                          |
 | `venti`              | —     |                                                                          |
 | `wanderer`           | —     |                                                                          |
 | `wriothesley`        | —     |                                                                          |

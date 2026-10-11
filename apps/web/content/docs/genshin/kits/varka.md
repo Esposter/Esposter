@@ -7,7 +7,7 @@ description: Varka's kit as built: his five strikes, charged attack, plunges, An
 
 Varka's kit is its record and one behaviour module, `createVarkaKitBehaviour`, avatar 10000128: five normal attacks, a charged attack of two hits, a collision and two plunges, his skill's hit, and the burst's two hits. Every skill and burst hit is Anemo, the burst's by gcsim's default, and his strikes are physical.
 
-His skill and burst are read from proud skill groups as their talent multipliers, and his cooldowns, energy cost and charged stamina are read from the table: 16 seconds, 15 seconds, 60 energy and 50 stamina.
+Proud skill groups give his skill and burst their talent multipliers; the table reads his cooldowns as 16 and 15 seconds, his energy cost as 60 and his charged stamina as 50.
 
 gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with the table data in gcsim's Varka data file.
 
@@ -26,8 +26,8 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 | File                                                             | Role                                                                                     |
 | :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/varkaKit.ts` | `createVarkaKitBehaviour`, Varka's module, built on his record and with no behaviour yet |
-| `packages/genshin-world/src/data/kits/varka.json`                | Varka's overlay: the areas and elements gcsim's hitboxes do not give by name             |
+| `packages/genshin-world/src/data/kits/varka.json`                | Varka's overlay: the areas and elements gcsim leaves unnamed                             |
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/varka), MIT: his strikes' hitmarks and cancels, the charged attack, the skill, the burst and their elements, and his table data file.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/main/internal/characters/varka), MIT: the timings of his strikes, his charged attack, skill, burst and elements, and his table data file.
