@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
+import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
@@ -34,8 +35,8 @@ const editedName = ref(webhook.name);
       :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
       :variant="UiButtonVariant.Quiet"
     />
-    <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
-    <MessageModelRoomSettingsTypeWebhookDeleteButton :id="webhook.id" />
+    <MessageModelRoomSettingsTypeWebhookActionButton :action="WebhookDialogAction.RotateToken" :id="webhook.id" />
+    <MessageModelRoomSettingsTypeWebhookActionButton :action="WebhookDialogAction.Delete" :id="webhook.id" />
     <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
   </div>
 </template>

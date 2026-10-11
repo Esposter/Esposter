@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
@@ -23,6 +24,6 @@ const { items } = storeToRefs(webhookStore);
   <div v-else role="list" aria-label="Webhooks" flex flex-col gap-1>
     <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
   </div>
-  <MessageModelRoomSettingsTypeWebhookConfirmDeleteDialog :room-id />
-  <MessageModelRoomSettingsTypeWebhookConfirmRotateTokenDialog :room-id />
+  <MessageModelRoomSettingsTypeWebhookConfirmDialog :action="WebhookDialogAction.Delete" :room-id />
+  <MessageModelRoomSettingsTypeWebhookConfirmDialog :action="WebhookDialogAction.RotateToken" :room-id />
 </template>
