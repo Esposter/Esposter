@@ -11,6 +11,7 @@ import {
   CHONGYUN_CHARACTER_ID,
   DILUC_CHARACTER_ID,
   DIONA_CHARACTER_ID,
+  EULA_CHARACTER_ID,
   FISCHL_CHARACTER_ID,
   GANYU_CHARACTER_ID,
   HU_TAO_CHARACTER_ID,
@@ -46,6 +47,7 @@ import { createBennettKit } from "#src/services/kit/characters/bennettKit";
 import { createChongyunKit } from "#src/services/kit/characters/chongyunKit";
 import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { createDionaKit } from "#src/services/kit/characters/dionaKit";
+import { createEulaKit } from "#src/services/kit/characters/eulaKit";
 import { createFischlKit } from "#src/services/kit/characters/fischlKit";
 import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
 import { createHuTaoKit } from "#src/services/kit/characters/huTaoKit";
@@ -84,6 +86,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [CHONGYUN_CHARACTER_ID]: createChongyunKit,
   [DILUC_CHARACTER_ID]: createDilucKit,
   [DIONA_CHARACTER_ID]: createDionaKit,
+  [EULA_CHARACTER_ID]: createEulaKit,
   [FISCHL_CHARACTER_ID]: createFischlKit,
   [GANYU_CHARACTER_ID]: createGanyuKit,
   [HU_TAO_CHARACTER_ID]: createHuTaoKit,
