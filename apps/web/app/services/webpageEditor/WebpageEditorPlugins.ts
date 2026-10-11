@@ -3,7 +3,7 @@ import type { Editor, EditorConfig } from "grapesjs";
 
 import { usePlugin } from "grapesjs";
 import { blocksBasicPlugin } from "@/services/webpageEditor/plugins/blocksBasicPlugin";
-import grapesJSComponentCountdown from "grapesjs-component-countdown";
+import { countdownPlugin } from "@/services/webpageEditor/plugins/countdownPlugin";
 import grapesJSCustomCode from "grapesjs-custom-code";
 import grapesJSParserPostcss from "grapesjs-parser-postcss";
 import grapesJSPluginExport from "grapesjs-plugin-export";
@@ -22,7 +22,7 @@ const { css: cssFormat, html: htmlFormat } = jsBeautify;
 export const WebpageEditorPlugins: EditorConfig["plugins"] = [
   usePlugin(blocksBasicPlugin, { flexGrid: true }),
   usePlugin(grapesJSPluginForms, { blocks: [] }),
-  grapesJSComponentCountdown,
+  countdownPlugin,
   grapesJSPluginExport,
   usePlugin(grapesJSTabs, { tabsBlock: { category: "Extra" } }),
   grapesJSCustomCode,

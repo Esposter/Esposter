@@ -129,7 +129,6 @@
     "genshin-text": "workspace:*",
     "genshin-world": "workspace:*",
     "grapesjs": "catalog:",
-    "grapesjs-component-countdown": "catalog:",
     "grapesjs-custom-code": "catalog:",
     "grapesjs-mjml": "catalog:",
     "grapesjs-parser-postcss": "catalog:",
