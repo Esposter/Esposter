@@ -132,7 +132,7 @@ describe(createPackage, () => {
     );
   });
 
-  test("gives a nuxt-module the erasable-only tsconfig, a module entry and its registration in the app's module list", () => {
+  test("gives a nuxt-module the shared Nuxt module tsconfig, a module entry and its registration in the app's module list", () => {
     expect.hasAssertions();
 
     const root = createFixtureRoot();
