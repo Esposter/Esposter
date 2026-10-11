@@ -186,7 +186,8 @@ What it does after:
 
 - **What the build can resolve is resolved once.**
   - Each hit gets its `attackTag`: its action's kind, unless gcsim's `AttackInfo` for that hit names another, including a stance's.
-  - That removes `getKitAttackTag` and the stance's hand-written `attackTags`. No action needs a slot: the step already tells its actions apart by which of the kit's lists holds them, and the infusable and melee Sets stay, since an infusion and the ores follow the list a hit sits in, not its kind of attack.
+  - That removes `getKitAttackTag` and the stance's hand-written `attackTags`. No action needs a slot: the step already tells its actions apart by which of the kit's lists holds them.
+  - An infusion and the ores follow the list a hit sits in, not its kind of attack, so the same build gives each hit its action's kind beside it (`actionAttackTag`), and the infusable and melee Sets, built from the kit on the field each frame a hit lands, go. Read off the hit, a stance's normal attack whose stance ends mid-swing is still a normal attack to both, as gcsim infuses an attack by its own tag as it lands.
   - A stance's kit is built once, when the stance starts.
 - **A cursor lands the hits.** An action and a summon each keep the index of their next hit. A step compares one hitmark rather than the whole list, and a summon with nothing to land does nothing.
 - **The effects are stepped by index, in today's order, and compacted in place.**

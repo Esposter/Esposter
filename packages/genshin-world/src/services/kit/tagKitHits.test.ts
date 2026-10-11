@@ -1,3 +1,5 @@
+import type { KitHit } from "#src/models/kit/KitHit";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -37,14 +39,24 @@ describe(tagKitHits, () => {
     );
   });
 
-  test("keeps the kind of attack a hit names, whatever list of the kit it sits in", () => {
+  test("keeps the kind of attack a hit names, whatever list of the kit it sits in, beside its action's kind", () => {
     expect.hasAssertions();
-    const hit = { ...takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits), attackTag: AttackTag.ElementalSkill };
+    const hit: KitHit = {
+      attackTag: AttackTag.ElementalSkill,
+      hitArea: { angle: 2 * Math.PI, height: 2, radius: 1 },
+      hitmarkSeconds: 0,
+      poiseDamage: 0,
+      talentMultiplier: 1,
+    };
     const kit = tagKitHits({
       ...TRAVELER_KIT,
       normalAttacks: [{ ...takeOne(TRAVELER_KIT.normalAttacks), hits: [hit] }],
     });
+    const { actionAttackTag, attackTag } = takeOne(takeOne(kit.normalAttacks).hits);
 
-    expect(takeOne(takeOne(kit.normalAttacks).hits).attackTag).toBe(AttackTag.ElementalSkill);
+    expect({ actionAttackTag, attackTag }).toStrictEqual({
+      actionAttackTag: AttackTag.NormalAttack,
+      attackTag: AttackTag.ElementalSkill,
+    });
   });
 });

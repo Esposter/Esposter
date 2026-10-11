@@ -7,13 +7,13 @@ import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { readOreHits } from "#src/services/gathering/readOreHits";
+import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
-import { infuseKitHits } from "#src/services/kit/effects/infuseKitHits";
+import { infuseKitHit } from "#src/services/kit/effects/infuseKitHit";
 import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -93,8 +93,9 @@ export const stepActiveKit = (
   );
   // The ores are struck by the hits as the kit gives them, before an infusion copies them
   const stepHits = landedHits.slice(landedStart);
-  const landedOreHits = stepHits.length > 0 ? readOreHits(combatant, stepHits) : [];
-  if (infusion !== undefined) infuseKitHits(kit, infusion, landedHits, landedStart);
+  const landedOreHits = stepHits.map((hit) => readOreHit(combatant, hit));
+  if (infusion !== undefined)
+    for (const [index, hit] of stepHits.entries()) landedHits[landedStart + index] = infuseKitHit(hit, infusion);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
   let target: Enemy | undefined;

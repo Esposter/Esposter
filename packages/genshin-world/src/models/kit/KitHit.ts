@@ -15,6 +15,9 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 // Character's own, the cylinder it reaches, when its hitmark falls from the action's start, its internal cooldown tag,
 // Whether it is blunt, its poise damage and the talent's multiplier
 export interface KitHit {
+  // The kind of attack the action the hit sits in deals, set as its kit or its stance is built, which an infusion and an
+  // Ore follow whatever kind the hit is dealt as. None for a hit no action holds
+  actionAttackTag?: AttackTag;
   // The flat damage the hit adds to its base damage, given its striker, if a passive adds one from the striker's stats
   additiveBaseDamageBonus?: (combatant: Combatant) => number;
   // The kind of attack the hit is dealt as, set as its kit or its stance is built from the action it sits in, unless it
