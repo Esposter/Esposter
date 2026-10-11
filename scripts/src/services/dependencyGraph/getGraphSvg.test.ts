@@ -1,6 +1,7 @@
 import { GRAPH_FILENAME } from "#src/services/dependencyGraph/constants";
 import { getGraphSvg } from "#src/services/dependencyGraph/getGraphSvg";
 import { getWorkspaceEdges } from "#src/services/dependencyGraph/getWorkspaceEdges";
+import { readPnpmProjects } from "#src/services/dependencyGraph/readPnpmProjects";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readFileSync } from "node:fs";
@@ -16,8 +17,8 @@ describe(getGraphSvg, () => {
     expect.hasAssertions();
 
     const workspacePackages = readWorkspacePackages(REPOSITORY_ROOT);
-    await expect(getGraphSvg(workspacePackages, getWorkspaceEdges(workspacePackages))).resolves.toBe(
-      readFileSync(resolve(REPOSITORY_ROOT, GRAPH_FILENAME), "utf8"),
-    );
+    await expect(
+      getGraphSvg(workspacePackages, getWorkspaceEdges(workspacePackages, readPnpmProjects())),
+    ).resolves.toBe(readFileSync(resolve(REPOSITORY_ROOT, GRAPH_FILENAME), "utf8"));
   });
 });

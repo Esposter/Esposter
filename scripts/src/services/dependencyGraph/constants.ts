@@ -1,17 +1,9 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three template literals would otherwise infer */
-import { DependencyField } from "#src/models/shared/DependencyField";
 
 export const GRAPH_FILENAME = "dependency-graph.svg";
 
-export const WORKSPACE_SPECIFIER_PREFIX = "workspace:";
-// The fields whose entries the package's shipped code needs, as opposed to `devDependencies`, which only its
-// Build, lint, test and bench runs reach. Drawing the two apart is the whole point of this graph: every package
-// Depends on `@esposter/configuration`, and reading that as a runtime edge inverts what the repo actually is.
-export const RUNTIME_DEPENDENCY_FIELDS: DependencyField[] = [
-  DependencyField.Dependencies,
-  DependencyField.OptionalDependencies,
-  DependencyField.PeerDependencies,
-];
+// Pnpm writes a sibling it links from the workspace as a `link:` version to its folder
+export const LINK_PREFIX = "link:";
 // The one neutral in the palette. It is the grey that carries against both a white and a near-black page, which
 // Is what every line the theme does not own has to do — the svg is committed once and read in either scheme.
 export const MUTED_COLOR = "#8b949e";
