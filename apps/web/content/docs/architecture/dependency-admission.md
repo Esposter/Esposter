@@ -1,6 +1,6 @@
 ---
 title: Dependency admission
-description: What a third-party package must earn to stay in the catalog — the three real costs, the admission test, the stop list, the gap analysis that applied it once, and the absorption flow that replaces an adapter with a package of our own.
+description: What a third-party package must earn to stay in the catalog — the three real costs, the admission gate, the stop list, the register and score that track every entry, and the absorption flow that replaces a package with one of our own.
 ---
 
 # Dependency Admission
@@ -23,33 +23,42 @@ Bytes, imports and call sites are the evidence; those three are the charge. A pa
 
 ## The admission test
 
-The same gate decides a package we are considering adding and a package already in the catalog. It is a chain of refusals — a package is absorbed only when it survives every one of them, which is rare by design.
+The same gate decides a package we are considering adding and one already in the catalog. Maintenance is an agent's compute rather than a person's time, so a small utility costs almost nothing to own, and owning it pays: it is rewritten to our conventions, built as ESM by our own tsdown, carries no CommonJS interop, and leaves every upstream issue fixed with a regression test naming it rather than inherited. What a dependency still buys is a size we would not write, a feed of fixes or data we would not otherwise see, and the tooling the rest of the pipeline stands on.
 
 ```mermaid
 flowchart TD
-  candidate["Package under review"]
-  spec{"Tracks an external spec<br/>we do not control?"}
-  security{"A bug in it is a<br/>security or data-loss hole?"}
-  a11y{"Accessibility or input<br/>handling is the product?"}
-  size{"Its surface is larger than<br/>the code that calls it?"}
-  own{"Do we want an opinion<br/>about how it behaves?"}
-  keep["Keep — bump it, never rewrite it"]
-  absorb["Absorb — our code, our conventions"]
-  thin["Thin it — keep the engine<br/>drop the adapter"]
-  candidate --> spec
-  spec -->|yes| keep
-  spec -->|no| security
-  security -->|yes| keep
-  security -->|no| a11y
-  a11y -->|yes| keep
-  a11y -->|no| size
-  size -->|yes| keep
-  size -->|no| own
-  own -->|no| absorb
-  own -->|yes| thin
+  candidate["Catalog entry"]
+  used{"Anything uses it: an import,<br/>a tool, a runtime load?"}
+  platform{"The platform does it:<br/>node, the browser, the language?"}
+  installed{"Something installed does it:<br/>vp, pnpm, the framework?"}
+  heavy{"Engine, SDK, framework<br/>or tooling?"}
+  feed{"Its value is a feed:<br/>security fixes or tracked data?"}
+  watch{"An advisory or source watch<br/>can start an agent session?"}
+  adapter{"Only connects two<br/>things we keep?"}
+  remove["Remove"]
+  usePlatform["Replace — platform"]
+  useInstalled["Replace — installed"]
+  keep["Keep"]
+  absorb["Absorb into @esposter/shared<br/>or the lowest shared package"]
+  thin["Thin — keep both engines,<br/>own the connection"]
+  candidate --> used
+  used -->|no| remove
+  used -->|yes| platform
+  platform -->|yes| usePlatform
+  platform -->|no| installed
+  installed -->|yes| useInstalled
+  installed -->|no| heavy
+  heavy -->|yes| keep
+  heavy -->|no| feed
+  feed -->|yes| watch
+  watch -->|no| keep
+  watch -->|yes| adapter
+  feed -->|no| adapter
+  adapter -->|yes| thin
+  adapter -->|no| absorb
 ```
 
-The last branch is what carries the initiative. A package we have no opinion about is absorbed because it is small and we would rather own the twenty lines than the version range. A package we _do_ have an opinion about is not deleted — its engine is kept and the layer that decided the behaviour is replaced by ours. Those are different jobs with different risks, and conflating them is how a dependency cut turns into a rewrite.
+The order is the point: the platform and what is already installed come before any code of ours, and the only packages the gate keeps by category are the ones whose size or churn would make owning them a standing cost — engines, SDKs, the framework and the tooling, which is delegated rather than rebuilt. Everything else is a utility, and a utility is absorbed unless its value is a feed nobody would send us. A package we want an opinion about is not deleted either: its engine stays and the connection is ours, which is the thin branch below.
 
 ### Adapters
 
@@ -73,52 +82,25 @@ The fourth is [nuxt-security-module](/docs/nuxt-security-module), the first secu
 
 ## The stop list
 
-Four kinds of package are never absorbed, whatever their size or call-site count. These exist so the initiative cannot talk itself into the expensive mistake later:
+These stay packages whatever their size or call-site count, so the initiative cannot talk itself into the expensive mistake later:
 
-- **Spec-tracking.** Anything whose correctness is defined by a document that changes without us — PDF, OOXML, Unicode, XML, SQL dialects, the cloud REST surfaces. Absorbing one converts a version bump into a standing obligation.
-- **Security-shaped.** Anything where a bug is a hole rather than a glitch — HTML sanitisation, auth, push encryption, rate limiting, the cloud SDKs. A hand-rolled version is not smaller, it is unaudited. The exception: a security-shaped package is absorbed only when the absorption carries the full upstream audit, a regression test for every in-scope defect, and a security review of the result. The first is [nuxt-security-module](/docs/nuxt-security-module), which replaces `nuxt-security`.
+- **Engines.** Anything implementing a large algorithm as its product — the game, 3D, diagram, page-builder, survey and editor runtimes. The plugins around an engine are a separate question from the engine.
+- **SDKs and the framework.** The cloud SDKs, the framework and its modules: their surface follows a service or a release train that changes without us.
+- **Tooling.** The build, lint, test and type tooling the pipeline is built on, delegated to the tool rather than rebuilt (the `dependency-updates` skill owns its bumps).
 - **Accessibility-shaped.** Anything whose real surface is focus management, ARIA and keyboard semantics — the component framework, the rich text and code editors. Our own version reliably ships worse here, because the part we would reimplement is the part we would not think to test.
-- **Engines.** Anything implementing a large algorithm as its product — the game, 3D, diagram, page-builder and survey runtimes. The plugins around an engine are a separate question from the engine.
+- **A feed with no watch.** A security-shaped package (HTML sanitisation, auth, push encryption, rate limiting) is valuable for the bypasses researchers report to it, and a data-tracking one (media types, top-level domains, user agents, emoji) for the registry it follows. Either is absorbed only with that feed replaced: a security-shaped absorption carries the full upstream audit, a regression test for every in-scope defect and advisory, a security review, and a watch on the upstream's GitHub advisories that starts an agent session to port each new fix; a data-tracking one becomes a generator over the registry's own source, rerun when the source changes. [nuxt-security-module](/docs/nuxt-security-module), which replaces `nuxt-security`, is the first security-shaped absorption.
+
+## The register and the score
+
+Every catalog entry's verdict is a row in `.agents/ledgers/dependencies.md`, with its reason. The catalog derives the rows, so a new dependency opens there unjudged and nothing goes untracked. `pnpm ai:dependencies:score` scores every entry out of 100 for how sensible absorbing it is — its lines of code, its releases over the last two years, whether it is CommonJS, and its own dependency count — and lists where the score disagrees with the ledger's verdict. The score ranks; the verdict decides, because only the gate above tells an engine from a utility.
 
 ## Gap analysis
 
-Applying the gate across the catalog. Only entries with a verdict worth recording appear — everything absent from these tables passed the gate as an ordinary keep, and `pnpm-workspace.yaml` is the list.
+The ledger is the gap analysis, one verdict per entry. What it cannot hold is a finding about a cluster, and two clusters are recorded here.
 
 A `@types/x` entry is read against the package it types rather than against a call site of its own: one whose runtime package now ships its own declarations is residue, and one whose major trails the package it types is describing an API we no longer install.
 
-### Thin — keep the engine, drop the adapter
-
-The wrapper here is a component file we could write, and its cost is the version lock rather than the styling. Ordered by what the thinning buys.
-
-| Cluster              | Finding                                                                                                                                                                                                                                                         |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3D visual            | A declarative renderer, its helper library and its Nuxt module serve one decorative component on one page, on top of the 3D engine already shipped for the globe                                                                                                |
-| Charts               | The chart wrapper is a thin component over the chart engine, and our own component already sits in front of it                                                                                                                                                  |
-| Page-builder plugins | Around a dozen single-purpose plugins around the page builder, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter — are engines; the small ones register a block and a trait |
-
-### Keep — the ones that look absorbable and are not
-
-Recording these matters as much as the backlog, because each is a candidate someone will re-propose:
-
-- **The full PDF viewer**, beside the thumbnail embed and the renderer both are built on. Three packages for one component reads like the clearest duplication in the catalog, and it is the one entry where the reading is backwards: what the viewer sells is virtual scrolling, in-document search, a table of contents, printing, forms and ARIA, which the stop list refuses at two separate gates. The `overrides` entry holding it above the renderer major it declares is the cheaper side of that trade, not a reason to take the expensive one (see [PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation), rejected).
-- **The deep-equality helper**, used across many components. It is a few dozen lines that already handle the cases a hand-rolled version forgets, and rewriting it buys nothing but the chance to get `NaN` wrong.
-- **The default-merge helper**, used by every chart resolver. The framework already depends on it, so keeping it costs nothing and replacing it is pure risk.
-- **The worker-backed timers**, behind the recording indicator and the interval composable. Their whole value is surviving background-tab throttling, and the failure mode of a naive replacement is silent drift that no test notices.
-- **The file-picker ponyfill**, behind import, export and attachment selection. Its value is the fallback path for browsers without the File System Access API, which is exactly the part a replacement would skip.
-- **The spreadsheet reader and writer.** Two packages for one feature reads like duplication, but the format is a specification and this is the stop list's first rule.
-- **The deep omit**, behind the clicker's save trigger. What it produces is compared against the previous snapshot to decide whether to save, so a replacement that treats a class instance or a nested array even slightly differently either saves on every tick or stops saving, and neither announces itself.
-- **The indent-stripping template tag**, behind a request body, the query logger and the virtual runner's command help. The tag is a few lines; the part that is not is escape handling, and getting it wrong corrupts a payload rather than a message.
-- **The reactive-streams library**, imported by one component for one operator and one type. It is the grid engine's own dependency and the observables that component filters are the engine's, so the import costs nothing installed; replacing `filter` with a guard in each subscriber saves no line and leaves the subscription type to be rebuilt from the engine's return types.
-- **The typed event emitter**, behind the game's app-wide event bus. The game engine ships the same emitter, but untyped; importing it directly is what types every event against the bus's map, and it is already installed as the engine's own dependency.
-- **The upstream XML converter's declarations**, in our port of it. The port's public option types are the upstream package's own, inlined into its `dist`; owning them is dozens of interface lines written to replace four manifest lines, and the upstream shapes are the parity target anyway.
-- **The code viewer's component**, over the code editor it wraps. The thin version is an editor view mounted by hand plus a compartment reconfigured when the language loads or the theme flips — more lines than the two manifest entries it deletes, for a component that renders one read-only preview.
-- **The progress aggregate**, behind block upload. Counting settled blocks ourselves is small, but the counter needs a per-promise continuation and our conventions route those through `Result`, which makes this a rewrite of the upload path rather than a swap. It goes with whatever next touches that path.
-
-## What the analysis left open
-
-The two thinnings the gate did not settle are roadmap items, each on the area whose component carries the dependency: the 3D visual on the about page ([users roadmap](/docs/user/roadmap)) and the page-builder plugin belt ([resource roadmap](/docs/resource/roadmap)). The media viewer was the first item off that list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
-
-The chart wrapper is deliberately not an item. It is a cheap thinning that buys little, which makes it something to fold into whichever change next touches that component rather than a task of its own. The code viewer is not one either: its thinning costs more lines than it deletes, which puts it on the keep list above.
+The page-builder plugin belt is the one thinning left open: around a dozen single-purpose plugins, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter, the MJML and PostCSS integrations — are engines; the small ones register a block and a trait, and are absorbed into the page builder's own tree ([resource roadmap](/docs/resource/roadmap)). The full PDF viewer stays beside the thumbnail embed and the renderer both are built on, for the reasons in [PDF viewer consolidation](/docs/architecture/rejected/pdf-viewer-consolidation).
 
 ## Executing an absorption
 
