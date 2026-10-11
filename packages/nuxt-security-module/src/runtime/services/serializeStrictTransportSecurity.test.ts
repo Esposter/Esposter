@@ -5,7 +5,7 @@ import { serializeStrictTransportSecurity } from "#src/runtime/services/serializ
 describe(serializeStrictTransportSecurity, () => {
   const MAX_AGE = 63072000;
 
-  test("#647 an options object serialises as one valid header value", () => {
+  test("an options object serialises as one valid header value", () => {
     expect.hasAssertions();
 
     expect(serializeStrictTransportSecurity({ includeSubdomains: true, maxAge: MAX_AGE, preload: false })).toBe(

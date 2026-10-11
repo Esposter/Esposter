@@ -6,7 +6,7 @@ describe(generateHash, () => {
   const CONTENT = "abc";
   const HASH_ALGORITHM = "SHA-384";
 
-  test("#395 a Buffer of a file's bytes hashes as the same content does as a string", async () => {
+  test("a Buffer of a file's bytes hashes as the same content does as a string", async () => {
     expect.hasAssertions();
 
     await expect(generateHash(Buffer.from(CONTENT), HASH_ALGORITHM)).resolves.toBe(

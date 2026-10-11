@@ -6,7 +6,7 @@ import { serializeSecurityHeaders } from "#src/runtime/services/serializeSecurit
 describe(serializeSecurityHeaders, () => {
   const DEFAULT_HEADERS = getDefaultSecurityHeaders(false, false);
 
-  test("#587 a header set to false is not sent at all", () => {
+  test("a header set to false is not sent at all", () => {
     expect.hasAssertions();
 
     expect(serializeSecurityHeaders({ ...DEFAULT_HEADERS, xFrameOptions: false })).not.toHaveProperty(

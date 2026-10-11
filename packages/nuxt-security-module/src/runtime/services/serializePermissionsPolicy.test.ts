@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { serializePermissionsPolicy } from "#src/runtime/services/serializePermissionsPolicy";
 
 describe(serializePermissionsPolicy, () => {
-  test("#194 a feature with several origins is written in parentheses", () => {
+  test("a feature with several origins is written in parentheses", () => {
     expect.hasAssertions();
 
     expect(serializePermissionsPolicy({ geolocation: ["self", "https://a.example"] })).toBe(
