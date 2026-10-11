@@ -61,6 +61,8 @@ Each one is a dialog that takes focus as it opens, so the keyboard reaches it wi
 
 A talk is none of these: `MenuScreen` draws nothing for it, and the world screen mounts the talk's host over the world while the talk is open ([dialogue](/docs/genshin/dialogue)).
 
+- **The world runs on behind a talk, as a best estimate.** The clock, the sky and the residents go on behind the speaker until a recording shows the game holding them still.
+
 ## Key files
 
 | File                                                                     | Its role                                                                                              |

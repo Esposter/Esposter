@@ -10,6 +10,7 @@ Kokomi's kit is one module, `createKokomiKit`, on avatar 10000054: three strikes
 ## Decisions
 
 - **Kokomi's Ceremonial Garment is a stance that the burst starts as it lands.** gcsim's garment changes her normal attacks, charged attack and Bake-Kurage for ten seconds, which is the job a stance does: its actions replace the kit's while it lasts. So the Max HP bonuses and the heals sit on the garment's own actions, and the kit's base actions carry neither.
+- **Kokomi's plunges land at half a second, on the reaches the other kits use.** gcsim gives her plunges no timing.
 
 ## Key files
 

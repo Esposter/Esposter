@@ -7,6 +7,10 @@ description: Kirara's kit as built: four strikes, a charged attack, Tail-Flickin
 
 Kirara's kit is one module, `createKiraraKit`, on avatar 10000061: four strikes, a charged attack of three hits, a collision and two plunges, Tail-Flicking Flying Kick with its shield and Dendro self-infusion, its short hold and its holds of one to ten seconds with Urgent Neko Parcel's cat ticks and Flipclaw Strike's kick, and Secret Art: Surprise Dispatch's box with six Cat Grass Cardamoms, two detonating at 180 frames and four at expiry. Her multipliers are read from proud skill groups 6131, 6132 and 6139; the press's cooldown, the holds' cooldowns, the longest hold, the charged attack's stamina, and the burst's mines come from the same groups. Her passives and constellations sit outside the kit, and the short hold's 8.2-second cooldown and the mines' six count are gcsim's own values. The poise, the plunges' seconds and reaches, and the short hold's minimum is provisional.
 
+## Decisions
+
+- **Kirara's strikes, charged attack, skill and burst are priced at 0 poise.** Provisional: `kiraraKit.ts` sets each at 0, gcsim giving none; her plunges reuse the other kits' stand-ins.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                          |

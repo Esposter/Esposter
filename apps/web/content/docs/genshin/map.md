@@ -36,6 +36,7 @@ flowchart TD
 - **A landmark's name is its area's.** Each statue lights one area, so its area's catalogue name is the name a jump goes by, with no name of its own written anywhere.
 - **The pose lands in front, facing back.** `computeJumpPose` stands the arrival a fixed distance in front of the landmark, along the way it faces, at a yaw that looks back at it, so the view arrives on what was jumped to, clear of a statue's plinth. The body stands on the ground's height there, read when the jump lands.
 - **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a veil of the loading screen's pale grey over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](/docs/genshin/follow-camera) level behind it, then fades back in.
+- **A near teleport within one region fades through the loading screen as a cross-region one does.** The cross-region clip `captures/yt-UVCdkuNpmf4-world-teleport.mp4` shows the fade through the pale-grey screen; a near teleport's fade is not yet read off a clip.
 
 ## Parity
 

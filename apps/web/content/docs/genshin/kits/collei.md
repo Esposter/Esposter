@@ -13,6 +13,7 @@ Not yet built: Sprout (Ascension 1) and the Cuilein-Anbar Zone's extension (Asce
 
 - **Trump-Card Kitty's leap runs 378 frames from its explosion, as gcsim gives it.** The table's duration reads 6 seconds, and gcsim's 6.3 is shipped until a recording settles it. The field is the leap's circle of radius 4 round the spot the kitty was cast at, and its ticks land from there, at 68 frames and every 30 after it.
 - **The leap's ticks are priced by the kitty's combatant as it stood at the cast.** gcsim snapshots the explosion's attack for each tick, so a tick reads the same stats as the cast.
+- **Collei's arrows, Floral Brush and Trump-Card Kitty deal 0 poise.** gcsim gives them no poise, so `colleiKit.ts` gives each 0 poise damage.
 
 ## Key files
 

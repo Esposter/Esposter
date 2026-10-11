@@ -7,6 +7,12 @@ description: Yun Jin's kit as built, with Opening Flourish's tap and its two cha
 
 Yun Jin's kit is one module, `createYunjinKit`, on avatar 10000064: five strikes, a charged attack, a collision and two plunges, and Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, and Cliffbreaker's Banner's initial hit. Her multipliers are read from proud skill groups 6431, 6432 and 6439; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. The tap and both charges scale with her DEF, which the kit prices as their flat base damage, and each shield lasts until its hit, as gcsim expires it. Cliffbreaker's Banner's DMG Increase on the party's normal attacks is not built, as it scales with the striker's DEF while the banner stands. Her passives and constellations are not built. Her poise and the charge levels' thresholds are provisional.
 
+## Decisions
+
+- **Yun Jin's strikes, charged attack, plunges and Opening Flourish's hits deal 0 poise.** Provisional, as gcsim gives none, so `yunjinKit.ts` sets each at 0; her plunges reuse the other kits' stand-ins.
+- **Opening Flourish's tap and Yun Jin's Geo burst give 1U of Geo gauge each.** Provisional, as gcsim gives no gauge, so `yunjinKit.ts` reads 1U as the other Cryo and Geo hits do.
+- **Opening Flourish's charge levels start at half a second and a second.** Provisional, as gcsim takes the levels from the input alone, so `yunjinKit.ts` uses the thresholds Bennett's Charge Levels do.
+
 ## Key files
 
 | File                                                              | Role                                                                                                                                                                               |

@@ -13,7 +13,8 @@ Not yet built: Continuous Healing and Energy Regeneration, which the burst's own
 
 - **The charged attack is provisional.** gcsim has no charged attack for Dori, so the spin and the final hit take the table's multipliers, its stamina per second and its maximum duration, and the spin lands at the start. The timings are a best estimate until a recording of the attack settles them.
 - **The Connector ticks run to 772 frames, past the table's 12 seconds.** gcsim runs its 32 ticks on their own schedule, with no duration check, so the field lasts until the last of them, as gcsim has it.
-- **The After-Sales Service Round lands from the skill's spot.** Its two hits are the skill's own, at 72 and 85 frames, past its 44-frame animation, where gcsim queues them off the first hit's landing, which is the same moment as the skill's 26-frame hitmark.
+- **The After-Sales Service Round lands from the skill's spot.** Its two hits are a summon cast with the skill, at 72 and 85 frames, where gcsim queues them off the first hit's landing, which is the same moment as the skill's 26-frame hitmark.
+- **Dori's Troubleshooter Shot and Connector deal 0 poise, and her plunge collision takes Bennett's 25.** gcsim gives the first two no poise and no plunge file for the collision, so `doriKit.ts` gives the first two 0 and borrows Bennett's 25 for the collision.
 
 ## Key files
 
