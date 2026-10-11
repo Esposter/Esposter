@@ -1,11 +1,9 @@
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
-import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 
 // The hits of an action that ran its course whose hitmarks fall past the seconds it ran to, queued on the world's clock as
 // Gcsim queues each attack at its hitmark whatever its character does next: a summon cast at the body and running on from
@@ -14,7 +12,6 @@ import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 export const queueKitHits = (
   action: KitAction,
   actionSeconds: number,
-  kit: Kit,
   { activeCombatant, body, kitEffectState }: KitContext,
 ): void => {
   const queuedHits = action.hits.filter(({ hitmarkSeconds }) => hitmarkSeconds > actionSeconds);
@@ -27,7 +24,7 @@ export const queueKitHits = (
       queuedHits,
       lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS,
     ),
-    attackTag: getKitAttackTag(kit, lastHit, kitEffectState.effects),
+    attackTag: lastHit.attackTag,
     elapsedSeconds: actionSeconds,
   });
 };

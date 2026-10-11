@@ -207,9 +207,11 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     targetingArea: SKILL_TARGETING_AREA,
   };
 
-  // Denial of Darkness is the window's normal attack, a stance's one string of three hits, so it is the stance's normal attacks
+  // Denial of Darkness is the window's normal attack, a stance's one string of three hits, so it is the stance's normal
+  // Attacks, though its hits are Elemental Art DMG, gcsim's AttackTagElementalArt in durin/skill.go
   const blackRecast: KitAction = {
     hits: BLACK_RECAST_HITMARK_FRAMES.map((hitmarkFrames, index) => ({
+      attackTag: AttackTag.ElementalSkill,
       element: Element.Pyro,
       gauge: 1,
       hitArea: BLACK_RECAST_HIT_AREA,
@@ -248,14 +250,6 @@ export const createDurinKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           normalAttacks: [blackRecast],
         },
         SKILL_WINDOW_SECONDS,
-        // Denial of Darkness is Elemental Art DMG, gcsim's AttackTagElementalArt in durin/skill.go, so its group is the
-        // Skill's
-        {
-          chargedAttack: AttackTag.ChargedAttack,
-          elementalBurst: AttackTag.ElementalBurst,
-          elementalSkill: AttackTag.ElementalSkill,
-          normalAttacks: AttackTag.ElementalSkill,
-        },
       ),
     seconds: SKILL_PRESS_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

@@ -159,7 +159,8 @@ export const createKinichKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: SKILL_TARGETING_AREA,
     },
     // Not built: the Nightsoul Blessing the press enters, with its Scalespiker Cannon and Loop Shots and its Nightsoul
-    // Points. The blessing is a stance, which waits on the stance's attackTags hook, so the press deals nothing until then
+    // Points. The blessing is a stance that runs on those points, which wait on the Nightsoul hook, so the press deals
+    // Nothing until then
     elementalSkill: { hits: [], seconds: SKILL_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     highPlunge: createPlunge(PLUNGE_HIT_AREAS.high, HIGH_PLUNGE_POISE_DAMAGE, 7),
     lowPlunge: createPlunge(PLUNGE_HIT_AREAS.low, LOW_PLUNGE_POISE_DAMAGE, 6),

@@ -248,12 +248,14 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     talentMultiplier: skillMultiplier(0),
   };
   // Musou Isshin's strikes and charged attack, each multiplier raised by the Resolve stacks the burst spent and each DMG
-  // Bonus the Eye's, if she held it as she cast
+  // Bonus the Eye's, if she held it as she cast. Each is Elemental Burst DMG, gcsim's
+  // AttackTagElementalBurst in raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
   const createMusouIsshinActions = (
     stacks: number,
     damageBonus: number,
   ): Pick<KitStanceActions, "chargedAttack" | "chargedAttackStamina" | "normalAttacks"> => {
     const createHit = (hitArea: AttackArea, hitmarkFrames: number, index: number): KitHit => ({
+      attackTag: AttackTag.ElementalBurst,
       damageBonus,
       element: Element.Electro,
       gauge: 1,
@@ -344,14 +346,6 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             elementalSkill: kit.elementalSkill,
           },
           BURST_HITMARK_FRAMES / 60 + musouIsshinSeconds,
-          // The Musou Isshin strikes and charged attack are Elemental Burst DMG, gcsim's AttackTagElementalBurst in
-          // In raiden/attack.go's swordAttack and raiden/charge.go's swordCharge
-          {
-            chargedAttack: AttackTag.ElementalBurst,
-            elementalBurst: AttackTag.ElementalBurst,
-            elementalSkill: AttackTag.ElementalSkill,
-            normalAttacks: AttackTag.ElementalBurst,
-          },
         );
       },
       seconds: BURST_FRAMES / 60,

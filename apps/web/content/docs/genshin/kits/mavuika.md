@@ -9,11 +9,11 @@ Mavuika's kit is one module, `createMavuikaKit`, avatar 10000106: her four strik
 
 ## Not yet built
 
-Without Nightsoul state in the framework, her Flamestrider Blessing, which needs a stance's required attack tags and its points, waits on the Nightsoul hook, and so does the Fighting Spirit that the party's Nightsoul points feed.
+Without Nightsoul state in the framework, her Flamestrider Blessing, a stance that runs on its points, waits on the Nightsoul hook, and so does the Fighting Spirit that the party's Nightsoul points feed.
 
 - **The skill's Flamestrider waits on the Nightsoul hook.** The press enters the Blessing and its Ring of Searing Radiance, and while it lasts her strikes, charged attack, sprint and plunges are the Flamestrider's, not the ones built here. The press has no hit yet and spends its 15-second cooldown, so it is a placeholder until the hook lands, as the Natlan kits' skills before it are.
 - **Sunfell Slice waits on Fighting Spirit.** The burst is paid in 100 Fighting Spirit, not energy, and its ATK share grows with the Fighting Spirit it spends. Fighting Spirit is fed by the party's Nightsoul points as they are consumed. Until the hook lands, the burst's energy cost is unreachable, so it cannot be cast and has no hit.
-- **The Flamestrider's strikes, charged attack and plunges wait on the stance hook.** gcsim's bike strikes, biked charged attack and bike plunges replace hers inside the blessing, and their stance needs the attack tags of its action groups, which the framework does not hold yet.
+- **The Flamestrider's strikes, charged attack and plunges wait on the Nightsoul hook.** gcsim's bike strikes, biked charged attack and bike plunges replace hers inside the blessing, the stance the Nightsoul hook waits on, and a stance holds no plunges to play in place of the kit's.
 - **Ascension 1 and 4 and Constellations 1, 2 and 4 wait on the Nightsoul hook.** Ascension 1 gives 30% ATK for ten seconds on each Nightsoul burst, Constellation 1 changes the Fighting Spirit each point gives, and the others read the blessing's Flamestrider or its burst, so none is built.
 
 ## Decisions

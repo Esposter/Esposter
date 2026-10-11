@@ -18,7 +18,6 @@ import { infuseKitStrike } from "#src/services/kit/effects/infuseKitStrike";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
-import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
@@ -92,11 +91,9 @@ export const stepActiveKit = (
     landedHits,
     context,
   );
-  // The ores are struck by the hits as the kit gives them, and each hit's kind of attack is read, before an infusion
-  // Copies them
+  // The ores are struck by the hits as the kit gives them, before an infusion copies them
   const stepHits = landedHits.slice(landedStart);
   const landedOreHits = stepHits.length > 0 ? readOreHits(combatant, stepHits) : [];
-  const attackTags = landedHits.map((hit) => getKitAttackTag(kit, hit, kitEffectState.effects));
   if (infusion !== undefined) infuseKitHits(kit, infusion, landedHits, landedStart);
   // A started action turns the body to the enemy it targets, and the hits that follow are drawn from the turned body. An
   // Aimed shot instead turns it to the camera's aim while the aim is held, as the bow's aim binding is
@@ -135,7 +132,7 @@ export const stepActiveKit = (
   // And the step's own hits from the turned body and the character on the field
   const strikes: KitStrike[] = [
     ...summonStrikes.map((strike) => infuseKitStrike(strike, kitEffectState.effects)),
-    ...landedHits.map((hit, index): KitStrike => ({ attackTag: attackTags[index], body: kitBody, combatant, hit })),
+    ...landedHits.map((hit): KitStrike => ({ attackTag: hit.attackTag, body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
   gainKitAttackEnergy(kitState, strikeKitEnemies(strikes, context), party, random);
