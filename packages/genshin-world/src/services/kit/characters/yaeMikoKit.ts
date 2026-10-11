@@ -133,7 +133,7 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
 
   const elementalSkill: KitAction = {
     hits: [],
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const standingTotems = kitEffectState.effects.filter(
         (effect): effect is KitSummon =>
           checkIsStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,
@@ -163,7 +163,7 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       },
     ],
     // Destroys every totem standing, each one a Tenko Thunderbolt that strikes from the burst's own clock
-    onStart: ({ body, combatant, kitEffectState }) => {
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
       const standingTotems = kitEffectState.effects.filter(
         (effect): effect is KitSummon =>
           checkIsStandingTotem(effect, combatant.characterId) && effect.secondsRemaining > 0,

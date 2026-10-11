@@ -5,10 +5,10 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -294,7 +294,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // Lands, through a field with no edge that ticks once then
   const castSwordRain = (
     raincutter: KitSummon,
-    { body: { facing, height, position }, kitEffectState }: KitStepContext,
+    { body: { facing, height, position }, kitEffectState }: KitContext,
   ): void => {
     const waves = kitEffectState.effects.filter(checkIsSwordRainWave);
     if (waves.some(({ elapsedSeconds }) => elapsedSeconds < SWORD_RAIN_INTERVAL_SECONDS)) return;
@@ -354,7 +354,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Lengthened by Rainbow Upon the Azure Sky from two constellations
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const seconds =
           raincutterSeconds +
           (combatant.constellationCount >= RAINBOW_UPON_THE_AZURE_SKY_CONSTELLATION
@@ -374,7 +374,7 @@ export const createXingqiuKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     // Starts, from four constellations while his Raincutter stands. The skill stands the Rain Swords for the group's seconds
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const isEvilsoothed =
           combatant.constellationCount >= EVILSOOTHER_CONSTELLATION &&
           kitEffectState.effects.some((effect) => checkIsRaincutter(effect, combatant.characterId));

@@ -5,7 +5,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLaumaKit, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -80,7 +80,7 @@ describe(createLaumaKit, () => {
     expect.hasAssertions();
 
     const hold = takeOne(LAUMA_KIT.elementalSkillHolds ?? [], 0);
-    const context = createKitStepContext(createCombatant(0));
+    const context = createKitTestContext(createCombatant(0));
     const isActiveWithoutDew = hold.variant?.checkIsActive(context);
     context.party.verdantDew.count = 1;
 
@@ -103,7 +103,7 @@ describe(createLaumaKit, () => {
     expect.hasAssertions();
 
     const holdAction = takeOne(LAUMA_KIT.elementalSkillHolds ?? [], 0).variant?.action;
-    const context = createKitStepContext(createCombatant(0));
+    const context = createKitTestContext(createCombatant(0));
     context.party.verdantDew.count = 2;
     holdAction?.onStart?.(context);
     const lunarHits = context.kitEffectState.effects.flatMap((effect) =>

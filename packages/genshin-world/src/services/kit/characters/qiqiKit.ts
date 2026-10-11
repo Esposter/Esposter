@@ -7,7 +7,7 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitFieldTick } from "#src/models/kit/KitFieldTick";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitPartyHeal } from "#src/models/kit/KitPartyHeal";
 
@@ -251,7 +251,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   const talismanSeconds = getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 3);
   // Continuous regeneration snapshots Qiqi's ATK on cast, as the wiki's note gives it, and heals the active character
   const createRegenerationTick =
-    (combatant: Combatant): ((tick: KitFieldTick) => void) =>
+    (combatant: Combatant): KitField["onTick"] =>
     ({ activeCombatant, party }) => {
       const regenerationHealth =
         getTalentMultiplier(talentMultiplierMap, QIQI_SKILL_GROUP_ID, TALENT_START_LEVEL, 3) +
@@ -315,7 +315,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, QIQI_BURST_GROUP_ID, TALENT_START_LEVEL, 2),
         },
       ],
-      onStart: ({ body, combatant: { characterId, constellationCount }, kitEffectState }) => {
+      onStart: ({ activeCombatant: { characterId, constellationCount }, body, kitEffectState }) => {
         if (
           constellationCount < RITE_OF_RESURRECTION_CONSTELLATION ||
           checkHasKitStatus(kitEffectState.effects, characterId, RITE_OF_RESURRECTION_COOLDOWN_STATUS_ID)
@@ -345,7 +345,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     },
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => castHerald(body, combatant, kitEffectState),
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => castHerald(body, combatant, kitEffectState),
       seconds: HERALD_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -383,7 +383,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     // Damage an enemy holding a Talisman takes from the character on the field heals that character, a Normal or Charged
     // Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her energy from
     // One constellation
-    onKitEvent: (event, { activeCombatant, combatant, kitEffectState, party, random }) => {
+    onKitEvent: (event, { activeCombatant, kitEffectState, party, random }, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, striker } = event;
       const { ascension, characterId, constellationCount } = combatant;

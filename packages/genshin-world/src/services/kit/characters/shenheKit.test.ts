@@ -9,8 +9,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createShenheKit, SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -27,37 +27,22 @@ const createShenheCombatant = (ascension = 0): Combatant => ({
   weaponType: WeaponType.Polearm,
 });
 
+const castField = (ascension: number): KitField => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  SHENHE_KIT.elementalBurst.onStart?.(createKitTestContext(createShenheCombatant(ascension), { kitEffectState }));
+  return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
+};
+// The effects a field's tick adds, from a field cast by a combatant of the given ascension
+const tickField = (ascension: number, tickIndex: number): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  castField(ascension).onTick(createKitTestContext(createShenheCombatant(), { kitEffectState }), tickIndex);
+  return kitEffectState.effects;
+};
+
+const tickSummon = (tickIndex: number): KitSummon | undefined =>
+  tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
+
 describe(createShenheKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const castField = (ascension: number): KitField => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    const combatant = createShenheCombatant(ascension);
-    SHENHE_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([SHENHE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
-  };
-  // The effects a field's tick adds, from a field cast by a combatant of the given ascension
-  const tickField = (ascension: number, tickIndex: number): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    castField(ascension).onTick({
-      activeCombatant: createShenheCombatant(),
-      characterIdCombatantMap: new Map([[SHENHE_CHARACTER_ID, createShenheCombatant()]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([SHENHE_CHARACTER_ID]),
-      tickIndex,
-    });
-    return kitEffectState.effects;
-  };
-
-  const tickSummon = (tickIndex: number): KitSummon | undefined =>
-    tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
-
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

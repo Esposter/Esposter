@@ -4,7 +4,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKinichKit, KINICH_CHARACTER_ID } from "#src/services/kit/characters/kinichKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -45,7 +45,7 @@ describe(createKinichKit, () => {
     const rolls = [0, 0.5, 0.99, 0.49, 0.75];
     const kitEffectState: KitEffectState = { effects: [] };
     KINICH_KIT.elementalBurst.onStart?.(
-      createKitStepContext(
+      createKitTestContext(
         {
           ascension: 0,
           attributes: computeCharacterAttributes([]),

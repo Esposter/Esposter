@@ -1,14 +1,13 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createSigewinneKit, SIGEWINNE_CHARACTER_ID } from "#src/services/kit/characters/sigewinneKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -28,21 +27,14 @@ const createSigewinneCombatant = (health: number): Combatant => ({
   level: 90,
 });
 
-describe(createSigewinneKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The summons an action's start casts, as the kit's effects hold them
-  const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([SIGEWINNE_CHARACTER_ID]),
-      random: () => 0,
-    });
-    return kitEffectState.effects.filter((effect) => effect.kind === "summon");
-  };
+// The summons an action's start casts, as the kit's effects hold them
+const castSummons = (action: KitAction, combatant: Combatant): KitSummon[] => {
+  const context = createKitTestContext(combatant);
+  action.onStart?.(context);
+  return context.kitEffectState.effects.filter((effect) => effect.kind === "summon");
+};
 
+describe(createSigewinneKit, () => {
   test("reads her strikes, Fully-Charged Aimed Shot and plunges from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

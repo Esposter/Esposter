@@ -193,14 +193,14 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       // The field is cast ahead of the body and its DoT and buff are summoned there, so it stands where gcsim places it
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const centreBody = createAheadBody(body, BURST_OFFSET_METRES);
         const field: KitField = {
           centre: { x: centreBody.position.x, z: centreBody.position.z },
           characterId: combatant.characterId,
           kind: "field",
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
-          onTick: ({ activeCombatant, kitEffectState: tickEffectState, tickIndex }) => {
+          onTick: ({ activeCombatant, kitEffectState: tickEffectState }, tickIndex) => {
             if (combatant.ascension >= BURST_ASCENSION)
               addKitEffect(tickEffectState, {
                 amount: BURST_CRYO_DAMAGE_BONUS,

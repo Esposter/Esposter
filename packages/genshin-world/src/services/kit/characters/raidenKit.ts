@@ -311,7 +311,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Landing from a summon at the body, and takes the Musou Isshin stance, whose skill and burst stay the kit's own
     elementalBurst: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId, kit } = combatant;
         const stacks = countStatusStacks(kitEffectState.effects, characterId, RESOLVE_STATUS_ID);
         kitEffectState.effects = kitEffectState.effects.filter(
@@ -364,7 +364,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Whose one tick gives it
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon(body, combatant, [skillHit]));
         addKitEffect(kitEffectState, {
           centre: { x: body.position.x, z: body.position.z },
@@ -424,7 +424,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Constellation 4's ATK. A Musou Isshin attack that lands restores the team's energy, and from Constellation 6 cuts
     // The others' burst cooldowns, once a second and five times a cast, as gcsim's two callbacks keep the same interval
     // And count. A member holding the Eye who deals damage sets off its coordinated attack on the enemy struck
-    onKitEvent: (event, { characterIdCombatantMap, combatant, kitEffectState, party }) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       const { ascension, characterId, constellationCount } = combatant;
       const musouIsshin = findMusouIsshin(kitEffectState.effects, characterId);
       if (event.kind === KitEventKind.CharacterSwapped) {

@@ -8,8 +8,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createLyneyKit, LYNEY_CHARACTER_ID } from "#src/services/kit/characters/lyneyKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const LYNEY_KIT = createLyneyKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [LYNEY_CHARACTER_ID]));
@@ -23,13 +23,7 @@ describe(createLyneyKit, () => {
   // The effects a start adds to the team's, which its owner holds
   const startAction = (action: KitAction): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant: createLyneyCombatant(),
-      kitEffectState,
-      party: createParty([LYNEY_CHARACTER_ID]),
-      random: () => 0,
-    });
+    action.onStart?.(createKitTestContext(createLyneyCombatant(), { kitEffectState }));
     return kitEffectState;
   };
 
@@ -45,8 +39,6 @@ describe(createLyneyKit, () => {
   });
 
   const MAX_HEALTH = 10_000;
-
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
   test("reads the strikes', Prop Arrow's and plunges' multipliers from his proud attack group", () => {
     expect.hasAssertions();

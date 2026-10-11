@@ -17,8 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createRaidenKit, RAIDEN_CHARACTER_ID } from "#src/services/kit/characters/raidenKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -43,23 +42,19 @@ const createRaidenCombatant = (): Combatant => ({
 const readResolveStacks = ({ effects }: KitEffectState): number | undefined =>
   effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === "raiden-resolve")?.stacks;
 
-describe(createRaidenKit, () => {
-  // The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
-  const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
-    const kitEffectState: KitEffectState = {
-      effects: [
-        { characterId: RAIDEN_CHARACTER_ID, id: "raiden-resolve", kind: "status", secondsRemaining: 1, stacks },
-      ],
-    };
-    RAIDEN_KIT.elementalBurst.onStart?.(createKitStepContext(createRaidenCombatant(), { body, kitEffectState }));
-    return {
-      kitEffectState,
-      stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
-    };
+// The team's effects once the burst is cast with the Resolve stacks given, and the Musou Isshin stance it takes
+const castBurst = (stacks: number): { kitEffectState: KitEffectState; stance?: KitStance } => {
+  const kitEffectState: KitEffectState = {
+    effects: [{ characterId: RAIDEN_CHARACTER_ID, id: "raiden-resolve", kind: "status", secondsRemaining: 1, stacks }],
   };
+  RAIDEN_KIT.elementalBurst.onStart?.(createKitTestContext(createRaidenCombatant(), { kitEffectState }));
+  return {
+    kitEffectState,
+    stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
+  };
+};
 
-  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
+describe(createRaidenKit, () => {
   test("the burst spends resolve's stacks into musou no hitotachi and each musou isshin strike", () => {
     expect.hasAssertions();
     const { kitEffectState, stance } = castBurst(1);
@@ -79,7 +74,7 @@ describe(createRaidenKit, () => {
       element: Element.Electro,
     };
     const createContext = (constellationCount: number) =>
-      createKitEventContext(
+      createKitTestContext(
         { ...createRaidenCombatant(), constellationCount },
         {
           characterIdCombatantMap: new Map([[FISCHL_CHARACTER_ID, electroMember]]),
@@ -92,10 +87,12 @@ describe(createRaidenKit, () => {
       RAIDEN_KIT.onKitEvent?.(
         { characterId: RAIDEN_CHARACTER_ID, energyCost: 90, kind: KitEventKind.BurstUsed },
         eventContext,
+        eventContext.activeCombatant,
       );
       RAIDEN_KIT.onKitEvent?.(
         { characterId: FISCHL_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed },
         eventContext,
+        eventContext.activeCombatant,
       );
     }
 
@@ -105,7 +102,8 @@ describe(createRaidenKit, () => {
 
   test("from ascension 1 the party's particles give her 2 resolve stacks once every 3 seconds", () => {
     expect.hasAssertions();
-    const context = createKitEventContext({ ...createRaidenCombatant(), ascension: 1 });
+    const combatant = { ...createRaidenCombatant(), ascension: 1 };
+    const context = createKitTestContext(combatant);
     const event: KitEnergyParticleCollectedEvent = {
       characterId: RAIDEN_CHARACTER_ID,
       count: 1,
@@ -113,8 +111,8 @@ describe(createRaidenKit, () => {
       kind: KitEventKind.EnergyParticleCollected,
     };
 
-    RAIDEN_KIT.onKitEvent?.(event, context);
-    RAIDEN_KIT.onKitEvent?.(event, context);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
 
     expect(readResolveStacks(context.kitEffectState)).toBe(2);
   });
@@ -122,7 +120,8 @@ describe(createRaidenKit, () => {
   test("musou isshin's strikes restore the team's energy once a second", () => {
     expect.hasAssertions();
     const { kitEffectState, stance } = castBurst(0);
-    const context = createKitEventContext(createRaidenCombatant(), { kitEffectState });
+    const combatant = createRaidenCombatant();
+    const context = createKitTestContext(combatant, { kitEffectState });
     const event: KitDamageTakenEvent = {
       enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       hit: takeOne(takeOne(stance?.actions.normalAttacks ?? []).hits),
@@ -132,8 +131,8 @@ describe(createRaidenKit, () => {
       striker: createRaidenCombatant(),
     };
 
-    RAIDEN_KIT.onKitEvent?.(event, context);
-    RAIDEN_KIT.onKitEvent?.(event, context);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
 
     expect(getPartyMember(context.party, RAIDEN_CHARACTER_ID).energy).toBeCloseTo(1.6);
   });
@@ -143,7 +142,8 @@ describe(createRaidenKit, () => {
     const kitEffectState: KitEffectState = {
       effects: [{ characterId: RAIDEN_CHARACTER_ID, id: "raiden-eye", kind: "status", secondsRemaining: 1 }],
     };
-    const context = createKitEventContext(createRaidenCombatant(), { kitEffectState });
+    const combatant = createRaidenCombatant();
+    const context = createKitTestContext(combatant, { kitEffectState });
     const event: KitDamageTakenEvent = {
       enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       hit: takeOne(takeOne(RAIDEN_KIT.normalAttacks).hits),
@@ -153,8 +153,8 @@ describe(createRaidenKit, () => {
       striker: createRaidenCombatant(),
     };
 
-    RAIDEN_KIT.onKitEvent?.(event, context);
-    RAIDEN_KIT.onKitEvent?.(event, context);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
+    RAIDEN_KIT.onKitEvent?.(event, context, combatant);
 
     expect(kitEffectState.effects.filter((effect) => effect.kind === "summon")).toHaveLength(1);
   });

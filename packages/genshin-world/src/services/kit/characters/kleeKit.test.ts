@@ -7,6 +7,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKleeKit, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createTravelerKit } from "#src/services/kit/travelerKit";
@@ -28,22 +29,13 @@ const createKleeCombatant = (constellationCount: number): Combatant => ({
 });
 
 describe(createKleeKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
-
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const combatant = createKleeCombatant(0);
     // The multipliers of the hits the summons an action's start casts land
     const readCastMultipliers = (action: KitAction): number[] => {
       const kitEffectState: KitEffectState = { effects: [] };
-      action.onStart?.({
-        body: kitBody,
-        combatant,
-        kitEffectState,
-        party: createParty([KLEE_CHARACTER_ID]),
-        random: () => 0,
-      });
+      action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
       return kitEffectState.effects.flatMap((effect) =>
         effect.kind === "summon" ? effect.hits.map(({ talentMultiplier }) => talentMultiplier) : [],
       );
@@ -74,25 +66,15 @@ describe(createKleeKit, () => {
       expect.hasAssertions();
       const combatant = createKleeCombatant(constellationCount);
       const travelerCombatant: Combatant = { ...combatant, characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
-      const context = {
-        activeCombatant: combatant,
-        body,
-        party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
-      };
-      const offFieldContext = { ...context, activeCombatant: travelerCombatant };
       const kitEffectState: KitEffectState = { effects: [] };
-      KLEE_KIT.elementalBurst.onStart?.({
-        body: kitBody,
-        combatant,
+      const context = createKitTestContext(combatant, {
         kitEffectState,
-        party: createParty([KLEE_CHARACTER_ID]),
-        random: () => 0,
+        party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
       });
-      const onFieldStrikes = stepKitEffects(kitEffectState, 4.5, context);
-      const offFieldStrikes = [
-        ...stepKitEffects(kitEffectState, 1, offFieldContext),
-        ...stepKitEffects(kitEffectState, 1, offFieldContext),
-      ];
+      const offFieldContext = { ...context, activeCombatant: travelerCombatant };
+      KLEE_KIT.elementalBurst.onStart?.(context);
+      const onFieldStrikes = stepKitEffects(4.5, context);
+      const offFieldStrikes = [...stepKitEffects(1, offFieldContext), ...stepKitEffects(1, offFieldContext)];
 
       expect(onFieldStrikes).toHaveLength(3);
       expect(offFieldStrikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual(explosionMultipliers);
@@ -107,21 +89,13 @@ describe(createKleeKit, () => {
     "at %i constellations, Sparks 'n' Splash gives Blazing Delight's 10%% Pyro DMG Bonus for 25 seconds to %j",
     (constellationCount, characterIds) => {
       expect.hasAssertions();
-      const combatant = createKleeCombatant(constellationCount);
-      const context = {
-        activeCombatant: combatant,
-        body,
-        party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
-      };
       const kitEffectState: KitEffectState = { effects: [] };
-      KLEE_KIT.elementalBurst.onStart?.({
-        body: kitBody,
-        combatant,
+      const context = createKitTestContext(createKleeCombatant(constellationCount), {
         kitEffectState,
-        party: createParty([KLEE_CHARACTER_ID]),
-        random: () => 0,
+        party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
       });
-      stepKitEffects(kitEffectState, 1 / 60, context);
+      KLEE_KIT.elementalBurst.onStart?.(context);
+      stepKitEffects(1 / 60, context);
 
       expect(kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual(
         characterIds.map((characterId) => ({

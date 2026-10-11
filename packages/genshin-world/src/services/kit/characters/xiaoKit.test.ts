@@ -1,6 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -9,6 +9,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createXiaoKit, XIAO_CHARACTER_ID } from "#src/services/kit/characters/xiaoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -32,27 +33,18 @@ const createXiaoCombatant = (ascension: number): Combatant => ({
 });
 
 // Runs the team's effects on at the world's fixed step for the given seconds, as the world steps them
-const stepEffects = (
-  kitEffectState: KitEffectState,
-  seconds: number,
-  context: Parameters<typeof stepKitEffects>[2],
-): KitStrike[] =>
+const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
   Array.from({ length: Math.round(seconds / FIXED_STEP_SECONDS) }, () =>
-    stepKitEffects(kitEffectState, FIXED_STEP_SECONDS, context),
+    stepKitEffects(FIXED_STEP_SECONDS, context),
   ).flat();
 
 describe(createXiaoKit, () => {
-  const body = { x: 0, z: 0 };
-  const kitBody = { facing: 0, height: 0, position: body };
-
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
-    const combatant = createXiaoCombatant(0);
-    const party = createParty([XIAO_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    const dashStrikes = stepEffects(kitEffectState, 0.2, { activeCombatant: combatant, body, party });
-    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(createXiaoCombatant(0));
+    XIAO_KIT.elementalSkill.onStart?.(context);
+    const dashStrikes = stepEffects(0.2, context);
+    XIAO_KIT.elementalBurst.onStart?.(context);
     const multipliers = [
       ...XIAO_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
       takeOne(XIAO_KIT.chargedAttack.hits).talentMultiplier,
@@ -60,7 +52,7 @@ describe(createXiaoKit, () => {
       takeOne(XIAO_KIT.lowPlunge.hits).talentMultiplier,
       takeOne(XIAO_KIT.highPlunge.hits).talentMultiplier,
       ...dashStrikes.map(({ hit }) => hit.talentMultiplier),
-      getKitInfusion(kitEffectState.effects, XIAO_CHARACTER_ID)?.damageBonus,
+      getKitInfusion(context.kitEffectState.effects, XIAO_CHARACTER_ID)?.damageBonus,
     ];
     const expectedMultipliers = [
       0.2754, 0.2754, 0.5694, 0.6855, 0.3766, 0.3766, 0.7154, 0.9583, 1.2109, 0.8183, 1.6363, 2.0439, 2.528, 0.5845,
@@ -77,19 +69,16 @@ describe(createXiaoKit, () => {
     "at Ascension %i, Bane of All Evil drains 3% of Xiao's HP each second and raises his Anemo DMG Bonus to %s",
     (ascension, tamerOfDemonsBonus) => {
       expect.hasAssertions();
-      const combatant = createXiaoCombatant(ascension);
-      const party = createParty([XIAO_CHARACTER_ID]);
-      const context = { activeCombatant: combatant, body, party };
-      const kitEffectState: KitEffectState = { effects: [] };
-      XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+      const context = createKitTestContext(createXiaoCombatant(ascension));
+      XIAO_KIT.elementalBurst.onStart?.(context);
       // Tamer of Demons gives its last 5% at 12 seconds, and the burst stands until 57 frames past 15
-      stepEffects(kitEffectState, 13, context);
-      const buff = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
-      stepEffects(kitEffectState, 3, context);
+      stepEffects(13, context);
+      const buff = context.kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
+      stepEffects(3, context);
 
       expect(buff?.amount).toBe(tamerOfDemonsBonus);
-      expect(getPartyMember(party, XIAO_CHARACTER_ID).healthShare).toBeCloseTo(0.97 ** 14, 10);
-      expect(kitEffectState.effects).toStrictEqual([]);
+      expect(getPartyMember(context.party, XIAO_CHARACTER_ID).healthShare).toBeCloseTo(0.97 ** 14, 10);
+      expect(context.kitEffectState.effects).toStrictEqual([]);
     },
   );
 
@@ -98,14 +87,14 @@ describe(createXiaoKit, () => {
     const combatant = createXiaoCombatant(1);
     const party = createParty([XIAO_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const travelerCombatant: Combatant = { ...combatant, characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
-    const kitEffectState: KitEffectState = { effects: [] };
-    XIAO_KIT.elementalBurst.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    const context = createKitTestContext(combatant, { party });
+    XIAO_KIT.elementalBurst.onStart?.(context);
     // Xiao's HP drains at 1.95 and 2.95 seconds, and he leaves the field before the third
-    stepEffects(kitEffectState, 3, { activeCombatant: combatant, body, party });
-    stepEffects(kitEffectState, 13, { activeCombatant: travelerCombatant, body, party });
+    stepEffects(3, context);
+    stepEffects(13, { ...context, activeCombatant: travelerCombatant });
 
     expect(getPartyMember(party, XIAO_CHARACTER_ID).healthShare).toBeCloseTo(0.97 ** 2, 10);
-    expect(kitEffectState.effects).toStrictEqual([]);
+    expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 
   test.each([
@@ -115,14 +104,11 @@ describe(createXiaoKit, () => {
     "at Ascension %i, four dashes a second apart and one 9 seconds after the last carry %j stacks of Heaven Fall's 15%",
     (ascension, stackCounts) => {
       expect.hasAssertions();
-      const combatant = createXiaoCombatant(ascension);
-      const party = createParty([XIAO_CHARACTER_ID]);
-      const context = { activeCombatant: combatant, body, party };
-      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(createXiaoCombatant(ascension));
       const waitSeconds = [1, 1, 1, 9, 1];
       const damageBonuses = waitSeconds.flatMap((seconds) => {
-        XIAO_KIT.elementalSkill.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-        return stepKitEffects(kitEffectState, seconds, context).map(({ hit }) => hit.damageBonus);
+        XIAO_KIT.elementalSkill.onStart?.(context);
+        return stepKitEffects(seconds, context).map(({ hit }) => hit.damageBonus);
       });
 
       expect(damageBonuses).toStrictEqual(stackCounts.map((stacks) => (stacks === 0 ? undefined : 0.15 * stacks)));

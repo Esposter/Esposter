@@ -204,7 +204,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       characterId: owner.characterId,
       kind: "field",
       nextTickSeconds: LIGHTNING_FANG_HITMARK_FRAMES / 60,
-      onTick: ({ activeCombatant, kitEffectState, party, tickIndex }) => {
+      onTick: ({ activeCombatant, kitEffectState, party }, tickIndex) => {
         if (activeCombatant.characterId !== owner.characterId) {
           kitEffectState.effects = kitEffectState.effects.filter(
             (effect) => effect !== wolfWithin && !checkIsRazorBuff(effect, owner.characterId, LIGHTNING_FANG_SOURCE),
@@ -284,7 +284,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
             talentMultiplier,
           },
         ],
-        onStart: ({ body, combatant, kitEffectState }) => {
+        onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
           const isLightningFangLive = kitEffectState.effects.some((effect) =>
             checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
           );
@@ -353,7 +353,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, RAZOR_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
         },
       ],
-      onStart: ({ body: { position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
         const centre = { x: position.x, z: position.z };
         addKitEffect(kitEffectState, createElectroSigilClear(combatant, centre, LIGHTNING_FANG_SIGIL_CLEAR_FRAMES));
         addKitEffect(kitEffectState, createWolfWithin(combatant, centre));
@@ -374,7 +374,8 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           talentMultiplier: getTalentMultiplier(talentMultiplierMap, RAZOR_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
         },
       ],
-      onStart: ({ combatant, kitEffectState }) => addElectroSigil(combatant.characterId, kitEffectState),
+      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
+        addElectroSigil(combatant.characterId, kitEffectState),
       seconds: 74 / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },
@@ -394,7 +395,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
               talentMultiplier: getTalentMultiplier(talentMultiplierMap, RAZOR_SKILL_GROUP_ID, TALENT_START_LEVEL, 1),
             },
           ],
-          onStart: ({ body: { position }, combatant, kitEffectState }) =>
+          onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) =>
             addKitEffect(
               kitEffectState,
               createElectroSigilClear(combatant, { x: position.x, z: position.z }, HOLD_HITMARK_FRAMES),
@@ -406,7 +407,7 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         minimumHeldSeconds: HOLD_MINIMUM_HELD_SECONDS,
       },
     ],
-    getSkillCooldownMultiplier: ({ combatant }) =>
+    getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.ascension >= AWAKENING_ASCENSION ? AWAKENING_COOLDOWN_MULTIPLIER : 1,
     // Measured: gcsim v2.47.2 (MIT) razor/plunge.go, the low plunge at 44 frames and the high at 46, ending at 86 and
     // 87. The wiki's Steel Fang gives them 150 and 200 poise, both blunt

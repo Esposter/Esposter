@@ -1,12 +1,11 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKokomiKit, KOKOMI_CHARACTER_ID } from "#src/services/kit/characters/kokomiKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
@@ -29,10 +28,10 @@ describe(createKokomiKit, () => {
   test("nereid's ascension's garment gives Kokomi's normal attacks a share of her Max HP to their damage, for ten seconds", () => {
     expect.hasAssertions();
     const combatant = createKokomiCombatant();
-    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant);
 
-    KOKOMI_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
-    const garment = kitEffectState.effects.find((effect) => effect.kind === "stance");
+    KOKOMI_KIT.elementalBurst.onStart?.(context);
+    const garment = context.kitEffectState.effects.find((effect) => effect.kind === "stance");
     if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
     const [firstNormalAttack] = garment.actions.normalAttacks;
     const bonus = firstNormalAttack?.hits[0]?.additiveBaseDamageBonus?.(combatant);

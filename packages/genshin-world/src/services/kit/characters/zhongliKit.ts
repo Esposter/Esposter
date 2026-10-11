@@ -4,11 +4,13 @@ import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
@@ -207,7 +209,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     (effect.hits === pressSteleHits || effect.hits === holdSteleHits);
   // A Stone Stele is a summon cast 3 metres ahead of Zhongli, which lands its hits from there. A press with the most
   // Standing ends the newest of them as its own lands, as gcsim's construct handler replaces the last of a kind
-  const castPressStele = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const castPressStele = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
     const newestStele = steles.at(-1);
     if (newestStele && steles.length >= getMaxSteleCount(combatant))
@@ -237,7 +239,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // The Jade Shield: a Geo shield on the team of the group's flat health and share of Zhongli's Max HP, for its seconds,
   // And its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends the summon
   // Once the shield is spent or recast over
-  const castJadeShield = ({ body, combatant, kitEffectState }: KitStepContext): void => {
+  const castJadeShield = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): void => {
     const { characterId } = combatant;
     const shield: KitShield = {
       characterId,
@@ -272,8 +274,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   };
   // A hold casts a Stone Stele unless the most stand, and its Jade Shield at its hitmark, through a field with no edge
   // That ticks once then
-  const castHold = (context: KitStepContext): void => {
-    const { body, combatant, kitEffectState } = context;
+  const castHold = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
     if (steles.length < getMaxSteleCount(combatant))
       addKitEffect(
@@ -290,8 +291,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       characterId: combatant.characterId,
       kind: "field",
       nextTickSeconds: HOLD_HITMARK_FRAMES / 60,
-      onTick: ({ kitEffectState: tickKitEffectState }) =>
-        castJadeShield({ ...context, kitEffectState: tickKitEffectState }),
+      onTick: ({ kitEffectState: tickKitEffectState }) => castJadeShield(tickKitEffectState, body, combatant),
       radius: UNBOUNDED_FIELD_RADIUS,
       // The field lives a tenth of a second past its tick, so the step that runs it still has it
       secondsRemaining: HOLD_HITMARK_FRAMES / 60 + 0.1,
@@ -312,12 +312,11 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, ZHONGLI_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
   };
   const topazMeteor: KitHit = { ...meteor, hitArea: TOPAZ_METEOR_HIT_AREA };
-  const castPlanetBefall = (context: KitStepContext): void => {
-    const { body, combatant, kitEffectState } = context;
+  const castPlanetBefall = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { constellationCount } = combatant;
     const hit = constellationCount >= TOPAZ_UNBREAKABLE_AND_FEARLESS_CONSTELLATION ? topazMeteor : meteor;
     addKitEffect(kitEffectState, createKitSummon(createAheadBody(body, METEOR_OFFSET), combatant, [hit]));
-    if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION) castJadeShield(context);
+    if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION) castJadeShield(kitEffectState, body, combatant);
   };
   return {
     burstCooldownSeconds: getTalentMultiplier(talentMultiplierMap, ZHONGLI_BURST_GROUP_ID, TALENT_START_LEVEL, 2),

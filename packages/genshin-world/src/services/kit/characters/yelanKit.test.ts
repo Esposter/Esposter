@@ -10,9 +10,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createYelanKit, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -29,14 +28,15 @@ const createYelanCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (action: KitAction): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  action.onStart?.(createKitTestContext(createYelanCombatant(), { kitEffectState }));
+  return kitEffectState.effects;
+};
+
 describe(createYelanKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (action: KitAction): KitEffect[] => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.(createKitStepContext(createYelanCombatant(), { body: kitBody, kitEffectState }));
-    return kitEffectState.effects;
-  };
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -73,14 +73,7 @@ describe(createYelanKit, () => {
     expect.hasAssertions();
     const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");
     const kitEffectState: KitEffectState = { effects: [] };
-    field?.onTick({
-      activeCombatant: createYelanCombatant(),
-      characterIdCombatantMap: new Map([[YELAN_CHARACTER_ID, createYelanCombatant()]]),
-      enemyMap: new Map(),
-      kitEffectState,
-      party: createParty([YELAN_CHARACTER_ID]),
-      tickIndex: 0,
-    });
+    field?.onTick(createKitTestContext(createYelanCombatant(), { kitEffectState }), 0);
     const throws = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(field?.secondsRemaining).toBeCloseTo(76 / 60 + 15 + 0.1);
@@ -93,8 +86,13 @@ describe(createYelanKit, () => {
     expect.hasAssertions();
     const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
     const strike = (effects: KitEffect[]): KitEffect[] => {
+      const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects };
-      lifelineHit.onStrike?.(createKitStepContext(createYelanCombatant(), { body: kitBody, kitEffectState }));
+      lifelineHit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), {
+        body: kitBody,
+        combatant,
+        hit: lifelineHit,
+      });
       return kitEffectState.effects;
     };
     const field = castEffects(YELAN_KIT.elementalBurst).find((effect): effect is KitField => effect.kind === "field");

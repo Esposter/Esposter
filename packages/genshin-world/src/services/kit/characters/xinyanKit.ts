@@ -263,7 +263,7 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     hitmarkSeconds: SKILL_HITMARK_FRAMES / 60,
     isBlunt: true,
     // Each enemy the hit strikes counts toward the shield's level, which the hit steps up as the count reaches each level
-    onStrike: ({ body, combatant, kitEffectState }) => {
+    onStrike: ({ kitEffectState }, { body, combatant }) => {
       const hitCount = kitEffectState.effects.find(
         (effect): effect is KitStatus =>
           effect.kind === "status" && effect.characterId === combatant.characterId && effect.id === HIT_COUNT_STATUS_ID,
@@ -319,7 +319,7 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     // Constellation 2 the shield is set as the burst is cast, with the Physical hit's CRIT Rate for the moment it lands
     elementalBurst: {
       hits: [riffInitialHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= CRITICAL_RATE_CONSTELLATION)
           addKitEffect(kitEffectState, {
             amount: RIFF_CRITICAL_RATE_BONUS,
@@ -340,7 +340,7 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalSkill: {
       hits: [skillHit],
       // The press sets the level-1 shield when none stands, and resets the count its hit adds to
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (findShieldLevel(kitEffectState.effects, combatant.characterId) === 0)
           setShield(kitEffectState, combatant, body, SHIELD_LEVEL_ONE, talentMultiplierMap);
         addKitEffect(kitEffectState, {

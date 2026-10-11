@@ -12,8 +12,8 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKujouSaraKit, KUJOU_SARA_CHARACTER_ID } from "#src/services/kit/characters/kujouSaraKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -33,18 +33,18 @@ const createSaraCombatant = (ascension = 0, constellationCount = 0): Combatant =
 
 const checkIsSummon = (effect: KitEffect): effect is KitSummon => effect.kind === "summon";
 
+// The effects an action's start adds, as the kit's effects hold them
+const castEffects = (
+  action: KitAction,
+  combatant = createSaraCombatant(),
+  kitEffectState: KitEffectState = { effects: [] },
+): KitEffect[] => {
+  action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  return kitEffectState.effects;
+};
+
 describe(createKujouSaraKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const party = createParty([KUJOU_SARA_CHARACTER_ID]);
-  // The effects an action's start adds, as the kit's effects hold them
-  const castEffects = (
-    action: KitAction,
-    combatant = createSaraCombatant(),
-    kitEffectState: KitEffectState = { effects: [] },
-  ): KitEffect[] => {
-    action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-    return kitEffectState.effects;
-  };
 
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -96,13 +96,9 @@ describe(createKujouSaraKit, () => {
   test("the ATK Bonus Tengu Stormcall gives is a share of Sara's base ATK, to the character on the field", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    takeOne(SARA_KIT.elementalBurst.hits).onStrike?.({
-      body: kitBody,
-      combatant: createSaraCombatant(),
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const combatant = createSaraCombatant();
+    const hit = takeOne(SARA_KIT.elementalBurst.hits);
+    hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
     const atkBonus = kitEffectState.effects.find((effect): effect is KitBuff => effect.kind === "buff");
 
     expect(atkBonus?.amount).toBeCloseTo(0.4296 * 1000);

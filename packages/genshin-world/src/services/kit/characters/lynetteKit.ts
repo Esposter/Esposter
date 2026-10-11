@@ -191,7 +191,7 @@ export const createLynetteKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         talentMultiplier: burstMultiplier(0),
       },
     ],
-    onStart: ({ body, combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
       addKitEffect(kitEffectState, createBogglecatField(body, combatant)),
     seconds: BURST_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

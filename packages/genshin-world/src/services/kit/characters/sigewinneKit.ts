@@ -130,7 +130,7 @@ export const createSigewinneKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     // Hold's bubble tiers are not built
     elementalSkill: {
       hits: [],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         addKitEffect(kitEffectState, createKitSummon(body, combatant, bubbleHits));
       },
       seconds: SKILL_PRESS_FRAMES / 60,

@@ -15,8 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYoimiyaKit, YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { takeOne } from "@esposter/shared";
@@ -54,7 +53,7 @@ describe(createYoimiyaKit, () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    YOIMIYA_KIT.elementalSkill.onStart?.(createKitStepContext(createYoimiyaCombatant(), { kitEffectState }));
+    YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(createYoimiyaCombatant(), { kitEffectState }));
     const { normalAttacks } = getStancedKit(YOIMIYA_KIT, kitEffectState.effects, YOIMIYA_CHARACTER_ID);
 
     expect(kitEffectState.effects.map(({ kind, secondsRemaining }) => [kind, secondsRemaining])).toStrictEqual([
@@ -72,7 +71,8 @@ describe(createYoimiyaKit, () => {
     expect.hasAssertions();
     const combatant = createYoimiyaCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    YOIMIYA_KIT.elementalSkill.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    const context = createKitTestContext(combatant, { kitEffectState });
+    YOIMIYA_KIT.elementalSkill.onStart?.(context);
 
     YOIMIYA_KIT.onKitEvent?.(
       {
@@ -80,7 +80,8 @@ describe(createYoimiyaKit, () => {
         kind: KitEventKind.CharacterSwapped,
         previousCharacterId: YOIMIYA_CHARACTER_ID,
       },
-      createKitEventContext(combatant, { kitEffectState }),
+      context,
+      combatant,
     );
 
     expect(kitEffectState.effects.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([0]);
@@ -91,13 +92,17 @@ describe(createYoimiyaKit, () => {
     const combatant = createYoimiyaCombatant();
     const other: Combatant = { ...combatant, characterId: OTHER_CHARACTER_ID };
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitEventContext(combatant, { kitEffectState });
+    const context = createKitTestContext(combatant, { kitEffectState });
     const marked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const unmarked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const burstHit = takeOne(YOIMIYA_KIT.elementalBurst.hits);
-    YOIMIYA_KIT.elementalBurst.onStart?.(createKitStepContext(combatant, { kitEffectState }));
+    YOIMIYA_KIT.elementalBurst.onStart?.(context);
     for (const enemy of [marked, unmarked])
-      YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(enemy, burstHit, combatant, AttackTag.ElementalBurst), context);
+      YOIMIYA_KIT.onKitEvent?.(
+        createDamageTakenEvent(enemy, burstHit, combatant, AttackTag.ElementalBurst),
+        context,
+        combatant,
+      );
 
     expect(
       [marked, unmarked].map(({ statuses }) => statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining])),
@@ -105,8 +110,16 @@ describe(createYoimiyaKit, () => {
 
     const strike = takeOne(takeOne(YOIMIYA_KIT.normalAttacks).hits);
     for (const striker of [combatant, other, other])
-      YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(marked, strike, striker, AttackTag.NormalAttack), context);
-    YOIMIYA_KIT.onKitEvent?.(createDamageTakenEvent(unmarked, strike, other, AttackTag.NormalAttack), context);
+      YOIMIYA_KIT.onKitEvent?.(
+        createDamageTakenEvent(marked, strike, striker, AttackTag.NormalAttack),
+        context,
+        combatant,
+      );
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(unmarked, strike, other, AttackTag.NormalAttack),
+      context,
+      combatant,
+    );
 
     expect(
       kitEffectState.effects.flatMap((effect) =>

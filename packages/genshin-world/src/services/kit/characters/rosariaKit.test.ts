@@ -7,8 +7,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createRosariaKit, ROSARIA_CHARACTER_ID } from "#src/services/kit/characters/rosariaKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const ROSARIA_KIT = createRosariaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ROSARIA_CHARACTER_ID]));
@@ -26,13 +26,9 @@ const createRosariaCombatant = (constellationCount: number): Combatant => ({
 
 const getFieldSeconds = (constellationCount: number): number => {
   const kitEffectState: KitEffectState = { effects: [] };
-  ROSARIA_KIT.elementalBurst.onStart?.({
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: createRosariaCombatant(constellationCount),
-    kitEffectState,
-    party: createParty([ROSARIA_CHARACTER_ID]),
-    random: () => 0,
-  });
+  ROSARIA_KIT.elementalBurst.onStart?.(
+    createKitTestContext(createRosariaCombatant(constellationCount), { kitEffectState }),
+  );
   const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
   if (!field) throw new Error("Rites of Termination placed no field");
   return field.secondsRemaining;

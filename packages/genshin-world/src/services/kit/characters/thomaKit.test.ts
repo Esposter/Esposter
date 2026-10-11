@@ -1,6 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,7 +8,7 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createThomaKit, THOMA_CHARACTER_ID } from "#src/services/kit/characters/thomaKit";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { describe, expect, test } from "vitest";
 
@@ -26,14 +26,14 @@ const createThomaCombatant = (): Combatant => ({
 });
 
 // Starts a normal attack on the field: each summon that answers one is set off
-const startNormalAttack = (context: KitStepContext): void => {
+const startNormalAttack = (context: KitContext): void => {
   for (const effect of context.kitEffectState.effects)
     if (effect.kind === "summon") effect.onNormalAttackStart?.(context);
 };
 
 // Sets off a Fiery Collapse over the shield standing, if any, strikes with it the given times, and reads the shield
 const readShieldHealth = (standingShieldHealth: number | undefined, strikeCount: number): number[] => {
-  const context = createKitStepContext(createThomaCombatant());
+  const context = createKitTestContext(createThomaCombatant());
   if (standingShieldHealth !== undefined)
     context.kitEffectState.effects.push({
       characterId: THOMA_CHARACTER_ID,
@@ -47,8 +47,10 @@ const readShieldHealth = (standingShieldHealth: number | undefined, strikeCount:
   const fieryCollapse = context.kitEffectState.effects.find(
     (effect) => effect.kind === "summon" && effect.hits.length > 0,
   );
-  for (let index = 0; index < strikeCount; index++)
-    if (fieryCollapse?.kind === "summon") fieryCollapse.hits[0]?.onStrike?.(context);
+  const hit = fieryCollapse?.kind === "summon" ? fieryCollapse.hits[0] : undefined;
+  if (hit)
+    for (let index = 0; index < strikeCount; index++)
+      hit.onStrike?.(context, { body: context.body, combatant: context.activeCombatant, hit });
   return context.kitEffectState.effects.flatMap((effect) =>
     effect.kind === "shield" && effect.secondsRemaining > 0 ? [effect.health] : [],
   );
@@ -59,7 +61,7 @@ describe(createThomaKit, () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
 
-    THOMA_KIT.elementalSkill.onStart?.(createKitStepContext(createThomaCombatant(), { kitEffectState }));
+    THOMA_KIT.elementalSkill.onStart?.(createKitTestContext(createThomaCombatant(), { kitEffectState }));
 
     expect(kitEffectState.effects).toStrictEqual([
       {
@@ -75,7 +77,7 @@ describe(createThomaKit, () => {
 
   test("the burst sets off a Fiery Collapse from a normal attack started on the field, once a second, for its seconds", () => {
     expect.hasAssertions();
-    const context = createKitStepContext(createThomaCombatant());
+    const context = createKitTestContext(createThomaCombatant());
     THOMA_KIT.elementalBurst.onStart?.(context);
     startNormalAttack(context);
     startNormalAttack(context);

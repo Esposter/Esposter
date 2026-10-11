@@ -1,8 +1,8 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitEventContext } from "#src/models/kit/KitEventContext";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -16,11 +16,10 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createTartagliaKit, TARTAGLIA_CHARACTER_ID } from "#src/services/kit/characters/tartagliaKit";
-import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
-import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -41,23 +40,16 @@ const createTartagliaCombatant = (ascension = 0, constellationCount = 0): Combat
 });
 
 // The multipliers of the hits the summons on the team land
-const readStrikeMultipliers = ({ kitEffectState }: KitEventContext): number[] =>
+const readStrikeMultipliers = ({ kitEffectState }: KitContext): number[] =>
   kitEffectState.effects.flatMap((effect) =>
     effect.kind === "summon" ? effect.hits.map(({ talentMultiplier }) => talentMultiplier) : [],
   );
 
 describe(createTartagliaKit, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   // The team's effects once the skill's press has changed into the Melee Stance, and the kit that stance plays
   const enterMeleeStance = (combatant: Combatant): { kitEffectState: KitEffectState; stance?: KitStance } => {
     const kitEffectState: KitEffectState = { effects: [] };
-    TARTAGLIA_KIT.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([TARTAGLIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    TARTAGLIA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return {
       kitEffectState,
       stance: kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance"),
@@ -82,13 +74,9 @@ describe(createTartagliaKit, () => {
     expect.hasAssertions();
     const stanceEffects = enterMeleeStance(createTartagliaCombatant()).kitEffectState.effects;
     const rangedBurstEffectState: KitEffectState = { effects: [] };
-    TARTAGLIA_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant: createTartagliaCombatant(),
-      kitEffectState: rangedBurstEffectState,
-      party: createParty([TARTAGLIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    TARTAGLIA_KIT.elementalBurst.onStart?.(
+      createKitTestContext(createTartagliaCombatant(), { kitEffectState: rangedBurstEffectState }),
+    );
     const multipliers = [
       ...TARTAGLIA_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
       takeOne(TARTAGLIA_KIT.chargedAttack.hits).talentMultiplier,
@@ -119,13 +107,7 @@ describe(createTartagliaKit, () => {
 
     expect(stance?.secondsRemaining).toBe(30);
 
-    meleeKit.elementalSkill.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([TARTAGLIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    meleeKit.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
     expect(stance?.secondsRemaining).toBe(0);
   });
@@ -140,10 +122,10 @@ describe(createTartagliaKit, () => {
       expect.hasAssertions();
       const combatant = createTartagliaCombatant(0, count);
       const { kitEffectState, stance } = enterMeleeStance(combatant);
-      const context = createKitEventContext(combatant, { kitEffectState });
+      const context = createKitTestContext(combatant, { kitEffectState });
       if (stance) {
         stance.elapsedSeconds = heldSeconds;
-        TARTAGLIA_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context);
+        TARTAGLIA_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context, combatant);
       }
 
       expect(getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds).toBeCloseTo(cooldown);
@@ -154,15 +136,9 @@ describe(createTartagliaKit, () => {
     expect.hasAssertions();
     const combatant = createTartagliaCombatant(0, 6);
     const { kitEffectState, stance } = enterMeleeStance(combatant);
-    const context = createKitEventContext(combatant, { kitEffectState });
+    const context = createKitTestContext(combatant, { kitEffectState });
     getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds = 1;
-    meleeKit.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([TARTAGLIA_CHARACTER_ID]),
-      random: () => 0,
-    });
+    meleeKit.elementalBurst.onStart?.(context);
     TARTAGLIA_KIT.onKitEvent?.(
       {
         characterId: TRAVELER_CHARACTER_ID,
@@ -170,8 +146,9 @@ describe(createTartagliaKit, () => {
         previousCharacterId: TARTAGLIA_CHARACTER_ID,
       },
       context,
+      combatant,
     );
-    if (stance) TARTAGLIA_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context);
+    if (stance) TARTAGLIA_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context, combatant);
 
     expect(stance?.secondsRemaining).toBe(0);
     expect(getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).skillCooldownSeconds).toBe(0);
@@ -179,16 +156,17 @@ describe(createTartagliaKit, () => {
 
   test("a fully charged aimed shot gives Riptide, and on Riptide it held sets off Riptide Flash once in 0.7 seconds", () => {
     expect.hasAssertions();
-    const context = createKitEventContext(createTartagliaCombatant(1));
+    const combatant = createTartagliaCombatant(1);
+    const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const aimedShot = createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack });
-    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context);
+    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context, combatant);
 
     expect(enemy.statuses.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([18]);
     expect(readStrikeMultipliers(context)).toStrictEqual([]);
 
-    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context);
-    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context);
+    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context, combatant);
+    TARTAGLIA_KIT.onKitEvent?.(aimedShot, context, combatant);
 
     expect(readStrikeMultipliers(context)).toStrictEqual([0.124, 0.124, 0.124]);
   });
@@ -196,7 +174,7 @@ describe(createTartagliaKit, () => {
   test("a Melee Stance hit sets off Riptide Slash on Riptide once in 1.5 seconds, its CRIT hit giving Riptide from ascension 4", () => {
     expect.hasAssertions();
     const combatant = createTartagliaCombatant(4);
-    const context = createKitEventContext(combatant, { kitEffectState: enterMeleeStance(combatant).kitEffectState });
+    const context = createKitTestContext(combatant, { kitEffectState: enterMeleeStance(combatant).kitEffectState });
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const strike = (isCritical: boolean): void =>
       TARTAGLIA_KIT.onKitEvent?.(
@@ -207,6 +185,7 @@ describe(createTartagliaKit, () => {
           striker: combatant,
         }),
         context,
+        combatant,
       );
     strike(false);
 
@@ -220,12 +199,14 @@ describe(createTartagliaKit, () => {
 
   test("the Melee Stance's burst hit on Riptide clears it and sets off Riptide Blast 0.8 seconds on", () => {
     expect.hasAssertions();
-    const context = createKitEventContext(createTartagliaCombatant());
+    const combatant = createTartagliaCombatant();
+    const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context);
+    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context, combatant);
     TARTAGLIA_KIT.onKitEvent?.(
       createDamageTaken(enemy, { attackTag: AttackTag.ElementalBurst, hit: takeOne(meleeKit.elementalBurst.hits) }),
       context,
+      combatant,
     );
     const blast = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
@@ -237,9 +218,10 @@ describe(createTartagliaKit, () => {
 
   test("an enemy defeated holding Riptide bursts, giving 4 energy from two constellations, whoever defeated it", () => {
     expect.hasAssertions();
-    const context = createKitEventContext(createTartagliaCombatant(0, 2));
+    const combatant = createTartagliaCombatant(0, 2);
+    const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context);
+    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context, combatant);
     TARTAGLIA_KIT.onKitEvent?.(
       createDamageTaken(enemy, {
         hit: TARTAGLIA_KIT.plungeCollision,
@@ -247,6 +229,7 @@ describe(createTartagliaKit, () => {
         striker: { ...createTartagliaCombatant(), characterId: TRAVELER_CHARACTER_ID },
       }),
       context,
+      combatant,
     );
 
     expect(readStrikeMultipliers(context)).toStrictEqual([0.62]);
@@ -255,11 +238,13 @@ describe(createTartagliaKit, () => {
 
   test("four constellations tick Riptide every 3.9 seconds, each tick a Riptide Flash out of the Melee Stance", () => {
     expect.hasAssertions();
-    const context = createKitEventContext(createTartagliaCombatant(0, 4));
+    const combatant = createTartagliaCombatant(0, 4);
+    const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context);
+    TARTAGLIA_KIT.onKitEvent?.(createDamageTaken(enemy, { attackTag: AttackTag.ChargedAttack }), context, combatant);
     const [riptide] = enemy.statuses;
-    if (riptide) TARTAGLIA_KIT.onKitEvent?.({ enemy, kind: KitEventKind.StatusTicked, status: riptide }, context);
+    if (riptide)
+      TARTAGLIA_KIT.onKitEvent?.({ enemy, kind: KitEventKind.StatusTicked, status: riptide }, context, combatant);
     const flash = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(riptide?.tickIntervalSeconds).toBe(3.9);
@@ -269,22 +254,11 @@ describe(createTartagliaKit, () => {
   test("the ranged burst lands Flash of Havoc on the enemy turned to and gives 20 energy back 4 frames on", () => {
     expect.hasAssertions();
     const combatant = createTartagliaCombatant();
-    const context = createKitEventContext(combatant);
+    const context = createKitTestContext(combatant);
     const target = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -9 } };
-    TARTAGLIA_KIT.elementalBurst.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState: context.kitEffectState,
-      party: createParty([TARTAGLIA_CHARACTER_ID]),
-      random: () => 0,
-      target,
-    });
+    TARTAGLIA_KIT.elementalBurst.onStart?.(context, target);
     const flashOfHavoc = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-    stepKitEffects(context.kitEffectState, 4 / 60, {
-      activeCombatant: combatant,
-      body: kitBody.position,
-      party: context.party,
-    });
+    stepKitEffects(4 / 60, context);
 
     expect(flashOfHavoc?.body.position).toStrictEqual({ x: 0, z: -9 });
     expect(getPartyMember(context.party, TARTAGLIA_CHARACTER_ID).energy).toBe(20);

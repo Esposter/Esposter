@@ -182,7 +182,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     chargedAttack: {
       hits: [fullAimHit],
       isAimed: true,
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount < SPLITTING_GALES_CONSTELLATION) return;
         addKitEffect(kitEffectState, createKitSummon(body, combatant, splittingGalesHits));
       },
@@ -195,7 +195,7 @@ export const createVentiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     // Field with no edge ticks once as the Stormeye's seconds end, giving Venti his energy up to what his burst costs
     elementalBurst: {
       hits: [],
-      onStart: ({ body: { facing, height, position }, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         // Ahead of a body at its facing lies the bearing -sin and -cos of that facing, as computeFacingAngle reads it
         const stormeyePosition = {
           x: position.x - Math.sin(facing) * STORMEYE_OFFSET,

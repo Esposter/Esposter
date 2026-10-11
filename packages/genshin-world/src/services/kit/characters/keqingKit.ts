@@ -130,7 +130,7 @@ export const createKeqingKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         talentMultiplier: skillTalentMultiplier(1),
       },
     ],
-    onStart: ({ combatant, kitEffectState }) =>
+    onStart: ({ activeCombatant: combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
         element: Element.Electro,

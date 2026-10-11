@@ -1,14 +1,15 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
 import type { AttackArea } from "#src/models/kit/AttackArea";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
-import type { KitEventContext } from "#src/models/kit/KitEventContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
-import type { KitStepContext } from "#src/models/kit/KitStepContext";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -94,7 +95,7 @@ const ASCENSION_4_COOLDOWN_STATUS_ID = "ororon-a4-icd";
 
 export const ORORON_CHARACTER_ID = 10_000_105;
 
-const addConstellation2Stack = ({ combatant, kitEffectState }: KitStepContext): void => {
+const addConstellation2Stack = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
   if (combatant.constellationCount < CONSTELLATION_2) return;
   const earlier = kitEffectState.effects.find(
     (effect): effect is KitBuff =>
@@ -108,7 +109,11 @@ const addConstellation2Stack = ({ combatant, kitEffectState }: KitStepContext): 
     amount: Math.min(earlier.amount + CONSTELLATION_2_STACK, CONSTELLATION_2_MAXIMUM),
   });
 };
-const onKitEvent = (event: KitEvent, { activeCombatant, combatant, kitEffectState, party }: KitEventContext): void => {
+const onKitEvent = (
+  event: KitEvent,
+  { activeCombatant, kitEffectState, party }: KitContext,
+  combatant: Combatant,
+): void => {
   if (event.kind !== KitEventKind.DamageTaken || combatant.ascension < ASCENSION_4) return;
   const { attackTag, striker } = event;
   if (striker.characterId !== activeCombatant.characterId) return;
@@ -191,7 +196,7 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     gauge: 1,
     hitArea: SPIRIT_ORB_HIT_AREA,
     hitmarkSeconds: SPIRIT_ORB_HITMARK_FRAMES / 60,
-    onStrike: ({ combatant, kitEffectState }) => {
+    onStrike: ({ kitEffectState }, { combatant }) => {
       if (combatant.ascension < ASCENSION_4) return;
       addKitEffect(kitEffectState, {
         characterId: combatant.characterId,
@@ -227,7 +232,7 @@ export const createOroronKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     chargedAttackStamina: 0,
     elementalBurst: {
       hits: [ritualHit],
-      onStart: ({ body, combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= CONSTELLATION_2)
           addKitEffect(kitEffectState, {
             amount: CONSTELLATION_2_STACK,

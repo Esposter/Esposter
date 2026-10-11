@@ -15,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createNilouKit, NILOU_CHARACTER_ID } from "#src/services/kit/characters/nilouKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -39,13 +40,7 @@ describe(createNilouKit, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createNilouCombatant()): KitEffectState => {
     const kitEffectState: KitEffectState = { effects: [] };
-    action.onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party: createParty([NILOU_CHARACTER_ID]),
-      random: () => 0,
-    });
+    action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     return kitEffectState;
   };
 
@@ -127,19 +122,12 @@ describe(createNilouKit, () => {
   test("the third sword dance sets Lunar Prayer on the team 30 frames on, for eight seconds", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant();
-    const party = createParty([NILOU_CHARACTER_ID]);
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
     const thirdStep = takeOne((findStance(kitEffectState)?.actions.normalAttacks ?? []).slice(2));
-    thirdStep.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    thirdStep.onStart?.(context);
     const endField = findField(kitEffectState);
-    endField?.onTick({
-      activeCombatant: combatant,
-      characterIdCombatantMap: new Map(),
-      enemyMap: new Map(),
-      kitEffectState,
-      party,
-      tickIndex: 0,
-    });
+    endField?.onTick(context, 0);
 
     expect({
       lunarPrayerNormalAttacks: findStance(kitEffectState)?.actions.normalAttacks.length,
@@ -188,27 +176,13 @@ describe(createNilouKit, () => {
   test("leaving the field ends Pirouette and cancels the field that would hand the team Lunar Prayer", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant();
-    const party = createParty([NILOU_CHARACTER_ID]);
     const kitEffectState = castAction(NILOU_KIT.elementalSkill, combatant);
-    takeOne((findStance(kitEffectState)?.actions.normalAttacks ?? []).slice(2)).onStart?.({
-      body: kitBody,
-      combatant,
-      kitEffectState,
-      party,
-      random: () => 0,
-    });
+    const context = createKitTestContext(combatant, { kitEffectState });
+    takeOne((findStance(kitEffectState)?.actions.normalAttacks ?? []).slice(2)).onStart?.(context);
     NILOU_KIT.onKitEvent?.(
       { characterId: KUKI_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: NILOU_CHARACTER_ID },
-      {
-        activeCombatant: combatant,
-        body: kitBody,
-        characterIdCombatantMap: new Map(),
-        combatant,
-        enemyMap: new Map(),
-        kitEffectState,
-        party,
-        random: () => 0,
-      },
+      context,
+      combatant,
     );
 
     expect({
