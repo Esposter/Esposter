@@ -148,4 +148,16 @@ describe(createOroronKit, () => {
 
     expect([energyAfterFirst, getPartyMember(context.party, ORORON_CHARACTER_ID).energy]).toStrictEqual([3, 3]);
   });
+
+  test("each soundwave tick lands from where the burst was cast, whatever the body does after", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createOroronCombatant());
+    ORORON_KIT.elementalBurst.onStart?.(context);
+    const field = context.kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+    context.body.position.x = 1;
+    field?.onTick(context, 0);
+    const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
+  });
 });

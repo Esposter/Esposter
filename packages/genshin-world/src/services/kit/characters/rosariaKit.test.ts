@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -38,5 +39,17 @@ describe(createRosariaKit, () => {
   test("the field Rites of Termination places lasts four seconds longer from Constellation 2", () => {
     expect.hasAssertions();
     expect(getFieldSeconds(2) - getFieldSeconds(0)).toBe(4);
+  });
+
+  test("each tick of Rites of Termination lands from where the lance was cast, whatever the body does after", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createRosariaCombatant(0));
+    ROSARIA_KIT.elementalBurst.onStart?.(context);
+    const field = context.kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
+    context.body.position.x = 1;
+    field?.onTick(context, 0);
+    const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+
+    expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
   });
 });

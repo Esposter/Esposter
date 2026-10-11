@@ -209,7 +209,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });
-            castKitSummon(tickEffectState, { facing, height, position }, combatant, [celestialShowerHit]);
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [celestialShowerHit]);
           },
           radius: CELESTIAL_SHOWER_RADIUS,
           secondsRemaining:

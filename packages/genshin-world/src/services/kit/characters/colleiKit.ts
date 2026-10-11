@@ -154,7 +154,7 @@ export const createColleiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const field = createKitField(combatant.characterId, position, {
           nextTickSeconds: LEAP_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            castKitSummon(tickEffectState, { facing, height, position }, combatant, [leapHit]);
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [leapHit]);
           },
           radius: UNBOUNDED_FIELD_RADIUS,
           secondsRemaining: EXPLOSION_HITMARK_FRAMES / 60 + TRUMP_CARD_KITTY_SECONDS,

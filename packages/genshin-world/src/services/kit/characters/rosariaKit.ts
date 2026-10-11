@@ -176,7 +176,7 @@ export const createRosariaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           id: RITES_FIELD_ID,
           nextTickSeconds: RITES_LANCE_HITMARK_FRAMES / 60 + RITES_TICK_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) =>
-            castKitSummon(tickEffectState, { facing, height, position }, combatant, [ritesTickHit]),
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [ritesTickHit]),
           radius: RITES_TICK_HIT_AREA.radius,
           secondsRemaining:
             burstTalentMultiplier(3) +
