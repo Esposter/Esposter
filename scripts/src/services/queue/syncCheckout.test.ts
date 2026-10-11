@@ -19,7 +19,7 @@ describe(syncCheckout, () => {
     switchTo(base);
     writeRoadmap("1\n2\n3\n4\nfive\n");
 
-    syncCheckout(pushed, base, getCwd());
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
 
     expect(readSha("HEAD")).toBe(pushed);
     expect(readRoadmap()).toBe("one\n2\n3\n4\nfive\n");
@@ -35,7 +35,7 @@ describe(syncCheckout, () => {
     writeRoadmap("uno\n2\n3\n4\n5\n");
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
 
-    syncCheckout(pushed, base, getCwd());
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining(ROADMAP));
     info.mockRestore();
@@ -52,39 +52,78 @@ describe(syncCheckout, () => {
     switchTo(base);
     writeRoadmap("1\0\n2\n3-local\n");
 
-    syncCheckout(pushed, base, getCwd());
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
 
     expect(readSha("HEAD")).toBe(base);
     expect(readRoadmap()).toBe("1\0\n2\n3-local\n");
   });
 
-  test("waits while a commit landed during the push, leaving it on the branch for the push it queued", () => {
+  test("carries a commit that landed during the push onto the pushed tip, keeping another session's uncommitted file", () => {
     expect.hasAssertions();
 
-    const base = commitFile(ROADMAP, "1\n2\n3\n4\n5\n");
+    const base = commitFile("other", "o\n");
     const pushed = commitFile(ROADMAP, "one\n2\n3\n4\n5\n");
     switchTo(base);
-    const landed = commitFile("notes", "landed\n");
+    commitFile("notes", "landed\n");
+    writeFileSync(join(getCwd(), "other"), "edited\n");
 
-    syncCheckout(pushed, base, getCwd());
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
 
-    expect(readSha("HEAD")).toBe(landed);
-    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+    expect(readSha("HEAD~1")).toBe(pushed);
+    expect(runGit(["log", "--format=%s", "-1"], getCwd())).toBe("notes\n");
+    expect(readFileSync(join(getCwd(), "other"), "utf8")).toBe("edited\n");
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M other\n");
   });
 
-  test("refuses an uncommitted edit when a commit that landed since the base touched the file", () => {
+  test("leaves the branch where it stands when a commit that landed during the push conflicts with the pushed tip", () => {
     expect.hasAssertions();
 
     const base = commitFile(ROADMAP, "1\n2\n3\n4\n5\n");
     const pushed = commitFile(ROADMAP, "one\n2\n3\n4\n5\n");
     switchTo(base);
-    const landed = commitFile(ROADMAP, "1\n2\nthree\n4\n5\n");
-    writeRoadmap("1\n2\nthree\n4\nfive\n");
+    const landed = commitFile(ROADMAP, "uno\n2\n3\n4\n5\n");
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
 
-    syncCheckout(pushed, base, getCwd());
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
+
+    expect(info).toHaveBeenCalledWith(expect.stringContaining("waits"));
+    info.mockRestore();
+    expect(readSha("HEAD")).toBe(landed);
+    expect(readRoadmap()).toBe("uno\n2\n3\n4\n5\n");
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+    expect(runGit(["worktree", "list"], getCwd()).trim().split("\n")).toHaveLength(1);
+  });
+
+  test("leaves the branch alone when a commit lands between the head it reads and the reset", () => {
+    expect.hasAssertions();
+
+    const base = commitFile(ROADMAP, "1\n2\n3\n4\n5\n");
+    const pushed = commitFile(ROADMAP, "one\n2\n3\n4\n5\n");
+    switchTo(base);
+    const head = readSha("HEAD");
+    const landed = commitFile("notes", "landed\n");
+    writeRoadmap("1\n2\n3\n4\nfive\n");
+
+    syncCheckout(pushed, base, head, getCwd());
 
     expect(readSha("HEAD")).toBe(landed);
-    expect(readRoadmap()).toBe("1\n2\nthree\n4\nfive\n");
+    expect(readRoadmap()).toBe("1\n2\n3\n4\nfive\n");
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M roadmap\n");
+  });
+
+  test("syncs over an uncommitted edit to a file a landed commit changed, merging both sides", () => {
+    expect.hasAssertions();
+
+    const base = commitFile(ROADMAP, "1\n2\n3\n4\n5\n");
+    const pushed = commitFile(ROADMAP, "one\n2\n3\n4\n5\n");
+    switchTo(base);
+    commitFile(ROADMAP, "1\n2\nthree\n4\n5\n");
+    writeRoadmap("1\n2\nthree\n4\nfive\n");
+
+    syncCheckout(pushed, base, readSha("HEAD"), getCwd());
+
+    expect(readSha("HEAD~1")).toBe(pushed);
+    expect(readRoadmap()).toBe("one\n2\nthree\n4\nfive\n");
     expect(runGit(["status", "--porcelain"], getCwd())).toBe(" M roadmap\n");
   });
 });

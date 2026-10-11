@@ -1,11 +1,14 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
 import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { addReplayWorktree } from "#src/services/queue/addReplayWorktree";
 import { carryReplayCommit } from "#src/services/queue/carryReplayCommit";
 import { checkIsRetried } from "#src/services/queue/checkIsRetried";
 import { checkIsStaleRefusal } from "#src/services/queue/checkIsStaleRefusal";
 import { MAX_PUSH_ATTEMPTS } from "#src/services/queue/constants";
 import { getRetryDelayMilliseconds } from "#src/services/queue/getRetryDelayMilliseconds";
 import { readQueueCommits } from "#src/services/queue/readQueueCommits";
+import { removeReplayWorktree } from "#src/services/queue/removeReplayWorktree";
 import { selectReplayCommits } from "#src/services/queue/selectReplayCommits";
 import { syncCheckout } from "#src/services/queue/syncCheckout";
 import { writeLastPush } from "#src/services/queue/writeLastPush";
@@ -13,13 +16,9 @@ import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const REMOTE_QUEUE_REF = `origin/${QUEUE_BRANCH}`;
-const WORKTREE_PREFIX = "queue-push-";
 
 // `--fork-point` reads the remote's reflog, so it names where the branch last met the remote even after a rewrite.
 // Without that reflog entry the plain merge base is the fork point
@@ -48,28 +47,15 @@ const pushQueueHead = (sha: string, count: number, cwd: string): boolean =>
     },
   );
 
-// Removes the replay worktree. The directory is removed by node, which unlinks an install's junction without following
-// It, where `git worktree remove` on Windows either fails on one ("Invalid argument") or deletes through it into the
-// Shared install; the registration is then pruned. Its removal never decides the push: throwing there lost a push that
-// Had replayed cleanly, so a failure of either step is only reported
-const removeReplayWorktree = (replayCwd: string, cwd: string): void => {
-  getResult(() => rmSync(replayCwd, { force: true, maxRetries: 3, recursive: true })).match(noop, (error) =>
-    console.warn(`The replay worktree ${replayCwd} is left behind: ${error.message}`),
-  );
-  getResult(() => runGit(["worktree", "prune"], cwd)).match(noop, (error) =>
-    console.warn(`The replay worktree ${replayCwd} is left registered: ${error.message}`),
-  );
-};
-
 // One fetch, replay and push of the session's commits, as `pushQueue` describes. A push refused as stale is reported as
 // `Refused`, so the caller can make it again on the remote as it now stands
 const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
   runGit(["fetch", "--quiet", "origin", QUEUE_BRANCH], cwd);
-  const head = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const head = readHeadSha(cwd);
   if (checkIsAncestor(REMOTE_QUEUE_REF, head, cwd)) {
     const carriedCount = readQueueCommits(`${REMOTE_QUEUE_REF}..${head}`, cwd).length;
     if (!pushQueueHead(head, carriedCount, cwd)) return QueuePushOutcome.Refused;
-    syncCheckout(head, head, cwd);
+    syncCheckout(head, head, readHeadSha(cwd), cwd);
     return QueuePushOutcome.Pushed;
   }
 
@@ -79,22 +65,15 @@ const attemptPush = async (cwd: string): Promise<QueuePushOutcome> => {
   const replayCommits = selectReplayCommits(localCommits, remoteCommits);
   // A worktree is a full checkout, which is why the fast-forward above needs none. It is registered in the checkout
   // Apart from its directory, so it is removed on every path, a refused push included, or one is left per attempt
-  const replayCwd = mkdtempSync(join(tmpdir(), WORKTREE_PREFIX));
-  getResult(() => runGit(["worktree", "add", "--quiet", "--detach", replayCwd, REMOTE_QUEUE_REF], cwd)).match(
-    noop,
-    (error) => {
-      rmSync(replayCwd, { force: true, recursive: true });
-      throw error;
-    },
-  );
+  const replayCwd = addReplayWorktree(REMOTE_QUEUE_REF, cwd);
   const result = await getResultAsync(async () => {
     for (const commit of replayCommits)
       // oxlint-disable-next-line no-await-in-loop -- each commit is picked onto the tree the one before it left
       if (!(await carryReplayCommit(commit.sha, replayCwd))) return QueuePushOutcome.Waiting;
 
-    const replayed = runGit(["rev-parse", "HEAD"], replayCwd).trim();
+    const replayed = readHeadSha(replayCwd);
     if (!pushQueueHead(replayed, replayCommits.length, cwd)) return QueuePushOutcome.Refused;
-    syncCheckout(replayed, head, cwd);
+    syncCheckout(replayed, head, readHeadSha(cwd), cwd);
     return QueuePushOutcome.Pushed;
   });
   removeReplayWorktree(replayCwd, cwd);
