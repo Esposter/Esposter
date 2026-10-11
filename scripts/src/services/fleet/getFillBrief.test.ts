@@ -1,7 +1,7 @@
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
-import { FILL_RULES_LINE } from "#src/services/fleet/constants";
+import { COMPUTE_QUEUE_DIRECTORY, FILL_RULES_LINE } from "#src/services/fleet/constants";
 import { getFillBrief } from "#src/services/fleet/getFillBrief";
 import { PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
 import { describe, expect, test } from "vitest";
@@ -43,13 +43,13 @@ describe(getFillBrief, () => {
     );
   });
 
-  test("quotes a queue item's roadmap line whole", () => {
+  test("quotes a queue item's line whole, with the page it is edited on", () => {
     expect.hasAssertions();
 
     expect(getFillBrief(QUEUE_ITEM, WORKER)).toStrictEqual(
       [
         `Entry login-door, worker ${WORKER}.`,
-        `Roadmap line: ${QUEUE_LINE}`,
+        `Item line, on its area page under ${COMPUTE_QUEUE_DIRECTORY}/: ${QUEUE_LINE}`,
         `Release: pnpm ai:fleet:release login-door --worker ${WORKER}`,
         FILL_RULES_LINE,
       ].join("\n"),

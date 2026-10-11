@@ -16,7 +16,7 @@ flowchart LR
     MAC["MacBook"]
     MORE["more machines"]
   end
-  QUEUE[("origin ai/queue<br/>the roadmap's Compute queue<br/>and the open proposal units")]
+  QUEUE[("origin ai/queue<br/>the compute queue's pages<br/>and the open proposal units")]
   CLAIMS[("refs/claims/&lt;entry&gt;<br/>one parentless commit per claim")]
   MACHINES[("refs/machines/&lt;id&gt;<br/>one heartbeat every ten minutes")]
   COORD["Coordinator: pnpm ai:fleet:status"]
@@ -52,7 +52,7 @@ The profile's `id` and `areas` are never overwritten once the user has set them.
 
 An entry is one unit of work a machine may take, from two sources, read in this order:
 
-- **The compute queue.** Each open item under the roadmap's **Compute queue** heading (`apps/web/content/docs/genshin/roadmap.md`) has an id in braces and its needs after `needs`, such as `needs game-install, game-exports`. Its written paths are its touch set. An item under **Waiting** is not offered.
+- **The compute queue.** Each open item under the **Queue** heading of a page in `apps/web/content/docs/genshin/compute/` (the index excepted) has an id in braces and its needs after `needs`, such as `needs game-install, game-exports`. Its written paths are its touch set. An item under **Waiting** is not offered.
 - **The open proposal units** under `apps/web/content/docs/proposals/<area>/`, the same units `pnpm ai:proposals:report` reads. A proposal's area is its folder, and its touch set is its Key files table plus the `touches` globs its frontmatter names. Its `needs` and `waiting` are its frontmatter's `needs` and `waiting`, empty when the page names none; a unit with a `waiting` blocker is not offered, and `pnpm ai:fleet:status` lists it with the blocker.
 
 `pnpm ai:fleet:next` returns the first entry that meets every condition: the machine has its needs, the entry's area is lent, the entry is not waiting, no live claim holds the entry, and its touch set overlaps no live claim's. A claim is stale, and so does not hold, once it has gone unrenewed for thirty minutes. A runner passes its lane with `--lane <lane>` (`page` or `cpu`), so it never takes another lane's item, and `--kind queue` or `--kind unit` picks between roadmap items and proposal units. A queue line with no `{id}` is skipped, with one warning on stderr naming how many. Nothing takeable means the machine prints nothing and stays idle. `pnpm ai:fleet:fill` keeps a machine's live claims at its target, which is the profile's `fillTarget` when set and otherwise its logical cores capped at twenty, taking the kinds the profile names (every kind when it names none): it claims through the same selection, one kind after another, starts each claim's hold detached, and prints a brief for an agent per claim. The pulse wakes an idle session to run it.
@@ -64,7 +64,7 @@ An entry is one unit of work a machine may take, from two sources, read in this 
 - **A holder renews it.** `pnpm ai:fleet:hold <id>` claims the entry, then renews every ten minutes with a new commit leased from the claim the remote holds at that moment, carrying the latest load line. At each renewal it stops when the ref is gone, when the claim is a miss, or when another machine or worker holds it. `pnpm ai:fleet:release` also deletes that worker's hold file under `~/.esposter/holds/`, which the hold polls every five seconds, so a local release ends it at once. It runs in the background for as long as the runner works the entry.
 - **A stale claim is taken over.** A claim unrenewed for thirty minutes is replaced with the same explicit lease, from the stale commit, so two machines taking the same stale claim cannot both land.
 - **A miss stays.** `pnpm ai:fleet:release <id> --miss "<text>"` writes the miss into the claim. A missed claim is never stale, so the entry waits for the coordinator's call, and its paths stay held for the same reason.
-- **A finished entry is released.** The landing commit deletes the entry's line from the roadmap, and `pnpm ai:fleet:release <id>` then deletes the ref, which ends the hold.
+- **A finished entry is released.** The landing commit deletes the entry's line from its area page, and `pnpm ai:fleet:release <id>` then deletes the ref, which ends the hold.
 
 ## Load
 
@@ -103,7 +103,8 @@ A machine's first route to the game data is the game itself: download it from Ho
 | `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims                               |
 | `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease          |
 | `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and tells a refusal by a held ref from a network failure    |
-| `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads the compute queue's open items, with their ids, needs and written paths, from the roadmap           |
+| `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading     |
+| `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                             |
 | `scripts/src/services/machine/watchMachine.ts`        | Samples the machine each minute and pushes its heartbeat every ten minutes                                |
 | `scripts/src/services/queue/pushQueue.ts`             | Pushes `ai/queue`, retrying a refused push with exponential backoff and full jitter, up to eight attempts |
-| `apps/web/content/docs/genshin/roadmap.md`            | The compute queue, whose items the fleet takes                                                            |
+| `apps/web/content/docs/genshin/compute/`              | The compute queue's pages, whose items the fleet takes                                                    |

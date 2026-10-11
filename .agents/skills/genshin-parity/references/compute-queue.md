@@ -6,7 +6,7 @@ A build writes the script; the run waits in the queue. A queue item is work whos
 
 ## An item
 
-One line under the roadmap's **Compute queue** (`apps/web/content/docs/genshin/roadmap.md`), carrying everything a runner needs and nothing it must decide:
+One line on its area's page in the compute queue (`apps/web/content/docs/genshin/compute/`, one page per area), carrying everything a runner needs and nothing it must decide:
 
 - its lane, `[page]` or `[cpu]` (see **The lanes** on this page), first;
 - its id in braces, a short kebab slug of what it does, which is the entry's name in the fleet's claims (`pnpm ai:fleet:hold <id>`);
@@ -20,7 +20,7 @@ The line is the item's whole record in the queue: `- [ ] `[cpu]` {id} needs <cap
 
 An item missing any of these is not queued: the gap is a call, and calls are the main session's. Items stand in the recreation passes' order, so the queue reads top to bottom. An item waits on the earlier passes **its measure reads**, not on every earlier pass: a sun solved on the exports' shadow edges reads the shape and the camera, so it runs while the surface is still red, and a light pass that scores our stone's colour does not. Releasing an item past a red pass is the main session's call, made by naming what its measure reads.
 
-**The queue holds only what can be digested.** Every item in it can run now, or once an item above it has run. An item whose input does not exist yet sits under the queue's own **Waiting** heading and names its blocker: a clip on the References sought list, or a fix in progress. No runner takes one, and it moves up when its input lands. A missed item keeps its claim, its miss written into the claim, and no runner retakes it: a missed claim is never taken over as stale, so the main session's call alone changes that item. A queue that only grows is a queue nothing can finish.
+**The queue holds only what can be digested.** Every item in it can run now, or once an item above it has run. An item whose input does not exist yet sits under its page's **Waiting** heading and names its blocker: a clip on the References sought list, or a fix in progress. No runner takes one, and it moves up when its input lands. A missed item keeps its claim, its miss written into the claim, and no runner retakes it: a missed claim is never taken over as stale, so the main session's call alone changes that item. A queue that only grows is a queue nothing can finish.
 
 ## The lanes
 
@@ -51,7 +51,7 @@ An item missing any of these is not queued: the gap is a call, and calls are the
 1. **Claim it.** Run `pnpm ai:fleet:next --lane <lane>`, where `<lane>` is your runner's lane. It prints `claimed <id> as worker <worker>`, and that worker id is yours for the item. Start `pnpm ai:fleet:hold <id> --worker <worker>` in the background for it. The claim is a ref on origin, not a commit on `ai/queue`, and the hold renews it every ten minutes until the release below.
 2. **Check the memory first.** While free memory is under the gate the `throughput` skill reads (`references/machine-efficiency.md`, "Read the memory gate first"), wait for a run to end before starting another. Thrashing slows every run more than waiting does.
 3. **Run it in the background.** The runner reads its output when it ends, never with a foreground wait.
-4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item's line from the queue in the same commit. The roadmap holds open work only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and the roadmap, never `git add -A` or `git commit -a`, or it carries another item's half-written output. Then `pnpm ai:fleet:release <id> --worker <worker>` deletes the claim, and that worker's hold ends.
+4. **If the measure meets its bar,** commit what the command wrote (data, a report row) and delete the item's line from the queue in the same commit. The compute pages hold open items only. The items running at once share their lane's worktree and its index, so the commit is by pathspec, naming only this item's outputs and its area page, never `git add -A` or `git commit -a`, or it carries another item's half-written output. Then `pnpm ai:fleet:release <id> --worker <worker>` deletes the claim, and that worker's hold ends.
 5. **If the measure misses,** commit nothing and change no parameter. Run `pnpm ai:fleet:release <id> --worker <worker> --miss "<number>"` with the number, which keeps the claim as the miss, and report it. A miss is a call for the main session, never a second run with a guessed value.
 6. **Start the next runnable item of the lane** whenever the memory gate leaves room, beside the ones still running, until none is left. Then report and end.
 

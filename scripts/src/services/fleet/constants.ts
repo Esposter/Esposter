@@ -42,9 +42,11 @@ export const DETECTED_CAPABILITIES: readonly string[] = [
   "windows",
 ];
 export const MEDIA_ENGINE_ACCELERATION = "d3d11va";
-export const ROADMAP_PATH = "apps/web/content/docs/genshin/roadmap.md";
-// The compute queue's heading in the roadmap, which the queue section runs under
-export const COMPUTE_QUEUE_HEADING = "## Compute queue";
+// The folder of the compute queue's area pages: each holds its runnable items under `## Queue` and its waiting ones under `## Waiting`
+export const COMPUTE_QUEUE_DIRECTORY = "apps/web/content/docs/genshin/compute";
+export const COMPUTE_QUEUE_INDEX_FILE = "index.md";
+export const COMPUTE_QUEUE_HEADING = "## Queue";
+export const COMPUTE_QUEUE_WAITING_HEADING = "## Waiting";
 // A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WORKER_NAME_REGEX: RegExp = /^[\w-]+$/u;

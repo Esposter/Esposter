@@ -1,12 +1,10 @@
 import type { FleetEntryReading } from "#src/models/fleet/FleetEntryReading";
 
-import { COMPUTE_QUEUE_HEADING } from "#src/services/fleet/constants";
+import { COMPUTE_QUEUE_HEADING, COMPUTE_QUEUE_WAITING_HEADING } from "#src/services/fleet/constants";
 import { parseComputeQueueItem } from "#src/services/fleet/parseComputeQueueItem";
 
-// The section a heading opens runs to the next level-two heading, which ends the compute queue
+// A section runs to the next level-two heading, which ends it
 const SECTION_END_REGEX = /^## /mu;
-// The waiting heading splits the queue: the items above it are runnable, the ones below wait on an input
-const WAITING_REGEX = /^### Waiting/mu;
 const OPEN_LINE_PREFIX = "- [ ] ";
 
 // Every open line of a section, parsed: an item, or undefined for an open line with no id
@@ -16,12 +14,12 @@ const parseOpenLines = (text: string) =>
     .filter((line) => line.startsWith(OPEN_LINE_PREFIX))
     .map((line) => parseComputeQueueItem(line));
 
-// Every open item of the roadmap's compute queue above its waiting heading, in the order the roadmap lists them. An open
-// Line with no id is skipped and counted, in the queue or its waiting list, so a missing id is visible rather than lost
-export const parseComputeQueue = (roadmap: string): FleetEntryReading => {
-  const afterHeading = roadmap.split(COMPUTE_QUEUE_HEADING)[1] ?? "";
-  const section = afterHeading.split(SECTION_END_REGEX)[0] ?? "";
-  const [runnable = "", waiting = ""] = section.split(WAITING_REGEX);
+// Every open item of one compute page: those under its queue heading are runnable, those under its waiting heading wait
+// On an input. An open line with no id is skipped and counted, in either list, so a missing id is visible rather than lost
+export const parseComputeQueue = (page: string): FleetEntryReading => {
+  const afterQueue = page.split(COMPUTE_QUEUE_HEADING)[1] ?? "";
+  const runnable = (afterQueue.split(COMPUTE_QUEUE_WAITING_HEADING)[0] ?? "").split(SECTION_END_REGEX)[0] ?? "";
+  const waiting = (afterQueue.split(COMPUTE_QUEUE_WAITING_HEADING)[1] ?? "").split(SECTION_END_REGEX)[0] ?? "";
   const runnableItems = parseOpenLines(runnable);
   const waitingItems = parseOpenLines(waiting);
   return {

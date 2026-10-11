@@ -21,7 +21,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 
 ## The queue is pulled, never pushed
 
-- **Work is an entry with an id and its needs:** a compute-queue item on the roadmap, or an open proposal unit. An entry names what it writes, which is also its touch set.
+- **Work is an entry with an id and its needs:** a compute-queue item on its area page under `apps/web/content/docs/genshin/compute/`, or an open proposal unit. An entry names what it writes, which is also its touch set.
 - **A proposal unit carries the same three fields a queue item does, in its frontmatter** (the `docs` skill, `references/page-frontmatter.md`), each optional:
   - `needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
   - `waiting: "<blocker>"`, set while the unit cannot be built yet, such as on another unit or on data that is not extracted; a waiting unit is never offered, and `pnpm ai:fleet:status` lists it with its blocker;

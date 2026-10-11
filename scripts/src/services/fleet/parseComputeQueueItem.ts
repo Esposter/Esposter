@@ -3,7 +3,7 @@ import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 
 // `- [ ] `[cpu]` {id} needs game-install, game-exports — the rest of the line`. The needs are optional: none means any
-// Machine may take the item. Every compute-queue item belongs to the Genshin area, where the roadmap is kept
+// Machine may take the item. Every compute-queue item belongs to the Genshin area, where its compute pages are kept
 const ITEM_REGEX =
   /^- \[ \] `\[(?<lane>[a-z]+)\]` \{(?<id>[a-z0-9-]+)\}(?: needs (?<needs>[a-z-]+(?:, [a-z-]+)*))? — (?<rest>.*)$/u;
 const WRITES_REGEX = /Writes (?<writes>.*)/u;
