@@ -33,13 +33,13 @@ flowchart LR
   HOST --> MODELFILE
 ```
 
-With no address, or an index that fails to load (which is logged), the host has none. A model that fails to read, or a texture the release does not ship, is logged and emitted, and the body's capsule is drawn in its place.
+With no address, or an index that fails to load (which is logged), the host has none. A model that fails to read is logged and emitted, and the body's capsule is drawn in its place. A texture the release does not ship is logged once and its material drawn untextured.
 
 ## Decisions
 
 - **The world holds no account of where packs live.** It takes the packs' address from the app and reads any host laid out the same way. The rules that read an official release's folder are the world package's, with no Node import, so the browser applies them to a player's release as the development server applies them to a folder on its disk.
 - **An index lists the packs a host holds, read once.** Without it the world could tell an absent pack from a failed one only by asking for its model, and a character without a pack would cost a request.
-- **A pack is drawn whole or not at all.** Only the textures a material draws with are read, and a release missing one is refused, so a character never draws partly.
+- **A pack is drawn whole or not at all.** Only the textures a material draws with are read. A texture the release does not hold draws its material untextured, since the release itself lacks it; a file the pack lists that fails to arrive fails the whole model, so a character never draws partly.
 - **The terms are shown from whichever copy draws the model.** They carry the credit the release asks for, so the terms of a development pack and of a player's pack appear the same way.
 
 ## Key files

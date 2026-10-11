@@ -21,12 +21,10 @@ export const resolveCharacterPackTextures = (
       .map((filePath) => [getMatchKey(filePath.slice(modelFolder.length)), filePath]),
   );
   const pathFilePathMap = new Map<string, string>();
-  const missingPaths: string[] = [];
   for (const texturePath of texturePaths) {
     const path = getCharacterPackFilePath(texturePath);
     const filePath = path.split("/").includes("..") ? undefined : filePathMap.get(getMatchKey(path));
-    if (filePath === undefined) missingPaths.push(texturePath);
-    else pathFilePathMap.set(path, filePath);
+    if (filePath !== undefined) pathFilePathMap.set(path, filePath);
   }
-  return { files: Array.from(pathFilePathMap, ([path, filePath]) => ({ filePath, path })), missingPaths };
+  return { files: Array.from(pathFilePathMap, ([path, filePath]) => ({ filePath, path })) };
 };

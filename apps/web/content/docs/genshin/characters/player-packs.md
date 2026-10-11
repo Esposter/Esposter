@@ -19,7 +19,7 @@ flowchart TD
   NAMES["readCharacterIdNamesMap: every character's names in Chinese, English and Japanese"] --> READ
   READ --> WHO["identifyCharacterPack: by the models' or folders' names"]
   WHO --> RULES["the model, its textures and its terms, by the folder rules below"]
-  RULES -->|"no model, no terms, or a texture a material draws with missing"| REFUSED["the reason shown, nothing kept"]
+  RULES -->|"no model or no terms"| REFUSED["the reason shown, nothing kept"]
   RULES --> TERMS["the terms shown verbatim"]
   TERMS -->|cancelled| DROPPED["nothing kept"]
   TERMS -->|accepted| PUT["CharacterPackStore.put: every file under the id and hash, each write settled"]
@@ -41,7 +41,7 @@ flowchart TD
 An official release is extracted as it shipped: its folder names its files in Chinese or Japanese, nests the model a folder or two down, and spells a texture's case as it likes. Three rules turn it into the pack layout. Each lives in the world package and runs wherever a folder is read.
 
 - **The model.** `chooseCharacterPackModel` takes the folder's one `.pmx`, in any case. Of several, as Zhongli's release ships his skill effects beside him, it takes the one whose own name, read from its header, is one of the character's names in Chinese, English or Japanese. `readCharacterNames` reads those names from the [hosted game data](/docs/genshin/hosted-game-data), and only for such a folder. The releases spell a name in a case and spacing of their own, so a name is matched without either. A folder with no model, or with several and none named as its character, is refused, naming each.
-- **The textures.** `resolveCharacterPackTextures` matches each path the model names to a file below the model's own folder, case-insensitively and in either Unicode form, as MMD reads a path. A path climbing out of that folder matches nothing. `readPickedCharacterPack` matches every texture a material draws with and refuses a release lacking one, naming it: Tartaglia's release names a `tex/面.png` it does not ship.
+- **The textures.** `resolveCharacterPackTextures` matches each path the model names to a file below the model's own folder, case-insensitively and in either Unicode form, as MMD reads a path. A path climbing out of that folder matches nothing. `readPickedCharacterPack` keeps the textures the release holds and leaves out the rest, so Tartaglia's release, which names a `tex/面.png` it does not ship while shipping `tex/面1.png`, keeps its model, and the material that draws with the missing one is drawn untextured. The model is drawn with that texture missing and logged once, rather than refused.
 - **The terms.** `chooseCharacterTermsFile` takes the text file named as terms are, `利用規約`, then `readme`, `使用说明`, `规约`, `规则` and `terms`, the one nearest the root where several share a name. `decodeCharacterTerms` decodes it strictly, from UTF-16 by its byte-order mark, or as UTF-8, Shift-JIS or GBK, so a byte no character maps refuses the encoding rather than being replaced. A folder with no terms is refused.
 
 ## Kept in the browser's storage

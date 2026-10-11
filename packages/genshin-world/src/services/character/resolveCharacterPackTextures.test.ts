@@ -9,7 +9,6 @@ describe(resolveCharacterPackTextures, () => {
         { filePath: "a/b", path: "A/B" },
         { filePath: "é", path: "é" },
       ],
-      missingPaths: [],
     });
   });
 
@@ -17,23 +16,18 @@ describe(resolveCharacterPackTextures, () => {
     expect.hasAssertions();
     expect(resolveCharacterPackTextures([String.raw`a\..\b`], ["b"], "")).toStrictEqual({
       files: [{ filePath: "b", path: "b" }],
-      missingPaths: [],
     });
   });
 
-  test("reports a texture no file matches and one climbing out of the model's folder", () => {
+  test("leaves out a texture no file matches and one climbing out of the model's folder", () => {
     expect.hasAssertions();
-    expect(resolveCharacterPackTextures(["a", "../b", "a/../../b"], ["b"], "")).toStrictEqual({
-      files: [],
-      missingPaths: ["a", "../b", "a/../../b"],
-    });
+    expect(resolveCharacterPackTextures(["a", "../b", "a/../../b"], ["b"], "")).toStrictEqual({ files: [] });
   });
 
   test("matches a texture below the model's own folder, kept at its path in the release", () => {
     expect.hasAssertions();
     expect(resolveCharacterPackTextures(["a", "b"], ["a", "c/a", "b"], "c/d.pmx")).toStrictEqual({
       files: [{ filePath: "c/a", path: "a" }],
-      missingPaths: ["b"],
     });
   });
 });
