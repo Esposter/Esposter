@@ -1,6 +1,6 @@
 ---
 title: Characters
-description: Proposal — what is left of drawing the game's characters from HoYoverse's official MMD models. The model stands on the character controller's body and faces where it faces, moves as the game's own locomotion clips move it, with only fitted parameters shipped, stands at the height the game's own model does, and has its terms shown wherever it is chosen.
+description: Proposal — what is left of drawing the game's characters from HoYoverse's official MMD models. The model's motion follows the game's own locomotion clips through fitted parameters only, its scale is the game's own model's height, and its terms are shown wherever a character is chosen.
 model: claude-opus-5-5
 needs: [game-install, game-exports]
 touches:
@@ -14,15 +14,14 @@ touches:
 
 # Characters
 
-This page builds on [characters](/docs/genshin/characters) as built: the engine reads a character's official model pack from the release a player loaded into their browser, or under `nuxt dev` from the developer's own extracted packs, with its own PMX reader and draws it at rest on the toon ramp, at the origin of whatever holds it. It also builds on the [character controller](/docs/genshin/character-controller), whose body a character is drawn on. What is left is the character's motion, its scale and where its terms are shown.
+This page builds on [characters](/docs/genshin/characters) as built: the engine reads a character's official model pack, draws it at rest on the toon ramp at its holder's origin, and holds it on the [character controller](/docs/genshin/character-controller)'s body, which it stands and faces with. What is left is the character's motion, its scale and where its terms are shown.
 
 ## Decisions
 
-- **The character is drawn on the controller's body.** It stands where the body stands, between the body's last two steps as a frame blends them, and faces where it faces. The model already faces -z at its holder's origin, as the body's yaw of none does, so the body's world component holds the model and moves itself, and nothing turns the model on its own.
 - **Its motion is fitted to the game's own locomotion clips** in the [recreation passes](/docs/proposals/genshin/recreation-passes)' motion pass, so only the fitted parameters ship, never a motion file. How far and how fast the body moves is the controller's, and how it is seen is the [follow camera](/docs/genshin/follow-camera)'s.
 - **Its scale is the game's.** MMD's unit stands at the community's reckoning of eight centimetres until the game's own model of the character measures it: that model's height in the exports over the PMX's height in units.
 - **The Traveler is fitted first.** The world plays the Traveler (`TRAVELER_CHARACTER_ID`, 10000007, the medium female body), whose `Ani_Avatar_Girl_` clips the controller already reads for its speeds, so its standing, walk, run and sprint cycles in `00/00035183.blk` are the first clips the motion pass fits.
-- **Its terms are shown where it is chosen.** The terms view already reads and shows a pack's terms with their credit through the pack's reader; the screens that choose a character, the party's, mount it beside the character.
+- **Its terms are shown where it is chosen.** The terms view already shows a pack's terms with their credit; the party's screens, which choose a character, mount it beside the character.
 
 ## How it works
 
@@ -38,7 +37,7 @@ flowchart LR
 
 ## Scope
 
-**Today:** a character's model is read and drawn at rest at its holder's origin, at MMD's reckoned scale, held by the controller's body in Windrise's scene (`World/Windrise/Index.vue`), so it stands and faces where the body does, and nothing poses it.
+**Today:** a character's model is drawn at rest at its holder's origin, at MMD's reckoned scale, held by the controller's body in Windrise's scene (`World/Windrise/Index.vue`), so it stands and faces where the body does, and nothing poses it.
 
 **This adds:**
 
