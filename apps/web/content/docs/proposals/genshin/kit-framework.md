@@ -398,6 +398,7 @@ flowchart TD
 9. **The guard and the bench's entry for today's path deleted,** once nothing moves anymore, with the bench re-run on the same machine for the before against after. The zero test turns on.
    - The zero test is on: the workspace suite holds genshin-world at no clone, and the ledger's two rows are swept. The split test is on: `kitModules.test.ts` reads each module's source and fails on one that divides by 60 or by `KIT_FRAMES_PER_SECOND`, names `proudSkillGroupId` or calls `getTalentMultiplier`.
    - The bench's one task is the fixed step, today's path's entry gone. The Mac ran this sitting on battery in Low Power Mode, slower throughout than the committed before's mains power, so the before was re-run from the bench's first commit beside the after: 69.63 ms to 53.29 idle and 84.35 to 68.69 in combat, at forty rounds.
+   - The guard is deleted: the replay test and its 108 digests. Under the `testing` skill's "What to Test" a digest of each kit's strikes, bugs included, fails on every fix as on every break, so it pins the implementation rather than a behaviour a player depends on, and each kit's own suite holds its values. The scripted minute stays for the bench.
 
 **Per kit, after the tree has moved.** What no whole-tree commit can do is a sweep: classifying each overlay's `Unclassified` entries from its module's own comments, and rendering each page's Provisional and Sources sections. The kit-records ledger is opened for it, in the `sweeps` skill's shape, only if such work remains.
 
