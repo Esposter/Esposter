@@ -43,6 +43,7 @@ describe(stepActiveKit, () => {
         ? [
             [
               createKit.name,
+              // oxlint-disable-next-line typescript/no-unnecessary-type-conversion -- Object.entries keys are strings at runtime, though the record types them as numbers
               [Number(characterId)],
               `characters/${uncapitalize(createKit.name.replace(/^create/u, ""))}.replay.snapshot.md`,
             ] satisfies [string, number[], string],
