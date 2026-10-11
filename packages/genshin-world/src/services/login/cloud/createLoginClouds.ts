@@ -1,9 +1,10 @@
 import type { LoginClouds } from "#src/models/login/LoginClouds";
+import type { LoginCloudsData } from "#src/models/login/LoginCloudsData";
+import type { LoginWalkway } from "#src/models/login/LoginWalkway";
 import type { CloudSprite, SkyUniforms } from "genshin-engine";
 import type { UniformNode } from "three/webgpu";
 
-import clouds from "#src/data/login/clouds.json";
-import walkway from "#src/data/login/walkway.json";
+import { LoginCloudBand } from "#src/models/login/LoginCloudBand";
 import { LoginCloudBandMap } from "#src/services/login/cloud/LoginCloudBandMap";
 import { LOGIN_CLOUD_SEA_ROW } from "#src/services/login/scene/constants";
 import { createCloudAtlasTexture, createCloudBandSprite, placeCloudBand } from "genshin-engine";
@@ -12,9 +13,7 @@ import { Group, MathUtils } from "three";
 // The texels each painted cloud's cell is drawn at in its band's atlas
 const CLOUD_CELL_SIZE = 256;
 // The band heaped under the walkway, the sea of cloud that scrolls past with it
-const SEA_BAND = "bottom";
-// How far the walkway reaches to either side of its middle, its wings and all, which the camera glides along
-const WALKWAY_HALF_WIDTH = Math.max(...walkway.pieces.flatMap(({ outline }) => outline.map(([x = 0]) => Math.abs(x))));
+const SEA_BAND = LoginCloudBand.Bottom;
 // A fitted loop as the data file holds it, its points as pairs
 const toLoops = (loops: number[][][]): [number, number][][] =>
   loops.map((loop) => loop.map(([x = 0, y = 0]): [number, number] => [x, y]));
@@ -25,7 +24,13 @@ const toLoops = (loops: number[][][]): [number, number][][] =>
 // Side or stays under it. Each band's sprite is named for its band and hands on its cover, the share of its clouds the
 // Hour draws, and its clouds' places with the heights they were drawn between and the highest each may stand, which a
 // Tool reads off the sprite
-export const createLoginClouds = (skyUniforms: SkyUniforms): LoginClouds => {
+export const createLoginClouds = (
+  clouds: LoginCloudsData,
+  walkway: LoginWalkway,
+  skyUniforms: SkyUniforms,
+): LoginClouds => {
+  // How far the walkway reaches to either side of its middle, its wings and all, which the camera glides along
+  const walkwayHalfWidth = Math.max(...walkway.pieces.flatMap(({ outline }) => outline.map(([x = 0]) => Math.abs(x))));
   const group = new Group();
   const covers: Record<string, UniformNode<"float", number>> = {};
   const disposables: { dispose: () => void }[] = [];
@@ -40,7 +45,7 @@ export const createLoginClouds = (skyUniforms: SkyUniforms): LoginClouds => {
     // The highest each cloud may stand: under the walkway for a sea's cloud that does not clear it to its side
     const placements = placeCloudBand(LoginCloudBandMap[band], sprites.length).map((placement) => ({
       ceiling:
-        band !== SEA_BAND || Math.abs(placement.position[0]) - placement.width / 2 > WALKWAY_HALF_WIDTH
+        band !== SEA_BAND || Math.abs(placement.position[0]) - placement.width / 2 > walkwayHalfWidth
           ? Infinity
           : walkway.bottom - placement.width / aspect,
       placement,

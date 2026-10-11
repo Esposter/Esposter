@@ -20,6 +20,7 @@ declare global {
       DATABASE_URL: string;
       FACEBOOK_CLIENT_ID: string;
       FACEBOOK_CLIENT_SECRET: string;
+      GENSHIN_CHARACTER_PACKS_DIRECTORY?: string;
       GITHUB_CLIENT_ID: string;
       GITHUB_CLIENT_SECRET: string;
       GOOGLE_CLIENT_ID: string;

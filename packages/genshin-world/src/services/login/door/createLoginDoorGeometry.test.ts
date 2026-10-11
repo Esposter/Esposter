@@ -1,10 +1,13 @@
 import type { LoginDoorPieceGeometry } from "#src/models/login/LoginDoorPieceGeometry";
 import type { Object3D } from "three";
 
-import door from "#src/data/login/door.json";
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoorGeometry";
+import { readLoginData } from "#src/services/login/readLoginData";
 import { FrontSide, Group, Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { assert, describe, expect, test } from "vitest";
+
+const { door } = await readLoginData(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createLoginDoorGeometry, () => {
   // Only faces turned toward a ray are hit, so a face wound the wrong way round reads as a hole
@@ -16,7 +19,7 @@ describe(createLoginDoorGeometry, () => {
     new Raycaster(new Vector3(x, height / 2, 10), new Vector3(0, 0, -1)).intersectObject(object)[0]?.point.z;
   // Every piece's frame, or every piece's panel, where each rests
   const createPart = (part: keyof LoginDoorPieceGeometry): Group =>
-    new Group().add(...createLoginDoorGeometry().map((piece) => new Mesh(piece[part], material)));
+    new Group().add(...createLoginDoorGeometry(door).map((piece) => new Mesh(piece[part], material)));
 
   test("stands the frame round an opening the panel fills, recessed behind the frame's face", () => {
     expect.hasAssertions();

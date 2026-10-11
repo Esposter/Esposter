@@ -1,7 +1,3 @@
-import scroll from "#src/data/login/scroll.json";
-import walkway from "#src/data/login/walkway.json";
-import { LOGIN_DOOR_POSITION } from "#src/services/login/door/constants";
-
 // How far every block of the walkway rises into place: Ani_Login_Lift, on each block's own animator, lifts it 50 units
 // At the walkway's tenth, and nothing else of the scene rises with it
 const WALKWAY_LIFT = 5;
@@ -14,19 +10,13 @@ const MODEL_CAMERA_HEIGHT = 6;
 // Door frame at 21.5:9 puts the eye 0.997 metres over the walkway's top at 45 degrees; the design aspect is the one
 // Whose width, held on the older build's 16:9 recording, gives the 51.2 its widths read. The door's rest is that
 // Recording's, 10.64 metres short of the door (Login/Scene/Camera.reference.ts)
-const EYE_HEIGHT = MODEL_CAMERA_HEIGHT - WALKWAY_LIFT;
+export const LOGIN_EYE_HEIGHT = MODEL_CAMERA_HEIGHT - WALKWAY_LIFT;
 export const LOGIN_DOOR_REST_DISTANCE = 10.64;
-export const LOGIN_CAMERA_HEIGHT = walkway.top + EYE_HEIGHT;
-export const LOGIN_CAMERA_Z = LOGIN_DOOR_POSITION[2] - LOGIN_DOOR_REST_DISTANCE;
 export const LOGIN_CAMERA_YAW = Math.PI;
 export const LOGIN_CAMERA_PITCH = (5.69 * Math.PI) / 180;
 export const LOGIN_CAMERA_FOV = 45;
 export const LOGIN_CAMERA_DESIGN_ASPECT = 18.5 / 9;
 export const LOGIN_CAMERA_FAR = 2000;
-// The rows MonoLoginScene scrolls past the camera, each laid ahead of its own place and wrapped by its length: the
-// Walkway's copies, its own length apart, and the towers' with their bridges and pillars
-export const LOGIN_WALKWAY_ROW = scroll.LoginScene_Bridge01_Vo;
-export const LOGIN_TOWERS_ROW = scroll.LoginScene_Build_All;
 // Where the towers' row, its bridges and pillars with it, stands off the place the blocks lay it: the walkway's lift
 // Under it, since the row keeps its laid place while the walkway rises, so the deck of the bridge that crosses the
 // Glide's path passes under the walkway as the game's does however long the title idles; and 8.94 metres nearer, the
@@ -46,17 +36,13 @@ export const LOGIN_GLIDE_ACCELERATION = 0.63;
 // Camera held: 145.8 and 144.4 along. There the lantern tower stands close to the door's right and the colonnade low
 // Behind it; the current build's door frame stands the row elsewhere, so the phase follows how long the title idled
 export const LOGIN_GLIDE_DOOR_SCROLLED = 144;
-// The moment of the loop the title opens at, as metres scrolled. Its walkway's phase is where the wiki's dawn still's
-// First solve stood the walkway, 10.4 metres short of the middle of the copy ahead, a still of another camera; its
-// Towers' is the English recording's glide from the title to the door's rest short of the door's, about 51 metres (2.4
-// Seconds of title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the braking after), since
-// Recordings idle as long or not show the same door frame
-const TITLE_WALKWAY_PHASE = 8.67;
-const RECORDED_GLIDE_TO_DOOR = 51;
-export const LOGIN_GLIDE_TITLE_SCROLLED =
-  TITLE_WALKWAY_PHASE +
-  LOGIN_WALKWAY_ROW.length *
-    Math.round((LOGIN_GLIDE_DOOR_SCROLLED - RECORDED_GLIDE_TO_DOOR - TITLE_WALKWAY_PHASE) / LOGIN_WALKWAY_ROW.length);
+// The moment of the loop the title opens at (`computeLoginGlideTitleScrolled`). Its walkway's phase is where the
+// Wiki's dawn still's first solve stood the walkway, 10.4 metres short of the middle of the copy ahead, a still of
+// Another camera; its towers' is the English recording's glide from the title to the door's rest short of the door's,
+// About 51 metres (2.4 seconds of title, the load's stall at the preparing pace, its measured 9 to 14 seconds and the
+// Braking after), since recordings idle as long or not show the same door frame
+export const LOGIN_GLIDE_TITLE_WALKWAY_PHASE = 8.67;
+export const LOGIN_RECORDED_GLIDE_TO_DOOR = 51;
 // The rush to the door on the click: the camera closes 41% of its distance to the door in its first 333 ms, gathering
 // Speed with the square of the time, as the door grows about 1.7 times in the recording's last third of a second
 // (Login/Scene/Index.reference.ts, source `recording`), and stops short of the door under the white

@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { LoginAgeRating } from "#src/models/login/LoginAgeRating";
+import type { LoginInterfaceClips } from "#src/models/login/LoginInterfaceClips";
+import type { LoginInterfaceRects } from "#src/models/login/LoginInterfaceRects";
 import type { LoginStatusStep } from "#src/models/login/LoginStatusStep";
 import type { GameLanguage, GameText } from "genshin-text";
 
 import LoginStatus from "#src/components/Login/Status/Index.vue";
-import ageRating from "#src/data/login/ageRating.json";
-import interfaceRects from "#src/data/login/interfaceRects.json";
 import { LoginInterfaceClip } from "#src/models/login/LoginInterfaceClip";
 import { LoginInterfaceClipTarget } from "#src/models/login/LoginInterfaceClipTarget";
+import { LoginInterfaceRectName } from "#src/models/login/LoginInterfaceRectName";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { GameClient } from "#src/models/splash/GameClient";
 import {
@@ -17,7 +19,7 @@ import {
   LOGIN_WELCOME_FADE_MS,
 } from "#src/services/login/constants";
 import { GameClientVersionTextMap } from "#src/services/login/GameClientVersionTextMap";
-import { LoginInterfaceClipMap } from "#src/services/login/interface/LoginInterfaceClipMap";
+import { createLoginInterfaceClipMap } from "#src/services/login/interface/createLoginInterfaceClipMap";
 import { InterfaceIconGameTextKeyMap } from "#src/services/login/InterfaceIconGameTextKeyMap";
 import { GameLanguageGameClientMap } from "#src/services/splash/GameLanguageGameClientMap";
 import {
@@ -35,8 +37,14 @@ import {
 import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // The paths of mainland China's age rating badge, which its client keeps in the corner of every stage
+  ageRating: LoginAgeRating;
   // The game's words in the reader's language
   gameText: GameText;
+  // The page's clips as the fit sampled them, which the screen plays at each stage
+  interfaceClips: LoginInterfaceClips;
+  // Where the page's pieces stand, each fitted from the game's own RectTransform
+  interfaceRects: LoginInterfaceRects;
   // Whether the door is still rising, which the door's prompt and corner buttons wait on, as the game's do
   isDoorWaiting?: true;
   isSpinnerShown?: boolean;
@@ -50,8 +58,20 @@ interface Props {
   statusStep: LoginStatusStep;
 }
 
-const { gameText, isDoorWaiting, isSpinnerShown, isWelcomeShown, language, playerName, progress, stage, statusStep } =
-  defineProps<Props>();
+const {
+  ageRating,
+  gameText,
+  interfaceClips,
+  interfaceRects,
+  isDoorWaiting,
+  isSpinnerShown,
+  isWelcomeShown,
+  language,
+  playerName,
+  progress,
+  stage,
+  statusStep,
+} = defineProps<Props>();
 // The white is up as the screen enters, the moment the screen hands on
 const emit = defineEmits<{ whiten: [] }>();
 const client = computed(() => GameLanguageGameClientMap[language]);
@@ -75,8 +95,10 @@ const page = useTemplateRef("page");
 // Whether the title is still fading out after its click, which keeps it drawn until the fade has run
 const isStartLeaving = ref(false);
 const isStartShown = computed(() => stage === LoginStage.Title || isStartLeaving.value);
+// The game's own clips made playable once, the white the scene fades up out of among them
+const clipMap = createLoginInterfaceClipMap(interfaceClips);
 const playClip = (clip: LoginInterfaceClip): Animation[] =>
-  page.value ? playInterfaceClip(page.value, LoginInterfaceClipMap[clip]) : [];
+  page.value ? playInterfaceClip(page.value, clipMap[clip]) : [];
 // Each stage's clips as the game plays them: the white curtain then the page fading in on arriving, the title fading in
 // At the title and out on its click, and the page fading into white on entering. A clip's tracks share its length, so
 // Any one of them ending is the clip's end
@@ -113,17 +135,21 @@ watch(
   <GameScreen class="login-interface">
     <!-- The page as the game's tree under `LoginMainPage` nests it: each piece a `GameRect` placed by its
          RectTransform inside its game parent's, and what the tree cannot hold measured inside the piece holding it -->
-    <GameRect #default="{ rect: loginRect }" :rect="interfaceRects.GrpLogin">
+    <GameRect #default="{ rect: loginRect }" :rect="interfaceRects[LoginInterfaceRectName.Login]">
       <!-- The root the clips play on, the empty path, over GrpLogin's whole box -->
       <div ref="page" class="page">
-        <GameRect #default="{ rect: backgroundRect }" :parent="loginRect" :rect="interfaceRects['GrpLogin/BgBtn']">
+        <GameRect
+          #default="{ rect: backgroundRect }"
+          :parent="loginRect"
+          :rect="interfaceRects[LoginInterfaceRectName.Background]"
+        >
           <!-- The white the page fades up out of as it arrives and into as it enters, which only the clips draw; its
                Scale overhangs the page, so the page's own, down to 0.96 as it fades in, never uncovers the screen's
                Edge -->
           <GameRect
             class="white-screen"
             :parent="backgroundRect"
-            :rect="interfaceRects['GrpLogin/BgBtn/ImgWhiteScreen  ']"
+            :rect="interfaceRects[LoginInterfaceRectName.WhiteScreen]"
             :data-clip-target="LoginInterfaceClipTarget.WhiteScreen"
           />
         </GameRect>
@@ -131,20 +157,20 @@ watch(
         <GameRect
           #default="{ rect: centerRect }"
           :parent="loginRect"
-          :rect="interfaceRects['GrpLogin/Center']"
+          :rect="interfaceRects[LoginInterfaceRectName.Center]"
           :data-clip-target="LoginInterfaceClipTarget.Center"
         >
           <GameRect
             #default="{ rect: switchServerRect }"
             :parent="centerRect"
-            :rect="interfaceRects['GrpLogin/Center/SwitchServer']"
+            :rect="interfaceRects[LoginInterfaceRectName.Server]"
             :data-clip-target="LoginInterfaceClipTarget.Server"
           >
             <!-- The door's prompt, a prefab the page loads at run time into this container -->
             <GameRect
               v-if="isAtDoor && !isDoorWaiting"
               :parent="switchServerRect"
-              :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnPressStart']"
+              :rect="interfaceRects[LoginInterfaceRectName.PressStart]"
             >
               <PromptBand class="prompt">{{ gameText[GameTextKey.LoginBegin] }}</PromptBand>
             </GameRect>
@@ -152,7 +178,7 @@ watch(
               v-if="stage === LoginStage.Title"
               class="server"
               :parent="switchServerRect"
-              :rect="interfaceRects['GrpLogin/Center/SwitchServer/BtnSwitchServer']"
+              :rect="interfaceRects[LoginInterfaceRectName.SwitchServer]"
             >
               <ServerBar :name="LOGIN_SERVER_NAME" />
             </GameRect>
@@ -161,7 +187,7 @@ watch(
           <GameRect
             v-if="isStartShown"
             :parent="centerRect"
-            :rect="interfaceRects['GrpLogin/Center/BtnStart']"
+            :rect="interfaceRects[LoginInterfaceRectName.Start]"
             :data-clip-target="LoginInterfaceClipTarget.Start"
           >
             <!-- A heading to a screen reader, drawn as a paragraph so no host's own heading styles reach it -->
@@ -174,7 +200,7 @@ watch(
           <GameRect
             v-if="client === GameClient.Mainland"
             :parent="centerRect"
-            :rect="interfaceRects['GrpLogin/Center/BtnCADPA']"
+            :rect="interfaceRects[LoginInterfaceRectName.RatingBadge]"
             :data-clip-target="LoginInterfaceClipTarget.RatingBadge"
           >
             <svg class="age-rating" viewBox="0 0 84 110" role="img" aria-label="12+">
@@ -198,32 +224,32 @@ watch(
           v-if="isFooterShown"
           #default="{ rect: bottomRect }"
           :parent="loginRect"
-          :rect="interfaceRects['GrpLogin/Bottom']"
+          :rect="interfaceRects[LoginInterfaceRectName.Bottom]"
           :data-clip-target="LoginInterfaceClipTarget.Bottom"
         >
           <LoginStatus v-if="stage === LoginStage.Preparing" :game-text :progress :step="statusStep" />
           <GameRect
             #default="{ rect: currentAccountRect }"
             :parent="bottomRect"
-            :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount']"
+            :rect="interfaceRects[LoginInterfaceRectName.CurrentAccount]"
           >
             <p v-if="stage === LoginStage.Title" class="user">
               <!-- The space after the label is its own, since the template drops one between two lines -->
               <span class="user-label">{{ `${gameText[GameTextKey.LoginUserLabel]} ` }}</span>
               <span class="user-name">{{ playerName }}</span>
             </p>
-            <GameRect :parent="currentAccountRect" :rect="interfaceRects['GrpLogin/Bottom/CurrentAccount/TxtVersion']">
+            <GameRect :parent="currentAccountRect" :rect="interfaceRects[LoginInterfaceRectName.Version]">
               <p class="version">
                 {{ GameClientVersionTextMap[client] }}
               </p>
             </GameRect>
           </GameRect>
-          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects['GrpLogin/Bottom/RightButtons']">
+          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects[LoginInterfaceRectName.RightButtons]">
             <div v-for="icon of cornerIcons" :key="icon" :class="['slot', { arriving: isAtDoor }]">
               <RoundButton :icon :label="gameText[InterfaceIconGameTextKeyMap[icon]]" />
             </div>
           </GameRect>
-          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects['GrpLogin/Bottom/LeftButtons']">
+          <GameRect class="column" :parent="bottomRect" :rect="interfaceRects[LoginInterfaceRectName.LeftButtons]">
             <div class="slot">
               <RoundButton
                 :icon="InterfaceIcon.Power"

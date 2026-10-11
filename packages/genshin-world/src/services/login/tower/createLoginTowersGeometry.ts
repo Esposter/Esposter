@@ -1,7 +1,7 @@
 import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
+import type { LoginTowers } from "#src/models/login/LoginTowers";
 import type { BufferGeometry } from "three";
 
-import towers from "#src/data/login/towers.json";
 import {
   LOGIN_FACADE_ATTRIBUTE,
   LOGIN_FACADE_CUT_ATTRIBUTE,
@@ -24,11 +24,11 @@ const withCut = (geometry: BufferGeometry, cut: number): BufferGeometry =>
 // In the atlas: across its tile by how far round the axis it stands, from +z toward +x as the lathe turns, and up it
 // By its height from the foot. A lathe's seam vertices stand a hair short of a whole turn, so they read its tile's
 // Far edge rather than its near one
-export const createLoginTowersGeometry = (atlas: LoginTowerAtlas): BufferGeometry => {
+export const createLoginTowersGeometry = (towers: LoginTowers, atlas: LoginTowerAtlas): BufferGeometry => {
   const matrix = new Matrix4();
   const towerPartMap = new Map<string, BufferGeometry>();
   const createPart = (tower: string): BufferGeometry | undefined => {
-    const facade = towers.facades[tower as keyof typeof towers.facades];
+    const facade = towers.facades[tower];
     const tile = atlas.tiles[tower];
     if (!facade || !tile) return undefined;
     const {

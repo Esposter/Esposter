@@ -23,6 +23,7 @@ import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
 import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
+import { useCharacterPackIds } from "#src/composables/useCharacterPackIds";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
@@ -35,7 +36,6 @@ import mondstadtWildlife from "#src/generated/wildlife/mondstadt.json";
 import { wildlifePlaceSchema } from "#src/models/wildlife/WildlifePlace";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { getCharacterPackHash } from "#src/services/character/getCharacterPackHash";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
@@ -103,7 +103,7 @@ interface Props {
   // Among everything in the world
   characterBody?: Object3D;
   // The character on the field, drawn on the body from its pack, or as its body's capsule where no pack is served, the
-  // Lock names none of the character's, or its model fails to load
+  // Host holds none of the character's, or its model fails to load
   characterId: number;
   // How the character on the field moves, whose body's capsule is drawn where no pack is served
   characterLocomotion?: Locomotion;
@@ -267,7 +267,9 @@ const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin);
 const questTargetPosition = computed(() =>
   questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
 );
-// The character whose model failed to load, drawn as its body's capsule in its place
+// The characters the host holds a pack for, and the one whose model failed to load, drawn as its body's capsule in its
+// Place
+const characterPackIds = useCharacterPackIds(characterPackBaseUrl);
 const failedCharacterId = ref<number>();
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
@@ -446,7 +448,7 @@ onUnmounted(() => {
     <!-- The character on the field, on the controller's body -->
     <primitive v-if="characterBody" :object="characterBody">
       <CharacterModel
-        v-if="characterPackBaseUrl && getCharacterPackHash(characterId) && failedCharacterId !== characterId"
+        v-if="characterPackBaseUrl && characterPackIds.has(characterId) && failedCharacterId !== characterId"
         :key="characterId"
         :character-id
         :character-pack-base-url

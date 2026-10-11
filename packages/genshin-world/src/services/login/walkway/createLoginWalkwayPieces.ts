@@ -1,7 +1,7 @@
+import type { LoginWalkway } from "#src/models/login/LoginWalkway";
 import type { LoginWalkwayPiece } from "#src/models/login/LoginWalkwayPiece";
 import type { BufferGeometry } from "three";
 
-import walkway from "#src/data/login/walkway.json";
 import { mergeGeometryParts } from "genshin-engine";
 import { ExtrudeGeometry, Shape } from "three";
 
@@ -21,7 +21,7 @@ const extrudeOutline = (outline: readonly (readonly number[])[], bottom: number,
 // The walkway as the pieces it is laid from, each its outline extruded from the walkway's underside up to its own top
 // With what stands raised over its stone (its curbs, its lanes' borders) extruded on up to their own, with the depth of
 // Its middle, which it rises into place by as one, and a share from 0 to 1 staggering its rise from its neighbours'
-export const createLoginWalkwayPieces = (): LoginWalkwayPiece[] =>
+export const createLoginWalkwayPieces = (walkway: LoginWalkway): LoginWalkwayPiece[] =>
   walkway.pieces.map(({ outline, raised, top }, index) => {
     const zs = [outline, ...raised.map((part) => part.outline)].flatMap((loop) => loop.map(([, z = 0]) => z));
     return {

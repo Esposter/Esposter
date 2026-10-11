@@ -1,6 +1,6 @@
 import type { LoginPaving } from "#src/models/login/LoginPaving";
+import type { LoginPavingData } from "#src/models/login/LoginPavingData";
 
-import paving from "#src/data/login/paving.json";
 import { SceneAxis } from "#src/models/scene/SceneAxis";
 import { createPlanCanvasNode } from "#src/services/login/scene/createPlanCanvasNode";
 import { createPlanTonesNode } from "#src/services/login/scene/createPlanTonesNode";
@@ -8,13 +8,10 @@ import { LOGIN_PAVING_PIXELS_PER_METRE } from "#src/services/login/walkway/const
 import { addSmoothLoop, MAX_BYTE } from "genshin-engine";
 import { mix, normalView, transformNormalToView, vec3 } from "three/tsl";
 
-// The box a rim is blurred by, twice over: a quarter of the rim's width either side, and a pixel at the least
-const BEVEL_PIXELS = Math.max(Math.round((paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / 4), 1);
-// A step blurred twice by that box falls at most by one over the box's width a pixel
-const BEVEL_PEAK_PIXELS = BEVEL_PIXELS * 2 + 1;
-// A slope a pixel as its share of the steepest a rim falls, about the byte's middle
-const toByte = (slope: number): number =>
-  Math.round((Math.min(Math.max(slope * BEVEL_PEAK_PIXELS, -1), 1) * 0.5 + 0.5) * MAX_BYTE);
+// A slope a pixel as its share of the steepest a rim falls, about the byte's middle, a rim falling at most one over
+// Its blur's peak pixels a pixel
+const toByte = (slope: number, bevelPeakPixels: number): number =>
+  Math.round((Math.min(Math.max(slope * bevelPeakPixels, -1), 1) * 0.5 + 0.5) * MAX_BYTE);
 // A canvas's one channel blurred by a box of the radius along one axis, in place, twice over for a bevel that eases
 // In and out
 const blurChannel = (values: Float32Array, width: number, height: number, radius: number): void => {
@@ -48,7 +45,11 @@ const blurChannel = (values: Float32Array, width: number, height: number, radius
 // Slopes across and along the walkway are the canvas's red and green about their middle. The normal tilts by the slopes
 // On the tops alone, a rim falling its fitted slope's and width's depth; the shade is the tones its textures paint the
 // Tops in, drawn once over the repeat of their pattern and read again along the copy (`createPlanTonesNode`)
-export const createLoginPaving = (): LoginPaving => {
+export const createLoginPaving = (paving: LoginPavingData): LoginPaving => {
+  // The box a rim is blurred by, twice over: a quarter of the rim's width either side, and a pixel at the least
+  const bevelPixels = Math.max(Math.round((paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / 4), 1);
+  // A step blurred twice by that box falls at most by one over the box's width a pixel
+  const bevelPeakPixels = bevelPixels * 2 + 1;
   const plan = {
     axes: [SceneAxis.X, SceneAxis.Z],
     corner: paving.corner,
@@ -88,7 +89,7 @@ export const createLoginPaving = (): LoginPaving => {
     // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
     context.fill(grooves, "evenodd");
     const depths = getFilledShares();
-    blurChannel(depths, width, height, BEVEL_PIXELS);
+    blurChannel(depths, width, height, bevelPixels);
     const image = context.getImageData(0, 0, width, height);
     for (let pixel = 0; pixel < width * height; pixel++) {
       const [column, row] = [pixel % width, Math.floor(pixel / width)];
@@ -99,8 +100,8 @@ export const createLoginPaving = (): LoginPaving => {
       const along =
         (depths[Math.max(row - 1, 0) * width + column] ?? 0) -
         (depths[Math.min(row + 1, height - 1) * width + column] ?? 0);
-      image.data[pixel * 4] = toByte(across / 2);
-      image.data[pixel * 4 + 1] = toByte(along / 2);
+      image.data[pixel * 4] = toByte(across / 2, bevelPeakPixels);
+      image.data[pixel * 4 + 1] = toByte(along / 2, bevelPeakPixels);
       image.data[pixel * 4 + 3] = MAX_BYTE;
     }
     context.putImageData(image, 0, 0);
@@ -110,7 +111,7 @@ export const createLoginPaving = (): LoginPaving => {
   const slopes = sample.rg
     .mul(2)
     .sub(1)
-    .mul((paving.bevel.slope * paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / BEVEL_PEAK_PIXELS);
+    .mul((paving.bevel.slope * paving.bevel.width * LOGIN_PAVING_PIXELS_PER_METRE) / bevelPeakPixels);
   return {
     normalNode: mix(normalView, transformNormalToView(vec3(slopes.x, 1, slopes.y).normalize()), weight),
     shade: createPlanTonesNode({ ...plan, size: paving.paint.size }, paving.paint),

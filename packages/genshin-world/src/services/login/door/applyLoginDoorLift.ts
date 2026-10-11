@@ -1,6 +1,6 @@
+import type { LoginDoor } from "#src/models/login/LoginDoor";
 import type { Object3D } from "three";
 
-import door from "#src/data/login/door.json";
 import { Quaternion } from "three";
 
 const startTurn = new Quaternion();
@@ -8,6 +8,7 @@ const endTurn = new Quaternion();
 // A piece of the door stood where its lift has carried it so many milliseconds into its rise, between the samples
 // Either side, its place eased along a line and its turn along the arc between, and at rest once the lift is done
 export const applyLoginDoorLift = (
+  door: LoginDoor,
   { position, quaternion }: Object3D,
   lift: readonly (readonly number[])[],
   riseMs: number,

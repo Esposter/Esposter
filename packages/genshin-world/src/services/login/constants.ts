@@ -15,9 +15,9 @@ export const LOGIN_STATUS_STEPS: readonly { ms: number; step: LoginStatusStep }[
   { ms: 1400, step: LoginStatusStep.LoadingData },
 ];
 // Timings from the 1440 high recording at 10 frames and the English one at 60, each read as a curve over its region
-// (`luma`): the wait mark shows from 1.3 s to 2 s, and the title comes in as it goes; the white the scene fades up
-// Out of is the game's own clip (LoginInterfaceClipMap). The welcome card, which the account kit drops in as the
-// Player signs in, holds 1.9 s and fades over 200 ms; the screen does not show it until it has an account to welcome
+// (`luma`): the wait mark shows from 1.3 s to 2 s, and the title comes in as it goes. The welcome card, which the
+// Account kit drops in as the player signs in, holds 1.9 s and fades over 200 ms; the screen does not show it until it
+// Has an account to welcome
 export const LOGIN_SPINNER_START_MS = 1300;
 export const LOGIN_TITLE_START_MS = 2000;
 export const LOGIN_WELCOME_FADE_MS = 200;

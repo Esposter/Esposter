@@ -1,7 +1,7 @@
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { GameTextKey } from "genshin-text";
+import { GameLanguage, GameTextKey } from "genshin-text";
 
 // The game's order of the five artifact slots, and of the three combat talents, which the tabs list them in
 export const ARTIFACT_SLOT_ORDER = [
@@ -18,12 +18,34 @@ export const COMBAT_TALENT_ORDER = [
 ];
 // The level every combat talent starts at, before any upgrade raises it
 export const TALENT_START_LEVEL = 1;
-// Where the characters' packs sit in their container, each file under its character's id and its pack's hash
-export const CHARACTER_PACK_BLOB_PATH = "genshin/characters";
-// A pack's own files, named alike in every pack: its model, uploaded under this name, and the terms bundled with it.
-// The model's textures keep the paths the model names them by
+// The listing beside the characters' folders of the ids a host holds a pack for, so a character with none is drawn as
+// Its capsule without a request of its own
+export const CHARACTER_PACK_INDEX_PATH = "index.json";
+// A pack's own files, named alike in every pack whatever its folder calls them: its model, and the terms bundled with
+// It as UTF-8. The model's textures keep the paths the model names them by
 export const CHARACTER_MODEL_PATH = "model.pmx";
 export const CHARACTER_TERMS_PATH = "terms.txt";
+// What a pack's terms file is found by in its name, the earliest preferred where several match: the Japanese terms, the
+// Readme they are often bundled in, the Chinese instructions, terms and rules, and an English name
+export const CHARACTER_TERMS_FILE_NAMES: readonly string[] = [
+  "利用規約",
+  "readme",
+  "使用说明",
+  "规约",
+  "规则",
+  "terms",
+];
+// What a Shift-JIS reading of Chinese text turns up and Japanese terms never hold: the half-width katakana a GBK lead
+// Byte reads as, and the private-use letters its highest lead bytes map to
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const CHARACTER_TERMS_NOT_JAPANESE_REGEX: RegExp = /[\uE000-\uF8FF\uFF61-\uFF9F]/u;
+// The languages the official packs name their models in, which a folder of several models is matched to its character
+// By: the Chinese and English names the packs carry, and the Japanese of MMD's own convention
+export const CHARACTER_PACK_MODEL_NAME_LANGUAGES: readonly GameLanguage[] = [
+  GameLanguage.ChineseSimplified,
+  GameLanguage.English,
+  GameLanguage.Japanese,
+];
 // A pack's terms are fetched on its own, and abandoned past this so a stalled request cannot hold the page's text back
 export const CHARACTER_TERMS_FETCH_TIMEOUT_MS = 10_000;
 // A model and each of its textures run to megabytes, and are abandoned past this so a stalled request cannot leave a

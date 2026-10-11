@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { LoginData } from "#src/models/login/LoginData";
 import type { LoginTimeOfDay } from "#src/models/login/LoginTimeOfDay";
 import type { TresRendererSetupContext } from "@tresjs/core";
 import type { GameLanguage, GameText } from "genshin-text";
@@ -37,6 +38,8 @@ interface Props {
   isInterfaceHidden?: true;
   // The reader's language, whose client's interface the screen shows
   language: GameLanguage;
+  // Every record the screen is drawn from, read from the hosted game data, each handed to the part that draws it
+  loginData: LoginData;
   // Where the music's recordings are served from
   musicRecordingBaseUrl: string;
   playerName?: string;
@@ -53,6 +56,7 @@ const {
   heldScrolled,
   isInterfaceHidden,
   language,
+  loginData,
   musicRecordingBaseUrl,
   playerName,
   progress,
@@ -139,11 +143,22 @@ const onClick = (event: MouseEvent): void => {
       :shadow-map-type="PCFShadowMap"
     >
       <LoginScene
+        :cloud-layer-textures="loginData.cloudLayerTextures"
+        :clouds="loginData.clouds"
+        :door="loginData.door"
         :held-scrolled
+        :hulls="loginData.hulls"
         :is-door-lit="stage === LoginStage.Entering"
+        :paving="loginData.paving"
         :quality-tier
+        :scroll="loginData.scroll"
+        :sky="loginData.sky"
         :stage
+        :stone="loginData.stone"
+        :stone-light="loginData.stoneLight"
         :time-of-day
+        :towers="loginData.towers"
+        :walkway="loginData.walkway"
         @door-formed="isDoorFormed = true"
         @ready="emit('ready')"
       />
@@ -151,11 +166,16 @@ const onClick = (event: MouseEvent): void => {
     <LoginMusic
       v-if="!isInterfaceHidden"
       :is-door-opened="stage === LoginStage.Entering || undefined"
+      :music="loginData.music"
       :music-recording-base-url
+      :sounds="loginData.sounds"
     />
     <LoginInterface
       v-if="!isInterfaceHidden"
+      :age-rating="loginData.ageRating"
       :game-text
+      :interface-clips="loginData.interfaceClips"
+      :interface-rects="loginData.interfaceRects"
       :language
       :is-door-waiting="stage === LoginStage.Door && !isDoorFormed ? true : undefined"
       :is-spinner-shown

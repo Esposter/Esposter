@@ -1,7 +1,7 @@
 import type { LoginTowerAtlas } from "#src/models/login/LoginTowerAtlas";
 import type { LoginTowerFacade } from "#src/models/login/LoginTowerFacade";
+import type { LoginTowers } from "#src/models/login/LoginTowers";
 
-import towers from "#src/data/login/towers.json";
 import { createShadeCanvasTexture } from "#src/services/login/scene/createShadeCanvasTexture";
 import { getHalfShadeStyle } from "#src/services/login/scene/getHalfShadeStyle";
 import {
@@ -19,7 +19,7 @@ import { attribute, float, texture } from "three/tsl";
 // Drawn clipped to its tile and its gutters, its loops once more a whole turn either side so the gutters carry its
 // Surface on round its axis. The gilding is drawn as the stone's colour, not as metal: with no reflection of the sky to
 // Show it, a metal reads dark against the game's own exports at every hour
-export const createLoginTowerFacade = (atlas: LoginTowerAtlas): LoginTowerFacade => {
+export const createLoginTowerFacade = (towers: LoginTowers, atlas: LoginTowerAtlas): LoginTowerFacade => {
   const shadeCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const maskCanvas = new OffscreenCanvas(atlas.width, atlas.height);
   const shadeContext = shadeCanvas.getContext("2d");

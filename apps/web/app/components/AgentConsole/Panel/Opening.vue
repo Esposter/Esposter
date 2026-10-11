@@ -2,6 +2,7 @@
 import type { LoadingStep } from "@/models/agentConsole/LoadingStep";
 
 import { GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL } from "#shared/services/genshin/constants";
+import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { GameLanguageTagMap } from "genshin-text";
 import { GameOpening } from "genshin-world";
 
@@ -18,11 +19,14 @@ const emit = defineEmits<{ finish: [] }>();
 const progress = computed(() => loadingSteps.filter(({ isDone }) => isDone).length / loadingSteps.length);
 const currentStep = computed(() => loadingSteps.find(({ isDone }) => !isDone));
 const gameText = await useGameText();
+// The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
+const containerBaseUrl = useContainerBaseUrl();
 </script>
 
 <template>
   <div :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
     <GameOpening
+      :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
       :game-text="gameText.text"
       :language="gameText.language"
       :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"

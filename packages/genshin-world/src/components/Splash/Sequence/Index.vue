@@ -20,11 +20,13 @@ import { GAME_WHITE } from "genshin-interface";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
-  // The reader's language, whose client's splashes and title logo the opening shows
+  // The reader's language, whose client's splashes the opening shows
   language: GameLanguage;
+  // The path of the reader's client's title logo, which its title splash draws
+  titleLogoPath: string;
 }
 
-const { gameText, language } = defineProps<Props>();
+const { gameText, language, titleLogoPath } = defineProps<Props>();
 const emit = defineEmits<{ finish: [] }>();
 // The game's opening on white, one splash after another as the reader's client shows them: the publisher's logo, the
 // Game's, then the health notice in the global client, and the game's straight away in mainland China's. Each fades
@@ -33,11 +35,15 @@ const emit = defineEmits<{ finish: [] }>();
 const clientSplashesMap: Record<GameClient, Splash[]> = {
   [GameClient.Global]: [
     { component: SplashPublisher, timing: PUBLISHER_SPLASH_TIMING },
-    { component: SplashTitle, props: { gameText, language }, timing: TITLE_SPLASH_TIMING },
+    { component: SplashTitle, props: { gameText, language, logoPath: titleLogoPath }, timing: TITLE_SPLASH_TIMING },
     { component: SplashHealthNotice, props: { gameText }, timing: HEALTH_NOTICE_TIMING },
   ],
   [GameClient.Mainland]: [
-    { component: SplashTitle, props: { gameText, language }, timing: MAINLAND_TITLE_SPLASH_TIMING },
+    {
+      component: SplashTitle,
+      props: { gameText, language, logoPath: titleLogoPath },
+      timing: MAINLAND_TITLE_SPLASH_TIMING,
+    },
     { component: SplashHealthNotice, props: { gameText }, timing: MAINLAND_HEALTH_NOTICE_TIMING },
   ],
 };

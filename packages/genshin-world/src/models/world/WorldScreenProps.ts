@@ -7,7 +7,8 @@ import type { GameLanguage, GameText } from "genshin-text";
 export interface WorldScreenProps {
   // A camera held still, as a reference of the game's sees the world, in place of the one circling the oak
   cameraPose?: WorldCameraPose;
-  // Where the host serves the characters' model packs, without which no character is drawn
+  // Where the host serves the characters' model packs: the index of the ids it holds one for, and under each id that
+  // Pack's model, terms and textures. Without it no character is drawn
   characterPackBaseUrl?: string;
   createTerrainWorker: () => Worker;
   // Where the host serves the game's own tables and words, each object fetched by the hash the lock names
