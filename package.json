@@ -54,6 +54,7 @@
     "ai:resume": "pnpm -C scripts ai:resume",
     "ai:skills:extract": "pnpm -C scripts ai:skills:extract",
     "ai:sweep:constant-scope": "pnpm -C scripts ai:sweep:constant-scope",
+    "ai:sweep:duplicate-code": "pnpm -C scripts ai:sweep:duplicate-code",
     "ai:sweep:duplicate-prose": "pnpm -C scripts ai:sweep:duplicate-prose",
     "ai:sweep:file-organization": "pnpm -C scripts ai:sweep:file-organization",
     "ai:sweep:ledger-coverage": "pnpm -C scripts ai:sweep:ledger-coverage",

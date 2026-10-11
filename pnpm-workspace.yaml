@@ -214,6 +214,7 @@ catalog:
   idb: ^8.0.4
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
+  jscpd: ^4.3.0
   knip: ^6.40.0
   link-preview-js: ^5.0.0
   linkifyjs: ^4.3.3
