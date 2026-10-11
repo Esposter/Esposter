@@ -9,7 +9,7 @@ Yun Jin's kit is one module, `createYunjinKit`, on avatar 10000064: five strikes
 
 ## Decisions
 
-- **Yun Jin's strikes, charged attack, plunges and Opening Flourish's hits deal 0 poise.** Provisional, as gcsim gives none, so `yunjinKit.ts` sets each at 0; her plunges reuse the other kits' stand-ins.
+- **Yun Jin's strikes, charged attack, plunges and Opening Flourish's hits deal 0 poise.** Provisional, as gcsim gives none, so `yunjinKit.ts` sets each at 0; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 - **Opening Flourish's tap and Yun Jin's Geo burst give 1U of Geo gauge each.** Provisional, as gcsim gives no gauge, so `yunjinKit.ts` reads 1U as the other Cryo and Geo hits do.
 - **Opening Flourish's charge levels start at half a second and a second.** Provisional, as gcsim takes the levels from the input alone, so `yunjinKit.ts` uses the thresholds Bennett's Charge Levels do.
 

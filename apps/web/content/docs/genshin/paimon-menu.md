@@ -16,6 +16,10 @@ The game's pause menu, laid out as the English PC client's 1.3 still draws it at
 - **Its profile card shows the rank and the World Level.** Each value stands right-aligned beside its row's end, where the current client draws it, and the info icon beside the World Level opens the World Level dialog over the dimmed menu ([Adventure Rank](/docs/genshin/adventure-rank)). Birthday stands over an empty value until the profile is backed; the [menu screens](/docs/proposals/genshin/menu-paimon) proposal builds it.
 - **The World Level dialog is measured off a public recording.** Its frame, 1078 by 716 and centred, its band, line and fill, the title, the cross, the dividers, the scroll track, the body's lines 32 units apart at a cap height of 20 and spaced out to the game's line widths, and the cream button with its red arrow are read from a tutorial recorded at 1080 high, at 5 seconds (`world-level-dialog`), its glyphs traced from the same tutorial's 4K recording. Scored over its frame, the mean difference is about six percent. What is left is the build's wording and the game's typeface: the recording's help text reads World Level 5 and "reduce" where the current text map reads 3 and "decrease", which wraps one line more and moves every line above it.
 
+## Decisions
+
+- **The Settings screen's looks are provisional.** They are read through the world blurred behind them at 144.5 and 178 seconds of `captures/yt-5EmJX_RyuY8-menu-settings.mp4`, each solved from the two worlds the stills show it over: the header's dark veil and how it fades, the light trailing the open tab's name, the faint second star behind each value, the scroll track's and thumb's alphas, and the Audio tab's speaker, number box and slider. Anisotropic Filtering's 8x is written as a number, since no text id holds it. They stand if the screen reads the same beside those frames in English and 8x stands alike in every language, and any look or that value differing would change it.
+
 ## Key files
 
 | File                                                                    | Its role                                                                                            |
