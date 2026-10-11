@@ -316,6 +316,7 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
     getResidents: () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents),
     getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
     language,
+    nameText,
     questProgressMap,
     questsInProgress,
     questTextMap,

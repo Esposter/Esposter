@@ -22,6 +22,7 @@ export const useWorldTalks = ({
   getResidents,
   getResidentSpot,
   language,
+  nameText,
   questProgressMap,
   questsInProgress,
   questTextMap,
@@ -31,6 +32,8 @@ export const useWorldTalks = ({
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   language: GameLanguage;
+  // The world's names by text id, which name a resident's row
+  nameText: Readonly<Record<string, string>>;
   questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
   questsInProgress: ComputedRef<Quest[]>;
   questTextMap: Ref<Readonly<Record<string, string>>>;
@@ -65,8 +68,7 @@ export const useWorldTalks = ({
       standingTalks.value,
     ),
   );
-  // Every talk's words, the quests' and the standing talks', which name a resident as their talk's speaker and a standing
-  // Talk's offers by their quest's title
+  // Every talk's words, the quests' and the standing talks', which name a standing talk's offers by their quest's title
   const talkTextMap = computed(() => ({ ...questTextMap.value, ...standingTalkTextMap.value }));
   // The quest talks the talk running offers on its first line: a standing talk offers each one open to the characters it
   // Is begun on, and a quest's talk offers none
@@ -92,7 +94,7 @@ export const useWorldTalks = ({
         {
           id: residentTalkId,
           kind: InteractionKind.Talk,
-          name: talkTextMap.value[nameTextId] ?? "",
+          name: nameText[nameTextId] ?? "",
           position: { x, y: getGroundHeight(x, z), z },
         },
       ];
