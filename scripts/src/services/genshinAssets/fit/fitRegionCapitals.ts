@@ -1,4 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
 import type { GaussianHills, GroundPoint } from "genshin-engine";
 import type { RegionGround } from "genshin-world";
 
@@ -22,12 +23,6 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// An area of the game's own table as the community's dump writes one: its id among the scene points, and its name's
-// Text id
-interface WorldArea {
-  areaID2: number;
-  areaNameTextMapHash: number;
-}
 // Each region's first landmark stood at its capital, round the world's origin at the oak's foot: the median place of
 // The waypoints the game's area table files under the capital's areas, a waypoint being a point of the kind
 // Windrise's statue is. Where the region's ground is its own file and no fit has drawn it, its first plateau, the

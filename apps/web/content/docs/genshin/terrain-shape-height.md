@@ -45,7 +45,7 @@ The features keep the residual off their own ground too: the composed height mul
 ## Not yet
 
 - **A smooth window on each hill.** A hill is cut at its reach, where its Gaussian still stands at about a hundredth of its height (the exponential of minus four and a half, 1.1%), so the ground steps by that much where a tall hill's square ends. A window falling smoothly to none at the reach would close the step, but the fit would then read a different shape, so the hills would have to be fitted again with it.
-- **One bilinear read for the fitted grids.** `sampleTerrainResidualFade` reads its weights between four nodes exactly as `sampleGroundLayerField` reads each layer's shares, over the same row-major grid, and differs only past the edges, where the fade draws none and the field keeps to its edge. One read of a grid's value at a point would serve both; the layer field's side waits until its owner's work on the ground's layers lands.
+- **One bilinear read for the fitted grids.** `sampleTerrainResidualFade` reads its weights between four nodes exactly as `sampleGroundLayerField` reads each layer's shares, over the same row-major grid, and differs only past the edges, where the fade draws none and the field keeps to its edge. One read of a grid's value at a point would serve both.
 
 ## Key files
 
@@ -69,5 +69,9 @@ The features keep the residual off their own ground too: the composed height mul
 
 ## Notes
 
-- **Windrise's ground is hills, features and a faded residual.** Its data is the fitted hills, the plateaus, cliffs and ridges its fit places ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground") and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent ([terrain shapes](/docs/proposals/genshin/terrain-shapes)). Inside Mondstadt City it holds the land the city stands on, its tiers and walls smoothed away, as every fitted region's does inside its capital's city. The world lays every other region's ground over it: one no fit has drawn adds its provisional plateau, raised under its capital ([region buildings](/docs/genshin/region-buildings)), and one a fit has drawn adds its hills, features and faded residual on its own level. Past every fitted extent no residual is drawn; coastlines are the [terrain shapes](/docs/proposals/genshin/terrain-shapes) proposal's.
+- **Windrise's ground is hills, features and a faded residual.** Its data is the fitted hills, the plateaus, cliffs and ridges its fit places ([scene derivation](/docs/genshin/scene-derivation), "Each region's ground") and the residual's noise, faded out where the hills hold and cleared from the bar's 60 metres round the oak and from every place a region file stands a landmark on inside the fitted extent. Inside Mondstadt City it holds the land the city stands on, its tiers and walls smoothed away, as every fitted region's does inside its capital's city. The world lays every other region's ground over it: one no fit has drawn adds its provisional plateau, raised under its capital ([region buildings](/docs/genshin/region-buildings)), and one a fit has drawn adds its hills, features and faded residual on its own level. Past every fitted extent no residual is drawn, and a coastline is no feature of its own ([terrain coastlines](/docs/genshin/deferred/terrain-coastlines)).
 - **A feature's falloff is positive.** The blends divide by their falloff, so a sharp edge is a falloff of a small positive length rather than zero.
+
+## Sources
+
+- [Making maps with noise functions](https://www.redblobgames.com/maps/terrain-from-noise/), Red Blob Games: noise octaves summed into height, used here only for the residual below the fitted features, its octaves' amplitudes fitted to that residual.

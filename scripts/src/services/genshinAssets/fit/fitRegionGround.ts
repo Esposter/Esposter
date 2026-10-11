@@ -17,7 +17,7 @@ import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerra
 import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGroundFootprints";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { smoothTerrainGrid } from "#src/services/genshinAssets/fit/smoothTerrainGrid";
-import { GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { CATALOGUE_FILE, GROUND_RADIUS, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
@@ -34,6 +34,12 @@ import { join } from "node:path";
 // The screen's views see, its near ground first
 const GROUND_STEP = 6;
 const GROUND_FALLOFF = 200;
+// How far round its centre a region the catalogue outlines is fitted, in metres: its capital's surroundings, out to
+// Twice the falloff, where a sample weighs a fifth of one at the centre. The features' stop is a share of the whole
+// Extent's error, so fitted over a region's outlines out to Windrise's disc they go to the farther land's cliffs and
+// Leave the city's ground unheld: Mondstadt's bar stood at 1.24 metres against its gate's 0.87, Sumeru's at 2.96
+// Against 2.29
+const REGION_GROUND_RADIUS = 2 * GROUND_FALLOFF;
 // The hills' widths, widest first, down to the knolls round the oak and the statue
 const GROUND_WIDTHS = [200, 120, 70, 40, 24, 14];
 // The distance the ground's bar is read within, in metres, round the centre or round the city it stands in, where the
@@ -50,32 +56,33 @@ interface Catalogue {
   regions: { areas: { outline: GroundPoint[] }[]; id: string }[];
 }
 
-// A region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round the oak's foot,
-// Which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted round the
-// Region's centre and only inside its catalogue outlines, so no region's ground runs into another's; a region the
-// Catalogue gives no outline (Windrise, the valley its views see) is fitted over its disc. A capital's city is no
-// Region's own ground: its buildings and plazas own its tiers and walls (Mondstadt City's are flat terraces with steps
-// Of metres between two of the tiles' samples), so inside it the fit takes the land the city stands on, its tiles
-// Smoothed at the narrowest hills' width, and its bar is read on the region's own ground alone. Left unsampled, the hills
-// Would run on into a city unheld, tens of metres off its tiles. The region's gate is read off the ground itself, never
-// Off the fit: the RMS of its detail finer than the fit's step over the samples its bar is read on, the roughness no
-// Hill of the fit's widths follows (the narrowest keeps about a hundredth of its power through it), against which the
-// Tiles' own rounding, a 1024 metre height scale in 16 bits (`parseTerrainHeights`), is under a centimetre. Returns the
-// Hills, the plateaus, cliffs and ridges the hills leave, the residual's noise faded out where they hold against the gate
-// And the heights they stand between as the region's ground, the record `ground/<region>`, with a report holding the
-// Gate, the bar the hills and features are held to against it, and the composed ground's error with and without the
-// Residual
+// A region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round the oak's
+// Foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted
+// Round the region's centre, within its radius and only inside its catalogue outlines, so no region's ground runs into
+// Another's; a region the catalogue gives no outline (Windrise, the valley its views see) is fitted over its whole
+// Disc. A capital's city is no region's own ground: its buildings and plazas own its tiers and walls (Mondstadt City's
+// Are flat terraces with steps of metres between two of the tiles' samples), so inside it the fit takes the land the
+// City stands on, its tiles smoothed at the narrowest hills' width, and its bar is read on the region's own ground
+// Alone. Left unsampled, the hills would run on into a city unheld, tens of metres off its tiles. The region's gate is
+// Read off the ground itself, never off the fit: the RMS of its detail finer than the fit's step over the samples its
+// Bar is read on, the roughness no hill of the fit's widths follows (the narrowest keeps about a hundredth of its power
+// Through it), against which the tiles' own rounding, a 1024 metre height scale in 16 bits (`parseTerrainHeights`), is
+// Under a centimetre. Returns the hills, the plateaus, cliffs and ridges the hills leave, the residual's noise faded
+// Out where they hold against the gate and the heights they stand between as the region's ground, the record
+// `ground/<region>`, with a report holding the gate, the bar the hills and features are held to against it, and the
+// Composed ground's error with and without the residual
 export const fitRegionGround = async (region: DerivedAssetComponent, centre: GroundPoint): Promise<GameDataBuild> => {
   const [getGameHeight, origin, catalogueJson] = await Promise.all([
     readWorldTerrainHeight(region),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readFile(join(WORLD_DATA_DIRECTORY, "catalogue.json"), "utf8"),
+    readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
   ]);
   const [originX, originY, originZ] = origin;
   const { regions } = parseMachineJson<Catalogue>(catalogueJson);
   const outlines = (regions.find(({ id }) => id === region)?.areas ?? []).flatMap(({ outline }) =>
     outline.length > 0 ? [outline] : [],
   );
+  const extentRadius = outlines.length > 0 ? REGION_GROUND_RADIUS : GROUND_RADIUS;
   const { cityAreas, footprints } = await readGroundFootprints(centre, GROUND_RADIUS, GROUND_BAR_RADIUS, origin);
   // How far a place stands from the nearest of the cities' areas, none inside one
   const getCityDistance = (x: number, z: number): number => {
@@ -97,7 +104,9 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
       values: new Float64Array(size * size),
     },
     (x, z) =>
-      checkIsInsideRegionOutlines(outlines, x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN,
+      Math.hypot(x - centre.x, z - centre.z) <= extentRadius && checkIsInsideRegionOutlines(outlines, x, z)
+        ? getGameHeight(originX + x, originZ - z) - originY
+        : Number.NaN,
   );
   const cityDistances = mapTerrainResidualGrid(tileGrid, getCityDistance).values;
   // The region's own ground, NaN inside a city, and the land a city stands on: its tiles smoothed at the narrowest

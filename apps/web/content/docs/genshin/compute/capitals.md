@@ -11,4 +11,4 @@ description: The witness runs that lay out the capitals as the game draws them, 
 
 ## Waiting
 
-- [ ] `[cpu]` {capital-area-outlines} needs game-exports — **Capitals: each capital's area outlined as the game draws it.** blocked: the game's area shapes have no extracted source yet, so the squares the [world map](/docs/genshin/world-map) draws stay provisional. Bar: each capital's outline drawn from that source, in place of its square.
+- [ ] `[cpu]` {capital-area-outlines} needs game-exports — **Capitals: each capital's area outlined as the game draws it.** blocked: no asset the exports' index names holds an area's shape, so each capital's area is outlined round the tiles its waypoints stand on (`fitAreaOutlines`, [world map](/docs/genshin/world-map)), and Everfrozen Earth by a provisional square. Bar: each capital's outline read from the game's own shape, in place of the one drawn round its tiles.

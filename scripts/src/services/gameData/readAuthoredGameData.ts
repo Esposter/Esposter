@@ -1,6 +1,6 @@
-import { AGE_RATING_KEY } from "#src/services/gameData/constants";
+import { AGE_RATING_KEY, CATALOGUE_KEY } from "#src/services/gameData/constants";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { CATALOGUE_FILE, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readRegionGroundFiles } from "#src/services/genshinAssets/shared/readRegionGroundFiles";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -8,13 +8,13 @@ import { GameDataset } from "genshin-world";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// The world's authored data files, which people edit and no step generates, as the records they publish under: the
-// Catalogue, each region's ground no fit has drawn and the login's age rating, read as the world package commits them. A
-// Ground file whose region a fit has since drawn is refused, since publishing it would put the plateaus back in place of
-// The fitted ground
+// The world's authored data files, which people edit and no step generates but the catalogue's outlines
+// (`fitAreaOutlines`), as the records they publish under: the catalogue, each region's ground no fit has drawn and the
+// Login's age rating, read as the world package commits them. A ground file whose region a fit has since drawn is
+// Refused, since publishing it would put the plateaus back in place of the fitted ground
 export const readAuthoredGameData = async (): Promise<Record<string, unknown>> => {
   const [catalogueJson, regionGroundMap, ageRatingJson] = await Promise.all([
-    readFile(join(WORLD_DATA_DIRECTORY, "catalogue.json"), "utf8"),
+    readFile(join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE), "utf8"),
     readRegionGroundFiles(),
     readFile(join(WORLD_DATA_DIRECTORY, `${AGE_RATING_KEY}.json`), "utf8"),
   ]);
@@ -29,7 +29,7 @@ export const readAuthoredGameData = async (): Promise<Record<string, unknown>> =
     }),
   );
   return {
-    [`${GameDataset.Catalogue}/catalogue`]: parseMachineJson(catalogueJson),
+    [CATALOGUE_KEY]: parseMachineJson(catalogueJson),
     ...Object.fromEntries(
       Object.entries(regionGroundMap).map(([region, ground]) => [`${GameDataset.Ground}/${region}`, ground]),
     ),

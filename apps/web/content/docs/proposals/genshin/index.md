@@ -45,7 +45,6 @@ flowchart TD
 | :----------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen |
 | [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows             |
-| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | each area's outline in the world map's catalogue                             |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                  |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | every placed plant's species, instanced and culled on the GPU                |
 | [World stalls](/docs/proposals/genshin/world-stalls)               | the Windrise frame's GPU stalls, each answered by its pass and object kind   |
@@ -157,7 +156,7 @@ What still separates the recreation from the whole game once the world and its p
 ## Notes
 
 - **As-built pages form a Genshin area.** Each engine page, once built, is rewritten in the [Genshin](/docs/genshin) area, beside the [agent console](/docs/infra/claude-interface/agent-console)'s docs, which keep only the console that works the sessions.
-- **The geography is the game's own, fitted.** Heights and placements are read from the game's terrain tiles and streaming records on its own coordinates and fitted by our generators ([terrain shapes](/docs/proposals/genshin/terrain-shapes)), so no region is laid out by hand and none needs a transform from a map's pixels.
+- **The geography is the game's own, fitted.** Heights and placements are read from the game's terrain tiles and streaming records on its own coordinates and fitted by our generators ([scene derivation](/docs/genshin/scene-derivation)), so no region is laid out by hand and none needs a transform from a map's pixels.
 
 ## Sources
 
