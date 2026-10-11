@@ -32,6 +32,8 @@ export const createMockRouter = <TContext extends object>(
         const createNotFoundError = () =>
           new TRPCError({ code: "NOT_FOUND", message: `No "${type}"-procedure on path "${path}"` });
 
+        // Each procedure reads its resolver when it is called rather than when the router is built, so a resolver a test
+        // Replaces answers the next call even on a WebSocket connection whose router was built before it
         switch (type) {
           case "mutation":
           case "query":
