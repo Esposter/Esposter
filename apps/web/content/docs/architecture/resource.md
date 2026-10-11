@@ -169,15 +169,7 @@ Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedO
 
 ### Router topology
 
-Router-per-type plus one cross-type router:
-
-| Router                                                                    | Contents                                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `resource`                                                                | everything that must work without knowing the type — the explorer's reads and counts (sharing one filter schema so list and total stay in lockstep), favourites, activity, publish history, duplicate, and the recycle-bin lifecycle |
-| `sheet`, `todoList`, `dashboard`, `email`, `webpage`, `flowchart`, `note` | `createResourceProcedures(type, …)`                                                                                                                                                                                                  |
-| `survey`                                                                  | factory + type-specific procedures (public respondent responses)                                                                                                                                                                     |
-| `program`                                                                 | factory + type-specific procedures (`generateProgramParticipants`, `readProgramStatus`)                                                                                                                                              |
-| `blueprint`                                                               | factory + type-specific procedures (`captureBlueprint`, `deployBlueprint`)                                                                                                                                                           |
+Each type has its own router, and one cross-type `resource` router holds what must work without knowing the type. `apps/web/server/trpc/routers/index.ts` registers them all by name, and a type-specific procedure (a survey's responses, a program's participants, a blueprint's capture and deploy) lives on its type's router.
 
 Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
 
