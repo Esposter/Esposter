@@ -1,6 +1,7 @@
 import { createTRPCMsw } from "#src/createTRPCMsw";
 import { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
 import { takeOne } from "@esposter/shared";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from "@trpc/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { http, HttpResponse } from "msw";
@@ -19,6 +20,21 @@ describe(createTRPCMsw, () => {
   });
   // What the chained parsers below have done so far, in the order they did it
   const parserSteps: string[] = [];
+  // Every input the Standard Schema validator below has been asked to judge
+  const standardValidatorInputs: unknown[] = [];
+  // A validator that is only a Standard Schema, so the mock can judge it through that interface alone
+  const standardValidator: StandardSchemaV1<{ id: string }> = {
+    "~standard": {
+      validate: (value) => {
+        standardValidatorInputs.push(value);
+        return typeof value === "object" && value !== null && "id" in value && typeof value.id === "string"
+          ? { value: { id: value.id } }
+          : { issues: [{ message: "id must be a string" }] };
+      },
+      vendor: "test",
+      version: 1,
+    },
+  };
   const router = t.router({
     chained: t.procedure
       .input(async (value: unknown): Promise<{ id: string }> => {
@@ -44,6 +60,7 @@ describe(createTRPCMsw, () => {
     }),
     readAuthorization: t.procedure.query(() => ""),
     registeredLater: t.procedure.query(() => ""),
+    standard: t.procedure.input(standardValidator).query(() => ""),
     unregistered: t.procedure.query(() => ""),
     upload: t.procedure.input(z.instanceof(FormData)).mutation(() => ""),
     write: t.procedure.mutation(() => undefined),
@@ -75,6 +92,7 @@ describe(createTRPCMsw, () => {
 
   afterEach(() => {
     parserSteps.length = 0;
+    standardValidatorInputs.length = 0;
     reset();
     server.resetHandlers();
   });
@@ -103,18 +121,31 @@ describe(createTRPCMsw, () => {
     trpc.nested.deep.read.query(read);
 
     // @ts-expect-error The input the real parser exists to reject
-    await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCClientError: formatted [
-        {
-          "expected": "string",
-          "code": "invalid_type",
-          "path": [
-            "id"
-          ],
-          "message": "Invalid input: expected string, received number"
-        }
-      ]]
-    `);
+    await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: formatted Invalid input: expected string, received number]`,
+    );
+    expect(read).not.toHaveBeenCalled();
+  });
+
+  test("#37 validates input through a Standard Schema validator", async () => {
+    expect.hasAssertions();
+
+    trpc.standard.query(() => "");
+    await client.standard.query({ id: "" });
+
+    expect(standardValidatorInputs).toStrictEqual([{ id: "" }]);
+  });
+
+  test("#37 rejects an input a Standard Schema validator reports issues for", async () => {
+    expect.hasAssertions();
+
+    const read = vi.fn<() => string>(() => "");
+    trpc.standard.query(read);
+
+    // @ts-expect-error The input the validator exists to reject
+    await expect(client.standard.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: formatted id must be a string]`,
+    );
     expect(read).not.toHaveBeenCalled();
   });
 
