@@ -9,6 +9,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
@@ -100,7 +101,7 @@ const OZ_ATTACK_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 1);
 // Undone Be Thy Sinful Hex, from Ascension 4: an Electro-related reaction the character on the field triggers while Oz
 // Stands strikes the enemy with Thundering Retribution, 80% of Fischl's ATK as Oz snapshot it, at most once every 0.5
 // Seconds for each character. Measured: gcsim v2.47.2 (MIT) fischl/asc.go, its circle of radius 0.5 on the enemy 4 frames
-// On, and the wiki's 1U and 40 poise with no internal cooldown
+// On, dealt as Elemental Skill DMG, its AttackTagElementalArt, and the wiki's 1U and 40 poise with no internal cooldown
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/fischl/asc.go
 // https://genshin-impact.fandom.com/wiki/Undone_Be_Thy_Sinful_Hex
 const UNDONE_BE_THY_SINFUL_HEX_ASCENSION = 4;
@@ -384,12 +385,12 @@ export const createFischlKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           kind: "status",
           secondsRemaining: THUNDERING_RETRIBUTION_COOLDOWN_SECONDS,
         });
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing: 0, height: 0, position: enemy.position }, oz.combatant, [
+        addKitEffect(kitEffectState, {
+          ...createKitSummon({ facing: 0, height: 0, position: enemy.position }, oz.combatant, [
             THUNDERING_RETRIBUTION_HIT,
           ]),
-        );
+          attackTag: AttackTag.ElementalSkill,
+        });
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
         const [normalAttackHit] = event.action.hits;

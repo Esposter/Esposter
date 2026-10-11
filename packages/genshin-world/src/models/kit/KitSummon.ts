@@ -9,7 +9,8 @@ import type { KitStepContext } from "#src/models/kit/KitStepContext";
 // Seconds left of it. It is priced by the combatant that cast it, as it stood then. A summon that travels moves its body
 // Forward at its speed from its start on its clock, and its hits are reached from where it is then
 export interface KitSummon {
-  // The kind of attack its hits are dealt as, if they are an action's own, queued past its end by queueKitHits
+  // The kind of attack its hits are dealt as, gcsim's attack tag for them, which its kit names as it casts it, or its
+  // Action's own when queueKitHits queues its hits past its end. None for a summon gcsim deals as no kind of attack
   attackTag?: AttackTag;
   body: KitBody;
   combatant: Combatant;
