@@ -1,6 +1,6 @@
 ---
 title: Map
-description: The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (the outlines of its filled areas and every unlocked landmark a jump lands at) placed on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider, which the map is dragged to pan and the wheel or the slider zooms. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to black, places the view in front of it facing it, and fades back in.
+description: The world's map on M, and the jumps it makes. The game's open map at full screen: one drawing of the catalogue (the outlines of its filled areas and every unlocked landmark a jump lands at) placed on the player, north up, with each area's name, the player as a pointer, and the game's close button and zoom slider, which the map is dragged to pan and the wheel or the slider zooms. Choosing a landmark, on the map or in the keyboard's jump list, fades the world to the loading screen, places the view in front of it facing it, and fades back in.
 ---
 
 # Map
@@ -17,7 +17,7 @@ flowchart TD
   LM --> OV
   OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: in front of it, facing it"]
   POSE --> CLOSE["The map closes to the world"]
-  CLOSE --> FADE["The screen fades to black"]
+  CLOSE --> FADE["The screen fades to the loading screen's pale grey"]
   FADE -->|"the fade ends"| PLACE["The character placed on the ground there, the camera behind it"]
   PLACE --> IN["The screen fades back in"]
 ```
@@ -35,7 +35,7 @@ flowchart TD
 - **The landmarks a jump lands at.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven alone today, as the game teleports to its statues and waypoints and nowhere else; a tree is never a jump. Only the unlocked ones are offered, as the world's jump list, the map and a revive are given the unlocked landmarks alone ([map unlocking](/docs/genshin/map-unlocking)). Teleport Waypoints join as a landmark kind of their own once the regions' data holds them.
 - **A landmark's name is its area's.** Each statue lights one area, so its area's catalogue name is the name a jump goes by, with no name of its own written anywhere.
 - **The pose lands in front, facing back.** `computeJumpPose` stands the arrival a fixed distance in front of the landmark, along the way it faces, at a yaw that looks back at it, so the view arrives on what was jumped to, clear of a statue's plinth. The body stands on the ground's height there, read when the jump lands.
-- **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a black veil over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](/docs/genshin/follow-camera) level behind it, then fades back in.
+- **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a veil of the loading screen's pale grey over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](/docs/genshin/follow-camera) level behind it, then fades back in.
 
 ## Parity
 
@@ -62,7 +62,8 @@ The overlay is scored against `map-overlay-jueyun`, the English client's map on 
 
 ## Notes
 
-- **Its looks are provisional.** The map's colours, the marks, the pointer, the list's look and the fade's durations are each marked provisional in their file, until the map's and the teleport's recordings are measured ([roadmap](/docs/genshin/roadmap)). The zoom's range and the wheel's rate are provisional too, until the `world-map.mkv` recording shows the game's levels at the slider's ends and one notch of its wheel.
+- **The fade goes through the loading screen, not black.** The game's teleport fades to its loading screen, whose background reads #e9ece9 on the clip's plateau (frame 130 of `yt-UVCdkuNpmf4-world-teleport.mp4`, the screen's emblem, tip and element row above it). The fade draws that background alone, since no component draws the teleport's loading screen yet. The clip is a cross-region teleport, and its durations are read from it: the fade out is 801 ms (48 frames at 60000/1001 a second, from the map's darkness of 176 to the screen's plateau of 21) and the fade in 200 ms (12 frames, from the plateau to the world's darkness of 84), with the plateau held 54 frames. A near teleport's fade is not measured yet ([roadmap](/docs/genshin/roadmap)).
+- **Its looks are provisional.** The map's colours, the marks, the pointer and the list's look are each marked provisional in their file, until the map's recording is measured ([roadmap](/docs/genshin/roadmap)). The zoom's range and the wheel's rate are provisional too, until the `world-map.mkv` recording shows the game's levels at the slider's ends and one notch of its wheel.
 - **The map's terrain is not drawn.** The game paints its map as art, and that art is kept out of the repository, so the overlay draws only the catalogue's outlines, which are provisional squares for most areas. Its masked score is in Parity above; the terrain and the missing names are the difference, while the chrome is placed from the reference's own pixels.
 - **The pointer is off the screen's centre.** The reference shows the player's pointer 45 units right of and 50 under the centre at 1080 high, so the drawing is offset to that place rather than centred on the screen. Provisional until a second map's pointer is read.
 - **Not built yet.** The region tag at the bottom right, its exploration progress, the UID line and the domains-only toggle are missing: their words are not in the text dump, so they wait on their text ids rather than being typed by hand. The top bar's floor counter belongs to a feature not yet built, and its resin counter is [Original Resin](/docs/genshin/original-resin)'s, placed provisionally until its recording lands. No reference for the teleport panel has been found, so it is not drawn ([roadmap](/docs/genshin/roadmap)).

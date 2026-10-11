@@ -38,7 +38,10 @@ export const MAP_ZOOM_TRACK_HEIGHT = 194;
 export const MAP_ZOOM_DRAWING_HEIGHT = 270;
 // The pixels a press must travel before it pans the map, so a press that stays put still chooses a landmark
 export const MAP_DRAG_THRESHOLD_PIXELS = 4;
-// Provisional: a recording of a teleport, read frame by frame. How long a jump's fade to black and its fade back in
-// Take, in milliseconds
-export const TELEPORT_FADE_OUT_MS = 400;
-export const TELEPORT_FADE_IN_MS = 600;
+// How long a jump's fade to the loading screen takes, and its fade back in, in milliseconds. Read off the cross-region
+// Teleport clip yt-UVCdkuNpmf4-world-teleport.mp4, which runs at 60000/1001 frames a second, so a frame is 1001/60 ms:
+// The fade out is the 48 frames from the last still within 5 of the map's darkness (frame 63) to the first within 5 of
+// The loading screen's plateau (frame 111), and the fade in the 12 frames from the last plateau still (frame 164) to
+// The first within 5 of the world's darkness (frame 176). A cross-region teleport loads longer than a near one
+export const TELEPORT_FADE_OUT_MS = 801;
+export const TELEPORT_FADE_IN_MS = 200;
