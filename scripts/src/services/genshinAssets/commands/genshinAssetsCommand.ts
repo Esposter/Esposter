@@ -43,6 +43,7 @@ import { puzzlesCommand } from "#src/services/genshinAssets/commands/puzzlesComm
 import { rankCommand } from "#src/services/genshinAssets/commands/rankCommand";
 import { reputationCommand } from "#src/services/genshinAssets/commands/reputationCommand";
 import { residentsCommand } from "#src/services/genshinAssets/commands/residentsCommand";
+import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
@@ -95,6 +96,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     outcrops: leyLineCommand,
     chests: chestsCommand,
     residents: residentsCommand,
+    "scene-scripts": sceneScriptsCommand,
     oculi: oculiCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,
