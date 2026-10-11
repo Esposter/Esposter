@@ -4,10 +4,10 @@ import type { GroundLayerField, GroundPaint } from "genshin-engine";
 import { GroundLayer } from "genshin-engine";
 import { Color } from "three";
 
-// Windrise's ground as its terrain paints it: grass, bare earth and rock lie where the base maps place them, as fitted
-// Into the ground layers' field of their shares, never by a slope or a height, and each layer paints the mean of the
-// Base-map texels classed into it, as fitted into the ground surface's layers (a layer the base maps hold no texel of
-// Takes the ground's mean). Its layers' weights also place the flowers
+// Windrise's ground as its terrain paints it: each layer lies where the tiles' cells are painted in it, the roads its
+// Path, as fitted into the ground layers' field of their shares, never by a slope or a height, and each layer paints the
+// Mean of the base-map texels on its cells, as fitted into the ground surface's layers (a layer no texel stands on takes
+// The ground's mean). Its layers' weights also place the flowers
 export const createWindriseGroundPaint = (groundLayers: GroundLayerField, surfaces: WindriseSurfaces): GroundPaint => {
   const { color: groundColor, layers } = surfaces.Ground;
   const getGroundLayerColors = (layer: GroundLayer) => {

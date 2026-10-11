@@ -5,6 +5,8 @@ import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { readTerrainSplats } from "#src/services/genshinAssets/world/readTerrainSplats";
+import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -17,13 +19,15 @@ const readNames = (directory: string): Promise<string[]> =>
   existsSync(directory) ? readdir(directory) : Promise.resolve([]);
 // Everything a component's export holds, as a Markdown report beside it: each material's shader, texture slots and
 // Values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it
-// With, and each shader the `shaders` step read. It is the scene derivation's first step: nothing is built before it is
+// With, each terrain tile's splat layers with the share of its cells each paints, and each shader the `shaders` step
+// Read. It is the scene derivation's first step: nothing is built before it is
 // Inventoried (apps/web/content/docs/genshin/scene-derivation.md)
 export const writeComponentInventory = async (component: DerivedAssetComponent): Promise<string> => {
   const directory = getComponentDirectory(component);
-  const [materials, { gameObjectDrawingMap }] = await Promise.all([
+  const [materials, { gameObjectDrawingMap }, terrainSplats] = await Promise.all([
     readComponentMaterials(component),
     readSceneLayout(directory.layout),
+    readWorldOptions(component).then((world) => (world ? readTerrainSplats(component) : [])),
   ]);
   const referencedIds = new Set([
     ...materials.flatMap(({ shaderPathId, textures }) => [
@@ -31,6 +35,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
       ...Object.values(textures).map(({ pathId }) => pathId),
     ]),
     ...[...gameObjectDrawingMap.values()].flatMap(({ materials: drawnMaterials }) => drawnMaterials),
+    ...terrainSplats.flatMap(({ splat }) => splat.layers.map(({ diffusePathId }) => diffusePathId)),
   ]);
   const indexed = await readIndexedAssets(({ pathId }) => referencedIds.has(pathId), GENSHIN_ANIMESTUDIO_OPTIONS);
   const pathIdAssetMap = new Map(indexed.map((asset) => [asset.pathId, asset]));
@@ -78,6 +83,21 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
     const mesh = basename(name, ".obj");
     lines.push(`| ${mesh} | ${vertexCount} | ${[...(meshMaterialsMap.get(mesh) ?? [])].join(", ")} |`);
   }
+  lines.push(
+    "",
+    "## Terrain layers",
+    "",
+    "| Tile | Layer | Diffuse | Kind | Repeat | Cells |",
+    "| :-- | --: | :-- | --: | --: | --: |",
+  );
+  for (const { name, splat } of terrainSplats.toSorted((firstTile, secondTile) =>
+    firstTile.name.localeCompare(secondTile.name),
+  ))
+    for (const [index, { diffusePathId, kind, tileSize }] of splat.layers.entries()) {
+      const share = splat.cells.filter((cell) => cell === index).length / splat.cells.length;
+      const diffuse = pathIdAssetMap.get(diffusePathId)?.name ?? `\`${diffusePathId}\``;
+      lines.push(`| ${name} | ${index} | ${diffuse} | ${kind} | ${tileSize} m | ${(100 * share).toFixed(1)}% |`);
+    }
   lines.push("", "## Shaders", "");
   for (const block of (await readNames(directory.shaders)).filter((name) => name !== "raw"))
     for (const shader of await readNames(join(directory.shaders, block))) {

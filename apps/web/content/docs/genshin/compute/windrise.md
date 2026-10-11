@@ -7,7 +7,7 @@ description: Windrise, the first scene: the great oak's shape, the surface's pas
 
 ## Queue
 
-Nothing here.
+- [ ] `[cpu]` {windrise-ground-layers} needs game-exports — **Windrise: the ground's layers and their colours read off its tiles' cells.** `pnpm -C scripts genshin:assets fit windrise --only surfaces`. Reads Windrise's TerrainData tiles and base maps under `~/Esposter/genshin-parity/extracted/windrise` and the asset index for its splat layers' diffuse names. Writes the hosted keys `windrise/ground-layers` and `windrise/surfaces`. Bar: the run's note names Earth, Grass, Path, Rock, Sand and Snow, each with a colour, as its dry run did (Grass 38% `#54753e`, Sand 27% `#887e67`, Earth 17% `#767052`, Snow 10% `#abb0bd`, Rock 4% `#706d75`, Path 4% `#747e74` of the field's nodes); the surface pass's read of the Ground against the exports is `{windrise-pass-list}`'s.
 
 ## Waiting
 

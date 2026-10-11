@@ -45,7 +45,7 @@ flowchart TD
 | :----------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Recreation passes](/docs/proposals/genshin/recreation-passes)     | a screen rebuilt in ordered passes, each gated by its own measure and frozen |
 | [Localized opening](/docs/proposals/genshin/localized-opening)     | the publisher's splash and layouts as each client language shows             |
-| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | the ground's layers fitted to the game's own, and each area's outline        |
+| [Terrain shapes](/docs/proposals/genshin/terrain-shapes)           | each area's outline in the world map's catalogue                             |
 | [Flowing water](/docs/proposals/genshin/flowing-water)             | rivers along their courses, and waterfalls over cliff bands                  |
 | [Trees and scatter](/docs/proposals/genshin/trees-and-scatter)     | every placed plant's species, instanced and culled on the GPU                |
 | [World stalls](/docs/proposals/genshin/world-stalls)               | the Windrise frame's GPU stalls, each answered by its pass and object kind   |
