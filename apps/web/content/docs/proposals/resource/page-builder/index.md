@@ -117,6 +117,7 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 - A Video or Map embed is a third-party frame, and the security config names no `frame-src`, so `default-src 'self'` refuses those frames in the canvas and inside the published view's frame, which inherits the app's policy — reading the policy says the current blocks embed nothing that loads. Phase 2 confirms it in the browser, and the two types ship either with the providers' origins named or as uploaded video only.
 - An external image loads in the canvas and on the published page only from the hosts the image whitelist names, for the same reason, so the image field offers upload first and says why a pasted address from elsewhere shows nothing.
 - [Program email invites](/docs/proposals/resource/program-email-invites) gets simpler: the compile it needs per participant is a server call rather than a live editor.
+- [AI-native resources](/docs/proposals/architecture/ai-native-resources) is this editor's agent surface. Its content tools apply the same JSON Patch operations an edit here records, on the server and through the same document schema, so a webpage or an email is an agent's to edit the day the cutover lands, with nothing built for it here; `applyPatches` is written once in `@esposter/shared` for both.
 
 ## Key files
 
@@ -129,8 +130,8 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 New code lands here:
 
 ```text
-apps/web/shared/models/pageBuilder/            the document, node, slot, element-tree, style and patch models
-apps/web/shared/services/pageBuilder/          the document schema, serialiser, CSS emitter, applyPatches
+apps/web/shared/models/pageBuilder/            the document, node, slot, element-tree and style models
+apps/web/shared/services/pageBuilder/          the document schema, serialiser, CSS emitter
 apps/web/shared/services/pageBuilder/webpage/  WebpageNodeType, WebpageNodeTypeMap, one module per type
 apps/web/shared/services/pageBuilder/email/    EmailNodeType, EmailNodeTypeMap, one module per type, the MJML render
 apps/web/server/services/emailEditor/          the MJML compile service
