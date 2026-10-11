@@ -41,7 +41,7 @@ flowchart TD
 - `stats/artifactMainAffixPools`: per slot, the attributes of its standard main affix depot in `ReliquaryMainPropExcelConfigData`.
 - `stats/artifactExpMaterials`: each item whose use adds artifact EXP, with the EXP one adds, from `MaterialExcelConfigData`.
 
-The weights are not in the tables. They are the [wiki's](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) distribution, kept as constants beside the functions that draw by them, marked provisional where the source could not be checked.
+The weights are not in the tables. They are the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
 
 ## Key files
 
@@ -51,7 +51,7 @@ The weights are not in the tables. They are the [wiki's](https://genshin-impact.
 | `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`       | A rarity's levels, costs, fodder base, affix levels and groups    |
 | `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`    | A slot's main affix pool                                          |
 | `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`      | An item's EXP                                                     |
-| `packages/genshin-world/src/services/artifact/constants.ts`              | The recovery rate, the EXP bonus and the provisional weights      |
+| `packages/genshin-world/src/services/artifact/constants.ts`              | The recovery rate, the EXP bonus and the wiki's weights           |
 | `packages/genshin-world/src/services/artifact/rollArtifact.ts`           | A drop's artifact: main affix and minor affixes                   |
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`        | Feeding EXP, the bonus, levels and the affix levels passed        |
 | `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`    | The minor affix added or raised at an affix level                 |
@@ -64,13 +64,13 @@ The weights are not in the tables. They are the [wiki's](https://genshin-impact.
 
 ## Notes
 
-- **The weights are provisional.** The Goblet's main weights are the wiki's 3.0 table as a search summary quoted it. The Sands', Circlet's and minor affixes' weights are recalled from the wiki's distribution and not yet checked against it, since the wiki pages could not be read from this build. Each awaits that check, and none is measured from the game.
-- **A drop's starting count is the drop's.** A piece's variant row says how many minor affixes it starts with, and the drop tables that choose a variant are the domains', bosses' and chests' pages.
+- **A drop's starting count is the drop's.** A piece's variant row says how many minor affixes it starts with, and the drop tables that choose a variant are the domains', bosses' and chests' pages. The wiki's drop distribution gives each source's split: a domain's five-star starts with three at 80% and four at 20%, and a boss's at 66% and 34%.
 - **Mora is charged before the bonus.** The Mora counts the EXP the player feeds, so a bonus of five multiplies the EXP the artifact gains by five, not the Mora it costs.
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ReliquaryExcelConfigData`, `ReliquaryMainPropExcelConfigData`, `ReliquaryAffixExcelConfigData`, `ReliquaryLevelExcelConfigData` and `MaterialExcelConfigData`, the tables this page reads.
 - [Artifact](https://genshin-impact.fandom.com/wiki/Artifact), Genshin Impact Wiki: a main affix and up to four minor affixes, enhancing with Artifact EXP and Mora, and the next tier every fourth level.
-- [Artifact: Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution), Genshin Impact Wiki: the weighted main and starting minor affixes, the pool without the main affix and those drawn, and values drawn evenly.
+- [Artifact: Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution), Genshin Impact Wiki: each slot's main affix chances and the minor affixes' weights, the pool without the main affix and those drawn, and values drawn evenly.
 - [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP), Genshin Impact Wiki: a Mora a point, a fodder's base plus 80% of its own, and the bonus of two or five times.
+- [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.
