@@ -21,7 +21,7 @@ Changes from the package:
 
 ## Upstream
 
-Each open or closed issue and pull request was read and given one verdict. The package is no longer a dependency, so the table is the record of what was decided. Twenty of the forty-eight are dependency bumps, grouped into one row.
+All forty-eight upstream issues and pull requests, the twenty dependency bumps sharing one row:
 
 | Upstream                                                              | Subject                                                   | Verdict                       | Proof or owner                                                                                                                  |
 | :-------------------------------------------------------------------- | :-------------------------------------------------------- | :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |

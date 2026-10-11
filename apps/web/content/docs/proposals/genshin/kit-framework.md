@@ -148,10 +148,10 @@ Each primitive absorbs one family of the finder's kit pairs, or one shape a hand
   Each piece lands with the first kit that needs it, as the framework's shared effects always have.
 
 - **One context for every call.**
-  - Today a kit's step, an action's start, a field's tick and an event each get a different partial context. A field tick cannot draw at random, an action's start cannot see the enemies, and adding one field breaks every test that builds a context by hand.
-  - `KitContext` is the world's combat state, built once by `useWorldCombat` and written in place each step. It holds the party, every built combatant by id, the enemies with their tables, the team's effects, the seeded random source, the outbox, and the field member's body and combatant.
+  - Before it, each kind of call (the step, a start, a field tick, an event) got a partial context of its own. A field tick cannot draw at random, an action's start cannot see the enemies, and adding one field breaks every test that builds a context by hand.
+  - Landed as `KitContext`, which the [kits page](/docs/genshin/kits) describes with what it holds.
   - Every behaviour call takes the context: `onStart(context, target)`, `onTick(context, tickIndex)`, and a strike's `onStrike(context, strike)`. A call made for the character on the field reads it as `context.activeCombatant`, so only an event, which reaches every deployed member, is given the kit's own combatant as well: `onKitEvent(event, context, combatant)`. No call builds an object.
-  - What only the step of the character on the field reads beyond the context, the controller, the camera's aim, the landed hits and the ores, is passed beside it (`ActiveKitControls`).
+  - The field member's controls are passed beside it (`ActiveKitControls`).
   - One test builder, `createKitTestContext`, makes the context for every suite.
 - **One outbox for what happens between steps.**
   - Events raised inside the active step are sent as they happen, as today.
@@ -330,7 +330,7 @@ flowchart TD
 4. **The attack tag set at build.** Landed.
    - A stance's kit is built once as the stance starts (`enterKitStance`), and `getStancedKit` goes.
    - Each hit's attack tag is set as its kit or its stance's kit is built (`tagKitHits`), unless the hit names its own, and `getKitAttackTag` and `KitStance.attackTags` go.
-   - The tag is the one step whose digests move, in a commit of its own that means to: a hit tagged as it is built keeps its kind through a stance that starts or ends while its action plays, where the read at landing left it untagged. Eight kits' digests move between tags (Tartaglia, Hu Tao, Yoimiya, Raiden, Nilou, Skirk, Flins and Durin), and no strike count or total does.
+   - The tag is the one step whose digests move, in a commit of its own that means to: tagging at build closes the stance edge the [kits page](/docs/genshin/kits) names, which the read at landing left untagged. Eight kits' digests move between tags (Tartaglia, Hu Tao, Yoimiya, Raiden, Nilou, Skirk, Flins and Durin), and no strike count or total does.
    - No action carries a slot, for the reasons under the per-frame path.
 5. **The cursors.** Landed. An action (`KitState.nextHitIndex`) and a summon (`KitSummon.nextHitIndex`) each keep the index of their next hit, and `queueKitHits` queues the hits from it on. A fix landed ahead of it, in a commit of its own: a summon's hit at its cast never landed, since its first step read hits after nought, and eight kits' digests move by the field ticks that now strike (Collei, Columbina, Dori, Faruzan, Lynette, Ororon, Rosaria and Shenhe).
 6. **The effects stepped in place,** in today's order and compacted in place, the expired and strike lists held on the context.
@@ -383,9 +383,7 @@ flowchart TD
 | `packages/genshin-world/src/services/kit/stepActiveKit.ts`          | The frame: the outbox, the effects, the step and the strikes, reading what the build resolved  |
 | `packages/genshin-world/src/services/kit/stepKit.ts`                | An action's cursor and the presses                                                             |
 | `packages/genshin-world/src/services/kit/effects/stepKitEffects.ts` | The effects stepped by index in today's order and compacted in place                           |
-| `packages/genshin-world/src/services/kit/getKitAttackTag.ts`        | Deleted: a hit's tag is set when its kit is built                                              |
 | `packages/genshin-world/src/models/kit/Kit.ts`                      | The built kit its readers keep, each hit carrying its attack tag                               |
-| `packages/genshin-world/src/models/kit/KitStepContext.ts`           | One of the five partial contexts `KitContext` replaces                                         |
 | `packages/genshin-world/src/services/kit/createCharacterKit.ts`     | Replaced by `buildKit` and `readCharacterKits`                                                 |
 | `packages/genshin-world/scripts/kit/generateCharacterKitMap.ts`     | Writes the loader map of `import()` calls from each module's declared id                       |
 | `packages/configuration/src/generateExports.ts`                     | The barrel's option for directories a package loads on demand                                  |

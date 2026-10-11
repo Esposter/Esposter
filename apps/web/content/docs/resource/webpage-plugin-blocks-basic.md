@@ -13,7 +13,7 @@ The plugin registers each block on the editor's block manager under the upstream
 
 ## Upstream
 
-Each open or closed upstream issue and pull request was read and given one verdict. The package is no longer a dependency, so the table is the record of what was decided.
+Every upstream issue and pull request, with its verdict:
 
 | Upstream                                            | Subject                                                    | Verdict                      | Proof or owner                                                                                                                                                                                      |
 | :-------------------------------------------------- | :--------------------------------------------------------- | :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,9 +36,9 @@ Each open or closed upstream issue and pull request was read and given one verdi
 | #31                                                 | Paragraph and heading blocks                               | Feature not needed           | The text block is a `div`; headings are text formatting in the rich text editor                                                                                                                     |
 | #9, #46                                             | Columns after grapesjs 0.14.20 and 0.20.1                  | Out of scope, fixed upstream | Fixed by the maintainer's releases; the editor runs 0.23                                                                                                                                            |
 | #1, #4, #11, #13, #33, #41                          | Packaging, CI, docs typo, install audit, and migration     | Out of scope                 | The package is no longer a dependency                                                                                                                                                               |
-| #20 to #23, #26 to #29, #32, #34 to #37, #42 to #45 | Dependabot bumps                                           | Out of scope                 | One line for the group: we no longer depend on the package                                                                                                                                          |
+| #20 to #23, #26 to #29, #32, #34 to #37, #42 to #45 | Dependabot bumps                                           | Out of scope                 | The package's own build dependencies, no longer ours                                                                                                                                                |
 
 ## Sources
 
-- Upstream repository: `GrapesJS/blocks-basic` (version 1.0.2 source, read from its published source map).
+- Upstream repository: `GrapesJS/blocks-basic` at 1.0.2, from the source map it publishes.
 - grapesjs 0.23 for the block manager, selector events and the video component.
