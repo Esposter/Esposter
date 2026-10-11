@@ -189,6 +189,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - **Does Masatsu Zetsugi's hit deal 2 units of Geo gauge?** `ittoKit.ts` gives the skill's gauge as 2U, as the other Geo skills read, since gcsim's Itto file gives none: yes if a recording of the hit shows a Geo gauge of 2U, no if it is 1U.
 - **Does holding Heartstopper for less than three seconds give fewer Declension stacks?** `heizouKit.ts` plays the press for a hold released before three seconds, and the full hold's four stacks only, since gcsim charges the full hold: yes if a shorter hold gives its own stack count, no if a release before three seconds is always a press.
 - **Does Depth-Clarion Dice's first wave of Exquisite Throws come a second after the burst's hit?** `yelanKit.ts` starts the wave a second after the initial hit, as gcsim's ticker does, and each throw lands 20, 26 and 32 frames after its wave: yes if a recording of the burst shows its first three throws a second after the hit, no if they come at once or at another time.
+- **Do Kirara's strikes, charged attack, skill and burst deal no poise?** Provisional, as gcsim gives them none, so `kiraraKit.ts` sets each at 0 and her plunges' reaches and 0.4 seconds are the other kits' stand-ins: yes if a recording of them against a poised enemy shows none staggering it, no if one does.
 
 ## References sought
 
