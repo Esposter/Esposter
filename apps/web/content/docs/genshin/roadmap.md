@@ -152,6 +152,11 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - [ ] **Does Furina's Fanfare gain land 6 frames after a change to HP, with a 35-frame window gathering the changes after it?** — [Furina](/docs/genshin/kits/furina): `furinaKit.ts` takes gcsim's estimate of the game's debounce.
 - [ ] **Do Furina's strikes, charged attack, Arkhe hits, Salon members and burst deal no poise?** — [Furina](/docs/genshin/kits/furina): gcsim gives them none, so `furinaKit.ts` stands each at 0.
 - [ ] **Do Skirk's plunges deal the standard poise, and land as their action starts?** — [Skirk](/docs/genshin/kits/skirk): gcsim gives her no plunge file, so her plunges share the reach, with 100, 150 and 25 poise.
+- [ ] **Does a claymore's combo break a Crystal Chunk in 3 hits, and an Iron Chunk in 1?** — [Gathering](/docs/genshin/gathering): provisional, the wiki's rule over Noelle's and Razor's blunt poise, 97 to 160 a hit, against 286 and 29; no clip shows one ore struck by a claymore alone.
+- [ ] **Does a sword's combo break a Crystal Chunk in 41 hits, and an Iron Chunk in 5?** — [Gathering](/docs/genshin/gathering): provisional, the rule over the Traveler's melee poise, 40 to 65 a hit, against 2000 and 200.
+- [ ] **Does a polearm's combo break a Crystal Chunk in 43 hits, and an Iron Chunk in 6?** — [Gathering](/docs/genshin/gathering): provisional, the rule over Xiao's melee poise, 25 to 87 a hit, against 2000 and 200.
+- [ ] **Does Overloaded break a Crystal Chunk in 4 reactions, and an Iron Chunk in 1?** — [Gathering](/docs/genshin/gathering): provisional, the wiki's 90 blunt poise against 286 and 29.
+- [ ] **Does Zhongli's pressed stele break a Crystal Chunk in 2, and an Iron Chunk in 1?** — [Gathering](/docs/genshin/gathering): provisional, its 200 blunt poise against 286 and 29.
 
 ## References sought
 
@@ -161,7 +166,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [x] `menu-time.mkv` — **Time screen**, found as `captures/yt-igW050DMb4A-0-40.mp4` (https://www.youtube.com/watch?v=igW050DMb4A, 0–40 s). Read by [Paimon menu](/docs/genshin/paimon-menu).
 - [x] `wish-ten.mkv` — **Ten wish**, found as `captures/yt-gFmdG_0s5L0-wish-ten.mp4` (https://www.youtube.com/watch?v=gFmdG_0s5L0, 0–76 s), a near one: the English PC client at 1080p and 60 frames a second in 2022. Read by [wish](/docs/genshin/wish).
 - [x] `menu-settings.mkv` — **Settings screen**, found as `captures/yt-5EmJX_RyuY8-menu-settings.mp4` (https://www.youtube.com/watch?v=5EmJX_RyuY8, 0–220 s), a near one: the English PC client at 1080p and 60 frames a second. Read by [settings](/docs/genshin/compute/settings).
-- [x] `ore-strike.mkv` — **Ore strike**, found as `captures/yt-VlRNdhoeXTk-ore-strike.mp4` (https://www.youtube.com/watch?v=VlRNdhoeXTk, 0–170 s), a near one: the English PC client at 1080p and 60 frames a second, with a face camera from 170 s. Read by [ores-kind-attack](/docs/genshin/compute/world).
+- [x] `ore-strike.mkv` — **Ore strike**, found as `captures/yt-VlRNdhoeXTk-ore-strike.mp4` (https://www.youtube.com/watch?v=VlRNdhoeXTk, 0–170 s), a near one: the English PC client at 1080p and 60 frames a second, with a face camera from 170 s. A montage cut between strikes, so [gathering](/docs/genshin/gathering) reads two kinds' counts off clips of one ore struck by that kind alone, and gives the other five from the wiki's rule, provisional.
 - [ ] **Sealed chest freed** — `chest-seal-pyro.mkv`, waits on [chests](/docs/proposals/genshin/chests): a sealed chest in Dendro vines or ice freed by Pyro, and one sealed in rock struck by a blunt attack, each from standing in reach, with each seal and how long freeing takes.
 - [ ] **Buried chest dug** — `chest-dig.mkv`, waits on [chests](/docs/proposals/genshin/chests): a buried chest dug with the Dig prompt in view and a scale in the frame, so the prompt's reach can be measured.
 - [ ] **Camp locks a chest** — `chest-camp-lock.mkv`, waits on [chests](/docs/proposals/genshin/chests): a chest beside an enemy camp locked while the camp lives and opened once it is cleared, showing the reach the lock applies within.

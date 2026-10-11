@@ -1,6 +1,6 @@
 ---
 title: Compute queue: World
-description: The world's own runs: the prompt list, teleports, weather, thunderstorms and lightning, the ores' poise and the props scripts spawn.
+description: The world's own runs: the thunderstorm's frames, the teleport's fades, the weather's turn and lightning, the props scripts spawn and the HUD.
 ---
 
 # World
@@ -8,7 +8,6 @@ description: The world's own runs: the prompt list, teleports, weather, thunders
 ## Queue
 
 - [ ] `[cpu]` {world-thunderstorm} needs game-exports, media-engine — **World: a thunderstorm, frame by frame.** `pnpm -C scripts genshin:parity frames "$HOME/Esposter/genshin-parity/captures/world-thunderstorm.mkv" 60 0 50`. Reads a recording of Yashiori Island's thunderstorm, 50 seconds of it on a fixed camera at 59.94 frames a second, its picture pillarboxed to 1520 by 1080 at x 198 in a 1920 frame; the clip is in `captures`. Writes 3000 stills and a contact sheet under `~/Esposter/genshin-parity/frames/world-thunderstorm@0/`, outside the repository. Bar: the 3000 stills and the sheet written.
-- [ ] `[cpu]` {ores-kind-attack} needs game-exports, media-engine — **Ores: the wiki's poise rule checked off a mining clip.** Reads `~/Esposter/genshin-parity/captures/yt-VlRNdhoeXTk-ore-strike.mp4` from 0 to 170 seconds, the near one found for `ore-strike.mkv`: ores struck until they break and their pieces picked up, grouped by weapon and element rather than by the four kinds (claymore, sword and polearm users, Overload, bursts, Geo constructs and plunges), each level behind a title card and cut between strikes. Counts each kind of attack's hits to break off the clip and checks them against each ore's poise requirement over the attack's poise damage ([gathering](/docs/proposals/genshin/gathering)); a count the rule does not give goes back as a call.
 
 ## Waiting
 

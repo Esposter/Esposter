@@ -48,6 +48,18 @@ A point is kept as picked with the instant of the pick, and stands again once it
 
 An ore is struck until it breaks. The character's landed hits feed it from the strike loop, beside the enemies: each hit reaches the ores in its area as an enemy's capsule is reached, at the ore's ground point. A hit is melee when it sits in a normal or charged attack of a character wielding a sword, a claymore or a polearm, read off the kind of action its kit was built with it in and the weapon type its combatant carries from the roster's table, so no kit carries a flag. Each hit adds its poise damage over the ore's requirement for its kind, blunt or melee, so the ore breaks once its shares reach one, and a hit that is neither blunt nor melee adds nothing. The hits are read before an infusion copies them, so an infusion's converted poise does not reach an ore. A broken ore drops its certain piece where it lay, and one more for each of two draws that comes under 10%. It comes back two days after it breaks for a White Iron Chunk or Starsilver, and three days after for a Crystal Chunk away from a mining outcrop, as the wiki's Reset page gives them. The respawn reads the same as the plants', from the instant of the break.
 
+Each kind of attack takes the hits below to break an ore, its kit's poise run through the rule. A swing of several hits counts each of them, and a combo starts again at its first strike once it ends. Two counts are checked off a clip of one ore struck by that kind alone, unbroken, at 60 frames a second. The others are the rule's own, provisional until a clip shows them, and each is on the [roadmap](/docs/genshin/roadmap)'s Manual verification list.
+
+| Attack                                   | Poise a hit      | Iron, White Iron, Starsilver (29 blunt, 200 melee) | Crystal, Magical Crystal and the rest (286, 2000) | Basis                                                           |
+| :--------------------------------------- | :--------------- | -------------------------------------------------: | ------------------------------------------------: | :-------------------------------------------------------------- |
+| A claymore's combo, Noelle's or Razor's  | 97 to 160, blunt |                                                  1 |                                                 3 | Provisional                                                     |
+| A sword's combo, the Traveler's          | 40 to 65, melee  |                                                  5 |                                                41 | Provisional                                                     |
+| A polearm's combo, Xiao's                | 25 to 87, melee  |                                                  6 |                                                43 | Provisional                                                     |
+| Overloaded                               | 90, blunt        |                                                  1 |                                                 4 | Provisional                                                     |
+| A burst, Zhongli's Planet Befall         | 500, blunt       |                                                  1 |                                                 1 | Checked: one breaks a Crystal Chunk and a Magical Crystal Chunk |
+| A Geo construct, Zhongli's pressed stele | 200, blunt       |                                                  1 |                                                 2 | Provisional                                                     |
+| A sword's or polearm's low plunge        | 100, blunt       |                                                  1 |                                                 3 | Checked: three break a Crystal Chunk                            |
+
 ## The pick
 
 F on a gathering point's row picks one of its item into the bag, through the same `addInventoryItem` a drop uses. The point is kept as picked only when the bag takes the item, so a full bag leaves it standing. The picked points are kept for the page's life only, as the drops are. An ore's point is never offered here: it is struck, not picked.
@@ -76,11 +88,16 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 
 - **Four cooking ingredients and one specialty are left out.** Apple, Starshroom, Bulle Fruit and Candlecap Mushroom are typed as a notice-restoring material the world's material type does not name yet, and Rukkhashava Mushrooms has its map label in the singular. Each is one line to add when its type or name lands.
 - **The stand-ins are the drops' stand-ins, and they cap at 64.** The world draws each PickUp row as a sphere up to the stand-in capacity, in list order, so most of Mondstadt's points are not drawn yet. Prompts still come from every standing point in reach. A distance cull of the stand-ins is the open part.
+- **Overloaded does not break an ore yet.** A reaction's reach lands with no poise, and only a kit's own hits strike an ore (`landReactionReach.ts`), where the wiki gives Overloaded 90 blunt poise. Reaching the ores from a reaction is open.
 - **The respawns are the wiki's, not measured.** The 46 hours is the wiki's figure, and the midnight is the wiki's reading of the daily spawn. Both wait on a recording of a point picked and watched (see the [roadmap](/docs/genshin/roadmap)).
 
 ## Sources
 
 - [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki: a harvested specialty respawns after 46 hours.
 - [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki: the daily reset at 04:00 server time, and the overworld Iron Chunk and common cooking ingredients spawning at 0:00 server time, four hours before it.
+- [Mineral](https://genshin-impact.fandom.com/wiki/Mineral), Genshin Impact Wiki: the poise each ore takes to break, from melee hits and from blunt ones.
+- [Interruption Resistance/Data](https://genshin-impact.fandom.com/wiki/Interruption_Resistance/Data), Genshin Impact Wiki: Overloaded's 90 poise.
+- [Genshin Impact - Fast Mining Methods](https://www.youtube.com/watch?v=6CY2RwKc_TE), YouTube, 0–10 s at 60 frames a second: three low plunges of the Traveler's break a Crystal Chunk.
+- [Farming Ores with Zhongli](https://www.youtube.com/watch?v=EWYe-MYjmqU), YouTube, 77–82 s at 60 frames a second: one Planet Befall breaks a Crystal Chunk and a Magical Crystal Chunk.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `GatherExcelConfigData` and `MaterialExcelConfigData`, the tables the items and their ground rows are read from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map's labels and points that the places are fitted from.
