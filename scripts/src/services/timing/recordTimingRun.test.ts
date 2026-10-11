@@ -39,7 +39,7 @@ describe(recordTimingRun, () => {
       .split("\n")
       .filter(Boolean)
       .map((line) => parseMachineJson<TimingRun>(line).milliseconds);
-    expect(logged).toStrictEqual(Array.from({ length: TIMING_LOG_LENGTH }, (_, index) => index + 2));
+    expect(logged).toStrictEqual(Array.from({ length: TIMING_LOG_LENGTH }, (_value, index) => index + 2));
   });
 
   test("returns the milliseconds of the successful runs before the new one, not the failed ones", () => {

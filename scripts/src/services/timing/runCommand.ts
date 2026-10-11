@@ -1,8 +1,8 @@
 import type { ArgsDef, CommandDef } from "citty";
 
+import { TIMINGS_DIRECTORY } from "#src/services/timing/constants";
 import { getSlowRunWarning } from "#src/services/timing/getSlowRunWarning";
 import { getTimingArgs } from "#src/services/timing/getTimingArgs";
-import { TIMINGS_DIRECTORY } from "#src/services/timing/constants";
 import { recordTimingRun } from "#src/services/timing/recordTimingRun";
 import { runMain } from "citty";
 import { writeSync } from "node:fs";
