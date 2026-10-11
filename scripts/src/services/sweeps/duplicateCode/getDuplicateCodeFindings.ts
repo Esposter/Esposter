@@ -6,6 +6,7 @@ import { checkIsRangeFree } from "#src/services/sweeps/duplicateCode/checkIsRang
 import { checkIsRegisterFile } from "#src/services/sweeps/duplicateCode/checkIsRegisterFile";
 import { getNonDataRowLines } from "#src/services/sweeps/duplicateCode/getNonDataRowLines";
 import { getNonDeclarationLines } from "#src/services/sweeps/duplicateCode/getNonDeclarationLines";
+import { getLeadingImportLines } from "#src/services/sweeps/duplicateCode/getLeadingImportLines";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
 import { getNonRecordRowLines } from "#src/services/sweeps/duplicateCode/getNonRecordRowLines";
 import { getOrCreate } from "@esposter/shared";
@@ -38,6 +39,9 @@ export const getDuplicateCodeFindings = (
     return (sourceId: string) =>
       getOrCreate(sourceIdNonLogicLinesMap, sourceId, () => readNonLogicLines(readSource(sourceId)));
   });
+  const leadingImportLinesMap = new Map<string, Set<number>>();
+  const readLeadingImportLines = (sourceId: string) =>
+    getOrCreate(leadingImportLinesMap, sourceId, () => getLeadingImportLines(readSource(sourceId)));
   const findings: DuplicateCodeFinding[] = [];
   for (const { duplicationA, duplicationB } of clones) {
     const pluginRootA = readPluginRoot(duplicationA.sourceId);
@@ -46,6 +50,17 @@ export const getDuplicateCodeFindings = (
     if (
       checkIsRegisterFile(duplicationA.sourceId, pluginRootA) &&
       checkIsRegisterFile(duplicationB.sourceId, pluginRootB)
+    )
+      continue;
+    // Two files sharing an import block run from it into their bodies, so a clone reaching a leading import line is a
+    // Shared block rather than a copied body, and no clone can include an import line.
+    if (
+      !checkIsRangeFree(
+        duplicationA.start.line,
+        duplicationA.end.line,
+        readLeadingImportLines(duplicationA.sourceId),
+      ) ||
+      !checkIsRangeFree(duplicationB.start.line, duplicationB.end.line, readLeadingImportLines(duplicationB.sourceId))
     )
       continue;
 

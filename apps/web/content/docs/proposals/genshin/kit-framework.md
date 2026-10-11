@@ -338,7 +338,7 @@ flowchart TD
 3. **The framework, alongside today's.**
    - It adds `KitContext` and its outbox, the cursors, the slot and attack tag set at build, the effects stepped in place, `buildKit`, `readCharacterKits`, the loader map with the barrel option, and the primitives the proof kits need.
    - A module still in today's shape runs through a compatibility path that builds today's partial contexts for it, so every replay digest stays as it was.
-   - The finder learns to end a clone where the import block ends, which removes the false positives among the kit pairs.
+   - The finder drops any clone that reaches a file's leading import block, so no clone includes an import line, which removes the false positives among the kit pairs.
 4. **The proof kits,** each in its own commit with its digest unchanged:
    - **Xiangling:** summons, a following summon, scheduled tasks, a team buff;
    - **Noelle:** a shield, a converting infusion, a party heal on a hit, an explosion as the shield ends;

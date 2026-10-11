@@ -27,6 +27,17 @@ describe(getDuplicateCodeFindings, () => {
     );
   });
 
+  test("reads a clone running from an identical import block into differing bodies as no finding", () => {
+    expect.hasAssertions();
+
+    const sourceIdA = join(REPOSITORY_ROOT, "a");
+    const sourceA = `import a from "a";\nimport b from "b";\nconst first = 0;\nconst second = 1;`;
+    const sourceB = `import a from "a";\nimport b from "b";\nconst third = 2;\nconst fourth = 3;`;
+    expect(
+      getDuplicateCodeFindings([createClone(1, 4)], (sourceId) => (sourceId === sourceIdA ? sourceA : sourceB)),
+    ).toStrictEqual([]);
+  });
+
   test("reads a clone of a declaration in both files as no finding", () => {
     expect.hasAssertions();
 
