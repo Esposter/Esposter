@@ -29,7 +29,7 @@ export const ScreenLoadBudgetMap: Record<string, LoadBudget> = {
     machine: "DESKTOP-B9KPH2V",
     objects: 322,
     programs: 107,
-    readyMs: 13610,
+    readyMs: 11802,
     requests: 95,
     textures: 39,
   },
