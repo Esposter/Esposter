@@ -3,6 +3,7 @@ import type { QualityTier } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
@@ -145,15 +146,7 @@ onMounted(() => {
     <!-- The scroll bar shows only while the page has more than it shows -->
     <template v-if="scrollThumb.share < 1">
       <svg class="scroll-caret" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
-      <div class="track" aria-hidden="true">
-        <div
-          class="thumb"
-          :style="{
-            height: `${scrollThumb.share * 100}%`,
-            top: `${(1 - scrollThumb.share) * scrollThumb.offset * 100}%`,
-          }"
-        />
-      </div>
+      <MenuScrollTrack :offset="scrollThumb.offset" :share="scrollThumb.share" />
     </template>
   </GameScreen>
 </template>
@@ -507,7 +500,7 @@ onMounted(() => {
   background: rgb(89 89 89 / 0.19);
 }
 
-.thumb {
+.track :deep(.thumb) {
   position: absolute;
   left: calc(var(--unit) * -1);
   width: calc(var(--unit) * 7);
