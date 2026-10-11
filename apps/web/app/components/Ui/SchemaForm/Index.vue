@@ -5,7 +5,7 @@ import type { z } from "zod";
 
 import { SchemaFormRenderers } from "@/services/ui/schemaForm/SchemaFormRenderers";
 import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jsonforms/core";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
   // What only the dialog knows, whose keys a field names for the items it chooses among: a sheet's columns
@@ -49,7 +49,7 @@ const jsonforms = shallowReactive<JsonFormsSubStates & { core: JsonFormsCore }>(
 // A field's change runs through the core, and the value it leaves is written back unless it is the one already held
 const dispatch = (action: CoreActions) => {
   jsonforms.core = coreReducer(jsonforms.core, action);
-  if (!deepEqual(jsonforms.core.data, modelValue.value)) modelValue.value = jsonforms.core.data;
+  if (!checkIsDeepEqual(jsonforms.core.data, modelValue.value)) modelValue.value = jsonforms.core.data;
 };
 
 watch([modelValue, jsonFormsSchema, uischema], ([newModelValue, newJsonFormsSchema, newUischema]) => {

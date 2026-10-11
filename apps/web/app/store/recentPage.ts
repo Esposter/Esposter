@@ -4,7 +4,7 @@ import type { RecentPage } from "@/models/app/RecentPage";
 import { RECENT_PAGES_STORED_LIMIT } from "@/services/app/constants";
 import { getFrecency } from "@/services/app/getFrecency";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 // The one ranking both the dock's order and the trim of a full list read, so the pages kept are the ones shown first
 const getRankedPages = (recentPages: RecentPage[], now: number) =>
@@ -40,7 +40,7 @@ export const useRecentPageStore = defineStore("recentPage", () => {
   const updateRecentPage = ({ mark, path, title }: PageLink) => {
     const index = recentPages.value.findIndex((recentPage) => recentPage.path === path);
     const recentPage = recentPages.value[index];
-    if (!recentPage || (recentPage.title === title && deepEqual(recentPage.mark, mark))) return;
+    if (!recentPage || (recentPage.title === title && checkIsDeepEqual(recentPage.mark, mark))) return;
     recentPages.value = recentPages.value.with(index, { ...recentPage, mark, title });
   };
   // A page renamed or removed since its visit has no route left to open, so it leaves the list rather than link nowhere

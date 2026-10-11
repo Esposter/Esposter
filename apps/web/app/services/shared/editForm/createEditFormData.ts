@@ -3,8 +3,7 @@ import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { toRawDeep } from "@esposter/shared";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(
   items: ComputedRef<TItem[]>,
@@ -28,8 +27,8 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       Boolean(editedItem.value) &&
       isEditFormValid.value &&
       // The edited item is a clone that drops class information, so it is never strictly equal —
-      // `deepEqual` is what makes the comparison against the original mean anything
-      (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
+      // `checkIsDeepEqual` is what makes the comparison against the original mean anything
+      (!originalItem.value || !checkIsDeepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
   );
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 

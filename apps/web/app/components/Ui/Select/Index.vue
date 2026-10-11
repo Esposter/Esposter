@@ -3,7 +3,7 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { Select } from "@vuetify/v0";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual } from "@esposter/shared";
 
 interface Props {
   items: UiSelectItem<T>[];
@@ -23,7 +23,7 @@ const { items, label } = defineProps<Props>();
     :multiple="Array.isArray(modelValue)"
     @update:model-value="
       (value) => {
-        if ((typeof value === 'string' || Array.isArray(value)) && !deepEqual(value, modelValue))
+        if ((typeof value === 'string' || Array.isArray(value)) && !checkIsDeepEqual(value, modelValue))
           modelValue = value as TModel;
       }
     "

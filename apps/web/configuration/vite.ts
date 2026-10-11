@@ -17,6 +17,6 @@ export const vite: NuxtConfig["vite"] = {
     // Mermaid is imported lazily after mount, so without this it is discovered mid-session and the
     // Re-optimize rewrites the chunks it shares with the app out from under the loaded module graph. JSON Forms'
     // Ajv is CommonJS the schema forms only load in a dialog, so it is named through its importer, whose own copy it is
-    include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats", "fast-deep-equal", "mermaid", "pdfjs-dist"],
+    include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats", "mermaid", "pdfjs-dist"],
   },
 };

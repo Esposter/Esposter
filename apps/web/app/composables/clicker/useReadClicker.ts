@@ -3,8 +3,7 @@ import { toClicker } from "@/services/clicker/save/toClicker";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useClickerStore } from "@/store/clicker";
 import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
-import { getResult, jsonDateParse, omitDeep } from "@esposter/shared";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual, getResult, jsonDateParse, omitDeep } from "@esposter/shared";
 
 export const useReadClicker = async () => {
   const { $trpc } = useNuxtApp();
@@ -17,7 +16,9 @@ export const useReadClicker = async () => {
   // Tick and updatedAt is stamped by the save itself, so watching them would retrigger the save
   const virtualClicker = computed((oldVirtualClicker) => {
     const newVirtualClicker = omitDeep(clicker.value, "pointCount", "producedValue", "updatedAt");
-    return oldVirtualClicker && deepEqual(newVirtualClicker, oldVirtualClicker) ? oldVirtualClicker : newVirtualClicker;
+    return oldVirtualClicker && checkIsDeepEqual(newVirtualClicker, oldVirtualClicker)
+      ? oldVirtualClicker
+      : newVirtualClicker;
   });
 
   watch(virtualClicker, async () => {

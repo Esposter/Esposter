@@ -8,8 +8,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
 import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
-import { toRawDeep } from "@esposter/shared";
-import deepEqual from "fast-deep-equal";
+import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
 interface Props {
   filter?: RoomFilterInMessage;
@@ -42,7 +41,7 @@ const selectedTimeoutDuration = computed({
 });
 const isDirty = computed(
   () =>
-    !deepEqual(editedFormData.value.words, initialFormData.value.words) ||
+    !checkIsDeepEqual(editedFormData.value.words, initialFormData.value.words) ||
     editedFormData.value.action !== initialFormData.value.action ||
     (isTimeout.value && editedFormData.value.timeoutDurationMs !== initialFormData.value.timeoutDurationMs),
 );
