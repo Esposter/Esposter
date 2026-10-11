@@ -203,64 +203,61 @@ describe(stepActiveKit, () => {
     expect(kitState.action).toBe(stanceAttack);
   });
 
-  describe("a hit whose hitmark falls past its action's end", () => {
-    // A strike whose one hit lands at twice the seconds it plays for
-    const lateAttack: KitAction = { ...takeOne(TRAVELER_KIT.normalAttacks) };
-    const lateHit = takeOne(lateAttack.hits);
-    lateAttack.seconds = lateHit.hitmarkSeconds / 2;
+  // A strike whose one hit lands at twice the seconds it plays for
+  const lateHit = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+  const lateAttack: KitAction = { ...takeOne(TRAVELER_KIT.normalAttacks), seconds: lateHit.hitmarkSeconds / 2 };
 
-    test("lands at its hitmark after the action has ended, as its kind of attack and infused as it lands", () => {
-      expect.hasAssertions();
-      const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-      const kit: Kit = { ...TRAVELER_KIT, normalAttacks: [lateAttack], onKitEvent };
-      const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, kit)], {
-        effects: [{ characterId: TRAVELER_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 1 }],
-      });
-      // A landing's action or its kind of attack and element, the one its event carries
-      const readLandings = () =>
-        onKitEvent.mock.calls.flatMap(
-          ([event]): { action?: KitAction; attackTag?: AttackTag; element?: Element; kind: KitEventKind }[] => {
-            if (event.kind === KitEventKind.NormalAttackLanded) return [{ action: event.action, kind: event.kind }];
-            if (event.kind === KitEventKind.DamageTaken)
-              return [{ attackTag: event.attackTag, element: event.hit.element, kind: event.kind }];
-            return [];
-          },
-        );
-      const kitState = createKitState();
-      stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
-      stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
-
-      expect(kitState.action).toBeUndefined();
-      expect(readLandings()).toStrictEqual([]);
-
-      stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
-
-      expect(readLandings()).toStrictEqual([
-        { action: lateAttack, kind: KitEventKind.NormalAttackLanded },
-        { attackTag: AttackTag.NormalAttack, element: Element.Cryo, kind: KitEventKind.DamageTaken },
-      ]);
+  test("a hit whose hitmark falls past its action's end lands at it, as its kind of attack and infused as it lands", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const kit: Kit = { ...TRAVELER_KIT, normalAttacks: [lateAttack], onKitEvent };
+    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, kit)], {
+      effects: [{ characterId: TRAVELER_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 1 }],
     });
+    // A landing's action or its kind of attack and element, the one its event carries
+    const readLandings = () =>
+      onKitEvent.mock.calls.flatMap(
+        ([event]): { action?: KitAction; attackTag?: AttackTag; element?: Element; kind: KitEventKind }[] => {
+          if (event.kind === KitEventKind.NormalAttackLanded) return [{ action: event.action, kind: event.kind }];
+          if (event.kind === KitEventKind.DamageTaken)
+            return [{ attackTag: event.attackTag, element: event.hit.element, kind: event.kind }];
+          return [];
+        },
+      );
+    const kitState = createKitState();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
 
-    test("lands after a swap, priced by the character that played it", () => {
-      expect.hasAssertions();
-      const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-      const lateCombatant = createCombatant(TRAVELER_CHARACTER_ID, {
-        ...TRAVELER_KIT,
-        normalAttacks: [lateAttack],
-        onKitEvent,
-      });
-      const context = createStrikeContext([lateCombatant, createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
-      const kitState = createKitState();
-      stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
-      stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
-      context.party.activeIndex = 1;
-      stepActiveKit(createKitState(), IDLE_INPUT, lateAttack.seconds, context);
+    expect(kitState.action).toBeUndefined();
+    expect(readLandings()).toStrictEqual([]);
 
-      expect(
-        onKitEvent.mock.calls.flatMap(([event]) =>
-          event.kind === KitEventKind.DamageTaken ? [{ hit: event.hit, striker: event.striker }] : [],
-        ),
-      ).toStrictEqual([{ hit: lateHit, striker: lateCombatant }]);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
+
+    expect(readLandings()).toStrictEqual([
+      { action: lateAttack, kind: KitEventKind.NormalAttackLanded },
+      { attackTag: AttackTag.NormalAttack, element: Element.Cryo, kind: KitEventKind.DamageTaken },
+    ]);
+  });
+
+  test("a hit whose hitmark falls past its action's end lands after a swap, priced by the character that played it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const lateCombatant = createCombatant(TRAVELER_CHARACTER_ID, {
+      ...TRAVELER_KIT,
+      normalAttacks: [lateAttack],
+      onKitEvent,
     });
+    const context = createStrikeContext([lateCombatant, createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
+    const kitState = createKitState();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context);
+    stepActiveKit(kitState, IDLE_INPUT, lateAttack.seconds, context);
+    context.party.activeIndex = 1;
+    stepActiveKit(createKitState(), IDLE_INPUT, lateAttack.seconds, context);
+
+    expect(
+      onKitEvent.mock.calls.flatMap(([event]) =>
+        event.kind === KitEventKind.DamageTaken ? [{ hit: event.hit, striker: event.striker }] : [],
+      ),
+    ).toStrictEqual([{ hit: lateHit, striker: lateCombatant }]);
   });
 });

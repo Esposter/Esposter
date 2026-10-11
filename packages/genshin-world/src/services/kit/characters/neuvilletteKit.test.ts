@@ -40,11 +40,11 @@ describe(createNeuvilletteKit, () => {
   test("his strikes deal hydro, and his skill's and burst's hits land at their hitmarks, past their animations too", () => {
     expect.hasAssertions();
     expect({
-      normalAttackElements: NEUVILLETTE_KIT.normalAttacks.map(({ hits }) => hits[0]?.element),
-      skillHitmarkFrames: NEUVILLETTE_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) =>
+      burstHitmarkFrames: NEUVILLETTE_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) =>
         Math.round(hitmarkSeconds * 60),
       ),
-      burstHitmarkFrames: NEUVILLETTE_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) =>
+      normalAttackElements: NEUVILLETTE_KIT.normalAttacks.map(({ hits }) => hits[0]?.element),
+      skillHitmarkFrames: NEUVILLETTE_KIT.elementalSkill.hits.map(({ hitmarkSeconds }) =>
         Math.round(hitmarkSeconds * 60),
       ),
     }).toStrictEqual({
