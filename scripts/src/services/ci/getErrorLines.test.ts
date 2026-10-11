@@ -18,4 +18,15 @@ describe(getErrorLines, () => {
       "##[error]Process completed with exit code 1.",
     ]);
   });
+
+  test("reads a job's whole log, whose lines carry the timestamp alone", () => {
+    expect.hasAssertions();
+
+    const timestamp = Temporal.Instant.fromEpochMilliseconds(0).toString();
+    const log = [`${timestamp} ✔ Build complete`, `${timestamp} fatal runtime error: stack overflow, aborting`].join(
+      "\n",
+    );
+
+    expect(getErrorLines(log)).toStrictEqual(["fatal runtime error: stack overflow, aborting"]);
+  });
 });
