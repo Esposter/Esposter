@@ -560,7 +560,6 @@ defineExpose({ jumpTo, readCameraPosition });
           :get-ground-height
           :input-state
           :is-held="screenBehaviour.isHeld || undefined"
-          :is-paused
           :origin
           :water-level="windriseData.water.level"
         />
@@ -581,6 +580,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :held-minutes
         :is-held="screenBehaviour.isHeld || undefined"
         :interactables
+        :is-paused
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
         :origin
