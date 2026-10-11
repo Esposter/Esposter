@@ -39,7 +39,7 @@ invariants all pick it up from there.
 
 `packages/genshin-persona` is the only-run shape with more constraints, every one forced by the tool that
 installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and every
-hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
+hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/infra/claude-interface/persona-plugin/index.md`).
 
 - **Every dependency is a plain semver range and there are no devDependencies** — `tsx` included, which the
   entries need at runtime. npm reads neither `catalog:`
@@ -58,7 +58,7 @@ hook and command is a bare `node <path>` the tool runs (`apps/web/content/docs/i
   (the `package-scripts` skill, `references/typescript-scripts.md`).
   `Temporal` is the plugin's date layer, and the plugin's own `engines.node` is the floor it needs: `>=` the
   root's `.node-version`, moved with it by `pnpm update:node` and never edited by hand
-  (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
+  (`apps/web/content/docs/infra/claude-interface/persona-plugin/index.md`).
 - It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.
 
 ## Bin entrypoints — no shebang

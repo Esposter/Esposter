@@ -62,7 +62,7 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 
 ## A headless session delegates in the foreground, and only the drain does
 
-The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, as `apps/web/content/docs/infra/review-collector/drain.md` sets out. Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call, and the runner's environment leaves `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` unset (`apps/web/content/docs/infra/review-collector/runner.md`).
+The drain session is the one headless session that delegates. Its fixes may go to `haiku` subagents, as `apps/web/content/docs/infra/review-collector/drain.md` sets out. Foreground is forced by the shape: a `claude -p` session has no next turn in which to read a backgrounded result. The subagent tier is named per call, and the runner's environment leaves `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` unset (`apps/web/content/docs/infra/review-collector/runner/index.md`).
 
 ## A deterministic tier does not have to know whether it applies
 
