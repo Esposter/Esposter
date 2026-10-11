@@ -3,6 +3,7 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { Vector3 } from "three";
 
 import { REGION_REACH, REGION_RECHECK_DISTANCE } from "#src/services/constants";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { getResultAsync } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
@@ -47,7 +48,7 @@ export const useRegionData = (origin: Vector3, regionDataBaseUrl: string, catalo
       if (regionDataMap.has(id) || pendingRegionIds.has(id)) continue;
       pendingRegionIds.add(id);
       // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and a frame has nothing to await it
-      getResultAsync(() => readRegionData(regionDataBaseUrl, id)).match(
+      getResultAsync(() => measureLoadStep("regions", readRegionData(regionDataBaseUrl, id))).match(
         (regionData) => {
           pendingRegionIds.delete(id);
           // A region that left reach while it was fetching is not kept

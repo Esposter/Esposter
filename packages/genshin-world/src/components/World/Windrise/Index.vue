@@ -75,6 +75,7 @@ import {
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop } from "@tresjs/core";
@@ -328,7 +329,7 @@ whenever(
     // The scene's pipelines, outlines included, compile before the world shows, so no first sight of one stalls a frame.
     // A compile that fails is logged and the world shows anyway, drawn without the warm-up, rather than never being ready
     await getResultAsync(async () => {
-      await postPipeline.value?.compileAsync();
+      if (postPipeline.value) await measureLoadStep("compile", postPipeline.value.compileAsync());
     }).match(noop, (error) => {
       console.error("The Windrise post pipeline failed to compile", error);
     });

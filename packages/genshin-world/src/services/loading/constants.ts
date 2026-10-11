@@ -3,3 +3,5 @@
 // With no crossfade. Each wipe step lands within one frame, with no easing
 export const MARKS_FADE_MS = 280;
 export const WHITE_HOLD_MS = 700;
+// The prefix of each load step's performance measure, which DevTools' Timings track shows and the parity page's `load` reads
+export const LOAD_STEP_MEASURE_PREFIX = "genshin:load:";

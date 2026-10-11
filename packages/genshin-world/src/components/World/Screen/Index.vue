@@ -4,6 +4,7 @@ import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 
 import WorldSession from "#src/components/World/Session/Index.vue";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -27,18 +28,21 @@ const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinS
 const tables = shallowRef<WorldTables>();
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() =>
-  Promise.all([
-    NameTextLoaderMap[props.language](props.gameDataBaseUrl),
-    readStatTables(props.gameDataBaseUrl),
-    readEnemyTables(props.gameDataBaseUrl),
-    readAdventureRankTables(props.gameDataBaseUrl),
-    readMaterialDataMap(props.gameDataBaseUrl),
-    readHudInterfaceRects(props.gameDataBaseUrl),
-    readTalentMultipliers(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS),
-    readWindriseData(props.gameDataBaseUrl),
-    readCatalogue(props.gameDataBaseUrl),
-    readMondstadtWildlifePlaces(props.gameDataBaseUrl),
-  ]),
+  measureLoadStep(
+    "world-gate",
+    Promise.all([
+      measureLoadStep("name-text", NameTextLoaderMap[props.language](props.gameDataBaseUrl)),
+      measureLoadStep("stat-tables", readStatTables(props.gameDataBaseUrl)),
+      measureLoadStep("enemy-tables", readEnemyTables(props.gameDataBaseUrl)),
+      measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
+      measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
+      measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
+      measureLoadStep("talent-multipliers", readTalentMultipliers(props.gameDataBaseUrl, STARTING_TEAM_CHARACTER_IDS)),
+      measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
+      measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
+      measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
+    ]),
+  ),
 ).match(
   ([
     nameText,

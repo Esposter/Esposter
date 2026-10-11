@@ -8,6 +8,7 @@ import SplashSequence from "#src/components/Splash/Sequence/Index.vue";
 import { OpeningPhase } from "#src/models/game/OpeningPhase";
 import { getLoginTimeOfDay } from "#src/services/login/getLoginTimeOfDay";
 import { readLoginData } from "#src/services/login/readLoginData";
+import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { GameLanguageTitleLogoMap } from "#src/services/splash/GameLanguageTitleLogoMap";
 import { readTitleLogoPath } from "#src/services/splash/readTitleLogoPath";
 import { getResultAsync } from "@esposter/shared";
@@ -45,7 +46,9 @@ const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 const titleLogoPath = shallowRef("");
 const loginData = shallowRef<LoginData>();
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readTitleLogoPath(gameDataBaseUrl, GameLanguageTitleLogoMap[language])).match(
+getResultAsync(() =>
+  measureLoadStep("opening", readTitleLogoPath(gameDataBaseUrl, GameLanguageTitleLogoMap[language])),
+).match(
   (newTitleLogoPath) => {
     titleLogoPath.value = newTitleLogoPath;
   },
@@ -54,7 +57,7 @@ getResultAsync(() => readTitleLogoPath(gameDataBaseUrl, GameLanguageTitleLogoMap
   },
 );
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-getResultAsync(() => readLoginData(gameDataBaseUrl)).match(
+getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl))).match(
   (newLoginData) => {
     loginData.value = newLoginData;
   },
