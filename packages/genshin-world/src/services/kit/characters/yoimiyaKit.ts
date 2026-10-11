@@ -4,6 +4,7 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -173,6 +174,13 @@ export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     onStart: ({ combatant, kitEffectState }) =>
       addKitEffect(kitEffectState, {
         actions: { chargedAttack, chargedAttackStamina, elementalBurst, elementalSkill, normalAttacks: blazingArrows },
+        // The Blazing Arrows stay Normal Attack DMG, gcsim's AttackTagNormal in yoimiya/attack.go's Attack
+        attackTags: {
+          chargedAttack: AttackTag.ChargedAttack,
+          elementalBurst: AttackTag.ElementalBurst,
+          elementalSkill: AttackTag.ElementalSkill,
+          normalAttacks: AttackTag.NormalAttack,
+        },
         characterId: combatant.characterId,
         elapsedSeconds: 0,
         kind: "stance",

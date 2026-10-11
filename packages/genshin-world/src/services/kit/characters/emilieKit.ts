@@ -30,14 +30,16 @@ export const EMILIE_CHARACTER_ID = 10_000_099;
 // Circle of radius 2 centred 0.4 metres ahead for the first, a box of 1.6 by 3 metres on the target for the second, and
 // Circles of radius 2.5 and 3 centred 0.4 metres ahead for the third and fourth
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/emilie/attack.go
-const NORMAL_ATTACK_HIT_AREAS = [
-  createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 2),
-  createTargetedHitArea(STRIKE_TARGETING_AREA, createBoxReach(0, 1.6, 3).radius),
-  createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 2.5),
-  createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 3),
+const NORMAL_ATTACKS = [
+  { frames: 28, hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 2), hitmarkFrames: 11 },
+  {
+    frames: 32,
+    hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, createBoxReach(0, 1.6, 3).radius),
+    hitmarkFrames: 16,
+  },
+  { frames: 49, hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 2.5), hitmarkFrames: 33 },
+  { frames: 71, hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, 0.4 + 3), hitmarkFrames: 34 },
 ];
-const NORMAL_ATTACK_FRAMES = [28, 32, 49, 71];
-const NORMAL_ATTACK_HITMARK_FRAMES = [11, 16, 33, 34];
 // Measured: gcsim (MIT) emilie/charge.go, the thrust's box of 3.3 by 3.5 metres centred 1.2 metres behind the primary
 // Target, its hitmark at 26 frames and its animation at 50
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/emilie/charge.go
@@ -105,17 +107,17 @@ export const createEmilieKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     getTalentMultiplier(talentMultiplierMap, EMILIE_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
   const skillMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, EMILIE_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
-  const normalAttacks = NORMAL_ATTACK_HIT_AREAS.map((hitArea, index): KitAction => ({
+  const normalAttacks = NORMAL_ATTACKS.map(({ frames, hitArea, hitmarkFrames }, index): KitAction => ({
     hits: [
       {
         hitArea,
-        hitmarkSeconds: NORMAL_ATTACK_HITMARK_FRAMES[index] / 60,
+        hitmarkSeconds: hitmarkFrames / 60,
         internalCooldownTag: InternalCooldownTag.NormalAttack,
         poiseDamage: 0,
         talentMultiplier: attackMultiplier(index),
       },
     ],
-    seconds: NORMAL_ATTACK_FRAMES[index] / 60,
+    seconds: frames / 60,
     targetingArea: STRIKE_TARGETING_AREA,
   }));
   const createPlunge = (

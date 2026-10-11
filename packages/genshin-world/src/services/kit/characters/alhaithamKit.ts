@@ -13,6 +13,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStepContext } from "#src/models/kit/KitStepContext";
 
+import { takeOne } from "@esposter/shared";
+
 import { Attribute } from "#src/models/character/Attribute";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
@@ -45,7 +47,7 @@ const ALHAITHAM_BURST_GROUP_ID = 7839;
 // Reach: a circle is its offset plus its radius, and a box is priced to its far corner, as Ayato's strikes are. The first
 // Strike's fan is 180 degrees
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/alhaitham
-const NORMAL_ATTACK_CANCEL_FRAMES = [29, 31, 55, 51, 90];
+const NORMAL_ATTACK_CANCEL_FRAMES = [29, 31, 55, 51, 90] as const;
 const CHARGED_ATTACK_FRAMES = 64;
 const CHARGED_ATTACK_HIT_RADIUS = 2.5;
 const CHARGED_ATTACK_HITMARK_FRAMES = [19, 27];
@@ -362,7 +364,7 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       kind: "status",
       secondsRemaining: PROJECTION_ICD_FRAMES / 60,
     });
-    const { hitArea, hitmarkFrames } = PROJECTION_ATTACK_SHAPES[count - 1] ?? PROJECTION_ATTACK_SHAPES[MIRRORS_MAX - 1];
+    const { hitArea, hitmarkFrames } = takeOne(PROJECTION_ATTACK_SHAPES, count - 1);
     addKitEffect(
       kitEffectState,
       createKitSummon(

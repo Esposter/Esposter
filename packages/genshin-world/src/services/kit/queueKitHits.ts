@@ -22,7 +22,7 @@ export const queueKitHits = (
   if (!lastHit) return;
   addKitEffect(kitEffectState, {
     ...createKitSummon(body, combatant, queuedHits, lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS),
-    attackTag: getKitAttackTag(kit, lastHit),
+    attackTag: getKitAttackTag(kit, lastHit, kitEffectState.effects),
     elapsedSeconds: actionSeconds,
   });
 };

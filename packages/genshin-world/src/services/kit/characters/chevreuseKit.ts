@@ -78,8 +78,13 @@ const BURST_HITMARK_FRAMES = 59;
 const BURST_FRAMES = 61;
 const BURST_BLAST_HIT_AREA = createFanReach(360, 6);
 const BURST_SHELL_HIT_AREA = createTargetedHitArea(SKILL_TARGETING_AREA, 6);
-const BURST_SHELL_DELAYS = [24, 33, 42, 51, 60];
-const BURST_SHELL_COUNTS = [1, 2, 2, 2, 1];
+const BURST_SHELL_GROUPS = [
+  { count: 1, delayFrames: 24 },
+  { count: 2, delayFrames: 33 },
+  { count: 2, delayFrames: 42 },
+  { count: 2, delayFrames: 51 },
+  { count: 1, delayFrames: 60 },
+];
 
 // Overloaded reactions set the Overcharged Ball going for the next hold, as gcsim's overcharged-ball subscription does,
 // Whoever triggers them, until a hold casts the ball
@@ -126,12 +131,12 @@ export const createChevreuseKit = (talentMultiplierMap: TalentMultiplierMap): Ki
   };
   // The Overcharged Ball's hold spends the ball as it starts, so the next hold is a plain one again
 
-  const burstShellHits: KitHit[] = BURST_SHELL_COUNTS.flatMap((count, groupIndex) =>
+  const burstShellHits: KitHit[] = BURST_SHELL_GROUPS.flatMap(({ count, delayFrames }) =>
     Array.from({ length: count }, (): KitHit => ({
       element: Element.Pyro,
       gauge: 1,
       hitArea: BURST_SHELL_HIT_AREA,
-      hitmarkSeconds: hitmark(BURST_HITMARK_FRAMES + BURST_SHELL_DELAYS[groupIndex]),
+      hitmarkSeconds: hitmark(BURST_HITMARK_FRAMES + delayFrames),
       internalCooldownTag: InternalCooldownTag.ElementalBurst,
       isBlunt: true,
       poiseDamage: 25,

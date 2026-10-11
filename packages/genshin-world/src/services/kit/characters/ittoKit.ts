@@ -8,6 +8,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -372,6 +373,13 @@ export const createIttoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         elementalBurst,
         elementalSkill,
         normalAttacks,
+      },
+      // The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in itto/charge.go's ChargeAttack
+      attackTags: {
+        chargedAttack: AttackTag.ChargedAttack,
+        elementalBurst: AttackTag.ElementalBurst,
+        elementalSkill: AttackTag.ElementalSkill,
+        normalAttacks: AttackTag.NormalAttack,
       },
       characterId,
       elapsedSeconds: 0,
