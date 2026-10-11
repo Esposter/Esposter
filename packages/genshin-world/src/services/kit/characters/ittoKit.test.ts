@@ -42,7 +42,7 @@ const landNormalAttacks = (context: KitContext): void => {
 };
 
 describe(createIttoKit, () => {
-  test("the burst, Royal Descent, adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD for its seconds", () => {
+  test("the burst, Royal Descent, adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD, ending on a swap", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();
     const context = createKitTestContext(combatant);
@@ -54,6 +54,7 @@ describe(createIttoKit, () => {
         amount: 0.576 * combatant.attributes.defense,
         attribute: Attribute.Attack,
         characterId: ITTO_CHARACTER_ID,
+        isEndedOnSwap: true,
         kind: "buff",
         secondsRemaining: 13.25,
       },
@@ -61,6 +62,7 @@ describe(createIttoKit, () => {
         characterId: ITTO_CHARACTER_ID,
         element: Element.Geo,
         isConverted: true,
+        isEndedOnSwap: true,
         kind: "infusion",
         normalAttackSpeedBonus: 0.1,
         secondsRemaining: 13.25,

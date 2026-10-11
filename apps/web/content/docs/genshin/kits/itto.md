@@ -15,6 +15,7 @@ Superlative Superstrength is a resource of up to 5 on the team's effects. His se
 - **The Arataki Kesagiri is one charged attack holding every slash its stacks buy, and spends them as it starts.** gcsim plays each slash as its own charged attack, spending a stack and choosing the next slash from the stacks then held, so a stack gained mid-combo lengthens it. The kit's charged attack starts only once a strike ends, so it cannot chain one into another: the stance holds the whole combo for the stacks at its start, and lasts as long as the combo plays so its slashes keep the burst's conversion and their kind of attack. A stack gained while it plays waits for the next charged attack.
 - **Ushi is a taunt with no explosion, and gives its stack as an enemy's strike damages it.** Ushi flees without dealing damage, so it carries no explosion. Each strike it takes is a `TauntDamaged` event, which gives Itto a stack off a 2-second cooldown of his own, the talent's "only 1 stack can be gained in this way every 2s"; gcsim leaves that stack to a parameter that defaults to none, since its enemies do not strike.
 - **Masatsu Zetsugi's gauge is 1U**, the Durability of 25 gcsim gives it.
+- **Royal Descent ends as Itto leaves the field.** gcsim's `itto-exit` deletes the burst's ATK and ATK SPD on a swap, which its Geo conversion reads (`itto/burst.go`), so the burst's buff and infusion each end on a swap (`isEndedOnSwap`).
 
 ## Key files
 
