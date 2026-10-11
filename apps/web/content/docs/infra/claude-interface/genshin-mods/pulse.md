@@ -1,11 +1,11 @@
 ---
 title: Pulse
-description: A minute clock that keeps the machine watcher running from any session with the plugin, and wakes an idle session with the next fleet work once the machine has been under 80% CPU and GPU for twenty minutes, then again every thirty minutes while it stays idle, with no turn running and no usage reserve winding down.
+description: A minute clock that keeps the machine watcher running from any session with the plugin, and wakes an idle session to fill the machine with the next fleet work once it has been under 80% CPU and GPU for five minutes, then again every fifteen minutes while it stays idle, with no turn running and no usage reserve winding down.
 ---
 
 # Pulse
 
-Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The machine watcher, `pnpm ai:machine:watch`, reads the machine's CPU, GPU and free memory each minute, and the fleet's idle time is what it measures. A session that ran the watcher under Monitor lost it at the Monitor's expiry, which comes within thirty minutes and with the session, so a machine could sit idle for a day with nothing to wake the session that would have started its work. Pulse removes the arming: any session with the plugin keeps the watcher running, and wakes an idle session with the work the fleet has ready.
+Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). The machine watcher, `pnpm ai:machine:watch`, reads the machine's CPU, GPU and free memory each minute, and the fleet's idle time is what it measures. A session that ran the watcher under Monitor lost it at the Monitor's expiry, which comes within thirty minutes and with the session, so a machine could sit idle for a day with nothing to wake the session that would have started its work. Pulse removes the arming: any session with the plugin keeps the watcher running, and wakes an idle session to fill the machine with the work the fleet has ready.
 
 Pulse draws no row above the prompt. Its one visible act is a prompt the session takes as a turn of its own.
 
@@ -13,9 +13,11 @@ Pulse draws no row above the prompt. Its one visible act is a prompt the session
 
 Each minute, and once at session start, the plugin runs `packages/genshin-mods/scripts/machinePulse.mjs` with the session's directory. Outside the repository the script prints nothing, since the watcher's script is not there. Inside it, the script reads the watcher's latest reading from `~/.esposter/machine/state.json`, which the watcher writes each minute, and starts `pnpm ai:machine:watch` detached when that reading is missing, older than three minutes, or written by a process that has exited. The watcher's output is appended to `~/.esposter/machine/watch.log`. The script then prints the reading, and the plugin counts it.
 
-A reading is idle when the CPU is under 80% and the GPU is under 80% or unread. Each new reading counts once, so the count is of readings, and a reading at or over the line starts the count again at zero. The session is woken when the count reaches twenty, no turn is running, and no usage reserve is winding down. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku. The first wake of an idle episode is immediate once those hold, and while the machine stays idle the session is woken again at most every thirty minutes.
+A reading is idle when the CPU is under 80% and the GPU is under 80% or unread. Each new reading counts once, so the count is of readings, and a reading at or over the line starts the count again at zero. The session is woken when the count reaches five, no turn is running, and no usage reserve is winding down. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku. The first wake of an idle episode is immediate once those hold, and while the machine stays idle the session is woken again at most every fifteen minutes.
 
-The wake is a prompt, `IDLE_WAKE_PROMPT`, that tells the session to run `pnpm ai:resume`, to take the next unit with `pnpm ai:fleet:next --kind unit`, and to start a runner for each compute-queue lane with items, every agent on haiku unless a call needs the main session.
+The wake is a prompt, `IDLE_WAKE_PROMPT`, that tells the session to run `pnpm ai:fleet:fill`, then to launch one background haiku agent per brief it printed, with the brief as its prompt, and to report what started. A brief names the entry, its spec, the command that releases it and the standing rules. When the command prints `nothing ready`, the session reports that instead.
+
+The session also runs `pnpm ai:fleet:fill` before anything else when an agent reports with the machine under its line, so a finished agent's slot is refilled at once (the `throughput` skill).
 
 ```mermaid
 flowchart TD
@@ -27,7 +29,7 @@ flowchart TD
   Start --> Reading
   Reading --> New{"A reading not yet counted?"}
   New -->|yes| Count["Idle readings in a row: one more under the line, else zero"]
-  Count --> Gate{"Twenty idle readings, no turn running, no wind-down, and no wake in thirty minutes"}
+  Count --> Gate{"Five idle readings, no turn running, no wind-down, and no wake in fifteen minutes"}
   New -->|no| Gate
   Gate -->|yes| Wake["Submit the idle prompt"]
 ```
