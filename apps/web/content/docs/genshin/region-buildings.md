@@ -43,6 +43,6 @@ flowchart TD
 
 ## Notes
 
-- **Places, plateaus, outlines and colours are provisional.** The places and heights wait on the fit, the palettes on sampling the game's own building textures, and each area's square outline on the area's own; the [roadmap](/docs/genshin/roadmap) holds each.
+- **Places, plateaus, outlines and colours are provisional.** The places and heights wait on the fit, the palettes on sampling the game's own building textures, which `genshin:assets palette <region>` does for Mondstadt and Liyue (dry run: a stone, plaster, timber, roof or lacquer colour from its families' diffuse maps, each with its texel count and spread), the publish of `regions/<region>/palette` waiting on the Mac, and each area's square outline on the area's own; the [roadmap](/docs/genshin/roadmap) holds each.
 - **A plateau stands within the terrain's bounds.** Every tile's box spans the heights Windrise's fit stands between, so a region's ground above or below them would be culled where it shows; `createWorldHeight.test.ts` fails for any plateau outside them.
 - **The game's map turns ours.** Placed by the game's own coordinates, the capitals stand with north along x and east along z, Inazuma east of Liyue and Fontaine to its north-west, since the game's x and the mirror of its z are the scene's.

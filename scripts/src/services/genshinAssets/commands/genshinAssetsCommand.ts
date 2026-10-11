@@ -36,6 +36,7 @@ import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand"
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
+import { paletteCommand } from "#src/services/genshinAssets/commands/paletteCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";
 import { pointsCommand } from "#src/services/genshinAssets/commands/pointsCommand";
 import { pointsFitCommand } from "#src/services/genshinAssets/commands/pointsFitCommand";
@@ -91,6 +92,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     statues: statuesCommand,
     "trans-points": transPointsCommand,
     offerings: offeringsCommand,
+    palette: paletteCommand,
     friendship: friendshipCommand,
     stats: statsCommand,
     enemies: enemiesCommand,
