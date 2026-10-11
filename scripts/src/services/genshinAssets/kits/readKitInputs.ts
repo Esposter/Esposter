@@ -47,7 +47,12 @@ export const readKitInputs = async ({
   const plungeFallback = tagCharacterMap.get(GCSIM_PLUNGE_FALLBACK_FOLDER);
   if (plungeFallback === undefined)
     throw new InvalidOperationError(Operation.Read, GCSIM_PLUNGE_FALLBACK_FOLDER, `has no folder at ${GCSIM_TAG}`);
-  const modules = (await readKitModules()).filter(
+  const allModules = await readKitModules();
+  const moduleCharacterIds = new Set(allModules.map(({ characterId }) => characterId));
+  const unknownCharacterIds = characterIds?.filter((characterId) => !moduleCharacterIds.has(characterId)) ?? [];
+  if (unknownCharacterIds.length > 0)
+    throw new InvalidOperationError(Operation.Read, unknownCharacterIds.join(", "), "has no kit module");
+  const modules = allModules.filter(
     ({ characterId }) => characterIds === undefined || characterIds.includes(characterId),
   );
   const tablesMap = await readKitTables(modules.map(({ characterId }) => characterId));

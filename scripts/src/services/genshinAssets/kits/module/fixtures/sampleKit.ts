@@ -31,7 +31,7 @@ const createStrike = (talentMultiplierMap: TalentMultiplierMap, index: number): 
 
 // A kit for the analysis to read as its record holds it: a skill that lands a mark held whole as it starts and an echo
 // Built as it plays, whose poise turns on its target, and a cooldown a constellation shortens by a share derived from a
-// Talent read
+// Talent read through a helper over a helper
 export const createSampleKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const markHit: KitHit = {
     hitArea: MARK_HIT_AREA,
@@ -40,7 +40,10 @@ export const createSampleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     talentMultiplier: getTalentMultiplier(talentMultiplierMap, SAMPLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
   };
   const echoMultiplier = getTalentMultiplier(talentMultiplierMap, SAMPLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 1);
-  const cooldownShare = 1 - getTalentMultiplier(talentMultiplierMap, SAMPLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 2);
+  const getSkillMultiplier = (index: number) =>
+    getTalentMultiplier(talentMultiplierMap, SAMPLE_SKILL_GROUP_ID, TALENT_START_LEVEL, index);
+  const getSkillShare = (index: number) => getSkillMultiplier(index);
+  const cooldownShare = 1 - getSkillShare(2);
   const strike = createStrike(talentMultiplierMap, 0);
   return {
     burstCooldownSeconds: 15,

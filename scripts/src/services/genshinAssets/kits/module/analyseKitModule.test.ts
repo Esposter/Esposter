@@ -84,7 +84,7 @@ describe(analyseKitModule, () => {
         {
           "captureKind": undefined,
           "derivedFrom": "cooldownShare",
-          "expressionText": "getTalentMultiplier(talentMultiplierMap, SAMPLE_SKILL_GROUP_ID, TALENT_START_LEVEL, 2)",
+          "expressionText": "getSkillShare(2)",
           "fieldKey": undefined,
           "kind": "Talent",
           "name": "cooldownShare",

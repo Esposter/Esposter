@@ -110,7 +110,7 @@
     "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 3832 }
   },
-  "parameters.solarIsotomaSecondsRemaining": {
+  "parameters.elementalSkillOnStartSecondsRemaining": {
     "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 3832 }
   },

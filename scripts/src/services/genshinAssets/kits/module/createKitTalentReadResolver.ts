@@ -54,7 +54,7 @@ export const createKitTalentReadResolver = (source: KitModuleSource): KitTalentR
     const wrapper = declaration.initializer;
     const body = getArrowBody(wrapper);
     if (body === undefined || !ts.isCallExpression(body)) return undefined;
-    const wrapperParameterArgumentMap = new Map<ts.Symbol, ts.Expression>();
+    const wrapperParameterArgumentMap = new Map(parameterArgumentMap);
     for (const [position, parameter] of wrapper.parameters.entries()) {
       const symbol = source.checker.getSymbolAtLocation(parameter.name);
       const argument = call.arguments[position];
