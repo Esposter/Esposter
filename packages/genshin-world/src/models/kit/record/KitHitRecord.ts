@@ -1,37 +1,15 @@
-import type { AttackArea } from "#src/models/kit/AttackArea";
-import type { KitParameter } from "#src/models/kit/record/KitParameter";
+import type { BaseKitHitRecord } from "#src/models/kit/record/BaseKitHitRecord";
+import type { KitBubbleRecord } from "#src/models/kit/record/KitBubbleRecord";
+import type { z } from "zod";
 
-import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
-import { Element } from "#src/models/Element";
-import { attackAreaSchema } from "#src/models/kit/AttackArea";
-import { kitParameterSchema } from "#src/models/kit/record/KitParameter";
-import { z } from "zod";
+import { baseKitHitRecordSchema } from "#src/models/kit/record/BaseKitHitRecord";
+import { kitBubbleRecordSchema } from "#src/models/kit/record/KitBubbleRecord";
 
-// One hit of a kit's record: the cylinder it reaches, and while an infusion converts its attacks the cylinder and poise
-// It takes instead, the element it deals, none for a physical hit, its gauge, its hitmark in frames at 60 a second from
-// The action's start, its internal cooldown tag, whether it is blunt, its talent multiplier and its poise damage
-export interface KitHitRecord {
-  area: AttackArea;
-  convertedArea?: AttackArea;
-  convertedPoiseDamage?: number;
-  element?: Element;
-  gauge?: number;
-  hitmarkFrames: number;
-  internalCooldownTag?: InternalCooldownTag;
-  isBlunt?: true;
-  multiplier: KitParameter;
-  poiseDamage: number;
+// One hit of a kit's record, with the bubble it holds the enemy it strikes in, if it holds one
+export interface KitHitRecord extends BaseKitHitRecord {
+  bubble?: KitBubbleRecord;
 }
 
-export const kitHitRecordSchema = z.strictObject({
-  area: attackAreaSchema,
-  convertedArea: attackAreaSchema.optional(),
-  convertedPoiseDamage: z.number().nonnegative().optional(),
-  element: z.enum(Element).optional(),
-  gauge: z.number().nonnegative().optional(),
-  hitmarkFrames: z.number().nonnegative(),
-  internalCooldownTag: z.enum(InternalCooldownTag).optional(),
-  isBlunt: z.literal(true).optional(),
-  multiplier: kitParameterSchema,
-  poiseDamage: z.number().nonnegative(),
+export const kitHitRecordSchema = baseKitHitRecordSchema.extend({
+  bubble: kitBubbleRecordSchema.optional(),
 }) satisfies z.ZodType<KitHitRecord>;

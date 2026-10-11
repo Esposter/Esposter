@@ -18,14 +18,17 @@ import {
   GCSIM_BURST_ATTACK_TAGS,
   GCSIM_CHARACTERS_PATH,
   GCSIM_CHARGED_ATTACK_TAG,
-  GCSIM_CONFIG_FILE,
   GCSIM_DURABILITY_PER_GAUGE,
   GCSIM_NO_INTERNAL_COOLDOWN_TAG,
   GCSIM_PHYSICAL_ELEMENT,
+  GCSIM_PLUNGE_FILE,
   GCSIM_SKILL_ATTACK_TAGS,
-  NO_ACTION_FILE_CLAYMORE_CHARGED_CANCEL_FRAMES,
+  GCSIM_SKILL_HOLD_HITBOX_NAME,
+  GCSIM_SKILL_HOLD_PREFIXES,
+  GCSIM_SKILL_PRESS_HITBOX_NAMES,
+  NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES,
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
-  NO_ACTION_FILE_PLUNGE_CANCEL_FRAMES,
+  NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
@@ -38,6 +41,7 @@ import {
   STRIKE_TARGETING_AREA,
   WeaponType,
 } from "genshin-world";
+import { posix } from "node:path";
 
 const GcsimTalentTypeCombatTalentMap: Record<GcsimTalentType, CombatTalent> = {
   [GcsimTalentType.Attack]: CombatTalent.NormalAttack,
@@ -52,6 +56,12 @@ interface HitSource {
   // The poise the attack's poise variable gives this hit, by its place in its string
   poiseDamage?: { line: number; value: number };
   talentLeaf?: GcsimTalentLeaf;
+}
+
+// A hold of the skill: the constant its frames are in, and its hitmarks where gcsim gives them as numbers
+interface HoldSource {
+  framesName?: string;
+  hitmarks?: { file: string; line: number; name: string; values?: number[] };
 }
 
 const checkIsPathEqual = (left: readonly number[], right: readonly number[]): boolean =>
@@ -74,7 +84,8 @@ export const getGcsimKitCandidates = (
   plungeFallback: GcsimCharacter,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
-  const { attacks, config, constantMap, fileNames, folder, talentFile, talentParameterMap, travelMap } = gcsim;
+  const { attacks, config, configFile, constantMap, fileNames, folder, talentFile, talentParameterMap, travelMap } =
+    gcsim;
   const toFile = (name: string, from = folder) => `${GCSIM_CHARACTERS_PATH}/${from}/${name}`;
   const add = (path: string, value: unknown, file: string, line: number, cause?: KitProvisionalCause) =>
     addKitCandidate(candidateMap, path, {
@@ -127,7 +138,7 @@ export const getGcsimKitCandidates = (
     if (hitmark !== undefined) add(`${path}.hitmarkFrames`, hitmark.value, toFile(hitmark.file), hitmark.line);
     if (areaHitbox !== undefined) {
       const area = toGcsimArea(areaHitbox, targetingArea);
-      if (area !== undefined) add(`${path}.area`, area.area, toFile(GCSIM_CONFIG_FILE), areaHitbox.line, area.cause);
+      if (area !== undefined) add(`${path}.area`, area.area, toFile(configFile), areaHitbox.line, area.cause);
     }
     if (talentLeaf !== undefined) {
       const { label, selector, type } = talentLeaf.reference;
@@ -199,7 +210,7 @@ export const getGcsimKitCandidates = (
         typeof strikeFrames === "object"
       )
         add(
-          `${path}.cancelFrames`,
+          `${path}.animationFrames`,
           strikeFrames.animationFrames,
           toFile(normalFrames.file),
           normalFrames.elementLines[strikeIndex] ?? normalFrames.line,
@@ -238,7 +249,7 @@ export const getGcsimKitCandidates = (
   const aimedFrames = readConstant("aimedFrames");
   if (chargedHitmarks !== undefined && chargedHitmarkValues !== undefined) {
     add("chargedAttack.hits.length", chargedHitmarkValues.length, toFile(chargedHitmarks.file), chargedHitmarks.line);
-    addFrames("chargedAttack.cancelFrames", "chargeFrames");
+    addFrames("chargedAttack.animationFrames", "chargeFrames");
     for (const [hitIndex, hitmark] of chargedHitmarkValues.entries())
       addHit(
         `chargedAttack.hits.${hitIndex}`,
@@ -261,7 +272,7 @@ export const getGcsimKitCandidates = (
     const aimedLevelFrames = Array.isArray(aimedFrames?.value) ? aimedFrames.value[GCSIM_AIM_CHARGE_LEVEL] : undefined;
     if (aimedFrames !== undefined && typeof aimedLevelFrames === "object" && !Array.isArray(aimedLevelFrames))
       add(
-        "chargedAttack.cancelFrames",
+        "chargedAttack.animationFrames",
         aimedLevelFrames.animationFrames,
         toFile(aimedFrames.file),
         aimedFrames.elementLines[GCSIM_AIM_CHARGE_LEVEL] ?? aimedFrames.line,
@@ -283,14 +294,15 @@ export const getGcsimKitCandidates = (
   }
   if (readConstant("chargeFrames", "aimedFrames") === undefined && tables.weaponType === WeaponType.Claymore) {
     addNoActionFileRule("chargedAttack.hits.length", NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES.length);
-    addNoActionFileRule("chargedAttack.cancelFrames", NO_ACTION_FILE_CLAYMORE_CHARGED_CANCEL_FRAMES);
+    addNoActionFileRule("chargedAttack.animationFrames", NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES);
     for (const [hitIndex, hitmark] of NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES.entries())
       addNoActionFileRule(`chargedAttack.hits.${hitIndex}.hitmarkFrames`, hitmark);
   }
   // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
   // Its area from the `Low_Plunge` or `High_Plunge` hitbox, and the collision's from `Plunge`. With no plunge file, the
   // Shared rule
-  const hasPlungeFile = fileNames.includes("plunge.go");
+  const plungeFile = fileNames.find((name) => posix.basename(name) === GCSIM_PLUNGE_FILE);
+  const hasPlungeFile = plungeFile !== undefined;
   const plungeSource = hasPlungeFile ? gcsim : plungeFallback;
   const plungeCause = hasPlungeFile ? undefined : KitProvisionalCause.NoActionFile;
   for (const [plunge, prefix, hitboxName] of [
@@ -301,8 +313,8 @@ export const getGcsimKitCandidates = (
     const hitbox = plungeSource.config.abilityHitboxesMap.get("plunge")?.find(({ name }) => name === hitboxName);
     if (hasPlungeFile) {
       const hitmark = readConstant(`${prefix}PlungeHitmark`);
-      add(`${path}.hits.length`, 1, toFile("plunge.go"), hitmark?.line ?? 1);
-      addFrames(`${path}.cancelFrames`, `${prefix}PlungeFrames`);
+      add(`${path}.hits.length`, 1, toFile(plungeFile), hitmark?.line ?? 1);
+      addFrames(`${path}.animationFrames`, `${prefix}PlungeFrames`);
       const attack = findAttack(`${prefix}Plunge`);
       addHit(
         `${path}.hits.0`,
@@ -318,13 +330,13 @@ export const getGcsimKitCandidates = (
       );
     } else {
       addNoActionFileRule(`${path}.hits.length`, 1);
-      addNoActionFileRule(`${path}.cancelFrames`, NO_ACTION_FILE_PLUNGE_CANCEL_FRAMES);
+      addNoActionFileRule(`${path}.animationFrames`, NO_ACTION_FILE_PLUNGE_ANIMATION_FRAMES);
       addNoActionFileRule(`${path}.hits.0.hitmarkFrames`, 0);
       if (hitbox?.radius !== undefined)
         add(
           `${path}.hits.0.area`,
           createCircleReach(0, hitbox.radius),
-          toFile(GCSIM_CONFIG_FILE, plungeFallback.folder),
+          toFile(plungeFallback.configFile, plungeFallback.folder),
           hitbox.line,
           plungeCause,
         );
@@ -341,19 +353,24 @@ export const getGcsimKitCandidates = (
     add(
       "plungeCollision.area",
       createCircleReach(0, collisionHitbox.radius),
-      toFile(GCSIM_CONFIG_FILE, plungeFallback.folder),
+      toFile(plungeFallback.configFile, plungeFallback.folder),
       collisionHitbox.line,
       plungeCause,
     );
-  // The skill and burst: their hitmarks from `<slot>Hitmark` or `<slot>Hitmarks`, their frames from `<slot>Frames`, and
-  // Each hit by its place among the slot's talent multipliers and the ability's hitboxes, where they are as many as its
-  // Hitmarks
-  for (const [slot, ability, attackTags] of [
-    ["skill", "skill", GCSIM_SKILL_ATTACK_TAGS],
-    ["burst", "burst", GCSIM_BURST_ATTACK_TAGS],
+  // The skill and burst: their hitmarks from `<slot>Hitmark` or `<slot>Hitmarks`, or the skill's press's or tap's,
+  // Their frames from `<slot>Frames` or the press's or tap's, and each hit by its place among the slot's talent
+  // Multipliers and the ability's hitboxes, where they are as many as its hitmarks. A skill of one hit with no hitbox for
+  // Each takes the `E-Tap` or `E-Press` hitbox
+  for (const [slot, ability, attackTags, pressNames, pressHitboxNames] of [
+    ["skill", "skill", GCSIM_SKILL_ATTACK_TAGS, ["skillPress", "skillTap"], GCSIM_SKILL_PRESS_HITBOX_NAMES],
+    ["burst", "burst", GCSIM_BURST_ATTACK_TAGS, [], []],
   ] as const) {
-    addFrames(`${slot}.cancelFrames`, `${slot}Frames`, `${slot}PressFrames`);
-    const hitmarks = readConstant(`${slot}Hitmarks`, `${slot}Hitmark`);
+    addFrames(`${slot}.animationFrames`, `${slot}Frames`, ...pressNames.map((pressName) => `${pressName}Frames`));
+    const hitmarks = readConstant(
+      `${slot}Hitmarks`,
+      `${slot}Hitmark`,
+      ...pressNames.flatMap((pressName) => [`${pressName}Hitmarks`, `${pressName}Hitmark`]),
+    );
     const hitmarkValues = toNumbers(hitmarks?.value);
     if (hitmarks === undefined || hitmarkValues === undefined) continue;
     const slotAttacks = attacks.filter(({ attackTag }) => attackTag !== undefined && attackTags.includes(attackTag));
@@ -374,7 +391,11 @@ export const getGcsimKitCandidates = (
       addHit(
         `${slot}.hits.${hitIndex}`,
         {
-          areaHitbox: isHitboxJoined ? hitboxes[hitIndex] : undefined,
+          areaHitbox: isHitboxJoined
+            ? hitboxes[hitIndex]
+            : hitmarkValues.length === 1
+              ? findHitbox(ability, ...pressHitboxNames)
+              : undefined,
           attack: slotAttacks.find(({ talentVariable }) => talentVariable === variable),
           hitmark: {
             file: hitmarks.file,
@@ -386,6 +407,41 @@ export const getGcsimKitCandidates = (
         SKILL_TARGETING_AREA,
       );
     }
+  }
+  // The skill's holds: one for each of the short hold and the hold gcsim gives frames or hitmarks for, the shorter first,
+  // Or one for each level its hitmarks list, each with its frames from `<hold>Frames`, its hits from `<hold>Hitmark` or
+  // `<hold>Hitmarks`, and a hit's area from the `E-Hold` hitbox where the hold has one hit
+  const holds = GCSIM_SKILL_HOLD_PREFIXES.flatMap((prefix): HoldSource[] => {
+    const hitmarks = readConstant(`${prefix}Hitmarks`, `${prefix}Hitmark`);
+    const framesName = `${prefix}Frames`;
+    const levelHitmarks = Array.isArray(hitmarks?.value) ? hitmarks.value.filter((level) => Array.isArray(level)) : [];
+    if (hitmarks !== undefined && levelHitmarks.length > 0)
+      return levelHitmarks.map((level, levelIndex) => ({
+        hitmarks: { ...hitmarks, line: hitmarks.elementLines[levelIndex] ?? hitmarks.line, values: toNumbers(level) },
+      }));
+    const hitmarkValues = toNumbers(hitmarks?.value);
+    if (hitmarks === undefined && !constantMap.has(framesName)) return [];
+    return [{ framesName, ...(hitmarks !== undefined && { hitmarks: { ...hitmarks, values: hitmarkValues } }) }];
+  });
+  const [firstHold] = holds;
+  const holdsConstant =
+    firstHold?.hitmarks ?? readConstant(...GCSIM_SKILL_HOLD_PREFIXES.map((prefix) => `${prefix}Frames`));
+  if (holdsConstant !== undefined)
+    add("skillHolds.length", holds.length, toFile(holdsConstant.file), holdsConstant.line);
+  for (const [holdIndex, { framesName, hitmarks }] of holds.entries()) {
+    const path = `skillHolds.${holdIndex}.action`;
+    if (framesName !== undefined) addFrames(`${path}.animationFrames`, framesName);
+    if (hitmarks?.values === undefined) continue;
+    add(`${path}.hits.length`, hitmarks.values.length, toFile(hitmarks.file), hitmarks.line);
+    for (const [hitIndex, hitmark] of hitmarks.values.entries())
+      addHit(
+        `${path}.hits.${hitIndex}`,
+        {
+          areaHitbox: hitmarks.values.length === 1 ? findHitbox("skill", GCSIM_SKILL_HOLD_HITBOX_NAME) : undefined,
+          hitmark: { file: hitmarks.file, line: hitmarks.line, value: toLandingFrames(hitmarks.name, hitmark) },
+        },
+        SKILL_TARGETING_AREA,
+      );
   }
   return candidateMap;
 };

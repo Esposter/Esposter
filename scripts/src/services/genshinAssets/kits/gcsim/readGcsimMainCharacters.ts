@@ -6,31 +6,35 @@ import {
   GCSIM_MAIN_BRANCH,
   GCSIM_RAW_URL,
 } from "#src/services/genshinAssets/kits/constants";
+import { GcsimFolderSubfoldersMap } from "#src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
+import { posix } from "node:path";
 
 const FETCH_CONCURRENCY = 8;
 
-// The named character folders of gcsim's current branch that it has, read only to classify a value a kit holds that the
-// Tag does not: the tree is listed through the API and each file read through its raw URL into memory, never written
-// Anywhere
+// The named character folders of gcsim's current branch that it has, each with the subfolders its files sit in, read
+// Only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file read
+// Through its raw URL into memory, never written anywhere
 export const readGcsimMainCharacters = async (folders: readonly string[]): Promise<Map<string, GcsimCharacter>> => {
   const { tree } = parseMachineJson<{ tree: { path: string; type: string }[] }>(
     runGh(["api", `repos/genshinsim/gcsim/git/trees/${GCSIM_MAIN_BRANCH}?recursive=1`]),
   );
-  const wantedFolders = new Set(folders);
+  const subfolderPaths = new Set(
+    folders.flatMap((folder) =>
+      (GcsimFolderSubfoldersMap[folder] ?? [""]).map((subfolder) =>
+        posix.join(GCSIM_CHARACTERS_PATH, folder, subfolder),
+      ),
+    ),
+  );
   const filePaths = tree
     .filter(({ path, type }) => {
-      const [, folder, name, ...rest] = path.slice(GCSIM_CHARACTERS_PATH.length).split("/");
+      const name = posix.basename(path);
       return (
         type === "blob" &&
-        path.startsWith(`${GCSIM_CHARACTERS_PATH}/`) &&
-        folder !== undefined &&
-        wantedFolders.has(folder) &&
-        name !== undefined &&
-        rest.length === 0 &&
+        subfolderPaths.has(posix.dirname(path)) &&
         (name.endsWith(".go") || name === GCSIM_CONFIG_FILE)
       );
     })

@@ -1,8 +1,9 @@
 {
   "burst.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 178 },
   "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalBurst" },
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 113 },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 10239 } },
+  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 113 },
   "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
@@ -14,6 +15,10 @@
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.elementalBurstHitsAdditiveBaseDamageBonus": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 10239 }
+  },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

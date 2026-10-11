@@ -1,4 +1,9 @@
 {
+  "areas.dawnTick": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 7, "radius": 8.9 } },
+  "areas.dawnExplosion": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 7, "radius": 9.4 }
+  },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 7, "radius": 8.9 } },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
@@ -16,6 +21,11 @@
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 1631 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.dilucBurstHitmark": { "cause": "Unclassified", "value": 100 },
+  "frames.dawnTickInterval": { "cause": "Unclassified", "value": 12 },
+  "hitFields.dawnPhoenix.gauge": { "cause": "Unclassified", "value": 2 },
+  "hitFields.dawnPhoenix.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hitFields.dawnPhoenix.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 5.235987755982989, "height": 2, "radius": 2 }
@@ -32,6 +42,14 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.2 }
   },
+  "parameters.tickHitsTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 1639 }
+  },
+  "parameters.dawnPhoenixTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 1639 }
+  },
   "plungeCollision.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
@@ -46,14 +64,14 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "skill.cancelFrames": { "cause": "Unclassified", "value": 32 },
+  "skill.animationFrames": { "cause": "Unclassified", "value": 32 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.3 }
   },
   "skillChain.followUps.length": { "cause": "Unclassified", "value": 2 },
-  "skillChain.followUps.0.cancelFrames": { "cause": "Unclassified", "value": 38 },
+  "skillChain.followUps.0.animationFrames": { "cause": "Unclassified", "value": 38 },
   "skillChain.followUps.0.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.0.hits.0.area": {
     "cause": "Unclassified",
@@ -68,7 +86,7 @@
     "value": { "index": 1, "proudSkillGroupId": 1632 }
   },
   "skillChain.followUps.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 120 },
-  "skillChain.followUps.1.cancelFrames": { "cause": "Unclassified", "value": 66 },
+  "skillChain.followUps.1.animationFrames": { "cause": "Unclassified", "value": 66 },
   "skillChain.followUps.1.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillChain.followUps.1.hits.0.area": {
     "cause": "Unclassified",

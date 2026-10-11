@@ -64,38 +64,60 @@ The frame reads what the build resolved once, and a module loads only when its c
 interface KitRecord {
   burst: KitActionRecord;
   burstCooldownSeconds: KitParameter;
-  burstEnergyCost: KitParameter;
+  // Absent where the burst draws on no Energy, as Mavuika's
+  burstEnergyCost?: KitParameter;
+  burstVariant?: KitActionRecord;
   chargedAttack: KitActionRecord;
   chargedAttackStamina: KitParameter;
-  // The hits a behaviour casts by name, gcsim's hitbox names: a summon's ticks, an explosion, a coordinated attack
-  hits: Record<string, KitHitRecord>;
+  moonsignBenediction?: KitMoonsignBenedictionRecord; // { lunarReactionTypes }
   normalAttacks: KitActionRecord[];
+  plungeCollision: KitHitRecord;
   plunges: Record<KitPlunge, KitActionRecord>;
-  resourceMaximum?: KitParameter;
   skill: KitActionRecord;
+  skillChain?: KitSkillChainRecord;
+  skillCharges?: KitParameter;
   skillCooldownSeconds: KitParameter;
-  skillHolds: KitHoldRecord[];
-  // A stance's own actions, each hit carrying the attack tag gcsim gives it
-  stances: Record<string, Pick<KitRecord, "burst" | "chargedAttack" | "normalAttacks" | "skill">>;
+  skillHolds: KitHoldRecord[]; // { action, cooldownSeconds, minimumHeldSeconds, variant? }
+  skillMaximumHeldSeconds?: KitParameter;
+  // What a behaviour reads by name, each under its module's name for it: an action or its fields, an area, a frame
+  // Count, a hit or its fields, a table's parameter, and a stance's own actions where they differ from the kit's
+  actionFields?: Record<string, Partial<KitActionRecord>>;
+  actions?: Record<string, KitActionRecord | KitActionRecord[]>;
+  areas?: Record<string, AttackArea | AttackArea[]>;
+  frames?: Record<string, number | number[]>;
+  hitFields?: Record<string, Partial<KitHitRecord>>;
+  hits?: Record<string, KitHitRecord | KitHitRecord[]>;
+  parameters?: Record<string, KitParameter | KitParameter[]>;
+  stances?: Record<
+    string,
+    Partial<Pick<KitRecord, "burst" | "chargedAttack" | "chargedAttackStamina" | "normalAttacks" | "skill">>
+  >;
 }
 interface KitActionRecord {
-  cancelFrames: number;
+  animationFrames: number;
   hits: KitHitRecord[];
+  isAimed?: true;
+  staminaPerSecond?: KitParameter;
   targeting: KitTargeting;
 }
 interface KitHitRecord {
   area: AttackArea;
   attackTag?: AttackTag;
+  bubble?: KitBubbleRecord; // { explosion, omen, secondsRemaining }
+  convertedArea?: AttackArea;
+  convertedPoiseDamage?: number;
+  damageBonus?: KitParameter;
   element?: Element;
   gauge?: number;
+  healParty?: KitPartyHealRecord;
   hitmarkFrames: number;
   internalCooldownTag?: InternalCooldownTag;
   isBlunt?: true;
-  isNightsoul?: true;
+  lunarReactionType?: LunarReactionType;
   multiplier: KitParameter;
-  name: string;
   poiseDamage: number;
   scalingAttribute?: Attribute;
+  stackedHit?: KitStackedHitRecord; // { multipliers, poiseDamages }
 }
 // A table's parameter by its group and index, or a number where no table holds it
 type KitParameter = number | { index: number; proudSkillGroupId: number };
@@ -324,6 +346,10 @@ flowchart TD
    - `genshin:assets kits` is a citty command with three readers: gcsim at v2.47.2 (the YAML hitboxes, a constant evaluator for the action files' literals and integer sums, the `AttackInfo` fields and the talent file's indices), the wiki through the MediaWiki API at each page's revision, and the published tables through the lock.
    - It holds the join, the overlay's schema and `KitProvisionalCause`, and `--compare` seeds each overlay with every module value a source lacks or disagrees with, classifying a shared provisional constant by its cause, a disagreement as `DiffersFromSource` and the rest as `Unclassified`.
    - `kits` and `kitSources` are published for every built character, each record reproducing its module's values, and the builder's tests take their oracles from gcsim's and the wiki's own text.
+   - The record was completed ahead of step 7, so that it holds every value a module reads. A module is read for its record rather than given one: its text is analysed for the values its behaviours read, and it is built under a probe twice, once from its multipliers and once from encoded ones. What its slots do not hold, eight named bags hold. The Traveler has a record, read from her composite gcsim folder at Lumine's gender. Holds and presses are read from gcsim's names, and an arrow's box on its target by rule. The gap against the committed overlays went from 5,013 values in 85 kits to none in 107.
+   - Corrections to the shape above, as built. `burstEnergyCost` is optional, since Mavuika's burst draws on none. `cancelFrames` is `animationFrames`, since a kit's action ends where its animation does, not where it may be cancelled. A hit holds no `name`: a behaviour reads a hit by its key in a bag, and a slot's hits by their place. `isNightsoul` is not recorded, as no kit's hit carries it. The `hits` and `stances` the shape had are two of the eight bags, and a stance holds only the actions that differ from its kit's.
+   - What is not a value is not recorded. A behaviour's own numbers, its status ids, an omen's id and its functions stay in its module. Eight sites in six kits choose their talent's group or index as the kit plays, so no record holds them, and step 7 reads them as the modules do.
+   - gcsim names its skill and burst hitboxes by no convention, and a burst's variant or a hold's is no constant of its own, so variants, Kazuha's and Razor's frames as arrays, Lynette's hold end and Zhongli's press hitmark are not read from gcsim. Their values stand in the overlays, as Bennett's hold frames, which gcsim does not give, and Kirara's and Sayu's holds, which gcsim models as two levels against the modules' eleven.
 2. **The guard and the bench.** Landed.
    - A replay test drives each kit alone, and the proof party together, through the scripted minute at a fixed seed, and snapshots each strike log's count and its multipliers by attack tag, bugs included.
    - The bench lands beside it, on today's path.

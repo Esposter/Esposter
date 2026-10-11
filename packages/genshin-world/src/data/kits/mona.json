@@ -3,10 +3,125 @@
   "burst.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
   "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 50 },
+  "burst.hits.0.bubble.explosion.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
+  },
+  "burst.hits.0.bubble.explosion.element": { "cause": "Unclassified", "value": "Water" },
+  "burst.hits.0.bubble.explosion.gauge": { "cause": "Unclassified", "value": 2 },
+  "burst.hits.0.bubble.explosion.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.0.bubble.explosion.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "burst.hits.0.bubble.explosion.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 4139 }
+  },
+  "burst.hits.0.bubble.explosion.poiseDamage": { "cause": "Unclassified", "value": 200 },
+  "burst.hits.0.bubble.omen.damageTakenBonus": {
+    "cause": "Unclassified",
+    "value": { "index": 9, "proudSkillGroupId": 4139 }
+  },
+  "burst.hits.0.bubble.omen.secondsRemaining": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 4139 }
+  },
+  "burst.hits.0.bubble.secondsRemaining": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 4139 }
+  },
   "chargedAttack.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
+  "frames.phantomTickHitmark.length": { "cause": "Unclassified", "value": 4 },
+  "frames.phantomTickHitmark.0": { "cause": "Unclassified", "value": 86 },
+  "frames.phantomTickHitmark.1": { "cause": "Unclassified", "value": 145 },
+  "frames.phantomTickHitmark.2": { "cause": "Unclassified", "value": 204 },
+  "frames.phantomTickHitmark.3": { "cause": "Unclassified", "value": 263 },
+  "frames.phantomExplosionHitmark": { "cause": "Unclassified", "value": 329 },
+  "hitFields.a1Phantom.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hitFields.a1Phantom.element": { "cause": "Unclassified", "value": "Water" },
+  "hitFields.a1Phantom.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.a1Phantom.hitmarkFrames": { "cause": "Unclassified", "value": 120 },
+  "hitFields.a1Phantom.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hitFields.mirrorReflection.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hitFields.mirrorReflection.element": { "cause": "Unclassified", "value": "Water" },
+  "hitFields.mirrorReflection.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.mirrorReflection.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hitFields.mirrorReflection.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hitFields.mirrorReflection2.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hitFields.mirrorReflection2.element": { "cause": "Unclassified", "value": "Water" },
+  "hitFields.mirrorReflection2.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.mirrorReflection2.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
+  "hitFields.mirrorReflection2.poiseDamage": { "cause": "Unclassified", "value": 150 },
+  "hits.mirrorReflection.length": { "cause": "Unclassified", "value": 5 },
+  "hits.mirrorReflection.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.mirrorReflection.0.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.mirrorReflection.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.mirrorReflection.0.hitmarkFrames": { "cause": "Unclassified", "value": 86 },
+  "hits.mirrorReflection.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.mirrorReflection.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4132 } },
+  "hits.mirrorReflection.0.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hits.mirrorReflection.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.mirrorReflection.1.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.mirrorReflection.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.mirrorReflection.1.hitmarkFrames": { "cause": "Unclassified", "value": 145 },
+  "hits.mirrorReflection.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.mirrorReflection.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4132 } },
+  "hits.mirrorReflection.1.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hits.mirrorReflection.2.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.mirrorReflection.2.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.mirrorReflection.2.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.mirrorReflection.2.hitmarkFrames": { "cause": "Unclassified", "value": 204 },
+  "hits.mirrorReflection.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.mirrorReflection.2.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4132 } },
+  "hits.mirrorReflection.2.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hits.mirrorReflection.3.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.mirrorReflection.3.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.mirrorReflection.3.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.mirrorReflection.3.hitmarkFrames": { "cause": "Unclassified", "value": 263 },
+  "hits.mirrorReflection.3.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.mirrorReflection.3.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 4132 } },
+  "hits.mirrorReflection.3.poiseDamage": { "cause": "Unclassified", "value": 40 },
+  "hits.mirrorReflection.4.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.mirrorReflection.4.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.mirrorReflection.4.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.mirrorReflection.4.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
+  "hits.mirrorReflection.4.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 4132 } },
+  "hits.mirrorReflection.4.poiseDamage": { "cause": "Unclassified", "value": 150 },
+  "hits.a1Phantom.length": { "cause": "Unclassified", "value": 1 },
+  "hits.a1Phantom.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.a1Phantom.0.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.a1Phantom.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.a1Phantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 120 },
+  "hits.a1Phantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
+  "hits.a1Phantom.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
@@ -23,9 +138,21 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
+  "parameters.a1PhantomHitsTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 4132 }
+  },
+  "parameters.mirrorReflectionHitsTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 4132 }
+  },
+  "parameters.mirrorReflectionHitsTalentMultiplier2": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 4132 }
+  },
   "plungeCollision.element": { "cause": "Unclassified", "value": "Water" },
   "plunges.high.hits.0.element": { "cause": "Unclassified", "value": "Water" },
   "plunges.low.hits.0.element": { "cause": "Unclassified", "value": "Water" },
-  "skill.cancelFrames": { "cause": "Unclassified", "value": 50 },
+  "skill.animationFrames": { "cause": "Unclassified", "value": 50 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }

@@ -1,6 +1,6 @@
 {
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.cancelFrames": { "cause": "Unclassified", "value": 300 },
+  "chargedAttack.animationFrames": { "cause": "Unclassified", "value": 300 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
@@ -13,6 +13,7 @@
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 8131 } },
   "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.burstStance": { "cause": "Unclassified", "value": 720 },
   "plungeCollision.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
@@ -29,5 +30,78 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
+  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "stances.elementalBurstOnStart.normalAttacks.length": { "cause": "Unclassified", "value": 4 },
+  "stances.elementalBurstOnStart.normalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 44 },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 4.537856055185257, "height": 2, "radius": 3.6 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.internalCooldownTag": {
+    "cause": "Unclassified",
+    "value": "NormalAttack"
+  },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 8131 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 107.738 },
+  "stances.elementalBurstOnStart.normalAttacks.0.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "stances.elementalBurstOnStart.normalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 45 },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 4.537856055185257, "height": 2, "radius": 3.6 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 22 },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.internalCooldownTag": {
+    "cause": "Unclassified",
+    "value": "NormalAttack"
+  },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 8131 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 98.524 },
+  "stances.elementalBurstOnStart.normalAttacks.1.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "stances.elementalBurstOnStart.normalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 56 },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 4.1887902047863905, "height": 2, "radius": 3.7 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 33 },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.internalCooldownTag": {
+    "cause": "Unclassified",
+    "value": "NormalAttack"
+  },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 8131 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 123.542 },
+  "stances.elementalBurstOnStart.normalAttacks.2.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "stances.elementalBurstOnStart.normalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 81 },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.length": { "cause": "Unclassified", "value": 1 },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.6 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.internalCooldownTag": {
+    "cause": "Unclassified",
+    "value": "NormalAttack"
+  },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.isBlunt": { "cause": "Unclassified", "value": true },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 8131 }
+  },
+  "stances.elementalBurstOnStart.normalAttacks.3.hits.0.poiseDamage": { "cause": "Unclassified", "value": 148.118 },
+  "stances.elementalBurstOnStart.normalAttacks.3.targeting": { "cause": "Unclassified", "value": "Strike" }
 }

@@ -4,7 +4,7 @@ import type { KitRecord } from "genshin-world";
 
 // What the builder reads for one character before it builds or compares: its id, English name and overlay's name, its
 // Tables, the record its kit module holds today, its gcsim folder at the tag if the tag has one, every source's
-// Candidates for its record, and what a reader could not read for it
+// Candidates for its record, what a reader could not read for it, and each value its module reads that no record holds
 export interface KitInput {
   characterId: number;
   gcsimFolder?: string;
@@ -14,4 +14,5 @@ export interface KitInput {
   overlayName: string;
   sourceCandidateMap: Map<string, KitCandidate[]>;
   tables: KitTables;
+  unreadSites: string[];
 }

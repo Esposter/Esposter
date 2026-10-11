@@ -1,8 +1,42 @@
 {
-  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8939 } },
+  "burst.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.area": {
+  "frames.singerInitialTick": { "cause": "Unclassified", "value": 63 },
+  "frames.singerInterval": { "cause": "Unclassified", "value": 120 },
+  "frames.fieldTickInterval": { "cause": "Unclassified", "value": 1 },
+  "frames.fanfareGainDelay": { "cause": "Unclassified", "value": 6 },
+  "frames.fanfareDebounceStart": { "cause": "Unclassified", "value": 1 },
+  "frames.fanfareDebounce": { "cause": "Unclassified", "value": 35 },
+  "frames.arkheSwitch": { "cause": "Unclassified", "value": 34 },
+  "frames.pneumaSummonDelay": { "cause": "Unclassified", "value": 10 },
+  "frames.ousiaBubbleHitmark": { "cause": "Unclassified", "value": 18 },
+  "frames.salon": { "cause": "Unclassified", "value": 1736 },
+  "frames.fanfareStart": { "cause": "Unclassified", "value": 95 },
+  "hitFields.hit.element": { "cause": "Unclassified", "value": "Water" },
+  "hitFields.hit.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.hit.multiplier": { "cause": "Unclassified", "value": 0 },
+  "hitFields.hit.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.arkhe.area": {
     "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.242640687119286 }
+  },
+  "hits.arkhe.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.arkhe.hitmarkFrames": { "cause": "Unclassified", "value": 30 },
+  "hits.arkhe.multiplier": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8931 } },
+  "hits.arkhe.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ousiaBubble.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
+  "hits.ousiaBubble.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.ousiaBubble.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.ousiaBubble.hitmarkFrames": { "cause": "Unclassified", "value": 18 },
+  "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
+  "hits.ousiaBubble.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ousiaBubble.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "normalAttacks.0.hits.0.area": {
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.802231253840411 }
   },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -17,12 +51,19 @@
   },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.301162633521313 }
   },
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.openArkheHit.length": { "cause": "Unclassified", "value": 2 },
+  "parameters.openArkheHit.0": { "cause": "Unclassified", "value": { "index": 11, "proudSkillGroupId": 8931 } },
+  "parameters.openArkheHit.1": { "cause": "Unclassified", "value": { "index": 10, "proudSkillGroupId": 8931 } },
+  "parameters.fieldOnTick": { "cause": "Unclassified", "value": { "index": 9, "proudSkillGroupId": 8932 } },
+  "parameters.fieldOnTick2": { "cause": "Unclassified", "value": { "index": 8, "proudSkillGroupId": 8932 } },
+  "parameters.getFanfareMax": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 8939 } },
+  "parameters.fanfare": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 8939 } },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.cancelFrames": { "cause": "Unclassified", "value": 54 },
+  "skill.animationFrames": { "cause": "Unclassified", "value": 54 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }

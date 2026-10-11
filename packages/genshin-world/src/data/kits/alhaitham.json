@@ -1,4 +1,8 @@
 {
+  "areas.burst": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.899999999999999 }
+  },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
@@ -10,6 +14,22 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 }
   },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.mirror.length": { "cause": "Unclassified", "value": 2 },
+  "frames.mirror.0": { "cause": "Unclassified", "value": 15 },
+  "frames.mirror.1": { "cause": "Unclassified", "value": 23 },
+  "frames.mirrorDecay": { "cause": "Unclassified", "value": 233 },
+  "frames.projectionIcd": { "cause": "Unclassified", "value": 96 },
+  "frames.burstFirstHitmark": { "cause": "Unclassified", "value": 94 },
+  "frames.burstHitInterval": { "cause": "Unclassified", "value": 21 },
+  "frames.burstMirrorRegen": { "cause": "Unclassified", "value": 184 },
+  "hitFields.triggerProjection.element": { "cause": "Unclassified", "value": "Grass" },
+  "hitFields.triggerProjection.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.triggerProjection.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hitFields.triggerProjection.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 7832 }
+  },
+  "hitFields.triggerProjection.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 3.141592653589793, "height": 2, "radius": 2.4 }
@@ -41,32 +61,41 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.7 }
   },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.triggerProjectionAdditiveBaseDamageBonusMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 4, "proudSkillGroupId": 7832 }
+  },
+  "parameters.burstHitsAdditiveBaseDamageBonusMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 7839 }
+  },
+  "parameters.burstHitsTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 7839 }
+  },
+  "parameters.skillActionHitsAdditiveBaseDamageBonusMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 7832 }
+  },
   "plungeCollision.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.cancelFrames": { "cause": "Unclassified", "value": 77 },
+  "plunges.high.animationFrames": { "cause": "Unclassified", "value": 77 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 48 },
-  "plunges.low.cancelFrames": { "cause": "Unclassified", "value": 70 },
+  "plunges.low.animationFrames": { "cause": "Unclassified", "value": 70 },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
-  "skill.cancelFrames": { "cause": "Unclassified", "value": 44 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 1 },
   "skill.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.25 }
   },
   "skill.hits.0.element": { "cause": "Unclassified", "value": "Grass" },
   "skill.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 19 },
   "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 7832 } },
-  "skillHolds.length": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.cancelFrames": { "cause": "Unclassified", "value": 87 },
-  "skillHolds.0.action.hits.length": { "cause": "Unclassified", "value": 1 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19.25 }
   },
   "skillHolds.0.action.hits.0.element": { "cause": "Unclassified", "value": "Grass" },
   "skillHolds.0.action.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
   "skillHolds.0.action.hits.0.multiplier": {
     "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 7832 }

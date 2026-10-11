@@ -1,4 +1,146 @@
 {
+  "actions.sevenPhaseChargedAttack.animationFrames": { "cause": "Unclassified", "value": 54 },
+  "actions.sevenPhaseChargedAttack.hits.length": { "cause": "Unclassified", "value": 3 },
+  "actions.sevenPhaseChargedAttack.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseChargedAttack.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseChargedAttack.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 28 },
+  "actions.sevenPhaseChargedAttack.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 7, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseChargedAttack.hits.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseChargedAttack.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseChargedAttack.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 37 },
+  "actions.sevenPhaseChargedAttack.hits.1.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 7, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseChargedAttack.hits.2.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.2.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseChargedAttack.hits.2.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseChargedAttack.hits.2.hitmarkFrames": { "cause": "Unclassified", "value": 46 },
+  "actions.sevenPhaseChargedAttack.hits.2.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 7, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseChargedAttack.hits.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseChargedAttack.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "actions.extinction.animationFrames": { "cause": "Unclassified", "value": 41 },
+  "actions.extinction.hits.length": { "cause": "Unclassified", "value": 0 },
+  "actions.extinction.targeting": { "cause": "Unclassified", "value": "Skill" },
+  "actions.sevenPhaseNormalAttacks.length": { "cause": "Unclassified", "value": 5 },
+  "actions.sevenPhaseNormalAttacks.0.animationFrames": { "cause": "Unclassified", "value": 30 },
+  "actions.sevenPhaseNormalAttacks.0.hits.length": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.78013840664737 }
+  },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 12 },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.0.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "actions.sevenPhaseNormalAttacks.1.animationFrames": { "cause": "Unclassified", "value": 43 },
+  "actions.sevenPhaseNormalAttacks.1.hits.length": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.675467891024383 }
+  },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 1, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.1.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.1.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "actions.sevenPhaseNormalAttacks.2.animationFrames": { "cause": "Unclassified", "value": 42 },
+  "actions.sevenPhaseNormalAttacks.2.hits.length": { "cause": "Unclassified", "value": 2 },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.313930922024598 }
+  },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 2, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.2.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.459820624195552 }
+  },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 23 },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 3, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.2.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.2.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "actions.sevenPhaseNormalAttacks.3.animationFrames": { "cause": "Unclassified", "value": 60 },
+  "actions.sevenPhaseNormalAttacks.3.hits.length": { "cause": "Unclassified", "value": 2 },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
+  },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 4, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.3.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
+  },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unclassified", "value": 27 },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 5, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.3.hits.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.3.targeting": { "cause": "Unclassified", "value": "Strike" },
+  "actions.sevenPhaseNormalAttacks.4.animationFrames": { "cause": "Unclassified", "value": 72 },
+  "actions.sevenPhaseNormalAttacks.4.hits.length": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.849203781276161 }
+  },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.element": { "cause": "Unclassified", "value": "Ice" },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 25 },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 6, "proudSkillGroupId": 11432 }
+  },
+  "actions.sevenPhaseNormalAttacks.4.hits.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "actions.sevenPhaseNormalAttacks.4.targeting": { "cause": "Unclassified", "value": "Strike" },
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
   "burst.hits.0.area": {
     "cause": "Unclassified",
@@ -36,6 +178,8 @@
   "burstEnergyCost": { "cause": "Unclassified", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "frames.sevenPhaseFlash": { "cause": "Unclassified", "value": 754 },
+  "frames.skillDelay": { "cause": "Unclassified", "value": 19 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 11 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 5 },
@@ -48,8 +192,13 @@
   "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 33 },
   "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "parameters.enterSevenPhaseFlashChargedAttackStamina": {
+    "cause": "Unclassified",
+    "value": { "index": 7, "proudSkillGroupId": 11431 }
+  },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 },
   "skillCooldownSeconds": { "cause": "DiffersFromSource", "value": 20.883333333333333 },
+  "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "burst.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
   "burst.hits.2.internalCooldownTag": { "cause": "DiffersFromSource" },

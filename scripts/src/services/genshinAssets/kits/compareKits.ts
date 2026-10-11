@@ -12,8 +12,12 @@ import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
+import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
+import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
+import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import { getResult } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
@@ -30,8 +34,9 @@ const formatCounts = (countMap: ReadonlyMap<string, number>): string =>
     .join(", ") || "none";
 
 // Builds every kit module as it stands against its sources, seeds each character's overlay with what the build needs to
-// Reproduce it, and returns the report: the overlay's entries by kit and by cause, the shared causes the rules applied,
-// The values read past the licence line by kit, the characters the tag predates, and what failed by kit. gcsim's
+// Reproduce it, and returns the report: the gap, each value the committed overlay left the build short of, by kit; the
+// Overlay's entries by kit and by cause; the shared causes the rules applied; the values read past the licence line by
+// Kit; the characters the tag predates; what failed by kit; and each value a module reads that no record holds. gcsim's
 // Current branch is read in memory only, to tell a value read past the licence line from one that differs
 export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]> => {
   const mainCharacterMap = await readGcsimMainCharacters([
@@ -47,7 +52,26 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   const predatedNames: string[] = [];
   const overlayKeys: string[] = [];
   const ruleCauses: string[] = [];
-  for (const { gcsimFolder, moduleRecord, name, notes, overlayName, sourceCandidateMap, tables } of inputs) {
+  const gapLines: string[] = [];
+  const unreadLines: string[] = [];
+  let gapCount = 0;
+  for (const {
+    gcsimFolder,
+    moduleRecord,
+    name,
+    notes,
+    overlayName,
+    sourceCandidateMap,
+    tables,
+    unreadSites,
+  } of inputs) {
+    const gapPaths = getResult(() => buildKitRecord(sourceCandidateMap, readKitOverlay(overlayName))).match(
+      ({ record }) => getMismatchedKitPaths(record, moduleRecord),
+      (error) => [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
+    );
+    gapCount += gapPaths.length;
+    if (gapPaths.length > 0) gapLines.push(`  ${name} (${gapPaths.length})`);
+    if (unreadSites.length > 0) unreadLines.push(`  ${name}: ${unreadSites.join("; ")}`);
     const mainFolder = gcsimFolder ?? findGcsimFolder(mainCharacterMap, name);
     const mainCharacter = mainFolder === undefined ? undefined : mainCharacterMap.get(mainFolder);
     const mainCandidateMap: Map<string, KitCandidate[]> =
@@ -85,6 +109,8 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   }
   return [
     `kits --compare at gcsim ${GCSIM_TAG}: ${inputs.length} kits, ${overlayKeys.length} overlay entries`,
+    `Gap against the committed overlays: ${gapCount} values in ${gapLines.length} kits`,
+    ...gapLines,
     `Overlay entries by cause: ${formatCounts(countBy(overlayKeys))}`,
     `Shared causes applied by rule: ${formatCounts(countBy(ruleCauses))}`,
     "Per kit:",
@@ -94,5 +120,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     `Predated by the tag: ${predatedNames.join(", ") || "none"}`,
     `Failures by kit: ${failureLines.length === 0 ? "none" : ""}`,
     ...failureLines,
+    `Read by a module and held by no record: ${unreadLines.length === 0 ? "none" : ""}`,
+    ...unreadLines,
   ];
 };

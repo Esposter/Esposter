@@ -1,34 +1,43 @@
 {
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
+  "frames.fieryRainHitmark.length": { "cause": "Unclassified", "value": 18 },
+  "frames.fieryRainHitmark.0": { "cause": "Unclassified", "value": 84 },
+  "frames.fieryRainHitmark.1": { "cause": "Unclassified", "value": 96 },
+  "frames.fieryRainHitmark.2": { "cause": "Unclassified", "value": 96 },
+  "frames.fieryRainHitmark.3": { "cause": "Unclassified", "value": 108 },
+  "frames.fieryRainHitmark.4": { "cause": "Unclassified", "value": 108 },
+  "frames.fieryRainHitmark.5": { "cause": "Unclassified", "value": 120 },
+  "frames.fieryRainHitmark.6": { "cause": "Unclassified", "value": 120 },
+  "frames.fieryRainHitmark.7": { "cause": "Unclassified", "value": 132 },
+  "frames.fieryRainHitmark.8": { "cause": "Unclassified", "value": 144 },
+  "frames.fieryRainHitmark.9": { "cause": "Unclassified", "value": 144 },
+  "frames.fieryRainHitmark.10": { "cause": "Unclassified", "value": 144 },
+  "frames.fieryRainHitmark.11": { "cause": "Unclassified", "value": 156 },
+  "frames.fieryRainHitmark.12": { "cause": "Unclassified", "value": 168 },
+  "frames.fieryRainHitmark.13": { "cause": "Unclassified", "value": 168 },
+  "frames.fieryRainHitmark.14": { "cause": "Unclassified", "value": 180 },
+  "frames.fieryRainHitmark.15": { "cause": "Unclassified", "value": 180 },
+  "frames.fieryRainHitmark.16": { "cause": "Unclassified", "value": 192 },
+  "frames.fieryRainHitmark.17": { "cause": "Unclassified", "value": 192 },
+  "frames.elementalBurstOnStartSecondsRemaining": { "cause": "Unclassified", "value": 192 },
+  "frames.tauntSecondsRemaining": { "cause": "Unclassified", "value": 529 },
+  "hits.explosion.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
+  "hits.explosion.element": { "cause": "Unclassified", "value": "Fire" },
+  "hits.explosion.gauge": { "cause": "Unclassified", "value": 2 },
+  "hits.explosion.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "hits.explosion.isBlunt": { "cause": "Unclassified", "value": true },
+  "hits.explosion.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 2132 } },
+  "hits.explosion.poiseDamage": { "cause": "Unclassified", "value": 260 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 14 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 10 },
-  "normalAttacks.2.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 27 },
-  "normalAttacks.3.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
-  "normalAttacks.4.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
-  },
   "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
+  "parameters.fieryRainHitsTalentMultiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 2139 }
+  },
+  "parameters.tauntHealth": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 2132 } },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 }
 }
