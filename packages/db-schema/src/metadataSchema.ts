@@ -1,9 +1,9 @@
 import { timestamp } from "drizzle-orm/pg-core";
 
-export const metadataSchema = {
+export const createMetadataSchema = () => ({
   createdAt: timestamp().notNull().defaultNow(),
   deletedAt: timestamp(),
   updatedAt: timestamp()
     .notNull()
     .$onUpdateFn(() => new Date()),
-};
+});

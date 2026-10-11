@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
 import { socialSchema } from "#src/schema/social/socialSchema";
-import { senderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
+import { createSenderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { check, index, text } from "drizzle-orm/pg-core";
 
@@ -11,7 +11,7 @@ export const friendsInSocial = pgTable(
     // Text PK: every lookup goes through this value, it never changes,
     // And there is exactly one row per user pair.
     id: text().primaryKey(),
-    ...senderReceiverColumns,
+    ...createSenderReceiverColumns(),
   },
   {
     extraConfig: ({ receiverId, senderId }) => [
