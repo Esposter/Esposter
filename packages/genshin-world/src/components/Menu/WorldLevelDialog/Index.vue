@@ -2,6 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import { MenuDialogIcon } from "#src/models/menu/MenuDialogIcon";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
 import { computeWorldLevelCooldown } from "#src/services/adventureRank/computeWorldLevelCooldown";
@@ -121,16 +122,7 @@ onMounted(() => {
           <span v-for="({ color, text }, index) of infoSegments" :key="index" :style="{ color }">{{ text }}</span>
         </p>
       </div>
-      <div class="track" aria-hidden="true">
-        <div
-          v-if="scrollThumb.share < 1"
-          class="thumb"
-          :style="{
-            height: `${scrollThumb.share * 100}%`,
-            top: `${(1 - scrollThumb.share) * scrollThumb.offset * 100}%`,
-          }"
-        />
-      </div>
+      <MenuScrollTrack :offset="scrollThumb.offset" :share="scrollThumb.share" />
       <svg class="caret up" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 4.25 5 0.75 9 4.25" /></svg>
       <svg class="caret down" aria-hidden="true" viewBox="0 0 10 5"><polyline points="1 0.75 5 4.25 9 0.75" /></svg>
       <button
@@ -277,7 +269,7 @@ onMounted(() => {
   background: #383d4e;
 }
 
-.thumb {
+.track :deep(.thumb) {
   position: absolute;
   left: 0;
   width: calc(var(--unit) * 6);
