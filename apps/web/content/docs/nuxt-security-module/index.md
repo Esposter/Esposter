@@ -16,4 +16,13 @@ The decision to absorb it, and the rule a security-shaped absorption meets, are 
 
 ## Status
 
-Only the audit and the defaults review exist. The package's code is the next phase: its defaults are written from the defaults review, each defect the audit records gets a regression test that fails against the upstream package first, and the swap replaces the upstream catalog entry and the two workarounds that are kept against it today. Those workarounds are `@TODO` markers in `pnpm-workspace.yaml`: the rate limiter's storage mounted with `rateLimiter: false`, and the prerender hook that reads Nitro 2's build-time storage. The package drops both.
+The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth and the request size limit, with its defaults written from the defaults review. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins are typed and built but not yet run inside a Nuxt app, so the app still runs the upstream package.
+
+Not built yet, in order:
+
+1. Run the plugins in a Nuxt app and check the headers, the nonce and the integrity attributes in a rendered page, including the `X-Powered-By` removal, whose framework header is not yet confirmed to reach the response.
+2. Run each regression test against the upstream package and confirm it fails there first, where the reproduction is cheap.
+3. Write the prerendered headers file for static hosts. The `ssg.nitroHeaders` and `ssg.exportToPresets` options are read but not yet acted on.
+4. Verify the SRI behaviour on preload links (#655) and on entry import maps (#657) against a built app. Both are kept as they are until then.
+5. Build the features the audit defers to a follow-up unit: the rate limiter, the XSS validator, CSRF, `removeLoggers`, strict mode, Zod options, and the route rules `security` key.
+6. Swap the app's dependency onto the package, then remove the upstream catalog entry and the two workarounds it holds: the rate limiter's storage mounted with `rateLimiter: false`, and the prerender hook that reads Nitro 2's build-time storage. Those workarounds are `@TODO` markers in `pnpm-workspace.yaml`.
