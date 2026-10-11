@@ -51,7 +51,7 @@ describe(createYanfeiKit, () => {
     expect(summon.hits[0]?.hitArea.radius).toBeCloseTo(8.5);
   });
 
-  test("Constellation 6 holds a fourth Scarlet Seal, where three is the most before it", () => {
+  test("constellation 6 holds a fourth Scarlet Seal, where three is the most before it", () => {
     expect.hasAssertions();
     const hit = YANFEI_KIT.elementalSkill.hits[0];
     if (!hit?.onStrike) throw new Error("Signed Edict has no seal on hit");

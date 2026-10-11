@@ -127,8 +127,8 @@ export const createThomaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           talentMultiplier: skillTalentMultiplier(0),
         },
       ],
-      // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its seconds,
-      // and infuses his own attacks with Pyro for the infusion's seconds
+      // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its seconds.
+      // It also infuses his own attacks with Pyro for the infusion's seconds
       onStart: ({ combatant, kitEffectState }) => {
         addKitEffect(kitEffectState, {
           characterId: combatant.characterId,

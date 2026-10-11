@@ -11,17 +11,18 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
-// Yoimiya's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4, the aimed shot
-// at 5 and the fully charged shot at 6, and the plunges' collision, low and high at 8, 9 and 10. The skill group holds
-// Niwabi Fire-Dance's duration at 1 and its cooldown at 2. The burst group holds Naganohara Meteor Swarm's hit at 0, Aurous
-// Blaze's explosion at 1, its internal cooldown at 2, its seconds at 3, its cooldown at 4 and its energy cost at 5
+// Yoimiya's proud skill groups, read at her talent level. The attack group holds the five strikes at 0 to 4.
+// The aimed shot is at 5 and the fully charged shot at 6, and the plunges' collision, low and high are at 8, 9 and 10.
+// The skill group holds Niwabi Fire-Dance's duration at 1 and its cooldown at 2. The burst group holds Naganohara
+// Meteor Swarm's hit at 0. Aurous Blaze's explosion is at 1, its internal cooldown at 2, its seconds at 3, its cooldown
+// It is at 4, and its energy cost is at 5
 const YOIMIYA_ATTACK_GROUP_ID = 4931;
 const YOIMIYA_SKILL_GROUP_ID = 4932;
 const YOIMIYA_BURST_GROUP_ID = 4939;
 
-// Measured: gcsim (MIT, main) internal/characters/yoimiya/attack.go, each strike's hitmarks and the frame its action cancels
-// at, its arrows travelling 10 frames to their target, which lands each hit at the hitmark plus the travel. Each arrow lands
-// on the primary target through a box, priced as a circle of a metre round the body, as Ganyu's are
+// Measured: gcsim (MIT, main) internal/characters/yoimiya/attack.go, each strike's hitmarks and the frame its action
+// It cancels at the frame. Its arrows travel 10 frames to their target, which lands each hit at the hitmark plus the travel.
+// Each arrow lands on the primary target through a box, priced as a circle of a metre round the body, as Ganyu's are
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yoimiya/attack.go
 const ARROW_HIT_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: 1 });
 const ARROW_TRAVEL_FRAMES = 10;
@@ -33,21 +34,21 @@ const NORMAL_ATTACK_STRIKES = [
   { cancelFrames: 52, hitmarkFrames: [17], index: 4 },
 ];
 
-// Measured: gcsim (MIT, main) internal/characters/yoimiya/aimed.go, the fully charged shot's animation at 97 frames, its arrow
-// at 86 and its travel of 10, and no Kindling Arrows, as the hold it is cast with gives none
+// Measured: gcsim (MIT, main) internal/characters/yoimiya/aimed.go. The fully charged shot's animation is 97 frames.
+// Its arrow is at 86 and its travel is 10, and it has no Kindling Arrows, as the hold it is cast with gives none
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yoimiya/aimed.go
 const FULL_CHARGE_FRAMES = 97;
 const FULL_CHARGE_HITMARK_FRAMES = 86 + ARROW_TRAVEL_FRAMES;
 
-// Measured: gcsim (MIT, main) internal/characters/yoimiya/skill.go, Niwabi Fire-Dance's animation at 34 frames. It infuses
-// her Pyro for the table's seconds from the cast, and gcsim's damage multiplier on her Normal Attacks is not built, as the
-// infusion carries no multiplier of its own
+// Measured: gcsim (MIT, main) internal/characters/yoimiya/skill.go. Niwabi Fire-Dance's animation is 34 frames.
+// Infuses her Pyro for the table's seconds from the cast, and gcsim's damage multiplier on her Normal Attacks is not built.
+// Its infusion carries no multiplier of its own
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yoimiya/skill.go
 const SKILL_FRAMES = 34;
 
-// Measured: gcsim (MIT, main) internal/characters/yoimiya/burst.go, the initial hit at 75 frames as a circle of radius 6
-// round the body, its animation at 113 frames, and the Pyro gauge of its 50 durability. Aurous Blaze's explosion, which lands
-// on another character's hits, is not built: it is set up by the burst, but no kit event reaches it yet
+// Measured: gcsim (MIT, main) internal/characters/yoimiya/burst.go. The initial hit is a circle of radius 6 round the body
+// It is at 75 frames. Its animation is 113 frames, and the Pyro gauge has 50 durability.
+// Aurous Blaze's explosion is not built: it lands on another character's hits, and no kit event reaches them yet
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yoimiya/burst.go
 const BURST_FRAMES = 113;
 const BURST_HITMARK_FRAMES = 75;
@@ -59,9 +60,10 @@ const BURST_GAUGE = 2;
 // Her own plunge clips are not in the sources fetched. The table's multipliers for them are read as the rest are
 const PLUNGE_SECONDS = 0.4;
 
-// Yoimiya's first kit, at talent level 1: five strikes, a fully charged shot, a collision and two plunges, Niwabi Fire-Dance's
-// Pyro infusion for the table's seconds, and Naganohara Meteor Swarm's initial hit. Her multipliers are read from her proud
-// skill groups. Aurous Blaze's explosion, her passives and her constellations are not built yet
+// Yoimiya's first kit, at talent level 1: five strikes, a fully charged shot, a collision and two plunges, Niwabi
+// Fire-Dance's Pyro infusion for the table's seconds, and Naganohara Meteor Swarm's initial hit.
+// Her multipliers are read from her proud skill groups. Aurous Blaze's explosion, her passives and her constellations
+// Are not built yet
 export const createYoimiyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, YOIMIYA_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);

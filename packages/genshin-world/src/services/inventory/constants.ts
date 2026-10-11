@@ -42,7 +42,8 @@ export const EMPTY_WALLET: Readonly<Wallet> = {
   originalResinChangedAt: Temporal.Instant.fromEpochMilliseconds(0),
   primogemResinRefillCount: 0,
   primogemResinRefillDay: Temporal.PlainDate.from("1970-01-01"),
-}; // Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
+};
+// Mora's item id in the game's tables, which every pile of it a defeated enemy drops is filed under
 export const MORA_ITEM_ID = 202;
 // The item id each currency the wallet holds is filed under in the game's material table, so a drop or a reward naming
 // One is a wallet grant, never a bag item

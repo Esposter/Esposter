@@ -1,5 +1,5 @@
 // The level multiplier of an enemy's or the environment's reactions, by level. It agrees with the characters' table
-// up to level 57 and parts from it at 58, so a reaction takes the table of the side that triggered it
+// Up to level 57 and parts from it at 58, so a reaction takes the table of the side that triggered it
 export const EnemyLevelMultiplierMap: Record<number, number> = {
   1: 17.165605,
   2: 18.535048,

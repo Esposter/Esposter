@@ -44,7 +44,9 @@ const NORMAL_ATTACKS = [
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/yanfei/charge.go
 const CHARGED_ATTACK_FRAMES = 79;
 const CHARGED_ATTACK_HITMARK_FRAMES = 63;
-const CHARGED_ATTACK_RADII = [2.5, 3, 3.5, 4, 4];
+// The radius at none, one and two seals, with three and four seals both at the maximum radius
+const CHARGED_ATTACK_RADII = [2.5, 3, 3.5];
+const CHARGED_ATTACK_MAXIMUM_RADIUS = 4;
 const CHARGED_ATTACK_STAMINA_REDUCTION = 0.15;
 const CHARGED_ATTACK_STAMINA_CONSTELLATION = 1;
 const CHARGED_ATTACK_STAMINA_REDUCTION_FROM_CONSTELLATION = 0.25;
@@ -176,8 +178,9 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   return {
     burstCooldownSeconds: burstMultiplier(4),
     burstEnergyCost: burstMultiplier(5),
-    // The charged attack spends the seals as it starts, its hit a summon cast at the body with the multiplier and radius
-    // the seals it spent give, and the Done Deal's Pyro DMG bonus while it is up. Ascension 1's bonus is set from them too
+    // The charged attack spends the seals as it starts, its hit a summon cast at the body.
+    // The seals it spent set its multiplier and radius, and the Done Deal's Pyro DMG bonus while it is up. Ascension
+    // 1's bonus is set from them too
     chargedAttack: {
       hits: [],
       onStart: ({ body, combatant, kitEffectState }) => {
@@ -195,7 +198,10 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           ...(isDoneDealActive(kitEffectState, combatant.characterId) ? { damageBonus: burstMultiplier(1) } : {}),
           element: Element.Pyro,
           gauge: 1,
-          hitArea: createTargetedHitArea(STRIKE_TARGETING_AREA, CHARGED_ATTACK_RADII[seals]),
+          hitArea: createTargetedHitArea(
+            STRIKE_TARGETING_AREA,
+            CHARGED_ATTACK_RADII[seals] ?? CHARGED_ATTACK_MAXIMUM_RADIUS,
+          ),
           hitmarkSeconds: CHARGED_ATTACK_HITMARK_FRAMES / 60,
           isBlunt: true,
           poiseDamage: 80,

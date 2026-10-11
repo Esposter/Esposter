@@ -315,7 +315,7 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
     wallet,
   });
-// The Reputation and the Companionship EXP no source changes yet, so they are carried as they were saved
+// The Reputation, the Companionship EXP and the Frostbearing Tree's offerings no source changes yet, so they are carried as they were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
@@ -324,6 +324,7 @@ useWorldSaveSync({
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
+    frostbearingTreeProgress: savedState.frostbearingTreeProgress,
     inventory: inventory.value,
     quests: questProgressMap.value,
     reputation: savedState.reputation,
