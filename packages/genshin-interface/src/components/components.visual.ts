@@ -15,7 +15,7 @@ import { page } from "vitest/browser";
 const components = import.meta.glob<Component>("./*/Index.vue", { eager: true, import: "default" });
 const fixtures = import.meta.glob<ComponentFixture>("./*/Index.fixture.ts", { eager: true });
 // The screen root and the rect a piece is placed by draw nothing of their own, so they have no image to hold
-const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.vue"]);
+const LAYOUT_COMPONENTS = new Set(["./GameRect/Index.vue", "./GameScreen/Index.vue", "./TwoColumnScreen/Index.vue"]);
 const COMPONENT_FILE = "/Index.vue";
 const IMAGE_NAME = "Index";
 const STAGE_STYLE = { background: "#6b7280", display: "grid", placeItems: "center" };

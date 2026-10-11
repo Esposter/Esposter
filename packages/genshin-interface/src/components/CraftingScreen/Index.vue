@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CraftingCell } from "#src/models/CraftingCell";
 
+import TwoColumnScreen from "#src/components/TwoColumnScreen/Index.vue";
+
 interface Props {
   // The amount slider's name for assistive tech
   amountLabel: string;
@@ -56,7 +58,7 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   <!-- The crafting bench, the Craft screen: the recipes on the left, the picked one's icon, count and cost on the right,
        and the way out and the coins across the head. Provisional: every place, size and colour waits on the crafting
        screen's passes against the public clip of the Crafting Table (references/crafting-screen) -->
-  <div class="crafting-screen">
+  <TwoColumnScreen>
     <header class="head">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <p class="coins">{{ coins }}</p>
@@ -105,20 +107,10 @@ const emit = defineEmits<{ close: []; craft: [] }>();
       <p class="materials-label">{{ craftingMaterialsLabel }}</p>
       <button class="craft" type="button" @click="emit('craft')">{{ craftLabel }}</button>
     </div>
-  </div>
+  </TwoColumnScreen>
 </template>
 
 <style scoped>
-.crafting-screen {
-  position: relative;
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  color: #ece5d8;
-}
-
 .head {
   grid-column: 1 / -1;
 }
