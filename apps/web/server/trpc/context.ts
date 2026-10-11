@@ -1,3 +1,4 @@
+import type { AgentApiKey } from "#server/models/auth/AgentApiKey";
 import type { ContextInput } from "#server/models/trpc/ContextInput";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Database } from "@esposter/db-schema";
@@ -30,6 +31,9 @@ export const createContext = (options: ContextInput) => {
 };
 
 export type Context = ReturnType<typeof createContext> & {
+  // The key an agent's request came through, absent on a person's own request, so the activity trail can tell the two
+  // Apart and name the key
+  apiKey?: AgentApiKey;
   // A caller the route already authenticated another way, as the MCP route does an API key's owner, which the
   // Rate-limited middleware takes instead of reading a session from the cookie
   getSessionPayload?: GetSessionPayload;

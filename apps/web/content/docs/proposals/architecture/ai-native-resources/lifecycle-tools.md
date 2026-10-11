@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Lifecycle tools
 
-Built on [agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. This unit serves them as one tool per operation, under the `Resources` scope, so the tool list does not grow with the number of types.
+Ships beside the owner's-alone declaration in [agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. This unit serves them as one tool per operation, under the `Resources` scope a key is made with ([agent access](/docs/architecture/agent-access)), so the tool list does not grow with the number of types.
 
 ## One tool per operation
 

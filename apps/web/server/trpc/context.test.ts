@@ -70,6 +70,8 @@ export const getMockRevokeSession = () => authMocks.revokeSession;
 
 export const getMockRevokeOtherSessions = () => authMocks.revokeOtherSessions;
 
+export const getMockCreateApiKey = () => authMocks.createApiKey;
+
 export const createMockContext = async (): Promise<Context> => ({
   db: await createMockDb(),
   headers: new Headers(),

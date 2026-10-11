@@ -341,10 +341,9 @@ export const resourceRouter = router({
         .returning();
       // Best-effort: a failed write loses one trail entry, never the restore.
       for (const { id } of restoredResources)
-        getSynchronizedFunction(writeResourceActivity)({
+        getSynchronizedFunction(writeResourceActivity)(ctx, {
           activityType: ResourceActivityType.Restored,
           resourceId: id,
-          userId,
         });
       const firstRestoredResource = restoredResources[0];
       if (firstRestoredResource)

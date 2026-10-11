@@ -13,7 +13,7 @@ touches:
 
 # Content tools
 
-Built on [agent keys](/docs/proposals/architecture/ai-native-resources/agent-keys), so the tools below reach only keys made for them. This is the core of [AI-native resources](/docs/proposals/architecture/ai-native-resources): an agent finds a resource, learns its type's shape, reads what it holds and edits it, through tools that read every type's declaration off the row they are handed.
+Built on the scopes API keys carry ([agent access](/docs/architecture/agent-access)), so the tools below reach only keys made for them. This is the core of [AI-native resources](/docs/proposals/architecture/ai-native-resources): an agent finds a resource, learns its type's shape, reads what it holds and edits it, through tools that read every type's declaration off the row they are handed.
 
 ## The tools
 

@@ -1,8 +1,10 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
+import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type { UserInAuth, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
+import { auth } from "#server/auth";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/azure/eventGrid/publishBlobPrefixDeletion";
@@ -19,6 +21,7 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
+import { createApiKeyInputSchema } from "#shared/models/db/user/CreateApiKeyInput";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
 import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
@@ -50,6 +53,21 @@ import { eq } from "drizzle-orm";
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, true)),
+  // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
+  // Side that can, so the scopes a key holds are the ones its owner ticked. Answers with the whole key, which is stored
+  // Only hashed, so the owner is shown it once
+  createApiKey: standardAuthedProcedure
+    .input(createApiKeyInputSchema)
+    .mutation<string>(async ({ ctx, input: { mcpScopes, name } }) => {
+      const { key } = await auth.api.createApiKey({
+        body: {
+          name,
+          permissions: { mcp: mcpScopes } satisfies ApiKeyPermissions,
+          userId: ctx.getSessionPayload.user.id,
+        },
+      });
+      return key;
+    }),
   deleteCallBackground: standardAuthedProcedure
     .input(callBackgroundSlotSchema)
     .mutation<void>(async ({ ctx, input: { slot } }) => {

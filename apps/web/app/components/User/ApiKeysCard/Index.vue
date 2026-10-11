@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 
+import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
@@ -14,8 +15,9 @@ interface Props {
 
 const { section } = defineProps<Props>();
 const {
-  apiKey: { create, delete: deleteApiKey, list },
+  apiKey: { delete: deleteApiKey, list },
 } = authClient;
+const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
@@ -31,14 +33,14 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
     <template #actions>
       <UserApiKeysCardCreateButton
         :create="
-          async (name) => {
-            const outcome = await executeMutation(() => requireAuthData(create({ name })), {
+          async (input) => {
+            const outcome = await executeMutation(() => $trpc.user.createApiKey.mutate(input), {
               key: API_KEYS_MUTATION_KEY,
               onSuccess: async () => {
                 await refresh();
               },
             });
-            return outcome.status === MutationStatus.Succeeded ? (outcome.result?.key ?? '') : '';
+            return outcome.status === MutationStatus.Succeeded ? (outcome.result ?? '') : '';
           }
         "
       />
@@ -47,15 +49,16 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
     <UserSettingsListSkeleton v-else-if="!data" />
     <UiEmptyState
       v-else-if="data.apiKeys.length === 0"
-      description="An agent such as a Claude Code session reaches your TodoList with one"
+      description="An agent such as a Claude Code session reaches your follow-ups or your resources with one"
       :meaning="UiIconMeaning.Terminal"
       title="No API keys"
     />
     <ul v-else flex flex-col>
       <UserApiKeysCardRow
-        v-for="{ createdAt, id, name, start } of data.apiKeys"
+        v-for="{ createdAt, id, name, permissions, start } of data.apiKeys"
         :key="id"
         :created-at
+        :mcp-scopes="getApiKeyScopes(permissions)"
         :name="name ?? ''"
         :start="start ?? ''"
         @delete="deletingId = id"

@@ -18,10 +18,14 @@ export const getMcpTools = (router: AnyRouter): McpTool[] =>
     const [input] = _def.inputs;
     return [
       {
+        // A tool is treated as possibly destructive unless it says otherwise, so a query says it changes nothing and a
+        // Client can let every read through while it keeps asking about writes
+        annotations: { readOnlyHint: _def.type === "query" },
         description: mcp.description,
         inputSchema: z.toJSONSchema(input as z.ZodObject, { io: "input" }) as Tool["inputSchema"],
         name: path.replaceAll(".", "_"),
         path,
+        scope: mcp.scope,
         type: _def.type,
       },
     ];

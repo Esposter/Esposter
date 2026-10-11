@@ -3,6 +3,7 @@ import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPay
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { createContext } from "#server/trpc/context";
 import { trpcRouter } from "#server/trpc/routers";
+import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 import { withFinalizerAsync } from "@esposter/shared";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { defineEventHandler } from "nuxt/server";
@@ -37,7 +38,16 @@ export default defineEventHandler(async (event) => {
     return { message: "Invalid API key." };
   }
 
-  const server = createMcpServer(trpcRouter, { ...ctx, getSessionPayload: getAgentSessionPayload(user, apiKey.id) });
+  // The scopes are read off the verified key, never off the request, and a key holding none reaches no tool
+  const server = createMcpServer(
+    trpcRouter,
+    {
+      ...ctx,
+      apiKey: { id: apiKey.id, name: apiKey.name ?? "" },
+      getSessionPayload: getAgentSessionPayload(user, apiKey.id),
+    },
+    getApiKeyScopes(apiKey.permissions),
+  );
   const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
   await server.connect(transport);
   // A JSON response is whole once it resolves, so the server closes with it

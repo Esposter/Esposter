@@ -3,6 +3,7 @@ import type { Context } from "#server/trpc/context";
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { publicProcedure, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { beforeAll, describe, expect, onTestFinished, test } from "vitest";
@@ -14,9 +15,13 @@ describe(createMcpServer, () => {
     nested: router({
       hidden: publicProcedure.input(z.object({ value: z.string() })).query<string>(({ input: { value } }) => value),
       read: publicProcedure
-        .meta({ mcp: { description } })
+        .meta({ mcp: { description, scope: McpScope.FollowUps } })
         .input(z.object({ value: z.string().max(1) }))
         .query<string>(({ input: { value } }) => value),
+      write: publicProcedure
+        .meta({ mcp: { description, scope: McpScope.Resources } })
+        .input(z.object({ value: z.string().max(1) }))
+        .mutation<string>(({ input: { value } }) => value),
     }),
   });
 
@@ -26,24 +31,28 @@ describe(createMcpServer, () => {
     mockContext = await createMockContext();
   });
 
-  const createConnectedClient = async () => {
+  const createConnectedClient = async (mcpScopes: McpScope[] = McpScopes) => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const client = new Client({ name: "", version: "" });
-    await createMcpServer(testRouter, mockContext).connect(serverTransport);
+    await createMcpServer(testRouter, mockContext, mcpScopes).connect(serverTransport);
     await client.connect(clientTransport);
     onTestFinished(() => client.close());
     return client;
   };
 
-  test("lists only the procedures that opt in, named by their path", async () => {
+  test("lists only the procedures that opt in, named by their path, a query marked read-only", async () => {
     expect.hasAssertions();
 
     const client = await createConnectedClient();
 
     const { tools } = await client.listTools();
 
-    expect(tools).toStrictEqual([
-      {
+    expect(tools).toStrictEqual(
+      [
+        ["nested_read", true],
+        ["nested_write", false],
+      ].map(([name, readOnlyHint]) => ({
+        annotations: { readOnlyHint },
         description,
         inputSchema: {
           $schema: "https://json-schema.org/draft/2020-12/schema",
@@ -51,9 +60,39 @@ describe(createMcpServer, () => {
           required: ["value"],
           type: "object",
         },
-        name: "nested_read",
-      },
-    ]);
+        name,
+      })),
+    );
+  });
+
+  test.each([
+    [McpScope.FollowUps, "nested_read"],
+    [McpScope.Resources, "nested_write"],
+  ])("lists and calls only its own tool for a key holding %s alone", async (mcpScope, name) => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient([mcpScope]);
+
+    const { tools } = await client.listTools();
+    const result = await client.callTool({ arguments: { value: "" }, name });
+
+    expect(tools.map((tool) => tool.name)).toStrictEqual([name]);
+    expect(result).toStrictEqual({ content: [{ text: '""', type: "text" }] });
+  });
+
+  test("lists and calls no tool for a key holding no scope", async () => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient([]);
+
+    const { tools } = await client.listTools();
+
+    expect(tools).toStrictEqual([]);
+    await expect(
+      client.callTool({ arguments: { value: "" }, name: "nested_read" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_read]`,
+    );
   });
 
   test("calls the procedure and answers with its result", async () => {
@@ -106,6 +145,31 @@ describe(createMcpServer, () => {
       client.callTool({ arguments: { value: "" }, name: "nested_hidden" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_hidden]`,
+    );
+  });
+
+  // Refused as a tool that does not exist, so a key learns nothing of what lies outside its scopes
+  test("refuses a Resources tool to a key holding FollowUps alone", async () => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient([McpScope.FollowUps]);
+
+    await expect(
+      client.callTool({ arguments: { value: "" }, name: "nested_write" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_write]`,
+    );
+  });
+
+  test("refuses a FollowUps tool to a key holding Resources alone", async () => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient([McpScope.Resources]);
+
+    await expect(
+      client.callTool({ arguments: { value: "" }, name: "nested_read" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_read]`,
     );
   });
 });

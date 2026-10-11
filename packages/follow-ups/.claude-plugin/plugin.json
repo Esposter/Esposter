@@ -24,7 +24,7 @@
     "api_key": {
       "type": "string",
       "title": "API key",
-      "description": "An API key from API keys in your Esposter settings. Stored in the credential store, never in a settings file.",
+      "description": "An API key with the Follow-ups scope, from API keys in your Esposter settings. Stored in the credential store, never in a settings file.",
       "required": true,
       "sensitive": true
     }

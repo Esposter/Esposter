@@ -8,7 +8,7 @@ A Claude Code plugin that writes the follow-ups a session leaves unfinished into
 
 ## Getting Started
 
-Open a TodoList, press **Connect an agent** and follow its steps: create an API key under API keys in your settings, then install the plugin and give it the site, the list's id and the key.
+Open a TodoList, press **Connect an agent** and follow its steps: create an API key with the Follow-ups scope under API keys in your settings, then install the plugin and give it the site, the list's id and the key.
 
 ```bash
 claude plugin marketplace add Esposter/Esposter
