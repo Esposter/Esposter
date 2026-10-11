@@ -26,9 +26,10 @@ const createAloyCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
+const bombletHits = (): KitHit[] => ALOY_KIT.elementalSkill.hits.slice(1);
+
 describe(createAloyKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-  const bombletHits = (): KitHit[] => ALOY_KIT.elementalSkill.hits.slice(1);
 
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
@@ -53,7 +54,7 @@ describe(createAloyKit, () => {
     expect(Math.round(takeOne(ALOY_KIT.chargedAttack.hits).hitmarkSeconds * 60)).toBe(96);
   });
 
-  test("Freeze Bomb lands at 25 frames, and each Chillwater Bomblet 6 frames after the last", () => {
+  test("the Freeze Bomb lands at 25 frames, and each Chillwater Bomblet 6 frames after the last", () => {
     expect.hasAssertions();
     const hitmarks = ALOY_KIT.elementalSkill.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60));
 

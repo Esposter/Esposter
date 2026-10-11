@@ -43,6 +43,8 @@ describe(readWholeScreenImages, () => {
     const fetch = vi.spyOn(globalThis, "fetch");
     for (const response of responses) fetch.mockResolvedValueOnce(Response.json(response));
 
-    await expect(readWholeScreenImages("a")).rejects.toThrow("badcontinue");
+    await expect(readWholeScreenImages("a")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a, badcontinue: Invalid continue param.]`,
+    );
   });
 });
