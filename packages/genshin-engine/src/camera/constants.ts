@@ -25,8 +25,10 @@ export const FOLLOW_CAMERA_NEUTRAL_SENSITIVITY = 3;
 // (`genshin:assets camera`): its global config's elevation limits, its nearest zoom radius and its furthest on foot
 export const FOLLOW_CAMERA_PIVOT_SHARE = 0.7;
 export const FOLLOW_CAMERA_FOV = 45;
-export const FOLLOW_CAMERA_MIN_PITCH: number = MathUtils.degToRad(-89);
-export const FOLLOW_CAMERA_MAX_PITCH: number = MathUtils.degToRad(89);
+// Provisional: the PC client's look stops a little short of straight up from below and down from above. No recording has
+// Read the exact stop yet, so the look is held to 70 degrees down and 80 up until one does
+export const FOLLOW_CAMERA_MIN_PITCH: number = MathUtils.degToRad(-70);
+export const FOLLOW_CAMERA_MAX_PITCH: number = MathUtils.degToRad(80);
 export const FOLLOW_CAMERA_MIN_DISTANCE = 1;
 export const FOLLOW_CAMERA_MAX_DISTANCE = 6;
 // Provisional, each read off a recording of the camera in play: how far a notch moves it, and how fast it eases back

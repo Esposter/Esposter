@@ -1,6 +1,11 @@
 import type { InputState } from "#src/models/input/InputState";
 
-import { FOLLOW_CAMERA_DEFAULT_SETTINGS, FOLLOW_CAMERA_EASE_OUT_SPEED } from "#src/camera/constants";
+import {
+  FOLLOW_CAMERA_DEFAULT_SETTINGS,
+  FOLLOW_CAMERA_EASE_OUT_SPEED,
+  FOLLOW_CAMERA_MAX_PITCH,
+  FOLLOW_CAMERA_MIN_DISTANCE,
+} from "#src/camera/constants";
 import { createFollowCamera } from "#src/camera/createFollowCamera";
 import { createGroundQuery } from "#src/collision/createGroundQuery";
 import { createLandmarkCollider } from "#src/collision/createLandmarkCollider";
@@ -16,6 +21,9 @@ describe(createFollowCamera, () => {
   const LOOK_YAW = 3;
   const ZOOM_OUT_STEPS = 2;
   const DEFAULT_DISTANCE = 4.5;
+  // A pivot low enough that a look up from below puts the arm's reach under the ground
+  const LOW_PIVOT_HEIGHT = 0.5;
+  const LOOK_PAST_LIMIT = 10;
   const STILL_INPUT: InputState = {
     heldActions: new Set(),
     lookPitch: 0,
@@ -79,6 +87,39 @@ describe(createFollowCamera, () => {
     expect.hasAssertions();
 
     expect(lookYawAt(5) / lookYawAt(3)).toBeCloseTo(5 / 3);
+  });
+
+  test("looks up from below no higher than its pitch limit, so the arm stays out in front of the pivot", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, defaultDistance: DEFAULT_DISTANCE },
+    });
+    followCamera.look({ ...STILL_INPUT, lookPitch: LOOK_PAST_LIMIT }, 0);
+    followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(camera.position.y).toBeCloseTo(PIVOT_HEIGHT - Math.sin(FOLLOW_CAMERA_MAX_PITCH) * DEFAULT_DISTANCE);
+  });
+
+  test("keeps its eye the minimum distance from the pivot when the ground stands under the arm", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const pivot = new Vector3(0, LOW_PIVOT_HEIGHT, 0);
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: FOLLOW_CAMERA_DEFAULT_SETTINGS,
+    });
+    followCamera.look({ ...STILL_INPUT, lookPitch: LOOK_PAST_LIMIT }, 0);
+    followCamera.follow(pivot, new Vector3(), FRAME_SECONDS);
+
+    expect(camera.position.distanceTo(pivot)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE);
   });
 
   test("resets its eye to the settings' default distance after a zoom", () => {
