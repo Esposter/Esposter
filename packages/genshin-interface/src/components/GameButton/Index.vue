@@ -5,6 +5,9 @@ import {
   GAME_CREAM,
   GAME_GOLD,
   GAME_INK,
+  GAME_REPLY_HOVER,
+  GAME_REPLY_HOVER_INK,
+  GAME_REPLY_REST,
   GAME_ROW_HOVER,
   GAME_ROW_PRESS,
   GAME_SMOOTHSTEP_EASING,
@@ -262,6 +265,34 @@ defineExpose({ focus: () => button.value?.focus() });
   from {
     background-color: rgb(241 211 142);
   }
+}
+
+/* The dialogue reply's pill: a fifth black over the scene at rest, its words white, and lit as a cream-white pill with slate
+   Words when hovered, focused or selected by its screen. Its press holds that lit look at once. Provisional past the rest, see
+   The constants */
+.game-button[data-kind="Reply"] {
+  --state-duration: v-bind(restDuration);
+  border-radius: calc(var(--unit) * 23);
+  background-color: v-bind(GAME_REPLY_REST);
+  color: #fff;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 0.5);
+  transition-duration: var(--state-duration);
+  transition-property: background-color, color;
+}
+
+.game-button[data-kind="Reply"]:enabled:is(:hover, :focus-visible, [data-interaction-state="Hover"] *) {
+  --state-duration: v-bind(hoverDuration);
+  outline: none;
+  background-color: v-bind(GAME_REPLY_HOVER);
+  color: v-bind(GAME_REPLY_HOVER_INK);
+}
+
+.game-button[data-kind="Reply"]:enabled:is(:active, [data-interaction-state="Pressed"] *) {
+  --state-duration: 0s;
+  background-color: v-bind(GAME_REPLY_HOVER);
+  color: v-bind(GAME_REPLY_HOVER_INK);
 }
 
 /* The game draws no state for a plain button, so a keyboard's focus is ringed in the white its pills light in */

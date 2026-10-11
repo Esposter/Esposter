@@ -18,6 +18,7 @@ The user's one batch, checked whenever convenient ([parity](/docs/genshin/parity
 - [ ] **Does the Paimon menu's Back look the same hovered and pressed?** — [Paimon menu](/docs/genshin/paimon-menu): no recording shows it under the pointer, so it is drawn with no state of its own, as the info icon is.
 - [ ] **Are the Settings screen's provisional looks the game's?** — [Paimon menu](/docs/genshin/paimon-menu): the header veil, tab light, value star, scroll alphas and Audio widgets are solved from two frames; Anisotropic Filtering's 8x is a number, not a text id.
 - [ ] **Are the hover and press tints of a rectangular menu row (Settings tabs, Map jump list) the game's, read off a 60 fps PC recording?** — [Interface library](/docs/genshin/interface-library): the `Row` kind's tints are provisional, since the game draws no state for a plain button and no recording shows a row under the pointer.
+- [ ] **Are a dialogue reply's hover and press the game's, read off a 60 fps PC recording of the dialogue choices hovered?** — [Interface library](/docs/genshin/interface-library): the `Reply` kind's lit look is provisional, a white pill with slate words, since no recording shows a reply under the pointer.
 - [ ] **Does a Mualani plunge land as its action starts?** — [Mualani](/docs/genshin/kits/mualani): provisional, hitting at 1, 3 and 5 metres with no poise.
 - [ ] **Does Chasca's high plunge land at her low plunge's 50 frames of 80, in a radius of 5?** — [Chasca](/docs/genshin/kits/chasca): gcsim gives the high plunge's multiplier but no hitmark.
 

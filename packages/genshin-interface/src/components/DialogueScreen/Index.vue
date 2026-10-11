@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { DialogueChoice } from "#src/models/DialogueChoice";
 
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
 import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 import { computed } from "vue";
 
@@ -46,19 +48,17 @@ const lineParts = computed(() => {
       </p>
     </div>
     <ul v-if="choices.length > 0" class="choices">
-      <li v-for="{ icon, id, text } of choices" :key="id">
-        <button
-          class="choice"
-          :class="{ selected: id === selectedChoiceId }"
-          :data-icon="icon"
-          type="button"
-          @click.stop="emit('choose', id)"
-        >
+      <li
+        v-for="{ icon, id, text } of choices"
+        :key="id"
+        :data-interaction-state="id === selectedChoiceId ? 'Hover' : undefined"
+      >
+        <GameButton class="choice" :data-icon="icon" :kind="GameButtonKind.Reply" @click.stop="emit('choose', id)">
           <svg class="icon" aria-hidden="true" :viewBox="DialogueChoiceIconPathMap[icon].viewBox">
             <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" />
           </svg>
           {{ text }}
-        </button>
+        </GameButton>
       </li>
     </ul>
   </div>
@@ -151,6 +151,7 @@ const lineParts = computed(() => {
   list-style: none;
 }
 
+/* The reply's look and its states are its GameButton kind's, so the screen places each and sets only its layout */
 .choice {
   display: flex;
   width: 100%;
@@ -158,25 +159,7 @@ const lineParts = computed(() => {
   align-items: center;
   gap: calc(var(--unit) * 7.5);
   padding: 0 calc(var(--unit) * 10.5);
-  letter-spacing: calc(var(--unit) * 0.5);
-  border: none;
-  border-radius: calc(var(--unit) * 23);
-  /* A pill is a fifth black over the scene, the darkness that scored best against the recording */
-  background: rgb(0 0 0 / 0.22);
-  color: #fff;
-  cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
   text-align: start;
-}
-
-.choice:hover,
-.choice:focus-visible,
-.choice.selected {
-  background: rgb(255 255 255 / 0.85);
-  color: #3b4255;
-  outline: none;
 }
 
 /* The mark's place, its traced glyph from the game's own file, drawn in the pill's colour */

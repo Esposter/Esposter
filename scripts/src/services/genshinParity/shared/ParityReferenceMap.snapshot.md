@@ -22,7 +22,7 @@ committed.
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
 | `crafting-table` | `CraftingScreen` | 39.00% | 0.243 | 44.59% | 0.7678 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
-| `dialogue-choices-replies` | `DialogueTalk` | 14.34% | 0.756 | 8.55% | 0.4678 |
+| `dialogue-choices-replies` | `DialogueTalk` | 14.36% | 0.766 | 8.59% | 0.4588 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |
 | `dialogue-line` | `DialogueTalk` | 10.80% | 0.982 | 2.06% | 0.3844 |
 | `dialogue-paimon-line` | `DialogueTalk` | 9.98% | 0.957 | 2.60% | 0.3151 |
