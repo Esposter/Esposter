@@ -1,6 +1,6 @@
 ---
 title: Quests
-description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, which lists the quests in progress under the game's four lists and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
+description: Genshin's quests as built. A quest is one of the game's five kinds, a run of steps each with its objectives (go to, talk to, defeat, collect, act on), and the talks it runs, all by the game's own ids. The Archon quests start from the prologue's first, a talk ended, an item collected, an enemy defeated and a thing acted on advance the quests in progress, and a finished step or quest reaches the achievements, and a finished main quest the Travel Log. J opens the quest screen, laid out off the English client's still, which lists the quests in progress under the game's four lists, a series' quests under its row and each with how far it stands, and navigates to one, and a beam rises over the navigated objective. A reader writes the quests the world carries from the community's data dump.
 ---
 
 # Quests
@@ -56,7 +56,9 @@ A quest's progress is the step it is on, which equals the number of steps once i
 
 ### The quest screen
 
-`QuestScreen` is J's screen, through the screens' `ScreenKind.Quests`. Its tabs along the top list every quest, then each of the game's four lists, and Q and E step between them. Down the left, each list's quests sit under its heading in the game's words. On the right are the selected quest's title, its step with its first counted objective's "(n/m)", and its description, over the button that navigates to it, or cancels the navigation of the quest already navigated to. F presses that button. The screen reads the quests in progress, their progress and their text map, and the world screen holds the one navigated to.
+`QuestScreen` is J's screen, through the screens' `ScreenKind.Quests`, laid out as the English client's still at 1920 by 1080 lays it out, every place, size and fill measured off it in `Layout.reference.ts` beside the component. Its tabs along the top list every quest under In Progress, then each of the game's four lists under its own mark, and Q and E step between them. Down the left, each list sits under its heading and its mark: its quests in no series first, each a row of its title over how far its objective stands and its mark at the row's end, the commission's star or a place's pin, then each series holding any of its quests, a row of its title and region over a paler panel of its quests in the series' order. On the right are the selected quest's title and place, the journal its series unlocks, its step with its first counted objective's "(n/m)", its description and its series' rewards, a tile a reward shaded by its item's rarity. Under them sit the Quest Overview button, drawn and doing nothing since the overview is not built, and the button that navigates to the selected quest, or cancels the navigation of the quest already navigated to, which F presses.
+
+The screen reads the quests in progress, their progress, their text map and the series they belong to. The world screen holds the one navigated to, and hands it each quest's distance, measured on the ground from the character to where its current step's target stands among the regions in reach, the same target the beam rises over (`getQuestTargetId`). The marks are traced off the still: the banner, the tabs', a series' chevron, the pins, the objective's and the overview's, and the close button's X, which every list screen of the Paimon menu shares with the band across its top.
 
 ### Navigation
 
@@ -70,29 +72,35 @@ The dump scrambles the binary output's field names each patch, so the reader fin
 
 ## Parity
 
-The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080: a mean difference of 55.84% and a FLIP of 0.8998. The wiki's screenshot draws the blurred scene and its own text under the screen, so the whole-frame score counts a double print rather than a placement. The blur behind J is provisional until `quest-open.mkv` lands on the roadmap's References sought list.
+The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080, set to the still's state by `components/Quest/Screen/Index.fixture.ts`: a mean difference of 44.32% and a FLIP of 0.8047. Most of what remains is the world behind the screen, blurred and washed lighter down the screen, which the page has no copy of; the screen draws the band, rows and panels translucent as the game does, so they sit over the page's white rather than the world. The rest is the list's scroll, since the still is scrolled down to its commissions and the list opens at its top, and the stand-in font, narrower than the game's.
 
 ## Key files
 
-| File                                                                   | Role                                                                    |
-| :--------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/quest/Quest.ts`                     | A quest: its kind, words, steps and talks, with its schema              |
-| `packages/genshin-world/src/models/quest/QuestObjective.ts`            | One thing a step asks for, by its kind, target and count                |
-| `packages/genshin-world/src/services/quest/advanceQuest.ts`            | The Traveler's doing met against the current step, step by step         |
-| `packages/genshin-world/src/services/quest/startQuests.ts`             | The Archon quests started from the prologue's first                     |
-| `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`  | The steps and quests a progress moves past, as the achievements' events |
-| `packages/genshin-world/src/services/quest/readQuests.ts`              | The carried quests fetched by their keys and checked against the schema |
-| `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`  | The Travel Log entries of the finished main quests opened               |
-| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts` | Where a navigated objective's target stands                             |
-| `packages/genshin-world/src/composables/useWorldQuests.ts`             | The quests in progress, and the navigated objective's target            |
-| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`    | Each kind's list on the quest screen                                    |
-| `packages/genshin-world/src/services/quest/constants.ts`               | The screen's tab order and keys, and the beam's distance and look       |
-| `packages/genshin-world/src/components/Quest/Screen/Index.vue`         | The quest screen J opens                                                |
-| `packages/genshin-world/src/components/Quest/Beam/Index.vue`           | The beam over the navigated objective                                   |
-| `packages/genshin-world/src/models/quest/QuestId.ts`                   | The quests the world carries, the reader's inventory                    |
-| `scripts/src/services/genshinText/buildQuests.ts`                      | The builder: every inventoried quest, its talks and words, published    |
-| `scripts/src/services/genshinText/readQuestSteps.ts`                   | A quest's shown steps read off its scrambled binary output by shape     |
-| `scripts/src/services/genshinText/readTalk.ts`                         | A talk read off the dialog and talk tables                              |
+| File                                                                     | Role                                                                    |
+| :----------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/quest/Quest.ts`                       | A quest: its kind, words, steps and talks, with its schema              |
+| `packages/genshin-world/src/models/quest/QuestObjective.ts`              | One thing a step asks for, by its kind, target and count                |
+| `packages/genshin-world/src/services/quest/advanceQuest.ts`              | The Traveler's doing met against the current step, step by step         |
+| `packages/genshin-world/src/services/quest/startQuests.ts`               | The Archon quests started from the prologue's first                     |
+| `packages/genshin-world/src/services/quest/getFinishedQuestEvents.ts`    | The steps and quests a progress moves past, as the achievements' events |
+| `packages/genshin-world/src/services/quest/readQuests.ts`                | The carried quests fetched by their keys and checked against the schema |
+| `packages/genshin-world/src/services/archive/openTravelLogEntries.ts`    | The Travel Log entries of the finished main quests opened               |
+| `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`   | Where a navigated objective's target stands                             |
+| `packages/genshin-world/src/composables/useWorldQuests.ts`               | The quests in progress, and the navigated objective's target            |
+| `packages/genshin-world/src/services/quest/QuestKindCategoryMap.ts`      | Each kind's list on the quest screen                                    |
+| `packages/genshin-world/src/services/quest/constants.ts`                 | The screen's tab order and keys, and the beam's distance and look       |
+| `packages/genshin-world/src/components/Quest/Screen/Index.vue`           | The quest screen J opens                                                |
+| `packages/genshin-world/src/components/Quest/Screen/Layout.reference.ts` | The screen's places, sizes, fills and marks as measured off the still   |
+| `packages/genshin-world/src/components/Quest/Row/Index.vue`              | One quest of the list: its title, distance and end mark                 |
+| `packages/genshin-world/src/models/quest/QuestChapter.ts`                | A series: its title, region, journal, quests and rewards                |
+| `packages/genshin-world/src/services/quest/QuestGlyphMap.ts`             | The screen's own traced marks                                           |
+| `packages/genshin-world/src/services/quest/QuestCategoryGlyphMap.ts`     | Each list's traced mark, on its tab and by its heading                  |
+| `packages/genshin-world/src/services/quest/getQuestTargetId.ts`          | What a quest's current step sends the player to                         |
+| `packages/genshin-world/src/components/Quest/Beam/Index.vue`             | The beam over the navigated objective                                   |
+| `packages/genshin-world/src/models/quest/QuestId.ts`                     | The quests the world carries, the reader's inventory                    |
+| `scripts/src/services/genshinText/buildQuests.ts`                        | The builder: every inventoried quest, its talks and words, published    |
+| `scripts/src/services/genshinText/readQuestSteps.ts`                     | A quest's shown steps read off its scrambled binary output by shape     |
+| `scripts/src/services/genshinText/readTalk.ts`                           | A talk read off the dialog and talk tables                              |
 
 ## Notes
 
@@ -100,7 +108,8 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 - **Progress is kept in the save.** The carried quests' progress is a slice of the [save](/docs/genshin/save-data), so a reload resumes them as it does the bag and the wallet.
 - **Quests are read from the hosted game data, not the bundle.** Each carried quest and its words are fetched by their keys (`quests/<id>` and `questText/<language>`) through `QuestLoaderMap` and `QuestTextLoaderMap`, which a new carried quest adds a line to, from the base URL the world is given.
 - **The beam's look is provisional.** Its radius and colour wait on a recording of the English client navigating to an objective.
-- **The quest screen is laid out, not yet likeness.** Its header, tabs, list, details and navigation button sit at the English client's 1080-high places, measured off the wiki's screenshot. Its five tab glyphs stand in as diamonds until traced, its header reads the game's "Quests" where the client reads "In Progress" (that text is not in the English the package carries), and its quest distances, kind and place marks, rewards row, Quest Overview button and UID are not built. The screen's open, close and tab animations are not yet timed (the roadmap's References sought).
+- **The world's series are not carried yet.** The screen lists a series' quests under its row once it is handed the series, which no reader writes until the world and story quests are carried ([quests proposal](/docs/proposals/genshin/quests)), so the world hands none and only the fixture shows one. A quest whose target no region in reach places, an enemy or an item to collect among them, shows no distance.
+- **Some of the screen's words and looks are best estimates.** The install's text map holds no line named for the screen's In Progress or its distances, so the plainest In Progress and a minigame's "{0}m" stand in, and the rewards' caption is not drawn. The still shows no selected row, so the selected one is ringed in the game's cream. The region's art on a series' row, the journal's emblem, each reward's item and the UID are not drawn, and the screen's open, close and tab animations are not yet timed (the roadmap's References sought).
 
 ## Sources
 

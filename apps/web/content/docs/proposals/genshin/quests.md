@@ -1,14 +1,20 @@
 ---
 title: Quests
-description: Proposal — what remains of Genshin's quests: the quest screen measured against the wiki's still, the go-to triggers placed in region data, the world and story quests started by the talks that offer them, and the clues the quests leave for companionship and Elemental Sight.
+description: Proposal — what remains of Genshin's quests: the go-to triggers placed in region data, the world and story quests started by the talks that offer them, and the clues the quests leave for companionship and Elemental Sight.
 model: claude-opus-5-5
 needs: [parity-page]
-touches: ["packages/genshin-world/src/components/Quest/Screen/**"]
+touches:
+  [
+    "packages/genshin-world/src/components/Handbook/**",
+    "packages/genshin-world/src/components/Quest/**",
+    "packages/genshin-world/src/services/quest/**",
+    "scripts/src/services/genshinText/**",
+  ]
 ---
 
 # Quests
 
-The [quests](/docs/genshin/quests) page holds the quest model, its progression, the quest screen, the navigation beam, the reader that writes the carried quests from the community's dump, the start and finish of the Archon quests, and the achievements and Travel Log they reach. It builds on [dialogue](/docs/genshin/dialogue), whose talks a quest's talk-to steps end on. What remains is what the world still does not hand the quests: the places the go-to steps stand at and the quests the talks offer.
+The [quests](/docs/genshin/quests) page holds the quest model, its progression, the quest screen laid out off the wiki's still, the navigation beam, the reader that writes the carried quests from the community's dump, the start and finish of the Archon quests, and the achievements and Travel Log they reach. It builds on [dialogue](/docs/genshin/dialogue), whose talks a quest's talk-to steps end on. What remains is what the world still does not hand the quests: the places the go-to steps stand at and the quests the talks offer.
 
 ## Decisions
 
@@ -18,10 +24,9 @@ The [quests](/docs/genshin/quests) page holds the quest model, its progression, 
 
 ## What is left
 
-1. **The quest screen's layout pass, from the wiki still held.** `quest-screen` (`File:Quest Screen.png`, 1920 by 1080, in `references/` by `pnpm -C scripts genshin:parity fetch`) scores 55.84% today. Set `components/Quest/Screen/Index.fixture.ts` to the still's state, with readable text ids for the fixture alone as `components/Dialogue/Talk/Index.fixture.ts` does: the In Progress tab, three Archon rows with distances, the World Quests heading with two series and their steps, and the detail panel's title, journal line, one objective at (0/3), description, five rewards and the Quest Overview and Cancel Navigation buttons. Place each piece off the still with `genshin:parity zoom` and `measure`, its sizes written in a `Layout.reference.ts` beside the component, and trace the six tab glyphs and the close mark with `genshin:parity trace` on the still at full resolution. The pass holds when `pnpm -C scripts genshin:parity compare quest-screen` falls clear of the 55.84% and its row of `ParityReferenceMap.snapshot.md` is committed with it, and the image is queued for the user's eyes under the roadmap's Manual verification.
-2. **The go-to triggers.** Waits on the scene group export the other machine is making. Then `TriggerExcelConfigData` (added to `DUMP_TABLE_NAMES` and fetched with `genshin:text fetch`) joins each carried go-to's trigger id to its group, and the group's region is placed in its region's data, reaching it being the go-to event.
-3. **The talks that offer a quest.** A world or story quest starts from the talk that offers it, read from the quest's own `BinOutput/Quest` file. Each carried quest is a record of its own, published by `genshin:text quests`.
-4. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once item 2 places them.
+1. **The go-to triggers.** Waits on the scene group export the other machine is making. Then `TriggerExcelConfigData` (added to `DUMP_TABLE_NAMES` and fetched with `genshin:text fetch`) joins each carried go-to's trigger id to its group, and the group's region is placed in its region's data, reaching it being the go-to event.
+2. **The talks that offer a quest.** A world or story quest starts from the talk that offers it, read from the quest's own `BinOutput/Quest` file. Each carried quest is a record of its own, published by `genshin:text quests`, and a carried world quest's series is the quest screen's `QuestChapter`, which the screen lists the quest under once the world hands it the series.
+3. **The clues.** The quests' objectives' places are what [Elemental Sight](/docs/proposals/genshin/elemental-sight) draws its quest trails to, and what [companionship](/docs/proposals/genshin/companionship)'s story waits name, once item 1 places them.
 
 The commissions are dealt by [commissions](/docs/genshin/commissions), and their wiring is that proposal's. The finished quests the world level reads are [Adventure Rank](/docs/proposals/genshin/adventure-rank)'s.
 
@@ -29,7 +34,6 @@ The commissions are dealt by [commissions](/docs/genshin/commissions), and their
 
 These need the English PC client at 1080 high, published screenshots and recordings first ([parity](/docs/genshin/parity)):
 
-- **The quest screen**, against the wiki's screenshot `ParityReferenceMap` names, which What is left's first item builds.
 - **The Adventurer Handbook**, against the wiki's screenshot of its Experience tab: the book, its tabs and its close button.
 - **The beam**, its radius and colour off a recording navigating to an objective, into `QUEST_BEAM_RADIUS` and `QUEST_BEAM_COLOR`.
 

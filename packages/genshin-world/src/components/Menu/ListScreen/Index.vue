@@ -14,14 +14,15 @@ interface Props {
 
 defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-defineSlots<{ detail: () => VNode; list: () => VNode; tabs?: () => VNode }>();
+defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?: () => VNode }>();
 </script>
 
 <template>
   <!-- A screen of the Paimon menu that lists its entries down the left, Q and E stepping between them, with the selected
-       entry's detail on the right. The title and the close mark sit across the top, and a screen's own tabs, if it has
-       Any, go along the top beside them -->
+       entry's detail on the right. The title and the close mark sit across the top on a translucent band, a screen's
+       Own icon before the title and its own tabs, if it has any, along the band beside them -->
   <GameScreen class="list-screen">
+    <slot name="icon" />
     <ScreenHeader :game-text="gameText" :title="title" @close="emit('close')" />
     <slot name="tabs" />
     <span class="key previous">Q</span>
@@ -32,8 +33,22 @@ defineSlots<{ detail: () => VNode; list: () => VNode; tabs?: () => VNode }>();
 </template>
 
 <style scoped>
+/* Its marks are traced off the quest screen's still at 1920 by 1080, one of its pixels a unit */
 .list-screen {
+  --reference-pixel: var(--unit);
   color: #fff;
+}
+
+/* The band across the top, the world darkened under it as the quest screen's still has it: its fill fitted against
+   The world just under its edge, over the still's width clear of the tabs */
+.list-screen::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: calc(var(--unit) * 95);
+  background: rgb(30 29 45 / 0.4);
+  content: "";
 }
 
 .key {

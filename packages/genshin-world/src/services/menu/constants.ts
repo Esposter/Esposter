@@ -1,5 +1,6 @@
 import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
+import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
 import type { SettingsTab } from "#src/models/menu/SettingsTab";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 
@@ -69,3 +70,15 @@ export const SETTINGS_TABS: readonly SettingsTab[] = [
   Tab.Resources,
   Tab.Other,
 ];
+
+// The list screens' close mark: its X traced at four times off the English client's quest screen at 1920 by 1080
+// (`File:Quest Screen.png`), the cream disc's dark hole, its box from the close button's top left
+export const MENU_LIST_CLOSE_GLYPH: MenuIconGlyph = {
+  height: 72,
+  paths: [
+    "M 22.25 20 L 21.25 20.75 L 21.25 23.25 L 21.5 23.5 L 21.75 26.75 L 22 27 L 22 28.25 L 22.25 28.75 Q 23.25 29 24 28.25 L 25.25 28.25 L 26.75 29.5 Q 27.25 29.25 27 30 L 27.5 30 L 31 33.75 L 31 34.75 L 27 38.75 L 25.25 40 L 24 40 Q 23.25 39.25 22.25 39.5 L 22 40.25 L 21.75 43.25 L 21.5 43.5 L 21.5 45 L 21.25 45.25 L 21.25 47.75 L 22.25 48.25 Q 23.25 48.5 23.75 48 L 26.75 48 L 27 47.75 L 29 47.75 L 29.75 47.25 Q 30 45.75 29.25 45.5 L 29.25 44.5 L 30.75 42.75 L 35.25 38.5 L 35.75 38.5 L 36.75 39.5 Q 37.25 39.25 37 40 L 37.75 40.25 L 38 41 L 38.75 41.25 L 38.75 41.75 L 41.25 44.5 L 41.25 45.5 L 40.75 46.5 L 40.75 47.25 L 41.75 47.75 L 43.75 47.75 L 44 48 L 47.75 48 L 48 48.25 Q 49.25 48.5 49.5 47.75 L 49.25 44 L 49 43.75 L 49 41.75 L 48.75 41.5 L 48.75 40.25 L 48.5 39.5 L 47.5 39.5 L 46.5 40.25 L 45.5 40 L 45 39.25 L 44.25 39 L 39.75 34.75 L 39.75 33.75 L 45.75 28 L 46.5 28 L 47.5 28.75 L 48.5 28.75 Q 48.25 28 48.75 28 L 48.75 27 L 49 26.75 L 49.25 22.5 L 49.5 22.25 Q 50 20.5 49 20 L 47.25 20 L 47 20.25 L 44.25 20.25 L 44 20.5 L 41.5 20.5 L 40.75 21.25 L 40.75 22 L 41.25 23 L 41.25 24 L 39 26.75 L 38.5 27 L 38 27.75 L 35.75 29.75 L 35 29.75 L 30.75 25.75 L 30 24.75 L 30 24.25 L 29.25 24 L 29.25 23.25 L 29.75 22.25 L 29.75 21.25 L 29 20.5 L 27.5 20.5 L 27.25 20.25 L 23.75 20.25 Q 23.25 19.75 22.25 20 Z",
+  ],
+  width: 72,
+  x: -6,
+  y: -5,
+};

@@ -6,10 +6,10 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
-import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { getFinishedQuestEvents } from "#src/services/quest/getFinishedQuestEvents";
+import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
 import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
@@ -54,19 +54,12 @@ export const useWorldQuests = ({
   const trackerQuest = computed(
     () => questsInProgress.value.find(({ id }) => id === trackedQuestId.value) ?? questsInProgress.value[0],
   );
-  // A talk is had with the first character the game begins it on, so the beam rises over them, and over the talk's own
-  // Id for a talk begun on no one
-  const questTargetId = computed(() => {
-    if (!trackedQuestId.value || !trackerQuest.value) return "";
-    const { id, steps, talks } = trackerQuest.value;
-    const objective = steps[questProgressMap.value.get(id)?.stepIndex ?? 0]?.objectives[0];
-    if (!objective) return "";
-    const talkNpcId =
-      objective.kind === QuestObjectiveKind.TalkTo
-        ? talks.find((talk) => talk.id === objective.targetId)?.npcIds[0]
-        : undefined;
-    return talkNpcId ?? objective.targetId;
-  });
+  // What the navigated quest's step sends the player to, which the beam rises over
+  const questTargetId = computed(() =>
+    trackedQuestId.value && trackerQuest.value
+      ? getQuestTargetId(trackerQuest.value, questProgressMap.value.get(trackerQuest.value.id))
+      : "",
+  );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readQuests(gameDataBaseUrl)).match(
     (newQuests) => {
