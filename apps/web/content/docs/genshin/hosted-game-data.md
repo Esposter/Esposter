@@ -74,6 +74,7 @@ Every builder is a `pnpm -C scripts` command, and every one takes `--dry-run`. A
 | `frostbearingTreePlaces`     | one key a region                                                      | `genshin:assets offerings`                                                    | none yet                                                                                       | no caller yet                                             |
 | `chests`, `oculi`, `puzzles` | one key a region                                                      | `genshin:assets chests`, `oculi`, `puzzles`                                   | none yet                                                                                       | no caller yet                                             |
 | `shops`                      | one key a shop                                                        | `genshin:assets shops`                                                        | none yet                                                                                       | no caller yet                                             |
+| `regions`                    | `regions/<region>/palette`                                            | `genshin:assets palette <region>`                                             | none yet                                                                                       | no caller yet                                             |
 
 ## What stays in the package
 
