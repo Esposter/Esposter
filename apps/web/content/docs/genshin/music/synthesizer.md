@@ -22,13 +22,13 @@ The synthesizer is `genshin-engine`'s audio module. It plays each note of a [voi
 
 ## Key files
 
-| File                                                                       | Role                                                             |
-| :------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `packages/genshin-engine/src/audio/computeNoiseSamples.ts`                 | An instrument's noise, its bands built in one spectrum           |
-| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`                   | One note's oscillator and envelope                               |
-| `packages/genshin-engine/src/audio/createMusicPlayer.ts`                   | The live player                                                  |
-| `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`             | A segment's expression ramped on the gain its notes play through |
-| `packages/genshin-world/src/components/Login/Music/Index.vue`              | Where the login's music plays                                    |
+| File                                                           | Role                                                             |
+| :------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `packages/genshin-engine/src/audio/computeNoiseSamples.ts`     | An instrument's noise, its bands built in one spectrum           |
+| `packages/genshin-engine/src/audio/scheduleMusicNote.ts`       | One note's oscillator and envelope                               |
+| `packages/genshin-engine/src/audio/createMusicPlayer.ts`       | The live player                                                  |
+| `packages/genshin-engine/src/audio/scheduleMusicExpression.ts` | A segment's expression ramped on the gain its notes play through |
+| `packages/genshin-world/src/components/Login/Music/Index.vue`  | Where the login's music plays                                    |
 
 ## Sources
 

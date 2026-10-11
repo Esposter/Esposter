@@ -39,14 +39,15 @@ The parity commands read three further measures from the same frames.
 
 ## Key files
 
-| File                                                                       | Role                                                              |
-| :------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`            | Pitch agreement and each octave band's distance                   |
-| `scripts/src/services/genshinParity/music/renderMusicSegments.ts`          | Each segment rendered by its screen, beside the game's            |
-| `scripts/src/services/genshinParity/commands/noiseCommand.ts`              | The noise solve read back from our render and from the game's     |
-| `scripts/src/services/genshinParity/commands/attacksCommand.ts`            | How often each band jumps between frames, ours against the game's |
-| `scripts/src/services/genshinParity/music/computeAttackShares.ts`          | The share of a band's frames that jump                            |
-| `scripts/src/services/genshinParity/commands/decayCommand.ts`              | Whether ours rings past the game's, band by band, by a note's age |
-| `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`  | The last `listen`, committed                                      |
-| `scripts/src/services/genshinParity/music/characterizeMusicBands.ts`       | What each band of the game's sound holds, for `bands`             |
+| File                                                                      | Role                                                              |
+| :------------------------------------------------------------------------ | :---------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`           | Pitch agreement and each octave band's distance                   |
+| `scripts/src/services/genshinParity/music/renderMusicSegments.ts`         | Each segment rendered by its screen, beside the game's            |
+| `scripts/src/services/genshinParity/commands/noiseCommand.ts`             | The noise solve read back from our render and from the game's     |
+| `scripts/src/services/genshinParity/commands/attacksCommand.ts`           | How often each band jumps between frames, ours against the game's |
+| `scripts/src/services/genshinParity/music/computeAttackShares.ts`         | The share of a band's frames that jump                            |
+| `scripts/src/services/genshinParity/commands/decayCommand.ts`             | Whether ours rings past the game's, band by band, by a note's age |
+| `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md` | The last `listen`, committed                                      |
+| `scripts/src/services/genshinParity/music/characterizeMusicBands.ts`      | What each band of the game's sound holds, for `bands`             |
+
 - [A Diffusion-Based Generative Equalizer for Music Restoration](https://arxiv.org/html/2403.18636), Moliner, Turunen, Elvander and Välimäki, section 3.4: the equaliser taken as the ratio of two long-term average spectra. A time average assumes the signal's balance holds throughout and weighs louder sections more, so it is a starting point rather than a remedy on its own, which is why no equaliser ships.
