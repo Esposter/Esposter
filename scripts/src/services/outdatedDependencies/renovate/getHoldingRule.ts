@@ -2,7 +2,7 @@ import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/Ren
 import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 
 import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/getDisablingRule";
-import { satisfies } from "semver";
+import { checkIsVersionInRange } from "#src/services/semver/checkIsVersionInRange";
 
 // The rule under which Renovate would not propose `latest` for this package: the package is disabled, or `latest`
 // Falls outside its `allowedVersions`. Renovate merges every matching rule in order with a later key overriding an
@@ -21,7 +21,7 @@ export const getHoldingRule = (
   );
   if (
     allowedVersionsRule?.allowedVersions !== undefined &&
-    !satisfies(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })
+    !checkIsVersionInRange(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })
   )
     return allowedVersionsRule;
   else return undefined;
