@@ -236,6 +236,7 @@
     "nitro": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
+    "nuxt-security-module": "workspace:*",
     "remark-emoji": "catalog:",
     "sass-embedded": "catalog:",
     "sql-highlight": "catalog:",
