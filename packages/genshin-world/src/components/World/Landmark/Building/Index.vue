@@ -21,13 +21,15 @@ const { getGroundHeight, landmark, partMaterial, regionPalettes } = defineProps<
 const { building, heightOffset, position, rotation } = landmark;
 const groundHeight = getGroundHeight(position.x, position.z);
 // The building's region kit decides its parts, each drawn in its own colour
-const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes).map(({ color, geometry }) => {
-  const mesh = new Mesh(geometry, partMaterial);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  setObjectSurface(mesh, color);
-  return mesh;
-});
+const buildingMeshes = BuildingKitPartsMap[building.kit](building.options as never, regionPalettes).map(
+  ({ color, geometry }) => {
+    const mesh = new Mesh(geometry, partMaterial);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    setObjectSurface(mesh, color);
+    return mesh;
+  },
+);
 
 onUnmounted(() => {
   for (const { geometry } of buildingMeshes) geometry.dispose();
