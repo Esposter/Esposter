@@ -91,7 +91,9 @@ export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as c
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 ```
 
-The exceptions are that graph and the code Node loads natively by type stripping: a package whose `module.ts` is loaded
-that way sets `erasableSyntaxOnly`, which refuses an enum across the whole package. Everything else a script runs under
-`tsx` or `node` keeps its enums, and a file that cannot load moves its entry to `tsx`. A `nuxt prepare` printing `NUXT_B5023` names the file that brought an
-enum, or an extensionless relative import, back into the graph.
+The exception is that graph. A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
+graph must hold no enum: `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` loads each module's entry under plain
+`node` and fails on any unsupported TypeScript syntax, so an enum reached from a value import is caught there rather
+than by a tsconfig flag that would also constrain `@esposter/shared`. Everything else a script runs under `tsx` or
+`node` keeps its enums, and a file that cannot load moves its entry to `tsx`. A `nuxt prepare` printing `NUXT_B5023`
+names the file that brought an enum, or an extensionless relative import, back into the graph.
