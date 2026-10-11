@@ -6,6 +6,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -146,7 +147,12 @@ describe(createNilouKit, () => {
     const party = createParty([NILOU_CHARACTER_ID]);
     const getBonus = (action: KitAction, constellationCount: number): number | undefined =>
       NILOU_KIT.getStrikeDamageBonus?.(
-        { body: kitBody, combatant: createNilouCombatant(constellationCount), hit: takeOne(action.hits) },
+        {
+          attackTag: AttackTag.NormalAttack,
+          body: kitBody,
+          combatant: createNilouCombatant(constellationCount),
+          hit: takeOne(action.hits),
+        },
         enemy,
         party,
       );
