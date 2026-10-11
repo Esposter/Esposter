@@ -14,26 +14,26 @@ Where a finding's home looked missing, it is settled:
 - **Styles:** they are shared through a shared component or stylesheet, and the visual suites stay unchanged. A style edit is never landed through a `-u`.
 - **Measured data:** a clone made only of numeric literal rows is data, not code. The finder skips it.
 
-| Unit                                                             | Swept | Notes                                                                   |
-| ---------------------------------------------------------------- | ----- | ----------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets`                             | —     |                                                                         |
-| `packages/genshin-world`                                         | —     | the rest of the package; `src/services/kit/characters` is its own row   |
-| `packages/genshin-world/src/services/kit/characters`             | —     |                                                                         |
-| `packages`                                                       | —     | the light packages not named above                                      |
-| `apps/web/app`                                                   | —     | the rest of the app, excluding the rows above                           |
-| `scripts/src/services/genshinParity`                             | —     |                                                                         |
-| `packages/vue-phaserjs`                                          | —     |                                                                         |
-| `apps/web/shared/assets/clicker/data/upgrades`                   | —     |                                                                         |
-| `apps/web/app/components/Message`                                | —     |                                                                         |
-| `apps/infra`                                                     | —     | the rest of the infrastructure, excluding the Azure resource rows above |
-| `packages/genshin-engine`                                        | —     |                                                                         |
-| `packages/db-schema`                                             | —     |                                                                         |
-| `apps/web/server/trpc/routers`                                   | —     |                                                                         |
-| `packages/agent-console-server`                                  | —     |                                                                         |
-| `apps/web/app/services/dungeons`                                 | —     |                                                                         |
-| `apps/web/app/models/resource`, `apps/web/app/services/resource` | —     |                                                                         |
-| `packages/shared`                                                | —     |                                                                         |
-| `scripts/src`                                                    | —     | the rest of the tooling, excluding the rows above                       |
-| `apps/web/shared`                                                | —     | the rest of the shared tree, excluding the clicker upgrades row above   |
-| `apps/web/server`                                                | —     | the rest of the server, excluding the router row above                  |
-| `apps/functions/src`                                             | —     | no finding today; the row stays so a copy that lands there is read      |
+| Unit                                                             | Swept | Notes                                                                 |
+| ---------------------------------------------------------------- | ----- | --------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets`                             | —     |                                                                       |
+| `packages/genshin-world`                                         | —     | the rest of the package; `src/services/kit/characters` is its own row |
+| `packages/genshin-world/src/services/kit/characters`             | —     |                                                                       |
+| `packages`                                                       | —     | the light packages not named above                                    |
+| `apps/web/app`                                                   | —     | the rest of the app, excluding the rows above                         |
+| `scripts/src/services/genshinParity`                             | —     |                                                                       |
+| `packages/vue-phaserjs`                                          | —     |                                                                       |
+| `apps/web/shared/assets/clicker/data/upgrades`                   | —     |                                                                       |
+| `apps/web/app/components/Message`                                | —     |                                                                       |
+| `apps/infra`                                                     | —     | its Azure resource declarations are left out of the scan              |
+| `packages/genshin-engine`                                        | —     |                                                                       |
+| `packages/db-schema`                                             | —     |                                                                       |
+| `apps/web/server/trpc/routers`                                   | —     |                                                                       |
+| `packages/agent-console-server`                                  | —     |                                                                       |
+| `apps/web/app/services/dungeons`                                 | —     |                                                                       |
+| `apps/web/app/models/resource`, `apps/web/app/services/resource` | —     |                                                                       |
+| `packages/shared`                                                | —     |                                                                       |
+| `scripts/src`                                                    | —     | the rest of the tooling, excluding the rows above                     |
+| `apps/web/shared`                                                | —     | the rest of the shared tree, excluding the clicker upgrades row above |
+| `apps/web/server`                                                | —     | the rest of the server, excluding the router row above                |
+| `apps/functions/src`                                             | —     | no finding today; the row stays so a copy that lands there is read    |
