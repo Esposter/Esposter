@@ -1,5 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -26,5 +27,23 @@ describe("lernaPackages", () => {
     expect(packages).toStrictEqual(
       parseWorkspacePackageGlobs(readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8")),
     );
+  });
+
+  // Lerna runs in fixed mode: one version for every member, which a release bumps together. A member created with any
+  // Other version is released at that version and stays off the shared line
+  test("version every workspace member at lerna's one version", () => {
+    expect.hasAssertions();
+
+    const { version } = parseMachineJson<{ version: string }>(
+      readFileSync(resolve(REPOSITORY_ROOT, LERNA_FILENAME), "utf8"),
+    );
+    const offVersionDirectories = readWorkspacePackageDirectories(REPOSITORY_ROOT).filter(
+      (packageDirectory) =>
+        parseMachineJson<{ version: string }>(
+          readFileSync(resolve(REPOSITORY_ROOT, packageDirectory, "package.json"), "utf8"),
+        ).version !== version,
+    );
+
+    expect(offVersionDirectories).toStrictEqual([]);
   });
 });
