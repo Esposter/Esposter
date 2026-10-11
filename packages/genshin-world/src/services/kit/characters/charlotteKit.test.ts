@@ -19,26 +19,30 @@ const CHARLOTTE_KIT = createCharlotteKit(
   await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [CHARLOTTE_CHARACTER_ID]),
 );
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const MAX_HEALTH = 10_000;
-const ATTACK = 1000;
-const THORN_HITMARK_SECONDS = 97 / 60;
-const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createCharlotteCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([
-    { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-    { attribute: Attribute.BaseAttack, value: ATTACK },
-  ]),
-  characterId: CHARLOTTE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: CHARLOTTE_KIT,
-  level: 90,
-  weaponType: WeaponType.Catalyst,
-});
 
 describe(createCharlotteKit, () => {
+  const createCharlotteCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+      { attribute: Attribute.BaseAttack, value: ATTACK },
+    ]),
+    characterId: CHARLOTTE_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: CHARLOTTE_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const ATTACK = 1000;
+
+  const THORN_HITMARK_SECONDS = 97 / 60;
+
+  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("the charged attack's Spiritbreath Thorn strikes once, and a thorn within its six-second cooldown is not opened", () => {
     expect.hasAssertions();
     const combatant = createCharlotteCombatant();

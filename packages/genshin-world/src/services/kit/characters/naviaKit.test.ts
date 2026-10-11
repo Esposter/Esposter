@@ -16,10 +16,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const NAVIA_KIT = createNaviaKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NAVIA_CHARACTER_ID]));
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
-const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
-const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
 
 const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -32,30 +28,8 @@ const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-// The effects an action's start adds to the team's, given the team's effects it starts on
-const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([NAVIA_CHARACTER_ID]),
-    random: () => 0,
-  });
-
-// A hit landing on one enemy from the team's effects
-const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-  hit.onStrike?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([NAVIA_CHARACTER_ID]),
-    random: () => 0,
-  });
-
 const getStatus = (kitEffectState: KitEffectState, id: string): KitStatus | undefined =>
   kitEffectState.effects.find((effect): effect is KitStatus => effect.kind === "status" && effect.id === id);
-const readShrapnel = (kitEffectState: KitEffectState): number =>
-  getStatus(kitEffectState, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
 // An internal cooldown runs out as its seconds do, which a test stands in for by ending it
 const endCooldown = (kitEffectState: KitEffectState, id: string): void => {
   const status = getStatus(kitEffectState, id);
@@ -68,22 +42,53 @@ const getBlastHit = (): KitHit => takeOne(NAVIA_KIT.elementalBurst.hits);
 const getCannonSummon = (kitEffectState: KitEffectState): KitSummon =>
   takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
 
-// The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
-const shrapnelAfterShot = (constellationCount: number): number => {
-  const combatant = createNaviaCombatant(constellationCount);
-  const kitEffectState: KitEffectState = { effects: [] };
-  for (let strike = 0; strike < 5; strike++) {
-    strikeHit(getBlastHit(), kitEffectState, combatant);
-    endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
-  }
-  startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
-  return readShrapnel(kitEffectState);
-};
-
 // The Geo RES cut a burst hit applies to an enemy, from a constellation count
 const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(createNaviaCombatant(constellationCount));
 
 describe(createNaviaKit, () => {
+  // The Crystal Shrapnel a shot leaves after five cannon hits, from a constellation count
+  const shrapnelAfterShot = (constellationCount: number): number => {
+    const combatant = createNaviaCombatant(constellationCount);
+    const kitEffectState: KitEffectState = { effects: [] };
+    for (let strike = 0; strike < 5; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+    startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
+    return readShrapnel(kitEffectState);
+  };
+
+  const readShrapnel = (kitEffectState: KitEffectState): number =>
+    getStatus(kitEffectState, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
+
+  // A hit landing on one enemy from the team's effects
+  const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
+    hit.onStrike?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([NAVIA_CHARACTER_ID]),
+      random: () => 0,
+    });
+
+  // The effects an action's start adds to the team's, given the team's effects it starts on
+  const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([NAVIA_CHARACTER_ID]),
+      random: () => 0,
+    });
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
+  const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
+
+  const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
+
+  const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
+
   test("reads her strikes', charged attack's, plunges', and burst's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

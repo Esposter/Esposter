@@ -25,9 +25,9 @@ const createEulaCombatant = (constellationCount = 0): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
 describe(createEulaKit, () => {
+  const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("a press's strike gains a Grimheart stack, and the hold spends the stacks into one Icewhirl each", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };

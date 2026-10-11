@@ -14,44 +14,46 @@ vi.mock(import("#src/services/genshinAssets/expeditions/readMondstadtExpeditionP
 }));
 vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 
-const TREE_ITEM_ID = 107010;
-const TREE_REWARD_ITEM_ID = 2000;
-const ADVENTURE_EXP_ID = 102;
-
-const materialRows = [
-  {
-    foodQuality: "",
-    id: ADVENTURE_EXP_ID,
-    itemUse: [],
-    materialType: "MATERIAL_EXP_FRUIT",
-    nameTextMapHash: 1,
-    rank: 1,
-    rankLevel: 1,
-    stackLimit: 99,
-  },
-  {
-    foodQuality: "",
-    id: TREE_ITEM_ID,
-    itemUse: [],
-    materialType: "MATERIAL_ELEC_CRYSTAL",
-    nameTextMapHash: 2,
-    rank: 1,
-    rankLevel: 2,
-    stackLimit: 99,
-  },
-  {
-    foodQuality: "",
-    id: TREE_REWARD_ITEM_ID,
-    itemUse: [],
-    materialType: "MATERIAL_ADSORBATE",
-    nameTextMapHash: 3,
-    rank: 1,
-    rankLevel: 3,
-    stackLimit: 99,
-  },
-] satisfies MaterialRow[];
-
 describe(buildItems, () => {
+  const TREE_ITEM_ID = 107010;
+
+  const TREE_REWARD_ITEM_ID = 2000;
+
+  const ADVENTURE_EXP_ID = 102;
+
+  const materialRows = [
+    {
+      foodQuality: "",
+      id: ADVENTURE_EXP_ID,
+      itemUse: [],
+      materialType: "MATERIAL_EXP_FRUIT",
+      nameTextMapHash: 1,
+      rank: 1,
+      rankLevel: 1,
+      stackLimit: 99,
+    },
+    {
+      foodQuality: "",
+      id: TREE_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_ELEC_CRYSTAL",
+      nameTextMapHash: 2,
+      rank: 1,
+      rankLevel: 2,
+      stackLimit: 99,
+    },
+    {
+      foodQuality: "",
+      id: TREE_REWARD_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_ADSORBATE",
+      nameTextMapHash: 3,
+      rank: 1,
+      rankLevel: 3,
+      stackLimit: 99,
+    },
+  ] satisfies MaterialRow[];
+
   beforeEach(() => {
     const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
       materials.map(({ itemId }) => ({ ...materialRows[0], id: itemId, nameTextMapHash: itemId })),

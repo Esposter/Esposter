@@ -13,34 +13,36 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const WANDERER_KIT = createWandererKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [WANDERER_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createWandererCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: WANDERER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: WANDERER_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant: createWandererCombatant(),
-    kitEffectState,
-    party: createParty([WANDERER_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 describe(createWandererKit, () => {
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant: createWandererCombatant(),
+      kitEffectState,
+      party: createParty([WANDERER_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createWandererCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: WANDERER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: WANDERER_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

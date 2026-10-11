@@ -21,27 +21,6 @@ import { describe, expect, test } from "vitest";
 const ALHAITHAM_KIT = createAlhaithamKit(
   await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [ALHAITHAM_CHARACTER_ID]),
 );
-const ELEMENTAL_MASTERY = 1000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-const party = createParty([ALHAITHAM_CHARACTER_ID]);
-
-const createAlhaithamCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
-  ascension,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY }]),
-  characterId: ALHAITHAM_CHARACTER_ID,
-  constellationCount,
-  elementalResonances: [],
-  kit: ALHAITHAM_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
-  return kitEffectState;
-};
 
 // The Mirrors a character holds, as the status the kit keeps them in
 const readMirrors = (kitEffectState: KitEffectState): number =>
@@ -49,25 +28,50 @@ const readMirrors = (kitEffectState: KitEffectState): number =>
     (effect): effect is KitStatus => effect.kind === "status" && effect.id === "alhaitham-mirrors",
   )?.stacks ?? 0;
 
-// Ticks the field of a delayed effect, one that makes its Mirrors once its delay has passed
-const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatant: Combatant): void => {
-  const field = kitEffectState.effects.find(
-    (effect): effect is KitField => effect.kind === "field" && Math.round(effect.nextTickSeconds * 60) === delayFrames,
-  );
-  field?.onTick({
-    activeCombatant: combatant,
-    characterIdCombatantMap: new Map(),
-    enemyMap: new Map(),
-    kitEffectState,
-    party,
-    tickIndex: 0,
-  });
-};
-
 // The hit of a normal attack's first strike, which a Projection Attack triggers from
 const getFirstStrikeHit = (): KitHit => takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits);
 
 describe(createAlhaithamKit, () => {
+  // Ticks the field of a delayed effect, one that makes its Mirrors once its delay has passed
+  const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatant: Combatant): void => {
+    const field = kitEffectState.effects.find(
+      (effect): effect is KitField =>
+        effect.kind === "field" && Math.round(effect.nextTickSeconds * 60) === delayFrames,
+    );
+    field?.onTick({
+      activeCombatant: combatant,
+      characterIdCombatantMap: new Map(),
+      enemyMap: new Map(),
+      kitEffectState,
+      party,
+      tickIndex: 0,
+    });
+  };
+
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({ body: kitBody, combatant, kitEffectState, party, random: () => 0 });
+    return kitEffectState;
+  };
+
+  const createAlhaithamCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
+    ascension,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: ELEMENTAL_MASTERY }]),
+    characterId: ALHAITHAM_CHARACTER_ID,
+    constellationCount,
+    elementalResonances: [],
+    kit: ALHAITHAM_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const ELEMENTAL_MASTERY = 1000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
+  const party = createParty([ALHAITHAM_CHARACTER_ID]);
+
   test("reads his strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

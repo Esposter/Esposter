@@ -24,10 +24,11 @@ const writeLayer = (pathId: bigint, tileSize: number, kind: number): Buffer => {
     writeUint32s(kind, kind),
   ]);
 };
-// A name of one character, padded to a word
-const NAME = Buffer.concat([writeUint32s(1), Buffer.from("T\0\0\0")]);
 
 describe(parseTerrainSplat, () => {
+  // A name of one character, padded to a word
+  const NAME = Buffer.concat([writeUint32s(1), Buffer.from("T\0\0\0")]);
+
   test("reads each layer's texture, kind and tiling, and the cell map past a square too small to be one", () => {
     expect.hasAssertions();
 

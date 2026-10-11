@@ -1,18 +1,21 @@
-import { H3, defineEventHandler } from "nitro/h3";
+import { defineEventHandler, H3 } from "nitro/h3";
 import { createRouteRulesPlugin } from "nuxt-security-module/runtime/nitro/plugins/routeRules";
 import rateLimiter from "nuxt-security-module/runtime/server/middleware/rateLimiter";
 import { describe, expect, test } from "vitest";
 
-const URL = "http://localhost/api";
-const SOCKET_ADDRESS = "203.0.113.5";
-const INTERVAL_IN_MILLISECONDS = 60_000;
-const TOKENS_PER_INTERVAL = 1;
-
-// The socket address is the connection's, which a client cannot write, unlike its own forwarded header
-const createRequest = (forwardedFor: string) =>
-  Object.assign(new Request(URL, { headers: { "x-forwarded-for": forwardedFor } }), { ip: SOCKET_ADDRESS });
-
 describe("nuxt-security-module rateLimiter", () => {
+  const URL = "http://localhost/api";
+
+  const SOCKET_ADDRESS = "203.0.113.5";
+
+  const INTERVAL_IN_MILLISECONDS = 60_000;
+
+  const TOKENS_PER_INTERVAL = 1;
+
+  // The socket address is the connection's, which a client cannot write, unlike its own forwarded header
+  const createRequest = (forwardedFor: string) =>
+    Object.assign(new Request(URL, { headers: { "x-forwarded-for": forwardedFor } }), { ip: SOCKET_ADDRESS });
+
   test("#83 #196 a forwarded address the client writes does not change its key, so it cannot spend a fresh count", async () => {
     expect.hasAssertions();
 

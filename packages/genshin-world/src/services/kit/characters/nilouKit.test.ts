@@ -22,45 +22,48 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const NILOU_KIT = createNilouKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NILOU_CHARACTER_ID]));
-const MAX_HEALTH = 10_000;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
-
-const createNilouCombatant = (constellationCount = 0): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: NILOU_CHARACTER_ID,
-  constellationCount,
-  elementalResonances: [],
-  kit: NILOU_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
-// The effects an action's start adds to the team's, which its owner holds
-const castAction = (action: KitAction, combatant = createNilouCombatant()): KitEffectState => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  action.onStart?.({
-    body: kitBody,
-    combatant,
-    kitEffectState,
-    party: createParty([NILOU_CHARACTER_ID]),
-    random: () => 0,
-  });
-  return kitEffectState;
-};
 
 const findStance = (kitEffectState: KitEffectState): KitStance | undefined =>
   kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
 const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
-// The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
-const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
-  (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(({ amount, attribute }) => [
-    attribute,
-    Math.round(amount * 1000) / 1000,
-  ]);
 
 describe(createNilouKit, () => {
+  // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
+  const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
+    (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(({ amount, attribute }) => [
+      attribute,
+      Math.round(amount * 1000) / 1000,
+    ]);
+
+  // The effects an action's start adds to the team's, which its owner holds
+  const castAction = (action: KitAction, combatant = createNilouCombatant()): KitEffectState => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    action.onStart?.({
+      body: kitBody,
+      combatant,
+      kitEffectState,
+      party: createParty([NILOU_CHARACTER_ID]),
+      random: () => 0,
+    });
+    return kitEffectState;
+  };
+
+  const createNilouCombatant = (constellationCount = 0): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: NILOU_CHARACTER_ID,
+    constellationCount,
+    elementalResonances: [],
+    kit: NILOU_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
+  const MAX_HEALTH = 10_000;
+
+  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+
   test("reads the strikes', charged attack's, plunges' multipliers from her proud skill group", () => {
     expect.hasAssertions();
     const multipliers = [
