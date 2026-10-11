@@ -15,7 +15,7 @@ describe(sanitizeHtml, () => {
     expect.hasAssertions();
 
     expect(sanitizeHtml(`<table><tr><${cell} align="center"></${cell}></tr></table>`)).toBe(
-      `<table ${tableStyle}><tr><${cell} style="text-align:center"></${cell}></tr></table>`,
+      `<table ${tableStyle}><tbody><tr><${cell} style="text-align:center"></${cell}></tr></tbody></table>`,
     );
   });
 
@@ -25,7 +25,7 @@ describe(sanitizeHtml, () => {
 
     expect(
       sanitizeHtml(`<table style="position:fixed"><tr><td style="position:fixed" align="center"></td></tr></table>`),
-    ).toBe(`<table ${tableStyle}><tr><td style="text-align:center"></td></tr></table>`);
+    ).toBe(`<table ${tableStyle}><tbody><tr><td style="text-align:center"></td></tr></tbody></table>`);
   });
 
   test("opens every link in a new tab with no handle back to the page", () => {
