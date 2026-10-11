@@ -8,7 +8,7 @@ import { initCommand } from "#src/services/cli/commands/initCommand";
 import { runCommand } from "#src/services/cli/commands/runCommand";
 import { warmCommand } from "#src/services/cli/commands/warmCommand";
 import { defineCommand } from "citty";
-import dedent from "dedent";
+import { dedent } from "@esposter/shared";
 
 // `default: CommandType.Run` routes the bare `virrun -- <cmd>` prefix to `run` via citty's default-subcommand
 // Mechanism rather than an own `run`, because citty 0.2.2 runs a parent's `run` *in addition to* a matched

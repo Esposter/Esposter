@@ -530,9 +530,6 @@ catalogs:
     crossws:
       specifier: ^0.4.15
       version: 0.4.15
-    dedent:
-      specifier: ^1.7.2
-      version: 1.7.2
     defu:
       specifier: ^6.1.7
       version: 6.1.7
@@ -1242,9 +1239,6 @@ importers:
       codemirror:
         specifier: 'catalog:'
         version: 6.0.2
-      dedent:
-        specifier: 'catalog:'
-        version: 1.7.2
       defu:
         specifier: 'catalog:'
         version: 6.1.7
@@ -2503,9 +2497,6 @@ importers:
       cross-spawn:
         specifier: 'catalog:'
         version: 7.0.6
-      dedent:
-        specifier: 'catalog:'
-        version: 1.7.2
       fast-check:
         specifier: 'catalog:'
         version: 4.10.2
@@ -10043,14 +10034,6 @@ packages:
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
     engines: {node: '>=10'}
-
-  dedent@1.7.2:
-    resolution: {integrity: sha512-WzMx3mW98SN+zn3hgemf4OzdmyNhhhKz5Ay0pUfQiMQ3e1g+xmTJWp/pKdwKVXhdSkAEGIIzqeuWrL3mV/AXbA==}
-    peerDependencies:
-      babel-plugin-macros: ^3.1.0
-    peerDependenciesMeta:
-      babel-plugin-macros:
-        optional: true
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
@@ -24013,8 +23996,6 @@ snapshots:
   decompress-response@6.0.0:
     dependencies:
       mimic-response: 3.1.0
-
-  dedent@1.7.2: {}
 
   deep-is@0.1.4: {}
 

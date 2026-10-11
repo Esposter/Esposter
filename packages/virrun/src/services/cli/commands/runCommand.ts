@@ -5,7 +5,7 @@ import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
 import { runPassthrough } from "#src/services/cli/run/runPassthrough";
 import { VIRRUN_DEBUG_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { defineCommand } from "citty";
-import dedent from "dedent";
+import { dedent } from "@esposter/shared";
 
 // `--no-cache`/`--debug` are surfaced via the VIRRUN_NO_CACHE/VIRRUN_DEBUG envs (what checkIsTaskCacheEnabled and
 // `writeVirrunDebug` read) rather than threaded through the Virrun handle, keeping persist's signature small.

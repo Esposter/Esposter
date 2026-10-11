@@ -171,7 +171,6 @@ catalog:
   codemirror: ^6.0.2
   cross-spawn: ^7.0.6
   crossws: ^0.4.15
-  dedent: ^1.7.2
   defu: ^6.1.7
   diff: ^9.0.0
   dotenv: ^18.0.7
