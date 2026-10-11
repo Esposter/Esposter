@@ -16,8 +16,9 @@ export const getTransformativeDamage = (
   elementalMastery: number,
   resistance: number,
   reactionBonus = 0,
+  levelMultiplierMap: Record<number, number> = CharacterLevelMultiplierMap,
 ): number =>
   TransformativeReactionCoefficientMap[transformativeReactionType] *
-  takeOne(CharacterLevelMultiplierMap, level) *
+  takeOne(levelMultiplierMap, level) *
   (1 + getElementalMasteryBonus(elementalMastery, TRANSFORMATIVE_ELEMENTAL_MASTERY_CURVE) + reactionBonus) *
   getResistanceMultiplier(resistance);

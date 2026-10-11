@@ -1,4 +1,5 @@
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { EnemyLevelMultiplierMap } from "#src/services/combat/damage/EnemyLevelMultiplierMap";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { describe, expect, test } from "vitest";
 
@@ -17,6 +18,22 @@ describe(getTransformativeDamage, () => {
     expect.hasAssertions();
 
     expect(getTransformativeDamage(transformativeReactionType, 90, 0, 0)).toBeCloseTo(damage, 2);
+  });
+
+  test("prices an enemy's reaction at level 90 from the enemies' table", () => {
+    expect.hasAssertions();
+
+    expect(
+      getTransformativeDamage(TransformativeReactionType.Overloaded, 90, 0, 0, 0, EnemyLevelMultiplierMap),
+    ).toBeCloseTo(3978.85 * (1202.813736 / 1446.853458), 2);
+  });
+
+  test("agrees with the characters' table at level 57, where the two tables last match", () => {
+    expect.hasAssertions();
+
+    expect(getTransformativeDamage(TransformativeReactionType.Overloaded, 57, 0, 0, 0, EnemyLevelMultiplierMap)).toBe(
+      getTransformativeDamage(TransformativeReactionType.Overloaded, 57, 0, 0),
+    );
   });
 
   test("raises the damage by 16 × EM / (EM + 2000) and the reaction bonus, and cuts it by resistance", () => {

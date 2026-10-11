@@ -73,6 +73,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 - **Transformative**: Overloaded, Superconduct, Electro-Charged, Swirl, Shattered, Bloom, Hyperbloom, Burgeon and Burning deal their own damage, from 0.25 to 3 times the level multiplier. That is raised by 16 × EM / (EM + 2000) and cut by resistance alone, since it ignores defence and cannot crit (`getTransformativeDamage`).
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
+`EnemyLevelMultiplierMap` is the wiki's level multiplier for enemies and the environment, to 100. It agrees with the characters' table to level 57 and parts from it at 58, so a reaction an enemy triggers takes its own table through `getTransformativeDamage`'s last parameter.
 
 The deployed team's [elemental resonance](/docs/genshin/party) adds to a kit hit's CRIT Rate, read in `strikeEnemy` before the hit's own reactions: Shattering Ice's 15% against an enemy Frozen or affected by Cryo, so a hit's critical roll is `random() < CRIT Rate + 0.15` on that enemy. The roll is drawn from the world's one seeded random source, the stream the kit's other rolls read, so a session's rolls repeat. The other resonances' stat effects are summed into each member's attributes, and reach the damage formula through them. Enduring Rock's DMG and Geo RES, and Sprawling Greenery's timed Elemental Mastery, are read as a strike lands, as the [party](/docs/genshin/party) page describes.
 
@@ -141,6 +142,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/combat/damage/getDamage.ts`                       | The general damage formula                                                                                            |
 | `packages/genshin-world/src/services/combat/damage/getTransformativeDamage.ts`         | A transformative reaction's own damage                                                                                |
 | `packages/genshin-world/src/services/combat/damage/CharacterLevelMultiplierMap.ts`     | The level multiplier by a character's level                                                                           |
+| `packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts`         | The level multiplier by an enemy's or the environment's level                                                         |
 | `packages/genshin-world/src/services/combat/internalCooldown/applyInternalCooldown.ts` | A hit counted into its internal cooldown                                                                              |
 | `packages/genshin-world/src/services/combat/shield/absorbShieldDamage.ts`              | Damage taken on a shield                                                                                              |
 | `packages/genshin-world/src/services/combat/energy/getEnergyGain.ts`                   | Energy from a particle or an orb                                                                                      |
