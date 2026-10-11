@@ -20,6 +20,7 @@ Her Nightsoul Blessing and its Fiery Passion forms, the points each Rush, Flying
 ## Decisions
 
 - **The strikes are gcsim's outside the blessing.** The first and second strikes are boxes and the third a circle, each centred as gcsim centres it, with a box priced as its far corner as the framework prices a box.
+- **Her charged attack keeps its own internal cooldown.** gcsim gives it the tag `VaresaCombatCycle` (`charge.go`, line 61), so it counts apart from her normal attacks, as the framework's tags keep a character's normal attacks, skill and burst apart.
 - **Strikes and the charged attack give no poise.** gcsim gives Varesa's normal attacks and plunges none, so each reads 0, following the framework's rule for an absent poise.
 - **The plunges are the airborne ones.** gcsim plays a high plunge from a charged attack at 37 frames and from the air at 38, and the low plunge at 37 from the air, so the kit takes the airborne frames for both: the high at 38 frames of a 77-frame animation, and the low at 37 of 75. The collision is 6 frames before the high's first hit, at 31.
 - **Rush's box is gcsim's, marked provisional.** gcsim queues Rush as a box 0.1 metres wide and 2 metres long centred on the primary target and marks it "TODO: approximated". The kit ships it as gcsim gives it, priced as the target's reach plus the box's far corner. The roadmap's manual verification has the question.

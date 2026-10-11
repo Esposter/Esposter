@@ -57,7 +57,6 @@
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 6 },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource" },
   "chargedAttack.isAimed": { "cause": "DiffersFromSource" },
   "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
   "burst.hits.0.gauge": { "cause": "DiffersFromSource" }

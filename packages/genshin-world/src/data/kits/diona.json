@@ -210,8 +210,6 @@
     "value": { "index": 0, "proudSkillGroupId": 3932 }
   },
   "skill.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.element": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource" },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "chargedAttack.isAimed": { "cause": "DiffersFromSource" }
 }

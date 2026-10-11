@@ -56,13 +56,6 @@
   "plunges.low.hits.0.isBlunt": { "cause": "DiffersFromSource", "value": true },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "normalAttacks.3.hits.1.gauge": { "cause": "DiffersFromSource" },
-  "normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource" },
-  "chargedAttack.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.low.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plunges.high.hits.0.gauge": { "cause": "DiffersFromSource" },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }

@@ -13,4 +13,5 @@ export const GcsimInternalCooldownTagMap: Partial<Record<string, InternalCooldow
   "attacks.ICDTagMonaWaterDamage": InternalCooldownTag.MonaHydroDamage,
   "attacks.ICDTagNormalAttack": InternalCooldownTag.NormalAttack,
   "attacks.ICDTagTartagliaRiptideFlash": InternalCooldownTag.TartagliaRiptide,
+  "attacks.ICDTagVaresaCombatCycle": InternalCooldownTag.VaresaCombatCycle,
 };
