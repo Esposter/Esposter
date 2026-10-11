@@ -1,0 +1,46 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Element } from "#src/models/Element";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { applyElement } from "#src/services/combat/aura/applyElement";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { createTravelerKit } from "#src/services/kit/characters/travelerKit";
+import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { describe, expect, test } from "vitest";
+
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const TRAVELER_KIT = createTravelerKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [TRAVELER_CHARACTER_ID]));
+
+describe(applyEnemyElement, () => {
+  const combatant: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  };
+
+  test.each<[Element, Element, boolean]>([
+    [Element.Hydro, Element.Electro, true],
+    [Element.Electro, Element.Hydro, true],
+    [Element.Hydro, Element.Pyro, false],
+  ])(
+    "on a %s enemy, makes the combatant whose %s lands the one Electro-Charged is priced from: %s",
+    (aura, element, isCharged) => {
+      expect.hasAssertions();
+
+      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      applyElement(enemy.elementalState, aura, 1);
+      applyEnemyElement(enemy, element, 1, combatant);
+
+      expect(enemy.electroChargedCombatant).toStrictEqual(isCharged ? combatant : undefined);
+    },
+  );
+});

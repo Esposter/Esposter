@@ -6,6 +6,7 @@ import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHits } from "#src/services/gathering/readOreHits";
@@ -18,6 +19,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getKitAttackTag } from "#src/services/kit/getKitAttackTag";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { stepKit } from "#src/services/kit/stepKit";
+import { strikeElementalTicks } from "#src/services/kit/strikeElementalTicks";
 import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -25,10 +27,10 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
 // The last step, the team's effects that run out and the statuses on the enemies that fall due are sent to the deployed
-// Team's kits, the kit plays the step's presses as its stance, if it holds one, plays them, an action that starts turns
-// The body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes the
-// Ores and the enemies in its area. A character whose combatant is not built yet, its talent multipliers still in
-// Flight, plays nothing until they arrive
+// Team's kits, the Electro-Charged ticks the enemies' elements brought since are struck, the kit plays the step's presses
+// As its stance, if it holds one, plays them, an action that starts turns the body to the enemy it targets, or to the
+// Camera's aim for an aimed shot, and every hit the step lands strikes the ores and the enemies in its area. A character
+// Whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -40,7 +42,6 @@ export const stepActiveKit = (
     characterController,
     characterIdCombatantMap,
     enemyMap,
-    enemyTables,
     isAimHeld,
     kitEffectState,
     landedHits,
@@ -77,6 +78,8 @@ export const stepActiveKit = (
   );
   for (const effect of expiredEffects) emit({ effect, kind: KitEventKind.EffectExpired });
   for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emit(event);
+  const strikeContext: KitStrikeContext = { ...context, emit };
+  strikeElementalTicks(strikeContext);
   const infusion = getKitInfusion(kitEffectState.effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(
@@ -125,5 +128,5 @@ export const stepActiveKit = (
     ...landedHits.map((hit, index): KitStrike => ({ attackTag: attackTags[index], body: kitBody, combatant, hit })),
   ];
   landedHits.length = 0;
-  strikeKitEnemies(strikes, { characterIdCombatantMap, emit, enemyMap, enemyTables, kitEffectState, party, random });
+  strikeKitEnemies(strikes, strikeContext);
 };

@@ -77,7 +77,7 @@ Each recorded reaction carries the element its damage is dealt in, none for Shat
 
 - **Amplifying**: Vaporize and Melt multiply their hit by 2 where Hydro vaporizes or Pyro melts, and by 1.5 the other way round. Elemental mastery raises that by 2.78 × EM / (EM + 1400), plus any reaction bonus (`getAmplifyingMultiplier`).
 - **Catalyze**: Aggravate adds 1.15 and Spread 1.25 times the character's level multiplier to the hit's flat bonus, raised by 5 × EM / (EM + 1200) (`getCatalyzeBonus`).
-- **Transformative**: Overloaded, Superconduct, Electro-Charged, Swirl, Shattered, Bloom, Hyperbloom, Burgeon and Burning deal their own damage, from 0.25 to 3 times the level multiplier. That is raised by 16 × EM / (EM + 2000) and cut by resistance alone, less what the enemy's statuses take off it, since it ignores defence and cannot crit (`getTransformativeDamage`). A reaction's damage on one enemy is limited by its own internal cooldown, below, and an Overloaded, a Superconduct and a Swirl reach the enemies round it, as the section after it describes.
+- **Transformative**: Overloaded, Superconduct, Electro-Charged, Swirl, Shattered, Bloom, Hyperbloom, Burgeon and Burning deal their own damage, from 0.25 to 3 times the level multiplier. That is raised by 16 × EM / (EM + 2000) and cut by resistance alone, less what the enemy's statuses take off it, since it ignores defence and cannot crit (`getTransformativeDamage`). A reaction's damage on one enemy is limited by its own internal cooldown, below, and an Overloaded, a Superconduct, a Swirl and Electro-Charged reach the enemies round it, as the section after it describes.
 - **Superconduct's shred**: a Superconduct gives its enemy a status taking 40% off its Physical RES for 12 seconds, so every physical hit on it until then reads the lower RES.
 
 `CharacterLevelMultiplierMap` is the wiki's level multiplier for characters at every level to 90, then 95 and 100.
@@ -94,6 +94,8 @@ A transformative reaction's damage is limited the same way, its sequence a share
 ### Reach
 
 A reaction that lands reaches every other standing enemy within its radius of the one it landed on, measured to the enemy's edge, once the strike that triggered it has landed on every enemy it reaches (`landReactionReach`). An Overloaded's and a Superconduct's explosion reach 3 metres and deal each enemy their damage, and a Superconduct's takes each one's Physical RES down as it does its own target's. A Swirl reaches 5 metres. It applies its element to each enemy at the gauge it spreads, and every Swirl but a Hydro one deals each its damage, which the reactions its element triggers there amplify or add to as the wiki's chain reactions do, so a Pyro Swirl on a Wet enemy is vaporized. The reactions it triggers deal their own damage, priced from the character that swirled, and an Overloaded or a Superconduct among them reaches on in turn. The damage on each enemy reached counts into the source's internal cooldown there, and the tenth of a second's limit is the triggering target's alone (`TransformativeReactionReachRadiusMap`).
+
+Electro-Charged arcs from each tick to the one Wet enemy nearest it within 5 metres, the wiki's figure, dealing it Electro-Charged's damage and applying nothing, as the wiki has the arc consume none of its Hydro. The ticks are priced from the combatant whose Electro or Hydro last charged the enemy, as each application that charges or refreshes it takes it over in gcsim (`applyEnemyElement`). The enemies' fixed step leaves the reactions an enemy's elements bring on their own on the enemy (`elementalReactions`), and the step of the kit on the field strikes them: each Electro-Charged tick deals its damage, drops the enemy's energy to the team and arcs on, and a tick on an enemy no combatant charged, or a Burning tick, deals nothing (`strikeElementalTicks`).
 
 ### Shields and energy
 
@@ -123,8 +125,9 @@ flowchart TD
   ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
   ACTION -->|"each hitmark"| HIT["A hit lands on each enemy in its area"]
   HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, reactions' limits, getDamage, damageEnemy"]
-  STRIKE -->|"an Overloaded, Superconduct or Swirl that lands"| REACH["landReactionReach: the other enemies within 3 or 5 metres"]
+  STRIKE -->|"an Overloaded, Superconduct, Swirl or Electro-Charged that lands"| REACH["landReactionReach: the other enemies within 3 or 5 metres, or Electro-Charged's nearest Wet one"]
   REACH -->|"a reaction its Swirl triggers that reaches"| REACH
+  TICKS["strikeElementalTicks: the enemies' Electro-Charged ticks, from the combatant that charged each"] -->|"its arc"| REACH
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
   ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: the team's shields, then getDamage over the member's Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
@@ -170,6 +173,9 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 | `packages/genshin-world/src/services/kit/strikeEnemy.ts`                                                   | A kit's hit on an enemy, priced and applied by combat                                                                 |
 | `packages/genshin-world/src/services/kit/priceEnemyReactions.ts`                                           | The reactions on an enemy priced: amplified, catalyzed and transformative, and those that reach                       |
 | `packages/genshin-world/src/services/kit/landReactionReach.ts`                                             | A landed reaction reaching the enemies round its own                                                                  |
+| `packages/genshin-world/src/services/kit/landKitReactionReaches.ts`                                        | The reactions a strike or a tick landed with a reach, reached and their energy and events sent on                     |
+| `packages/genshin-world/src/services/kit/strikeElementalTicks.ts`                                          | The enemies' Electro-Charged ticks, struck from the combatant that charged each                                       |
+| `packages/genshin-world/src/services/kit/applyEnemyElement.ts`                                             | An element applied to an enemy, its Electro-Charged taken over by the combatant that charged it                       |
 | `packages/genshin-world/src/services/combat/reach/TransformativeReactionReachRadiusMap.ts`                 | How far each reaction that reaches past its target reaches                                                            |
 | `packages/genshin-world/src/services/kit/strikePartyMember.ts`                                             | An enemy's strike on the member on the field                                                                          |
 | `packages/genshin-world/src/services/kit/selectAttackTarget.ts`                                            | The enemy an action turns the body to                                                                                 |
@@ -183,6 +189,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - **A Freeze over a Freeze keeps the larger.** Frozen triggered again over a Freeze keeps the larger gauge at the Freeze's growing rate, as any aura reapplied keeps its rate. A new Freeze starts at 0.4U a second.
 - **Burning's first tick is a quarter second after it lights.** The library places its first Pyro between a quarter second and 0.42 seconds after the text, and the rules take the earliest.
 - **Electro-Charged's last tick is seen at the step.** An aura decaying out between two steps ends it at the step after, so a target advanced at the world's fixed step ends within a sixtieth of a second of the game's.
+- **Electro-Charged arcs to the nearest Wet enemy.** The wiki names a single other Wet enemy within 5 metres, marking the radius to verify, and says nothing of which one is taken when several stand there, so the nearest is a provisional choice.
 - **An Overloaded's explosion staggers and shatters nothing yet.** The wiki calls its damage a blunt attack and gcsim gives it 90 poise, but the explosion deals no poise damage on its target or the enemies it reaches, and breaks no Freeze among them.
 - **The wiki's mastery scales are taken as written.** Its 2.78 and 4.44 are rounded, and its tables of the bonus they give read them as written.
 
@@ -191,7 +198,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki: the aura tax, the aura's duration and decay, reapplication and Pyro's exception, and each reaction's coefficient.
 - [Elemental Gauge Theory: Advanced Mechanics](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics), Genshin Impact Wiki: Swirl's gauge, Freeze's gauge and duration, the blunt hit's poise cost and Shatter, Quicken's aura, Burning's aura, drain and refresh, and self and immutable auras with each source's gauge.
 - [Simultaneous Reaction Priority](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Simultaneous_Reaction_Priority), Genshin Impact Wiki: the order an applied element tries its reactions in, and the scenarios with several auras.
-- [Electro-Charged](https://genshin-impact.fandom.com/wiki/Electro-Charged), Genshin Impact Wiki: its ticks, and the last tick as an aura decays out.
+- [Electro-Charged](https://genshin-impact.fandom.com/wiki/Electro-Charged), Genshin Impact Wiki: its ticks, the last tick as an aura decays out, and its arc to one other Wet enemy within 5 metres, consuming none of its Hydro.
 - [Damage](https://genshin-impact.fandom.com/wiki/Damage), Genshin Impact Wiki: the general formula, defence, resistance, and the amplifying, catalyze and transformative formulas.
 - [Elemental Reaction: Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling), Genshin Impact Wiki: the level multiplier and the Crystallize shield by level, and each reaction's base damage at each level.
 - [Elemental Mastery](https://genshin-impact.fandom.com/wiki/Elemental_Mastery), Genshin Impact Wiki: the mastery bonus of each kind of reaction.

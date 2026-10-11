@@ -5,10 +5,10 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyStrikeResult } from "#src/models/kit/EnemyStrikeResult";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { applyElement } from "#src/services/combat/aura/applyElement";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
@@ -18,14 +18,16 @@ import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
+import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
 // A reaction that landed on an enemy reaching every other standing enemy within its radius of it, written into each in
 // Place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's explosion deals each its
 // Damage, and a Superconduct's takes each one's Physical RES down. A Swirl applies its element to each at the gauge it
 // Spreads, and every Swirl but a Hydro one deals each its damage, which what its element triggers there amplifies or
-// Adds to, as the reactions it triggers deal their own. The damage on each is limited by the source's internal cooldown
-// There. It returns what each enemy reached took, a Swirl's reactions there reaching further in turn
+// Adds to, as the reactions it triggers deal their own. Electro-Charged arcs to the nearest Wet enemy alone, dealing it
+// Its damage and applying nothing. The damage on each is limited by the source's internal cooldown there. It returns
+// What each enemy reached took, a Swirl's reactions there reaching further in turn
 export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
   origin: Enemy,
@@ -39,17 +41,27 @@ export const landReactionReach = (
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
-  for (const enemy of enemies) {
-    if (
-      enemy === origin ||
-      [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-      Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z) >
-        radius + ENEMY_CAPSULE_RADIUS
+  // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
+  const reachedEnemies = [...enemies]
+    .map((enemy) => ({
+      distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
+      enemy,
+    }))
+    .filter(
+      ({ distance, enemy }) =>
+        enemy !== origin &&
+        ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
+        distance <= radius + ENEMY_CAPSULE_RADIUS &&
+        (reactionType !== TransformativeReactionType.ElectroCharged || enemy.elementalState.auras.has(AuraType.Hydro)),
     )
-      continue;
+    .toSorted((a, b) => a.distance - b.distance)
+    .slice(0, reactionType === TransformativeReactionType.ElectroCharged ? 1 : undefined);
+  for (const { enemy } of reachedEnemies) {
     const { elementalState, internalCooldownMap } = enemy;
     const reactions =
-      element === undefined || spreadGauge === undefined ? [] : applyElement(elementalState, element, spreadGauge);
+      element === undefined || spreadGauge === undefined
+        ? []
+        : applyEnemyElement(enemy, element, spreadGauge, combatant);
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
     const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =

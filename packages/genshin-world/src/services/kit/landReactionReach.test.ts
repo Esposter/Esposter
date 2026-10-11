@@ -119,6 +119,34 @@ describe(landReactionReach, () => {
     );
   });
 
+  test("arcs an Electro-Charged to the nearest Wet enemy within 5 metres alone, dealing its damage and applying nothing", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const dry = createSturdyEnemy(1);
+    const wet = createSturdyEnemy(2);
+    const fartherWet = createSturdyEnemy(-3);
+    for (const enemy of [wet, fartherWet]) applyElement(enemy.elementalState, Element.Hydro, 1);
+    const electroCharged: TransformativeReaction = {
+      element: Element.Electro,
+      reactionType: TransformativeReactionType.ElectroCharged,
+    };
+
+    const enemyStrikeResultMap = landReactionReach(
+      enemyTables,
+      origin,
+      [origin, dry, wet, fartherWet],
+      electroCharged,
+      combatant,
+    );
+
+    expect([...enemyStrikeResultMap.keys()]).toStrictEqual([wet]);
+    expect(wet.maxHealth - wet.health).toBeCloseTo(
+      getReactionDamage(TransformativeReactionType.ElectroCharged, Element.Electro),
+    );
+    expect([...wet.elementalState.auras.keys()]).toStrictEqual([AuraType.Hydro]);
+  });
+
   test("amplifies a Pyro Swirl's damage by the Vaporize its Pyro triggers, and returns an Overloaded it triggers to reach on", () => {
     expect.hasAssertions();
 

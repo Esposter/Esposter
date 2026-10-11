@@ -9,7 +9,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
-import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { getDamage } from "#src/services/combat/damage/getDamage";
 import { applyKeyedInternalCooldown } from "#src/services/combat/internalCooldown/applyKeyedInternalCooldown";
@@ -19,6 +18,7 @@ import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
+import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
@@ -59,7 +59,7 @@ export const strikeEnemy = (
         DEFAULT_INTERNAL_COOLDOWN_GROUP,
         elementalState.seconds,
       );
-    reactions.push(...applyElement(elementalState, element, gauge * share));
+    reactions.push(...applyEnemyElement(enemy, element, gauge * share, combatant));
   }
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);

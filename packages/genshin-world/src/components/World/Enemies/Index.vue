@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
-import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -89,8 +88,6 @@ const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARAT
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
 const loadedCampIds = new Set<string>();
-// The reactions an enemy's elements bring on their own as they age, which no hit deals, read into this and dropped
-const elementalReactions: Reaction[] = [];
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
 let spawnedWorldLevel = worldLevel;
@@ -126,8 +123,8 @@ watchImmediate(
 const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   let isAnyDefeated = false;
   for (const enemy of enemyMap.values()) {
-    advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, elementalReactions);
-    elementalReactions.length = 0;
+    // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
+    advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
     const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
     const enemyEvent = stepEnemy(enemy, taunt ? taunt.body.position : target, ENEMY_STEP_SECONDS);
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);

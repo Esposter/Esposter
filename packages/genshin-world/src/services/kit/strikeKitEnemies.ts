@@ -2,10 +2,8 @@ import type { TransformativeReaction } from "#src/models/combat/TransformativeRe
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitStrike } from "#src/models/kit/KitStrike";
-import type { Party } from "#src/models/party/Party";
+import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +12,7 @@ import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
-import { landReactionReach } from "#src/services/kit/landReactionReach";
+import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
@@ -25,18 +23,7 @@ import { gainPartyEnergy } from "#src/services/party/gainPartyEnergy";
 // Energy to the team, and the strike's bubbles, heals and reactions follow, the reactions it triggered and the damage
 // The enemy took sent to the deployed team's kits. Once the strike has landed on every enemy it reaches, each reaction
 // That landed with a reach reaches the enemies round its own, whose energy and reactions follow in turn
-export const strikeKitEnemies = (
-  strikes: readonly KitStrike[],
-  context: {
-    characterIdCombatantMap: Map<number, Combatant>;
-    emit: (event: KitEvent) => void;
-    enemyMap: Map<string, Enemy>;
-    enemyTables: EnemyTables;
-    kitEffectState: KitEffectState;
-    party: Party;
-    random: () => number;
-  },
-): void => {
+export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStrikeContext): void => {
   const { characterIdCombatantMap, emit, enemyMap, enemyTables, kitEffectState, party, random } = context;
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
@@ -89,19 +76,6 @@ export const strikeKitEnemies = (
       });
     }
 
-    for (const [origin, reaction] of reaches)
-      for (const [enemy, { energyDrops, reachingReactions, reactions }] of landReactionReach(
-        enemyTables,
-        origin,
-        enemyMap.values(),
-        reaction,
-        pricedCombatant,
-      )) {
-        for (const energyDrop of energyDrops)
-          gainPartyEnergy(party, energyDrop, combatant.element, characterIdCombatantMap);
-        addSprawlingGreeneryBuffs(kitEffectState, party, pricedCombatant, reactions);
-        for (const reachingReaction of reachingReactions) reaches.push([enemy, reachingReaction]);
-        if (reactions.length > 0) emit({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant });
-      }
+    landKitReactionReaches(reaches, pricedCombatant, context);
   }
 };
