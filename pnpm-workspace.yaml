@@ -98,6 +98,7 @@ catalog:
   "@pulumi/azure-native": ^3.28.0
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.268.0
+  "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.14.0
   "@tensorflow/tfjs": ^4.22.0
   "@tiptap/core": ^3.31.4

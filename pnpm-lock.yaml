@@ -338,6 +338,9 @@ catalogs:
     '@pulumi/pulumi':
       specifier: ^3.268.0
       version: 3.268.0
+    '@standard-schema/spec':
+      specifier: ^1.1.0
+      version: 1.1.0
     '@takumi-rs/core':
       specifier: ^2.14.0
       version: 2.14.0
@@ -2362,6 +2365,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@standard-schema/spec':
+        specifier: 'catalog:'
+        version: 1.1.0
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.19.0(@trpc/server@11.19.0(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)
