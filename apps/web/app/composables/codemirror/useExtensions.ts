@@ -1,13 +1,6 @@
 import type { Extension } from "@codemirror/state";
 
-import { useThemeModeStore } from "@/store/ui/themeMode";
-import { oneDark } from "@codemirror/theme-one-dark";
+import { uiEditorExtensions } from "@/services/codemirror/uiEditorExtensions";
 
-export const useExtensions = (baseExtensions: MaybeRef<Extension[]>) => {
-  const themeModeStore = useThemeModeStore();
-  const { isDark } = storeToRefs(themeModeStore);
-  return computed(() => {
-    const baseExtensionsValue = unref(baseExtensions);
-    return isDark.value ? [...baseExtensionsValue, oneDark] : baseExtensionsValue;
-  });
-};
+export const useExtensions = (baseExtensions: MaybeRef<Extension[]>) =>
+  computed(() => [...unref(baseExtensions), ...uiEditorExtensions]);
