@@ -142,5 +142,9 @@ export const DUMP_TABLE_NAMES: readonly string[] = [
   "GCGLevelExcelConfigData",
   "GCGWeekLevelExcelConfigData",
 ];
+// The dump's scene 3 NPC births, the open world's, fetched like the tables. Its directory and file name are split so the
+// Fetch can list the one and select the other
+export const SCENE_NPC_BORN_DIRECTORY = "BinOutput/Scene/SceneNpcBorn";
+export const SCENE_NPC_BORN_FILE_NAME = "scene3_npcborn.json";
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
 export const DUMP_FETCH_BATCH_SIZE = 8;

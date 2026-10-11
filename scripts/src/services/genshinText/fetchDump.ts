@@ -9,6 +9,8 @@ import {
   DUMP_TABLE_NAMES,
   GAME_TEXT_DIRECTORY,
   GameLanguageCodeMap,
+  SCENE_NPC_BORN_DIRECTORY,
+  SCENE_NPC_BORN_FILE_NAME,
 } from "#src/services/genshinText/constants";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
 import { fetchJson } from "#src/services/shared/fetchJson";
@@ -30,8 +32,8 @@ const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
   );
 };
 
-// The dump's own files a fetch may add: the readable texts of every language's folder and the tables a reader names,
-// Each at its path under the dump's folder
+// The dump's own files a fetch may add: the readable texts of every language's folder, the tables a reader names and the
+// Scene's NPC births, each at its path under the dump's folder
 const listDumpFiles = async (): Promise<DumpFile[]> => {
   const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) =>
     DUMP_TABLE_NAMES.some((tableName) => path === `ExcelBinOutput/${tableName}.json`),
@@ -39,7 +41,10 @@ const listDumpFiles = async (): Promise<DumpFile[]> => {
   const readableFiles = await Promise.all(
     Object.values(GameLanguageCodeMap).map((code) => listRemoteDirectory(`Readable/${code}`)),
   );
-  return [...tableFiles, ...readableFiles.flat()];
+  const sceneNpcBornFiles = (await listRemoteDirectory(SCENE_NPC_BORN_DIRECTORY)).filter(
+    ({ path }) => path === `${SCENE_NPC_BORN_DIRECTORY}/${SCENE_NPC_BORN_FILE_NAME}`,
+  );
+  return [...tableFiles, ...readableFiles.flat(), ...sceneNpcBornFiles];
 };
 
 // The fetch's download of every dump file the dump lacks or holds at another size, into the dump beside the others. A
