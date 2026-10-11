@@ -9,7 +9,7 @@ node_modules
 
 # Build Artifacts
 **/src/index.ts
-**/src/generated/characterKitMap/
+**/src/generated/characterKitMaps/
 **/src/components/index.ts
 **/public/docs
 

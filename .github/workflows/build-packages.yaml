@@ -40,7 +40,7 @@ jobs:
             packages/*/dist
             packages/*/src/index.ts
             packages/*/src/components/index.ts
-            packages/genshin-world/src/generated/characterKitMap
+            packages/genshin-world/src/generated/characterKitMaps
       # The build writes the exports map and `inlinedDependencies` into each manifest, and nothing downstream
       # reads one — so an uncommitted manifest is green everywhere else
       - name: 🔍 Check generated manifest fields are committed

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Element } from "#src/models/Element";
+import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 
 import HudGlyph from "#src/components/Hud/Glyph/Index.vue";
-import { CharacterIdSkillGlyphsMap } from "#src/services/hud/CharacterIdSkillGlyphsMap";
 import { ACTION_BUTTON_BACKGROUND } from "#src/services/hud/constants";
 import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
 import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
@@ -16,8 +16,6 @@ interface Props {
   // The member on the field's burst: the seconds left of its cooldown and its whole cooldown, its energy and its cost
   burstCooldown: number;
   burstCooldownSeconds: number;
-  // The member on the field, whose skill and burst icons the buttons carry
-  characterId: number;
   // The element the burst's fill and charged disc are coloured in, none for a member the roster's table gives none
   element?: Element;
   energy: number;
@@ -30,12 +28,13 @@ interface Props {
   // The member on the field's skill: the seconds left of its cooldown and its whole cooldown
   skillCooldown: number;
   skillCooldownSeconds: number;
+  // The member on the field's skill and burst icons, which the buttons carry, none for a member whose icons are not traced
+  skillGlyphs?: SkillGlyphs;
 }
 
 const {
   burstCooldown,
   burstCooldownSeconds,
-  characterId,
   element,
   energy,
   energyCost,
@@ -44,12 +43,12 @@ const {
   isTouch,
   skillCooldown,
   skillCooldownSeconds,
+  skillGlyphs,
 } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 // A key's cap reads its letter, the physical code's own
 const getKeyCapText = (code: string) => code.replace(/^Key/u, "");
-const skillGlyphs = computed(() => CharacterIdSkillGlyphsMap[characterId]);
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets

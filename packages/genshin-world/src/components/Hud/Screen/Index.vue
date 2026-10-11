@@ -134,7 +134,6 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           v-if="member"
           :burst-cooldown="member.burstCooldown"
           :burst-cooldown-seconds="member.burstCooldownSeconds"
-          :character-id="member.characterId"
           :element="member.element"
           :energy="member.energy"
           :energy-cost="member.energyCost"
@@ -143,6 +142,7 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           :is-touch
           :skill-cooldown="member.skillCooldown"
           :skill-cooldown-seconds="member.skillCooldownSeconds"
+          :skill-glyphs="member.skillGlyphs"
         />
       </GameRect>
     </GameRect>

@@ -6,7 +6,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
-import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
+import { VENTI_SKILL_GLYPHS } from "#src/services/hud/skillGlyphs/ventiSkillGlyphs";
 import { createParty } from "#src/services/party/createParty";
 import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { readCatalogue } from "#src/services/world/readCatalogue";
@@ -47,7 +47,6 @@ export const props = {
   member: {
     burstCooldown: 0,
     burstCooldownSeconds: 0,
-    characterId: VENTI_CHARACTER_ID,
     element: Element.Anemo,
     energy: 14.2,
     energyCost: 60,
@@ -56,6 +55,7 @@ export const props = {
     maxHealth: 17400,
     skillCooldown: 0,
     skillCooldownSeconds: 0,
+    skillGlyphs: VENTI_SKILL_GLYPHS,
     weaponType: WeaponType.Bow,
   },
   nameTextMap: englishNameText,

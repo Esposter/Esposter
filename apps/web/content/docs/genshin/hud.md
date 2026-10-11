@@ -13,7 +13,7 @@ While a player is in the world, the game keeps a heads-up display over it. The w
 - **The screen reads its rects from the hosted game data.** The world reads the published `hud/interfaceRects` record as it opens (`readHudInterfaceRects`) and hands it to `Hud/Screen` as its `interfaceRects` prop, as the HUD's fixture reads it through the mirror. The record holds every piece of the fitted tree, and its schema keeps only the eight the screen places a piece by, each named by `HudInterfaceRectName` with its path in the tree as its value. A refit reaches the screen once its record is published.
 - **The stamina meter stands on the screen, not in its rect.** Its rect in the tree, `SPBar`, is anchored at the screen's middle, while every recording shows the meter beside the character wherever the character stands, so the meter places itself on the whole screen by the pivot the world projects.
 - **The touch layout is the host's to choose.** Whether the device's main pointer is a finger (`(pointer: coarse)`) is read by the world's session and handed to `Hud/Screen` as `isTouch`, so the screen holds no media query of its own and its fixture draws the touch layout its mobile recording shows.
-- **Each glyph is the game's icon, traced.** A button's glyph is drawn as filled paths on a 128 unit square, never an image: the attack's from the wiki's render of each kind of weapon's normal attack icon, the jump's and the sprint's from their talent icons, and the skill's and the burst's from each character's own talent icons (`CharacterIdSkillGlyphsMap`, Venti's and Chongyun's so far), each read as every pixel's share of white over the icon's graded disc and traced at the splits between its tones, each drawn at its tone's share of white. The aim's has no render, so it is drawn from its measure on the recording, a ring, four arrowheads and a dot ([interface library](/docs/genshin/interface-library)).
+- **Each glyph is the game's icon, traced.** A button's glyph is drawn as filled paths on a 128 unit square, never an image: the attack's from the wiki's render of each kind of weapon's normal attack icon, the jump's and the sprint's from their talent icons, and the skill's and the burst's from each character's own talent icons (a module a character under `services/hud/skillGlyphs/`, Venti's and Chongyun's so far, which loads with its kit as the character joins the party, so the HUD is handed the field member's icons rather than its id), each read as every pixel's share of white over the icon's graded disc and traced at the splits between its tones, each drawn at its tone's share of white. The aim's has no render, so it is drawn from its measure on the recording, a ring, four arrowheads and a dot ([interface library](/docs/genshin/interface-library)).
 - **The burst's fill takes its element's tones.** `ElementBurstColorsMap` fills a charged burst in the element's colour, as the PC recording's charged discs do, rather than in gold. The gold first decided for it was read as #dcb670 at 24% energy, but no pixel of `hud-world-pickup`'s burst disc reads gold: its fill is #309d6b over grass and #47bcea over water (70 and 80 seconds of `world-pickup.mkv`), and the recording's PC part fills a charged disc in Cryo's and Geo's colours. The element's tones moved `hud-world-pickup` from 10.06% to 10.04%; a game fill of gold after all would move it back.
 - **The PC keys' burst fills from its foot while uncharged, in the element's tone.** The uncharged disc is the touch layout's dark disc, filled as the element's bright tone rises; a PC frame with an uncharged burst would show whether the game fills it that way.
 - **The stamina pulse starts under an eighth.** The climbing clip behind `hud-stamina-climb` shows the track pulsing red with a glow from the moment the pool runs out at 33 seconds, but no frame under an eighth before it. It starts where the flash it replaced did; a clip pulsing with stamina left would confirm it, one pulsing only from empty would move it to empty.
@@ -73,39 +73,39 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role                                                                     |
-| :---------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Hud/Screen/Index.vue`            | The HUD: its pieces, their places and the slots others fill              |
-| `packages/genshin-world/src/services/hud/readHudInterfaceRects.ts`      | The HUD's rects, read from the hosted game data as the world opens       |
-| `packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`         | The pieces of the tree the screen places by, each by its path            |
-| `packages/genshin-world/src/models/hud/HudInterfaceRects.ts`            | The record's schema, keeping only those pieces' rects                    |
-| `scripts/src/services/genshinAssets/fit/fitHud.ts`                      | Fits the HUD's interface rects from its exported tree                    |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Names the HUD's page: its anchor `TeamBtn_MP` and root `InLevelMainPage` |
-| `packages/genshin-world/src/components/Hud/PaimonButton/Index.vue`      | The corner button that opens the Paimon menu                             |
-| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`           | The corner map                                                           |
-| `packages/genshin-world/src/components/Hud/Quest/Index.vue`             | The quest tracker under the minimap                                      |
-| `packages/genshin-world/src/components/Hud/Stamina/Index.vue`           | The stamina meter beside the character                                   |
-| `packages/genshin-world/src/components/Hud/Party/Index.vue`             | The deployed team's portraits down the right                             |
-| `packages/genshin-world/src/components/Hud/Health/Index.vue`            | The member on the field's level and HP at the bottom's middle            |
-| `packages/genshin-world/src/components/Hud/Skills/Index.vue`            | The skill and burst buttons at the bottom right                          |
-| `packages/genshin-world/src/components/Hud/Actions/Index.vue`           | The touch layout's attack, aim, jump and sprint buttons                  |
-| `packages/genshin-world/src/services/hud/WeaponTypeGlyphLayersMap.ts`   | The attack button's glyph for each kind of weapon                        |
-| `packages/genshin-world/src/services/hud/InputActionGlyphLayersMap.ts`  | The aim's, the jump's and the sprint's glyphs                            |
-| `packages/genshin-world/src/services/hud/pressCapturedPointer.ts`       | A button's press, its pointer captured until the release                 |
-| `packages/genshin-world/src/services/hud/ElementBurstColorsMap.ts`      | The burst's fill and charged disc tones for each element                 |
-| `packages/genshin-world/src/services/hud/CharacterIdSkillGlyphsMap.ts`  | Each traced character's skill and burst icons                            |
-| `packages/genshin-world/src/components/Hud/Glyph/Index.vue`             | A button's glyph drawn from its layers                                   |
-| `packages/genshin-world/src/models/hud/GlyphLayer.ts`                   | One tone of a glyph: its path and its share of white                     |
-| `packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts`     | The HUD's parity fixture: the frame's party, member and tracked quest    |
-| `packages/genshin-world/src/models/hud/HudMember.ts`                    | The field member's figures the health and skill buttons read             |
-| `packages/genshin-world/src/components/Hud/Touch/Index.vue`             | The touch controls under the pieces                                      |
-| `packages/genshin-world/src/models/hud/HudFrame.ts`                     | What the HUD reads off the world each frame                              |
-| `packages/genshin-world/src/services/quest/getQuestCounter.ts`          | A step's counted objective, as the tracker and the quest screen show it  |
-| `packages/genshin-world/src/models/quest/QuestMark.ts`                  | How far off and how high the navigated objective stands, for the tracker |
-| `packages/genshin-world/src/services/shared/getActionKeyCode.ts`        | The key a pressed piece holds in the world's input                       |
-| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the HUD, fills its slots with each piece's state, navigates on V  |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Raises the beam over the navigated objective in the world's group        |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`      | Which screens hide the HUD                                               |
+| File                                                                    | Role                                                                                    |
+| :---------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Hud/Screen/Index.vue`            | The HUD: its pieces, their places and the slots others fill                             |
+| `packages/genshin-world/src/services/hud/readHudInterfaceRects.ts`      | The HUD's rects, read from the hosted game data as the world opens                      |
+| `packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`         | The pieces of the tree the screen places by, each by its path                           |
+| `packages/genshin-world/src/models/hud/HudInterfaceRects.ts`            | The record's schema, keeping only those pieces' rects                                   |
+| `scripts/src/services/genshinAssets/fit/fitHud.ts`                      | Fits the HUD's interface rects from its exported tree                                   |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Names the HUD's page: its anchor `TeamBtn_MP` and root `InLevelMainPage`                |
+| `packages/genshin-world/src/components/Hud/PaimonButton/Index.vue`      | The corner button that opens the Paimon menu                                            |
+| `packages/genshin-world/src/components/Hud/Minimap/Index.vue`           | The corner map                                                                          |
+| `packages/genshin-world/src/components/Hud/Quest/Index.vue`             | The quest tracker under the minimap                                                     |
+| `packages/genshin-world/src/components/Hud/Stamina/Index.vue`           | The stamina meter beside the character                                                  |
+| `packages/genshin-world/src/components/Hud/Party/Index.vue`             | The deployed team's portraits down the right                                            |
+| `packages/genshin-world/src/components/Hud/Health/Index.vue`            | The member on the field's level and HP at the bottom's middle                           |
+| `packages/genshin-world/src/components/Hud/Skills/Index.vue`            | The skill and burst buttons at the bottom right                                         |
+| `packages/genshin-world/src/components/Hud/Actions/Index.vue`           | The touch layout's attack, aim, jump and sprint buttons                                 |
+| `packages/genshin-world/src/services/hud/WeaponTypeGlyphLayersMap.ts`   | The attack button's glyph for each kind of weapon                                       |
+| `packages/genshin-world/src/services/hud/InputActionGlyphLayersMap.ts`  | The aim's, the jump's and the sprint's glyphs                                           |
+| `packages/genshin-world/src/services/hud/pressCapturedPointer.ts`       | A button's press, its pointer captured until the release                                |
+| `packages/genshin-world/src/services/hud/ElementBurstColorsMap.ts`      | The burst's fill and charged disc tones for each element                                |
+| `packages/genshin-world/src/services/hud/skillGlyphs/`                  | Each traced character's skill and burst icons, a module a character loaded with its kit |
+| `packages/genshin-world/src/components/Hud/Glyph/Index.vue`             | A button's glyph drawn from its layers                                                  |
+| `packages/genshin-world/src/models/hud/GlyphLayer.ts`                   | One tone of a glyph: its path and its share of white                                    |
+| `packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts`     | The HUD's parity fixture: the frame's party, member and tracked quest                   |
+| `packages/genshin-world/src/models/hud/HudMember.ts`                    | The field member's figures the health and skill buttons read                            |
+| `packages/genshin-world/src/components/Hud/Touch/Index.vue`             | The touch controls under the pieces                                                     |
+| `packages/genshin-world/src/models/hud/HudFrame.ts`                     | What the HUD reads off the world each frame                                             |
+| `packages/genshin-world/src/services/quest/getQuestCounter.ts`          | A step's counted objective, as the tracker and the quest screen show it                 |
+| `packages/genshin-world/src/models/quest/QuestMark.ts`                  | How far off and how high the navigated objective stands, for the tracker                |
+| `packages/genshin-world/src/services/shared/getActionKeyCode.ts`        | The key a pressed piece holds in the world's input                                      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`         | Mounts the HUD, fills its slots with each piece's state, navigates on V                 |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`        | Raises the beam over the navigated objective in the world's group                       |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`      | Which screens hide the HUD                                                              |
 
 ## Notes
 

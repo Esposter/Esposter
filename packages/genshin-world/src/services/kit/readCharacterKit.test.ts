@@ -1,10 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { VENTI_SKILL_GLYPHS } from "#src/services/hud/skillGlyphs/ventiSkillGlyphs";
+import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"), () => ({
+vi.mock(import("#src/generated/characterKitMaps/CharacterIdCreateKitBehaviourMap"), () => ({
   CharacterIdCreateKitBehaviourMap: {},
 }));
 
@@ -19,5 +21,13 @@ describe(readCharacterKit, () => {
     ]);
 
     expect(kit).toStrictEqual(travelerKit);
+  });
+
+  test("carries the character's own traced skill glyphs", async () => {
+    expect.hasAssertions();
+
+    const kit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VENTI_CHARACTER_ID);
+
+    expect(kit.skillGlyphs).toBe(VENTI_SKILL_GLYPHS);
   });
 });

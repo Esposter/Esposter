@@ -1,4 +1,4 @@
-import { CharacterIdCreateKitBehaviourMap } from "#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap";
+import { CharacterIdCreateKitBehaviourMap } from "#src/generated/characterKitMaps/CharacterIdCreateKitBehaviourMap";
 import { describe, expect, test } from "vitest";
 
 describe("generated character kit behaviour map", () => {

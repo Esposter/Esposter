@@ -1,5 +1,6 @@
 import type { Attribute } from "#src/models/character/Attribute";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -14,7 +15,7 @@ import type { KitVariant } from "#src/models/kit/KitVariant";
 import type { Party } from "#src/models/party/Party";
 
 // A character's combat kit: its normal attack's string, its charged attack, its plunges, its skill and burst with their
-// Cooldowns and costs, and the collision a plunge strikes with as it falls
+// Cooldowns, costs and buttons' icons, and the collision a plunge strikes with as it falls
 export interface Kit {
   burstCooldownSeconds: number;
   burstEnergyCost: number;
@@ -56,4 +57,6 @@ export interface Kit {
   onSprint?: (context: KitContext, kitState: KitState) => void;
   plungeCollision: KitHit;
   skillCooldownSeconds: number;
+  // The icons its skill and burst buttons carry, if they are traced, read with the kit by the character's own id
+  skillGlyphs?: SkillGlyphs;
 }
