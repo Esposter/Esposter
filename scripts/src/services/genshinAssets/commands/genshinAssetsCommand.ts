@@ -28,6 +28,7 @@ import { imaginariumCommand } from "#src/services/genshinAssets/commands/imagina
 import { interfaceCommand } from "#src/services/genshinAssets/commands/interfaceCommand";
 import { inventoryCommand } from "#src/services/genshinAssets/commands/inventoryCommand";
 import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand";
+import { luaDialectCommand } from "#src/services/genshinAssets/commands/luaDialectCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
@@ -99,6 +100,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     residents: residentsCommand,
     "scene-npc-born": sceneNpcBornCommand,
     "scene-scripts": sceneScriptsCommand,
+    "lua-dialect": luaDialectCommand,
     oculi: oculiCommand,
     crafting: craftingCommand,
     cooking: cookingCommand,

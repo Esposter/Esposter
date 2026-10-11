@@ -1,7 +1,10 @@
 import type { SubCommandsDef } from "citty";
 
+import { LuaDialectName } from "#src/models/lua/LuaDialectName";
 import { countSceneScriptElements } from "#src/services/genshinAssets/scene/countSceneScriptElements";
 import { exportSceneScript } from "#src/services/genshinAssets/scene/exportSceneScript";
+import { formatSceneScriptShape } from "#src/services/genshinAssets/scene/formatSceneScriptShape";
+import { readLuaDialect } from "#src/services/lua/readLuaDialect";
 import { defineCommand } from "citty";
 
 export const sceneScriptsCommand: SubCommandsDef[string] = defineCommand({
@@ -11,14 +14,21 @@ export const sceneScriptsCommand: SubCommandsDef[string] = defineCommand({
       required: true,
       type: "positional",
     },
+    dialect: {
+      default: LuaDialectName.Genshin,
+      description: `The dialect the script is written in: ${Object.values(LuaDialectName).join(", ")}`,
+      options: Object.values(LuaDialectName),
+      type: "enum",
+    },
   },
   meta: {
     description:
-      "Read a scene script of Lua 5.3 bytecode as data, write the globals it sets as JSON beside it, and print each top-level global with its element count",
+      "Read a scene script of Lua 5.3 bytecode as data, write the globals it sets as JSON beside it, and print each top-level global's element count and entry shape",
     name: "scene-scripts",
   },
   run: async ({ args }) => {
-    for (const [name, value] of Object.entries(await exportSceneScript(args.file)))
-      console.log(`${name}: ${countSceneScriptElements(value)}`);
+    const globals = await exportSceneScript(args.file, readLuaDialect(args.dialect));
+    for (const [name, value] of Object.entries(globals))
+      console.log(`${name}: ${countSceneScriptElements(value)} ${formatSceneScriptShape(value)}`);
   },
 });
