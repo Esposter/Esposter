@@ -10,18 +10,6 @@ describe("getProperties type", () => {
     expectTypeOf<GetProperties<unknown[]>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
-  test("bigint", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<GetProperties<bigint>>().toEqualTypeOf<never>();
-  });
-
-  test("boolean", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<GetProperties<boolean>>().toEqualTypeOf<never>();
-  });
-
   test("date", () => {
     expect.hasAssertions();
 
@@ -36,22 +24,16 @@ describe("getProperties type", () => {
     >();
   });
 
-  test("null", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<GetProperties<null>>().toEqualTypeOf<never>();
-  });
-
   test("nullable", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<null | string | undefined>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
-  test("number", () => {
+  test("non-string primitives", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<number>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<bigint | boolean | number | null | undefined>>().toEqualTypeOf<never>();
   });
 
   test("object", () => {
@@ -85,12 +67,6 @@ describe("getProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<[number]>>().toEqualTypeOf<{ path: "length"; value: 1 }>();
-  });
-
-  test("undefined", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<GetProperties<undefined>>().toEqualTypeOf<never>();
   });
 
   test("union", () => {

@@ -17,6 +17,12 @@ describe("slashCommandParameters type", () => {
     expectTypeOf<SlashCommandParameters<SlashCommandType.Me>>().toEqualTypeOf<{ message: string }>();
   });
 
+  test(`${SlashCommandType.Me} refuses an optional message`, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<{ message?: string }>().not.toExtend<SlashCommandParameters<SlashCommandType.Me>>();
+  });
+
   test(SlashCommandType.Shrug, () => {
     expect.hasAssertions();
 

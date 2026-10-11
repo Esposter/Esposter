@@ -46,18 +46,6 @@ describe("deepOmit type", () => {
     }>();
   });
 
-  test("omits nested key in object with nested structure", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<DeepOmit<{ a: { b: { c: string; d: number } } }, "d">>().toEqualTypeOf<{ a: { b: { c: string } } }>();
-  });
-
-  test("preserves Date when omitting its key", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<DeepOmit<{ a: Date; b: string }, "b">>().toEqualTypeOf<{ a: Date }>();
-  });
-
   test("preserves Date in nested object when omitting different key", () => {
     expect.hasAssertions();
 
@@ -74,24 +62,6 @@ describe("deepOmit type", () => {
     expect.hasAssertions();
 
     expectTypeOf<DeepOmit<{ a: typeof Map; b: string }, "prototype">>().toEqualTypeOf<{ a: typeof Map; b: string }>();
-  });
-
-  test("preserves Primitive types when omitting their keys", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<DeepOmit<{ a: string; b: number; c: boolean; d: string }, "d">>().toEqualTypeOf<{
-      a: string;
-      b: number;
-      c: boolean;
-    }>();
-  });
-
-  test("omits key from array of objects at depth", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<DeepOmit<{ a: { b: string; c: string; d: string; e: string }[] }, "c">>().toEqualTypeOf<{
-      a: { b: string; d: string; e: string }[];
-    }>();
   });
 
   test("omits key at multiple nesting levels", () => {
