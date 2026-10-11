@@ -4,7 +4,6 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { SceneFog } from "genshin-world/parity/models/SceneFog";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
-import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { computePixelPoint } from "#src/services/genshinParity/shared/computePixelPoint";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
@@ -18,6 +17,7 @@ import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpa
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
+import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { getOrCreate } from "@esposter/shared";
 import sharp from "sharp";
 import { Matrix4, Vector3 } from "three";

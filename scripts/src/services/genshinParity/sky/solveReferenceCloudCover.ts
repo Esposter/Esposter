@@ -5,10 +5,10 @@ import type { Page } from "playwright";
 
 import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Each share starts at three in four, the simplex's first step in its logit as wide as from there to even odds and

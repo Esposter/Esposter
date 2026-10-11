@@ -1,8 +1,8 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
-import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { SKY_GRADIENT_TERMS, SKY_TERMS } from "#src/services/genshinParity/sky/constants";
+import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import { TONE_CURVE_FLOOR } from "genshin-engine";
 
 // A pixel standing over the sky solved by more than this share of the pixels' typical distance from it, or under it by

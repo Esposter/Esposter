@@ -5,12 +5,14 @@ import { RENEW_MILLISECONDS } from "#src/services/fleet/constants";
 import { pushMachineHeartbeat } from "#src/services/fleet/pushMachineHeartbeat";
 import { readMachineProfile } from "#src/services/fleet/readMachineProfile";
 import { LAUNCHD_PROCESS_ID, SAMPLE_MILLISECONDS, WINDOW_MINUTES } from "#src/services/machine/constants";
+import { checkIsWatching } from "#src/services/machine/checkIsWatching";
 import { formatMachineFigures } from "#src/services/machine/formatMachineFigures";
 import { getCpuPercentage } from "#src/services/machine/getCpuPercentage";
 import { getCpuTotals } from "#src/services/machine/getCpuTotals";
 import { getMachineLine } from "#src/services/machine/getMachineLine";
 import { getMachineState } from "#src/services/machine/getMachineState";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
+import { readMachineState } from "#src/services/machine/readMachineState";
 import { readGpuPercentage } from "#src/services/machine/readGpuPercentage";
 import { readProcesses } from "#src/services/machine/readProcesses";
 import { selectOrphans } from "#src/services/machine/selectOrphans";
@@ -24,6 +26,11 @@ import { setTimeout as sleep } from "node:timers/promises";
 // Watches the machine, one reading a minute, printing a line only when the state changes or an idle or tight state's
 // Reminder falls due, and writing each reading to the state file the genshin-mods pulse reads (the throughput skill)
 export const watchMachine = async (): Promise<void> => {
+  // The session starts one watcher, and a watcher already keeping the state file is left to keep it
+  if (checkIsWatching(readMachineState(), process.pid, Temporal.Now.instant().epochMilliseconds)) {
+    console.info("the machine watcher is already running");
+    return;
+  }
   const cpuAverages: number[] = [];
   let previousTotals: CpuTotals = getCpuTotals(cpus());
   let lastState: MachineState | undefined;

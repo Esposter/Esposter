@@ -1,4 +1,14 @@
 #!/bin/sh
+# A commit on the queue branch starts the queue push detached, its output appended to the sync log, so the commit returns at
+# once. The push takes its own lock, so a commit that lands while one runs only queues another. A push's own commits do not
+# start one, which the variable the push sets marks. Git hands a hook its own `GIT_*` variables, among them a commit by
+# pathspec's temporary index, deleted once the commit returns: the push replays in a worktree of its own, so it starts
+# without any of them
+if [ -z "$ESPOSTER_QUEUE_PUSHING" ] && [ "$(git symbolic-ref --short -q HEAD)" = "ai/queue" ]; then
+  mkdir -p "$HOME/.esposter/queue"
+  (unset GIT_INDEX_FILE GIT_DIR GIT_WORK_TREE GIT_PREFIX GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_REFLOG_ACTION &&
+    pnpm ai:queue:push </dev/null >>"$HOME/.esposter/queue/sync.log" 2>&1 &)
+fi
 # A commit by pathspec runs pre-commit against a temporary index, so the formatting the hook stages reaches the commit
 # but not the real index, which git wrote before the hook ran: each file the hook formatted is left staged as its
 # unformatted copy, undoing the format. A committed file whose index entry is still the one pre-commit recorded before

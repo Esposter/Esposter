@@ -1,5 +1,5 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 import { computeBandEnergies } from "#src/services/genshinParity/music/computeBandEnergies";
 import { computeBandFloor } from "#src/services/genshinParity/music/computeBandFloor";

@@ -1,6 +1,6 @@
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { SOUND_FRAME_LENGTH, SOUND_HOP_LENGTH, SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
-import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
+import { computeBandBins } from "#src/services/recreation/signal/computeBandBins";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 
 // A Hann window's power over its samples, three eighths, and a real signal's spectrum mirrored

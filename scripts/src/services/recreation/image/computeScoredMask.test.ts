@@ -1,4 +1,4 @@
-import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
+import { computeScoredMask } from "#src/services/recreation/image/computeScoredMask";
 import { describe, expect, test } from "vitest";
 
 describe(computeScoredMask, () => {

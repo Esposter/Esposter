@@ -7,7 +7,6 @@ import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData"
 import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { CHANNELS, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { minimizeNelderMead } from "#src/services/genshinParity/shared/minimizeNelderMead";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
@@ -18,6 +17,7 @@ import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDi
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
+import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapGenshin } from "genshin-engine";
 import { mkdir } from "node:fs/promises";

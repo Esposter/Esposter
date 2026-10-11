@@ -1,10 +1,10 @@
 import type { Pixel } from "#src/models/genshinParity/witness/Pixel";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
-import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
 import { computeReprojectionErrors } from "#src/services/genshinParity/witness/computeReprojectionErrors";
 import { findSmallestEigenvector } from "#src/services/genshinParity/witness/findSmallestEigenvector";
+import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
 

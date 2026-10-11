@@ -2,7 +2,6 @@ import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
@@ -13,6 +12,7 @@ import {
   LISTEN_SAMPLE_RATE,
   LOGIN_MUSIC_SCREEN,
 } from "#src/services/genshinParity/shared/constants";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { defineCommand } from "citty";
 
 // The noise solve run twice over the notes we ship, once on the game's sound and once on our own render of them, beside

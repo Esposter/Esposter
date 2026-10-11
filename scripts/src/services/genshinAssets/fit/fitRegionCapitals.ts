@@ -5,13 +5,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import { WORLD_AREAS_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";

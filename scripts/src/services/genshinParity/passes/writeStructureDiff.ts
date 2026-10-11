@@ -1,8 +1,8 @@
 import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 
 import { SURFACES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
+import { drawPixels } from "#src/services/recreation/image/drawPixels";
 import { toByte } from "#src/services/shared/toByte";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";

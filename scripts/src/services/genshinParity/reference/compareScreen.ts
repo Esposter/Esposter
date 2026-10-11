@@ -4,7 +4,6 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
-import { computeScoredMask } from "#src/services/genshinParity/reference/computeScoredMask";
 import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
@@ -22,6 +21,7 @@ import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityRef
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
+import { computeScoredMask } from "#src/services/recreation/image/computeScoredMask";
 import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";

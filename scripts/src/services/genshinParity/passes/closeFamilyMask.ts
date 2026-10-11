@@ -1,4 +1,4 @@
-import { computeBoxSums } from "#src/services/genshinParity/passes/computeBoxSums";
+import { computeBoxSums } from "#src/services/recreation/image/computeBoxSums";
 
 // A family's pixels closed at a radius: every pixel within the radius of one of them, then the result eroded by the
 // Same radius, so the gaps a card's width or less across close over and the canopy reads as one mass

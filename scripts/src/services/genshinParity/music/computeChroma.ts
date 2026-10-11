@@ -1,5 +1,5 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { Chroma } from "#src/models/genshinParity/music/Chroma";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 import { normalizeChromaClasses } from "#src/services/genshinParity/music/normalizeChromaClasses";
 import { CHROMA_MAX_FREQUENCY, CHROMA_MIN_FREQUENCY } from "#src/services/genshinParity/shared/constants";

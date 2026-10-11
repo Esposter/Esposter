@@ -44,14 +44,10 @@ declare module "claude-code" {
     "genshin-mods": {
       commission: Commission;
       enabledMods: EnabledMods;
-      idleMinutes: number;
-      idleReadingAt: string;
       isCommissionExpanded: boolean;
       isHandingOff: boolean;
       lastCacheRequestAt: number;
-      lastIdleWakeMs: number;
       lastPrompt: string;
-      lastQueueSyncMs: number;
       lastQueueSyncToastMs: number;
       lookupStreak: number;
       now: number;

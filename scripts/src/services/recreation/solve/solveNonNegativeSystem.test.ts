@@ -1,4 +1,4 @@
-import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
+import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import { describe, expect, test } from "vitest";
 
 describe(solveNonNegativeSystem, () => {

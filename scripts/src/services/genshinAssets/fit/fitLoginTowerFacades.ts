@@ -20,7 +20,6 @@ import { sampleFacadeGrid } from "#src/services/genshinAssets/fit/sampleFacadeGr
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
 import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
-import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import {
   TOWER_BAND_HEIGHT,
   TOWER_FACADE_CELL_SIZE,
@@ -35,6 +34,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { existsSync } from "node:fs";

@@ -1,4 +1,4 @@
-import { getNeighbourPixels } from "#src/services/genshinParity/shared/getNeighbourPixels";
+import { getNeighbourPixels } from "#src/services/recreation/image/getNeighbourPixels";
 
 // A shadow's edges over flat receivers: each shadowed receiver pixel with a lit receiver beside it, along a row or a
 // Column, so an edge is one pixel wide on its shadow's side and a shadow running off a receiver onto anything else draws

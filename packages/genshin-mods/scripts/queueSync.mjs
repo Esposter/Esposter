@@ -1,29 +1,16 @@
-// The pulse's queue sync: runs `pnpm ai:queue:push` in the repository, appending its output to the sync log and printing
-// Its last line, which a failed sync's toast shows. It does nothing outside the repository, and nothing while a previous
-// Sync still runs under a live pid in its lock. The paths mirror the repository's scripts package, which a plugin cannot
-// Import
+// The pulse's queue sync, run at each turn's end: runs `pnpm ai:queue:push` in the repository, appending its output to the
+// Sync log and printing its last line, which a failed sync's toast shows. The push takes its own lock, so a turn ending
+// While one runs only queues one more. It does nothing outside the repository. The paths mirror the repository's scripts
+// Package, which a plugin cannot import
 import { spawn } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+// oxlint-disable-next-line naming/no-site-name-literal -- the pulse is a plugin script shipped without @esposter/shared, so the folder is written out
 const QUEUE_DIRECTORY = join(homedir(), ".esposter", "queue");
 const LOG_PATH = join(QUEUE_DIRECTORY, "sync.log");
-const LOCK_PATH = join(QUEUE_DIRECTORY, "sync.lock");
 const PUSH_SCRIPT = join("scripts", "src", "queue", "push", "index.ts");
-
-// A pid of 0 or less names a process group, which signalling reads as alive, so only a positive pid counts
-const isProcessRunning = (processId) => {
-  if (!Number.isInteger(processId) || processId <= 0) return false;
-  try {
-    process.kill(processId, 0);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const isLocked = () => existsSync(LOCK_PATH) && isProcessRunning(Number(readFileSync(LOCK_PATH, "utf8")));
 
 // Spawned without a shell, as the watcher is, so the push's own exit code is the one read here
 const runPush = (repositoryRoot) =>
@@ -44,16 +31,12 @@ const runPush = (repositoryRoot) =>
     child.on("close", (code) => resolve({ exitCode: code ?? 1, lastLine }));
   });
 
+// oxlint-disable-next-line no-restricted-properties -- the hook passes the repository root as its one argument, and a plugin ships without citty
 const [repositoryRoot] = process.argv.slice(2);
-if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, PUSH_SCRIPT)) && !isLocked()) {
+if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, PUSH_SCRIPT))) {
   mkdirSync(QUEUE_DIRECTORY, { recursive: true });
   appendFileSync(LOG_PATH, `${new Date().toISOString()} pnpm ai:queue:push\n`);
-  writeFileSync(LOCK_PATH, String(process.pid));
-  try {
-    const { exitCode, lastLine } = await runPush(repositoryRoot);
-    console.log(lastLine === "" ? `exited with code ${exitCode}` : lastLine);
-    process.exitCode = exitCode;
-  } finally {
-    rmSync(LOCK_PATH, { force: true });
-  }
+  const { exitCode, lastLine } = await runPush(repositoryRoot);
+  console.log(lastLine === "" ? `exited with code ${exitCode}` : lastLine);
+  process.exitCode = exitCode;
 }

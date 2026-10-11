@@ -1,12 +1,9 @@
 import type { MusicBandCharacter } from "#src/models/genshinParity/music/MusicBandCharacter";
 import type { MusicNote } from "genshin-engine";
 
-import { computeMedianFlatness } from "#src/services/genshinAssets/shared/computeMedianFlatness";
 import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
-import { computeBandBins } from "#src/services/genshinParity/shared/computeBandBins";
 import {
   BANDS_ONSET_RISE,
   CHROMA_FRAME_LENGTH,
@@ -14,6 +11,9 @@ import {
   CHROMA_QUIET_SHARE,
   LISTEN_BAND_CENTRES,
 } from "#src/services/genshinParity/shared/constants";
+import { computeBandBins } from "#src/services/recreation/signal/computeBandBins";
+import { computeMedianFlatness } from "#src/services/recreation/signal/computeMedianFlatness";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 
 const sum = (values: Iterable<number>): number => {
   let total = 0;

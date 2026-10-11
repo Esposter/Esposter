@@ -3,12 +3,12 @@ import type { Instrument, Music, MusicSegment } from "genshin-engine";
 import type { Except } from "type-fest";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { fitMusicSource } from "#src/services/genshinAssets/shared/fitMusicSource";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
 import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/shared/constants";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -18,7 +18,7 @@ import { computeChromaSpectrogram } from "#src/services/genshinParity/music/comp
 import { computeGapsByOnsetAge } from "#src/services/genshinParity/music/computeGapsByOnsetAge";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
 import { scoreShapedMusic } from "#src/services/genshinParity/music/scoreShapedMusic";
-import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
+import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import { MUSIC_EXPRESSION_WINDOW_SECONDS } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 

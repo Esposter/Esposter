@@ -1,4 +1,4 @@
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 const CHANNELS = 4;
 const COLOUR_CHANNELS = 3;
@@ -17,7 +17,7 @@ interface Level {
 
 // The level's pixels just outside the region are its boundary, known from the frame, and the region's own are unknown.
 // Built over the region and its one-pixel ring, clipped to the frame, so a region on a frame edge has no ring there
-const getFinestLevel = (pixels: Uint8Array, width: number, height: number, region: ParityRegion): Level => {
+const getFinestLevel = (pixels: Uint8Array, width: number, height: number, region: ImageRegion): Level => {
   const left = Math.max(0, region.x - 1);
   const top = Math.max(0, region.y - 1);
   const levelWidth = Math.min(width, region.x + region.width + 1) - left;
@@ -148,7 +148,7 @@ export const fillRegionHarmonically = (
   pixels: Uint8Array,
   width: number,
   height: number,
-  region: ParityRegion,
+  region: ImageRegion,
 ): Uint8Array => {
   const filled = Uint8Array.from(pixels);
   const finest = getFinestLevel(pixels, width, height, region);

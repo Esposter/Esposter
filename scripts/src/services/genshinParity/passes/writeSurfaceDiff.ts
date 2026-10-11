@@ -1,8 +1,8 @@
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { SURFACES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { drawPixels } from "#src/services/genshinParity/shared/drawPixels";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
+import { drawPixels } from "#src/services/recreation/image/drawPixels";
 import { toByte } from "#src/services/shared/toByte";
 import { toSrgb } from "#src/services/shared/toSrgb";
 import { mkdir } from "node:fs/promises";

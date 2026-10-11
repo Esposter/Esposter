@@ -2,8 +2,8 @@ import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainR
 import type { TerrainResidualFade } from "genshin-engine";
 import type { Except } from "type-fest";
 
-import { computeRootMeanSquare } from "#src/services/genshinAssets/fit/computeRootMeanSquare";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { MathUtils } from "three";
 
 // Where a residual is drawn: on nodes a cell apart, centred on the grid's middle and covering all of it, each weighing

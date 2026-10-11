@@ -1,6 +1,6 @@
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/shared/constants";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { A4_FREQUENCY, A4_PITCH, MUSIC_NOISE_BAND_CENTRES } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription/notes";
 import { describe, expect, test } from "vitest";

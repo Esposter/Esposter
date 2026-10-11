@@ -1,6 +1,6 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // The median over frames of a band's spectral flatness, the geometric mean of its bins' power over their arithmetic
 // Mean: near 0 where a few partials hold the band, near 0.56 for white noise under a Hann window, whose bins' power

@@ -1,5 +1,5 @@
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 import { FRAME_LAYER, SKY_LAYER, STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
 
@@ -13,7 +13,7 @@ export const computeLayerMasks = (
     part,
     width: gbufferWidth,
   }: Pick<WitnessGbuffer, "families" | "height" | "part" | "width">,
-  region: ParityRegion,
+  region: ImageRegion,
   frame: { height: number; width: number },
   height: number,
 ): { mask?: Uint8Array; name: string }[] => {

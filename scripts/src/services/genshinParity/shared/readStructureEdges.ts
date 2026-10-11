@@ -1,5 +1,5 @@
-import { computeEdgeThreshold } from "#src/services/genshinParity/shared/computeEdgeThreshold";
 import { readSobelGradients } from "#src/services/genshinParity/shared/readSobelGradients";
+import { computeEdgeThreshold } from "#src/services/recreation/image/computeEdgeThreshold";
 
 // An image's edges at the height given and the structure's width or the one given, as a mask of its pixels
 export const readStructureEdges = async (input: Buffer, height: number, width?: number): Promise<Uint8Array> => {

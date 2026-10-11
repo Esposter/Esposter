@@ -1,7 +1,7 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
-import { solveLinearSystem } from "#src/services/genshinParity/shared/solveLinearSystem";
+import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
 // The sunward colour is settled only where the points looking toward the sun weigh at least this share of the rest
 const MIN_SCATTER_WEIGHT_SHARE = 0.001;

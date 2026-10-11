@@ -1,8 +1,8 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { closeFamilyMask } from "#src/services/genshinParity/passes/closeFamilyMask";
-import { computeBoxSums } from "#src/services/genshinParity/passes/computeBoxSums";
 import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
+import { computeBoxSums } from "#src/services/recreation/image/computeBoxSums";
 
 // A family's envelope at a radius: its pixels closed, its depth averaged over the family within the radius, and its
 // Normals averaged there and normalised, so a scattered family reads as the mass its cards make

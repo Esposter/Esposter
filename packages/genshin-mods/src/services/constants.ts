@@ -4,7 +4,6 @@ export const ACCENT_COLOR = "#d3bc8e";
 export const CACHE_LIFETIME_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
-export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
 // The usage lines each window's two tiers start at: the maintenance tier, then the wind-down
 export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;
@@ -60,20 +59,12 @@ export const LOOKUP_COMMAND_REGEX =
 export const DELEGATION_NUDGE_EVERY = 3;
 export const DELEGATION_NUDGE =
   "Third lookup in a row with no decision between them: by the llm-delegation skill's hop rule this chain goes to a haiku agent as one bounded question.";
-// The machine counts as idle under this share on its CPU and its GPU, and the session is woken once it has been idle for
-// The wait, then again each repeat interval while it stays idle
-export const UTILIZATION_LINE_PERCENTAGE = 80;
-export const IDLE_WAKE_MINUTES = 5;
-export const IDLE_WAKE_REPEAT_MINUTES = 15;
-export const IDLE_WAKE_REPEAT_MILLISECONDS: number = Temporal.Duration.from({
-  minutes: IDLE_WAKE_REPEAT_MINUTES,
-}).total("milliseconds");
-// The queue is synced on the pulse's tick once this long after the last sync started, outside a turn; a failed sync's
-// Toast is shown at most once this long apart
-export const QUEUE_SYNC_MINUTES = 10;
-export const QUEUE_SYNC_MILLISECONDS: number = Temporal.Duration.from({ minutes: QUEUE_SYNC_MINUTES }).total(
-  "milliseconds",
-);
+// The watcher prints a line starting with this when the machine goes idle, and each reminder it repeats while it stays idle.
+// Each one wakes the session, so the repeat is the watcher's own cadence rather than a timer here
+export const IDLE_LINE_PREFIX = "machine idle:";
+// The repository's watcher, which the pulse runs as its child and reads the lines of
+export const MACHINE_WATCHER_SCRIPT = "scripts/src/machine/watch/index.ts";
+// A failed queue sync's toast is shown at most once this long apart
 export const QUEUE_SYNC_TOAST_MILLISECONDS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const IDLE_WAKE_PROMPT: string = `This machine has run under ${UTILIZATION_LINE_PERCENTAGE}% CPU and GPU for ${IDLE_WAKE_MINUTES} minutes. Run \`pnpm ai:fleet:fill\`, then launch one background haiku agent per brief it printed, the brief as the prompt, then report what started. If it printed "nothing ready", report that and stop.`;
+export const IDLE_WAKE_PROMPT: string = `The machine has gone idle, with room for more runs. Run \`pnpm ai:fleet:fill\`, then launch one background haiku agent per brief it printed, the brief as the prompt, then report what started. If it printed "nothing ready", report that and stop.`;

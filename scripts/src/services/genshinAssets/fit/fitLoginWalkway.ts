@@ -7,7 +7,6 @@ import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopF
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
-import { computeUpperMedian } from "#src/services/genshinAssets/shared/computeUpperMedian";
 import {
   WALKWAY_CELL_SIZE,
   WALKWAY_MESH_REGEX,
@@ -18,6 +17,7 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
+import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
 import { join } from "node:path";
 
 // A piece's tops read from above on a centimetre grid

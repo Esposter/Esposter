@@ -1,13 +1,13 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 import type { MusicNote } from "genshin-engine";
 
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
 import { toFrequency } from "#src/services/genshinAssets/shared/toFrequency";
 import {
   NOTE_SUPPORT_DELAY_SECONDS,
   NOTE_SUPPORT_SEMITONES,
   NOTE_SUPPORT_SPAN_SECONDS,
 } from "#src/services/genshinParity/shared/constants";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // How far the game's sound stands over ours at a note's fundamental, in decibels: in each frame whose centre lies
 // Within the note's heard span, the loudest bin within `NOTE_SUPPORT_SEMITONES` of its pitch in each spectrogram, and

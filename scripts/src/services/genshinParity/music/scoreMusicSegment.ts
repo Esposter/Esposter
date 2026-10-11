@@ -1,12 +1,12 @@
-import type { Spectrogram } from "#src/models/genshinAssets/shared/Spectrogram";
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
+import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { computeChromaAgreement } from "#src/services/genshinParity/music/computeChromaAgreement";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 
 // How close our render of a segment of music sounds to the game's, over the frames the game's sound is not quiet in.
 // Its pitch agreement is the mean dot product of the two's pitch classes, 1 when every frame names the same notes in

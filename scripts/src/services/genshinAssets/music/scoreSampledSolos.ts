@@ -6,7 +6,7 @@ import { computeRecordingOnset } from "#src/services/genshinAssets/music/compute
 import { computeVoicePitchReference } from "#src/services/genshinAssets/music/computeVoicePitchReference";
 import { readInstrumentRecordings } from "#src/services/genshinAssets/music/readInstrumentRecordings";
 import { renderSampledVoice } from "#src/services/genshinAssets/music/renderSampledVoice";
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 import { selectMusicSample } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 

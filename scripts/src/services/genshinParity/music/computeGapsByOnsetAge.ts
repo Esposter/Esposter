@@ -1,9 +1,9 @@
 import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
 import type { OnsetAgeGaps } from "#src/models/genshinParity/music/OnsetAgeGaps";
 
-import { computeMean } from "#src/services/genshinAssets/shared/computeMean";
 import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
 import { DECAY_AGE_BOUNDS } from "#src/services/genshinParity/shared/constants";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 
 // Each band's gap from the game's sound read by how long before each frame the last note began, in the spans
 // `DECAY_AGE_BOUNDS` divides, the last open: a gap that falls with the age is a sound that dies sooner than the game's,

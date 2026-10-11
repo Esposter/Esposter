@@ -1,6 +1,6 @@
 import type { GroundPoint } from "genshin-engine";
 
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // The point whose each axis is the median of the set's, which a few far points cannot pull away from the rest
 export const getMedianPoint = (points: readonly GroundPoint[]): GroundPoint => ({

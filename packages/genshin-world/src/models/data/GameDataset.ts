@@ -36,6 +36,7 @@ export enum GameDataset {
   Puzzles = "puzzles",
   Quests = "quests",
   QuestText = "questText",
+  Regions = "regions",
   Reputation = "reputation",
   SceneNpcBorn = "sceneNpcBorn",
   Shops = "shops",

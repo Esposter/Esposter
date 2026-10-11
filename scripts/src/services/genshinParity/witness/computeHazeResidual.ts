@@ -2,9 +2,9 @@ import type { StoneLightSample } from "#src/models/genshinParity/witness/StoneLi
 
 import { accumulateNormalEquations } from "#src/services/genshinParity/shared/accumulateNormalEquations";
 import { CHANNELS } from "#src/services/genshinParity/shared/constants";
-import { solveNonNegativeSystem } from "#src/services/genshinParity/shared/solveNonNegativeSystem";
 import { RIDGE } from "#src/services/genshinParity/witness/constants";
 import { groupStoneBins } from "#src/services/genshinParity/witness/groupStoneBins";
+import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonNegativeSystem";
 import { toSrgb } from "#src/services/shared/toSrgb";
 import { toneMapGenshin } from "genshin-engine";
 import { Matrix3, Vector3 } from "three";

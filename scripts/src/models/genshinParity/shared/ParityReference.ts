@@ -1,6 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPlacement } from "#src/models/genshinParity/shared/ParityPlacement";
-import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion";
+import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
 // A reference is a wiki file, or one frame of a recording kept in the captures folder: a still the wiki lacks is taken
 // From the game itself, at the second it shows, cropped to the game's own screen when the recording letterboxes it
@@ -8,7 +8,7 @@ import type { ParityRegion } from "#src/models/genshinParity/shared/ParityRegion
 // From, so it is shot and scored at that frame's scale
 export type ParityReference = ParityReferenceBase &
   (
-    | { capture: string; crop?: ParityRegion; placement?: never; seconds: number; wikiTitle?: never }
+    | { capture: string; crop?: ImageRegion; placement?: never; seconds: number; wikiTitle?: never }
     | { capture?: never; crop?: never; placement?: ParityPlacement; seconds?: never; wikiTitle: string }
   );
 interface ParityReferenceBase {
@@ -27,7 +27,7 @@ interface ParityReferenceBase {
   // The rectangles within the region a comparison scores, in the reference's own pixels: every other pixel is masked
   // Out of the mean difference and FLIP, so a painted terrain the page does not draw never counts. The whole region when
   // Absent
-  mask?: ParityRegion[];
+  mask?: ImageRegion[];
   // The reprojection, in the reference's pixels, `pose --write` holds its solved camera to in place of the camera pass's
   // Gate, for a reference whose rigid landmarks cannot reach that gate; the reason is written beside the entry
   poseBar?: number;
@@ -36,7 +36,7 @@ interface ParityReferenceBase {
   props?: Record<string, unknown>;
   // The part a comparison scores, in the reference's own pixels, so the world behind a menu never counts against it;
   // The whole frame when absent
-  region?: ParityRegion;
+  region?: ImageRegion;
   // The parity page's screen that recreates it, by its component's name
   screen: string;
 }

@@ -1,10 +1,10 @@
 import type { InstrumentFit } from "#src/models/genshinAssets/shared/InstrumentFit";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
-import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
 import { MUSIC_FRAME_LENGTH, MUSIC_HOP_LENGTH, MUSIC_VOICE_COUNT } from "#src/services/genshinAssets/shared/constants";
 import { fitInstrument } from "#src/services/genshinAssets/shared/fitInstrument";
 import { splitVoicesByRegister } from "#src/services/genshinAssets/shared/splitVoicesByRegister";
+import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
 // A source's notes split by register into voices, and each voice's instrument fitted to the source it was heard in,

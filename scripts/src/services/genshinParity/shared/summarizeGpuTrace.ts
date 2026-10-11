@@ -3,8 +3,8 @@ import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 
-import { computeMedian } from "#src/services/genshinAssets/shared/computeMedian";
 import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarizeCpuWindow";
+import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
 // A frame is slow past this many milliseconds, the same line the stall summary counts by
 const SLOW_FRAME_MS = 50;
