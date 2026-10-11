@@ -1,9 +1,8 @@
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
-import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
+import { publishObjectsStep } from "#src/services/gameData/publishObjectsStep";
 import { readAuthoredGameData } from "#src/services/gameData/readAuthoredGameData";
-import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
 import { defineCommand } from "citty";
 
 export const authoredCommand: SubCommandsDef[string] = defineCommand({
@@ -16,12 +15,6 @@ export const authoredCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const objects = await readAuthoredGameData();
     // Each file is its own key, so a ground a fit publishes, Windrise's among them, is kept beside the authored ones
-    console.log(
-      await publishGameDataStep({
-        isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects },
-        scopes: toGameDataKeyScopes(Object.keys(objects)),
-      }),
-    );
+    console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects }));
   },
 });

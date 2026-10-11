@@ -2,8 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { PaletteRegion } from "#src/models/genshinAssets/palette/PaletteRegion";
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
-import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
+import { publishObjectsStep } from "#src/services/gameData/publishObjectsStep";
 import { sampleRegionPalette } from "#src/services/genshinAssets/palette/sampleRegionPalette";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -27,12 +26,6 @@ export const paletteCommand: SubCommandsDef[string] = defineCommand({
     if (!region) throw new InvalidOperationError(Operation.Read, args.region, "is no palette region");
     const { notes, objects } = await sampleRegionPalette(region);
     for (const note of notes) console.log(note);
-    console.log(
-      await publishGameDataStep({
-        isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects },
-        scopes: toGameDataKeyScopes(Object.keys(objects)),
-      }),
-    );
+    console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects }));
   },
 });

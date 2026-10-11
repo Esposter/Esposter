@@ -2,8 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
-import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
-import { toGameDataKeyScopes } from "#src/services/gameData/toGameDataKeyScopes";
+import { publishObjectsStep } from "#src/services/gameData/publishObjectsStep";
 import { DerivedAssetFitMap } from "#src/services/genshinAssets/fit/DerivedAssetFitMap";
 import { parseDerivedAssetComponent } from "#src/services/genshinAssets/shared/parseDerivedAssetComponent";
 import { parseNames } from "#src/services/shared/parseNames";
@@ -35,13 +34,6 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     if (!fit) throw new InvalidOperationError(Operation.Read, component, "has no fit yet");
     const { notes, objects } = await fit(only);
     for (const note of notes) console.log(note);
-    // Each key is its own scope, so a fit run alone replaces only its own records and keeps its dataset's others
-    console.log(
-      await publishGameDataStep({
-        isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects },
-        scopes: toGameDataKeyScopes(Object.keys(objects)),
-      }),
-    );
+    console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects }));
   },
 });
