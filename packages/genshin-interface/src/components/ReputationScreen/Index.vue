@@ -3,6 +3,8 @@ import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
 interface Props {
+  // The achieved mark's words in the reader's language, read to assistive technology in place of the mark
+  achievedLabel: string;
   // The way back to the world in the reader's language
   backLabel: string;
   // The picked level's reward, named as the game names it
@@ -16,7 +18,7 @@ interface Props {
 }
 
 const levelId = defineModel<number>("levelId", { default: 0 });
-const { backLabel, headline, levels, requirement, title } = defineProps<Props>();
+const { achievedLabel, backLabel, headline, levels, requirement, title } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 
@@ -41,10 +43,14 @@ const emit = defineEmits<{ close: [] }>();
         <button class="level" :aria-pressed="level.id === levelId" type="button" @click="levelId = level.id">
           <span class="level-label">{{ level.levelLabel }}</span>
           <span class="items">
+            <span class="hidden-label">{{ level.itemCountLabel }}</span>
             <span v-for="index of level.itemCount" :key="index" class="item" />
           </span>
           <span class="unlock">{{ level.unlockLabel }}</span>
-          <span v-if="level.isAchieved" class="achieved" aria-hidden="true">✓</span>
+          <span v-if="level.isAchieved" class="achieved">
+            <span aria-hidden="true">✓</span>
+            <span class="hidden-label">{{ achievedLabel }}</span>
+          </span>
           <span v-else class="status">{{ level.statusLabel }}</span>
         </button>
       </li>
@@ -112,7 +118,7 @@ const emit = defineEmits<{ close: [] }>();
   margin: 0;
   padding: calc(var(--unit) * 24) calc(var(--unit) * 33);
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: auto;
   background: rgb(245 240 230 / 0.92);
   list-style: none;
 }
@@ -138,6 +144,14 @@ const emit = defineEmits<{ close: [] }>();
 .level-label {
   width: calc(var(--unit) * 130);
   font-size: calc(var(--unit) * 30);
+}
+
+.hidden-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 .items {
