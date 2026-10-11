@@ -9,8 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
-import { createYunjinKit } from "#src/services/kit/characters/yunjinKit";
+import { createYunjinKit, YUNJIN_CHARACTER_ID } from "#src/services/kit/characters/yunjinKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -56,7 +55,7 @@ describe(createYunjinKit, () => {
     expect(multipliers).toStrictEqual(expectedMultipliers);
   });
 
-  test("Opening Flourish's tap and charges scale with her DEF, not her ATK", () => {
+  test("opening Flourish's tap and charges scale with her DEF, not her ATK", () => {
     expect.hasAssertions();
     const combatant = createYunjinCombatant();
     const tap = takeOne(YUNJIN_KIT.elementalSkill.hits);
@@ -90,7 +89,7 @@ describe(createYunjinKit, () => {
     ]).toStrictEqual([25, 60, 15]);
   });
 
-  test("Opening Flourish's shield is her Max HP's share and flat HP, lasting until its hit", () => {
+  test("opening Flourish's shield is her Max HP's share and flat HP, lasting until its hit", () => {
     expect.hasAssertions();
     const combatant = createYunjinCombatant();
     const [shield] = castStart(YUNJIN_KIT.elementalSkill, combatant).effects as KitShield[];

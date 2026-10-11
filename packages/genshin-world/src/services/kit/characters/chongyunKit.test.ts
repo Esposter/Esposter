@@ -13,12 +13,11 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { CHONGYUN_CHARACTER_ID } from "#src/services/kit/characters/chongyunKit";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createChongyunKit } from "#src/services/kit/characters/chongyunKit";
+import { CHONGYUN_CHARACTER_ID, createChongyunKit } from "#src/services/kit/characters/chongyunKit";
 import { createKitEventContext } from "#src/services/kit/createKitEventContext.test";
 import { createKitState } from "#src/services/kit/createKitState";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
@@ -94,8 +93,8 @@ describe(createChongyunKit, () => {
     );
     const kitEffectState: KitEffectState = { effects: [] };
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
+      characterIdCombatantMap: new Map(),
       enemyMap: new Map(),
       kitEffectState,
       party: createParty([CHONGYUN_CHARACTER_ID]),
@@ -134,16 +133,16 @@ describe(createChongyunKit, () => {
     const claymoreEffectState: KitEffectState = { effects: [] };
     const party = createParty([CHONGYUN_CHARACTER_ID]);
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       activeCombatant: { ...createChongyunCombatant(), weaponType: WeaponType.Catalyst },
+      characterIdCombatantMap: new Map(),
       enemyMap: new Map(),
       kitEffectState: catalystEffectState,
       party,
       tickIndex: 0,
     });
     field?.onTick({
-      characterIdCombatantMap: new Map(),
       activeCombatant: createChongyunCombatant(),
+      characterIdCombatantMap: new Map(),
       enemyMap: new Map(),
       kitEffectState: claymoreEffectState,
       party,

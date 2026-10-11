@@ -16,10 +16,10 @@ import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Yun Jin's proud skill groups, read at her talent level. The attack group holds the first strike's hit at 0, the second's at
 // 1, the third's two at 2 and 3, the fourth's two at 4 and 5 and the fifth's at 6, the charged attack at 7 and its stamina at
-// 8, and the plunges' collision, low and high at 9, 10 and 11. The skill group holds Opening Flourish's shield share at 0 and
-// flat HP at 1, its tap's DMG at 2, its level 1 and 2 charges' DMG at 3 and 4, and its cooldown at 5. The burst group holds
-// Cliffbreaker's Banner's damage at 0, its DMG Increase at 1, its seconds at 2, its cooldown at 3, its energy cost at 4, and its
-// Trigger Quota at 5
+// 8, and the plunges' collision, low and high at 9, 10 and 11. The skill group holds Opening Flourish's shield share at
+// 0 and Flat HP at 1, its tap's DMG at 2, its level 1 and 2 charges' DMG at 3 and 4, and its cooldown at 5. The burst group holds
+// Cliffbreaker's Banner's damage at 0, its DMG Increase at 1, its seconds at 2, its cooldown at 3, its energy cost at
+// 4, and its Trigger Quota at 5
 const YUNJIN_ATTACK_GROUP_ID = 6431;
 const YUNJIN_SKILL_GROUP_ID = 6432;
 const YUNJIN_BURST_GROUP_ID = 6439;
@@ -98,9 +98,9 @@ const createDefenseScaledBonus =
 
 export const YUNJIN_CHARACTER_ID = 10_000_064;
 
-// Yun Jin's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Opening Flourish with
-// Its tap and its two charge levels, each with a shield of her Max HP and a flat share to its hit. Cliffbreaker's Banner's
-// initial hit is built, but not its DEF-scaled DMG Increase on each of the party's normal attacks, which the kit prices from
+// Yun Jin's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, and Opening
+// Flourish with Its tap and its two charge levels, each with a shield of her Max HP and a flat share to its hit.
+// Cliffbreaker's Banner's Initial hit is built, but not its DEF-scaled DMG Increase on each of the party's normal attacks, which the kit prices from
 // The striker's stats alone, nor her passives or constellations
 export const createYunjinKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>

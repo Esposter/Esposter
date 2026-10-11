@@ -7,12 +7,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { createNingguangKit } from "#src/services/kit/characters/ningguangKit";
-import { createTravelerKit } from "#src/services/kit/travelerKit";
+import { createNingguangKit, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
+import { createTravelerKit } from "#src/services/kit/travelerKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -87,7 +86,7 @@ describe(createNingguangKit, () => {
     const party = createParty([NINGGUANG_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const context = { activeCombatant: combatant, body, party };
     const kitEffectState: KitEffectState = { effects: [] };
-    const start = { body: kitBody, combatant, kitEffectState, party: party };
+    const start = { body: kitBody, combatant, kitEffectState, party };
     // The Star Jades a charged attack fires, past its own gem
     const fireStarJades = (): number => {
       NINGGUANG_KIT.chargedAttack.onStart?.(start);

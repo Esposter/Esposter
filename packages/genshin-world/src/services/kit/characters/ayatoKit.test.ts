@@ -50,6 +50,15 @@ const getShunsuikenHit = (kitEffectState: KitEffectState, index: number): KitHit
 const readStacks = (hit: KitHit, combatant: Combatant): number =>
   Math.round((hit.additiveBaseDamageBonus?.(combatant) ?? 0) / (MAX_HEALTH * NAMISEN_SHARE));
 
+const stacksAfterStrikes = (constellationCount: number): number => {
+  const combatant = createAyatoCombatant(0, constellationCount);
+  const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
+  const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
+  for (let strike = 0; strike < 6; strike++)
+    shunsuikenHit.onStrike?.({ body: kitBody, combatant, kitEffectState, party: createParty([AYATO_CHARACTER_ID]) });
+  return readStacks(shunsuikenHit, combatant);
+};
+
 describe(createAyatoKit, () => {
   test("reads the strikes', charged attack's and plunges' multipliers from his proud skill groups", () => {
     expect.hasAssertions();
@@ -80,7 +89,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Kamisato Art: Kyouka's water illusion hits at its 35-frame delay, and Soukai Kanka lasts six seconds", () => {
+  test("kamisato Art: Kyouka's water illusion hits at its 35-frame delay, and Soukai Kanka lasts six seconds", () => {
     expect.hasAssertions();
     const kitEffectState = castAction(AYATO_KIT.elementalSkill);
     const illusionHit = takeOne(AYATO_KIT.elementalSkill.hits);
@@ -108,21 +117,8 @@ describe(createAyatoKit, () => {
     expect(stacks).toStrictEqual([0, 1, 2]);
   });
 
-  test("Namisen stacks stop at four, or five from Constellation 2", () => {
+  test("namisen stacks stop at four, or five from Constellation 2", () => {
     expect.hasAssertions();
-    const stacksAfterStrikes = (constellationCount: number): number => {
-      const combatant = createAyatoCombatant(0, constellationCount);
-      const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
-      const shunsuikenHit = getShunsuikenHit(kitEffectState, 0);
-      for (let strike = 0; strike < 6; strike++)
-        shunsuikenHit.onStrike?.({
-          body: kitBody,
-          combatant,
-          kitEffectState,
-          party: createParty([AYATO_CHARACTER_ID]),
-        });
-      return readStacks(shunsuikenHit, combatant);
-    };
 
     expect({ base: stacksAfterStrikes(0), constellation2: stacksAfterStrikes(2) }).toStrictEqual({
       base: 4,
@@ -130,7 +126,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Ascension 1 sets two stacks as Kyouka is cast and the most as its water illusion explodes", () => {
+  test("ascension 1 sets two stacks as Kyouka is cast and the most as its water illusion explodes", () => {
     expect.hasAssertions();
     const combatant = createAyatoCombatant(1);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
@@ -154,7 +150,7 @@ describe(createAyatoKit, () => {
     });
   });
 
-  test("Constellation 6 sets off two extra Shunsuiken strikes of 450% on the first enemy struck once Kyouka is cast", () => {
+  test("constellation 6 sets off two extra Shunsuiken strikes of 450% on the first enemy struck once Kyouka is cast", () => {
     expect.hasAssertions();
     const combatant = createAyatoCombatant(0, 6);
     const kitEffectState = castAction(AYATO_KIT.elementalSkill, combatant);
@@ -177,7 +173,7 @@ describe(createAyatoKit, () => {
     ]);
   });
 
-  test("Suiyuu's field follows the body and strikes from its first tick at 101 frames, every 30 frames", () => {
+  test("suiyuu's field follows the body and strikes from its first tick at 101 frames, every 30 frames", () => {
     expect.hasAssertions();
     const kitEffectState = castAction(AYATO_KIT.elementalBurst);
     const field = kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
@@ -192,11 +188,11 @@ describe(createAyatoKit, () => {
     const tickSummon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect({
+      hitmarkFrames: Math.round(takeOne(tickSummon?.hits ?? []).hitmarkSeconds * 60),
       isFollowing: field?.isFollowing,
       nextTickFrames: Math.round((field?.nextTickSeconds ?? 0) * 60),
       tickIntervalFrames: Math.round((field?.tickIntervalSeconds ?? 0) * 60),
-      hitmarkFrames: Math.round(takeOne(tickSummon?.hits ?? []).hitmarkSeconds * 60),
-    }).toStrictEqual({ isFollowing: true, nextTickFrames: 101, tickIntervalFrames: 30, hitmarkFrames: 38 });
+    }).toStrictEqual({ hitmarkFrames: 38, isFollowing: true, nextTickFrames: 101, tickIntervalFrames: 30 });
   });
 
   test("leaving the field ends Soukai Kanka and clears the Namisen stacks", () => {

@@ -10,8 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
-import { createGorouKit } from "#src/services/kit/characters/gorouKit";
+import { createGorouKit, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
@@ -32,7 +31,7 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
-const isField = (effect: KitEffect): effect is KitField => effect.kind === "field";
+const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
 
 describe(createGorouKit, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
@@ -66,15 +65,15 @@ describe(createGorouKit, () => {
 
   test("the General's War Banner buffs the active character's DEF, and its Geo DMG from three Geo characters", () => {
     expect.hasAssertions();
-    const banner = castEffects(GOROU_KIT.elementalSkill).find((effect) => isField(effect));
+    const banner = castEffects(GOROU_KIT.elementalSkill).find((effect) => checkIsField(effect));
     const combatant = createGorouCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
     banner?.onTick({
       activeCombatant: combatant,
       characterIdCombatantMap: new Map([
-        [GOROU_CHARACTER_ID, combatant],
         [1, createGorouCombatant(1)],
         [2, createGorouCombatant(2)],
+        [GOROU_CHARACTER_ID, combatant],
       ]),
       enemyMap: new Map(),
       kitEffectState,
@@ -104,7 +103,7 @@ describe(createGorouKit, () => {
 
   test("juuga's field moves with the body on the field", () => {
     expect.hasAssertions();
-    const field = castEffects(GOROU_KIT.elementalBurst).find((effect) => isField(effect));
+    const field = castEffects(GOROU_KIT.elementalBurst).find((effect) => checkIsField(effect));
     if (field)
       stepKitField(
         field,
@@ -128,7 +127,7 @@ describe(createGorouKit, () => {
     castEffects(GOROU_KIT.elementalBurst, kitEffectState);
     castEffects(GOROU_KIT.elementalSkill, kitEffectState);
 
-    expect(kitEffectState.effects.filter((effect) => isField(effect))).toHaveLength(1);
+    expect(kitEffectState.effects.filter((effect) => checkIsField(effect))).toHaveLength(1);
   });
 
   test("the crystal collapse's six ticks are set out at the cast, the first 2 seconds after it", () => {

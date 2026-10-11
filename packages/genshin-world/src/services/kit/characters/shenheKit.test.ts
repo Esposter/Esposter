@@ -8,13 +8,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
-import { createShenheKit } from "#src/services/kit/characters/shenheKit";
+import { createShenheKit, SHENHE_CHARACTER_ID } from "#src/services/kit/characters/shenheKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const SHENHE_KIT = createShenheKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [SHENHE_CHARACTER_ID]));
 
@@ -56,6 +54,9 @@ describe(createShenheKit, () => {
     return kitEffectState.effects;
   };
 
+  const tickSummon = (tickIndex: number): KitSummon | undefined =>
+    tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
+
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -91,15 +92,13 @@ describe(createShenheKit, () => {
     ]).toStrictEqual([25, 80, 20]);
   });
 
-  test("Divine Maiden's Deliverance's field ticks from 82 frames, every 117, and its DoT's second hit follows its tick's offset", () => {
+  test("divine Maiden's Deliverance's field ticks from 82 frames, every 117, and its DoT's second hit follows its tick's offset", () => {
     expect.hasAssertions();
     const field = castField(0);
 
     expect(field.nextTickSeconds).toBeCloseTo(82 / 60);
     expect(field.tickIntervalSeconds).toBeCloseTo(117 / 60);
     expect(field.radius).toBe(7);
-    const tickSummon = (tickIndex: number): KitSummon | undefined =>
-      tickField(0, tickIndex).find((effect): effect is KitSummon => effect.kind === "summon");
     expect(tickSummon(1)?.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60))).toStrictEqual([0, 32]);
   });
 

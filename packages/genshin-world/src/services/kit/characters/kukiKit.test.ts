@@ -9,14 +9,12 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
-import { createKukiKit } from "#src/services/kit/characters/kukiKit";
+import { createKukiKit, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createKitStepContext } from "#src/services/kit/createKitStepContext.test";
 
 const KUKI_KIT = createKukiKit(await readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [KUKI_CHARACTER_ID]));
 
@@ -44,6 +42,11 @@ describe(createKukiKit, () => {
   };
   const castSummon = (action: KitAction): KitSummon | undefined =>
     castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
+
+  const ringSeconds = (constellationCount: number): number =>
+    castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
+      .filter((effect): effect is KitField => effect.kind === "field")
+      .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
 
   test("reads the strikes', charged slashes' and plunges' multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -73,7 +76,7 @@ describe(createKukiKit, () => {
     });
   });
 
-  test("Gyoei Narukami Kariyama Rite's seven hits land from 50 frames every 17, each a share of her Max HP", () => {
+  test("gyoei Narukami Kariyama Rite's seven hits land from 50 frames every 17, each a share of her Max HP", () => {
     expect.hasAssertions();
     const hits = castSummon(KUKI_KIT.elementalBurst)?.hits ?? [];
 
@@ -85,10 +88,6 @@ describe(createKukiKit, () => {
 
   test("the Grass Ring lasts 12 seconds from its 23rd frame, and 15 from Constellation 2", () => {
     expect.hasAssertions();
-    const ringSeconds = (constellationCount: number): number =>
-      castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
-        .filter((effect): effect is KitField => effect.kind === "field")
-        .find((field) => field.tickIntervalSeconds > 1)?.secondsRemaining ?? 0;
 
     expect(ringSeconds(1)).toBeCloseTo(23 / 60 + 12 + 0.1);
     expect(ringSeconds(2)).toBeCloseTo(23 / 60 + 15 + 0.1);
