@@ -57,4 +57,8 @@ export const content: NuxtConfig["content"] = {
     // Use node:sqlite so we don't need the better-sqlite3 native dependency
     sqliteConnector: "native",
   },
+  // No content watcher under `nuxt dev`: every file it sees change recompiles the whole compressed database, a couple of
+  // Seconds each, and the sessions sharing the checkout write and sync the docs all day, so it never settled. A docs edit
+  // Reaches the page on the next start, as a package edit does
+  watch: { enabled: false },
 };
