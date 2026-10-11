@@ -15,8 +15,7 @@ import { parseResourceAssetPath } from "#shared/services/resource/parseResourceA
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
-import { lookup } from "mime-types";
+import { getResultAsync, lookup, noop } from "@esposter/shared";
 import { createError, defineEventHandler, getRequestIP, sendRedirect } from "nuxt/server";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller

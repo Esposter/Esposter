@@ -407,9 +407,6 @@ catalogs:
     '@types/js-beautify':
       specifier: ^1.14.3
       version: 1.14.3
-    '@types/mime-types':
-      specifier: ^3.0.1
-      version: 3.0.1
     '@types/node':
       specifier: ^26.6.5
       version: 26.6.5
@@ -674,9 +671,9 @@ catalogs:
     mermaid:
       specifier: ^12.1.0
       version: 12.1.0
-    mime-types:
-      specifier: ^3.0.2
-      version: 3.0.2
+    mime-db:
+      specifier: ^1.54.0
+      version: 1.54.0
     minisearch:
       specifier: ^7.2.0
       version: 7.2.0
@@ -1335,9 +1332,6 @@ importers:
       mermaid:
         specifier: 'catalog:'
         version: 12.1.0
-      mime-types:
-        specifier: 'catalog:'
-        version: 3.0.2
       minisearch:
         specifier: 'catalog:'
         version: 7.2.0
@@ -1486,9 +1480,6 @@ importers:
       '@types/js-beautify':
         specifier: 'catalog:'
         version: 1.14.3
-      '@types/mime-types':
-        specifier: 'catalog:'
-        version: 3.0.1
       '@types/three':
         specifier: 'catalog:'
         version: 0.186.0
@@ -1823,9 +1814,6 @@ importers:
       linkifyjs:
         specifier: 'catalog:'
         version: 4.3.3
-      mime-types:
-        specifier: 'catalog:'
-        version: 3.0.2
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.4
@@ -1839,9 +1827,6 @@ importers:
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:../shared-node
-      '@types/mime-types':
-        specifier: 'catalog:'
-        version: 3.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.23.1(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.1)(@volar/typescript@2.4.28(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))(@vue/language-core@3.3.13)(oxc-resolver@11.24.2)(publint@0.3.25)(tsx@4.23.15)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))
@@ -2255,6 +2240,9 @@ importers:
 
   packages/shared:
     dependencies:
+      mime-db:
+        specifier: 'catalog:'
+        version: 1.54.0
       neverthrow:
         specifier: 'catalog:'
         version: 8.2.0
@@ -8068,9 +8056,6 @@ packages:
 
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
-
-  '@types/mime-types@3.0.1':
-    resolution: {integrity: sha512-xRMsfuQbnRq1Ef+C+RKaENOxXX87Ygl38W1vDfPHRku02TgQr+Qd8iivLtAMcR0KF5/29xlnFihkTlbqFrGOVQ==}
 
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
@@ -21871,8 +21856,6 @@ snapshots:
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
-
-  '@types/mime-types@3.0.1': {}
 
   '@types/minimist@1.2.5': {}
 
