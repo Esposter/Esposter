@@ -6,9 +6,17 @@ interface FilePickerType {
   description?: string;
 }
 
+interface OpenFilePickerHandle {
+  getFile: () => Promise<File>;
+}
+
 interface OpenFilePickerOptions {
   multiple?: boolean;
   types?: FilePickerType[];
+}
+
+interface SaveFilePickerHandle {
+  createWritable: () => Promise<SaveFilePickerWritable>;
 }
 
 interface SaveFilePickerOptions {
@@ -16,18 +24,10 @@ interface SaveFilePickerOptions {
   types?: FilePickerType[];
 }
 
-interface OpenFilePickerHandle {
-  getFile: () => Promise<File>;
-}
-
 interface SaveFilePickerWritable {
   abort: () => Promise<void>;
   close: () => Promise<void>;
   write: (data: Blob) => Promise<void>;
-}
-
-interface SaveFilePickerHandle {
-  createWritable: () => Promise<SaveFilePickerWritable>;
 }
 
 interface Window {
