@@ -307,7 +307,6 @@ catalog:
   xmlbuilder2: ^4.0.3
   xss: ^1.0.15
   zod: ^4.6.5
-  lru-cache: ^11.5.3
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
