@@ -4,7 +4,6 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
-import { AuraType } from "#src/models/combat/AuraType";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -15,6 +14,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -93,12 +93,6 @@ const IRIS_TAG_STATUS_ID = "heizou-windmuster-iris-tags";
 const IRIS_MAX_TAGS = 4;
 const IRIS_DELAY_FRAMES = 40;
 const IRIS_HIT_AREA = createFanReach(360, 2.5);
-const IRIS_AURAS: readonly (readonly [Element, AuraType])[] = [
-  [Element.Pyro, AuraType.Pyro],
-  [Element.Hydro, AuraType.Hydro],
-  [Element.Electro, AuraType.Electro],
-  [Element.Cryo, AuraType.Cryo],
-];
 
 export const HEIZOU_CHARACTER_ID = 10_000_059;
 
@@ -309,7 +303,7 @@ export const createHeizouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       );
       if (!tags || (tags.stacks ?? 0) >= IRIS_MAX_TAGS) return;
       tags.stacks = (tags.stacks ?? 0) + 1;
-      const element = IRIS_AURAS.find(([, aura]) => enemy.elementalState.auras.has(aura))?.[0];
+      const element = findAbsorbedElement([enemy]);
       if (element === undefined) return;
       addKitEffect(
         kitEffectState,

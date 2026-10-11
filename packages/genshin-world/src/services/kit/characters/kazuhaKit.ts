@@ -1,13 +1,10 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 
-import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
@@ -15,6 +12,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kazuha's proud skill groups, read at his talent level. The attack group holds the first strike at 0, the second at 1,
@@ -109,21 +107,8 @@ const ABSORB_CHECK_FIRST_FRAMES = 81;
 const ABSORB_CHECK_INTERVAL_FRAMES = 18;
 const ABSORB_CHECK_COUNT = 17;
 const ABSORB_CHECK_AREA = createFanReach(360, 9);
-const ABSORBABLE_AURAS: readonly (readonly [Element, AuraType])[] = [
-  [Element.Pyro, AuraType.Pyro],
-  [Element.Hydro, AuraType.Hydro],
-  [Element.Electro, AuraType.Electro],
-  [Element.Cryo, AuraType.Cryo],
-];
 // The absorb check's field lives a tenth of a second past its last check, so the step that runs it still has it
 const ABSORB_FIELD_LINGER_SECONDS = 0.1;
-
-// The element the Autumn Whirlwind absorbs, from the first of the four an enemy within its reach carries, in the game's
-// Order
-const findAbsorbedElement = (enemyMap: Map<string, Enemy>, body: KitBody): Element | undefined => {
-  const reachedEnemies = [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(ABSORB_CHECK_AREA, body, enemy));
-  return ABSORBABLE_AURAS.find(([, aura]) => reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)))?.[0];
-};
 
 // Measured: gcsim (MIT) kazuha/cons.go, Chihayaburu's and Kazuha Slash's cooldowns each drop by a tenth from Constellation 1,
 // Which the table's 360 and 540 frames become 324 and 486 with
@@ -237,7 +222,9 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap }) => {
             if (isAbsorbed) return;
-            const element = findAbsorbedElement(enemyMap, whirlwind.body);
+            const element = findAbsorbedElement(
+              [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(ABSORB_CHECK_AREA, whirlwind.body, enemy)),
+            );
             if (element === undefined) return;
             isAbsorbed = true;
             whirlwind.hits = whirlwind.hits.flatMap((hit) =>
