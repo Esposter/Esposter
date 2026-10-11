@@ -23,7 +23,7 @@ flowchart TD
   W["Mouse wheel"] -->|"more than one row: a row a notch"| S
   W -->|"one row or none"| CAM["The camera zooms"]
   F{"F"} -->|"press"| ACT{"The selected row"}
-  ACT -->|"a drop"| PICK["Mora into the wallet, an item into the bag, the rest left on the ground"]
+  ACT -->|"a drop"| PICK["A currency into the wallet, an item into the bag, the rest left on the ground"]
   ACT -->|"a resident"| TALK["Their talk begins"]
   F -->|"held, each repeat interval"| REP["Pick up the selected item, or the first item"]
 ```
@@ -42,7 +42,7 @@ flowchart TD
 ## The drops and the residents
 
 - **A defeated enemy's drops lie where it fell.** The enemy's defeat reaches the world screen through Windrise, and `placeEnemyDrops` lays them at its ground point: its Mora as one pile under item id `MORA_ITEM_ID`, and each material piece as a drop of its own. A drop's id is its spawn's and the count of drops the page has placed, so no two share one. Drops last the page's life.
-- **A pick up takes it into the wallet or the bag.** `pickUpDroppedItem` puts Mora into the wallet, and any other item into the bag through `addInventoryItem` by its definition, which `getItemDefinition` reads from the world's materials table ([inventory](/docs/genshin/inventory)). What the bag has no room for stays where it lay as a smaller drop.
+- **A pick up takes it into the wallet or the bag.** `pickUpDroppedItem` puts a currency into the wallet, by the currency `getWalletCurrency` files its item under, and any other item into the bag through `addInventoryItem` by its definition, which `getItemDefinition` reads from the world's materials table ([inventory](/docs/genshin/inventory)). What the bag has no room for stays where it lay as a smaller drop.
 - **A resident is a talk in reach.** Every resident of the regions in reach whose talk the world holds is a `Talk` row, named from the world's names. A resident whose talk is not held is a row for the first quest talk open to them, and one with neither is neither drawn nor offered a prompt, since F on it would have no talk to open.
 - **A locked statue is an activation in reach.** Each Statue of The Seven whose landmark is not yet unlocked is an `Activate` row named by its statue, and F on it unlocks it; an unlocked statue has no row ([map unlocking](/docs/genshin/map-unlocking)).
 - **The stand-ins.** `World/Interactables` draws each drop as a small sphere and each resident as the locomotion capsule every body stands in as until its own is measured, one instanced mesh per kind rewritten only when the list changes. A witness render draws none.
