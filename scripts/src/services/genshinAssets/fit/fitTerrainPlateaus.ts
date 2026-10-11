@@ -22,10 +22,10 @@ export const fitTerrainPlateaus = (
     PLATEAU_RADII.map((radius) => {
       const radiusCells = radius / grid.step;
       const reach = Math.ceil(radiusCells);
-      const offsets: [number, number][] = [];
+      const offsets: [number, number, number][] = [];
       for (let rowShift = -reach; rowShift <= reach; rowShift++)
         for (let columnShift = -reach; columnShift <= reach; columnShift++)
-          if (rowShift ** 2 + columnShift ** 2 <= radiusCells ** 2) offsets.push([rowShift, columnShift]);
+          if (rowShift ** 2 + columnShift ** 2 <= radiusCells ** 2) offsets.push([rowShift, columnShift, 1]);
       return {
         createFeature: (x, z, height) => ({
           falloff: roundFitted(radius * FALLOFF_SHARE),

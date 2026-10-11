@@ -9,10 +9,11 @@ const MAX_FEATURES = 16;
 // A feature is placed only while it takes off this share of the residual's squared error
 const MIN_GAIN_SHARE = 0.01;
 
-// Places features greedily on a residual grid: each round, the shape and centre whose mean residual takes the most
-// Squared error off is a feature at that mean, and its exact height is then taken from the residual before the next
-// Round. A shape is a candidate at a centre only where every sample it covers is fitted ground. Returns the features
-// And the residual they leave
+// Places features greedily on a residual grid: each round, the shape and centre whose profile, fitted to the residual
+// It covers by least squares, takes the most squared error off is a feature at that fitted height, and its exact height
+// Is then taken from the residual before the next round. A shape whose profile is flat fits the mean of what it covers.
+// A shape is a candidate at a centre only where every sample it covers is fitted ground. Returns the features and the
+// Residual they leave
 export const placeTerrainFeatures = <TFeature extends TerrainFeature>(
   grid: TerrainResidualGrid,
   shapes: readonly TerrainFeatureShape<TFeature>[],
@@ -20,28 +21,32 @@ export const placeTerrainFeatures = <TFeature extends TerrainFeature>(
   const { originX, originZ, size, step } = grid;
   const values = Float64Array.from(grid.values);
   const features: TFeature[] = [];
+  const weightedShapes = shapes.map((shape) => ({
+    ...shape,
+    weightSquares: shape.offsets.reduce((sum, [, , weight]) => sum + weight ** 2, 0),
+  }));
   while (features.length < MAX_FEATURES) {
     const squaresTotal = values.reduce((sum, value) => (Number.isFinite(value) ? sum + value ** 2 : sum), 0);
     let bestGain = 0;
     let best: TFeature | undefined;
-    for (const { createFeature, offsets, reach, spacing } of shapes)
+    for (const { createFeature, offsets, reach, spacing, weightSquares } of weightedShapes)
       for (let row = reach; row < size - reach; row += spacing)
         for (let column = reach; column < size - reach; column += spacing) {
           let sum = 0;
           let isCovered = true;
-          for (const [rowShift, columnShift] of offsets) {
+          for (const [rowShift, columnShift, weight] of offsets) {
             const value = values[(row + rowShift) * size + column + columnShift] ?? Number.NaN;
             if (!Number.isFinite(value)) {
               isCovered = false;
               break;
             }
-            sum += value;
+            sum += weight * value;
           }
           if (!isCovered) continue;
-          const gain = sum ** 2 / offsets.length;
+          const gain = sum ** 2 / weightSquares;
           if (gain <= bestGain) continue;
           bestGain = gain;
-          best = createFeature(originX + column * step, originZ + row * step, sum / offsets.length);
+          best = createFeature(originX + column * step, originZ + row * step, sum / weightSquares);
         }
     if (!best || bestGain < MIN_GAIN_SHARE * squaresTotal) break;
     features.push(best);
