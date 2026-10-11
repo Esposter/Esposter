@@ -1,6 +1,6 @@
 ---
 title: Offering systems
-description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels and its place in Mondstadt are built, on the Offering systems page; the tree's items and name, its landmark and offer on F, and each region's offerings, are what is left.
+description: Proposal — the regions' offering systems on one rule. A sacred tree, a fountain or a shrine takes every offering item of its kind the bag holds at once, rises a level for each threshold reached and gives that level's reward once. The rule, the bag's offer, the Frostbearing Tree's levels, its place in Mondstadt, its items and its name are built, on the Offering systems page; its landmark and offer on F, and each region's offerings, are what is left.
 model: claude-haiku-5-5
 needs: [game-exports]
 touches:
@@ -30,13 +30,12 @@ Beside the Statues of The Seven, many areas keep an offering of their own: the F
 
 ## Scope and order
 
-**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; and its place in Mondstadt, written from the official map, on the [Offering systems](/docs/genshin/offering-systems) page.
+**Built:** the rule, `offerItems`, shared with the statues; the bag's offer, `offerBagItems`, which takes the items out of the bag and pays the rewards in; the Frostbearing Tree's levels, read from the game's table; its place in Mondstadt, written from the official map; its items, which the items step publishes with their names and `buildItems`'s test asserts; and its prompt name, `GameTextKey.FrostbearingTree`, in every language, on the [Offering systems](/docs/genshin/offering-systems) page.
 
 **This still adds, in order:**
 
-1. **The tree's items and name.** `scripts/src/services/genshinAssets/items/buildItems.ts` adds the item the tree's levels take and every item their rewards pay, read with `readFrostbearingTreeLevels` from `genshin-world` as it already reads the forge recipes, the wallet's ids left out as now. `pnpm -C scripts genshin:assets items` republishes `items/materials`, and `pnpm -C scripts genshin:text names` writes their names into the name chunks that already exist. `GameTextKey.FrostbearingTree` takes `UI_ELDERTREE_MAINUI_TITLE`, written with `pnpm -C scripts genshin:text write`. Test: a case of `buildItems`'s own suite asserts that every item the tree's levels take or pay, less the wallet's, is in the built materials.
-2. **The tree in Dragonspine**, Mondstadt's: a stand-in drawn on the ground at its place in the `frostbearingTreePlaces/mondstadt` record, an `Activate` row while it is in reach, F on it offering through `offerBagItems`, and its held count kept in the save.
-3. **Each region's offerings**, with its region.
+1. **The tree in Dragonspine**, Mondstadt's: a stand-in drawn on the ground at its place in the `frostbearingTreePlaces/mondstadt` record, an `Activate` row named by `GameTextKey.FrostbearingTree` while it is in reach, F on it offering through `offerBagItems`, and its held count kept in the save.
+2. **Each region's offerings**, with its region.
 
 ## Data and measures
 

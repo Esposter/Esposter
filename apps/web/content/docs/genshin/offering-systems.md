@@ -45,7 +45,7 @@ flowchart TD
 
 ## Notes
 
-- **Not yet wired.** No tree is drawn in the world and no prompt offers to it, so nothing calls `offerBagItems` on a screen. The tree's landmark and its ground, the Offer prompt's verb (a game text id still to be decoded from the install) and the taking on F wait on Mondstadt's region page.
+- **Not yet wired.** No tree is drawn in the world and no prompt offers to it, so nothing calls `offerBagItems` on a screen. The tree's name is `GameTextKey.FrostbearingTree` (`UI_ELDERTREE_MAINUI_TITLE`), written into every language's chunk, and its items and their names are in the published materials, which `buildItems`'s test checks. The tree's landmark and its ground, the prompt row and the taking on F wait on Mondstadt's region page.
 - **The bag has no definition for the tree's item yet.** The offering item 107010 and most of the levels' reward items are not in the materials table the bag reads, so `getItemDefinition` cannot name them until their definitions are added from the game's item table.
 - **One rule with the statues.** The statues' offerOculus became `offerItems`, which takes the count offered rather than one Oculus, and the level shape they share is `itemCount` and `itemId`, in place of oculusCount and oculusItemId. The statue slice was rewritten under those names.
 - **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page answered HTTP 402 when this was built, so the calls above rest on the game's table and the official map alone, and the wiki's wording of each is still to be checked.
