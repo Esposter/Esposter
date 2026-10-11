@@ -359,7 +359,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       { message: POLLING_MESSAGE, object: "expect", property: "poll" },
       {
         message:
-          "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization.md).",
+          "Use `jsonDateParse` from `@esposter/shared` — plain `JSON.parse` leaves every Date as an ISO string. Disable this rule with a reason where blanket revival is wrong (see /docs/architecture/serialization).",
         object: "JSON",
         property: "parse",
       },

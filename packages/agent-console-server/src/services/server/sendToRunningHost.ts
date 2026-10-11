@@ -34,7 +34,7 @@ export const sendToRunningHost = async (
     const pendingMessage = once(webSocket, "message", { signal });
     webSocket.send(JSON.stringify({ nonce, type: HandshakeMessageType.Challenge }));
     const [data] = await pendingMessage;
-    // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload, the pair /docs/architecture/serialization.md names
+    // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload, the pair /docs/architecture/serialization names
     const serverMessage = serverMessageSchema.parse(JSON.parse(readMessageText(data)));
     if (
       serverMessage.type !== ServerMessageType.Proof ||
