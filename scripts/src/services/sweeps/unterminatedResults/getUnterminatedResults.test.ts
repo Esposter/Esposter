@@ -45,8 +45,8 @@ describe(getUnterminatedResults, () => {
     ]);
   });
 
-  // `scanCode` drops the bracket, so in the code alone this reads as `getResultfn` — every case above hides
-  // That behind an arrow, whose own brackets are dropped too and leave a `=` where the name ends
+  // The argument is a bare identifier, which a bracket-less read would run into the name it follows
+  // A bare identifier argument is the shape a name-and-bracket match reads as one longer name
   test("reports a call whose argument is a bare identifier", () => {
     expect.hasAssertions();
 
@@ -79,7 +79,7 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("getResult /* note */ (fn).match(noop, console.error);")).toStrictEqual([]);
   });
 
-  // The scan reads code rather than text, so a call written inside either is not one
+  // The scan reads syntax rather than text, so a call written inside either is not one
   test("reports nothing for a call quoted inside a string", () => {
     expect.hasAssertions();
 
@@ -128,7 +128,7 @@ describe(getUnterminatedResults, () => {
     expect.hasAssertions();
 
     expect(getUnterminatedResults(`const result = getResult(fn);\nreadSomethingElse();`)).toStrictEqual([
-      { after: "; readSomethingElse;", line: 1 },
+      { after: "; readSomethingElse();", line: 1 },
     ]);
   });
 
@@ -158,7 +158,7 @@ describe(getUnterminatedResults, () => {
 
     expect(
       getUnterminatedResults(`const result: Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
   });
 
   // The two characters the annotation is skipped by excluding are the two a type may still spell
@@ -167,7 +167,7 @@ describe(getUnterminatedResults, () => {
 
     expect(
       getUnterminatedResults(`const result: () => Result<void, Error> = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
   });
 
   test("reads a binding through an object type annotation", () => {
@@ -175,22 +175,23 @@ describe(getUnterminatedResults, () => {
 
     expect(
       getUnterminatedResults(`const result: { isOk: boolean; value: string } = getResult(fn);\nreadSomethingElse();`),
-    ).toStrictEqual([{ after: "; readSomethingElse;", line: 1 }]);
+    ).toStrictEqual([{ after: "; readSomethingElse();", line: 1 }]);
   });
 
-  // `scanCode` drops the bracket, so a terminator and a longer name that starts with one read alike in the code
-  // Alone — only the source says which of the two was called
+  // A longer name that starts with a terminator is not the terminator, and only the name read whole says which
   test("does not read a longer name starting with a terminator as the terminator", () => {
     expect.hasAssertions();
 
-    expect(getUnterminatedResults("getResult(fn).matching(noop);")).toStrictEqual([{ after: ".matching;", line: 1 }]);
+    expect(getUnterminatedResults("getResult(fn).matching(noop);")).toStrictEqual([
+      { after: ".matching(noop);", line: 1 },
+    ]);
   });
 
   test("does not read a longer name on the binding as its terminator", () => {
     expect.hasAssertions();
 
     expect(getUnterminatedResults(`const result = getResult(fn);\nresult.matching(noop);`)).toStrictEqual([
-      { after: "; result.matching;", line: 1 },
+      { after: "; result.matching(noop);", line: 1 },
     ]);
   });
 
@@ -206,7 +207,7 @@ describe(getUnterminatedResults, () => {
     expect.hasAssertions();
 
     expect(getUnterminatedResults(`const result = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([
-      { after: "; éresult.match;", line: 1 },
+      { after: "; éresult.match(noop, log);", line: 1 },
     ]);
   });
 
@@ -215,7 +216,7 @@ describe(getUnterminatedResults, () => {
     expect.hasAssertions();
 
     expect(getUnterminatedResults(`const result = getResult(fn);\nother.result.match(noop, log);`)).toStrictEqual([
-      { after: "; other.result.match;", line: 1 },
+      { after: "; other.result.match(noop, log);", line: 1 },
     ]);
   });
 

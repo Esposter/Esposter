@@ -1,124 +1,85 @@
-import type { CodeToken } from "#src/models/sweeps/CodeToken";
 import type { UnterminatedResult } from "#src/models/sweeps/unterminatedResults/UnterminatedResult";
 
-import { scanCode } from "#src/services/sweeps/scanCode";
+import { getDescendants } from "#src/services/sweeps/getDescendants";
+import ts from "typescript";
 
-const NAME = "getResult";
-const ASYNC_NAME = "getResultAsync";
-// The annotation is skipped rather than parsed, and the two characters that would carry the match out of the
-// Declaration are the two a type may still spell: `=>` writes a function type, and a `;` separates an object
-// Type's members. So both are readmitted in the only shapes a type holds them in — an arrow, and a braced group
-const ANNOTATION_PATTERN = String.raw`(?::(?:[^;={}]|=>|\{(?:[^{}]|\{[^{}]*\})*\})*)?`;
-// An identifier is not ASCII, so `\w` reads a longer name as the one it is only the tail of and misses one
-// Whose own characters fall outside the range. `$` is legal in an identifier and is not `ID_Continue`
-const IDENTIFIER_CONTINUE_CHARACTERS = String.raw`$\p{ID_Continue}`;
-const IDENTIFIER_PATTERN = String.raw`[$\p{ID_Start}][${IDENTIFIER_CONTINUE_CHARACTERS}]*`;
-const BINDING_REGEX = new RegExp(
-  String.raw`\b(?:const|let|var)\s+(?<binding>${IDENTIFIER_PATTERN})\s*${ANNOTATION_PATTERN}=\s*$`,
-  "u",
-);
-const CALL_REGEX = new RegExp(NAME, "gu");
-const DOLLAR_REGEX = /\$/gu;
-const IDENTIFIER_REGEX = new RegExp(`[${IDENTIFIER_CONTINUE_CHARACTERS}]`, "u");
-const NEWLINE_REGEX = /\n/gu;
-const WHITESPACE_RUN_REGEX = /\s+/gu;
-const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
-// A block comment's body is spelled as what it cannot hold rather than as a lazy anything: `[\s\S]*?` lets one
-// Comment's body swallow the next comment's opener, and the trailing-trivia match that fails after many such
-// Comments retries every split of them — likewise a single `\s` inside the repeated group, where `\s+` retries
-// Every split of a run of spaces (CodeQL `js/redos`)
-const BLOCK_COMMENT_PATTERN = String.raw`\/\*(?:[^*]|\*(?!\/))*\*\/`;
-const PRECEDING_TRIVIA_REGEX = new RegExp(String.raw`(?:\s|${BLOCK_COMMENT_PATTERN})+$`, "u");
-const STATEMENT_START_REGEX = /[;{}]\s*$|^\s*$/u;
-const TERMINATOR_NAMES = "andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr";
-const TERMINATOR_REGEX = new RegExp(String.raw`^\s*\.(?:${TERMINATOR_NAMES})`, "u");
-const TRIVIA_REGEX = new RegExp(String.raw`^(?:\s|\/\/.*|${BLOCK_COMMENT_PATTERN})+`, "u");
+const RESULT_CALLEE_NAMES = new Set(["getResult", "getResultAsync"]);
+const TERMINATOR_NAMES = new Set(["andTee", "andThen", "mapErr", "map", "match", "orElse", "orTee", "unwrapOr"]);
 const AFTER_LENGTH = 34;
-// A terminator is a call, and `scanCode` drops the bracket, so in the code alone `.match(noop)` and
-// `.matching(noop)` both read as `.match` followed by more identifier characters — no boundary written against
-// The code can tell them apart. The source is where they separate, exactly as the call's own name is re-read
-// There: `end` is one past the last token the name matched, so that token's index is where the source resumes.
-const checkIsCalled = (text: string, tokens: readonly CodeToken[], end: number): boolean => {
-  const last = tokens[end - 1];
-  if (last)
-    return text
-      .slice(last[2] + 1)
-      .replace(TRIVIA_REGEX, "")
-      .startsWith("(");
-  else return false;
+
+const checkIsResultCall = (node: ts.Node): node is ts.CallExpression =>
+  ts.isCallExpression(node) && ts.isIdentifier(node.expression) && RESULT_CALLEE_NAMES.has(node.expression.text);
+
+// Whether `node` is the subject of the link above it: a bracket, an await, a non-null assertion, or a member or
+// Call written on it. An argument or a callback body is not, since the value leaves the expression there
+const checkIsSubjectOfParent = (node: ts.Node): boolean => {
+  const { parent } = node;
+  if (ts.isPropertyAccessExpression(parent) || ts.isCallExpression(parent)) return parent.expression === node;
+  return ts.isParenthesizedExpression(parent) || ts.isAwaitExpression(parent) || ts.isNonNullExpression(parent);
 };
-// A `Result` nothing terminates fails silently, and no line-anchored grep can see it: the terminator sits after
-// The call's closing bracket, which is wherever its callback ends — and a fixed window around the call reports
-// Every site whose body runs long. So the scan works over `scanCode`'s output rather than the raw text, which
-// Buys both halves at once: a `getResult(` written inside a string or a comment is not code and never matches,
-// And everything inside the call sits a bracket deeper, so the code back at the call's own depth is exactly
-// What follows the `)`.
-//
-// The name is matched in the code and then re-read from the **source**, because `scanCode` drops the bracket:
-// In the code alone `getResult(fn)` reads as `getResultfn`, so no lookahead can tell a call from a longer
-// Identifier, and only the source says whether a `(` opens the argument list. Both edges of the name are read
-// There: an identifier character before it means the match sits inside a longer name, and the `(` is looked for
-// Past whatever whitespace or comment the source writes between the two, which is trivia to the grammar.
-export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
-  const tokens = [...scanCode(text)];
-  const code = tokens.map(([character]) => character).join("");
-  const results: UnterminatedResult[] = [];
-  let line = 1;
-  let lineOffset = 0;
 
-  for (const match of code.matchAll(CALL_REGEX)) {
-    const start = tokens[match.index];
-    if (!start) continue;
-
-    const previous = text[start[2] - 1];
-    if (previous !== undefined && IDENTIFIER_REGEX.test(previous)) continue;
-
-    const name = text.startsWith(ASYNC_NAME, start[2]) ? ASYNC_NAME : NAME;
-    const afterName = text.slice(start[2] + name.length).replace(TRIVIA_REGEX, "");
-    if (!afterName.startsWith("(")) continue;
-    // The code back at the call's own depth, read up to the bracket that closes the scope the call sits in: a
-    // Terminator chained on the call cannot follow that bracket, so the tokens past it are never read
-    const afterTokens: CodeToken[] = [];
-    for (let index = match.index + name.length; index < tokens.length; index += 1) {
-      const token = tokens[index];
-      if (token === undefined || token[1] < start[1]) break;
-      else if (token[1] === start[1]) afterTokens.push(token);
-    }
-    const afterCode = afterTokens.map(([character]) => character).join("");
-    const after = afterCode.replaceAll(WHITESPACE_RUN_REGEX, " ").trim().slice(0, AFTER_LENGTH);
-    const terminator = TERMINATOR_REGEX.exec(afterCode);
-    if (terminator && checkIsCalled(text, afterTokens, terminator[0].length)) continue;
-    // Where no terminator follows the call, whatever the call's value reaches owns it instead — so the code
-    // Before the call decides, and only one of its shapes is still this file's to answer. A binding is
-    // Terminated wherever its name is read, which is the repo's preferred spelling over nesting a long call
-    // Inside its own terminator, so the name is looked up. Everywhere else the value leaves the statement —
-    // Handed to `return`, to a combinator's callback, to another call's argument list — and the caller
-    // Terminates it. What is left is a call standing alone as a statement, which is the silent drop.
-    const before = text.slice(0, start[2]).replace(PRECEDING_TRIVIA_REGEX, "").replace(PRECEDING_AWAIT_REGEX, "");
-    const { binding } = BINDING_REGEX.exec(before)?.groups ?? {};
-    if (binding) {
-      // The lookbehind is what makes this the binding rather than any property spelled the same: `\b` holds
-      // After the dot in `other.result.match`, so it would read an unrelated object's field as the terminator
-      // And clear a real finding. `$` is legal in an identifier and is an anchor in a pattern, so it is escaped
-      // Rather than interpolated — unescaped it compiles to a regex that matches nothing at all. Every hit is
-      // Walked rather than only the first, because one that turns out to be a longer property name does not
-      // Rule out a real terminator further down.
-      const escapedBinding = binding.replaceAll(DOLLAR_REGEX, (character) => `\\${character}`);
-      const bindingRegex = new RegExp(
-        String.raw`(?<![${IDENTIFIER_CONTINUE_CHARACTERS}.])${escapedBinding}\??\.(?:${TERMINATOR_NAMES})`,
-        "gu",
-      );
-      const bindingMatches = [...code.slice(match.index).matchAll(bindingRegex)];
-      const isTerminated = bindingMatches.some((bindingMatch) =>
-        checkIsCalled(text, tokens, match.index + bindingMatch.index + bindingMatch[0].length),
-      );
-      if (isTerminated) continue;
-    } else if (!STATEMENT_START_REGEX.test(before)) continue;
-    // Matches arrive in source order, so the line count only ever moves forward from the last hit
-    for (const _ of text.slice(lineOffset, start[2]).matchAll(NEWLINE_REGEX)) line += 1;
-    lineOffset = start[2];
-    results.push({ after, line });
+// The top of the chain the call's value sits in, and whether a terminator is called on it along the way
+const getValueChain = (call: ts.CallExpression): { isTerminated: boolean; top: ts.Node } => {
+  let isTerminated = false;
+  let top: ts.Node = call;
+  while (checkIsSubjectOfParent(top)) {
+    const { parent } = top;
+    if (
+      ts.isPropertyAccessExpression(parent) &&
+      TERMINATOR_NAMES.has(parent.name.text) &&
+      ts.isCallExpression(parent.parent) &&
+      parent.parent.expression === parent
+    )
+      isTerminated = true;
+    top = parent;
   }
+  return { isTerminated, top };
+};
 
-  return results;
+// The nearest block a node sits in, which is where a binding it declares can be read from
+const getScope = (node: ts.Node): ts.Node => {
+  let scope = node.parent;
+  while (!ts.isBlock(scope) && !ts.isSourceFile(scope)) scope = scope.parent;
+  return scope;
+};
+
+// Whether a `binding.match(…)`-style terminator is called on the binding after the call. A longer property name, or
+// Another object's field spelled the same, is not the binding, so only the identifier itself is read
+const checkIsBindingTerminated = (call: ts.CallExpression, bindingName: string, scope: ts.Node): boolean =>
+  getDescendants(scope).some(
+    (node) =>
+      ts.isPropertyAccessExpression(node) &&
+      node.pos >= call.end &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === bindingName &&
+      TERMINATOR_NAMES.has(node.name.text) &&
+      ts.isCallExpression(node.parent) &&
+      node.parent.expression === node,
+  );
+
+// A `Result` nothing terminates fails silently. Its value is only this file's to answer when it stands as a statement,
+// Or when it is bound to a name no later line terminates; anywhere else the caller owns the terminator.
+export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
+  const sourceFile = ts.createSourceFile("", text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  return getDescendants(sourceFile)
+    .filter((node) => checkIsResultCall(node))
+    .flatMap((call) => {
+      const { isTerminated, top } = getValueChain(call);
+      if (isTerminated) return [];
+
+      const { parent } = top;
+      const bindingName =
+        ts.isVariableDeclaration(parent) && parent.initializer === top && ts.isIdentifier(parent.name)
+          ? parent.name.text
+          : undefined;
+      if (bindingName === undefined && !ts.isExpressionStatement(parent)) return [];
+
+      const scope = getScope(call);
+      if (bindingName !== undefined && checkIsBindingTerminated(call, bindingName, scope)) return [];
+
+      const scopeEnd = ts.isBlock(scope) ? scope.end - 1 : text.length;
+      const after = text.slice(call.end, scopeEnd).replaceAll(/\s+/gu, " ").trim().slice(0, AFTER_LENGTH);
+      const line = sourceFile.getLineAndCharacterOfPosition(call.getStart(sourceFile)).line + 1;
+      return [{ after, line }];
+    });
 };

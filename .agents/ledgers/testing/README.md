@@ -50,8 +50,8 @@ pnpm ai:sweep:constant-scope
 The scan lives in `scripts/src/sweeps/constantScope/` rather than in this file, because it is a program: a
 line-anchored regex cannot decide constant scope on its own — it reads a multi-line arrow as a constant, since
 the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`,
-a `;` inside a string and a quote inside a regex literal all fool a bracket count. Its cases are pinned by
-`getModuleScopeConstants.test.ts` and `scanCode.test.ts`, which is what makes "prove the scan can fail before
+a `;` inside a string and a quote inside a regex literal all fool a bracket count, so it reads the TypeScript syntax tree. Its cases are pinned by
+`getModuleScopeConstants.test.ts`, which is what makes "prove the scan can fail before
 believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
 
 A clean pass prints nothing: every exception below is a shape the scan reads for itself, and

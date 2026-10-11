@@ -47,7 +47,7 @@ describe(getModuleScopeConstants, () => {
     expect(getModuleScopeConstants(`const ${name} = async function () {\n  return "";\n};`)).toStrictEqual([]);
   });
 
-  // The body is rebuilt from `scanCode`'s output, so a comment between two keywords has to leave a boundary —
+  // The body is rebuilt from its code, so a comment between two keywords has to leave a boundary —
   // Without one this reads as `asyncfunction` and the exemption stops matching
   test("skips an async function expression with a comment inside its head", () => {
     expect.hasAssertions();
