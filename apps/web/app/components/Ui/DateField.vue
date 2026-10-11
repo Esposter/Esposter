@@ -24,10 +24,9 @@ interface Props {
 const modelValue = defineModel<TModel>({ required: true });
 const { isClearable, isLabelHidden, isTime, label, max, min, placeholder = "Pick a date" } = defineProps<Props>();
 const isOpen = ref(false);
-const popover = useTemplateRef("popover");
+const field = useTemplateRef("field");
 // The trigger, which what opens the field in place of something else focuses
-const element = computed(() => popover.value?.triggerElement);
-const valueId = useId();
+const element = computed(() => field.value?.element);
 const zonedDateTime = computed(() => (modelValue.value ? getZonedDateTime(modelValue.value) : undefined));
 const minZonedDateTime = computed(() => (min ? getZonedDateTime(min) : undefined));
 const maxZonedDateTime = computed(() => (max ? getZonedDateTime(max) : undefined));
@@ -63,61 +62,45 @@ defineExpose({ element });
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span :class="{ 'sr-only': isLabelHidden }" text-sm text-muted>{{ label }}</span>
-    <div flex gap-1 items-center>
-      <UiPopover
-        ref="popover"
-        v-model:is-open="isOpen"
-        :aria-describedby="valueId"
-        is-label-shown
-        :label
-        :variant="UiButtonVariant.Field"
-        flex-1
-        justify-start
-      >
-        <template #trigger>
-          <UiIcon :meaning="UiIconMeaning.Date" text-muted />
-          <span :id="valueId" :class="{ 'text-muted': !modelValue }" text-left flex-1 truncate>
-            <NuxtTime
-              v-if="modelValue"
-              :datetime="modelValue"
-              date-style="medium"
-              :time-style="isTime ? 'short' : undefined"
-            />
-            <template v-else>{{ placeholder }}</template>
-          </span>
-        </template>
-        <UiCalendar
-          :label
-          :max="maxZonedDateTime?.toPlainDate()"
-          :min="minZonedDateTime?.toPlainDate()"
-          :model-value="zonedDateTime?.toPlainDate()"
-          @update:model-value="
-            (value) => {
-              if (value) chooseDate(value);
-            }
-          "
-        />
-        <UiTextField
-          v-if="isTime"
-          v-model="time"
-          :is-disabled="!modelValue || undefined"
-          label="Time"
-          :type="UiTextFieldType.Time"
-        />
-        <footer flex gap-2 justify-end>
-          <UiButton :variant="UiButtonVariant.Quiet" @click="chooseToday()">Today</UiButton>
-          <UiButton v-if="isTime" :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
-        </footer>
-      </UiPopover>
-      <UiIconButton
-        v-if="isClearable && modelValue"
-        :label="`Clear ${label}`"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        @click="modelValue = undefined as TModel"
+  <UiPopoverField
+    ref="field"
+    v-model:is-open="isOpen"
+    :is-clearable="Boolean(isClearable && modelValue)"
+    :is-empty="!modelValue"
+    :is-label-hidden="isLabelHidden"
+    :label
+    :placeholder
+    @clear="modelValue = undefined as TModel"
+  >
+    <template #value>
+      <NuxtTime
+        v-if="modelValue"
+        :datetime="modelValue"
+        date-style="medium"
+        :time-style="isTime ? 'short' : undefined"
       />
-    </div>
-  </div>
+    </template>
+    <UiCalendar
+      :label
+      :max="maxZonedDateTime?.toPlainDate()"
+      :min="minZonedDateTime?.toPlainDate()"
+      :model-value="zonedDateTime?.toPlainDate()"
+      @update:model-value="
+        (value) => {
+          if (value) chooseDate(value);
+        }
+      "
+    />
+    <UiTextField
+      v-if="isTime"
+      v-model="time"
+      :is-disabled="!modelValue || undefined"
+      label="Time"
+      :type="UiTextFieldType.Time"
+    />
+    <footer flex gap-2 justify-end>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="chooseToday()">Today</UiButton>
+      <UiButton v-if="isTime" :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
+    </footer>
+  </UiPopoverField>
 </template>
