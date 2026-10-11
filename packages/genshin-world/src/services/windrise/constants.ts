@@ -3,6 +3,8 @@ import type { GradeOptions, GrassRing, GroundPoint, RampOptions, SkyKeyframe } f
 import { Color, Vector2 } from "three";
 
 export const WINDRISE_SEED = 0;
+// The folder Windrise's exports are extracted into, which the world reads them from under a host that serves them
+export const WINDRISE_SCENE_EXPORT_COMPONENT = "windrise";
 // Clear shallows over the pale bed turning a deep blue in the middle, as Mondstadt's lakes read, and a green haze
 // Under the surface
 export const WATER_SHALLOW_COLOR = 0x5fd3c8;

@@ -14,11 +14,12 @@ import type { LoginWalkway } from "#src/models/login/LoginWalkway";
 import type { CloudLayerTextureProfiles, QualityTier } from "genshin-engine";
 
 import { usePostPipeline } from "#src/composables/usePostPipeline";
+import { useSceneExports } from "#src/composables/useSceneExports";
 import { LoginPartFamily } from "#src/models/login/LoginPartFamily";
 import { LoginStage } from "#src/models/login/LoginStage";
 import { createLoginClouds } from "#src/services/login/cloud/createLoginClouds";
 import { LoginCloudCoverMap } from "#src/services/login/cloud/LoginCloudCoverMap";
-import { LOGIN_DOOR_LIGHT_MS } from "#src/services/login/constants";
+import { LOGIN_DOOR_LIGHT_MS, LOGIN_SCENE_EXPORT_COMPONENT } from "#src/services/login/constants";
 import { applyLoginDoorLift } from "#src/services/login/door/applyLoginDoorLift";
 import { computeLoginDoorLiftMs } from "#src/services/login/door/computeLoginDoorLiftMs";
 import {
@@ -31,6 +32,7 @@ import { createLoginDoorGeometry } from "#src/services/login/door/createLoginDoo
 import { createLoginDoorRelief } from "#src/services/login/door/createLoginDoorRelief";
 import { getLoginDoorPosition } from "#src/services/login/door/getLoginDoorPosition";
 import { createLoginHullsGeometry } from "#src/services/login/hull/createLoginHullsGeometry";
+import { LoginPartFamilyMeshRegexMap } from "#src/services/login/LoginPartFamilyMeshRegexMap";
 import { advanceLoginGlide } from "#src/services/login/scene/advanceLoginGlide";
 import { computeLoginCameraHeight } from "#src/services/login/scene/computeLoginCameraHeight";
 import { computeLoginCameraZ } from "#src/services/login/scene/computeLoginCameraZ";
@@ -93,6 +95,7 @@ import {
   createSkyNode,
   createSkyUniforms,
   createStoneMaterial,
+  StoneNodeMaterial,
   synthesizeCloudLayerTextures,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Group, HemisphereLight, Matrix4, Mesh } from "three";
@@ -125,6 +128,9 @@ interface Props {
   // The walkway's paving, carved and painted over its tops
   paving: LoginPavingData;
   qualityTier: QualityTier;
+  // Where the host serves the developer's own exports of the game's scenes, the login's drawn in place of ours of each
+  // Family they hold, as only the development server does
+  sceneExportBaseUrl?: string;
   // The rows the scene scrolls past the camera: the walkway's copies and the towers'
   scroll: LoginScroll;
   // The sky's gradient and its cloud layer
@@ -151,6 +157,7 @@ const {
   isDoorLit,
   paving,
   qualityTier,
+  sceneExportBaseUrl,
   scroll,
   sky,
   stage,
@@ -165,7 +172,22 @@ const emit = defineEmits<{ doorFormed: []; ready: [] }>();
 // Them, alone when it asks
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
-const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !witness?.families.value.includes(family);
+// The login's own exports where the host serves them, lit as our stone is, by the game's deferred pass from the scene's
+// Stone light, and riding the glide as a witness render's parts do, which are drawn instead where the page provides them
+const sceneExportMap = useSceneExports(
+  sceneExportBaseUrl,
+  () => [LOGIN_SCENE_EXPORT_COMPONENT],
+  { [LOGIN_SCENE_EXPORT_COMPONENT]: LoginPartFamilyMeshRegexMap },
+  () => new StoneNodeMaterial(loginStoneLight),
+);
+const exportedParts = computed(() => witness?.parts ?? sceneExportMap.get(LOGIN_SCENE_EXPORT_COMPONENT)?.parts);
+// Whether the exports draw a family in place of ours: the families a witness render names, else every family the
+// Login's exports hold
+const checkIsExported = (family: string): boolean =>
+  witness
+    ? witness.families.value.includes(family)
+    : (sceneExportMap.get(LOGIN_SCENE_EXPORT_COMPONENT)?.familyBoundsMap.has(family) ?? false);
+const checkIsOwnFamilyDrawn = (family: LoginPartFamily): boolean => !checkIsExported(family);
 const { scene, sizes } = useTres();
 const cameraFov = computed(() => getLoginCameraFov(sizes.aspectRatio.value));
 const { onRender } = useLoop();
@@ -402,10 +424,10 @@ onRender(({ delta: frameDelta }) => {
   doorAhead.value = stopAt - scrolled;
   // Once the door is due the walkway ends at it, and nothing past it is built
   const doorAheadOfCamera = doorRestPosition[2] + doorAhead.value - cameraZ.value;
-  // The witness's parts ride the glide with ours, off by whatever offset a tool sets them: its towers and bridges the
-  // Row, its walkway the walkway's copies, assembling as ours does, and its door ours as it rises, standing only where
-  // Ours does, so a frame of the title compares no door against none
-  for (const group of witness?.parts.children ?? []) {
+  // The exported parts ride the glide with ours, off by whatever offset a witness tool sets them: their towers and
+  // Bridges the row, their walkway the walkway's copies, assembling as ours does, and their door ours as it rises,
+  // Standing only where ours does, so a frame of the title compares no door against none
+  for (const group of exportedParts.value?.children ?? []) {
     const [x = 0, y = 0, z = 0] = (group.userData.offset as [number, number, number] | undefined) ?? [];
     group.position.set(x, y, z);
     if (group.name === LoginPartFamily.Towers || group.name === LoginPartFamily.Bridges)
@@ -418,7 +440,7 @@ onRender(({ delta: frameDelta }) => {
       });
     } else if (group.name === LoginPartFamily.Door) {
       group.position.z += doorAhead.value;
-      group.visible = isDoorRising.value && (witness?.families.value.includes(group.name) ?? false);
+      group.visible = isDoorRising.value && checkIsExported(group.name);
     }
   }
   walkwayBatch.position.z = -walkwayScrolled;
@@ -505,7 +527,7 @@ onUnmounted(() => {
   <primitive :object="light.target" />
   <primitive :object="hemisphere" />
   <primitive v-if="!witness?.isAlone.value" :object="loginClouds.group" />
-  <primitive v-if="witness" :object="witness.parts" />
+  <primitive v-if="exportedParts" :object="exportedParts" />
   <primitive v-if="checkIsOwnFamilyDrawn(LoginPartFamily.Walkway)" :object="walkwayBatch" />
   <!-- The towers' row, with their bridges and pillars, each copy its length ahead of the last -->
   <primitive :object="towersGroup">

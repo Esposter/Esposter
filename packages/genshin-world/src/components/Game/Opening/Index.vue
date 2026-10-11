@@ -28,9 +28,12 @@ interface Props {
   // How far the world's loading has gone, from 0 to 1, which the startup loading screen's marks show once the door
   // Is opened
   progress: number;
+  // Where the host serves the developer's own exports of the game's scenes, which the login screen's scene is drawn from
+  sceneExportBaseUrl?: string;
 }
 
-const { gameDataBaseUrl, gameText, language, musicRecordingBaseUrl, playerName, progress } = defineProps<Props>();
+const { gameDataBaseUrl, gameText, language, musicRecordingBaseUrl, playerName, progress, sceneExportBaseUrl } =
+  defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,
@@ -83,6 +86,7 @@ getResultAsync(() => measureLoadStep("opening", readLoginData(gameDataBaseUrl)))
     :music-recording-base-url
     :player-name
     :progress="1"
+    :scene-export-base-url
     :time-of-day
     @begin="
       phase = OpeningPhase.Loading;

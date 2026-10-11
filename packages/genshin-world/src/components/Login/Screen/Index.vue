@@ -48,6 +48,8 @@ interface Props {
   progress: number;
   // The tier the scene draws at, the client's own: the phone's draws no screen-space occlusion where the computer's does
   qualityTier?: QualityTier;
+  // Where the host serves the developer's own exports of the game's scenes, which the scene draws the login's from
+  sceneExportBaseUrl?: string;
   timeOfDay: LoginTimeOfDay;
 }
 
@@ -61,6 +63,7 @@ const {
   playerName,
   progress,
   qualityTier = QualityTier.High,
+  sceneExportBaseUrl,
   timeOfDay,
 } = defineProps<Props>();
 // The name the screen welcomes the player by, the game's own word for the Traveler until they have chosen one
@@ -151,6 +154,7 @@ const onClick = (event: MouseEvent): void => {
         :is-door-lit="stage === LoginStage.Entering"
         :paving="loginData.paving"
         :quality-tier
+        :scene-export-base-url
         :scroll="loginData.scroll"
         :sky="loginData.sky"
         :stage

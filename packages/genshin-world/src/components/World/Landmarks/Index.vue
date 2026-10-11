@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SceneExport } from "#src/models/scene/SceneExport";
 import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
@@ -17,6 +18,7 @@ import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { getWindrisePartDetail } from "#src/services/windrise/getWindrisePartDetail";
+import { getExportedLandmarkIds } from "#src/services/world/getExportedLandmarkIds";
 import { createDitherFadeNode, createLeafMaterial, createObjectFadeNode, createToonMaterial } from "genshin-engine";
 import { Group } from "three";
 
@@ -33,6 +35,9 @@ interface Props {
   rampTexture: DataTexture;
   // The regions in reach, each with the palettes its buildings are drawn in
   regionDataMap: ReadonlyMap<string, LoadedRegion>;
+  // The game's own exports the world draws, by component, in place of each landmark standing within a family of theirs
+  // Its kind stands in for, which stays mounted, unseen, so the body and the camera still collide with ours
+  sceneExportMap: ReadonlyMap<string, SceneExport>;
   // The statue every Statue of The Seven is drawn as
   statue: WindriseStatue;
   // The families' surfaces, the oak's painting the trees and the statue's the statues
@@ -50,6 +55,7 @@ const {
   lightUniforms,
   rampTexture,
   regionDataMap,
+  sceneExportMap,
   statue,
   surfaces,
   treeSpeciesOptionsMap,
@@ -58,6 +64,8 @@ const {
 // Every landmark of every region in reach, built by its kind's kit, so a region's landmarks appear as its data
 // Arrives and go when it is released
 const regionLandmarks = computed(() => [...regionDataMap.values()].flatMap(({ landmarks }) => landmarks));
+// The landmarks the exports draw in place of ours, read again as a region or a component's exports arrive or go
+const exportedLandmarkIds = computed(() => getExportedLandmarkIds(regionLandmarks.value, sceneExportMap.values()));
 // The palettes every region in reach read with its data, which each of its buildings is drawn in
 const regionPalettes = computed(() => {
   const mergedRegionPalettes: Partial<RegionPaletteMap> = {};
@@ -123,7 +131,7 @@ onUnmounted(() => {
     <TresGroup
       v-for="landmark of regionLandmarks"
       :key="landmark.id"
-      :visible="!hiddenKinds.includes(landmark.kind)"
+      :visible="!hiddenKinds.includes(landmark.kind) && !exportedLandmarkIds.has(landmark.id)"
       :user-data="{ [SCENE_FAMILY_KEY]: kindFamilyMap[landmark.kind] }"
     >
       <WorldLandmarkTree

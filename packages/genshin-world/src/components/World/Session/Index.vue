@@ -106,6 +106,7 @@ const {
   regionDataBaseUrl,
   removeAccountCharacterPack,
   save,
+  sceneExportBaseUrl,
   serverClockOffsetMs = 0,
   startingCharacterIdKitMap,
   statTables,
@@ -636,6 +637,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :quality-tier
         :quest-target-id
         :region-data-base-url
+        :scene-export-base-url
         :frostbearing-tree-places
         :wildlife-places
         :windrise-data

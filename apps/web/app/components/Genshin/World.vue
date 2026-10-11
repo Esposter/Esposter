@@ -6,6 +6,7 @@ import {
   GENSHIN_ACCOUNT_CHARACTER_PACK_FILE_BASE_URL,
   GENSHIN_CHARACTER_PACK_BASE_URL,
   GENSHIN_REGION_DATA_BASE_URL,
+  GENSHIN_SCENE_EXPORT_BASE_URL,
 } from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
@@ -33,8 +34,8 @@ const containerBaseUrl = useContainerBaseUrl();
 const { accountCharacterPacks, isSignedIn, keepAccountCharacterPack, removeAccountCharacterPack } =
   useAccountCharacterPacks();
 // The world's screen with what only the app can hand it: the terrain worker its bundler builds, the URLs its server
-// Serves region data at and, in development alone, the developer's own character packs, and whether the tuning panel
-// Shows; quitting the game leaves for the app's home
+// Serves region data at and, in development alone, the developer's own character packs and exports of the game's
+// Scenes, and whether the tuning panel shows; quitting the game leaves for the app's home
 onMounted(() => {
   emit("load");
 });
@@ -56,6 +57,7 @@ onMounted(() => {
     :remove-account-character-pack="isSignedIn ? removeAccountCharacterPack : undefined"
     :region-data-base-url="GENSHIN_REGION_DATA_BASE_URL"
     :save
+    :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : undefined"
     :server-clock-offset-ms
     @grant="emit('grant')"
     @quit="navigateTo(RoutePath.Index)"

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {
   GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
+  GENSHIN_SCENE_EXPORT_BASE_URL,
   LOADING_STALL_WARNING_SECONDS,
 } from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
+import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
@@ -115,6 +117,7 @@ const emit = defineEmits<{ load: []; ready: [] }>();
         :language="gameText.language"
         :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"
         :progress
+        :scene-export-base-url="IS_DEVELOPMENT ? GENSHIN_SCENE_EXPORT_BASE_URL : undefined"
         @begin="isDoorOpened = true"
         @finish="isOpeningShown = false"
       />

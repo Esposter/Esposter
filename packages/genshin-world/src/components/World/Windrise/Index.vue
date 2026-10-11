@@ -36,6 +36,7 @@ import { useGenshinTuning } from "#src/composables/useGenshinTuning";
 import { usePostPipeline } from "#src/composables/usePostPipeline";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useResidentSpots } from "#src/composables/useResidentSpots";
+import { useSceneExports } from "#src/composables/useSceneExports";
 import { useSky } from "#src/composables/useSky";
 import { useSunShadow } from "#src/composables/useSunShadow";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
@@ -44,7 +45,7 @@ import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY }
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
-import { SCENE_FAMILY_KEY } from "#src/services/scene/constants";
+import { LEAF_SHADER, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import {
   CLOUD_COVERAGE,
@@ -73,6 +74,7 @@ import {
   WIND_STRENGTH,
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
+  WINDRISE_SCENE_EXPORT_COMPONENT,
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
 } from "#src/services/windrise/constants";
@@ -80,6 +82,7 @@ import { createWindrisePavingGeometry } from "#src/services/windrise/createWindr
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
+import { WorldSceneExportFamilyMeshRegexMap } from "#src/services/world/WorldSceneExportFamilyMeshRegexMap";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import { whenever } from "@vueuse/core";
@@ -87,6 +90,7 @@ import {
   createFogUniforms,
   createGradeLutTexture,
   createGroundCapture,
+  createLeafMaterial,
   createLightUniforms,
   createPostUniforms,
   createRampTexture,
@@ -148,6 +152,9 @@ interface Props {
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
   regionDataBaseUrl: string;
+  // Where the host serves the developer's own exports of the game's scenes, drawn in place of our stand-ins of each
+  // Family they hold, as only the development server does
+  sceneExportBaseUrl?: string;
   // The Mondstadt animals the official map marks, each stood at its place
   wildlifePlaces: WildlifePlace[];
   // Windrise's records: its ground, its surfaces, its oak, plants, paving and statue, and its water
@@ -181,6 +188,7 @@ const {
   qualityTier,
   questTargetId,
   regionDataBaseUrl,
+  sceneExportBaseUrl,
   wildlifePlaces,
   windriseData,
   worldLevel,
@@ -196,10 +204,10 @@ const emit = defineEmits<{
 // Within reach of the origin
 // oxlint-disable-next-line no-restricted-globals -- the parity page reaches a published scene's own parts with no prop for a host to see
 const witness = inject(SceneWitnessKey, null);
-const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean => !witness?.families.value.includes(family);
+const checkIsWitnessed = (family: WindrisePartFamily): boolean => witness?.families.value.includes(family) ?? false;
 const hiddenLandmarkKinds = computed(() => [
-  ...(checkIsOwnFamilyDrawn(WindrisePartFamily.Oak) ? [] : [LandmarkKind.Tree]),
-  ...(checkIsOwnFamilyDrawn(WindrisePartFamily.Statue) ? [] : [LandmarkKind.StatueOfTheSeven]),
+  ...(checkIsWitnessed(WindrisePartFamily.Oak) ? [LandmarkKind.Tree] : []),
+  ...(checkIsWitnessed(WindrisePartFamily.Statue) ? [LandmarkKind.StatueOfTheSeven] : []),
 ]);
 const rampTexture = createRampTexture(WINDRISE_RAMP_OPTIONS);
 const lightUniforms = createLightUniforms();
@@ -238,6 +246,21 @@ const { isRegionDataSettled, regionDataMap, regionGroundMap } = useRegionData(
   gameDataBaseUrl,
   catalogue,
 );
+// The game's own exports of Windrise and of each region in reach, where the host serves them, lit as our stand-ins are and
+// Drawn in their place: the leaf cards in the wind as our crowns are, and every other part in the toon material
+const sceneExportMap = useSceneExports(
+  sceneExportBaseUrl,
+  () => [WINDRISE_SCENE_EXPORT_COMPONENT, ...regionDataMap.keys()],
+  WorldSceneExportFamilyMeshRegexMap,
+  ({ shader }) =>
+    shader === LEAF_SHADER
+      ? createLeafMaterial({ lightUniforms, rampTexture }, windUniforms)
+      : createToonMaterial({ lightUniforms, rampTexture }),
+);
+// Whether ours of a family is drawn: not where a witness render draws the exports' in its place, nor where Windrise's
+// Exports hold the family
+const checkIsOwnFamilyDrawn = (family: WindrisePartFamily): boolean =>
+  !checkIsWitnessed(family) && !sceneExportMap.get(WINDRISE_SCENE_EXPORT_COMPONENT)?.familyBoundsMap.has(family);
 // The regions' grounds laid over Windrise's so far, which the terrain's workers raise every tile after by
 const regionGrounds = computed<RegionGround[]>(() => [...regionGroundMap.values()]);
 const fogUniforms = createFogUniforms();
@@ -394,6 +417,7 @@ onUnmounted(() => {
   <primitive v-if="witness" :object="witness.parts" />
   <!-- Everything placed in the world is in this group, which the floating origin offsets -->
   <TresGroup :position="worldOffset">
+    <primitive v-for="[component, { parts }] of sceneExportMap" :key="component" :object="parts" />
     <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
       <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of ours -->
@@ -460,6 +484,7 @@ onUnmounted(() => {
       :light-uniforms
       :ramp-texture
       :region-data-map
+      :scene-export-map
       :statue
       :surfaces
       :tree-species-options-map
