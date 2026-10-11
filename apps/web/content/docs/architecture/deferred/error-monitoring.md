@@ -31,4 +31,4 @@ A user reports a bug that cannot be reproduced from the console — meaning the 
 
 ## Cheaper interim
 
-The one gap worth closing without a service was the boundary page, and it is closed — an escaped error now lands on ours rather than the framework's. Everything else stays as it is: the console handler, the `loggerLink` production filter, and `.orTee(console.error)` on the server. None of them transmits anything, which is the whole of what adopting a tracker would change.
+The one gap worth closing without a service is the boundary page, which `app/error.vue` closes: an escaped error lands on ours rather than the framework's. Everything else stays as it is: the console handler, the `loggerLink` production filter, and `.orTee(console.error)` on the server. None of them transmits anything, which is the whole of what adopting a tracker would change.
