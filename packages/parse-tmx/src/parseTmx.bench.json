@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/parseTmx.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.06295049999999999,
+              "name": "translated flips",
+              "p99": 0.1253540000000104,
+              "rme": 18.35826476857931,
+              "sampleCount": 200
+            },
+            {
+              "mean": 0.08156049999999966,
+              "name": "raw gids",
+              "p99": 0.2764339999999918,
+              "rme": 9.66385382290198,
+              "sampleCount": 200
+            }
+          ],
+          "fullName": "parseTmx > the largest fixture"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 6.633705000000001,
+              "name": "raw gids",
+              "p99": 11.054739,
+              "rme": 6.339504755323913,
+              "sampleCount": 40
+            },
+            {
+              "mean": 14.551959999999985,
+              "name": "translated flips",
+              "p99": 22.50048799999994,
+              "rme": 5.616219760335908,
+              "sampleCount": 40
+            }
+          ],
+          "fullName": "parseTmx > a 300x300 CSV map"
+        }
+      ]
+    }
+  ]
+}
