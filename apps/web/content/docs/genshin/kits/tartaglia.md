@@ -13,7 +13,7 @@ Tartaglia's kit is one module, `createTartagliaKit`, on avatar 10000033: six arr
 - **Riptide goes on after the Riptide Flash it sets off is read**, as gcsim's order has it, so a shot sets off Flash only on Riptide the enemy held before it. An enemy a Riptide-giving hit defeats bursts too, as the wiki notes, and Riptide Burst gives Riptide to what it strikes, as its talent text reads where gcsim gives none.
 - **Riptide Blast lands 0.8 seconds after its hit**, the wiki's delay, clearing Riptide as the hit lands, and a Riptide Slash's interval holds it off, as gcsim checks.
 - **Hydrospout ticks on each enemy's own schedule**, every 3.9 seconds as gcsim measures the game's 4, from the first Riptide on that enemy; gcsim keeps one schedule, for the enemy last given Riptide.
-- **Tartaglia's gauges and poise are the wiki's**, Riptide Burst's 1U where gcsim gives 2U among them, his Melee Stance strikes count under their own Foul Legacy internal cooldown and Riptide Flash under its own Riptide one (`InternalCooldownTag`). His arrows are priced round his body as Fischl's are, and his plunges are provisional, as gcsim models none.
+- **Tartaglia's gauges and poise are the wiki's**, Riptide Burst's 1U where gcsim gives 2U among them, his Melee Stance strikes count under their own Foul Legacy internal cooldown and Riptide Flash under its own Riptide one (`InternalCooldownTag`). His arrows are priced round his body, and his plunges are provisional.
 
 ## Key files
 

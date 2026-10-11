@@ -9,7 +9,7 @@ Keqing's kit is one module, `createKeqingKit`, on avatar 10000042: five strikes,
 
 ## Decisions
 
-- **Keqing's Stiletto recast is a press inside a window, and her Starward Sword slashes are priced by their own hitmarks.** gcsim spaces the eight slashes 11 frames apart from 82; each is its own hit under the burst's internal cooldown, so the slashes are not one hit repeated. Her reaches on a target are provisional, as the other kits' are, and the recast's infusion is the shared infusion.
+- **Keqing's Stiletto recast is a press inside a window, and her Starward Sword slashes are priced by their own hitmarks.** gcsim spaces the eight slashes 11 frames apart from 82; each is its own hit under the burst's internal cooldown, so the slashes are not one hit repeated. The recast's infusion is the shared infusion.
 
 ## Key files
 

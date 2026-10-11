@@ -26,4 +26,4 @@ Amber's kit is one module, `createAmberKit`, avatar 10000021: five arrows, a ful
 ## Sources
 
 - [Sharpshooter](https://genshin-impact.fandom.com/wiki/Sharpshooter), [Explosive Puppet](https://genshin-impact.fandom.com/wiki/Explosive_Puppet) and [Fiery Rain](https://genshin-impact.fandom.com/wiki/Fiery_Rain), Genshin Impact Wiki: Amber's arrows' and shots' poise and gauges, the bunny's explosion, and Fiery Rain's arrows.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/amber), MIT: Amber's arrows', aimed shot's, skill's and burst's hitmarks, cancel frames and areas, and the bunny's explosion.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/amber), MIT: the kit's hitmarks, cancel frames and areas, the bunny's explosion.
