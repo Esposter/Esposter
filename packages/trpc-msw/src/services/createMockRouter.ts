@@ -1,29 +1,18 @@
 import type { ProcedureRegistration } from "#src/models/ProcedureRegistration";
 import type { ProcedureResolverOptions } from "#src/models/ProcedureResolverOptions";
 import type { TRPCMswRoot } from "#src/models/TRPCMswRoot";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
 
 import { toResolverOptions } from "#src/services/toResolverOptions";
 import { exhaustiveGuard } from "@esposter/shared";
-import { StandardSchemaV1Error, TRPCError } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 
-// A tRPC input is a Standard Schema or a plain function, the two forms the public `.input()` accepts
-type InputParser = ((value: unknown) => unknown) | StandardSchemaV1;
+// The parser type tRPC's public `.input()` takes, a Standard Schema, a Zod-like object or a plain function
+type InputParser = Parameters<TRPCMswRoot<object>["procedure"]["input"]>[0];
 
-const parseInput = async (parser: InputParser, value: unknown): Promise<void> => {
-  if (typeof parser === "function") {
-    await parser(value);
-    return;
-  }
-
-  const result = await parser["~standard"].validate(value);
-  if (result.issues) throw new StandardSchemaV1Error(result.issues);
-};
-
-// Each procedure reads its resolver when it is called rather than when the router is built, so a resolver a test
-// Replaces answers the next call even on a WebSocket connection whose router was built before it. tRPC joins
-// A router record's keys into procedure paths, so a dotted key is the nested path it spells
+// Each mock procedure chains the real procedure's inputs onto the consumer's own builder, so tRPC parses the input with
+// The same parsers, in the same order, and answers a rejection with the same BAD_REQUEST the server does
+// A tRPC router record's keys are joined into procedure paths, so a dotted key is the nested path it spells
 export const createMockRouter = <TContext extends object>(
   { procedure: baseProcedure, router }: TRPCMswRoot<TContext>,
   procedureTypes: ReadonlyMap<string, TRPCProcedureType>,
@@ -33,17 +22,13 @@ export const createMockRouter = <TContext extends object>(
   router(
     Object.fromEntries(
       procedureTypes.entries().map(([path, type]) => {
-        // The real procedure's parsers only judge the input: a rejection is the BAD_REQUEST the server answers with, and
-        // The resolver still receives the input as the transformer decoded it
-        const parsers: InputParser[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
-        const procedure = baseProcedure.input(async (value) => {
-          // oxlint-disable-next-line no-await-in-loop -- Order is the contract: the server's input middlewares run in turn and stop at the first rejection
-          for (const parser of parsers) await parseInput(parser, value);
-          return value;
-        });
+        const inputs: InputParser[] = inputRouter?._def.procedures[path]?._def.inputs ?? [];
+        const procedure = inputs.reduce<typeof baseProcedure>((builder, input) => builder.input(input), baseProcedure);
         const createNotFoundError = () =>
           new TRPCError({ code: "NOT_FOUND", message: `No "${type}"-procedure on path "${path}"` });
 
+        // Each procedure reads its resolver when it is called rather than when the router is built, so a resolver a test
+        // Replaces answers the next call even on a WebSocket connection whose router was built before it
         switch (type) {
           case "mutation":
           case "query":

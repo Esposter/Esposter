@@ -1,9 +1,11 @@
+import type { StandardSchemaV1 } from "@standard-schema/spec";
+
 import { createTRPCMsw } from "#src/createTRPCMsw";
 import { UnhandledProcedureAction } from "#src/models/UnhandledProcedureAction";
 import { takeOne } from "@esposter/shared";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from "@trpc/client";
 import { initTRPC, TRPCError } from "@trpc/server";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import superjson from "superjson";
@@ -14,8 +16,13 @@ describe(createTRPCMsw, () => {
   const endpoint = "http://localhost/trpc";
   const webSocketUrl = "ws://localhost/trpc";
   const t = initTRPC.context<{ authorization: string }>().create({
-    // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape
-    errorFormatter: ({ shape }) => ({ ...shape, message: `formatted ${shape.message}` }),
+    // Visible in every rejection below, which is what proves the real formatter ran rather than a copy of its shape. The
+    // Stack is the call site of each host, so it is dropped to let a mock body equal the real server body
+    errorFormatter: ({ shape }) => ({
+      ...shape,
+      data: { ...shape.data, stack: undefined },
+      message: `formatted ${shape.message}`,
+    }),
     transformer: superjson,
   });
   // What the chained parsers below have done so far, in the order they did it
@@ -58,6 +65,7 @@ describe(createTRPCMsw, () => {
       // A procedure named after the method the proxy ends in
       query: t.procedure.query(() => ""),
     }),
+    pair: t.procedure.input(z.object({ a: z.string(), b: z.number() })).query(() => ""),
     readAuthorization: t.procedure.query(() => ""),
     registeredLater: t.procedure.query(() => ""),
     standard: t.procedure.input(standardValidator).query(() => ""),
@@ -122,9 +130,37 @@ describe(createTRPCMsw, () => {
 
     // @ts-expect-error The input the real parser exists to reject
     await expect(client.nested.deep.read.query({ id: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCClientError: formatted Invalid input: expected string, received number]`,
+      `[TRPCClientError: formatted [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "id"
+    ],
+    "message": "Invalid input: expected string, received number"
+  }
+]]`,
     );
     expect(read).not.toHaveBeenCalled();
+  });
+
+  test("answers an input with two issues the way the real server does", async () => {
+    expect.hasAssertions();
+
+    trpc.pair.query(() => "");
+    const url = `${endpoint}/pair?input=${encodeURIComponent(JSON.stringify({ json: { a: 0, b: "" } }))}`;
+    const realResponse = await fetchRequestHandler({
+      createContext: () => ({ authorization: "" }),
+      endpoint: "/trpc",
+      req: new Request(url),
+      router,
+    });
+    const mockResponse = await fetch(url);
+
+    const realBody = await realResponse.json();
+
+    expect(mockResponse.status).toBe(realResponse.status);
+    await expect(mockResponse.json()).resolves.toStrictEqual(realBody);
   });
 
   test("#37 validates input through a Standard Schema validator", async () => {
