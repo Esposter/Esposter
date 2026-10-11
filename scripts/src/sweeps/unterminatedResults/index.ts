@@ -2,8 +2,11 @@ import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
 import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";
+import { timeCommand } from "#src/services/timing/runCommand";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+timeCommand("ai:sweep:unterminated-results");
 
 // Prints rather than exits non-zero, like the other sweep scans: a hit is a chain to read against what the
 // Enclosing function does with it, and the ledger carries the standing exclusions

@@ -1,9 +1,10 @@
+import { runCommand } from "#src/services/timing/runCommand";
 import { checkReferences } from "#src/services/voiceMatch/checkReferences";
 import { measureRoster } from "#src/services/voiceMatch/measureRoster";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 import { VoiceLanguage } from "genshin-persona/src/models/VoiceLanguage.ts";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       language: {

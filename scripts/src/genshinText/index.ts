@@ -1,4 +1,4 @@
 import { genshinTextCommand } from "#src/services/genshinText/commands/genshinTextCommand";
-import { runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
 
-await runMain(genshinTextCommand);
+await runCommand(genshinTextCommand);

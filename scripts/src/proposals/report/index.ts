@@ -4,6 +4,9 @@ import { getProductReviewPasses } from "#src/services/proposals/getProductReview
 import { getProposalShips } from "#src/services/proposals/getProposalShips";
 import { readProposalSummaries } from "#src/services/proposals/readProposalSummaries";
 import { runGit } from "#src/services/shared/runGit";
+import { timeCommand } from "#src/services/timing/runCommand";
+
+timeCommand("ai:proposals:report");
 
 // `pnpm ai:proposals:report` — every open proposal sized from what its page already says, cheapest first, then the
 // Areas a ship has moved since their last product-review pass. Nothing it prints is kept anywhere by hand

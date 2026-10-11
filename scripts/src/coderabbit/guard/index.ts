@@ -1,8 +1,9 @@
 import { runGuard } from "#src/services/coderabbit/guard/runGuard";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:coderabbit:guard` — whether the review collector's guard wakes the cycle after a red or killed run
-await runMain(
+await runCommand(
   defineCommand({
     meta: {
       description: "Whether the review collector's guard wakes the cycle after a red or killed run",

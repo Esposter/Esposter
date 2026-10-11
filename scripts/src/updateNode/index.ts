@@ -1,6 +1,7 @@
 import { PACKAGE_LOCK_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
+import { runCommand } from "#src/services/timing/runCommand";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { getEnvWithoutPackageBins } from "#src/services/updateNode/getEnvWithoutPackageBins";
 import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
@@ -11,7 +12,7 @@ import { setLockfileNodeVersion } from "#src/services/updateNode/setLockfileNode
 import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNodeVersion";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
@@ -26,7 +27,7 @@ const updateNodeFloorFile = (path: string, version: string, setFloor: (text: str
   console.info(`✔ ${relative(REPOSITORY_ROOT, path)} node → >=${version}`);
 };
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       // A partial request like `X` / `X.Y` resolves to its highest release (`X.Y.Z`) so the pin names a real version;

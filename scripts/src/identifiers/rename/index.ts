@@ -4,11 +4,12 @@ import { renameSource } from "#src/services/identifiers/rename/renameSource";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       // Read relative to where the command runs, so the map can live in a scratchpad

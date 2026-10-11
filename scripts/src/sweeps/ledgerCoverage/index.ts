@@ -9,8 +9,11 @@ import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEv
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { timeCommand } from "#src/services/timing/runCommand";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+timeCommand("ai:sweep:ledger-coverage");
 
 // Oldest first so a later trailer wins, ordered and dated by author date so a rebase moves neither — the default
 // Traversal is committer-dated, which replays a rebased pass after the reopen that was meant to undo it — and only

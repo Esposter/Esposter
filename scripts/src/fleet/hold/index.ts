@@ -2,12 +2,13 @@ import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
 import { claimFleetEntryHere } from "#src/services/fleet/claimFleetEntryHere";
 import { formatClaimHolder } from "#src/services/fleet/formatClaimHolder";
 import { holdFleetEntry } from "#src/services/fleet/holdFleetEntry";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:hold <id> [--worker <id>]` — claims an entry for this worker, then renews the claim every ten minutes
 // Until its ref is deleted or the process is killed. A runner starts it in the background for the entry it works, with
 // The worker id `next` printed (the throughput skill, `references/fleet.md`)
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       id: { description: "The entry's id", required: true, type: "positional" },

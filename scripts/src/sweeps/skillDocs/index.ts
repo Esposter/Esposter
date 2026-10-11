@@ -1,5 +1,8 @@
 import { SkillDocsFindingTypes } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
 import { readSkillDocsFindings } from "#src/services/sweeps/skillDocs/readSkillDocsFindings";
+import { timeCommand } from "#src/services/timing/runCommand";
+
+timeCommand("ai:sweep:skill-docs");
 
 const typeWidth = Math.max(...SkillDocsFindingTypes.map(({ length }) => length));
 

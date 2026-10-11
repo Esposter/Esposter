@@ -1,4 +1,7 @@
 import { readFileOrganizationFindings } from "#src/services/sweeps/fileOrganization/readFileOrganizationFindings";
+import { timeCommand } from "#src/services/timing/runCommand";
+
+timeCommand("ai:sweep:file-organization");
 
 // Prints candidates for the file-organization pass, one `path: <type>: <names>` per line — a candidate list
 // Rather than findings, since the skill's exceptions are a roster no scan can hold, so no workspace test asserts

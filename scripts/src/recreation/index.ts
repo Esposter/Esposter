@@ -1,5 +1,5 @@
 import { GENSHIN_LUA_53 } from "#src/services/genshinAssets/lua/GENSHIN_LUA_53";
 import { createRecreationCommand } from "#src/services/recreation/commands/recreationCommand";
-import { runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
 
-await runMain(createRecreationCommand(GENSHIN_LUA_53));
+await runCommand(createRecreationCommand(GENSHIN_LUA_53));

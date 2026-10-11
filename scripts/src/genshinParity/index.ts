@@ -1,4 +1,4 @@
 import { genshinParityCommand } from "#src/services/genshinParity/commands/genshinParityCommand";
-import { runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
 
-await runMain(genshinParityCommand);
+await runCommand(genshinParityCommand);

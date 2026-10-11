@@ -2,10 +2,11 @@ import type { CreatePackageOptions } from "#src/models/package/CreatePackageOpti
 
 import { PackageKind } from "#src/models/package/PackageKind";
 import { createPackage } from "#src/services/package/new/createPackage";
-import { defineCommand, runMain } from "citty";
+import { runCommand } from "#src/services/timing/runCommand";
+import { defineCommand } from "citty";
 
 // `pnpm ai:package:new <name>` — writes a workspace package that passes the workspace suite on its first commit
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       description: {

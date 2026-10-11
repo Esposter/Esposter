@@ -5,10 +5,11 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
+import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: { pullRequest: { description: "The pull request's number", required: true, type: "positional" } },
     meta: {

@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { defineCommand, runMain } from "citty";
+import { defineCommand } from "citty";
 import { spawn } from "node:child_process";
 import { constants } from "node:os";
 
@@ -9,7 +10,7 @@ import packageJson from "../../../package.json" with { type: "json" };
 
 const CROSS_OS_PROPERTY = "crossOS";
 
-await runMain(
+await runCommand(
   defineCommand({
     args: {
       script: {

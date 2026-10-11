@@ -39,10 +39,13 @@ import {
 } from "#src/services/shared/constants";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { timeCommand } from "#src/services/timing/runCommand";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+
+timeCommand("outdated:dependencies");
 
 const startedAt = performance.now();
 const color = createColor(!process.env.NO_COLOR);
