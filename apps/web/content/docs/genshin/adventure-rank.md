@@ -59,17 +59,17 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 ## Notes
 
 - Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
-- `useWorldAdventureRank` holds the player's Adventure EXP live, started from the save and read back through the save sync, so a gain moves the rank, the World Level and the bar at once. A gain past rank 60 is paid in Mora. The Paimon menu's profile card shows the rank, the World Level and the EXP's bar toward the next rank, read from that standing; the bar fills from the EXP, full at rank 60 and at a rank held by a quest. The World Level dialog's button lowers it by one from World Level 3 or restores it, through `toggleWorldLevel`; the adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload.
+- The World Level adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload. The EXP is read back through the save sync, so a gain moves the rank, the World Level and the bar at once.
 - The rank's rewards are not read yet. Katheryne, who hands them out, is not yet placed in Mondstadt's region data.
 
 ## Decisions
 
 - **The dialog's title is `UI_WORLDLEVEL_TITLE`,** the World Level's own interface title, the word the card's row already shows. Several text ids read "World Level" exactly, and nothing on screen tells them apart.
 - **The help text opens at its end.** Both public recordings show the dialog at its last lines, the scroll thumb at the track's foot, from the first frame it is open, so the body is laid out from its end as a column in reverse, which a later change of font or language keeps at the end too.
-- **The button changes the World Level at once.** The game first opens a Change World Level prompt over the dialog, showing the World Level now and lowered, what the change does and, during a cooldown, the time left; the 2024 recording shows it from about 8.5 seconds. That prompt is not built (the roadmap's World), so the button toggles the `worldLevelAdjustment` slice itself, and is held while the cooldown runs rather than opening a prompt to say so.
+- **The button changes the World Level at once.** The game first opens a Change World Level prompt over the dialog, showing the World Level now and lowered, what the change does and, during a cooldown, the time left; the 2024 recording shows it. That prompt is not built (the roadmap's World), so the button toggles the `worldLevelAdjustment` slice itself, and is held while the cooldown runs rather than opening a prompt to say so.
 - **The dialog stays open after a change,** its button turned to Revert World Level and held through the cooldown. Neither recording shows whether the game closes it.
 - **The restoring button's arrow is the lowering's turned over,** provisionally, since no recording shows the restoring button.
-- **The card's values stand right-aligned beside the info disc,** 17 units left of it at a cap height of 19, as the current client draws them. The menu's reference still is the 1.3 build's, its values redacted, so the move costs its score a few hundredths of a percent.
+- **The card's values stand right-aligned beside the info disc,** as the current client draws them. The menu's reference still is the 1.3 build's, its values redacted, so the move costs its score a little.
 
 ## Key files
 
@@ -88,7 +88,6 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/services/adventureRank/computeWorldLevelCooldown.ts`    | the time left before the World Level can be changed again            |
 | `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`             | the World Level dialog: the game's help text and the lowering button |
 | `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                       | the profile card's rank, EXP bar, World Level and its info icon      |
-| `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                   | the session's live EXP, the World Level it plays at and its toggle   |
 | `packages/genshin-world/src/services/enemy/createEnemy.ts`                          | spawns an enemy at its World Level's level                           |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`                     | spawns the camps, and respawns them when the World Level changes     |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                     | the World Level the world plays at, handed down to its enemies       |
