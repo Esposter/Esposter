@@ -44,7 +44,7 @@ Photo mode, chosen from the Paimon menu, holds the body where it stands and keep
 
 ## The numbers
 
-The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, each from the most exact source the game has for it:
+The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, each one a reading of the game's own data, the [parity](/docs/genshin/parity/passes) rule taking the exact source where one exists:
 
 - **The game's own data** for the field of view, the pitch's limits and the wheel's nearest and furthest distances. The field of view is the one the game sets its world camera to. The limits and the distances are the game's camera profile, a ScriptableObject holding a config for each of its camera modules and one global config, which `pnpm -C scripts genshin:assets camera` exports from the install and prints word by word: the global config's elevation limits, its nearest zoom radius and its furthest radius on foot. The Settings screen's default distance spans as much as the profile's setting adjustment does and tops out at that furthest radius, so the setting is read in metres of the arm.
 - **Recordings** for the pivot: the share of a standing character's height at which the screen's centre falls, read off frames of two bodies, a tall female's under a near-level camera and a medium male's under cameras looking down, whose foreshortening is allowed for. The readings are kept in the character's reference (`packages/genshin-world/src/components/World/Character/Camera.reference.ts`).

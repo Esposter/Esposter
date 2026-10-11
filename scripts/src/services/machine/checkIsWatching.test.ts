@@ -1,8 +1,8 @@
 import type { MachineStateFile } from "#src/models/machine/MachineStateFile";
 
 import { MachineState } from "#src/models/machine/MachineState";
-import { MACHINE_STATE_STALE_MILLISECONDS } from "#src/services/machine/constants";
 import { checkIsWatching } from "#src/services/machine/checkIsWatching";
+import { MACHINE_STATE_STALE_MILLISECONDS } from "#src/services/machine/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsWatching, () => {
