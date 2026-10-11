@@ -12,7 +12,7 @@ committed.
 | `character-attributes` | `CharacterScreen` | 7.74% | 0.765 | 5.57% | 0.3535 |
 | `character-attributes-panel` | `CharacterScreen` | 7.20% | 0.574 | 4.42% | 0.3177 |
 | `character-attributes-tabs` | `CharacterScreen` | 6.34% | 0.500 | 5.07% | 0.3094 |
-| `character-attributes-top` | `CharacterScreen` | 11.49% | 0.741 | 5.64% | 0.4177 |
+| `character-attributes-top` | `CharacterScreen` | 12.11% | 0.649 | 5.89% | 0.4284 |
 | `character-constellation` | `CharacterScreen` | 6.71% | 0.656 | 4.47% | 0.2813 |
 | `character-constellation-tabs` | `CharacterScreen` | 5.28% | 0.490 | 3.57% | 0.2051 |
 | `character-talents` | `CharacterScreen` | 7.92% | 0.468 | 4.91% | 0.3511 |
@@ -20,7 +20,7 @@ committed.
 | `character-weapons` | `CharacterScreen` | 10.19% | 0.479 | 6.42% | 0.4153 |
 | `character-weapons-tabs` | `CharacterScreen` | 7.35% | 0.503 | 5.26% | 0.3381 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
-| `crafting-table` | `CraftingScreen` | 60.82% | 0.045 | 58.58% | 0.9300 |
+| `crafting-table` | `CraftingScreen` | 53.70% | 0.024 | 58.66% | 0.9173 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.34% | 0.756 | 8.55% | 0.4678 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |
@@ -29,7 +29,7 @@ committed.
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
-| `handbook-experience` | `HandbookScreen` | 18.12% | 0.173 | 13.29% | 0.5150 |
+| `handbook-experience` | `HandbookScreen` | 8.22% | 0.895 | 4.49% | 0.3601 |
 | `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
 | `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
 | `hud-stamina-climb` | `HudScreen` | 1.97% | 0.724 | 2.17% | 0.1411 |
@@ -58,6 +58,8 @@ committed.
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
 | `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
+| `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
+| `quest-screen-details` | `QuestScreen` | 49.84% | 0.835 | 48.29% | 0.8746 |
 | `reputation-screen` | `ReputationScreen` | 6.13% | 0.380 | 5.39% | 0.2658 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.992 | 0.41% | 0.0756 |
 | `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
