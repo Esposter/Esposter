@@ -8,12 +8,13 @@ import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
 import { SETTINGS_TABS } from "#src/services/menu/constants";
+import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { QualityTierGameTextKeyMap } from "#src/services/menu/QualityTierGameTextKeyMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
 import { useResizeObserver } from "@vueuse/core";
-import { GameScreen } from "genshin-interface";
+import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -70,17 +71,24 @@ onMounted(() => {
     </svg>
     <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.SettingsGear]" class="gear" />
     <p class="breadcrumb">{{ gameText[GameTextKey.Settings] }} / {{ gameText[SettingsTabGameTextKeyMap[tab]] }}</p>
-    <button class="close" :aria-label="gameText[GameTextKey.Back]" type="button" @click="emit('close')" />
-    <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" class="close-glyph" />
+    <GameButton
+      class="close"
+      :aria-label="gameText[GameTextKey.Back]"
+      :kind="GameButtonKind.Disc"
+      :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close])"
+      @click="emit('close')"
+    >
+      <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 }" class="close-glyph" />
+    </GameButton>
     <div class="tabs" role="tablist" aria-orientation="vertical">
-      <button
+      <GameButton
         v-for="settingsTab of SETTINGS_TABS"
         :key="settingsTab"
         class="tab"
         role="tab"
         :aria-selected="settingsTab === tab"
         :disabled="!SettingsTabSectionsMap[settingsTab]"
-        type="button"
+        :kind="GameButtonKind.Row"
         @click="tab = settingsTab"
       >
         <svg v-if="settingsTab === tab" class="selected-bullet" aria-hidden="true" viewBox="0 0 28 28">
@@ -89,7 +97,7 @@ onMounted(() => {
         </svg>
         <span v-else class="bullet" />
         <span class="name">{{ gameText[SettingsTabGameTextKeyMap[settingsTab]] }}</span>
-      </button>
+      </GameButton>
     </div>
     <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">
       <div ref="content" class="content">
@@ -199,29 +207,20 @@ onMounted(() => {
   line-height: 1;
 }
 
-/* The close mark's disc in its translucent ring, which brightens under the pointer or the keyboard's focus */
+/* The close mark's disc in its translucent ring, the close button's box at the mark's own place. Its rest colour is the
+   Mark's cream; the disc lights behind it under the pointer or the keyboard's focus, as a Disc does */
 .close {
   position: absolute;
-  top: calc(var(--unit) * 18);
-  left: calc(var(--unit) * 1814);
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
   padding: 0;
   border: calc(var(--unit) * 5.5) solid rgb(240 236 236 / 0.47);
   border-radius: 50%;
   background: none;
   box-sizing: border-box;
-  cursor: inherit;
-}
-
-.close:focus-visible,
-.close:hover {
-  outline: none;
-  border-color: rgb(240 236 236 / 0.8);
+  color: #ece5d7;
 }
 
 .close-glyph {
-  color: #ece5d7;
+  color: inherit;
 }
 
 .tabs {
@@ -234,7 +233,6 @@ onMounted(() => {
 
 .tab {
   position: relative;
-  isolation: isolate;
   height: calc(var(--unit) * 69.75);
   padding: 0 0 0 calc(var(--unit) * 144);
   border: none;
