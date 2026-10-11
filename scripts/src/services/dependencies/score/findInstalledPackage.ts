@@ -1,7 +1,7 @@
 import type { InstalledPackage } from "#src/models/dependencies/score/InstalledPackage";
 
-import { readPackageAt } from "#src/services/dependencies/score/readPackageAt";
 import { NODE_MODULES_DIRECTORY } from "#src/services/dependencies/score/constants";
+import { readPackageAt } from "#src/services/dependencies/score/readPackageAt";
 import { dirname, join } from "node:path";
 
 // The copy a workspace that lists the package installed, read from its own `node_modules`: `pnpm ls` reports the

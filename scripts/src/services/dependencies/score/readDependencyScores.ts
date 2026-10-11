@@ -5,6 +5,7 @@ import type { Packument } from "#src/models/dependencies/score/Packument";
 import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
+import { LEDGER_PATH, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { countDependencyLines } from "#src/services/dependencies/score/countDependencyLines";
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
 import { countRecentReleases } from "#src/services/dependencies/score/countRecentReleases";
@@ -15,7 +16,6 @@ import { getPackageFormat } from "#src/services/dependencies/score/getPackageFor
 import { getSelfContainmentPoints } from "#src/services/dependencies/score/getSelfContainmentPoints";
 import { getSizePoints } from "#src/services/dependencies/score/getSizePoints";
 import { getStabilityPoints } from "#src/services/dependencies/score/getStabilityPoints";
-import { LEDGER_PATH, UNJUDGED_VERDICT } from "#src/services/dependencies/score/constants";
 import { readImportingFiles } from "#src/services/dependencies/score/readImportingFiles";
 import { readLedgerVerdicts } from "#src/services/dependencies/score/readLedgerVerdicts";
 import { readTypeShims } from "#src/services/dependencies/score/readTypeShims";
@@ -23,17 +23,17 @@ import { getManifestDependencies } from "#src/services/outdatedDependencies/mani
 import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { fetchRegistry } from "#src/services/shared/fetchRegistry";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
-import { getResultAsync, getOrCreate } from "@esposter/shared";
 import { WORKSPACE_FILE } from "@esposter/configuration";
+import { getOrCreate, getResultAsync } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // The latest release, the one a `latest` install gets, is deprecated: a flag on the row, never a score
-const isLatestDeprecated = ({ "dist-tags": distTags, versions }: Packument): boolean => {
+const checkIsLatestDeprecated = ({ "dist-tags": distTags, versions }: Packument): boolean => {
   const latestVersion = distTags.latest;
   return latestVersion !== undefined && Boolean(versions[latestVersion]?.deprecated);
 };
@@ -96,7 +96,7 @@ export const readDependencyScores = async (): Promise<DependencyScoreReport> => 
       dependencyLines: installed === undefined ? 0 : countDependencyLines(packageName, installed),
       formatPoints,
       importerCount: importers?.size ?? 0,
-      isDeprecated: packument !== undefined && isLatestDeprecated(packument),
+      isDeprecated: packument !== undefined && checkIsLatestDeprecated(packument),
       manifestCount: manifestPaths.length,
       packageName,
       releaseCount,

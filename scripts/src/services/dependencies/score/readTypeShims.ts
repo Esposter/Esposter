@@ -1,4 +1,4 @@
-import { TYPE_SHIM_PATTERN, IMPORT_GREP_PATHSPECS } from "#src/services/dependencies/score/constants";
+import { IMPORT_GREP_PATHSPECS, TYPE_SHIM_PATTERN } from "#src/services/dependencies/score/constants";
 import { getFileTypeShims } from "#src/services/dependencies/score/getFileTypeShims";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";

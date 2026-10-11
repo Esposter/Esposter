@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { PackageFormat } from "#src/models/dependencies/score/PackageFormat";
 import { getFormatPoints } from "#src/services/dependencies/score/getFormatPoints";
+import { describe, expect, test } from "vitest";
 
 describe(getFormatPoints, () => {
   test.each([

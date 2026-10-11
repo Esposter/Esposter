@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { getFileTypeShims } from "#src/services/dependencies/score/getFileTypeShims";
+import { describe, expect, test } from "vitest";
 
 describe(getFileTypeShims, () => {
   test("counts a declared module, and a directive and a cast beside an import or a call of its package", () => {

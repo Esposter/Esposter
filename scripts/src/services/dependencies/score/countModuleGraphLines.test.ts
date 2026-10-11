@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import type { InstalledManifest } from "#src/models/dependencies/score/InstalledManifest";
 
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(countModuleGraphLines, () => {
   const TEST_PREFIX = "score-";

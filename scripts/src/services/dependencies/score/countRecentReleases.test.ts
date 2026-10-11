@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { countRecentReleases } from "#src/services/dependencies/score/countRecentReleases";
+import { describe, expect, test } from "vitest";
 
 describe(countRecentReleases, () => {
   test("counts a release on the window's first day and leaves out the one before it", () => {
