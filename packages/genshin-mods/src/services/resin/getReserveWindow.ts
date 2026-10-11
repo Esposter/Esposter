@@ -6,7 +6,7 @@ import { PACE_FLOOR_PERCENTAGE } from "../constants";
 import { RateLimitKindUsageWindowMap } from "./RateLimitKindUsageWindowMap";
 
 // Each window a reserve is read off, five-hour before weekly, so the five-hour one is the one named when both have
-// Passed a line of the same tier. A window is read once past its maintenance line, or once past half of its length
+// Passed a line of the same tier. A window is read once past its maintenance line, or once half of its allowance is
 // Spent ahead of an even pace, the share of its length that has elapsed; the wind-down line is read as well. A window
 // The engine gives no reset time for is skipped, since the reserve is named by that time and lifts at it
 export const getReserveWindow = (rateLimits: SessionRateLimit[], now: number): ReserveWindow | undefined => {
