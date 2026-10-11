@@ -1,7 +1,8 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A tile is one little-endian gid of `Uint32Array.BYTES_PER_ELEMENT` bytes, so a byte run that does not divide into
-// Whole tiles is malformed before its count is ever read
+// Whole tiles is malformed before its count is ever read. The gids are read into a typed array with a DataView, which
+// Reads little-endian whatever the host's byte order is, and the array is copied out once.
 export const unpackTileBytes = (bytes: Uint8Array): number[] => {
   if (bytes.byteLength % Uint32Array.BYTES_PER_ELEMENT !== 0)
     throw new InvalidOperationError(
@@ -10,10 +11,10 @@ export const unpackTileBytes = (bytes: Uint8Array): number[] => {
       `expected whole ${Uint32Array.BYTES_PER_ELEMENT}-byte tiles, received ${bytes.byteLength} bytes`,
     );
 
-  const unpackedTiles: number[] = [];
   const dataView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  for (let byteIndex = 0; byteIndex < bytes.byteLength; byteIndex += Uint32Array.BYTES_PER_ELEMENT)
-    unpackedTiles.push(dataView.getUint32(byteIndex, true));
+  const tiles = new Uint32Array(bytes.byteLength / Uint32Array.BYTES_PER_ELEMENT);
+  for (let index = 0; index < tiles.length; index++)
+    tiles[index] = dataView.getUint32(index * Uint32Array.BYTES_PER_ELEMENT, true);
 
-  return unpackedTiles;
+  return Array.from(tiles);
 };
