@@ -9,27 +9,16 @@ import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
+import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createSeededRandom } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
 const englishNameText = await NameTextLoaderMap[GameLanguage.English](GAME_DATA_LOCAL_BASE_URL);
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
 
-// The Tier recipe that makes a second-tier enhancement material, and Condensed Resin, which the player has learned from its
-// Instruction, both open at Adventure Rank 10, with the party's Sucrose, who doubles an enhancement material's craft
+// Condensed Resin on the Consumable tab, which the player has learned from its Instruction and which is open at Adventure
+// Rank 10, with Diluc as the crafter and one already crafted, as the Crafting Table clip shows it
 const recipes: CraftingRecipe[] = [
-  {
-    combineType: 1,
-    id: 11_001,
-    kind: CraftingRecipeKind.Tier,
-    materials: [{ count: 3, id: 112_002 }],
-    mora: 25,
-    nameTextId: "2293592500",
-    playerLevel: 1,
-    resultCount: 1,
-    resultItemId: 112_003,
-    unlockItemIds: [],
-  },
   {
     combineType: 6,
     id: 22_007,
@@ -53,11 +42,8 @@ const items: InventoryItem[] = [
 
 export const props = {
   adventureRank: 10,
-  craftedCountMap: new Map<number, number>(),
-  crafters: [
-    { id: 10_000_043, name: "Sucrose" },
-    { id: 10_000_058, name: "Yae Miko" },
-  ],
+  craftedCountMap: new Map<number, number>([[22_007, 1]]),
+  crafters: [{ id: DILUC_CHARACTER_ID, name: "Diluc" }],
   gameText: ENGLISH_GAME_TEXT,
   inventory: { items, nextId: 3 },
   materialDataMap,
