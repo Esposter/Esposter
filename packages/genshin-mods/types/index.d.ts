@@ -48,7 +48,6 @@ declare module "claude-code" {
       isHandingOff: boolean;
       lastCacheRequestAt: number;
       lastPrompt: string;
-      lastQueueSyncToastMs: number;
       lookupStreak: number;
       now: number;
       reserveWindow: ReserveWindow;

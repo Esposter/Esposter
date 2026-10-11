@@ -9,8 +9,6 @@ import {
   IDLE_WAKE_PROMPT,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
   MACHINE_WATCHER_SCRIPT,
-  QUEUE_SYNC_TIMEOUT_MILLISECONDS,
-  QUEUE_SYNC_TOAST_MILLISECONDS,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
@@ -34,10 +32,6 @@ const isCommissionExpandedAtom = atom(
   InitialState.isCommissionExpanded,
 );
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
-const lastQueueSyncToastMsAtom = atom(
-  { key: "lastQueueSyncToastMs", plugin: "genshin-mods" } as const,
-  InitialState.lastQueueSyncToastMs,
-);
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
@@ -114,32 +108,6 @@ const watchPulse = async ($: EngineInterface) => {
     // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and the watcher's run settles as its process exits
     watchPulse($);
   });
-};
-
-// Pushes the queue at a turn's end, under the pulse's own switch. The push takes its own lock, so a turn ending while one
-// Runs only queues one more. A sync shows nothing unless it fails, and a failure's toast carries the sync's last line, at
-// Most once each toast interval. The run is settled rather than awaited, since it rejects when node cannot start or the
-// Push outlasts its timeout, and that failure is toasted the same way
-const syncQueue = async ($: EngineInterface) => {
-  if (!(await read($, enabledModsAtom)).pulse) return;
-
-  const [outcome] = await Promise.allSettled([
-    $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()], {
-      timeoutMs: QUEUE_SYNC_TIMEOUT_MILLISECONDS,
-    }),
-  ]);
-  const nowMs = await $.clock.now();
-  const lastToastMs = await read($, lastQueueSyncToastMsAtom);
-  if (
-    (outcome.status === "fulfilled" && outcome.value.exitCode === 0) ||
-    nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS
-  )
-    return;
-
-  await update($, lastQueueSyncToastMsAtom, () => nowMs);
-  $.ui.toast(
-    `The queue push failed: ${outcome.status === "fulfilled" ? outcome.value.stdout.trim() : String(outcome.reason)}`,
-  );
 };
 
 const closeCommission = async ($: EngineInterface) => {
@@ -237,11 +205,6 @@ export const registerLifecycle = (on: On): void => {
 
     const now = await $.clock.now();
     await update($, nowAtom, () => now);
-    // The queue is pushed once the turn has ended, off its own dispatch, so the push never holds the turn
-    $.clock.after(0, () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run, which settles every outcome rather than rejecting
-      syncQueue($);
-    });
     await armCacheWarning($);
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {
