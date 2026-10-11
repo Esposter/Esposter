@@ -8,7 +8,6 @@ import {
   CACHE_WARNING_MS,
   IDLE_WAKE_PROMPT,
   MACHINE_WATCHER_SCRIPT,
-  QUEUE_SYNC_TOAST_MILLISECONDS,
   RESERVE_SECTION_ID,
   VEIL_SECTION_ID,
   VEIL_SYSTEM_SECTION,
@@ -32,10 +31,6 @@ const isCommissionExpandedAtom = atom(
   InitialState.isCommissionExpanded,
 );
 const lastPromptAtom = atom({ key: "lastPrompt", plugin: "genshin-mods" } as const, InitialState.lastPrompt);
-const lastQueueSyncToastMsAtom = atom(
-  { key: "lastQueueSyncToastMs", plugin: "genshin-mods" } as const,
-  InitialState.lastQueueSyncToastMs,
-);
 const lastCacheRequestAtAtom = atom(
   { key: "lastCacheRequestAt", plugin: "genshin-mods" } as const,
   InitialState.lastCacheRequestAt,
@@ -105,21 +100,6 @@ const watchPulse = async ($: EngineInterface) => {
     const wakeOptions = { isTurnRunning, isWindDown };
     if (taken.lines.some((line) => getPulseWake(line, wakeOptions))) await $.prompt.submit({ text: IDLE_WAKE_PROMPT });
   }
-};
-
-// Pushes the queue at a turn's end, under the pulse's own switch. The push takes its own lock, so a turn ending while one
-// Runs only queues one more. A sync shows nothing unless it fails, and a failure's toast carries the sync's last line, at
-// Most once each toast interval
-const syncQueue = async ($: EngineInterface) => {
-  if (!(await read($, enabledModsAtom)).pulse) return;
-
-  const output = await $.process.run(["node", `${$.plugin.root}/scripts/queueSync.mjs`, await $.session.cwd()]);
-  const nowMs = await $.clock.now();
-  const lastToastMs = await read($, lastQueueSyncToastMsAtom);
-  if (output.exitCode === 0 || nowMs - lastToastMs < QUEUE_SYNC_TOAST_MILLISECONDS) return;
-
-  await update($, lastQueueSyncToastMsAtom, () => nowMs);
-  $.ui.toast(`The queue push failed: ${output.stdout.trim()}`);
 };
 
 const closeCommission = async ($: EngineInterface) => {
@@ -217,11 +197,6 @@ export const registerLifecycle = (on: On): void => {
 
     const now = await $.clock.now();
     await update($, nowAtom, () => now);
-    // The queue is pushed once the turn has ended, off its own dispatch, so the push never holds the turn
-    $.clock.after(0, () => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and a failed sync is toasted by the run rather than rejected
-      syncQueue($);
-    });
     await armCacheWarning($);
     if (e.reason === "answer" && (await read($, enabledModsAtom)).waypoints)
       $.clock.after(0, () => {
