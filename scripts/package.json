@@ -31,6 +31,7 @@
     "#src/*": "./src/*.ts"
   },
   "scripts": {
+    "ai:ci:watch": "tsx src/ci/watch/index.ts",
     "ai:citations:sync": "node src/citations/sync/index.ts",
     "ai:coderabbit:collect": "tsx src/coderabbit/collect/index.ts",
     "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",

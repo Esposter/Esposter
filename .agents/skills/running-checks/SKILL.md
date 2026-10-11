@@ -53,13 +53,11 @@ review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a chang
 
 ## Watching the push's run
 
-The push's run is found by its commit: `gh run list --commit <sha> --workflow CI.yaml`, the sha `git rev-parse
-origin/ai/queue` after the push, then `gh run watch <id> --exit-status` in the background. Never by `--branch`
-with `--workflow`: GitHub's per-workflow branch filter holds none of `ai/queue`'s runs after 2026-09-24, so it
-answers with weeks-old runs as the newest, while the repository-wide branch filter and the commit filter stay
-current. On `ai/queue` a run in progress is never cancelled (`concurrency` in `CI.yaml`): it finishes, and of the
-runs waiting behind it only the newest is kept. So the push's own run may be skipped while it waits, never cut short.
-A skipped run is no verdict: watch the next run that starts, which builds on the session's commit too.
+`pnpm ai:ci:watch`, in the background straight after the push. It finds the run by the tip's commit — never by
+`--branch` with `--workflow`, whose per-workflow filter answers `ai/queue` with weeks-old runs — follows a run that
+was skipped while it waited to the newer run that carries the commit too (`concurrency` in `CI.yaml` keeps only the
+newest waiting run), waits for it, and exits non-zero on a red with each failed job's error lines, which is what wakes
+the session to fix it. A wave of agents landing one after another is watched once, after the last landing.
 
 ## A check CI owns, run locally
 
