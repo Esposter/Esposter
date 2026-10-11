@@ -43,6 +43,7 @@ describe(createTRPCMsw, () => {
       query: t.procedure.query(() => ""),
     }),
     readAuthorization: t.procedure.query(() => ""),
+    registeredLater: t.procedure.query(() => ""),
     unregistered: t.procedure.query(() => ""),
     upload: t.procedure.input(z.instanceof(FormData)).mutation(() => ""),
     write: t.procedure.mutation(() => undefined),
@@ -195,6 +196,18 @@ describe(createTRPCMsw, () => {
     await expect(client.write.mutate()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCClientError: formatted No "mutation"-procedure on path "write"]`,
     );
+  });
+
+  test("answers a procedure registered after an earlier call reached the router", async () => {
+    expect.hasAssertions();
+
+    await expect(client.registeredLater.query()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCClientError: formatted No procedure found on path "registeredLater"]`,
+    );
+
+    trpc.registeredLater.query(() => "later");
+
+    await expect(client.registeredLater.query()).resolves.toBe("later");
   });
 
   test("hands the resolver the context built from the request", async () => {
