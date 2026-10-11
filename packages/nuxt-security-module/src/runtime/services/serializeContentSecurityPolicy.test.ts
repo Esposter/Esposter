@@ -2,13 +2,13 @@ import { serializeContentSecurityPolicy } from "#src/runtime/services/serializeC
 import { describe, expect, test } from "vitest";
 
 describe(serializeContentSecurityPolicy, () => {
-  test("#432 a directive set to false is left out of the policy", () => {
+  test("a directive set to false is left out of the policy", () => {
     expect.hasAssertions();
 
     expect(serializeContentSecurityPolicy({ "default-src": ["'self'"], "img-src": false })).toBe("default-src 'self';");
   });
 
-  test("#214 upgrade-insecure-requests set to false is omitted, and set to true it is the bare directive", () => {
+  test("upgrade-insecure-requests set to false is omitted, and set to true it is the bare directive", () => {
     expect.hasAssertions();
 
     expect(serializeContentSecurityPolicy({ "upgrade-insecure-requests": false })).toBe("");
