@@ -126,19 +126,7 @@ onUnmounted(() => {
   touch-action: none;
 }
 
-/* Each icon's square is centred on its disc, its side a share of the disc's measured from the mark's box against its
-   Icon's. The burst's icon is white at 0.14 over its disc until charged, as `hud-world-pickup` shows it at 24% energy */
-.glyph {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--glyph-size);
-  height: var(--glyph-size);
-  fill: #fff;
-  pointer-events: none;
-  translate: -50% -50%;
-}
-
+/* The burst's icon is white at 0.14 over its disc until charged, as `hud-world-pickup` shows it at 24% energy */
 .burst .glyph {
   opacity: 0.14;
 }

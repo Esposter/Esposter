@@ -111,17 +111,6 @@ onUnmounted(() => {
   touch-action: none;
 }
 
-.glyph {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: var(--glyph-size);
-  height: var(--glyph-size);
-  fill: #fff;
-  pointer-events: none;
-  translate: -50% -50%;
-}
-
 .attack {
   --glyph-size: calc(var(--unit) * 189.6);
   right: calc(var(--unit) * 280.5);
