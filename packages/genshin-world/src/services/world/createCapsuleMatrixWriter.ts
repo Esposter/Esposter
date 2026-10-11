@@ -3,8 +3,8 @@ import type { InstancedMesh } from "three";
 import { Matrix4, Quaternion, Vector3 } from "three";
 
 // A writer of one upright capsule's matrix at an index of an instanced mesh, stood on the ground under its position and
-// turned to its heading. Its scratch objects are kept by the writer, so each write allocates nothing. It returns the point
-// the capsule stands at, its centre, for a caller that places something else on it
+// Turned to its heading. Its scratch objects are kept by the writer, so each write allocates nothing. It returns the point
+// The capsule stands at, its centre, for a caller that places something else on it
 export const createCapsuleMatrixWriter = () => {
   const matrix = new Matrix4();
   const point = new Vector3();

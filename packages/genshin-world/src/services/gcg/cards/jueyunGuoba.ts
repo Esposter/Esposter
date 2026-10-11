@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
+import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 
 const JUEYUN_GUOBA_ID = 333_001;
 
