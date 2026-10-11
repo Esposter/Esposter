@@ -25,7 +25,7 @@ How CI carries the cache, why a hit needs the install, and why the app build rep
 
 **A command earns a task only when a replay is as good as a run, and a run costs enough to skip.** Three things hold together: the command's result depends on nothing but files the tracer sees, it is slow enough that a hit saves a job real time, and something runs it again on a tree that has not changed — a rerun, a re-push, a second workflow on the same commit. Everything else stays a script, which is the default rather than a task waiting to be promoted:
 
-- **A command run for its effect or a fresh reading** — `dev`, `release`, `ai:queue:push`, the `lint:fix` passes, and `bench:ci`, whose whole job is measuring again, so a replay would hand back an old measurement.
+- **A command run for its effect or a fresh reading** — `dev`, `release`, the `lint:fix` passes, and `bench:ci`, whose whole job is measuring again, so a replay would hand back an old measurement.
 - **A command reading what the tracer cannot see** — the network, a git remote, the clock. `coverage` is one: its shards run virrun's own os-backend suites through bubblewrap, the sandbox the tracer cannot follow into (the same blind spot that keeps the root scripts off virrun, below), so a replay could pass over an edit that only the sandboxed run read.
 - **A command cheaper than its cache** — `format:check`, one standalone binary over the source that waits on no build, so a hit would still pay the install a replay needs and save almost none of the job.
 

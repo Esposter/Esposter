@@ -44,7 +44,7 @@ The prompt is the agent's whole world: the spec with its judgement calls resolve
 
 ## While agents run
 
-A batch runs in the shared checkout on `ai/queue`, never a worktree: each agent commits its own paths, shared files are edited by whoever needs them, an agent checks only the packages it touched and never the app, and one agent runs and fixes the batch's remaining checks once every agent has reported (`references/running-agents.md`).
+A batch's agents each work in their own worktree on `ai/queue` and land their commits with the `review-queue` skill's loop (`.agents/skills/llm-delegation/references/running-agents.md` says the same): each agent commits its own paths, shared files are edited by whoever needs them, an agent checks only the packages it touched and never the app, and one agent runs and fixes the batch's remaining checks once every agent has reported.
 
 ## In automation — the tiers
 
