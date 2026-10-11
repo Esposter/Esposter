@@ -8,6 +8,7 @@ import { AuraType } from "#src/models/combat/AuraType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -72,6 +73,25 @@ describe(landReactionReach, () => {
       getReactionDamage(TransformativeReactionType.Overloaded, Element.Pyro),
     );
     expect([origin.health, far.health]).toStrictEqual([STURDY_HEALTH, STURDY_HEALTH]);
+  });
+
+  test("strikes each enemy an Overloaded reaches with the explosion's poise as a blunt hit, which shatters a Freeze", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const near = createSturdyEnemy(1);
+    const frozen = createSturdyEnemy(2);
+    frozen.elementalState.auras.set(AuraType.Freeze, { decayRate: 0, gauge: 1, isImmutable: false });
+    const overloaded: TransformativeReaction = {
+      element: Element.Pyro,
+      reactionType: TransformativeReactionType.Overloaded,
+    };
+
+    const enemyStrikeResultMap = landReactionReach(enemyTables, origin, [origin, near, frozen], overloaded, combatant);
+
+    expect([near.state, near.poise]).toStrictEqual([EnemyState.Stagger, 0]);
+    expect(frozen.elementalState.auras.has(AuraType.Freeze)).toBe(false);
+    expect(enemyStrikeResultMap.get(frozen)?.reactions).toStrictEqual([{ reactionType: ReactionType.Shattered }]);
   });
 
   test("applies a Burning tick's Pyro to an enemy it reaches under that enemy's own Burning internal cooldown", () => {

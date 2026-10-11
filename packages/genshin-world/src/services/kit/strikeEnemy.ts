@@ -30,11 +30,11 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
-// And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it
-// Through damageEnemy, against the enemy's RES as its statuses leave it. Its element reacts as the party's Moonsign turns
-// Its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's bonuses instead. It
-// Returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and those of them that landed
-// And reach round the enemy
+// And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it with its
+// Reactions' own poise through damageEnemy, against the enemy's RES as its statuses leave it. Its element reacts as the
+// Party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's
+// Bonuses instead. It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and
+// Those of them that landed and reach round the enemy
 export const strikeEnemy = (
   { enemyKindMap, enemyLevelCurves }: EnemyTables,
   enemy: Enemy,
@@ -72,8 +72,13 @@ export const strikeEnemy = (
 
   const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
   const { defense } = computeEnemyStats(enemyLevelCurves, kind, enemy.level);
-  const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =
-    priceEnemyReactions(kind, enemy, reactions, combatant, element);
+  const {
+    additiveBaseDamageBonus,
+    amplifyingMultiplier,
+    poiseDamage: reactionPoiseDamage,
+    reachingReactions,
+    transformativeDamage,
+  } = priceEnemyReactions(kind, enemy, reactions, combatant, element);
 
   const isCritical =
     random() <
@@ -100,7 +105,10 @@ export const strikeEnemy = (
         talentMultiplier,
       });
   return {
-    energyDrops: damageEnemy(enemy, { damage: damage + transformativeDamage, poiseDamage }),
+    energyDrops: damageEnemy(enemy, {
+      damage: damage + transformativeDamage,
+      poiseDamage: poiseDamage + reactionPoiseDamage,
+    }),
     isCritical,
     reachingReactions,
     reactions,

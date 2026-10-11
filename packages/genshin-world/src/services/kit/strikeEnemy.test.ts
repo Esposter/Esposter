@@ -417,6 +417,19 @@ describe(strikeEnemy, () => {
     expect(healthBeforePhysical - enemy.health).toBeCloseTo(damage);
   });
 
+  test("deals the enemy the poise of an Overloaded it triggers, breaking a minion's from a hit of none", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    const unreactedEnemy = createSturdyEnemy();
+    const kitHit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), poiseDamage: 0 };
+    strikeEnemy(enemyTables, enemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
+    strikeEnemy(enemyTables, unreactedEnemy, kitHit, createCombatant(Element.Electro), NEVER_CRITICAL);
+
+    expect([enemy.poise, unreactedEnemy.poise]).toStrictEqual([0, createSturdyEnemy().poise]);
+  });
+
   test("deals a source's second Overloaded within half a second no damage", () => {
     expect.hasAssertions();
 

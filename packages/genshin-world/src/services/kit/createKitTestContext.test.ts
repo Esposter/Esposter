@@ -14,6 +14,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
   expiredEffects: [],
   kitEffectState: { effects: [] },
+  oreStrikes: [],
   outbox: [],
   party: createParty([combatant.characterId]),
   random: () => 0,

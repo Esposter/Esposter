@@ -13,6 +13,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
 import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
+import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { applySimultaneousReactionInternalCooldown } from "#src/services/combat/internalCooldown/applySimultaneousReactionInternalCooldown";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
@@ -22,7 +23,8 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 // The reactions an element of the combatant's triggered on an enemy, priced from the combatant, written into the enemy
 // In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them,
 // Aggravate and Spread add to its base, and each transformative reaction that lands deals its own damage at the share
-// Its source's internal cooldown on the enemy deals, against the enemy's RES as its statuses leave it
+// Its source's internal cooldown on the enemy deals, against the enemy's RES as its statuses leave it, and its own hit's
+// Poise damage, an Overloaded's explosion's
 export const priceEnemyReactions = (
   kind: EnemyKind,
   enemy: Enemy,
@@ -38,6 +40,7 @@ export const priceEnemyReactions = (
 
   let additiveBaseDamageBonus = 0;
   let amplifyingMultiplier = 1;
+  let poiseDamage = 0;
   let transformativeDamage = 0;
   const reachingReactions: TransformativeReaction[] = [];
   for (const reaction of reactions) {
@@ -59,6 +62,7 @@ export const priceEnemyReactions = (
     ) {
       if (TransformativeReactionReachRadiusMap[reactionType] !== undefined)
         reachingReactions.push({ ...reaction, reactionType });
+      poiseDamage += TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
         getTransformativeDamage(
@@ -69,5 +73,5 @@ export const priceEnemyReactions = (
         );
     }
   }
-  return { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage };
+  return { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage };
 };

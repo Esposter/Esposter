@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { OreStrike } from "#src/models/gathering/OreStrike";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffect } from "#src/models/kit/KitEffect";
@@ -13,8 +14,8 @@ import type { Party } from "#src/models/party/Party";
 // Combatant of the deployed team by its id, the enemies with the tables they are priced by, the effects on the team, the
 // Events raised outside a kit's own calls, which the step sends in the order they were raised, the deployed team's
 // Party, and the world's one seeded random source, so the world plays the same under the same seed. The step's own
-// Lists, the effects that ran out on it and the strikes it lands, are kept here too and emptied by their length, so a
-// Step where nothing lands makes nothing
+// Lists, the effects that ran out on it, the ores its reactions strike and the strikes it lands, are kept here too and
+// Emptied by their length, so a step where nothing lands makes nothing
 export interface KitContext {
   activeCombatant: Combatant;
   body: KitBody;
@@ -24,6 +25,8 @@ export interface KitContext {
   // The effects that ran out on the step, which it sends as expired and bursts the Dendro Cores of
   expiredEffects: KitEffect[];
   kitEffectState: KitEffectState;
+  // The ores the step's reactions strike, each from where its reaction landed, sent once its strikes have landed
+  oreStrikes: OreStrike[];
   // The events raised outside a kit's own calls: between steps, as a taunt is struck, and as the enemies' statuses tick
   outbox: KitEvent[];
   party: Party;

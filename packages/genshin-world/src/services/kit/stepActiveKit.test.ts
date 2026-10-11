@@ -12,6 +12,8 @@ import type { KitStatus } from "#src/models/kit/KitStatus";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { AuraType } from "#src/models/combat/AuraType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -19,6 +21,8 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { readOreHit } from "#src/services/gathering/readOreHit";
+import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
@@ -59,6 +63,7 @@ const createContext = (combatants: Combatant[], kitEffectState: KitEffectState =
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
   expiredEffects: [],
   kitEffectState,
+  oreStrikes: [],
   outbox: [],
   party: createParty(combatants.map(({ characterId }) => characterId)),
   random: () => 0,
@@ -319,5 +324,22 @@ describe(stepActiveKit, () => {
         event.kind === KitEventKind.DamageTaken ? [{ hit: event.hit, striker: event.striker }] : [],
       ),
     ).toStrictEqual([{ hit: lateHit, striker: lateCombatant }]);
+  });
+
+  test("strikes the ores an Overloaded's explosion reaches from the enemy it lands on, after the step's own hits", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const context = createStrikeContext([combatant]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
+    const hit = { ...takeOne(TRAVELER_KIT.elementalSkill.hits, 0), element: Element.Electro };
+    const strikeOre = vi.fn<ActiveKitControls["strikeOre"]>();
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, { ...createControls(), landedHits: [hit], strikeOre });
+
+    expect(strikeOre.mock.calls).toStrictEqual([
+      [context.body, readOreHit(combatant, hit)],
+      [{ facing: 0, height: 0, position: enemy.position }, readReactionOreHit(TransformativeReactionType.Overloaded)],
+    ]);
+    expect(context.oreStrikes).toStrictEqual([]);
   });
 });

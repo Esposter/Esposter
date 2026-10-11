@@ -42,9 +42,10 @@ import { takeOne } from "@esposter/shared";
 // Its stance, if it holds one, plays them, a skill or burst that starts Lights Ascendant Gleam, an action that starts
 // Turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands strikes
 // The Ores, the Dendro Cores and the enemies in its area, a normal or charged attack's that struck an enemy rolling for
-// Its Energy, and the changes to the members' HP are sent last. A character whose combatant is not built yet, its talent
-// Multipliers still in flight, plays nothing until they arrive. The body and every list the step fills are the context's
-// And the controls' own, written in place and emptied by their length, so a step where nothing lands allocates nothing
+// Its Energy, the ores an Overloaded's explosion reached are struck, and the changes to the members' HP are sent last.
+// A character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they
+// Arrive. The body and every list the step fills are the context's and the controls' own, written in place and emptied
+// By their length, so a step where nothing lands allocates nothing
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -52,8 +53,18 @@ export const stepActiveKit = (
   context: KitContext,
   { aimYaw, characterController, isAimHeld, landedHits, strikeOre }: ActiveKitControls,
 ): void => {
-  const { body, characterIdCombatantMap, enemyMap, expiredEffects, kitEffectState, outbox, party, random, strikes } =
-    context;
+  const {
+    body,
+    characterIdCombatantMap,
+    enemyMap,
+    expiredEffects,
+    kitEffectState,
+    oreStrikes,
+    outbox,
+    party,
+    random,
+    strikes,
+  } = context;
   const characterId = getActiveCharacterId(party);
   const fieldCombatant = characterIdCombatantMap.get(characterId);
   if (!fieldCombatant) return;
@@ -145,6 +156,9 @@ export const stepActiveKit = (
     strikeKitEnemies(strikes, context);
     gainKitAttackEnergy(kitState, strikes, party, random);
   }
+  // The ores the step's reactions reached are struck once every strike has landed, from where each reaction landed
+  for (const oreStrike of oreStrikes) strikeOre(oreStrike.body, oreStrike.hit);
+  oreStrikes.length = 0;
   // The changes to the members' HP since the last step are sent last, so the step's own heals and drains are heard in it,
   // And a change a kit makes as it hears one is sent at the next step
   const { healthChanges } = party;

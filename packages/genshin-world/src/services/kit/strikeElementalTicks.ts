@@ -32,7 +32,13 @@ const strikeOwnedTicks = (
   if (!combatant || reactions.length === 0) return;
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
-  const { reachingReactions, transformativeDamage } = priceEnemyReactions(kind, enemy, reactions, combatant, undefined);
+  const { poiseDamage, reachingReactions, transformativeDamage } = priceEnemyReactions(
+    kind,
+    enemy,
+    reactions,
+    combatant,
+    undefined,
+  );
   let burningDamage = 0;
   for (const { element, reactionType, spreadGauge } of reactions) {
     if (reactionType !== TransformativeReactionType.Burning) continue;
@@ -47,7 +53,7 @@ const strikeOwnedTicks = (
     reachingReactions.push({ element, reactionType, spreadGauge });
   }
   collectKitEnergyDrops(
-    damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage: 0 }),
+    damageEnemy(enemy, { damage: transformativeDamage + burningDamage, poiseDamage }),
     combatant.element,
     context,
   );

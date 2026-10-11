@@ -10,9 +10,11 @@ import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { applyBurningInternalCooldown } from "#src/services/combat/aura/applyBurningInternalCooldown";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
+import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
@@ -25,7 +27,8 @@ import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 
 // A reaction that landed on an enemy, or burst from a Dendro Core, reaching every other standing enemy within its radius
 // Of it, written into each in place and priced from the combatant that triggered it. An Overloaded's or a Superconduct's
-// Explosion deals each its damage, and a Superconduct's takes each one's Physical RES down. A Swirl applies its element
+// Explosion deals each its damage, and a Superconduct's takes each one's Physical RES down. An Overloaded's is a blunt
+// Hit of its poise too, which drains a Freeze and shatters what is left. A Swirl applies its element
 // To each at the gauge it spreads, and every Swirl but a Hydro one deals each its damage, which what its element
 // Triggers there amplifies or adds to, as the reactions it triggers deal their own. A Burning tick applies its Pyro to
 // Each under that enemy's own Burning internal cooldown and deals each its damage. Electro-Charged arcs to the nearest
@@ -44,6 +47,7 @@ export const landReactionReach = (
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
   const radius = TransformativeReactionReachRadiusMap[reactionType];
   if (radius === undefined) return enemyStrikeResultMap;
+  const reachPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
 
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
@@ -65,13 +69,12 @@ export const landReactionReach = (
     const { elementalState, internalCooldownMap } = enemy;
     const gauge =
       reactionType === TransformativeReactionType.Burning ? applyBurningInternalCooldown(elementalState) : spreadGauge;
-    const reactions =
-      element === undefined || gauge === undefined
-        ? []
-        : applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes);
+    const reactions = reachPoiseDamage > 0 ? applyBluntHit(elementalState, reachPoiseDamage) : [];
+    if (element !== undefined && gauge !== undefined)
+      reactions.push(...applyEnemyElement(enemy, element, gauge, combatant, lunarReactionTypes));
     if (reactionType === TransformativeReactionType.Superconduct) addSuperconductStatus(enemy);
     const kind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
-    const { additiveBaseDamageBonus, amplifyingMultiplier, reachingReactions, transformativeDamage } =
+    const { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage } =
       priceEnemyReactions(kind, enemy, reactions, combatant, element);
     const resistance = getEnemyResistance(kind, enemy, element);
     const reactionDamage =
@@ -88,7 +91,10 @@ export const landReactionReach = (
             additiveBaseDamageBonus * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {
-      energyDrops: damageEnemy(enemy, { damage: reactionDamage + transformativeDamage, poiseDamage: 0 }),
+      energyDrops: damageEnemy(enemy, {
+        damage: reactionDamage + transformativeDamage,
+        poiseDamage: reachPoiseDamage + poiseDamage,
+      }),
       isCritical: false,
       reachingReactions,
       reactions,

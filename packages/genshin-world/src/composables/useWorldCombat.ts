@@ -140,8 +140,8 @@ export const useWorldCombat = ({
   // Team's combatants as they are built, the enemies in the world by their spawn key, which the enemies write as their
   // Camps load and as they die, the effects on the team, the shields and taunts an enemy's strike is taken by, which the
   // Character clears on a drown or a jump, the events an enemy's strike or a pick up raises for the next step, the step's
-  // Own lists of the effects that ran out and the strikes it lands, and the world's one seeded random source, which the
-  // Combat and the kit draw their rolls on, so a session's rolls repeat
+  // Own lists of the effects that ran out, the ores its reactions strike and the strikes it lands, and the world's one
+  // Seeded random source, which the combat and the kit draw their rolls on, so a session's rolls repeat
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -152,6 +152,7 @@ export const useWorldCombat = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    oreStrikes: [],
     outbox: [],
     party,
     random: createSeededRandom(WORLD_RANDOM_SEED),

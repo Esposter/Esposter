@@ -5,7 +5,7 @@ import type { CharacterController } from "genshin-engine";
 
 // What the step of the kit on the field reads of the character it moves, beyond the combat state: the controller whose
 // Body it acts from and turns, the camera's aim, the buffer its landed hits are written into, and where the ores its hits
-// Strike are sent
+// And reactions strike are sent
 export interface ActiveKitControls {
   // The yaw the camera aims along, which an aimed shot turns the body to while the aim is held
   aimYaw: number;
@@ -13,6 +13,6 @@ export interface ActiveKitControls {
   isAimHeld: boolean;
   // The buffer the step's landed hits are written into, emptied once they have struck
   landedHits: KitHit[];
-  // An ore struck by a hit the step landed, from the body it landed from
+  // An ore struck by a hit the step landed or a reaction's explosion, from the body its area is drawn from
   strikeOre: (body: KitBody, hit: OreHit) => void;
 }

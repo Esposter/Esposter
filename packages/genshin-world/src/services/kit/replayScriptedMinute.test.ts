@@ -115,6 +115,7 @@ export const replayScriptedMinute = ({
     enemyTables,
     expiredEffects: [],
     kitEffectState: { effects: [] },
+    oreStrikes: [],
     outbox: [],
     party,
     random: createSeededRandom(WORLD_RANDOM_SEED),
