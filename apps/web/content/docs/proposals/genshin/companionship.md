@@ -25,7 +25,7 @@ The Friendship Level and the EXP that raises it are built, with the Original Res
 - **The namecards share the levels' file.** The `friendship/friendship` record holds the levels and the namecards together, fetched by key, rather than a record of its own for the namecards, each reader parsing only the field it returns.
 - **A namecard is held by the level, never stored.** A character at Friendship Level 10 holds its namecard, read from its total EXP as the level is, so the save keeps nothing new and the two cannot disagree.
 - **A namecard is shown by its words, never its picture.** Its art is the game's texture, which is never served, so the view sets its name on a plate of our own, its description waiting with the art on the static-data host; the extracted art is a reference only, and no extraction gates the view.
-- **Settled while building the level.** The levels are the dump's `AvatarFettersLevelExcelConfigData`, each row's EXP the cost to leave its level, so the top row is never spent and level 10 totals 29,100, the wiki's figure. A character keeps its total EXP and the level is read from it. The first claim amounts are provisional at the low end of each wiki range, measured by the Recordings owed clips.
+- **Settled while building the level.** The levels are the dump's `AvatarFettersLevelExcelConfigData`, each row's EXP the cost to leave its level, so the top row is never spent and level 10 totals 29,100, the wiki's figure. A character keeps its total EXP and the level is read from it. The first claim amounts are provisional at the low end of each wiki range, measured by the References sought clips.
 
 ## How it works
 
@@ -47,7 +47,7 @@ flowchart LR
 
 ## Data and measures
 
-- **Provisional:** each claim kind's Companionship EXP, until the Recordings owed clips show what a claim pays out.
+- **Provisional:** each claim kind's Companionship EXP, until the References sought clips show what a claim pays out.
 
 ## Key files
 

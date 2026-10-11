@@ -27,7 +27,7 @@ flowchart LR
 
 - **The grant is whole, not split.** Every deployed member but the Traveler gets the full amount, a fallen one included, since the grant reads the team rather than their health.
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short.
-- **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's Recordings owed list, one per pair of kinds, measure what a claim gives.
+- **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
 - **A namecard is held by its level.** A namecard is in the held list once its character's total EXP reaches level 10, read from the same levels, so no save keeps it. Its art is the game's texture and is never served, so the profile sets its name on a plate of its own, and its description is the [proposal](/docs/proposals/genshin/companionship)'s.
 - **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](/docs/proposals/genshin/companionship) keeps; the stories and voice-overs are on the [character profile](/docs/genshin/character-profile). The claim is a rule with no claim screen calling it yet.
 

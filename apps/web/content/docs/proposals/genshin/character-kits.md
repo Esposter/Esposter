@@ -51,7 +51,7 @@ flowchart TD
 - **Read from the wiki:** each hit's gauge, internal cooldown tag and group, and each skill's particles, per character. Diluc's, Bennett's, Mona's, Amber's, Kaeya's, Lisa's, Noelle's, Kamisato Ayaka's, Jean's, Barbara's, Razor's, Venti's, Xiangling's, Beidou's, Xingqiu's, Xiao's, Ningguang's, Klee's and Zhongli's are read, as the [character kits](/docs/genshin/character-kits) page records; the rest wait on their modules.
 - **Read from gcsim v2.47.2 (MIT):** the Traveler's plunge poise, in its [pyro plunge](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/pyro/plunge.go) file, and the Anemo skill and burst's, which gcsim sets to none.
 - **Still to find:** a source for each strike's, the charged attack's and the plunge collision's poise damage. gcsim's Anemo attack file has none.
-- **Measured:** when each hit lands in its action (its hitmark) and when the next action may cancel it. The extracted Traveler attack clips carry no events, so the hitmarks come off the Recordings owed list's `world-attacks.mkv` and `world-skill-burst.mkv`. The least height a plunge starts from is what the wiki does not give, so it waits on `world-attacks.mkv` too. Until then each is a provisional constant with its character's module.
+- **Measured:** when each hit lands in its action (its hitmark) and when the next action may cancel it. The extracted Traveler attack clips carry no events, so the hitmarks come off the References sought list's `world-attacks.mkv` and `world-skill-burst.mkv`. The least height a plunge starts from is what the wiki does not give, so it waits on `world-attacks.mkv` too. Until then each is a provisional constant with its character's module.
 
 ## What this does not propose
 

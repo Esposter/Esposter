@@ -42,7 +42,7 @@ The Spiral Abyss is the game's standing combat challenge: a domain at Musk Reef,
 
 - **Read from the wiki:** what each period's blessing does, where its description leaves it open, and which blessings the Corridor's chambers offer. The wiki refused the read when the rules were built, so these wait on a source that answers.
 - **Read from the game's tables:** each chamber's domain scene, and `TowerBuffExcelConfigData` for the Corridor's blessings, which the rules build does not yet read.
-- **Measured:** the chamber's clock and the two-half carry, off recordings, as the [roadmap](/docs/genshin/roadmap)'s Recordings owed list states. The Abyss's opening rank is the wiki's, not yet measured.
+- **Measured:** the chamber's clock and the two-half carry, off recordings, as the [roadmap](/docs/genshin/roadmap)'s References sought list states. The Abyss's opening rank is the wiki's, not yet measured.
 
 ## Key files
 
