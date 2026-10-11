@@ -1,6 +1,7 @@
 import type { QueueRewriteInput } from "#src/models/coderabbit/collect/QueueRewriteInput";
 
 import { checkIsAncestor } from "#src/services/shared/checkIsAncestor";
+import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { QUEUE_BRANCH, SYNC_PUSH_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { parkCommits } from "#src/services/coderabbit/collect/parkCommits";
 import { pickSkippingStops } from "#src/services/coderabbit/collect/pickSkippingStops";
@@ -16,9 +17,9 @@ import { runGit } from "#src/services/shared/runGit";
 // The push moved to. Giving up instead would hand the next run the same conflict, and its resolver the same minutes,
 // To lose to the next session push. A carried commit that conflicts with the rewrite is parked on its held branch and
 // Skipped, with any later one that no longer applies without it, so the rest still rides the push and the rewrite's
-// Work is never thrown away for one commit. What does give up — the queue's history rewritten under the run, or a
-// Session pushing faster than the cap — leaves the rewrite unpushed for the next run to replay onto what the queue
-// Then carries.
+// Work is never thrown away for one commit. What does give up — the queue's history rewritten under the run, a carry
+// Whose skips did not run its sequence out, or a session pushing faster than the cap — leaves the rewrite unpushed for
+// The next run to replay onto what the queue then carries.
 export const pushQueueRewrite = ({ cwd, isDryRun, queueSha, viewerLogin }: QueueRewriteInput): string | undefined => {
   let leaseSha = queueSha;
   for (let attempt = 0; attempt < SYNC_PUSH_ATTEMPT_CAP; attempt++) {
@@ -33,6 +34,11 @@ export const pushQueueRewrite = ({ cwd, isDryRun, queueSha, viewerLogin }: Queue
     }
     const gainedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${leaseSha}..${movedSha}`], cwd));
     const parkedShas = pickSkippingStops(gainedShas, cwd);
+    if (parkedShas === undefined) {
+      abortSequencing(cwd);
+      console.info(`sync: the commits ${QUEUE_BRANCH} gained under the rewrite did not carry onto it — unpushed`);
+      return undefined;
+    }
     console.info(
       `sync: ${QUEUE_BRANCH} moved under the rewrite — carried ${gainedShas.length - parkedShas.length} of the ${gainedShas.length} commits it gained`,
     );

@@ -24,7 +24,7 @@ import { readWindowFilePaths } from "#src/services/coderabbit/collect/readWindow
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, noop } from "@esposter/shared";
+import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
 // The queue never holds on the cap: the first owed commit that adds more files than a window has room for
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
@@ -82,23 +82,32 @@ export const reshapeQueue = async ({
     return false;
   }
   const restShas = owedShas.slice(owedShas.indexOf(sha) + 1);
+  const tipSha = readHeadSha(cwd);
   if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`reshape: ${sha} failed ${attempts} times — parked, and what followed it replayed without it`);
     // A later commit that no longer applies without the parked one goes with it, in the same issue; nothing is
     // Pushed until this returns, so a commit skipped here is on its held branch before the queue drops it
     runGit(["switch", "--detach", `${sha}^`], cwd);
-    const parkedShas = [sha, ...pickSkippingStops(restShas, cwd)];
+    const skippedShas = pickSkippingStops(restShas, cwd);
+    if (skippedShas === undefined) {
+      abortSequencing(cwd);
+      runGit(["switch", "--detach", tipSha], cwd);
+      throw new InvalidOperationError(
+        Operation.Update,
+        "coderabbit",
+        `what followed ${sha} did not replay without it, so it stays unparked`,
+      );
+    }
     parkCommits({
       cause: `its reshaping under the window's room failed ${attempts} times`,
       cwd,
       isDryRun,
-      shas: parkedShas,
+      shas: [sha, ...skippedShas],
       viewerLogin,
     });
     return true;
   }
 
-  const tipSha = readHeadSha(cwd);
   console.info(`reshape: ${sha} changes ${fileCount} files alone against a room of ${roomFileCount}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
   const prompt = getReshapePrompt({ ...readPathFilterGlobs(baseSha, cwd), fileCap, fileCount, roomFileCount, sha });
