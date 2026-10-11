@@ -30,4 +30,5 @@ export const ImageSourceWhitelist = [
   PLACEHOLD_BASE_URL,
   TUI_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
-];
+  // An unset env var, as in CI, leaves its host out: the security module refuses an undefined source
+].filter((source) => source !== undefined);
