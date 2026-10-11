@@ -4,7 +4,7 @@ import type { HandbookReward } from "#src/models/handbook/HandbookReward";
 import type { GameText } from "genshin-text";
 
 import { HandbookTab } from "#src/models/handbook/HandbookTab";
-import { HANDBOOK_TABS } from "#src/services/handbook/constants";
+import { COMMISSION_STEP, HANDBOOK_TABS } from "#src/services/handbook/constants";
 import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGameTextKeyMap";
 import { GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -28,9 +28,7 @@ const emit = defineEmits<{ close: [] }>();
 // The book opens at its experience
 const tab = ref(HandbookTab.Experience);
 // The bar's segments, one per investigation, each lit when that investigation is done
-const progressSegments = computed(() => Array.from({ length: totalCount }, (_, index) => index < completedCount));
-// Each commission row's pitch in reference pixels, the rows of the game's list sitting 248 apart
-const COMMISSION_STEP = 248;
+const progressSegments = computed(() => Array.from({ length: totalCount }, (_value, index) => index < completedCount));
 </script>
 
 <template>

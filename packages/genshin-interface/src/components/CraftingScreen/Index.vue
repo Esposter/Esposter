@@ -17,10 +17,10 @@ interface Props {
   crafters: CraftingCell[];
   // The Crafting Materials row's heading
   craftingMaterialsLabel: string;
-  // The materials the picked recipe takes, each with the count the player holds and the count one craft takes
-  materials: CraftingMaterial[];
   // The button that crafts the picked recipe for the chosen amount
   craftLabel: string;
+  // The materials the picked recipe takes, each with the count the player holds and the count one craft takes
+  materials: CraftingMaterial[];
   // The recipe list in the game's order
   recipes: CraftingCell[];
   // The coins the picked recipe costs for its amount
