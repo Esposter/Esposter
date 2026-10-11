@@ -1,6 +1,6 @@
 ---
 name: bench
-description: Apply when adding or editing benchmarks, timing how long anything takes, or changing what a *.bench.md contains. Esposter benchmarking — a benchmark is an ordinary Vitest test whose committed, colocated *.bench.md is the only speed gate and the only number a session quotes, so there is no .speed.test.ts, no timing script and no stopwatch reading kept; BENCHMARK_RUN_OPTIONS on every bench.compare, and the unit benched rather than its wrapper.
+description: Apply when adding or editing benchmarks, timing how long anything takes, measuring what a type costs the compiler, or changing what a *.bench.md or *.typebench.md contains. Esposter benchmarking — a benchmark is an ordinary Vitest test whose committed, colocated *.bench.md is the only speed gate and the only number a session quotes, so there is no .speed.test.ts, no timing script and no stopwatch reading kept; BENCHMARK_RUN_OPTIONS on every bench.compare, and the unit benched rather than its wrapper.
 ---
 
 # Benchmarking Conventions
@@ -12,6 +12,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 ## Settled — do not re-propose
 
 - **Sharding the 🏎️ Bench job** — it is an executes-clean smoke signal whose numbers nothing reads, so a shard buys only repeated setup (`references/running-benchmarks.md`).
+- **Measuring type cost with `@ark/attest` or an older TypeScript** — the user rejected both: a count is the repo's current compiler's, so a second measurer or an older compiler is a different number, and the counts are measured only by `pnpm bench:types` (`references/type-benches.md`).
 - **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is small enough to read; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
 
 ## Deep dive
@@ -21,6 +22,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 - `references/fixtures.md` — when a bench needs a fixture: shared, rebuilt per iteration, or read-only.
 - `references/what-to-bench.md` — when choosing what a bench measures: the unit, the axis, the shape, a slow workload, a baseline.
 - `references/running-benchmarks.md` — when running benches, adding one to `scripts`, switching one off, or gating one on CI.
+- `references/type-benches.md` — when measuring what a type costs the compiler, adding a `*.typebench.ts`, or changing the `bench:types` runner or its `*.typebench.md` results.
 
 ## Writing benchmarks
 
