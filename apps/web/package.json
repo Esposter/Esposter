@@ -218,7 +218,6 @@
     "nuxt": "catalog:",
     "nuxt-security-module": "workspace:*",
     "remark-emoji": "catalog:",
-    "sql-highlight": "catalog:",
     "trpc-msw": "workspace:*",
     "tsx": "catalog:",
     "type-fest": "catalog:",

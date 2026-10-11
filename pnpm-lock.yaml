@@ -716,9 +716,6 @@ catalogs:
     sharp:
       specifier: ^0.35.5
       version: 0.35.5
-    sql-highlight:
-      specifier: ^6.1.0
-      version: 6.1.0
     superjson:
       specifier: ^2.2.6
       version: 2.2.6
@@ -1459,9 +1456,6 @@ importers:
       remark-emoji:
         specifier: 'catalog:'
         version: 5.0.2
-      sql-highlight:
-        specifier: 'catalog:'
-        version: 6.1.0
       trpc-msw:
         specifier: workspace:*
         version: link:../../packages/trpc-msw
@@ -13886,10 +13880,6 @@ packages:
 
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
-
-  sql-highlight@6.1.0:
-    resolution: {integrity: sha512-ed7OK4e9ywpE7pgRMkMQmZDPKSVdm0oX5IEtZiKnFucSF0zu6c80GZBe38UqHuVhTWJ9xsKgSMjCG2bml86KvA==}
-    engines: {node: '>=14'}
 
   srvx@0.12.8:
     resolution: {integrity: sha512-7k9HoDhluTlD7UJ+F+OopZoPZXB2J8f/5nW2VMLaB8KsSlZlRQxyyoX0hWEQCxB+F+3ZvB5QX3LqB6xSBRfxQQ==}
@@ -28841,8 +28831,6 @@ snapshots:
   spdx-license-ids@3.0.24: {}
 
   sprintf-js@1.0.3: {}
-
-  sql-highlight@6.1.0: {}
 
   srvx@0.12.8:
     optional: true

@@ -197,7 +197,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `rxjs`                                  | —     | Keep — free         | grid-engine's own observables                                                                          |
 | `sax`                                   | —     | Keep — spec         | the XML tokenizer under parse-tmx's reader                                                                     |
 | `sharp`                                 | —     | Keep — engine       | image processing                                                                                       |
-| `sql-highlight`                         | —     | Remove              | colours in the dev query log, worth less than a dependency                                             |
 | `superjson`                             | —     | Keep — spec         | tRPC's wire transformer                                                                                |
 | `survey-core`                           | —     | Keep — engine       | the survey engine                                                                                      |
 | `survey-creator-core`                   | —     | Keep — engine       | the survey engine                                                                                      |
