@@ -1,6 +1,6 @@
 // Every option of nuxt-security@2.6.0, read from its `ModuleOptions` in `dist/shared/nuxt-security.DHRED3wH.d.mts` and
-// its `SecurityHeaders` in `dist/shared/nuxt-security.CWpmivnQ.d.mts`. A newer release's option is added here, and the
-// option parity test then names the row it is missing from
+// Its `SecurityHeaders` in `dist/shared/nuxt-security.CWpmivnQ.d.mts`. A newer release's option is added here, and the
+// Option parity test then names the row it is missing from
 export const UPSTREAM_MODULE_OPTIONS: string[] = [
   "allowedMethodsRestricter",
   "basicAuth",

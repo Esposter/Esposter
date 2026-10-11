@@ -7,14 +7,14 @@ import type { NitroAppPlugin } from "nitro/types";
 import { XFrameOptions } from "#src/models/XFrameOptions";
 
 // A rendered docs page, the shape the app's SSR emits: a head of stylesheets, preloads, entry scripts and an inline
-// state script, then a body of nested sections with their own inline scripts. Built from its shape so every bench reads
-// the same bytes, and the upstream comparison reads this file too.
+// State script, then a body of nested sections with their own inline scripts. Built from its shape so every bench reads
+// The same bytes, and the upstream comparison reads this file too.
 const SECTION_COUNT = 60;
 
 const HEAD: string[] = [
   '<meta charset="utf-8">',
   '<meta name="viewport" content="width=device-width, initial-scale=1">',
-  "<title>Esposter docs</title>",
+  "<title>Docs</title>",
   '<link rel="preload" as="font" type="font/woff2" crossorigin href="/_nuxt/fonts/inter.woff2">',
   '<link rel="stylesheet" href="/_nuxt/entry.css">',
   '<link rel="modulepreload" href="/_nuxt/entry.js">',
@@ -77,8 +77,8 @@ export const PAGE_HEADERS: SecurityHeaders = {
 export const PAGE_ROUTE_RULES: Record<string, SecurityRules> = {
   "/**": { headers: PAGE_HEADERS, nonce: true, sri: true },
   "/api/**": { nonce: false },
+  "/auth/**": { headers: { xFrameOptions: XFrameOptions.Deny } },
   "/docs/**": { headers: { xFrameOptions: XFrameOptions.SameOrigin } },
-  "/login": { headers: { xFrameOptions: XFrameOptions.Deny } },
 };
 
 // A request's path, one the default route and a narrowed route both match, so the merge does real work
@@ -94,6 +94,7 @@ export const createNitroApp = (): {
   const handlers = new Map<string, Handler[]>();
   const hooks = {
     async callHook(name: string, ...args: unknown[]): Promise<void> {
+      // oxlint-disable-next-line no-await-in-loop -- Order is the contract: hooks run in the order they were registered
       for (const handler of handlers.get(name) ?? []) await handler(...args);
     },
     hook(name: string, handler: Handler): void {

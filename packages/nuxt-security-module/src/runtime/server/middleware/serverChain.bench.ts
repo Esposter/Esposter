@@ -19,8 +19,8 @@ const DEV_SERVER_URL = "http://localhost:3000";
 const REQUEST_URL = "http://localhost:3000/docs/section-1";
 
 // The handlers module.ts registers for these options, in its order. Each sits behind the option that enables it, so a
-// disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with credentials, which
-// neither configuration sets
+// Disabled feature adds nothing to the chain. Basic auth is left out: it is registered only with credentials, which
+// Neither configuration sets
 const getServerChain = (options: ModuleOptions): Middleware[] => [
   ...(options.csrf ? [csrf] : []),
   ...(options.rateLimiter ? [rateLimiter] : []),
@@ -31,11 +31,12 @@ const getServerChain = (options: ModuleOptions): Middleware[] => [
 
 const runServerChain = async (chain: Middleware[]): Promise<void> => {
   const event = new H3Event(new Request(REQUEST_URL));
+  // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each middleware answers before the next one runs
   for (const middleware of chain) await middleware(event, () => undefined);
 };
 
 // The module's options for a consumer's overrides, with the route table the module resolves at startup, and the chain
-// those options register
+// Those options register
 const setUpServerChain = (overrides: Partial<ModuleOptions>): Middleware[] => {
   const options = parseModuleOptions(
     mergeModuleOptions(getDefaultModuleOptions(false, DEV_SERVER_URL, false), overrides),
@@ -45,7 +46,7 @@ const setUpServerChain = (overrides: Partial<ModuleOptions>): Middleware[] => {
 };
 
 // One request through each configuration's chain. The native task is the event alone, so the cost of the handlers
-// reads above it
+// Reads above it
 describe("server middleware chain", () => {
   test("the app's options", async ({ bench }) => {
     const chain = setUpServerChain(APP_SECURITY_OPTIONS);
