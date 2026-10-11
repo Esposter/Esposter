@@ -1,5 +1,4 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -10,6 +9,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -110,8 +110,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     poiseDamage: 0,
     talentMultiplier,
     ...(isInGarment && {
-      additiveBaseDamageBonus: (combatant: Combatant) =>
-        burstTalentMultiplier(garmentBonusIndex) * combatant.attributes.maxHealth,
+      additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(garmentBonusIndex)),
       healParty: garmentHeal,
     }),
   });
@@ -150,9 +149,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         hitmarkSeconds: hitmarkFrames / 60,
         poiseDamage: 0,
         talentMultiplier: skillTalentMultiplier(2),
-        ...(isInGarment && {
-          additiveBaseDamageBonus: (combatant: Combatant) => burstTalentMultiplier(8) * combatant.attributes.maxHealth,
-        }),
+        ...(isInGarment && { additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(8)) }),
       };
     });
     return {
@@ -193,7 +190,7 @@ export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   const elementalBurst: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: (combatant: Combatant) => burstTalentMultiplier(0) * combatant.attributes.maxHealth,
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(0)),
         element: Element.Hydro,
         gauge: BURST_GAUGE,
         hitArea: BURST_REACH,

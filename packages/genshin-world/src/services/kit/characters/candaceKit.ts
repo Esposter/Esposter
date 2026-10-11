@@ -23,6 +23,7 @@ import {
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -130,7 +131,7 @@ const infuse = (kitEffectState: KitEffectState, { characterId, weaponType }: Com
 // A wave or a Constellation 6 wave, a circle round the body that strikes for a share of the striker's Max HP as flat DMG, which
 // Its talent multiplier of zero leaves to the additive base DMG Bonus
 const createWaveHit = (share: number): KitHit => ({
-  additiveBaseDamageBonus: ({ attributes }) => attributes.maxHealth * share,
+  additiveBaseDamageBonus: createMaxHealthScaledBonus(share),
   element: Element.Hydro,
   gauge: 1,
   hitArea: createFanReach(360, BURST_AREA_RADIUS),
@@ -275,7 +276,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const elementalSkill: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: ({ attributes }) => attributes.maxHealth * tapShare,
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(tapShare),
         element: Element.Hydro,
         gauge: 1,
         hitArea: TAP_HIT_AREA,
@@ -294,7 +295,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const elementalSkillHold: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: ({ attributes }) => attributes.maxHealth * chargedShare,
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(chargedShare),
         element: Element.Hydro,
         gauge: 1,
         hitArea: CHARGED_HIT_AREA,
@@ -316,7 +317,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const elementalBurst: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: ({ attributes }) => attributes.maxHealth * burstMultiplier(0),
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(burstMultiplier(0)),
         element: Element.Hydro,
         gauge: 1,
         hitArea: createFanReach(360, BURST_AREA_RADIUS),

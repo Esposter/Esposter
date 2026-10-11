@@ -21,6 +21,7 @@ import {
 } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -204,7 +205,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const elementalBurst: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: (combatant) => combatant.attributes.maxHealth * burstMultiplier(0),
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(burstMultiplier(0)),
         element: Element.Hydro,
         gauge: 1,
         hitArea: BURST_HIT_AREA,
@@ -270,7 +271,7 @@ export const createNilouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   const elementalSkill: KitAction = {
     hits: [
       {
-        additiveBaseDamageBonus: (combatant) => combatant.attributes.maxHealth * skillMultiplier(0),
+        additiveBaseDamageBonus: createMaxHealthScaledBonus(skillMultiplier(0)),
         element: Element.Hydro,
         gauge: 1,
         hitArea: SKILL_HIT_AREA,

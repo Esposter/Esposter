@@ -12,6 +12,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -80,12 +81,6 @@ const HIGH_PLUNGE_POISE_DAMAGE = 100;
 const PLUNGE_SECONDS = 0.4;
 
 export const YELAN_CHARACTER_ID = 10_000_060;
-
-// A hit whose base damage is a share of its striker's Max HP rather than of its ATK, as gcsim's flat damage hits are
-const createMaxHealthScaledBonus =
-  (talentMultiplier: number) =>
-  (combatant: Combatant): number =>
-    talentMultiplier * combatant.attributes.maxHealth;
 
 // Yelan's first kit, at talent level 1: four strikes, a fully charged shot with its arrow, a collision and two plunges,
 // Lingering Lifeline with its hit, and Depth-Clarion Dice with its field and the Exquisite Throws it waves and throws on each
