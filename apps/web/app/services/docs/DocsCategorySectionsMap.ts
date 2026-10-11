@@ -5,11 +5,13 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
   [DocsCategory.Architecture]: ["architecture", "infra"],
   [DocsCategory.Packages]: [
     "nuxt-security-module",
+    "parse-tmx",
     "pitch-transcription",
     "trpc-msw",
     "trpc-nuxt-module",
     "virrun",
     "vue-phaserjs",
+    "xml2js",
   ],
   [DocsCategory.Products]: [
     "achievement",
