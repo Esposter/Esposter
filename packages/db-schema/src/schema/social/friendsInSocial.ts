@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
-import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { socialSchema } from "#src/schema/social/socialSchema";
-import { sql } from "drizzle-orm";
+import { senderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
+import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { check, index, text } from "drizzle-orm/pg-core";
 
 export const friendsInSocial = pgTable(
@@ -11,16 +11,11 @@ export const friendsInSocial = pgTable(
     // Text PK: every lookup goes through this value, it never changes,
     // And there is exactly one row per user pair.
     id: text().primaryKey(),
-    receiverId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
-    senderId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
+    ...senderReceiverColumns,
   },
   {
     extraConfig: ({ receiverId, senderId }) => [
-      check("friends_senderId_receiverId_check", sql`${senderId} != ${receiverId}`),
+      check("friends_senderId_receiverId_check", createDistinctCheckSql(senderId, receiverId)),
       index("friends_receiverId_index").on(receiverId),
       index("friends_senderId_index").on(senderId),
     ],

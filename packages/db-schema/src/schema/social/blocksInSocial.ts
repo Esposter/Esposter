@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { socialSchema } from "#src/schema/social/socialSchema";
-import { sql } from "drizzle-orm";
+import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { check, index, primaryKey, text } from "drizzle-orm/pg-core";
 
 export const blocksInSocial = pgTable(
@@ -17,7 +17,7 @@ export const blocksInSocial = pgTable(
   {
     extraConfig: ({ blockedId, blockerId }) => [
       primaryKey({ columns: [blockerId, blockedId] }),
-      check("blocks_blockerId_blockedId_check", sql`${blockerId} != ${blockedId}`),
+      check("blocks_blockerId_blockedId_check", createDistinctCheckSql(blockerId, blockedId)),
       index("blocks_blockedId_index").on(blockedId),
     ],
     schema: socialSchema,
