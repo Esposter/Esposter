@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: Proposal — what the bag still lacks: using food on its own target, with the party's health. Destroying equipment from the bag's screen is built, on the Inventory page.
+description: Proposal — what the bag still lacks: using food on its own target, with the party's health.
 model: claude-opus-5-5
 touches: ["packages/genshin-world/src/components/Inventory/**"]
 waiting: "the heal each food gives, read from the material table by the cooking proposal (cooking.md, Food's effects act through the kits)"
@@ -8,15 +8,13 @@ waiting: "the heal each food gives, read from the material table by the cooking 
 
 # Inventory
 
-This page builds on the [inventory](/docs/genshin/inventory), whose bag, wallet, screen, destroy mode and the materials the enemies drop are built, and on which the full-bag hint and the Fates bought with Primogems are built as well. What is left is using a food.
+The [inventory](/docs/genshin/inventory) page holds the bag, its wallet, screen and destroy mode. What is left is using a food.
 
 ## Decisions
 
 - **Food heals its own target.** Using a food takes one from the bag and applies its own effect to the target it names, the selected character for most recovery dishes and the whole party for some, never past full health. It waits on each food's heal and target, which are the game's own figures and not yet read into the bag's data.
 
 ## Scope and order
-
-**Today:** the bag, its room and sort, the wallet, the screen on B, the materials the enemies drop, the full-bag hint on a pick up, the Fates bought with Primogems on the wish screen, the destroy rule and the bag's destroy mode are built.
 
 **This adds:**
 
