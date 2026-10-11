@@ -25,7 +25,7 @@ const createKokomiCombatant = (): Combatant => ({
 });
 
 describe(createKokomiKit, () => {
-  test("Nereid's Ascension's garment gives Kokomi's normal attacks a share of her Max HP to their damage, for ten seconds", () => {
+  test("nereid's ascension's garment gives Kokomi's normal attacks a share of her Max HP to their damage, for ten seconds", () => {
     expect.hasAssertions();
     const combatant = createKokomiCombatant();
     const kitEffectState: KitEffectState = { effects: [] };

@@ -27,7 +27,7 @@ const SAYU_BURST_GROUP_ID = 5339;
 
 // Measured: gcsim (MIT) sayu/attack.go, each strike's hitmarks, cancel frames, poise and reach. A box is priced to its far
 // Corner, and a circle as its offset plus its radius, as the other kits price them
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/attack.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/attack.go
 const createOffsetReach = (offset: number, radius: number) => createFanReach(360, offset + radius);
 const FIRST_STRIKE_REACH = createBoxReach(-0.7, 2.5, 3.2);
 const SECOND_STRIKE_REACH = createOffsetReach(0.5, 2);
@@ -65,7 +65,7 @@ const PLUNGE_SECONDS = 1;
 // Measured: gcsim (MIT) sayu/skill.go, Fuufuu Windwheel's DoT ticks on a circle of radius 3 round the body, and the kick
 // Circles of radius 2.5 and 3 offset half a metre ahead. The press's DoT lands at 7 frames, its kick at 25 and its animation
 // Is 45, the short hold's DoT at 18, its kick at 48 and its animation 89, and its cooldown 372 frames
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/skill.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/skill.go
 const DOT_REACH = createFanReach(360, 3);
 const PRESS_KICK_REACH = createOffsetReach(0.5, 2.5);
 const HOLD_KICK_REACH = createOffsetReach(0.5, 3);
@@ -90,10 +90,10 @@ const ROLL_COOLDOWN_SECONDS_PER_HELD_SECOND = 0.5;
 const ROLL_MAXIMUM_SECONDS = 10;
 
 // Measured: gcsim (MIT) sayu/burst.go, Mujina Flurry's hit at 12 frames on a circle of radius 4.5 a metre and a half ahead,
-// and its animation of 65 frames. Muji-Muji Daruma is a field of radius 10 the same distance ahead, which ticks from 145
+// And its animation of 65 frames. Muji-Muji Daruma is a field of radius 10 the same distance ahead, which ticks from 145
 // Frames every 90 for six ticks, each a strike on the nearest enemy in it and a heal of the active character at 70% HP or
 // Under. The Daruma's strike is a summon here, its every tick striking whatever is in reach, as gcsim strikes one enemy
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/burst.go
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/burst.go
 const BURST_HITMARK_FRAMES = 12;
 const BURST_FRAMES = 65;
 const BURST_FIELD_CENTRE_METRES = 1.5;
