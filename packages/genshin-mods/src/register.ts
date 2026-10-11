@@ -5,6 +5,7 @@ import { registerCommission } from "./services/commission/registerCommission";
 import { registerDelegation } from "./services/delegation/registerDelegation";
 import { registerDiskScan } from "./services/diskScan/registerDiskScan";
 import { registerLifecycle } from "./services/registerLifecycle";
+import { registerReserveGate } from "./services/resin/registerReserveGate";
 import { registerVeil } from "./services/veil/registerVeil";
 import { registerWard } from "./services/ward/registerWard";
 import { registerWholeIndex } from "./services/ward/registerWholeIndex";
@@ -15,6 +16,7 @@ export const register: Register = (on) => {
   registerDelegation(on);
   registerDiskScan(on);
   registerLifecycle(on);
+  registerReserveGate(on);
   registerVeil(on);
   registerWard(on);
   registerWholeIndex(on);

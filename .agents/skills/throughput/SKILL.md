@@ -25,11 +25,11 @@ Time and effort are the limit, so every resource the session holds works at once
 
 ## The usage reserve
 
-The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads both windows against their lines, and puts the reserve into the session's system prompt naming the window and its reset time. The mod's page, `apps/web/content/docs/infra/claude-interface/genshin-mods/resin.md`, owns the lines' names and values, so the tiers below name only what the session does at each one. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
+The plan's usage is spent by the session and its agents, while a compute-queue run spends the machine and only needs a cheap `haiku` runner to start it. So each usage window keeps some of its end for the runners, and a session never runs dry with long runs still owed. The `genshin-mods` cache-and-handoff mod reads both windows against their lines, both windows having both tiers, and puts the reserve into the session's system prompt naming the window and its reset time. The prompt only describes the reserve, so the mod also enforces the model at launch: while a reserve holds, a workflow, a fork and any agent not on `haiku` are refused, and an agent that gets through runs on `haiku` whatever the tier. The mod's page, `apps/web/content/docs/infra/claude-interface/genshin-mods/resin.md`, owns the lines' names and values, so the tiers below name only what the session does at each one. Where both windows have crossed a line, the stricter state wins, so wind-down beats maintenance.
 
 ### Maintenance
 
-The five-hour window resets within hours, so its unused end is lost, and `haiku` stretches it furthest because limits weigh a token by its family. From its maintenance line until the window resets, the session:
+A window's end past its maintenance line is spent, not saved: the five-hour window's unused end is lost at its reset, and the weekly one's is the margin that lets the work in flight land before the wind-down. `haiku` stretches either furthest, because limits weigh a token by its family. From a window's maintenance line until it resets, the session:
 
 1. Starts no new feature, design or proposal.
 2. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (the `sweeps` skill); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
@@ -38,11 +38,11 @@ The five-hour window resets within hours, so its unused end is lost, and `haiku`
 
 ### Wind-down
 
-The weekly window stays strict because a lockout lasts days. From a window's wind-down line until it resets, the session:
+From a window's wind-down line until it resets, the session:
 
 1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
 2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
-3. Writes every open item down with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
+3. Writes every open item down where the `resuming` skill's `pnpm ai:resume` and its handoff order find it, with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
 4. Commits the edit in hand and the records just written by pathspec, and pushes the queue.
 5. Cleans up the page servers, shells, monitors and worktrees nothing still uses.
 6. Keeps the compute queue's runners going, one per lane, until the window resets and the reserve lifts by itself.

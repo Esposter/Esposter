@@ -16,7 +16,7 @@ export const getReserveWindow = (rateLimits: SessionRateLimit[]): ReserveWindow 
     if (rateLimit?.resetsAt === undefined) continue;
     const isWindDown = rateLimit.percentUsed >= windDownPercentage;
     const percentage = isWindDown ? windDownPercentage : maintenancePercentage;
-    if (percentage === undefined || rateLimit.percentUsed < percentage) continue;
+    if (rateLimit.percentUsed < percentage) continue;
     reserveWindows.push({ isWindDown, name, percentage, resetsAt: rateLimit.resetsAt });
   }
 

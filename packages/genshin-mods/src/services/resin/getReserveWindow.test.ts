@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 import {
   FIVE_HOUR_MAINTENANCE_PERCENTAGE,
   FIVE_HOUR_WIND_DOWN_PERCENTAGE,
+  WEEKLY_MAINTENANCE_PERCENTAGE,
   WEEKLY_WIND_DOWN_PERCENTAGE,
 } from "../constants";
 import { getReserveWindow } from "./getReserveWindow";
@@ -16,7 +17,7 @@ describe(getReserveWindow, () => {
     expect(
       getReserveWindow([
         { kind: "five_hour", percentUsed: FIVE_HOUR_MAINTENANCE_PERCENTAGE - 1, resetsAt },
-        { kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE - 1, resetsAt },
+        { kind: "seven_day", percentUsed: WEEKLY_MAINTENANCE_PERCENTAGE - 1, resetsAt },
       ]),
     ).toBeUndefined();
   });
@@ -37,7 +38,15 @@ describe(getReserveWindow, () => {
     ).toStrictEqual({ isWindDown: true, name: "five-hour", percentage: FIVE_HOUR_WIND_DOWN_PERCENTAGE, resetsAt });
   });
 
-  test("names the weekly window at its line as wind-down, since it has no maintenance tier", () => {
+  test("names the weekly window at its maintenance line as maintenance", () => {
+    expect.hasAssertions();
+
+    expect(
+      getReserveWindow([{ kind: "seven_day", percentUsed: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt }]),
+    ).toStrictEqual({ isWindDown: false, name: "weekly", percentage: WEEKLY_MAINTENANCE_PERCENTAGE, resetsAt });
+  });
+
+  test("names the weekly window at its wind-down line as wind-down", () => {
     expect.hasAssertions();
 
     expect(getReserveWindow([{ kind: "seven_day", percentUsed: WEEKLY_WIND_DOWN_PERCENTAGE, resetsAt }])).toStrictEqual(
@@ -45,7 +54,7 @@ describe(getReserveWindow, () => {
     );
   });
 
-  test("names the weekly window when only it has passed its line", () => {
+  test("names the weekly window when only it has passed its wind-down line", () => {
     expect.hasAssertions();
 
     expect(

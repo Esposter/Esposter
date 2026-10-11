@@ -17,6 +17,9 @@ export const CAPITAL_VIEW_METRES = 512;
 export const ARCHITECTURE_VIEW_METRES = 600;
 // The file a derived world block is written beside its exports, which every reader of the world reads back
 export const WORLD_JSON_NAME = "world.json";
+// The game's table of every LOD-grouped prefab, a MonoBehaviour keyed by the prefab's world id, whose placements carry no
+// Path hash of their own (`parseLodInfoMap`)
+export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 // The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file for
 // 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's name.
 // Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`)

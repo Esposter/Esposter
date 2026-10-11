@@ -31,8 +31,8 @@ describe(walkAssetClosure, () => {
         { block: "", name: "", pathId: "-1" },
       ],
       new Map([
-        ["a", { block: "c", dependencies: ["b"] }],
-        ["b", { block: "d", dependencies: [] }],
+        ["a", { block: "c", dependencies: ["b"], offset: 0 }],
+        ["b", { block: "d", dependencies: [], offset: 0 }],
       ]),
     );
 

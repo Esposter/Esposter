@@ -43,7 +43,7 @@ A machine's profile is `~/.esposter/machine.json`, written by `pnpm ai:fleet:pro
 - `areas`, the areas the user lent the machine for. A new profile is lent `["*"]`, every area. What an area it did not lend means for an agent is the throughput skill's (`.agents/skills/throughput/references/fleet.md`).
 - `capabilities`, read off the machine each run: its operating system, `game-install` when the game's asset blocks are present under the game folder, `game-exports` when the parity exports exist, and `media-engine` on macOS and on Windows when FFmpeg lists Direct3D acceleration. `parity-page` is not detected, so the user sets it by hand, and a capability the user set is kept.
 
-The game folder is the one holding `GenshinImpact_Data`, set by the `GENSHIN_GAME_DIRECTORY` variable and defaulting to `C:\Program Files\Genshin Impact\Genshin Impact game`. The tooling and the profile read the same folder. The MacBook holds the game at `~/Esposter/genshin-parity/game`, so its `GENSHIN_GAME_DIRECTORY` names that folder.
+The game folder is the one holding `GenshinImpact_Data`, set by the `GENSHIN_GAME_DIRECTORY` variable and defaulting to `C:\Program Files\Genshin Impact\Genshin Impact game`. The tooling and the profile read the same folder. On macOS the default is the parity folder's `game`, which is where the MacBook holds it, so no variable is needed there.
 
 The profile's `id` and `areas` are never overwritten once the user has set them.
 

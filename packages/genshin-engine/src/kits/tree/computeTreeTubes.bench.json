@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/kits/tree/computeTreeTubes.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.08992080000000016,
+              "name": "4 points a tube",
+              "p99": 0.10933949999999143,
+              "rme": 9.334936970710872,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.32071240000000073,
+              "name": "16 points a tube",
+              "p99": 0.4185211900000097,
+              "rme": 10.726333289884566,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTreeTubes > 8 tubes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.302166600000001,
+              "name": "4 points a tube",
+              "p99": 0.4226730599999964,
+              "rme": 14.318007883970665,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.2984500000000012,
+              "name": "16 points a tube",
+              "p99": 1.4025507200000076,
+              "rme": 4.83302159080368,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "computeTreeTubes > 32 tubes"
+        }
+      ]
+    }
+  ]
+}

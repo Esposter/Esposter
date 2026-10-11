@@ -3,6 +3,7 @@ import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
+import { CLI_EXECUTABLE_NAME, PUBLISH_DIRECTORY_NAME, TOOLS_DIRECTORY } from "#src/services/animeStudio/constants";
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { EXCEL_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -21,10 +22,14 @@ export const ASSET_MAP_PATH: string = join(EXTRACTED_DIRECTORY, "maps", `${ASSET
 export const ASSET_INDEX_PATH: string = join(EXTRACTED_DIRECTORY, "maps", "index.tsv");
 // Where each shard of the map's blocks is run from while it is mapped: its symlinked blocks and its own asset map
 export const ASSET_MAP_SHARDS_DIRECTORY: string = join(dirname(ASSET_MAP_PATH), "shards");
-// AnimeStudio's command line (github.com/Escartem/AnimeStudio), unpacked where the user keeps it. It writes its CAB map
-// Into a `Maps` folder beside its working directory, so it is run from its own folder
+// AnimeStudio's command line (github.com/Escartem/AnimeStudio): the CLI the build publishes on macOS, which is where its
+// Map is kept, or the one unpacked under Downloads on Windows, unless `GENSHIN_ANIMESTUDIO_CLI` names another. It writes its
+// CAB map into a `Maps` folder beside its working directory, so it is run from its own folder
 export const ANIMESTUDIO_CLI_PATH: string =
-  process.env.GENSHIN_ANIMESTUDIO_CLI ?? join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe");
+  process.env.GENSHIN_ANIMESTUDIO_CLI ??
+  (process.platform === "darwin"
+    ? join(TOOLS_DIRECTORY, PUBLISH_DIRECTORY_NAME, CLI_EXECUTABLE_NAME)
+    : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
 // The CAB map `map` builds there: every serialized file's block and the files it points into
 export const CAB_MAP_PATH: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps", `${ASSET_MAP_NAME}.bin`);
 // What a type filter is suffixed with to have AnimeStudio export a type's objects without parsing them: a raw export of
@@ -273,24 +278,25 @@ export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_FIGURE_MESH_REGEX: RegExp = /^Stages_MdGoddess_Lite/u;
 // The great oak as its export's Lod1 meshes: its canopy's clusters grouped from the leaf's card centres by a seeded
-// K-means, the same export always clustering the same way, and its trunk's radius at each station read off the bark
-// Within a slab of a station's height and within the trunk's reach of its axis. The clusters are as many as the shape
-// Pass's envelope stops reading nearer at, about five cards a cluster (`Oak.reference`)
+// K-means, the same export always clustering the same way, as many as the shape pass's envelope stops reading nearer
+// At, about five cards a cluster (`Oak.reference`)
 export const OAK_LEAF_MESH = "Stages_Unique_CyTree01_Leaf_Lod1";
 export const OAK_BARK_MESH = "Stages_Unique_CyTree01_Bark_Lod1";
 export const OAK_CLUSTER_COUNT = 1280;
 export const OAK_CLUSTER_SEED = 12345;
-export const OAK_TRUNK_HEIGHTS: number[] = [0, 2, 4, 6, 8, 10, 12];
-export const OAK_TRUNK_SLAB_HALF_HEIGHT = 1;
-export const OAK_TRUNK_REACH = 8;
+// The oak's trunk and limbs are its bark's first submesh, drawn in its first bark material: the trunk standing on the
+// Ground and each limb a tube open where it leaves the trunk or the limb it grows from, traced as the roots are
+// (`Oak.reference`)
+export const OAK_LIMB_SUBMESH = 0;
 // The side of a cell of the oak's leaf normal field, in metres: vertices within a few metres agree to about 18 degrees
 export const OAK_NORMAL_CELL_SIZE = 4;
 // The oak's surface roots are its bark's second submesh, drawn in its second bark material, each root a tube open only
-// Where it leaves the trunk or the root it forks from. Each is cut every half metre along itself into the loops its
-// Centreline runs through, and kept within 5 cm, its radius weighed as its place is (`Oak.reference`)
+// Where it leaves the trunk or the root it forks from. Each of the bark's tubes, a root or a limb, is cut every half
+// Metre along itself into the loops its centreline runs through, and kept within 5 cm, its radius weighed as its place
+// Is (`Oak.reference`)
 export const OAK_ROOT_SUBMESH = 1;
-export const OAK_ROOT_LEVEL_STEP = 0.5;
-export const OAK_ROOT_TOLERANCE = 0.05;
+export const OAK_TUBE_LEVEL_STEP = 0.5;
+export const OAK_TUBE_TOLERANCE = 0.05;
 // A tower's surface is unrolled on a grid of an eighth of a unit of its mesh, about a centimetre as the scene scales
 // It, fine enough that its carving's edges land within a pixel of the exports' where the login sees the towers nearest,
 // And its paint read again on half units, as fine as its loops are traced; a run of its height keeps one tone while

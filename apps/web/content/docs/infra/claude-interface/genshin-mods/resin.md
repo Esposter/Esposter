@@ -1,6 +1,6 @@
 ---
 title: Resin
-description: A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, then wind down before it runs dry.
+description: A band row of what the session is spending — time left on the prompt cache and what a cold cache would re-send, the context window, the five-hour and weekly limits, the cost so far — with one-press warm, compact and handoff, a warning before the cache goes cold, and a usage reserve that has the session clean up on cheap agents as a limit window fills, then wind down before it runs dry, and refuses at launch any agent that would spend the window on a dearer model.
 ---
 
 # Resin
@@ -30,7 +30,7 @@ Each is a button, or with the band focused a key: `w`, `c` and `h`.
 
 ## Usage reserve
 
-A plan's usage windows are spent by the session and its agents, and a compute run that is still owed needs some of a window left to start. So each limit window has two lines, a maintenance line and a wind-down line, and the mod reads the five-hour and the weekly window against them. The lines are the constants `FIVE_HOUR_MAINTENANCE_PERCENTAGE`, `FIVE_HOUR_WIND_DOWN_PERCENTAGE` and `WEEKLY_WIND_DOWN_PERCENTAGE` in `constants.ts`, and the map that holds each window's lines is `RateLimitKindUsageWindowMap.ts`. The weekly window has no maintenance line, since running it dry locks everything out for days. The mod keeps a usage reserve in the session from the first line a window passes until that window resets.
+A plan's usage windows are spent by the session and its agents, and a compute run that is still owed needs some of a window left to start. So each limit window has two lines, a maintenance line and a wind-down line, and the mod reads the five-hour and the weekly window against them. The lines are the constants `FIVE_HOUR_MAINTENANCE_PERCENTAGE`, `FIVE_HOUR_WIND_DOWN_PERCENTAGE`, `WEEKLY_MAINTENANCE_PERCENTAGE` and `WEEKLY_WIND_DOWN_PERCENTAGE` in `constants.ts`, and the map that holds each window's lines is `RateLimitKindUsageWindowMap.ts`. The weekly window has a maintenance line because a week's spend is mostly agents launched on the session's own model, each re-reading a large cached context, and by the wind-down line there is little left to steer: an earlier line moves the cleanup onto cheap agents while the window still has room, and the weekly window's lockout lasts days. The mod keeps a usage reserve in the session from the first line a window passes until that window resets.
 
 ```mermaid
 flowchart TD
@@ -41,12 +41,17 @@ flowchart TD
   ON --> S["System section for its tier, held still while the tier lasts"]
   Q -->|yes, same tier| HOLD["Reserve holds, no second toast"]
   Q -->|yes, maintenance raised to wind-down| UP["Section switches to wind-down<br/>and the toast names it again"]
-  P -->|no, reserve on| OFF["Reserve lifts<br/>the section stops being sent"]
+  P -->|no, reserve on| OFF["Reserve lifts<br/>the section stops being sent and the gate opens"]
   P -->|no, reserve off| NONE["Nothing shown"]
+  ON --> G["Launch gate on Agent and Workflow"]
+  G --> L{"The launch"}
+  L -->|Workflow, a fork, or an Agent not on haiku| D["Denied with the reserve's summary and what to do"]
+  L -->|Agent on haiku, SendMessage| A["Passes"]
 ```
 
 - **What starts it** — each measurement the engine pushes reads the limit windows. A wind-down names the reserve over a maintenance tier, and when both windows are at the same tier the five-hour one is named. A toast names it with its reset time in local time, once as it starts and again as its maintenance tier rises to wind-down. Nothing is shown when the reserve ends.
 - **What the session is told** — one system section naming the window, the line it has passed and its reset time, then the instruction of its tier: the maintenance tier spends the rest of the window on cleanup agents, the wind-down stops new work and has each running agent commit and hand off. The throughput skill's "The usage reserve" section spells out both. The text holds still while its tier lasts, so it does not break the prompt cache; a rise to wind-down changes it once. It is sent only while the resin mod is on.
+- **What is refused at launch** — the section only describes the reserve, and an agent or a workflow already launched never reads it, so while a reserve holds and the resin mod is on, a `tool.call` hook on `Agent` and `Workflow` decides each launch with `getReserveRefusal`. A workflow is denied; an agent is denied unless its `model` is `haiku`, and a `subagent_type` of `fork` always is, since a fork runs on the parent's model. Everything else passes, `SendMessage` included so a wrap-up reaches the agents still running. The denial opens with the reserve's summary sentence, then says to pass model `haiku` for cleanup or a compute runner whose judgement is settled, and otherwise to write the unit down as a follow-up and leave it for after the reset. The gate stops at the window's reset time without waiting for the next measurement, and a failure of the hook lets the launch through, as the ward's does.
 - **What lifts it** — the window's reset drops its reading under the line, and the next measurement clears the reserve, so the section simply stops being sent. No button or command does this.
 
 The steps a session follows under a reserve are the repository's own, in the [throughput](https://github.com/Esposter/Esposter/blob/main/.agents/skills/throughput/SKILL.md) skill's "The usage reserve" section.
@@ -61,6 +66,8 @@ The steps a session follows under a reserve are the repository's own, in the [th
 | `packages/genshin-mods/src/services/resin/getReserveWindow.ts`            | The window whose tier names the reserve, with its reset time            |
 | `packages/genshin-mods/src/services/resin/getReserveSummary.ts`           | The sentence the reserve's section and its toast open with              |
 | `packages/genshin-mods/src/services/resin/reserveText.ts`                 | The reserve's system section                                            |
+| `packages/genshin-mods/src/services/resin/getReserveRefusal.ts`           | Whether a launch is refused under the reserve, and the text it is told  |
+| `packages/genshin-mods/src/services/resin/registerReserveGate.ts`         | The `tool.call` hook on `Agent` and `Workflow` that denies the launch   |
 | `packages/genshin-mods/src/services/resin/formatResetsAt.ts`              | The reset time in local time, for the toast and the section             |
 | `packages/genshin-mods/src/services/registerLifecycle.ts`                 | The minute clock, the warning toast, the renewal, the reserve's reading |
 | `packages/genshin-mods/src/services/band/registerBand.ts`                 | The row and the warm, compact and handoff actions                       |

@@ -6,11 +6,15 @@ export const CACHE_LOW_MS: number = Temporal.Duration.from({ minutes: 10 }).tota
 export const CACHE_WARNING_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 export const CLOCK_TICK_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const USAGE_WARNING_PERCENTAGE = 80;
-// The usage lines each window's tiers start at: the five-hour window's maintenance tier, then its wind-down, and the
-// Weekly window's wind-down alone, since running it dry locks everything out for days
-export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 90;
-export const FIVE_HOUR_WIND_DOWN_PERCENTAGE = 97;
+// The usage lines each window's two tiers start at: the maintenance tier, then the wind-down
+export const FIVE_HOUR_MAINTENANCE_PERCENTAGE = 80;
+export const FIVE_HOUR_WIND_DOWN_PERCENTAGE = 95;
+export const WEEKLY_MAINTENANCE_PERCENTAGE = 80;
 export const WEEKLY_WIND_DOWN_PERCENTAGE = 90;
+// The only model an agent may launch on under a reserve, the one cleanup and a settled compute runner need
+export const RESERVE_AGENT_MODEL = "haiku";
+// What a refusal tells the session to do instead, after the reserve's summary
+export const RESERVE_REFUSAL_INSTRUCTION = `Launch only an agent with model "${RESERVE_AGENT_MODEL}", for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
 // Whole minutes as the band writes them, `12m`
