@@ -20,7 +20,7 @@ committed.
 | `character-weapons` | `CharacterScreen` | 10.19% | 0.479 | 6.42% | 0.4153 |
 | `character-weapons-tabs` | `CharacterScreen` | 7.35% | 0.503 | 5.26% | 0.3381 |
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
-| `crafting-table` | `CraftingScreen` | 52.26% | 0.080 | 51.36% | 0.8988 |
+| `crafting-table` | `CraftingScreen` | 51.67% | 0.145 | 50.95% | 0.8944 |
 | `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.34% | 0.756 | 8.55% | 0.4678 |
 | `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |
@@ -58,8 +58,8 @@ committed.
 | `people-of-the-springs-location` | `WorldScreen` | 25.06% | 0.223 | 21.49% | 0.7945 |
 | `publisher-splash` | `SplashPublisher` | 0.07% | 1.000 | 0.01% | 0.0036 |
 | `quest-screen` | `QuestScreen` | 44.36% | 0.406 | 40.91% | 0.8054 |
-| `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
 | `quest-screen-details` | `QuestScreen` | 49.84% | 0.835 | 48.29% | 0.8746 |
+| `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
 | `reputation-screen` | `ReputationScreen` | 6.13% | 0.380 | 5.39% | 0.2658 |
 | `settings-audio-rows` | `MenuSettings` | 1.01% | 0.992 | 0.41% | 0.0756 |
 | `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
