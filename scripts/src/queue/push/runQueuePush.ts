@@ -1,9 +1,9 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
-import { markPushPending } from "#src/queue/push/markPushPending";
 import { PUSH_LOCK_PATH, PUSH_PENDING_PATH } from "#src/queue/push/constants";
-import { releaseProcessLock } from "#src/services/shared/releaseProcessLock";
+import { markPushPending } from "#src/queue/push/markPushPending";
 import { takePushPending } from "#src/queue/push/takePushPending";
+import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
+import { releaseProcessLock } from "#src/services/shared/releaseProcessLock";
 import { existsSync } from "node:fs";
 
 // Runs one push under the lock, shared by the post-commit hook and a manual call. A commit that lands while a push holds

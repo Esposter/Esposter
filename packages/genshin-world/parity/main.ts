@@ -4,8 +4,8 @@ import type { SceneContext } from "#src/models/scene/SceneContext";
 import type { SceneWitness } from "#src/models/scene/SceneWitness";
 
 import "@fontsource/signika/600.css";
-import { benchScene } from "#parity/benchScene";
 import { benchLoad } from "#parity/benchLoad";
+import { benchScene } from "#parity/benchScene";
 import { getSceneCamera } from "#parity/getSceneCamera";
 import { getSceneFog } from "#parity/getSceneFog";
 import { getScenePieces } from "#parity/getScenePieces";

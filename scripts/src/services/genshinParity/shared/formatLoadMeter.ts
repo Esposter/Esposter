@@ -1,5 +1,5 @@
-import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
 import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
+import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
 
 import { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
 

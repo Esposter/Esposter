@@ -1,7 +1,7 @@
 import { QueuePushOutcome } from "#src/models/queue/QueuePushOutcome";
-import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { markPushPending } from "#src/queue/push/markPushPending";
 import { runQueuePush } from "#src/queue/push/runQueuePush";
+import { acquireProcessLock } from "#src/services/shared/acquireProcessLock";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
