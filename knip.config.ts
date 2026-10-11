@@ -2,7 +2,7 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  ignoreBinaries: ["lint", "pwsh", "reg", "tasklist", "tsdown", "typecheck"],
+  ignoreBinaries: ["lint", "pwsh", "reg", "tasklist", "typecheck"],
   ignoreExportsUsedInFile: true,
   workspaces: {
     ".": { entry: ["virrun.config.ts"], ignoreDependencies: ["@esposter/shared-node", "@lerna-lite/publish"] },

@@ -308,7 +308,6 @@ catalog:
   ws: ^8.22.0
   xmlbuilder2: ^4.0.3
   xss: ^1.0.15
-  yaml: ^2.9.1
   zod: ^4.6.5
 catalogMode: strict
 
