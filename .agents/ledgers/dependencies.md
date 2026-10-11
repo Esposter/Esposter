@@ -81,7 +81,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@trpc/client`                          | —     | Keep — framework    | the API layer                                                                                          |
 | `@trpc/server`                          | —     | Keep — framework    | the API layer                                                                                          |
 | `@tsdown/css`                           | —     | Keep — tooling      | tsdown's CSS handling                                                                                  |
-| `@types/fs-extra`                       | —     | Replace — platform  | goes with `fs-extra`                                                                                   |
 | `@types/howler`                         | —     | Replace — platform  | goes with `howler`                                                                                     |
 | `@types/js-beautify`                    | —     | Keep — types        | declarations for `js-beautify`                                                                         |
 | `@types/node`                           | —     | Keep — types        | declarations for `node`                                                                                |
@@ -140,7 +139,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `fake-indexeddb`                        | —     | Keep — tooling      | IndexedDB in the test environment                                                                      |
 | `fast-check`                            | —     | Keep — engine       | property testing: arbitraries and shrinking are the product                                            |
 | `fflate`                                | —     | Keep — spec         | the zip format, which `CompressionStream` does not write                                               |
-| `fs-extra`                              | —     | Replace — platform  | `node:fs` has `cp`, recursive `mkdir` and `rm`                                                         |
 | `grapesjs`                              | —     | Keep — engine       | the page-builder engine                                                                                |
 | `grapesjs-custom-code`                  | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
 | `grapesjs-mjml`                         | —     | Keep — engine       | the MJML compiler's integration                                                                        |

@@ -117,7 +117,6 @@ catalog:
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.1
-  "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/node": ^26.6.5
@@ -178,7 +177,6 @@ catalog:
   fake-indexeddb: ^6.2.5
   fast-check: ^4.10.2
   fflate: ^0.8.3
-  fs-extra: ^11.4.1
   grapesjs: ^0.23.6
   grapesjs-custom-code: ^1.0.2
   grapesjs-mjml: ^1.0.8

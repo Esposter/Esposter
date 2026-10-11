@@ -1,7 +1,7 @@
 import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
-import { remove as baseRemove } from "fs-extra";
+import { rm } from "node:fs/promises";
 
-export const remove = (directory?: Parameters<typeof baseRemove>[0]) => {
+export const remove = (directory?: string) => {
   const path = directory ? `/${directory}` : "";
-  return baseRemove(`${TILED_ROOT_DIRECTORY}${path}`);
+  return rm(`${TILED_ROOT_DIRECTORY}${path}`, { force: true, recursive: true });
 };

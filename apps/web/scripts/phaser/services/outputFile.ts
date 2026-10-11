@@ -1,7 +1,10 @@
 import { PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
-import { outputFile as baseOutputFile } from "fs-extra";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 
-export const outputFile = (file: Parameters<typeof baseOutputFile>[0], data: Parameters<typeof baseOutputFile>[1]) => {
+export const outputFile = async (file: string, data: Parameters<typeof writeFile>[1]) => {
   const path = file ? `/${file}` : file;
-  return baseOutputFile(`${PHASER_ROOT_DIRECTORY}${path}`, data);
+  const outputPath = `${PHASER_ROOT_DIRECTORY}${path}`;
+  await mkdir(dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, data);
 };
