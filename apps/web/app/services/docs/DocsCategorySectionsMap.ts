@@ -7,6 +7,7 @@ export const DocsCategorySectionsMap: Readonly<Record<DocsCategory, readonly str
     "nuxt-security-module",
     "parse-tmx",
     "pitch-transcription",
+    "shared",
     "trpc-msw",
     "trpc-nuxt-module",
     "virrun",

@@ -16,6 +16,7 @@ export const DocsSectionIconMap: Readonly<Record<string, string>> = {
   post: "i-mdi:note-text",
   proposals: "i-mdi:lightbulb",
   resource: "i-mdi:apps",
+  shared: "i-mdi:puzzle",
   "trpc-msw": "i-mdi:api",
   "trpc-nuxt-module": "i-mdi:nuxt",
   user: "i-mdi:account-group",
