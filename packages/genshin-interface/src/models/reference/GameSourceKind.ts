@@ -2,6 +2,7 @@
 // Data, a sound of its Wwise packages, or a capture of the running game
 export enum GameSourceKind {
   AnimationClip = "AnimationClip",
+  Avatar = "Avatar",
   BinaryData = "MiHoYoBinData",
   Capture = "Capture",
   DataTable = "DataTable",

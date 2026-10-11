@@ -16,6 +16,12 @@ export const reference: ComponentReference = {
       role: "Which blocks hold a body type's locomotion clips and the camera profile",
       table: "extracted/maps/index.tsv, in the parity directory",
     },
+    bodyAvatars: {
+      block: "00/10413193.blk, 00/00637927.blk, 00/12774345.blk, 00/06176477.blk",
+      kind: GameSourceKind.Avatar,
+      name: "Avatar_Girl_Sword_Ayaka_ModelAvatar and Avatar_Lady_Sword_Qin_ModelAvatar, Avatar_Boy_Pole_Mika_ModelAvatar, Avatar_Male_Catalyst_Neuvillette_ModelAvatar, Avatar_Loli_Bow_Sigewinne_ModelAvatar",
+      role: "A character's avatar of each body type, whose human scale the body's clips move its root by",
+    },
     cameraProfile: {
       block: "00/13980307.blk",
       kind: GameSourceKind.MonoBehaviour,
