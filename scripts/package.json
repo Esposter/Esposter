@@ -83,7 +83,6 @@
   "dependencies": {
     "citty": "catalog:",
     "genshin-text": "workspace:*",
-    "yaml": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
