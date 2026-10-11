@@ -20,6 +20,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -124,21 +126,17 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // The buffs a General's War Banner or General's Glory gives the active character on each tick: its DEF at the table's
   // Value, and the Geo DMG Bonus as well when the team holds the Crunch count of Geo characters
   const addFieldBuffs = ({ activeCombatant, characterIdCombatantMap, kitEffectState }: KitContext): void => {
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, activeCombatant.characterId, {
       amount: defenseBonus,
       attribute: Attribute.Defense,
-      characterId: activeCombatant.characterId,
-      kind: "buff",
       secondsRemaining: BANNER_BUFF_SECONDS,
       source: DEFENSE_SOURCE,
     });
     const geoCount = [...characterIdCombatantMap.values()].filter(({ element }) => element === Element.Geo).length;
     if (geoCount >= CRUNCH_GEO_COUNT)
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, activeCombatant.characterId, {
         amount: crunchGeoDamageBonus,
         attribute: Attribute.GeoDamageBonus,
-        characterId: activeCombatant.characterId,
-        kind: "buff",
         secondsRemaining: BANNER_BUFF_SECONDS,
         source: CRUNCH_SOURCE,
       });
@@ -243,15 +241,12 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         addKitEffect(kitEffectState, createJuugaField(body, combatant));
         addKitEffect(kitEffectState, createCrystalCollapse(body, combatant));
         if (combatant.ascension >= 1)
-          for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-            addKitEffect(kitEffectState, {
-              amount: A1_DEFENSE_PERCENT,
-              attribute: Attribute.DefensePercent,
-              characterId,
-              kind: "buff",
-              secondsRemaining: A1_SECONDS,
-              source: A1_SOURCE,
-            });
+          buffKitTeam(kitEffectState, party, {
+            amount: A1_DEFENSE_PERCENT,
+            attribute: Attribute.DefensePercent,
+            secondsRemaining: A1_SECONDS,
+            source: A1_SOURCE,
+          });
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

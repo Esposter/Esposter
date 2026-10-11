@@ -5,7 +5,7 @@ import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { SPRAWLING_GREENERY_SECONDS } from "#src/services/party/constants";
 import { ReactionElementalMasteryMap } from "#src/services/party/ReactionElementalMasteryMap";
 
@@ -23,14 +23,11 @@ export const addSprawlingGreeneryBuffs = (
   for (const { reactionType } of reactions) {
     const amount = ReactionElementalMasteryMap[reactionType];
     if (amount === undefined) continue;
-    for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-      addKitEffect(kitEffectState, {
-        amount,
-        attribute: Attribute.ElementalMastery,
-        characterId,
-        kind: "buff",
-        secondsRemaining: SPRAWLING_GREENERY_SECONDS,
-        source: `Sprawling Greenery ${amount}`,
-      });
+    buffKitTeam(kitEffectState, party, {
+      amount,
+      attribute: Attribute.ElementalMastery,
+      secondsRemaining: SPRAWLING_GREENERY_SECONDS,
+      source: `Sprawling Greenery ${amount}`,
+    });
   }
 };

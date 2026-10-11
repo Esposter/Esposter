@@ -19,6 +19,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { createKitField } from "#src/services/kit/effects/createKitField";
@@ -315,11 +316,9 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       hits: [riffInitialHit],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= CRITICAL_RATE_CONSTELLATION)
-          addKitEffect(kitEffectState, {
+          buffKitMember(kitEffectState, combatant.characterId, {
             amount: RIFF_CRITICAL_RATE_BONUS,
             attribute: Attribute.CriticalRate,
-            characterId: combatant.characterId,
-            kind: "buff",
             secondsRemaining: BURST_INITIAL_HITMARK_FRAMES / 60 + FIELD_LINGER_SECONDS,
             source: RIFF_CRITICAL_RATE_SOURCE,
           });

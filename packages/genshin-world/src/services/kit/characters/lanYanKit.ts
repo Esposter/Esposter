@@ -12,7 +12,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Lan Yan's proud skill groups, read at her talent level. The attack group holds her strikes at 0 to 5, the charged
@@ -143,15 +143,12 @@ export const createLanYanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       })),
       onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
         if (combatant.constellationCount < CONSTELLATION_4) return;
-        for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-          addKitEffect(kitEffectState, {
-            amount: CONSTELLATION_4_ELEMENTAL_MASTERY,
-            attribute: Attribute.ElementalMastery,
-            characterId,
-            kind: "buff",
-            secondsRemaining: CONSTELLATION_4_SECONDS,
-            source: CONSTELLATION_4_SOURCE,
-          });
+        buffKitTeam(kitEffectState, party, {
+          amount: CONSTELLATION_4_ELEMENTAL_MASTERY,
+          attribute: Attribute.ElementalMastery,
+          secondsRemaining: CONSTELLATION_4_SECONDS,
+          source: CONSTELLATION_4_SOURCE,
+        });
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

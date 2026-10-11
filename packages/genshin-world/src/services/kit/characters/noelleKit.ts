@@ -13,6 +13,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Noelle's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -165,13 +166,11 @@ export const createNoelleKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const seconds =
           getTalentMultiplier(talentMultiplierMap, NOELLE_BURST_GROUP_ID, TALENT_START_LEVEL, 3) +
           SWEEPING_TIME_START_SECONDS;
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, combatant.characterId, {
           amount:
             getTalentMultiplier(talentMultiplierMap, NOELLE_BURST_GROUP_ID, TALENT_START_LEVEL, 2) *
             combatant.attributes.defense,
           attribute: Attribute.Attack,
-          characterId: combatant.characterId,
-          kind: "buff",
           secondsRemaining: seconds,
         });
         addKitEffect(kitEffectState, {

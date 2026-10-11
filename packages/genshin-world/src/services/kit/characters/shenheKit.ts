@@ -14,6 +14,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -199,11 +200,9 @@ export const createShenheKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }, tickIndex) => {
             if (combatant.ascension >= BURST_ASCENSION)
-              addKitEffect(tickEffectState, {
+              buffKitMember(tickEffectState, activeCombatant.characterId, {
                 amount: BURST_CRYO_DAMAGE_BONUS,
                 attribute: Attribute.CryoDamageBonus,
-                characterId: activeCombatant.characterId,
-                kind: "buff",
                 secondsRemaining: fieldTickIntervalSeconds,
                 source: BURST_CRYO_DAMAGE_BONUS_SOURCE,
               });

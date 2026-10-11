@@ -26,6 +26,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -492,11 +493,9 @@ export const createFurinaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     const { secondsRemaining, stacks } = fanfareStatus;
     for (const characterId of getDeployedCharacterIds(party))
       for (const [attribute, amountPerPoint] of fanfareBonusesPerPoint)
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, characterId, {
           amount: stacks * amountPerPoint,
           attribute,
-          characterId,
-          kind: "buff",
           secondsRemaining,
           source: FANFARE_BUFF_SOURCE,
         });

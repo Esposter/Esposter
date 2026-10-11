@@ -16,6 +16,7 @@ import {
   STRIKE_TARGETING_AREA,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -220,22 +221,18 @@ const createFieldTick =
     }
     const hasGrandExpectation = owner.constellationCount >= GRAND_EXPECTATION_CONSTELLATION;
     if (healthShare > (hasGrandExpectation ? 0 : BENNETT_FIELD_HP_THRESHOLD)) {
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, characterId, {
         amount:
           (getTalentMultiplier(talentMultiplierMap, BENNETT_BURST_GROUP_ID, TALENT_START_LEVEL, 3) +
             (hasGrandExpectation ? GRAND_EXPECTATION_BASE_ATTACK_SHARE : 0)) *
           owner.attributes.attributeTotalMap[Attribute.BaseAttack],
         attribute: Attribute.Attack,
-        characterId,
-        kind: "buff",
         secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
       });
       if (owner.constellationCount >= FIRE_VENTURES_WITH_ME_CONSTELLATION) {
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, characterId, {
           amount: FIRE_VENTURES_PYRO_DAMAGE_BONUS,
           attribute: Attribute.PyroDamageBonus,
-          characterId,
-          kind: "buff",
           secondsRemaining: BENNETT_FIELD_BUFF_SECONDS,
         });
         if (weaponType !== undefined && MELEE_WEAPON_TYPES.has(weaponType))

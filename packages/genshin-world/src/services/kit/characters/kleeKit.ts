@@ -14,6 +14,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -203,15 +204,12 @@ export const createKleeKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     addKitEffect(kitEffectState, exit);
     if (constellationCount < BLAZING_DELIGHT_CONSTELLATION) return;
     scheduleKitTask(kitEffectState, characterId, 0, ({ kitEffectState: tickKitEffectState, party }) => {
-      for (const memberCharacterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
-        addKitEffect(tickKitEffectState, {
-          amount: BLAZING_DELIGHT_PYRO_DAMAGE_BONUS,
-          attribute: Attribute.PyroDamageBonus,
-          characterId: memberCharacterId,
-          kind: "buff",
-          secondsRemaining: BLAZING_DELIGHT_SECONDS,
-          source: BLAZING_DELIGHT_SOURCE,
-        });
+      buffKitTeam(tickKitEffectState, party, {
+        amount: BLAZING_DELIGHT_PYRO_DAMAGE_BONUS,
+        attribute: Attribute.PyroDamageBonus,
+        secondsRemaining: BLAZING_DELIGHT_SECONDS,
+        source: BLAZING_DELIGHT_SOURCE,
+      });
     });
   };
   return {

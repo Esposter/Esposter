@@ -18,6 +18,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -165,13 +166,11 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   };
   // Gives Razor an Electro Sigil, up to three, restarting the seconds of those he holds
   const addElectroSigil = (characterId: number, kitEffectState: KitEffectState): void =>
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, characterId, {
       amount:
         sigilEnergyRecharge *
         Math.min(ELECTRO_SIGIL_MAX_COUNT, getElectroSigilCount(characterId, kitEffectState.effects) + 1),
       attribute: Attribute.EnergyRecharge,
-      characterId,
-      kind: "buff",
       secondsRemaining: sigilSeconds,
       source: ELECTRO_SIGIL_SOURCE,
     });
@@ -207,11 +206,9 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         }
         if (tickIndex > 0) return;
         if (owner.ascension >= AWAKENING_ASCENSION) getPartyMember(party, owner.characterId).skillCooldownSeconds = 0;
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, owner.characterId, {
           amount: electroResistanceBonus,
           attribute: Attribute.ElectroResistance,
-          characterId: owner.characterId,
-          kind: "buff",
           secondsRemaining: wolfWithinSeconds,
           source: LIGHTNING_FANG_SOURCE,
         });

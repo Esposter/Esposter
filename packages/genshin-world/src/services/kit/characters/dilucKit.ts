@@ -13,6 +13,7 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -208,11 +209,9 @@ export const createDilucKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
         secondsRemaining,
       });
       if (hasA4)
-        addKitEffect(kitEffectState, {
+        buffKitMember(kitEffectState, combatant.characterId, {
           amount: DILUC_A4_PYRO_DAMAGE_BONUS,
           attribute: Attribute.PyroDamageBonus,
-          characterId: combatant.characterId,
-          kind: "buff",
           secondsRemaining,
         });
       addKitEffect(kitEffectState, createDawnPhoenix(body, combatant, talentMultiplierMap));

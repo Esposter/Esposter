@@ -19,6 +19,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
@@ -450,11 +451,9 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         for (const memberId of otherMemberIds) {
           const member = characterIdCombatantMap.get(memberId);
           if (member)
-            addKitEffect(kitEffectState, {
+            buffKitMember(kitEffectState, memberId, {
               amount: CONSTELLATION_4_ATTACK_SHARE * member.attributes.attributeTotalMap[Attribute.BaseAttack],
               attribute: Attribute.Attack,
-              characterId: memberId,
-              kind: "buff",
               secondsRemaining: CONSTELLATION_4_SECONDS,
               source: CONSTELLATION_4_SOURCE,
             });

@@ -18,6 +18,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { createKitField } from "#src/services/kit/effects/createKitField";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -193,11 +194,9 @@ export const createFaruzanKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   // Prayerful Wind's Gift gives every member of the deployed team the Anemo DMG Bonus for its seconds
   const addPrayerfulWindsGift = (kitEffectState: KitEffectState, { deployedTeamIndex, teams }: Party): void => {
     for (const characterId of teams[deployedTeamIndex]?.characterIds ?? [])
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, characterId, {
         amount: burstTalentMultiplier(1),
         attribute: Attribute.AnemoDamageBonus,
-        characterId,
-        kind: "buff",
         secondsRemaining: burstTalentMultiplier(2),
         source: PRAYERFUL_WIND_SOURCE,
       });

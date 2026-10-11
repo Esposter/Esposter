@@ -13,6 +13,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -189,11 +190,9 @@ export const createYanfeiKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const seals = countSeals(kitEffectState, combatant.characterId);
         if (combatant.ascension >= SEAL_PYRO_BONUS_ASCENSION)
-          addKitEffect(kitEffectState, {
+          buffKitMember(kitEffectState, combatant.characterId, {
             amount: seals * SEAL_PYRO_BONUS_PER_SEAL,
             attribute: Attribute.PyroDamageBonus,
-            characterId: combatant.characterId,
-            kind: "buff",
             secondsRemaining: SEAL_PYRO_BONUS_SECONDS,
             source: "yanfei-a1",
           });

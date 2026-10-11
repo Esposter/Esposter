@@ -22,6 +22,7 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { createKitField } from "#src/services/kit/effects/createKitField";
@@ -236,11 +237,9 @@ const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant 
       secondsRemaining: C2_SECONDS,
       stacks,
     });
-    addKitEffect(kitEffectState, {
+    buffKitMember(kitEffectState, characterId, {
       amount: C2_ELECTRO_DAMAGE_BONUS_PER_STACK * stacks,
       attribute: Attribute.ElectroDamageBonus,
-      characterId,
-      kind: "buff",
       secondsRemaining: C2_SECONDS,
       source: C2_STATUS_ID,
     });
@@ -458,11 +457,9 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
         },
         burstSeconds,
       );
-      addKitEffect(kitEffectState, {
+      buffKitMember(kitEffectState, characterId, {
         amount: burstMultiplier(11),
         attribute: Attribute.ElementalMastery,
-        characterId,
-        kind: "buff",
         secondsRemaining: burstSeconds,
         source: BURST_BUFF_SOURCE,
       });
