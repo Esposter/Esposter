@@ -1,5 +1,6 @@
-// The pulse's read of the machine watcher: prints its latest reading as JSON, and starts the watcher when the reading is
-// Missing, older than the stale line or written by a process that has exited. It prints nothing and exits 0 outside the
+// The pulse's read of the machine watcher: prints its latest reading as JSON while it is fresh, and starts the watcher
+// When no reading exists or the process that wrote it has exited. A live watcher is never started twice, so a stale
+// Reading from a live one is only left unprinted, and the pulse wakes nothing on it. It prints nothing and exits 0 outside the
 // Repository, where the watcher's script does not exist. The stale line and the state path mirror the repository's
 // Scripts package, which a plugin cannot import
 import { spawn } from "node:child_process";
@@ -42,6 +43,6 @@ const [repositoryRoot] = process.argv.slice(2);
 if (repositoryRoot !== undefined && existsSync(join(repositoryRoot, WATCHER_SCRIPT))) {
   const state = existsSync(STATE_PATH) ? JSON.parse(readFileSync(STATE_PATH, "utf8")) : undefined;
   const isStale = state === undefined || Date.now() - Date.parse(state.at) >= MACHINE_STATE_STALE_MS;
-  if (isStale || !isProcessRunning(state.processId)) startWatcher(repositoryRoot);
-  if (state !== undefined) process.stdout.write(JSON.stringify(state));
+  if (state === undefined || !isProcessRunning(state.processId)) startWatcher(repositoryRoot);
+  if (!isStale) process.stdout.write(JSON.stringify(state));
 }

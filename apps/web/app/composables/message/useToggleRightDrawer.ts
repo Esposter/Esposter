@@ -7,14 +7,12 @@ export const useToggleRightDrawer = (drawer: RightDrawer) => {
   const layoutStore = useLayoutStore();
   const { isRightDrawerOpen } = storeToRefs(layoutStore);
   const messageLayoutStore = useMessageLayoutStore();
+  const { openRightDrawer } = messageLayoutStore;
   const { rightDrawer } = storeToRefs(messageLayoutStore);
   const isOpen = computed(() => isRightDrawerOpen.value && rightDrawer.value === drawer);
   const toggle = () => {
     if (rightDrawer.value === drawer) isRightDrawerOpen.value = !isRightDrawerOpen.value;
-    else {
-      rightDrawer.value = drawer;
-      isRightDrawerOpen.value = true;
-    }
+    else openRightDrawer(drawer);
   };
   return { isOpen, toggle };
 };

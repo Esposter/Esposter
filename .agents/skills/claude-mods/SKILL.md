@@ -21,7 +21,7 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 - **Relative imports only, to the plugin's own files, plus `claude-code`**; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
 - **A matcherless event takes one hook per plugin**, in one `registerLifecycle` file shared by every mod; a mod's own file keeps only its matched hooks.
 - **A function that receives `on` returns nothing** — every `register<Name>(on)` is `void`.
-- **Every function that takes `$` sits in the file of the hook that calls it**; code free of `$` goes in a pure module with its test, and a button's action closes over `$`.
+- **Every function that takes `$` sits in the file of the hook that calls it**; code free of `$` goes in a pure module with its test, and a button's action closes over `$`. `claude plugin validate` is the check that catches a `$` passed across an import, and it runs before a mod commit.
 - **Each file makes the atoms it uses, plugin and key as literals, every initial from the one `InitialState` constant**; toggles share one record, as a loop cannot name a key.
 - **The contract's keys are written inline in `interface PluginState { "<plugin>": { … } }`** in `types/index.d.ts`, the value types exported beside them.
 - **A registration's `.catch` handler is a module-level `const` in that file, whose name no other binding there shares** — not even a parameter.

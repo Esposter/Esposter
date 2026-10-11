@@ -96,6 +96,31 @@ p:empty::before {
   opacity: 0.5;
 }
 
+// Whoever is speaking glows in the accent, easing in and out with their voice. The glow itself is the caller's own
+// box-shadow, since an avatar's ring sits outside its edge and a tile's inside
+.ui-speaking {
+  opacity: 0;
+  transition: opacity var(--ui-motion-short);
+}
+
+.ui-speaking[data-speaking] {
+  opacity: 1;
+}
+
+// A bar that settles into place as it first shows, rising from the offset its own --ui-enter-offset names
+.ui-bar-enter {
+  transition:
+    opacity var(--ui-motion-medium),
+    translate var(--ui-motion-medium);
+}
+
+@starting-style {
+  .ui-bar-enter {
+    opacity: 0;
+    translate: 0 var(--ui-enter-offset);
+  }
+}
+
 // Rich text (tiptap) output, themed from outside in the library's tokens: the list padding and markers and the heading
 // Sizes the reset takes away, links in the link colour, code in the mono face whatever the body reads in, and a quote
 // Behind a rule in the edge colour

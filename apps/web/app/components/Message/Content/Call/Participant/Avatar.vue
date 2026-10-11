@@ -26,20 +26,21 @@ const { isSpeaking, participant } = defineProps<Props>();
       ui-pill
     />
     <!-- Whoever is speaking glows in the accent, easing in and out with their voice -->
-    <span class="speaking" :data-speaking="isSpeaking || undefined" pointer-events-none inset-0 absolute ui-pill />
+    <span
+      class="speaking ui-speaking"
+      :data-speaking="isSpeaking || undefined"
+      pointer-events-none
+      inset-0
+      absolute
+      ui-pill
+    />
   </span>
 </template>
 
 <style scoped>
 .speaking {
-  opacity: 0;
   box-shadow:
     0 0 0 var(--ui-indicator-width) var(--ui-accent),
     0 0 0.5rem 0.25rem color-mix(in srgb, var(--ui-accent) 40%, transparent);
-  transition: opacity var(--ui-motion-short);
-}
-
-.speaking[data-speaking] {
-  opacity: 1;
 }
 </style>

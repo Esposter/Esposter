@@ -83,8 +83,8 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 
 ## Notes
 
-- **The reach, the window and the held F's interval are provisional.** No published source gives any of them: the wiki documents no reach, no row count and no repeat interval. Each waits on a recording of the game, and the [interaction proposal](/docs/proposals/genshin/interaction) keeps the measures with the rest of what is unbuilt.
-- **The order, the held F and the drops' stand-ins are this page's reading of the game.** The wiki documents neither how the game orders several prompts nor whether a held F repeats. Nearest first, a held F that repeats its pick up and spheres for drops are the readings closest to play, and the same recording confirms or replaces them.
+- **The held F's interval is read off a published clip; the reach and the window are best estimates.** The wiki documents no reach, no row count and no repeat interval. A PC tips clip of the English client, saved as `captures/world-pickup.mkv`, picks a berry bush's three berries up with F, each pick up 27 frames at 60 a second after the last, so `INTERACTION_HELD_REPEAT_SECONDS` is 0.45. No published clip or still shows a pile of more things than the list holds, or a slow walk up to a lone thing whose distance can be solved, so `INTERACTION_WINDOW_SIZE` (5) and `INTERACTION_REACH` (2.5 metres) stand as provisional best estimates. All three are on the [roadmap](/docs/genshin/roadmap)'s Manual verification list, and the clips that would measure the last two stay on its References sought list.
+- **The order, the held F and the drops' stand-ins are this page's reading of the game.** The wiki documents neither how the game orders several prompts nor whether a held F repeats. Nearest first, a held F that repeats its pick up and spheres for drops are the readings closest to play; the tips clip's evenly spaced pick ups bear out the repeat, and the Manual verification confirms or replaces the rest.
 
 ## Sources
 

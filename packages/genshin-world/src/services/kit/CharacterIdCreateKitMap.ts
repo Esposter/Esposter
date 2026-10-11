@@ -15,6 +15,7 @@ import {
   GANYU_CHARACTER_ID,
   JEAN_CHARACTER_ID,
   KAEYA_CHARACTER_ID,
+  KAZUHA_CHARACTER_ID,
   KEQING_CHARACTER_ID,
   KLEE_CHARACTER_ID,
   LISA_CHARACTER_ID,
@@ -24,10 +25,13 @@ import {
   QIQI_CHARACTER_ID,
   RAZOR_CHARACTER_ID,
   TARTAGLIA_CHARACTER_ID,
+  THOMA_CHARACTER_ID,
   VENTI_CHARACTER_ID,
   XIANGLING_CHARACTER_ID,
   XIAO_CHARACTER_ID,
   XINGQIU_CHARACTER_ID,
+  YOIMIYA_CHARACTER_ID,
+  YANFEI_CHARACTER_ID,
   ZHONGLI_CHARACTER_ID,
 } from "#src/services/character/constants";
 import { createAlbedoKit } from "#src/services/kit/characters/albedoKit";
@@ -43,6 +47,7 @@ import { createFischlKit } from "#src/services/kit/characters/fischlKit";
 import { createGanyuKit } from "#src/services/kit/characters/ganyuKit";
 import { createJeanKit } from "#src/services/kit/characters/jeanKit";
 import { createKaeyaKit } from "#src/services/kit/characters/kaeyaKit";
+import { createKazuhaKit } from "#src/services/kit/characters/kazuhaKit";
 import { createKeqingKit } from "#src/services/kit/characters/keqingKit";
 import { createKleeKit } from "#src/services/kit/characters/kleeKit";
 import { createLisaKit } from "#src/services/kit/characters/lisaKit";
@@ -52,10 +57,13 @@ import { createNoelleKit } from "#src/services/kit/characters/noelleKit";
 import { createQiqiKit } from "#src/services/kit/characters/qiqiKit";
 import { createRazorKit } from "#src/services/kit/characters/razorKit";
 import { createTartagliaKit } from "#src/services/kit/characters/tartagliaKit";
+import { createThomaKit } from "#src/services/kit/characters/thomaKit";
 import { createVentiKit } from "#src/services/kit/characters/ventiKit";
 import { createXianglingKit } from "#src/services/kit/characters/xianglingKit";
 import { createXiaoKit } from "#src/services/kit/characters/xiaoKit";
 import { createXingqiuKit } from "#src/services/kit/characters/xingqiuKit";
+import { createYoimiyaKit } from "#src/services/kit/characters/yoimiyaKit";
+import { createYanfeiKit } from "#src/services/kit/characters/yanfeiKit";
 import { createZhongliKit } from "#src/services/kit/characters/zhongliKit";
 
 // Each character's kit by its avatar id, for those whose module is built, made from the loaded talent multipliers. A
@@ -74,6 +82,7 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [GANYU_CHARACTER_ID]: createGanyuKit,
   [JEAN_CHARACTER_ID]: createJeanKit,
   [KAEYA_CHARACTER_ID]: createKaeyaKit,
+  [KAZUHA_CHARACTER_ID]: createKazuhaKit,
   [KEQING_CHARACTER_ID]: createKeqingKit,
   [KLEE_CHARACTER_ID]: createKleeKit,
   [LISA_CHARACTER_ID]: createLisaKit,
@@ -83,9 +92,12 @@ export const CharacterIdCreateKitMap: Partial<Record<number, (talentMultiplierMa
   [QIQI_CHARACTER_ID]: createQiqiKit,
   [RAZOR_CHARACTER_ID]: createRazorKit,
   [TARTAGLIA_CHARACTER_ID]: createTartagliaKit,
+  [THOMA_CHARACTER_ID]: createThomaKit,
   [VENTI_CHARACTER_ID]: createVentiKit,
   [XIANGLING_CHARACTER_ID]: createXianglingKit,
   [XIAO_CHARACTER_ID]: createXiaoKit,
   [XINGQIU_CHARACTER_ID]: createXingqiuKit,
+  [YANFEI_CHARACTER_ID]: createYanfeiKit,
+  [YOIMIYA_CHARACTER_ID]: createYoimiyaKit,
   [ZHONGLI_CHARACTER_ID]: createZhongliKit,
 };

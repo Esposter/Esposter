@@ -4,6 +4,8 @@ export const TILE_SELECTION_CAPACITY = 512;
 // Tile round the eye stays held whichever way the camera turns, with room left for the ground it moved on from
 export const TERRAIN_WORKER_COUNT = 2;
 export const MAX_PENDING_TILE_COUNT = 8;
+// The level of the finest tiles, the eye's own resolution, which the first frame waits on before the coarser rings are held
+export const FINEST_TILE_LEVEL = 0;
 // Past a kilometre from the scene's origin the world is moved back under the camera, in steps of a coarsest tile so
 // Every tile edge stays on a whole number
 export const ORIGIN_SHIFT_THRESHOLD = 1024;

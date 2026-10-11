@@ -18,7 +18,7 @@ import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
 import { DialogueChoiceIcon, DialogueScreen, GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { fillLinePlaceholders, GameTextKey, TravelerGender } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -42,7 +42,10 @@ const selectedChoiceIndex = ref(-1);
 // Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it for
 const elapsedMs = ref(0);
 const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progress.value.lineId) : undefined));
-const lineText = computed(() => (talkLine.value ? (textMap[talkLine.value.textId] ?? "") : ""));
+// The Traveler's title as the login fills it, which stands for the player's nickname until the world has a player profile
+const travelerName = computed(() => fillLinePlaceholders(gameText[GameTextKey.Traveler], "", TravelerGender.Female));
+const fillLine = (text: string) => fillLinePlaceholders(text, travelerName.value, TravelerGender.Female);
+const lineText = computed(() => (talkLine.value ? fillLine(textMap[talkLine.value.textId] ?? "") : ""));
 const lineLength = computed(() => [...lineText.value].length);
 // A duel offered is one more reply on the opening line, after the talk's own, and choosing it leaves the talk for the duel
 const choices = computed(() => {
@@ -50,7 +53,7 @@ const choices = computed(() => {
   const talkChoices = getTalkChoices(talk, progress.value.lineId).map(({ icon, id, textId }) => ({
     icon,
     id,
-    text: textMap[textId] ?? "",
+    text: fillLine(textMap[textId] ?? ""),
   }));
   return isDuelOffered && progress.value.lineId === talk.startLineId
     ? [
@@ -105,11 +108,9 @@ useEventListener("keydown", (event) => {
       :revealed-length="progress.isRevealed ? lineLength : Math.floor(elapsedMs / TALK_REVEAL_MS_PER_CHARACTER)"
       :selected-choice-id="choices[selectedChoiceIndex]?.id ?? ''"
       :speaker-name="
-        talkLine?.kind === TalkLineKind.Spoken
-          ? (textMap[talkLine.speakerTextId] ?? '')
-          : gameText[GameTextKey.Traveler]
+        talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerTextId] ?? '') : travelerName
       "
-      :speaker-role="talkLine?.kind === TalkLineKind.Spoken ? (textMap[talkLine.speakerRoleTextId] ?? '') : ''"
+      :speaker-role="talkLine?.kind === TalkLineKind.Spoken ? fillLine(textMap[talkLine.speakerRoleTextId] ?? '') : ''"
       @advance="setProgress(advanceTalk(talk, progress))"
       @choose="(choiceLineId) => choose(choiceLineId)"
     />

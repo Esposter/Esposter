@@ -2,15 +2,36 @@ import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
 
+import type { WardRecord } from "../../../types";
+
 import { InitialState } from "../InitialState";
 import { joinDirectory } from "../shell/joinDirectory";
 import { getCheckoutPeer } from "./getCheckoutPeer";
-import { getCheckoutRoot } from "./getCheckoutRoot";
+import { getParentFolder } from "./getParentFolder";
 import { getRecordsPath } from "./getRecordsPath";
 import { getWholeIndexDenyReason, getWholeIndexRefusal } from "./getWholeIndexRefusal";
-import { readRecords } from "./readRecords";
+import { parseRecords } from "./parseRecords";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
+
+// The records file under the person's home folder, the home read from this file's own environment lookup
+const resolveRecordsPath = async ($: EngineInterface): Promise<string> =>
+  getRecordsPath((await $.env.get("HOME")) ?? (await $.env.get("USERPROFILE")) ?? "");
+
+// The records as the file holds them, none when it does not yet exist
+const readRecords = async ($: EngineInterface, path: string): Promise<Record<string, WardRecord>> =>
+  (await $.fs.exists(path)) ? parseRecords(await $.fs.read(path)) : {};
+
+// The nearest folder at or above `folder` holding a `.git`, a worktree's file included, undefined when none does
+const findCheckoutRoot = async ($: EngineInterface, folder: string): Promise<string | undefined> => {
+  if (await $.fs.exists(`${folder}/.git`)) return folder;
+  const parent = getParentFolder(folder);
+  return parent === undefined ? undefined : findCheckoutRoot($, parent);
+};
+
+// The checkout a session's git commands run in: the folder with the `.git`, or the session's own folder where none is
+const getCheckoutRoot = async ($: EngineInterface, cwd: string): Promise<string> =>
+  (await findCheckoutRoot($, cwd)) ?? cwd;
 
 // A whole-index git command is refused while the ward's records show another session editing the checkout it runs in,
 // The session's folder moved by a `cd` before it and by its `-C`. With the Ward off nothing is recorded, so there is no
@@ -22,7 +43,7 @@ const wholeIndex = async (
 ): Promise<ToolCallResult> => {
   const refusal = getWholeIndexRefusal(command);
   if (refusal === undefined || !(await read($, enabledModsAtom)).ward) return proceed();
-  const records = await readRecords($, await getRecordsPath($));
+  const records = await readRecords($, await resolveRecordsPath($));
   const checkoutRoot = await getCheckoutRoot($, joinDirectory(await $.session.cwd(), refusal.directory));
   const peerPath = getCheckoutPeer(records, checkoutRoot, await $.session.id(), await $.clock.now());
   return peerPath === undefined ? proceed() : { deny: getWholeIndexDenyReason(refusal.form, peerPath) };

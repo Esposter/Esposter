@@ -12,6 +12,7 @@ import {
   SCRAMBLED_KEY_REGEX,
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
+import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
@@ -21,6 +22,9 @@ import { GameLanguage, GameLanguages } from "genshin-text";
 import { GameDataset, QuestIds, QuestObjectiveKind, questSchema, TalkLineKind } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+
+// The manual text map's key for a character's title, the key's prefix before the character's id
+const NPC_TITLE_PREFIX = "NPC_TITLE_";
 
 // Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps from its
 // Binary output, the talks its steps end on from the dialog table, and every word they show, a language missing a word
@@ -47,6 +51,11 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       String(nameTextMapHash),
     ]),
   );
+  const npcTitleTextIdMap = new Map(
+    [...readManualTextMap()]
+      .filter(([textMapId]) => textMapId.startsWith(NPC_TITLE_PREFIX))
+      .map(([textMapId, hash]) => [textMapId.slice(NPC_TITLE_PREFIX.length), hash]),
+  );
   const quests: Quest[] = QuestIds.map((questId) => {
     const mainQuest = mainQuestMap.get(Number(questId));
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_PATH, `has no quest ${questId}`);
@@ -69,7 +78,9 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       id: questId,
       kind: questKind,
       steps,
-      talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkDialogsMap.get(talkId) ?? [], npcNameTextIdMap)),
+      talks: Array.from(talkIds, (talkId) =>
+        readTalk(talkId, talkDialogsMap.get(talkId) ?? [], npcNameTextIdMap, npcTitleTextIdMap),
+      ),
       titleTextId: String(mainQuest.titleTextMapHash),
     });
   });
@@ -80,7 +91,7 @@ export const buildQuests = (): { notes: string[]; objects: Record<string, unknow
       ...steps.map(({ textId }) => textId),
       ...talks.flatMap(({ lines }) =>
         lines.flatMap((line) =>
-          line.kind === TalkLineKind.Spoken ? [line.textId, line.speakerTextId] : [line.textId],
+          line.kind === TalkLineKind.Spoken ? [line.textId, line.speakerTextId, line.speakerRoleTextId] : [line.textId],
         ),
       ),
     ]),

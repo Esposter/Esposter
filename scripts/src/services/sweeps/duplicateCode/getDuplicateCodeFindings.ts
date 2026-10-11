@@ -1,13 +1,11 @@
+import type { DuplicateCodeClone } from "#src/models/sweeps/duplicateCode/DuplicateCodeClone";
 import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/DuplicateCodeFinding";
-import type { detectClones } from "jscpd";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { checkIsImportOnlyRange } from "#src/services/sweeps/duplicateCode/checkIsImportOnlyRange";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
 import { getOrCreate } from "@esposter/shared";
 import { relative, sep } from "node:path";
-
-type DuplicateCodeClone = Awaited<ReturnType<typeof detectClones>>[number];
 
 // Every clone jscpd found, as a finding, except the ones whose lines are import declarations in both files. `readSource`
 // Is passed in so the filter reads the same text the clone was found in, and a test can supply it.

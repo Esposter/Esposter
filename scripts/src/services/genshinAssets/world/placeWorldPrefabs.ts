@@ -2,9 +2,8 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/WorldPrefabPlacements";
 
 import { ROOT_PARENT_ID } from "#src/services/genshinAssets/shared/constants";
+import { createSubtreeCollector } from "#src/services/genshinAssets/shared/createSubtreeCollector";
 import { findRootObject } from "#src/services/genshinAssets/shared/findRootObject";
-import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";
-import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 
 // The file every world anchor is held in, which no dump names
 const WORLD_FILE = "world";
@@ -16,13 +15,7 @@ export const placeWorldPrefabs = (
   objects: readonly SceneObject[],
   worldPrefabs: readonly WorldPrefabPlacements[],
 ): SceneObject[] => {
-  const parentKeyChildrenMap = groupSceneChildren(objects);
-  const collectSubtree = (object: SceneObject): SceneObject[] => [
-    object,
-    ...(parentKeyChildrenMap.get(toObjectKey(object.file, object.transformId)) ?? []).flatMap((child) =>
-      collectSubtree(child),
-    ),
-  ];
+  const collectSubtree = createSubtreeCollector(objects);
   let placed = [...objects];
   for (const { places, prefab } of worldPrefabs) {
     const root = findRootObject(objects, prefab);

@@ -2,8 +2,8 @@ import type { AssetSpawn } from "#src/models/genshinAssets/shared/AssetSpawn";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { composeWorldMatrices } from "#src/services/genshinAssets/shared/composeWorldMatrices";
+import { createSubtreeCollector } from "#src/services/genshinAssets/shared/createSubtreeCollector";
 import { findRootObject } from "#src/services/genshinAssets/shared/findRootObject";
-import { groupSceneChildren } from "#src/services/genshinAssets/shared/groupSceneChildren";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { Matrix3, Vector3 } from "three";
 
@@ -14,13 +14,7 @@ import { Matrix3, Vector3 } from "three";
 // The anchor's turn and scale
 export const copySpawns = (objects: readonly SceneObject[], spawns: readonly AssetSpawn[]): SceneObject[] => {
   const keyWorldMatrixMap = composeWorldMatrices(objects);
-  const parentKeyChildrenMap = groupSceneChildren(objects);
-  const collectSubtree = (object: SceneObject): SceneObject[] => [
-    object,
-    ...(parentKeyChildrenMap.get(toObjectKey(object.file, object.transformId)) ?? []).flatMap((child) =>
-      collectSubtree(child),
-    ),
-  ];
+  const collectSubtree = createSubtreeCollector(objects);
   let copied = [...objects];
   for (const { copies, prefab } of spawns) {
     const root = copies && findRootObject(objects, prefab);

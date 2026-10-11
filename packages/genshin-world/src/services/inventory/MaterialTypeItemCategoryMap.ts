@@ -1,18 +1,21 @@
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ItemCategory } from "genshin-interface";
 
-// The tab each material type is filed in, as the wiki's item pages file it
+// The tab each material type is filed in, as the wiki's item pages give its inventory category. The game files a wind
+// Glider and a namecard in no tab, keeping them in its attire and namecard collections, which are not built, so until
+// Then both stand among the Precious Items, a tab counted by kind. The game files the enhancement ores among the
+// Weapons, but every entry of that tab here is a weapon of its own at a level, so the ores stay among the Materials
 export const MaterialTypeItemCategoryMap = {
   [MaterialType.CharacterDevelopmentMaterial]: ItemCategory.CharacterDevelopmentItem,
-  [MaterialType.Consume]: ItemCategory.Material,
-  [MaterialType.ElementalCrystal]: ItemCategory.Material,
+  [MaterialType.Consume]: ItemCategory.PreciousItem,
+  [MaterialType.ElementalCrystal]: ItemCategory.PreciousItem,
   [MaterialType.Exchange]: ItemCategory.Material,
   [MaterialType.ExpFruit]: ItemCategory.CharacterDevelopmentItem,
   [MaterialType.FishBait]: ItemCategory.Material,
-  [MaterialType.Flycloak]: ItemCategory.Furnishing,
+  [MaterialType.Flycloak]: ItemCategory.PreciousItem,
   [MaterialType.Food]: ItemCategory.Food,
-  [MaterialType.Namecard]: ItemCategory.Furnishing,
-  [MaterialType.NoticeAddHp]: ItemCategory.Material,
+  [MaterialType.Namecard]: ItemCategory.PreciousItem,
+  [MaterialType.NoticeAddHp]: ItemCategory.Food,
   [MaterialType.WeaponExpStone]: ItemCategory.Material,
-  [MaterialType.Widget]: ItemCategory.Material,
+  [MaterialType.Widget]: ItemCategory.Gadget,
 } as const satisfies Record<MaterialType, ItemCategory>;

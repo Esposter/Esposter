@@ -7,15 +7,14 @@ import { Attribute } from "#src/models/character/Attribute";
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one
 export const MAX_MINOR_AFFIX_COUNT = 4;
-// Provisional: the chance an enhancement's EXP is doubled or quintupled, the wiki's Artifact EXP bonus, as weights out of
-// A hundred. Not measured from the game
+// The chance an enhancement's EXP is doubled or quintupled by the wiki's Artifact EXP page, as weights out of a hundred
 export const EXPERIENCE_BONUS_WEIGHTS: readonly WeightedValue<number>[] = [
   { value: 1, weight: 90 },
   { value: 2, weight: 9 },
   { value: 5, weight: 1 },
 ];
-// Provisional: each slot's main affixes by the wiki's Artifact distribution, Goblet's as its 3.0 table gives it. Only the
-// Attributes a slot's pool holds are drawn, so an attribute left out here is never its main affix
+// Each slot's main affixes by the wiki's Artifact/Distribution page. Only the attributes a slot's pool holds are drawn,
+// So an attribute left out here is never its main affix
 export const ArtifactMainAffixWeightMap: Readonly<Record<ArtifactSlot, Readonly<Partial<Record<Attribute, number>>>>> =
   {
     [ArtifactSlot.CircletOfLogos]: {
@@ -30,29 +29,29 @@ export const ArtifactMainAffixWeightMap: Readonly<Record<ArtifactSlot, Readonly<
     [ArtifactSlot.FlowerOfLife]: { [Attribute.Health]: 100 },
     [ArtifactSlot.GobletOfEonothem]: {
       [Attribute.AnemoDamageBonus]: 5,
-      [Attribute.AttackPercent]: 19.175,
+      [Attribute.AttackPercent]: 19.25,
       [Attribute.CryoDamageBonus]: 5,
-      [Attribute.DefensePercent]: 19.15,
+      [Attribute.DefensePercent]: 19,
       [Attribute.DendroDamageBonus]: 5,
       [Attribute.ElectroDamageBonus]: 5,
       [Attribute.ElementalMastery]: 2.5,
       [Attribute.GeoDamageBonus]: 5,
-      [Attribute.HealthPercent]: 19.175,
+      [Attribute.HealthPercent]: 19.25,
       [Attribute.HydroDamageBonus]: 5,
       [Attribute.PhysicalDamageBonus]: 5,
       [Attribute.PyroDamageBonus]: 5,
     },
     [ArtifactSlot.PlumeOfDeath]: { [Attribute.Attack]: 100 },
     [ArtifactSlot.SandsOfEon]: {
-      [Attribute.AttackPercent]: 26.68,
+      [Attribute.AttackPercent]: 26.66,
       [Attribute.DefensePercent]: 26.66,
       [Attribute.ElementalMastery]: 10,
       [Attribute.EnergyRecharge]: 10,
       [Attribute.HealthPercent]: 26.68,
     },
   };
-// Provisional: each minor affix's weight among the ones a rarity's pool still holds, by the wiki's Artifact distribution:
-// The flat attributes weigh six, the percentages and the rest four, and the critical ones three
+// Each minor affix's weight among the ones a rarity's pool still holds, by the wiki's Artifact/Distribution page: the
+// Flat attributes weigh six, the percentages and the rest four, and the critical ones three
 export const ArtifactMinorAffixWeightMap: Readonly<Partial<Record<Attribute, number>>> = {
   [Attribute.Attack]: 6,
   [Attribute.AttackPercent]: 4,

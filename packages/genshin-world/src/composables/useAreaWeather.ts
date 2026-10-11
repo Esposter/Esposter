@@ -2,15 +2,15 @@ import type { Catalogue } from "#src/models/world/Catalogue";
 import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import type { Vector3 } from "three";
 
-import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE } from "#src/services/constants";
-import { takeOne } from "@esposter/shared";
+import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED } from "#src/services/constants";
+import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
-import { computeOutlineDistance, WeatherKind } from "genshin-engine";
+import { computeOutlineDistance, createSeededRandom, WeatherKind } from "genshin-engine";
 
 // The weather of the area the camera stands in, its own first one, as the game draws only the weather where the
 // Player stands, and clear where no drawn outline holds the camera. It is rechecked only once the camera has moved a
 // Stretch, as region data's reach is. An area with several weathers turns to the next of them in turn each
-// AREA_WEATHER_CHANGE_SECONDS, and a special climate with one holds it
+// AREA_WEATHER_CHANGE_SECONDS, drawn by the game's chain among them, and a special climate with one holds it
 export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   const { camera } = useTres();
   const { onBeforeRender } = useLoop();
@@ -19,6 +19,7 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
   let checkedZ = Infinity;
   let checkedArea: CatalogueArea | undefined;
   let secondsInWeather = 0;
+  const random = createSeededRandom(WORLD_RANDOM_SEED);
 
   onBeforeRender(({ delta }) => {
     const activeCamera = camera.value;
@@ -43,7 +44,7 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
     secondsInWeather += delta;
     if (secondsInWeather < AREA_WEATHER_CHANGE_SECONDS) return;
     secondsInWeather = 0;
-    areaWeather.value = takeOne(weathers, (weathers.indexOf(areaWeather.value) + 1) % weathers.length);
+    areaWeather.value = getNextAreaWeather(areaWeather.value, weathers, random);
   });
 
   return areaWeather;

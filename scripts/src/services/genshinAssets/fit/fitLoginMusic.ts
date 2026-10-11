@@ -4,13 +4,11 @@ import type { Except } from "type-fest";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { computeSpectrogram } from "#src/services/genshinAssets/shared/computeSpectrogram";
-import { fitMusicVoices } from "#src/services/genshinAssets/shared/fitMusicVoices";
+import { fitMusicSource } from "#src/services/genshinAssets/shared/fitMusicSource";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
-import { readMusicSourceNotes } from "#src/services/genshinAssets/shared/readMusicSourceNotes";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
 import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/shared/constants";
-import { readAudioSamples } from "#src/services/genshinParity/shared/readAudioSamples";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -56,10 +54,7 @@ export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] 
     for (const { beginTrim, duration: sourceDuration, endTrim, playAt, sourceId } of clips) {
       const wavePath = join(directory, `${sourceId}.wav`);
       // oxlint-disable-next-line no-await-in-loop -- one source's samples and spectrum are held at a time
-      const samples = await readAudioSamples(wavePath, AUDIO_SAMPLE_RATE);
-      // oxlint-disable-next-line no-await-in-loop -- as above
-      const notes = await readMusicSourceNotes(wavePath, samples);
-      const { splits, voiceFits, voiceNotesList } = fitMusicVoices(samples, notes);
+      const { notes, samples, splits, voiceFits, voiceNotesList } = await fitMusicSource(wavePath);
       report.push(`segment ${id}, source ${sourceId}: ${notes.length} notes, registers split at ${splits.join(", ")}`);
       const clipStart = beginTrim / 1000;
       const clipEnd = (sourceDuration + endTrim) / 1000;

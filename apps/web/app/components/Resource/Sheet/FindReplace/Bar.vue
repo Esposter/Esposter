@@ -8,7 +8,15 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
 
 <template>
   <!-- One line: the two fields yield their width as the bar runs short, and the commands and close keep theirs -->
-  <div v-if="isFindReplaceOpen" class="bar" role="search" aria-label="Find and replace" flex gap-2 items-end>
+  <div
+    v-if="isFindReplaceOpen"
+    class="bar ui-bar-enter"
+    role="search"
+    aria-label="Find and replace"
+    flex
+    gap-2
+    items-end
+  >
     <div flex-1 min-w-0>
       <ResourceSheetFindReplaceFindField />
     </div>
@@ -32,15 +40,6 @@ const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, repla
 <style scoped>
 /* It drops in under the search it belongs to, rather than appearing at once */
 .bar {
-  transition:
-    opacity var(--ui-motion-medium),
-    translate var(--ui-motion-medium);
-}
-
-@starting-style {
-  .bar {
-    opacity: 0;
-    translate: 0 calc(var(--ui-step) * -2);
-  }
+  --ui-enter-offset: calc(var(--ui-step) * -2);
 }
 </style>

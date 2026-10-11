@@ -23,14 +23,13 @@ import { getPrefabNames } from "#src/services/genshinAssets/world/getPrefabNames
 import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBlobName";
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
 import { getWorldTileName } from "#src/services/genshinAssets/world/getWorldTileName";
-import { parseStreamingIndex } from "#src/services/genshinAssets/world/parseStreamingIndex";
-import { parseStreamingPlacements } from "#src/services/genshinAssets/world/parseStreamingPlacements";
 import { readAssetPathNames } from "#src/services/genshinAssets/world/readAssetPathNames";
 import { readCapitalWorldPlace } from "#src/services/genshinAssets/world/readCapitalWorldPlace";
 import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { readDerivedPathNames } from "#src/services/genshinAssets/world/readDerivedPathNames";
 import { readLodPathHashes } from "#src/services/genshinAssets/world/readLodPathHashes";
 import { readPrefabBlocks } from "#src/services/genshinAssets/world/readPrefabBlocks";
+import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
 import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePrefabRoot";
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectCityAreasInView";
@@ -85,15 +84,7 @@ export const deriveCapitalWorld = async (
   // A placement of a prefab grouped by level of detail carries no path hash, so it takes its finest level's from the
   // Game's LOD table, the prefab it is rooted at
   const prefabIdLodPathHashMap = await readLodPathHashes(directory.world);
-  const recordedPlacements = await Promise.all(
-    streams.map(async ({ blob, index }) => {
-      const [blobBytes, indexBytes] = await Promise.all([
-        readFile(join(directory.world, AssetType.MiHoYoBinData, `${blob.name}.dat`)),
-        readFile(join(directory.world, AssetType.MonoBehaviour, `${index.name}.dat`)),
-      ]);
-      return parseStreamingPlacements(blobBytes, parseStreamingIndex(indexBytes));
-    }),
-  );
+  const recordedPlacements = await Promise.all(streams.map((stream) => readStreamPlacements(component, stream)));
   const streamPlacements = recordedPlacements.map((placements) =>
     placements.map((placement) =>
       placement.pathHash ? placement : { ...placement, pathHash: prefabIdLodPathHashMap.get(placement.prefabId) ?? "" },

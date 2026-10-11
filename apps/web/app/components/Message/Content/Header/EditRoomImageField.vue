@@ -15,7 +15,7 @@ const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
 const { name, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const validateFile = useValidateFile();
-const input = useTemplateRef("input");
+const fileInput = useTemplateRef("fileInput");
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));
 </script>
 
@@ -32,7 +32,7 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
         cursor-pointer
         relative
         disabled:cursor-default
-        @click="input?.click()"
+        @click="fileInput?.open()"
       >
         <UiAvatar :image="modelValue" :name is-large group-hover:op-80 />
         <span v-if="isLoading" flex items-center inset-0 justify-center absolute>
@@ -43,25 +43,18 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
         </span>
       </button>
     </UiTooltip>
-    <!-- The button above is the labelled upload affordance, so this proxy input stays out of the
-      accessibility tree and out of the tab order -->
-    <input
-      ref="input"
-      type="file"
+    <HiddenFileInput
+      ref="fileInput"
       accept="image/*"
-      aria-hidden="true"
-      tabindex="-1"
-      hidden
-      @change="
-        async (event) => {
-          const file = (event.target as HTMLInputElement).files?.[0];
+      @select="
+        async (file) => {
           if (!file) return;
 
           if (!validateFile(file)) return;
 
           await getResultAsync(() =>
             uploadImage(file, () => {
-              if (input) input.value = '';
+              fileInput?.reset();
             }),
           ).match((newImage) => {
             modelValue = newImage;

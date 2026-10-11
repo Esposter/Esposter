@@ -21,6 +21,9 @@ const toDistance = (first: Readonly<Vector>, second: Readonly<Vector>): number =
   Math.hypot(first[0] - second[0], first[1] - second[1], first[2] - second[2]);
 const toEdgeKey = (first: number, second: number): string =>
   first < second ? `${first},${second}` : `${second},${first}`;
+// Every edge of a piece's faces, each as the two vertices it runs between, in the order the faces name them
+const toFaceEdges = (pieceFaces: readonly Vector[]): [number, number][] =>
+  pieceFaces.flatMap((face) => face.map((first, corner): [number, number] => [first, face[(corner + 1) % 3] ?? first]));
 const AXES = [0, 1, 2] as const;
 // Points' centroid and their mean distance from it
 const toCrossSection = (points: readonly Vector[]): Pick<SkeletonNode, "centre" | "radius"> => {
@@ -36,13 +39,11 @@ const findOpenLoops = (
 ): (Pick<SkeletonNode, "centre" | "radius"> & { edges: [number, number][]; vertices: number[] })[] => {
   const edgeFaceCountMap = new Map<string, number>();
   const edgeVerticesMap = new Map<string, [number, number]>();
-  for (const face of pieceFaces)
-    for (const [corner, first] of face.entries()) {
-      const second = face[(corner + 1) % 3] ?? first;
-      const key = toEdgeKey(first, second);
-      edgeFaceCountMap.set(key, (edgeFaceCountMap.get(key) ?? 0) + 1);
-      if (!edgeVerticesMap.has(key)) edgeVerticesMap.set(key, [first, second]);
-    }
+  for (const [first, second] of toFaceEdges(pieceFaces)) {
+    const key = toEdgeKey(first, second);
+    edgeFaceCountMap.set(key, (edgeFaceCountMap.get(key) ?? 0) + 1);
+    if (!edgeVerticesMap.has(key)) edgeVerticesMap.set(key, [first, second]);
+  }
   const openEdges = [...edgeFaceCountMap].flatMap(([key, faceCount]) => {
     const edge = edgeVerticesMap.get(key);
     return faceCount === 1 && edge ? [edge] : [];
@@ -87,15 +88,13 @@ const traceSkeleton = (
 ): SkeletonNode[] => {
   const edgeVerticesMap = new Map<string, [number, number]>();
   const neighbourMap = new Map<number, number[]>();
-  for (const face of pieceFaces)
-    for (const [corner, first] of face.entries()) {
-      const second = face[(corner + 1) % 3] ?? first;
-      const key = toEdgeKey(first, second);
-      if (edgeVerticesMap.has(key)) continue;
-      edgeVerticesMap.set(key, [first, second]);
-      neighbourMap.set(first, [...(neighbourMap.get(first) ?? []), second]);
-      neighbourMap.set(second, [...(neighbourMap.get(second) ?? []), first]);
-    }
+  for (const [first, second] of toFaceEdges(pieceFaces)) {
+    const key = toEdgeKey(first, second);
+    if (edgeVerticesMap.has(key)) continue;
+    edgeVerticesMap.set(key, [first, second]);
+    neighbourMap.set(first, [...(neighbourMap.get(first) ?? []), second]);
+    neighbourMap.set(second, [...(neighbourMap.get(second) ?? []), first]);
+  }
   const pieceVertices = [...neighbourMap.keys()];
   const readVertex = (vertex: number): Vector => vertices[vertex] ?? [0, 0, 0];
   // Dijkstra from every start vertex at once, along the piece's edges

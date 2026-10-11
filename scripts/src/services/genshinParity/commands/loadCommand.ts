@@ -3,7 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { loadScreen } from "#src/services/genshinParity/page/loadScreen";
 import { formatLoadMeter } from "#src/services/genshinParity/shared/formatLoadMeter";
 import { defineCommand } from "citty";
-import { ScreenLoadBudgetMap } from "genshin-world/parity/loadBudgets";
+import { ScreenLoadBudgetMap } from "#src/services/genshinParity/load/ScreenLoadBudgetMap";
 import { hostname } from "node:os";
 
 export const loadCommand: SubCommandsDef[string] = defineCommand({

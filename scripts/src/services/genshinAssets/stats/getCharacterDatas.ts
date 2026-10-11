@@ -1,8 +1,6 @@
 import type { ExcelAvatarPromoteRow } from "#src/models/genshinAssets/stats/ExcelAvatarPromoteRow";
 import type { ExcelAvatarRow } from "#src/models/genshinAssets/stats/ExcelAvatarRow";
 import type { ExcelFetterInfoRow } from "#src/models/genshinAssets/stats/ExcelFetterInfoRow";
-import type { ExcelSkillDepotRow } from "#src/models/genshinAssets/stats/ExcelSkillDepotRow";
-import type { ExcelSkillRow } from "#src/models/genshinAssets/stats/ExcelSkillRow";
 import type { CharacterData } from "genshin-world";
 
 import {
@@ -12,6 +10,8 @@ import {
   QualityTypeRarityMap,
 } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinAssets/stats/readExcelTable";
+import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
+import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { Attribute, characterDataSchema } from "genshin-world";
 
@@ -22,10 +22,8 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
     readExcelTable<ExcelAvatarPromoteRow>("AvatarPromoteExcelConfigData"),
     ({ avatarPromoteId }) => avatarPromoteId,
   );
-  const skillDepotMap = new Map(
-    readExcelTable<ExcelSkillDepotRow>("AvatarSkillDepotExcelConfigData").map((row) => [row.id, row]),
-  );
-  const skillMap = new Map(readExcelTable<ExcelSkillRow>("AvatarSkillExcelConfigData").map((row) => [row.id, row]));
+  const skillDepotMap = readSkillDepotMap();
+  const skillMap = readSkillMap();
   const avatarIdAssociationMap = new Map(
     readExcelTable<ExcelFetterInfoRow>("FetterInfoExcelConfigData").map(({ avatarAssocType, avatarId }) => [
       avatarId,

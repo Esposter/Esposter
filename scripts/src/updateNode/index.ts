@@ -2,6 +2,7 @@ import { PACKAGE_LOCK_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/share
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
+import { getEnvWithoutPackageBins } from "#src/services/updateNode/getEnvWithoutPackageBins";
 import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
 import { readNodeVersions } from "#src/services/updateNode/readNodeVersions";
 import { readRegistryLatestVersionForPrefix } from "#src/services/updateNode/readRegistryLatestVersionForPrefix";
@@ -79,7 +80,11 @@ await runMain(
         ["env", "install"],
         ["env", "clean"],
       ]) {
-        const result = spawnSync("vp", vpArgs, { cwd: REPOSITORY_ROOT, stdio: "inherit" });
+        const result = spawnSync("vp", vpArgs, {
+          cwd: REPOSITORY_ROOT,
+          env: getEnvWithoutPackageBins(process.env),
+          stdio: "inherit",
+        });
         if (result.status !== 0)
           throw new InvalidOperationError(
             Operation.Update,

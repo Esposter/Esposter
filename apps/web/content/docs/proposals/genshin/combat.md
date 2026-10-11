@@ -29,7 +29,7 @@ This page builds on [combat](/docs/genshin/combat) as built: auras, reactions by
 packages/genshin-world/src/services/combat/damage/EnemyLevelMultiplierMap.ts
 ```
 
-1. **The enemies' level multiplier**, so an enemy's reaction on a character is priced.
+1. **The enemies' level multiplier**, so an enemy's reaction on a character is priced. Shipped: the table and the parameter are built and as-built on the [combat](/docs/genshin/combat) page.
    - `EnemyLevelMultiplierMap.ts`: levels 1 to 100, the "Enemies and Environment" column of the wiki's [Elemental Reaction/Level Scaling](https://genshin-impact.fandom.com/wiki/Elemental_Reaction/Level_Scaling) table, read through the persona's wiki reader and written as `CharacterLevelMultiplierMap` is.
    - `getTransformativeDamage` gains a last parameter, the triggering side's level multiplier map, defaulting to `CharacterLevelMultiplierMap`, so its caller in `services/kit/strikeEnemy.ts` is unchanged.
    - Test: `getTransformativeDamage.test.ts` gains an Overloaded at level 90 priced on 1202.813736 from the enemies' table and 1446.853458 from the characters', and the two tables agreeing at level 57, where they last match.

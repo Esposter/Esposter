@@ -1,5 +1,5 @@
 import type { LoadReading } from "#src/models/genshinParity/page/LoadReading";
-import type { LoadBudget } from "genshin-world/parity/models/LoadBudget";
+import type { LoadBudget } from "#src/models/genshinParity/LoadBudget";
 
 import { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
 

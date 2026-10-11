@@ -12,6 +12,8 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { LAYOUT_ASSET_TYPES } from "#src/services/genshinAssets/shared/constants";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
+import { toGameObjectComponentsMap } from "#src/services/genshinAssets/shared/toGameObjectComponentsMap";
+import { toGameObjectTransformIdMap } from "#src/services/genshinAssets/shared/toGameObjectTransformIdMap";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { toSceneObjects } from "#src/services/genshinAssets/shared/toSceneObjects";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -63,18 +65,8 @@ export const readSceneLayout = async (layoutDirectory: string): Promise<SceneLay
       const gameObjectMaterialsMap = new Map(
         meshRenderers.map(({ m_GameObject, m_Materials }) => [m_GameObject.m_PathID, toPointers(m_Materials)]),
       );
-      const gameObjectTransformIdMap = new Map(
-        gameObjects.flatMap(({ m_Components, m_Transform }) => {
-          const transformId = m_Components[0]?.m_PathID;
-          return transformId ? [[m_Transform.m_GameObject.m_PathID, transformId] as const] : [];
-        }),
-      );
-      const gameObjectComponentsMap = new Map(
-        gameObjects.map(({ m_Components, m_Transform }) => [
-          m_Transform.m_GameObject.m_PathID,
-          m_Components.slice(1).flatMap(({ Name }) => (Name ? [Name] : [])),
-        ]),
-      );
+      const gameObjectTransformIdMap = toGameObjectTransformIdMap(gameObjects);
+      const gameObjectComponentsMap = toGameObjectComponentsMap(gameObjects);
       for (const { m_Components, m_Name, m_Transform } of gameObjects) {
         objectNameMap.set(toObjectKey(file, m_Transform.m_GameObject.m_PathID), m_Name);
         for (const [index, { m_PathID, Name }] of m_Components.entries())

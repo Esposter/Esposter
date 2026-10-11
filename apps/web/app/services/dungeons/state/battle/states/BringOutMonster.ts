@@ -1,24 +1,4 @@
-import type { State } from "@/models/dungeons/state/State";
-
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
-import { prettify } from "@/util/text/prettify";
-import { sleepScene } from "vue-phaserjs";
+import { createMonsterAppearState } from "@/services/dungeons/state/battle/createMonsterAppearState";
 
-export const BringOutMonster: State<StateName.BringOutMonster> = {
-  name: StateName.BringOutMonster,
-  onEnter: async (scene) => {
-    const battleDialogStore = useBattleDialogStore();
-    const { showMessageNoInputRequired } = battleDialogStore;
-    const battlePlayerStore = useBattlePlayerStore();
-    const { activeMonster } = storeToRefs(battlePlayerStore);
-
-    await useMonsterAppearTween(false);
-    useMonsterInfoContainerAppearTween(false);
-    await showMessageNoInputRequired(scene, `Go ${prettify(activeMonster.value.key)}!`);
-    await sleepScene(scene, Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
-    await battleStateMachine.setState(StateName.PlayerInput);
-  },
-};
+export const BringOutMonster = createMonsterAppearState(StateName.BringOutMonster, StateName.PlayerInput);

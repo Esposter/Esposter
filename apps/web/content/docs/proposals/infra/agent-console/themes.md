@@ -1,7 +1,7 @@
 ---
 title: Themes
 description: Proposal — what the agent console's theme interface grows beyond the default theme's reactions. The next parts are a palette, the voxel world's rooms and a voice. The Genshin theme, built from the persona plugin, is the first to use them.
-model: claude-opus-5-5
+model: claude-haiku-5-5
 ---
 
 # Themes
@@ -37,6 +37,16 @@ flowchart TD
   R -->|spoken line in a reply| SY[Resident synthesizer, then ambience]
   R -->|attention wanted| PO[The character turns, once the world draws one]
 ```
+
+## Scope and order
+
+1. **The palette**, the first part a theme sets past its reactions. It is read off the character's element, and two seams stand between it and the console today, so the first build settles them before a line of the palette is written:
+   - **The element is not in the session context.** The persona's context carries the card's name on its last line (`Character: <name>`, from `getSessionStartOutput`), and the element only in the headline's prose, which no theme may parse. The first build adds the element as a line of its own beside the name line, read by the Genshin theme the way the avatar is.
+   - **The console's scope takes one style and one mode.** `UiThemeScope` provides `getUiTheme(style, mode)` and nothing per-scope, so a palette needs a token set the scope can take. The choice belongs to the ui-library and is open.
+2. **The voice**, from the resident synthesizer, once the palette has shipped and the console has a line source.
+3. **The scene and reactions**: the wish banner, then the element ambience, then spatial chat as an option. Each one is built as its own sub-spec.
+
+The palette is not built yet, so nothing in the console changes and the Genshin theme keeps the avatar alone. The console itself is unmounted while `/genshin` is the game alone, so the palette's look has no place to be judged until that changes; the user's eyes check it then.
 
 ## Key files
 
