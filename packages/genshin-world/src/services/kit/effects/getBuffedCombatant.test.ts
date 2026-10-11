@@ -13,6 +13,8 @@ import { createDilucKit } from "#src/services/kit/characters/dilucKit";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -20,6 +22,7 @@ const DILUC_KIT = createDilucKit(await readTalentMultipliers(GAME_DATA_LOCAL_BAS
 
 describe(getBuffedCombatant, () => {
   const CHARACTER_ID = 1;
+  const party = createParty([CHARACTER_ID]);
 
   test("adds a flat ATK buff to the attack and a damage bonus to its attribute, and ignores another character's buff", () => {
     expect.hasAssertions();
@@ -43,10 +46,10 @@ describe(getBuffedCombatant, () => {
       },
       { amount: 0.5, attribute: Attribute.PyroDamageBonus, characterId: 2, kind: "buff", secondsRemaining: 1 },
     ];
-    const buffed = getBuffedCombatant(combatant, effects);
+    const buffed = getBuffedCombatant(combatant, effects, party);
     expect(buffed.attributes.attack).toBe(combatant.attributes.attack + 30);
     expect(buffed.attributes.attributeTotalMap[Attribute.PyroDamageBonus]).toBeCloseTo(0.2);
-    expect(getBuffedCombatant(combatant, [])).toBe(combatant);
+    expect(getBuffedCombatant(combatant, [], party)).toBe(combatant);
   });
 
   test("raises a Geo team's hits by 15% while a shield holds it, so a hit deals 1.15 times its damage", () => {
@@ -73,9 +76,32 @@ describe(getBuffedCombatant, () => {
       return enemy.maxHealth - enemy.health;
     };
 
-    const shielded = getBuffedCombatant(combatant, [shield]);
+    const shielded = getBuffedCombatant(combatant, [shield], party);
 
     expect(shielded.attributes.attributeTotalMap[Attribute.GeoDamageBonus]).toBeCloseTo(0.15);
-    expect(damageOf(shielded) / damageOf(getBuffedCombatant(combatant, []))).toBeCloseTo(1.15);
+    expect(damageOf(shielded) / damageOf(getBuffedCombatant(combatant, [], party))).toBeCloseTo(1.15);
+  });
+
+  test("hands a passive its character's HP as a share of its Max HP in the party", () => {
+    expect.hasAssertions();
+
+    const healthParty = createParty([CHARACTER_ID]);
+    getPartyMember(healthParty, CHARACTER_ID).healthShare = 0.5;
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getPassiveBonuses: (_combatant, healthShare) => [{ amount: healthShare, attribute: Attribute.CriticalRate }],
+      },
+      level: 90,
+    };
+
+    expect(
+      getBuffedCombatant(combatant, [], healthParty).attributes.attributeTotalMap[Attribute.CriticalRate],
+    ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.5);
   });
 });

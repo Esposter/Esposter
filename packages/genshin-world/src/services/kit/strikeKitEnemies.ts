@@ -31,7 +31,7 @@ export const strikeKitEnemies = (strikes: readonly KitStrike[], context: KitStri
   const struckStrikes: KitStrike[] = [];
   for (const strike of strikes) {
     const { attackTag, body, combatant, hit, target } = strike;
-    const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects);
+    const pricedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party);
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
     // The reactions that landed with a reach, each with the enemy it landed on, reached once the strike has landed

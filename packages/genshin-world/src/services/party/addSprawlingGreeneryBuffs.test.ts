@@ -67,7 +67,7 @@ describe(addSprawlingGreeneryBuffs, () => {
 
     expect(kitEffectState.effects).toHaveLength(PARTY_CHARACTER_IDS.length * 2);
     expect(
-      getBuffedCombatant(dendroCombatant, kitEffectState.effects).attributes.attributeTotalMap[
+      getBuffedCombatant(dendroCombatant, kitEffectState.effects, party).attributes.attributeTotalMap[
         Attribute.ElementalMastery
       ],
     ).toBe(50);

@@ -49,7 +49,7 @@ const findField = (kitEffectState: KitEffectState): KitField | undefined =>
   kitEffectState.effects.find((effect): effect is KitField => effect.kind === "field");
 // The passive bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
 const getPassiveBonusPairs = (constellationCount: number): [Attribute, number][] =>
-  (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount)) ?? []).map(({ amount, attribute }) => [
+  (NILOU_KIT.getPassiveBonuses?.(createNilouCombatant(constellationCount), 1) ?? []).map(({ amount, attribute }) => [
     attribute,
     Math.round(amount * 1000) / 1000,
   ]);

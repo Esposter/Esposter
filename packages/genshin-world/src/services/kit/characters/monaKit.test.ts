@@ -85,12 +85,13 @@ describe("mona kit", () => {
     expect.hasAssertions();
     const combatant = createMonaCombatant();
     const energyRecharge = combatant.attributes.attributeTotalMap[Attribute.EnergyRecharge];
-    const pricedAsCharacter = getBuffedCombatant({ ...combatant, ascension: 4 }, []);
+    const party = createParty([MONA_CHARACTER_ID]);
+    const pricedAsCharacter = getBuffedCombatant({ ...combatant, ascension: 4 }, [], party);
     expect(pricedAsCharacter.attributes.attributeTotalMap[Attribute.HydroDamageBonus]).toBeCloseTo(
       0.2 * energyRecharge,
       5,
     );
-    expect(getBuffedCombatant(combatant, [])).toBe(combatant);
+    expect(getBuffedCombatant(combatant, [], party)).toBe(combatant);
   });
 
   test("ascension 1 casts a phantom for every 2 seconds of sprint, which explodes at half of Mirror Reflection's", () => {

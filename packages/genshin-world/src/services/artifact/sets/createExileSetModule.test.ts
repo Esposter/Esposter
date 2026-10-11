@@ -67,7 +67,7 @@ describe(createExileSetModule, () => {
 
     const party = createParty(PARTY_CHARACTER_IDS);
     const kitEffectState: KitEffectState = { effects: [] };
-    exileSetModule.onKitEvent(
+    exileSetModule.onKitEvent?.(
       createBurstUsedEvent(wearer.characterId),
       createKitEventContext(wearer, { kitEffectState, party }),
     );
@@ -87,9 +87,9 @@ describe(createExileSetModule, () => {
     const party = createParty(PARTY_CHARACTER_IDS);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitEventContext(wearer, { kitEffectState, party });
-    exileSetModule.onKitEvent(createBurstUsedEvent(wearer.characterId), context);
+    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context);
     stepEnergies(kitEffectState, party, [2.5]);
-    exileSetModule.onKitEvent(createBurstUsedEvent(wearer.characterId), context);
+    exileSetModule.onKitEvent?.(createBurstUsedEvent(wearer.characterId), context);
 
     expect(stepEnergies(kitEffectState, party, [8])).toStrictEqual([[0, 6]]);
   });
@@ -98,7 +98,7 @@ describe(createExileSetModule, () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
-    exileSetModule.onKitEvent(
+    exileSetModule.onKitEvent?.(
       createBurstUsedEvent(ally.characterId),
       createKitEventContext(wearer, { kitEffectState, party: createParty(PARTY_CHARACTER_IDS) }),
     );

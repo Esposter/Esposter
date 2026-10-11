@@ -5,9 +5,9 @@ import type { Kit } from "#src/models/kit/Kit";
 import { ArtifactSetIdCreateModuleMap } from "#src/services/artifact/ArtifactSetIdCreateModuleMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A character's kit with the sets its artifacts make answering the events of combat after it: each bonus its worn pieces
-// Reach that the set table gives numbers to, built as its set's module where the set has one. A character whose sets
-// Build none keeps its kit as it is
+// A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus its
+// Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A character
+// Whose sets build none keeps its kit as it is
 export const getArtifactSetKit = (
   kit: Kit,
   artifacts: readonly Artifact[],
@@ -26,11 +26,14 @@ export const getArtifactSetKit = (
     },
   ).flat();
   if (artifactSetModules.length === 0) return kit;
+  // The kit's own passives first, then each module's
+  const passives = [kit, ...artifactSetModules];
   return {
     ...kit,
+    getPassiveBonuses: (combatant, healthShare) =>
+      passives.flatMap(({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare) ?? []),
     onKitEvent: (event, context) => {
-      kit.onKitEvent?.(event, context);
-      for (const { onKitEvent } of artifactSetModules) onKitEvent(event, context);
+      for (const { onKitEvent } of passives) onKitEvent?.(event, context);
     },
   };
 };

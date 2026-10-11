@@ -2,10 +2,12 @@ import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
 
 import {
+  BERSERKER_ARTIFACT_SET_ID,
   EXILE_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
   TRAVELING_DOCTOR_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
+import { createBerserkerSetModule } from "#src/services/artifact/sets/createBerserkerSetModule";
 import { createExileSetModule } from "#src/services/artifact/sets/createExileSetModule";
 import { createInstructorSetModule } from "#src/services/artifact/sets/createInstructorSetModule";
 import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/createTravelingDoctorSetModule";
@@ -15,6 +17,7 @@ import { createTravelingDoctorSetModule } from "#src/services/artifact/sets/crea
 export const ArtifactSetIdCreateModuleMap: Readonly<
   Partial<Record<number, (bonus: ArtifactSetBonus) => ArtifactSetModule>>
 > = {
+  [BERSERKER_ARTIFACT_SET_ID]: createBerserkerSetModule,
   [EXILE_ARTIFACT_SET_ID]: createExileSetModule,
   [INSTRUCTOR_ARTIFACT_SET_ID]: createInstructorSetModule,
   [TRAVELING_DOCTOR_ARTIFACT_SET_ID]: createTravelingDoctorSetModule,

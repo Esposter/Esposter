@@ -79,7 +79,7 @@ The character on the field fights through its kit, which prices every character'
 | `packages/genshin-world/src/services/party/addSprawlingGreeneryBuffs.ts`                | Each reaction's timed Elemental Mastery, one buff per party member for each reaction                            |
 | `packages/genshin-world/src/services/party/getImpetuousWindsLocomotion.ts`              | The walking, running, sprinting and dashing speeds raised by Impetuous Winds                                    |
 | `packages/genshin-world/src/services/party/getImpetuousWindsSkillCooldownMultiplier.ts` | Impetuous Winds' factor on a skill's cooldown, or none without it                                               |
-| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts`                 | A hit's pricing: its buffs, its passives' bonuses and Enduring Rock's DMG                                       |
+| `packages/genshin-world/src/services/kit/effects/getBuffedCombatant.ts`                 | A hit's pricing: its buffs, its passives' bonuses at its HP in the party and Enduring Rock's DMG                |
 | `packages/genshin-world/src/services/kit/startNextKitAction.ts`                         | A skill's cooldown as it starts: the kit's own multiplier, the fields' it is cast inside, then Impetuous Winds' |
 | `packages/genshin-world/src/services/party/drownParty.ts`                               | A drowning: every member's energy and a tenth of its Max HP                                                     |
 | `packages/genshin-world/src/services/party/reviveParty.ts`                              | A fallen team brought back at 35% of its Max HP, or the share a revive gives                                    |
