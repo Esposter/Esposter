@@ -14,11 +14,12 @@ import {
 import { getTalkChoices } from "#src/services/dialogue/getTalkChoices";
 import { getTalkLine } from "#src/services/dialogue/getTalkLine";
 import { skipTalk } from "#src/services/dialogue/skipTalk";
+import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { checkIsActionKey } from "#src/services/shared/checkIsActionKey";
 import { useEventListener, useRafFn } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
 import { DialogueChoiceIcon, DialogueScreen, GameScreen } from "genshin-interface";
-import { fillLinePlaceholders, GameTextKey, TravelerGender } from "genshin-text";
+import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 
 interface Props {
   // The game's words in the reader's language
@@ -42,9 +43,10 @@ const selectedChoiceIndex = ref(-1);
 // Time since the line on screen was shown, which writes it out, and then since it was whole, which auto-play holds it for
 const elapsedMs = ref(0);
 const talkLine = computed(() => (progress.value.lineId ? getTalkLine(talk, progress.value.lineId) : undefined));
-// The Traveler's title as the login fills it, which stands for the player's nickname until the world has a player profile
-const travelerName = computed(() => fillLinePlaceholders(gameText[GameTextKey.Traveler], "", TravelerGender.Female));
-const fillLine = (text: string) => fillLinePlaceholders(text, travelerName.value, TravelerGender.Female);
+// The Traveler's title as the login fills it, which stands for the player's nickname and the login's twin for their
+// Gender until the world has a player profile
+const travelerName = computed(() => fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER));
+const fillLine = (text: string) => fillLinePlaceholders(text, travelerName.value, LOGIN_TRAVELER_GENDER);
 const lineText = computed(() => (talkLine.value ? fillLine(textMap[talkLine.value.textId] ?? "") : ""));
 const lineLength = computed(() => [...lineText.value].length);
 // A duel offered is one more reply on the opening line, after the talk's own, and choosing it leaves the talk for the duel

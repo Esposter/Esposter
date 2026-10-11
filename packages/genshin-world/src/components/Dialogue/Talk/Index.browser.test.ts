@@ -1,15 +1,16 @@
 import type { Talk } from "#src/models/dialogue/Talk";
 
-import TalkComponent from "#src/components/Dialogue/Talk/Index.vue";
+import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import { TalkLineKind } from "#src/models/dialogue/TalkLineKind";
-import { ENGLISH_GAME_TEXT, fillLinePlaceholders, GameTextKey, TravelerGender } from "genshin-text";
+import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
+import { ENGLISH_GAME_TEXT, fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 // A one-line talk whose line names the player and their twin's own word, held whole from its first frame, so what is
 // Drawn is the line the game shows: the Traveler's title as the login fills it, then the female twin's word
-describe("talk", () => {
+describe("dialogueTalk", () => {
   test("should fill the player into the line", async () => {
     expect.hasAssertions();
 
@@ -28,8 +29,8 @@ describe("talk", () => {
       ],
       startLineId: "line",
     };
-    const travelerTitle = fillLinePlaceholders(ENGLISH_GAME_TEXT[GameTextKey.Traveler], "", TravelerGender.Female);
-    render(TalkComponent, {
+    const travelerTitle = fillLinePlaceholders(ENGLISH_GAME_TEXT[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER);
+    render(DialogueTalk, {
       props: {
         gameText: ENGLISH_GAME_TEXT,
         startProgress: { isRevealed: true, lineId: "line" },

@@ -34,7 +34,7 @@ const lineParts = computed(() => {
 <template>
   <!-- The game's dialogue over the world: a click anywhere goes on, the speaker's name over the line at the foot of the
        Screen, and the replies down the right. Sized and placed off the English client's recording of its dialogue
-       choices; the selected reply's look and the speaker's role line wait on recordings still owed -->
+       choices; the selected reply's look and a narration's place wait on recordings still owed -->
   <div class="dialogue-screen" @click="emit('advance')">
     <div class="band" :class="{ narration: !speakerName }" aria-live="polite">
       <p v-if="speakerName" class="speaker">{{ speakerName }}</p>
@@ -81,8 +81,9 @@ const lineParts = computed(() => {
   padding-top: calc(var(--unit) * 42);
 }
 
-/* A narration is drawn centred on black with no speaker, as the game's black screen draws it: provisional, until a
-   recording of one is read for its place and darkness */
+/* Provisional: a narration, which names no speaker and no role, is drawn centred on a black screen, the middle of the
+   screen being a best estimate of where the game's black screen sets its line, until a recording of one is read for
+   its place and darkness */
 .band.narration {
   inset: 0;
   height: auto;

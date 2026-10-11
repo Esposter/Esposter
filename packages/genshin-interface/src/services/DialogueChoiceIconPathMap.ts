@@ -1,8 +1,9 @@
 import { DialogueChoiceIcon } from "#src/models/DialogueChoiceIcon";
 
-// Each dialogue choice's mark, traced from the wiki's copy of the game's own file and kept in its own view box. A trace
-// Takes the ink's silhouette, so the quest's gold ring and its mark trace as one disc, a provisional read until the mark
-// Is split from its ring
+// Each dialogue choice's mark, traced from the wiki's copy of the game's own file and kept in its own view box, drawn in
+// The reply's own colour. A trace takes the ink's silhouette, so two are provisional: the quest's ring and its
+// Exclamation mark trace as one disc with no mark in it, and the story quest's nested diamonds as one diamond, until
+// Each inner mark is split from its outline and the game's gold read
 export const DialogueChoiceIconPathMap: Record<DialogueChoiceIcon, { d: string; viewBox: string }> = {
   [DialogueChoiceIcon.Quest]: {
     d: "M 140.5 22 L 159.5 22 L 160.5 23 L 168.5 23 L 169.5 24 L 174.5 24 L 175.5 25 L 186.5 27 L 195.5 30 L 198.5 32 L 200.5 32 L 212.5 38 L 226.5 47 L 249 68.5 L 262 87.5 L 268 99.5 L 268 101.5 L 270 104.5 L 273 113.5 L 273 116.5 L 276 125.5 L 276 130.5 L 277 131.5 L 277 139.5 L 278 140.5 L 278 159.5 L 277 160.5 L 277 168.5 L 276 169.5 L 276 174.5 L 275 175.5 L 273 186.5 L 270 195.5 L 268 198.5 L 268 200.5 L 262 212.5 L 249 231.5 L 231.5 249 L 212.5 262 L 200.5 268 L 198.5 268 L 195.5 270 L 186.5 273 L 183.5 273 L 174.5 276 L 169.5 276 L 168.5 277 L 160.5 277 L 159.5 278 L 140.5 278 L 139.5 277 L 131.5 277 L 130.5 276 L 125.5 276 L 124.5 275 L 113.5 273 L 104.5 270 L 101.5 268 L 99.5 268 L 87.5 262 L 68.5 249 L 51 231.5 L 38 212.5 L 32 200.5 L 32 198.5 L 30 195.5 L 27 186.5 L 27 183.5 L 24 174.5 L 24 169.5 L 23 168.5 L 23 160.5 L 22 159.5 L 22 140.5 L 23 139.5 L 23 131.5 L 24 130.5 L 24 125.5 L 25 124.5 L 27 113.5 L 30 104.5 L 32 101.5 L 32 99.5 L 38 87.5 L 51 68.5 L 68.5 51 L 82.5 41 L 99.5 32 L 101.5 32 L 104.5 30 L 113.5 27 L 116.5 27 L 125.5 24 Q 130.25 25.25 131.5 23 L 139.5 23 L 140.5 22 Z",
