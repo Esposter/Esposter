@@ -36,6 +36,7 @@ import { poseCommand } from "#src/services/genshinParity/commands/poseCommand";
 import { rankCommand } from "#src/services/genshinParity/commands/rankCommand";
 import { recordCommand } from "#src/services/genshinParity/commands/recordCommand";
 import { scrollCommand } from "#src/services/genshinParity/commands/scrollCommand";
+import { searchCommand } from "#src/services/genshinParity/commands/searchCommand";
 import { shadowsCommand } from "#src/services/genshinParity/commands/shadowsCommand";
 import { shootCommand } from "#src/services/genshinParity/commands/shootCommand";
 import { skyCommand } from "#src/services/genshinParity/commands/skyCommand";
@@ -97,6 +98,7 @@ export const genshinParityCommand: CommandDef = defineCommand({
     rank: rankCommand,
     record: recordCommand,
     clip: clipCommand,
+    search: searchCommand,
     frame: frameCommand,
   },
 });

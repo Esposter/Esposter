@@ -4,18 +4,19 @@ Read before any pass or round on a Genshin screen or scene, and whenever its loo
 
 ## The interface
 
-| Unknown                       | Tool                                                                                                                      |
-| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
-| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path                                                                    |
-| A piece's motion              | `genshin:assets clips`: the decoded clip curves                                                                           |
-| A mark's shape                | `trace`, or the vector on Commons                                                                                         |
-| A colour, a size, a place     | `measure`, `zoom`, `polar`                                                                                                |
-| A timing                      | `frames`, `luma`                                                                                                          |
-| Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`)                                                                 |
-| The game's words              | `genshin:text decode`, the install's text maps                                                                            |
-| A recording's own blur        | `getCaptureSoftness`: its Gaussian sigma off the frame's interface edges, applied to our shot by `compare` (see Softness) |
-| A published video's section   | `genshin:parity clip <url> --from <s> --to <s>`: the section at 1080p into `captures`, its path printed                   |
-| A frame of a capture          | `genshin:parity frame <capture> --at <s>`: one PNG into `references/<name>/`, beside a `SOURCE.txt` naming it             |
+| Unknown                       | Tool                                                                                                                                                          |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A piece's place and anchoring | `genshin:assets interface`, then `fit`'s rects by path                                                                                                        |
+| A piece's motion              | `genshin:assets clips`: the decoded clip curves                                                                                                               |
+| A mark's shape                | `trace`, or the vector on Commons                                                                                                                             |
+| A colour, a size, a place     | `measure`, `zoom`, `polar`                                                                                                                                    |
+| A timing                      | `frames`, `luma`                                                                                                                                              |
+| Whether the piece matches     | `compare` over the reference's clean plate (`isBackdrop`)                                                                                                     |
+| The game's words              | `genshin:text decode`, the install's text maps                                                                                                                |
+| A recording's own blur        | `getCaptureSoftness`: its Gaussian sigma off the frame's interface edges, applied to our shot by `compare` (see Softness)                                     |
+| A published video's section   | `genshin:parity clip <url> --from <s> --to <s>`: the section at 1080p into `captures`, its path printed                                                       |
+| A public video for a query    | `genshin:parity search <query> [--site youtube\|bilibili] [--count 10]`: each video's URL, length, resolution, frame rate and chapters, to pick a `clip` from |
+| A frame of a capture          | `genshin:parity frame <capture> --at <s>`: one PNG into `references/<name>/`, beside a `SOURCE.txt` naming it                                                 |
 
 ## Softness
 
