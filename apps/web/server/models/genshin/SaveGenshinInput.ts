@@ -1,6 +1,6 @@
 import type { GenshinSave } from "genshin-world/save";
 
-import { MAX_ETAG_LENGTH } from "#server/services/blobState/constants";
+import { MAX_ETAG_LENGTH } from "#shared/services/blobState/constants";
 import { genshinSaveSchema } from "genshin-world/save";
 import { z } from "zod";
 

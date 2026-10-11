@@ -2,7 +2,14 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
-import { SurveyAchievementName } from "@esposter/db-schema";
+import { SurveyAchievementName, ResourceType } from "@esposter/db-schema";
+import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { createSaveResourceContentInputSchema } from "#shared/models/db/resource/SaveResourceContentInput";
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
+import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
+import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
+import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
 
 export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Survey, {
   [SurveyAchievementName.DataCollector]: defineAchievementDefinition({
@@ -10,6 +17,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Receive 100 survey responses",
     icon: "i-mdi:database",
     points: 150,
+    inputSchema: createSurveyResponseInputSchema,
     triggerPath: "survey.createSurveyResponse",
   }),
   [SurveyAchievementName.Modeler]: defineAchievementDefinition({
@@ -17,6 +25,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Update a survey model",
     icon: "i-mdi:form-select",
     points: 15,
+    inputSchema: createSaveResourceContentInputSchema(ResourceDefinitionMap[ResourceType.Survey].contentSchema),
     triggerPath: "survey.saveResourceContent",
   }),
   [SurveyAchievementName.Publisher]: defineAchievementDefinition({
@@ -24,6 +33,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Publish a survey",
     icon: "i-mdi:publish",
     points: 25,
+    inputSchema: resourceIdInputSchema,
     triggerPath: "survey.publishResource",
   }),
   [SurveyAchievementName.Respondent]: defineAchievementDefinition({
@@ -31,6 +41,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Respond to a survey",
     icon: "i-mdi:clipboard-check",
     points: 10,
+    inputSchema: createSurveyResponseInputSchema,
     triggerPath: "survey.createSurveyResponse",
   }),
   [SurveyAchievementName.ResponseEditor]: defineAchievementDefinition({
@@ -38,6 +49,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Edit a survey response",
     icon: "i-mdi:clipboard-edit",
     points: 5,
+    inputSchema: updateSurveyResponseInputSchema,
     triggerPath: "survey.updateSurveyResponse",
   }),
   [SurveyAchievementName.SurveyDeleter]: defineAchievementDefinition({
@@ -45,6 +57,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Delete a survey",
     icon: "i-mdi:delete-sweep",
     points: 5,
+    inputSchema: resourceIdInputSchema,
     triggerPath: "survey.deleteResource",
   }),
   [SurveyAchievementName.SurveyEditor]: defineAchievementDefinition({
@@ -52,6 +65,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Edit a survey",
     icon: "i-mdi:file-document-edit",
     points: 5,
+    inputSchema: updateResourceInputSchema,
     triggerPath: "survey.updateResource",
   }),
   [SurveyAchievementName.SurveyGuru]: defineAchievementDefinition({
@@ -59,6 +73,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Publish 50 surveys",
     icon: "i-mdi:trophy-variant",
     points: 200,
+    inputSchema: resourceIdInputSchema,
     triggerPath: "survey.publishResource",
   }),
   [SurveyAchievementName.Surveyor]: defineAchievementDefinition({
@@ -66,6 +81,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Create a survey",
     icon: "i-mdi:poll",
     points: 15,
+    inputSchema: createResourceInputSchema,
     triggerPath: "survey.createResource",
   }),
   [SurveyAchievementName.SurveySays]: defineAchievementDefinition({
@@ -73,6 +89,7 @@ export const SurveyAchievementDefinitionMap = defineAchievementDefinitionMap(Ach
     description: "Create 10 surveys",
     icon: "i-mdi:clipboard-list",
     points: 50,
+    inputSchema: createResourceInputSchema,
     triggerPath: "survey.createResource",
   }),
 });

@@ -1,7 +1,6 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
-import { checkAchievementCondition } from "#server/services/achievement/checkAchievementCondition";
 import { achievementEventEmitter } from "#server/services/achievement/events/achievementEventEmitter";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
@@ -26,9 +25,9 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
     await Promise.all(
       achievementDefinitions
         .filter(({ triggerPath }) => triggerPath === path)
-        .map(({ amount = 1, condition, incrementAmount = 1, name }) =>
+        .map(({ amount = 1, check, incrementAmount = 1, name }) =>
           getResultAsync(async () => {
-            if (condition && !checkAchievementCondition(condition, rawInput)) return;
+            if (!check(rawInput)) return;
             // Upserted rather than read-then-inserted: concurrent mutations both miss the row and race to insert.
             // The no-op set is what makes RETURNING yield the existing row on conflict
             const achievement = requireMutation(
