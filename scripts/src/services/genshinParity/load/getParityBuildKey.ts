@@ -8,20 +8,25 @@ import { join } from "node:path";
 // With its size and time, so a build is reused while nothing it reads has moved and rebuilt once a changed file is saved again
 export const getParityBuildKey = (): string => {
   const head = spawnSync("git", ["rev-parse", "HEAD"], { cwd: REPOSITORY_ROOT, encoding: "utf8" }).stdout.trim();
-  const status = spawnSync("git", ["status", "--porcelain", "--untracked-files=all"], {
+  // NUL-separated, so a path is literal rather than quoted for its spaces, and a rename's entry is its new path, the
+  // File on disk, followed by its old path as an entry of its own
+  const entries = spawnSync("git", ["status", "--porcelain", "-z", "--untracked-files=all"], {
     cwd: REPOSITORY_ROOT,
     encoding: "utf8",
-  }).stdout;
-  const changedFiles = status
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => {
-      // A rename's line names both paths, and the new one is the file on disk
-      const changedPath = join(REPOSITORY_ROOT, line.slice(3).split(" -> ").at(-1) ?? "");
-      if (!existsSync(changedPath)) return line;
-      const { mtimeMs, size } = statSync(changedPath);
-      return `${line} ${size} ${mtimeMs}`;
-    });
+  }).stdout.split("\0");
+  const changedFiles: string[] = [];
+  for (let index = 0; index < entries.length; index += 1) {
+    const entry = entries[index];
+    if (!entry) continue;
+    if (entry[0] === "R" || entry[0] === "C") index += 1;
+    const changedPath = join(REPOSITORY_ROOT, entry.slice(3));
+    if (!existsSync(changedPath)) {
+      changedFiles.push(entry);
+      continue;
+    }
+    const { mtimeMs, size } = statSync(changedPath);
+    changedFiles.push(`${entry} ${size} ${mtimeMs}`);
+  }
   return createHash("sha256")
     .update([head, ...changedFiles].join("\n"))
     .digest("hex");
