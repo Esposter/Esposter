@@ -737,9 +737,6 @@ catalogs:
     oxlint-tsgolint:
       specifier: ^7.0.2004
       version: 7.0.2004
-    p-progress:
-      specifier: ^1.0.0
-      version: 1.0.0
     phaser:
       specifier: ^4.2.1
       version: 4.2.1
@@ -1392,9 +1389,6 @@ importers:
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.4
-      p-progress:
-        specifier: 'catalog:'
-        version: 1.0.0
       parse-tmx:
         specifier: workspace:*
         version: link:../../packages/parse-tmx
@@ -9179,10 +9173,6 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  aggregate-error@4.0.1:
-    resolution: {integrity: sha512-0poP0T7el6Vq3rstR8Mn4V/IQrpBLO6POkUSrN7RhyY+GF/InCFShQzsQ39T25gkHhLgSLByyAz+Kjb+c2L98w==}
-    engines: {node: '>=12'}
-
   ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
 
@@ -9627,10 +9617,6 @@ packages:
 
   clean-git-ref@2.0.1:
     resolution: {integrity: sha512-bLSptAy2P0s6hU4PzuIMKmMJJSE6gLXGH1cntDu7bWJUksvuM+7ReOK61mozULErYvP6a15rnYl0zFDef+pyPw==}
-
-  clean-stack@4.2.0:
-    resolution: {integrity: sha512-LYv6XPxoyODi36Dp976riBtSY27VmFo+MKqEU9QCCWyTrdEPDog+RWA7xQWHi6Vbp61j5c4cdzzX1NidnwtUWg==}
-    engines: {node: '>=12'}
 
   cli-width@4.1.0:
     resolution: {integrity: sha512-ouuZd4/dm2Sw5Gmqy6bGyNNNe1qt9RpmxveLSO7KcgsTnU7RXfsw+/bukWGo1abgBiMAic068rclZsO4IWmmxQ==}
@@ -13283,25 +13269,13 @@ packages:
     resolution: {integrity: sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  p-map@5.5.0:
-    resolution: {integrity: sha512-VFqfGDHlx87K66yZrNdI4YGtD70IRyd+zSvgks6mzHPRNkoKy+9EKP4SFC77/vTTQYmRmti7dvqC+m5jBrBAcg==}
-    engines: {node: '>=12'}
-
   p-map@7.1.0:
     resolution: {integrity: sha512-HaSJ9hNZOxTUSATfB48Qi7U2+GF1eECjI39nkeLmCWQrSOYr1z4NepR0rpWiZO77pYwUWU2cJ5NIgsmoFCsYDQ==}
-    engines: {node: '>=18'}
-
-  p-progress@1.0.0:
-    resolution: {integrity: sha512-OnA4Uo4/tB0PdZG7vH6qt0v8vfV5ktFiinJL+V7ThMvDPPloqL+syfki24h7iHxtMQqGFSIRImD5HEH5QL7RNQ==}
     engines: {node: '>=18'}
 
   p-timeout@6.1.4:
     resolution: {integrity: sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg==}
     engines: {node: '>=14.16'}
-
-  p-times@4.0.0:
-    resolution: {integrity: sha512-KqBkcxIZ2EZHHkt8lbNORmRofFLrLlHQh0ObFO3moOlrdN/v+sbJ2ssZspP5GN7E7zwvcqiqV0xnJydkQuoNyw==}
-    engines: {node: '>=12.20'}
 
   p-try@2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
@@ -23201,11 +23175,6 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  aggregate-error@4.0.1:
-    dependencies:
-      clean-stack: 4.2.0
-      indent-string: 5.0.0
-
   ajv-formats@2.1.1:
     dependencies:
       ajv: 8.20.0
@@ -23661,10 +23630,6 @@ snapshots:
   cjs-module-lexer@2.3.0: {}
 
   clean-git-ref@2.0.1: {}
-
-  clean-stack@4.2.0:
-    dependencies:
-      escape-string-regexp: 5.0.0
 
   cli-width@4.1.0: {}
 
@@ -28231,21 +28196,9 @@ snapshots:
     dependencies:
       p-limit: 4.0.0
 
-  p-map@5.5.0:
-    dependencies:
-      aggregate-error: 4.0.1
-
   p-map@7.1.0: {}
 
-  p-progress@1.0.0:
-    dependencies:
-      p-times: 4.0.0
-
   p-timeout@6.1.4: {}
-
-  p-times@4.0.0:
-    dependencies:
-      p-map: 5.5.0
 
   p-try@2.2.0: {}
 

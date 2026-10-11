@@ -64,6 +64,50 @@ describe(uploadBlocks, () => {
     expect(blockIdLengths.size).toBe(1);
   });
 
+  // Each block reports as it lands, and the last one lands at completion, so the progress ends at one
+  test("reports each landed block's share of the blob up to completion", async () => {
+    expect.hasAssertions();
+
+    stubFetch();
+    const progressNotifier = vi.fn<(progress: number) => void>();
+    await uploadBlocks(new Blob([new Uint8Array(8 * MEGABYTE + 1)]), sasUrl, progressNotifier);
+
+    expect(progressNotifier.mock.calls).toStrictEqual([[1 / 3], [2 / 3], [1]]);
+  });
+
+  // A refused block is never counted, while the blocks that land around it still are, and the upload still fails
+  test("counts the blocks that land around a refused one, and fails the upload", async () => {
+    expect.hasAssertions();
+
+    let requestCount = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<() => Promise<Response>>(() => {
+        requestCount++;
+        return Promise.resolve(new Response(null, { status: requestCount === 2 ? 403 : 200 }));
+      }),
+    );
+    const progressNotifier = vi.fn<(progress: number) => void>();
+
+    await expect(
+      uploadBlocks(new Blob([new Uint8Array(8 * MEGABYTE + 1)]), sasUrl, progressNotifier),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+    );
+    expect(progressNotifier.mock.calls).toStrictEqual([[1 / 3], [2 / 3]]);
+  });
+
+  // An empty file has no block to land, so it reports its completion alone
+  test("reports an empty file as complete", async () => {
+    expect.hasAssertions();
+
+    stubFetch();
+    const progressNotifier = vi.fn<(progress: number) => void>();
+    await uploadBlocks(new Blob(), sasUrl, progressNotifier);
+
+    expect(progressNotifier.mock.calls).toStrictEqual([[1]]);
+  });
+
   // A refused write is a status, not a failed request, so an upload whose blocks were all refused must not report
   // Itself landed
   test("fails an upload whose block storage refuses", async () => {

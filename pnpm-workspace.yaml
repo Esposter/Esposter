@@ -246,7 +246,6 @@ catalog:
   oxfmt: ^0.72.0
   oxlint: ^1.87.0
   oxlint-tsgolint: ^7.0.2004
-  p-progress: ^1.0.0
   pdfjs-dist: ^6.4.299
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
