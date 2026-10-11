@@ -1,0 +1,264 @@
+# Dependencies
+
+Every catalog entry, each with its verdict: kept, replaced by the platform or by something already installed, absorbed into our own code, or removed. The rubric and the score behind a verdict are `apps/web/content/docs/architecture/dependency-admission.md`, and `pnpm ai:dependencies:score` scores every entry out of 100. The catalog derives the rows (`scripts/src/services/sweeps/ledgerCoverage/LedgerUnitsMap.ts`), so a new dependency opens here at `—` until it is judged. A Keep row is swept once judged. Any other row is swept by the commit that carries out its verdict, which also deletes the catalog entry and its row.
+
+| Package                                 | Swept | Verdict             | Reason                                                                                                 |
+| --------------------------------------- | ----- | ------------------- | ------------------------------------------------------------------------------------------------------ |
+| `@2toad/profanity`                      | —     | Keep — data         | a curated word list we would otherwise maintain                                                        |
+| `@anthropic-ai/claude-agent-sdk`        | —     | Keep — SDK          | the agent console's session host                                                                       |
+| `@arethetypeswrong/core`                | —     | Keep — tooling      | tsdown's types check on every published package                                                        |
+| `@azure/core-client`                    | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/core-http-compat`               | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/core-rest-pipeline`             | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/data-tables`                    | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/eventgrid`                      | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/functions`                      | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/identity`                       | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/search-documents`               | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/service-bus`                    | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/storage-blob`                   | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/storage-queue`                  | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/web-pubsub`                     | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@azure/web-pubsub-client`              | —     | Keep — SDK          | a cloud SDK, on the stop list                                                                          |
+| `@better-auth/api-key`                  | —     | Keep — security     | authentication, on the stop list                                                                       |
+| `@better-auth/drizzle-adapter`          | —     | Keep — security     | authentication, on the stop list                                                                       |
+| `@codemirror/lang-vue`                  | —     | Keep — engine       | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/language`                  | —     | Keep — engine       | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/language-data`             | —     | Keep — engine       | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/state`                     | —     | Keep — engine       | the code editor engine, on the stop list for accessibility                                             |
+| `@codemirror/theme-one-dark`            | —     | Keep — data         | a finished theme; owning it would add a file to maintain                                               |
+| `@dxup/nuxt`                            | —     | Keep — tooling      | a TypeScript language-service plugin                                                                   |
+| `@dxup/unimport`                        | —     | Keep — tooling      | a TypeScript language-service plugin                                                                   |
+| `@electric-sql/pglite`                  | —     | Keep — engine       | in-memory PostgreSQL for the server tests                                                              |
+| `@eslint/core`                          | —     | Keep — tooling      | the linter's core                                                                                      |
+| `@eslint/json`                          | —     | Keep — tooling      | the linter's core                                                                                      |
+| `@fontsource/signika`                   | —     | Keep — data         | font files                                                                                             |
+| `@hpcc-js/wasm-graphviz`                | —     | Keep — engine       | Graphviz layout for the dependency graph                                                               |
+| `@huggingface/transformers`             | —     | Keep — engine       | model inference                                                                                        |
+| `@iconify-json/lucide`                  | —     | Keep — data         | an icon set UnoCSS reads                                                                               |
+| `@iconify-json/mdi`                     | —     | Keep — data         | an icon set UnoCSS reads                                                                               |
+| `@iconify-json/pixelarticons`           | —     | Keep — data         | an icon set UnoCSS reads                                                                               |
+| `@jsonforms/core`                       | —     | Keep — engine       | the form engine                                                                                        |
+| `@jsonforms/vue`                        | —     | Keep — engine       | the form engine                                                                                        |
+| `@kjanat/actionlint`                    | —     | Keep — tooling      | workflow lint                                                                                          |
+| `@lerna-lite/cli`                       | —     | Keep — tooling      | fixed-mode versioning and publishing, which pnpm does not do                                           |
+| `@lerna-lite/publish`                   | —     | Keep — tooling      | fixed-mode versioning and publishing, which pnpm does not do                                           |
+| `@livekit/track-processors`             | —     | Keep — SDK          | the call SDK's video processing                                                                        |
+| `@modelcontextprotocol/sdk`             | —     | Keep — spec         | the MCP protocol                                                                                       |
+| `@nuxt/content`                         | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/eslint`                          | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/fonts`                           | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/image`                           | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/kit`                             | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/nitro-server`                    | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/schema`                          | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/scripts`                         | —     | Keep — framework    | the framework's own module                                                                             |
+| `@nuxt/test-utils`                      | —     | Keep — tooling      | the app's test environment                                                                             |
+| `@nuxtjs/seo`                           | —     | Keep — framework    | the framework's SEO module                                                                             |
+| `@oxlint/plugins`                       | —     | Keep — tooling      | the repo's own oxlint rules load through it                                                            |
+| `@panzoom/panzoom`                      | —     | Keep — engine       | pointer, pinch and wheel interaction, where a hand-rolled version ships worse                          |
+| `@pinia/nuxt`                           | —     | Keep — framework    | the store's Nuxt module                                                                                |
+| `@platformatic/vfs`                     | —     | Keep — engine       | virrun's in-memory filesystem                                                                          |
+| `@pulumi/azure-native`                  | —     | Keep — SDK          | the infrastructure SDK                                                                                 |
+| `@pulumi/github`                        | —     | Keep — SDK          | the infrastructure SDK                                                                                 |
+| `@pulumi/pulumi`                        | —     | Keep — SDK          | the infrastructure SDK                                                                                 |
+| `@standard-schema/spec`                 | —     | Keep — types        | the Standard Schema interface                                                                          |
+| `@takumi-rs/core`                       | —     | Keep — framework    | the SEO module's OG image renderer                                                                     |
+| `@tensorflow/tfjs`                      | —     | Keep — engine       | pitch transcription's model runtime                                                                    |
+| `@tiptap/core`                          | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-code-block-lowlight` | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-file-handler`        | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-list`                | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-mention`             | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extensions`                    | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/html`                          | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/pm`                            | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/starter-kit`                   | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/suggestion`                    | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/vue-3`                         | —     | Keep — engine       | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tonejs/midi`                          | —     | Keep — spec         | the MIDI format                                                                                        |
+| `@tresjs/cientos`                       | —     | Keep — framework    | TresJS's helpers, which the Genshin world reaches for before raw `three`                               |
+| `@tresjs/core`                          | —     | Keep — framework    | the declarative renderer the Genshin world is built on, its WebGPU renderer given through `TresCanvas` |
+| `@tresjs/nuxt`                          | —     | Keep — framework    | TresJS's Nuxt module                                                                                   |
+| `@trpc/client`                          | —     | Keep — framework    | the API layer                                                                                          |
+| `@trpc/server`                          | —     | Keep — framework    | the API layer                                                                                          |
+| `@tsdown/css`                           | —     | Keep — tooling      | tsdown's CSS handling                                                                                  |
+| `@types/cross-spawn`                    | —     | Keep — types        | declarations for `cross-spawn`                                                                         |
+| `@types/fs-extra`                       | —     | Replace — platform  | goes with `fs-extra`                                                                                   |
+| `@types/howler`                         | —     | Replace — platform  | goes with `howler`                                                                                     |
+| `@types/js-beautify`                    | —     | Keep — types        | declarations for `js-beautify`                                                                         |
+| `@types/mime-types`                     | —     | Keep — types        | declarations for `mime-types`                                                                          |
+| `@types/node`                           | —     | Keep — types        | declarations for `node`                                                                                |
+| `@types/sanitize-html`                  | —     | Keep — types        | declarations for `sanitize-html`                                                                       |
+| `@types/sax`                            | —     | Keep — types        | declarations for `sax`                                                                                 |
+| `@types/semver`                         | —     | Keep — types        | declarations for `semver`                                                                              |
+| `@types/three`                          | —     | Keep — types        | declarations for `three`                                                                               |
+| `@types/web-push`                       | —     | Keep — types        | declarations for `web-push`                                                                            |
+| `@types/ws`                             | —     | Keep — types        | declarations for `ws`                                                                                  |
+| `@types/xml2js`                         | —     | Keep — types        | declarations for `xml2js`                                                                              |
+| `@typesafe-ai/sdk`                      | —     | Keep — SDK          | the persona's model client                                                                             |
+| `@unocss/eslint-config`                 | —     | Keep — framework    | the styling engine's integration                                                                       |
+| `@unocss/nuxt`                          | —     | Keep — framework    | the styling engine's integration                                                                       |
+| `@vite-pwa/nuxt`                        | —     | Keep — framework    | the PWA module                                                                                         |
+| `@vitest/browser`                       | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/browser-playwright`            | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/browser-preview`               | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/coverage-v8`                   | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/mocker`                        | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/pretty-format`                 | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/snapshot`                      | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/spy`                           | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vitest/utils`                         | —     | Keep — tooling      | pinned for vite-plus's own vitest                                                                      |
+| `@vue-flow/background`                  | —     | Keep — engine       | the flow-diagram engine                                                                                |
+| `@vue-flow/controls`                    | —     | Keep — engine       | the flow-diagram engine                                                                                |
+| `@vue-flow/core`                        | —     | Keep — engine       | the flow-diagram engine                                                                                |
+| `@vue-flow/minimap`                     | —     | Keep — engine       | the flow-diagram engine                                                                                |
+| `@vue-flow/node-resizer`                | —     | Keep — engine       | the flow-diagram engine                                                                                |
+| `@vue-pdf-viewer/viewer`                | —     | Keep — engine       | the full PDF viewer (PDF viewer consolidation, rejected)                                               |
+| `@vue/compiler-core`                    | —     | Keep — framework    | Vue's compiler, read by the app's tooling                                                              |
+| `@vue/test-utils`                       | —     | Keep — tooling      | component tests                                                                                        |
+| `@vuetify/v0`                           | —     | Keep — framework    | the UI library's headless base, on the stop list for accessibility                                     |
+| `@vueuse/core`                          | —     | Keep — framework    | the composable library                                                                                 |
+| `@vueuse/nuxt`                          | —     | Keep — framework    | auto-imports the composables                                                                           |
+| `@vueuse/router`                        | —     | Keep — framework    | route-query composables, auto-imported                                                                 |
+| `@wasm-audio-decoders/ogg-vorbis`       | —     | Keep — engine       | an Ogg Vorbis decoder                                                                                  |
+| `@webgpu/types`                         | —     | Keep — types        | WebGPU's declarations                                                                                  |
+| `@xterm/addon-fit`                      | —     | Keep — engine       | the terminal engine's sizing                                                                           |
+| `@xterm/xterm`                          | —     | Keep — engine       | the terminal engine                                                                                    |
+| `apexcharts`                            | —     | Keep — engine       | the chart engine                                                                                       |
+| `better-auth`                           | —     | Keep — security     | authentication, on the stop list                                                                       |
+| `bowser`                                | —     | Keep — data         | user-agent tables for the session's device label, which change without us                              |
+| `chokidar`                              | —     | Keep — hold         | unstorage's fs driver loads it undeclared (`@TODO` in the catalog)                                     |
+| `citty`                                 | —     | Keep — tooling      | the CLI framework every command uses                                                                   |
+| `codemirror`                            | —     | Keep — engine       | the code editor's base setup                                                                           |
+| `cross-spawn`                           | —     | Keep — platform gap | node's spawn cannot run a win32 `.cmd` shim without a shell                                            |
+| `crossws`                               | —     | Keep — framework    | the server's WebSocket layer                                                                           |
+| `dedent`                                | —     | Keep — utility      | a maintained template tag; its escape handling is the part ours would get wrong                        |
+| `defu`                                  | —     | Keep — free         | the framework installs it; the chart resolvers merge with it                                           |
+| `diff`                                  | —     | Keep — engine       | a diff algorithm                                                                                       |
+| `dotenv`                                | —     | Replace — platform  | `process.loadEnvFile()` and `node --env-file` read a `.env`                                            |
+| `drizzle-kit`                           | —     | Keep — framework    | migrations                                                                                             |
+| `drizzle-orm`                           | —     | Keep — framework    | the ORM                                                                                                |
+| `emojilib`                              | —     | Keep — data         | emoji keywords, tracking Unicode                                                                       |
+| `eslint`                                | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-depend`                  | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-jsonc`                   | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-oxlint`                  | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-perfectionist`           | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-pinia`                   | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eslint-plugin-vuejs-accessibility`     | —     | Keep — tooling      | the linter and its rules                                                                               |
+| `eventemitter3`                         | —     | Keep — free         | Phaser's own emitter, imported for its types; a copy of ours would add bytes                           |
+| `fake-indexeddb`                        | —     | Keep — tooling      | IndexedDB in the test environment                                                                      |
+| `fast-check`                            | —     | Keep — engine       | property testing: arbitraries and shrinking are the product                                            |
+| `fast-deep-equal`                       | —     | Keep — utility      | finished and dependency-free; owning a deep equality adds tests to keep for nothing                    |
+| `fflate`                                | —     | Keep — spec         | the zip format, which `CompressionStream` does not write                                               |
+| `fs-extra`                              | —     | Replace — platform  | `node:fs` has `cp`, recursive `mkdir` and `rm`                                                         |
+| `grapesjs`                              | —     | Keep — engine       | the page-builder engine                                                                                |
+| `grapesjs-blocks-basic`                 | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-component-countdown`          | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-custom-code`                  | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-mjml`                         | —     | Keep — engine       | the MJML compiler's integration                                                                        |
+| `grapesjs-parser-postcss`               | —     | Keep — engine       | the PostCSS parser's integration                                                                       |
+| `grapesjs-plugin-export`                | —     | Keep — engine       | the exporter (the admission doc's large plugins)                                                       |
+| `grapesjs-plugin-forms`                 | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-preset-webpage`               | —     | Keep — engine       | the webpage preset (the admission doc's large plugins)                                                 |
+| `grapesjs-style-bg`                     | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-tabs`                         | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-tooltip`                      | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-touch`                        | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grapesjs-tui-image-editor`             | —     | Keep — engine       | the image editor (the admission doc's large plugins)                                                   |
+| `grapesjs-typed`                        | —     | Absorb — own code   | a small CommonJS plugin registering a block or trait (the admission doc's page-builder belt)           |
+| `grid-engine`                           | —     | Keep — engine       | the tile-movement engine                                                                               |
+| `grid-layout-plus`                      | —     | Keep — engine       | the dashboard grid engine                                                                              |
+| `happy-dom`                             | —     | Keep — tooling      | the DOM test environment                                                                               |
+| `howler`                                | —     | Replace — platform  | one 20-line composable plays a sound; `HTMLAudioElement` does it                                       |
+| `html-element-attributes`               | —     | Keep — data         | HTML's attribute table, read by a lint rule                                                            |
+| `html-tag-names`                        | —     | Keep — data         | HTML's tag table, read by a lint rule                                                                  |
+| `idb`                                   | —     | Keep — spec         | the typed IndexedDB layer                                                                              |
+| `imagetracerjs`                         | —     | Keep — engine       | raster tracing for the glyph pipeline                                                                  |
+| `js-beautify`                           | —     | Keep — engine       | an HTML formatter                                                                                      |
+| `jscpd`                                 | —     | Keep — tooling      | the duplicate-code finder                                                                              |
+| `knip`                                  | —     | Keep — tooling      | unused files, exports and dependencies                                                                 |
+| `link-preview-js`                       | —     | Keep — utility      | maintained, with its own SSRF guard options                                                            |
+| `linkifyjs`                             | —     | Keep — data         | URL detection over the TLD list                                                                        |
+| `livekit-client`                        | —     | Keep — SDK          | the call SDK                                                                                           |
+| `livekit-server-sdk`                    | —     | Keep — SDK          | the call SDK                                                                                           |
+| `lodash-omitdeep`                       | —     | Keep — utility      | one call site whose class-instance and nested-array semantics the save trigger depends on              |
+| `lowlight`                              | —     | Keep — engine       | required by the tiptap code-block extension                                                            |
+| `lru-cache`                             | —     | Keep — framework    | `@nuxt/scripts` mounts its storage on unstorage's lru-cache driver; knip cannot see the runtime load   |
+| `marked`                                | —     | Keep — engine       | the client's markdown parser                                                                           |
+| `mathjs`                                | —     | Keep — engine       | the expression engine                                                                                  |
+| `mermaid`                               | —     | Keep — engine       | the diagram engine                                                                                     |
+| `mime-types`                            | —     | Keep — data         | the IANA media-type table                                                                              |
+| `minisearch`                            | —     | Keep — engine       | the search index                                                                                       |
+| `mocked-exports`                        | —     | Keep — hold         | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
+| `msw`                                   | —     | Keep — tooling      | request mocking                                                                                        |
+| `neverthrow`                            | —     | Keep — framework    | the `Result` the error-handling convention is built on                                                 |
+| `nitro`                                 | —     | Keep — framework    | the server framework                                                                                   |
+| `node-html-parser`                      | —     | Keep — engine       | server-side HTML parsing                                                                               |
+| `node-pty`                              | —     | Keep — engine       | native pseudo-terminals                                                                                |
+| `npm-run-all2`                          | —     | Replace — installed | vite-plus: the `run-s` chains become vp tasks with `dependsOn`                                         |
+| `nuxt`                                  | —     | Keep — framework    | the framework                                                                                          |
+| `ohash`                                 | —     | Keep — free         | the framework installs it                                                                              |
+| `oxfmt`                                 | —     | Keep — tooling      | the formatter                                                                                          |
+| `oxlint`                                | —     | Keep — tooling      | the linter                                                                                             |
+| `oxlint-tsgolint`                       | —     | Keep — tooling      | oxlint's type-aware rules                                                                              |
+| `p-progress`                            | —     | Keep — utility      | maintained; block upload's progress aggregate                                                          |
+| `pdfjs-dist`                            | —     | Keep — engine       | the PDF renderer, on the stop list                                                                     |
+| `phaser`                                | —     | Keep — engine       | the game engine                                                                                        |
+| `phaser4-rex-plugins`                   | —     | Keep — engine       | maintained with Phaser 4; its size is hard-linked from the store, so it costs no disk per checkout     |
+| `pinia`                                 | —     | Keep — framework    | the store                                                                                              |
+| `playwright`                            | —     | Keep — tooling      | browser automation for the visual suites and parity                                                    |
+| `postgres`                              | —     | Keep — framework    | the PostgreSQL driver                                                                                  |
+| `publint`                               | —     | Keep — tooling      | tsdown's publish check                                                                                 |
+| `rate-limiter-flexible`                 | —     | Keep — security     | rate limiting on a Drizzle store; review against nuxt-security-module's limiter, which overlaps        |
+| `read-excel-file`                       | —     | Keep — spec         | the spreadsheet format                                                                                 |
+| `remark-emoji`                          | —     | Keep — hold         | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
+| `rolldown`                              | —     | Keep — tooling      | the bundler under tsdown and Vite                                                                      |
+| `rou3`                                  | —     | Keep — free         | h3's own router, reused by nuxt-security-module                                                        |
+| `rxjs`                                  | —     | Keep — free         | grid-engine's own observables                                                                          |
+| `sanitize-html`                         | —     | Keep — security     | HTML sanitisation, on the stop list                                                                    |
+| `sass-embedded`                         | —     | Replace — platform  | one `globals.scss` left; native CSS nesting replaces Sass                                              |
+| `sax`                                   | —     | Keep — spec         | the XML tokenizer under our xml2js                                                                     |
+| `semver`                                | —     | Keep — spec         | the SemVer and npm range rules                                                                         |
+| `sharp`                                 | —     | Keep — engine       | image processing                                                                                       |
+| `show-open-file-picker`                 | —     | Keep — utility      | a maintained ponyfill whose fallback path is its value                                                 |
+| `sql-highlight`                         | —     | Remove              | colours in the dev query log, worth less than a dependency                                             |
+| `superjson`                             | —     | Keep — spec         | tRPC's wire transformer                                                                                |
+| `survey-core`                           | —     | Keep — engine       | the survey engine                                                                                      |
+| `survey-creator-core`                   | —     | Keep — engine       | the survey engine                                                                                      |
+| `survey-creator-vue`                    | —     | Keep — engine       | the survey engine                                                                                      |
+| `survey-vue3-ui`                        | —     | Keep — engine       | the survey engine                                                                                      |
+| `temporal-polyfill`                     | —     | Keep — hold         | until every target ships `Temporal`                                                                    |
+| `three`                                 | —     | Keep — engine       | the 3D engine                                                                                          |
+| `three-globe`                           | —     | Keep — engine       | the globe                                                                                              |
+| `tsdown`                                | —     | Keep — tooling      | the package bundler                                                                                    |
+| `tsx`                                   | —     | Keep — tooling      | runs TypeScript with enums, which node's type stripping refuses                                        |
+| `type-fest`                             | —     | Keep — types        | type utilities                                                                                         |
+| `typedoc`                               | —     | Keep — tooling      | API docs                                                                                               |
+| `typescript`                            | —     | Keep — tooling      | the compiler                                                                                           |
+| `unconfig`                              | —     | Keep — tooling      | virrun's config loading                                                                                |
+| `unicode-emoji-json`                    | —     | Keep — data         | the emoji list, tracking Unicode                                                                       |
+| `unocss`                                | —     | Keep — framework    | the styling engine                                                                                     |
+| `unplugin-auto-import`                  | —     | Keep — tooling      | auto-imports in the packages' builds                                                                   |
+| `unplugin-vue`                          | —     | Keep — tooling      | Vue SFCs in the packages' builds                                                                       |
+| `vite`                                  | —     | Keep — tooling      | the dev server and bundler                                                                             |
+| `vite-plus`                             | —     | Keep — tooling      | the task runner, lint and format                                                                       |
+| `vitest`                                | —     | Keep — tooling      | the test runner                                                                                        |
+| `vitest-browser-vue`                    | —     | Keep — tooling      | browser-mode component tests                                                                           |
+| `vue`                                   | —     | Keep — framework    | the UI framework                                                                                       |
+| `vue-codemirror`                        | —     | Keep — engine       | the code viewer (the admission doc's keep list: thinning costs more lines)                             |
+| `vue-draggable-plus`                    | —     | Keep — engine       | drag-and-drop sorting, on the stop list for accessibility                                              |
+| `vue-eslint-parser`                     | —     | Keep — tooling      | ESLint's Vue parser                                                                                    |
+| `vue-pdf-embed`                         | —     | Keep — engine       | the PDF thumbnail embed (PDF viewer consolidation, rejected)                                           |
+| `vue-router`                            | —     | Keep — framework    | routing                                                                                                |
+| `vue-tsc`                               | —     | Keep — tooling      | Vue's typecheck                                                                                        |
+| `vue3-apexcharts`                       | —     | Keep — engine       | the chart engine's official Vue component, released with it; thinning it buys little                   |
+| `web-push`                              | —     | Keep — security     | push encryption, on the stop list                                                                      |
+| `worker-timers`                         | —     | Keep — utility      | maintained; surviving background-tab throttling is its value                                           |
+| `write-excel-file`                      | —     | Keep — spec         | the spreadsheet format                                                                                 |
+| `ws`                                    | —     | Keep — engine       | the agent console's WebSocket server                                                                   |
+| `xmlbuilder2`                           | —     | Keep — spec         | the XML writer under our xml2js                                                                        |
+| `xss`                                   | —     | Replace — installed | `sanitize-html`: only a test imports it, comparing two sanitisers                                      |
+| `yaml`                                  | —     | Remove              | listed for a rewrite that never landed; nothing imports it                                             |
+| `zod`                                   | —     | Keep — framework    | the schema library                                                                                     |
