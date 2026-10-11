@@ -13,7 +13,7 @@ Every authed mutation flows through `achievementPlugin`, which turns matching pr
 flowchart LR
   mutation[any authed mutation succeeds] --> plugin[achievementPlugin]
   plugin -->|filter definitions by path| defs[matching definitions]
-  defs -->|condition?| check[checkAchievementCondition<br/>vs raw input]
+  defs -->|check| check[safeParse the raw input,<br/>then the condition?]
   check --> upsert[(achievements +<br/>userAchievements upsert)]
   upsert -->|amount reached| unlock[stamp unlockedAt]
   upsert --> emit[achievementEventEmitter]
@@ -21,7 +21,7 @@ flowchart LR
   sub --> toast[NotificationToast]
 ```
 
-The plugin runs **after** `next()` and only for successful mutations. For each definition whose `triggerPath` equals the called path (and whose condition, if any, passes against the raw input): lazily insert the `achievements` row on first encounter, upsert the caller's `userAchievements` counter, skip entirely if already unlocked, stamp `unlockedAt` when the threshold is met, and finally emit one `updateAchievement` event with everything that changed. The subscription filters events to the session user and the toast list shows progress/unlocks live anywhere in the app.
+The plugin runs **after** `next()` and only for successful mutations. For each definition whose `triggerPath` equals the called path (and whose `check` passes: the raw input parses against the trigger's schema, and the definition's condition, if any, holds for the parsed input): lazily insert the `achievements` row on first encounter, upsert the caller's `userAchievements` counter, skip entirely if already unlocked, stamp `unlockedAt` when the threshold is met, and finally emit one `updateAchievement` event with everything that changed. The subscription filters events to the session user and the toast list shows progress/unlocks live anywhere in the app.
 
 The achievement router is merged separately from the main root router to break a circular dependency — the plugin needs `TRPCPaths` derived from the routers it wraps.
 
@@ -40,7 +40,8 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | File                                                                         | Role                               |
 | ---------------------------------------------------------------------------- | ---------------------------------- |
 | `server/trpc/plugins/achievementPlugin.ts`                                   | the middleware                     |
-| `server/services/achievement/checkAchievementCondition.ts`                   | condition evaluation               |
+| `shared/services/achievement/definitions/defineAchievementDefinition.ts`     | the per-definition `check`         |
+| `shared/services/achievement/conditions/`                                    | typed predicate helpers            |
 | `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map              |
 | `server/trpc/routers/achievement.ts`                                         | read + subscription procedures     |
 | `app/components/Achievement/`                                                | gallery grid + notification toasts |

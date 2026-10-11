@@ -1,9 +1,28 @@
 import type { AchievementDefinition } from "#shared/models/achievement/AchievementDefinition";
 import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
-import type { Except } from "type-fest";
+import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
+import type { Except, Get } from "type-fest";
+import type { z } from "zod";
 
-// The category comes from the map this definition is declared in (defineAchievementDefinitionMap); the
-// Identity is for inference, pinning TPath from triggerPath so condition.path and value narrow with it
-export const defineAchievementDefinition = <TPath extends TRPCPaths>(
-  definition: Except<AchievementDefinition<TPath>, "category" | "name">,
-): Except<AchievementDefinition<TPath>, "category" | "name"> => definition;
+// The category comes from the map this definition is declared in (defineAchievementDefinitionMap). The input schema
+// Is constrained to the trigger's input type, and the condition receives what that schema parses, so a predicate is
+// Typed by the procedure that triggers it
+export const defineAchievementDefinition = <
+  TPath extends TRPCPaths,
+  TSchema extends z.ZodType<Get<TRPCRouterInputs, TPath>>,
+>(
+  definition: Except<AchievementDefinition<TPath>, "category" | "inputSchema" | "name"> & {
+    condition?: (input: z.output<TSchema>) => boolean;
+    inputSchema: TSchema;
+  },
+) => ({
+  ...definition,
+  // A call the schema rejects is not an unlock. The trigger only reaches here after tRPC accepted the call, so this is
+  // The same schema applied to the raw input the plugin was handed
+  check: (rawInput: unknown): boolean => {
+    const parsedInput = definition.inputSchema.safeParse(rawInput);
+    if (!parsedInput.success) return false;
+    if (definition.condition === undefined) return true;
+    return definition.condition(parsedInput.data);
+  },
+});

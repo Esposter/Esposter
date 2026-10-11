@@ -1,10 +1,13 @@
 // @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
-import { BinaryOperator } from "@esposter/azure";
-import { TableAchievementName } from "@esposter/db-schema";
+import { TableAchievementName, ResourceType } from "@esposter/db-schema";
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { createSaveResourceContentInputSchema } from "#shared/models/db/resource/SaveResourceContentInput";
+import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
+import { length } from "#shared/services/achievement/conditions/length";
+import { property } from "#shared/services/achievement/conditions/property";
 
 export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Table, {
   [TableAchievementName.DataAnalyst]: defineAchievementDefinition({
@@ -12,19 +15,16 @@ export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
     description: "Save a file",
     icon: "i-mdi:table",
     points: 20,
+    inputSchema: createSaveResourceContentInputSchema(ResourceDefinitionMap[ResourceType.Sheet].contentSchema),
     triggerPath: "sheet.saveResourceContent",
   }),
   [TableAchievementName.MathWhiz]: defineAchievementDefinition({
     amount: 1,
-    condition: {
-      operator: BinaryOperator.Ge,
-      path: "content.data.rows.length",
-      type: AchievementConditionType.Property,
-      value: 5,
-    },
+    condition: property("content.data.rows", length(isAtLeast(5))),
     description: "Create a table with at least 5 rows",
     icon: "i-mdi:calculator",
     points: 25,
+    inputSchema: createSaveResourceContentInputSchema(ResourceDefinitionMap[ResourceType.Sheet].contentSchema),
     triggerPath: "sheet.saveResourceContent",
   }),
 });

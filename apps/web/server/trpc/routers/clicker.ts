@@ -4,12 +4,13 @@ import { createSaveBlobStateProcedure } from "#server/trpc/procedure/blobState/c
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
-import { ClickerSave, clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
+import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
+import { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
 import { AzureContainer } from "@esposter/db-schema";
 
 export const clickerRouter = router({
   readBuildingMap: standardRateLimitedProcedure.query<typeof BuildingMap>(() => BuildingMap),
   readClicker: createReadBlobStateProcedure(AzureContainer.ClickerAssets, ClickerSave),
   readUpgradeMap: standardRateLimitedProcedure.query<typeof UpgradeMap>(() => UpgradeMap),
-  saveClicker: createSaveBlobStateProcedure(AzureContainer.ClickerAssets, clickerSaveSchema),
+  saveClicker: createSaveBlobStateProcedure(AzureContainer.ClickerAssets, saveClickerInputSchema),
 });

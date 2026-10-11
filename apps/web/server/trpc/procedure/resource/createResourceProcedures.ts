@@ -58,6 +58,7 @@ import { readPublishedVersionContentInputSchema } from "#shared/models/db/resour
 import { readResourcesInputSchema } from "#shared/models/db/resource/ReadResourcesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { saveResourceContentDeltaInputSchema } from "#shared/models/db/resource/SaveResourceContentDeltaInput";
+import { createSaveResourceContentInputSchema } from "#shared/models/db/resource/SaveResourceContentInput";
 import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource/SaveStagedResourceContentInput";
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
@@ -79,7 +80,7 @@ import {
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
-import { z } from "zod";
+import type { z } from "zod";
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
@@ -100,11 +101,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Declared — leaving the input side defaulted to unknown would erase the procedure's input type for
   // Consumers like achievement condition paths.
   // eslint-disable-next-line no-restricted-syntax -- the union zod infers from a generic map key overlaps no one type's schema
-  const saveResourceContentInputSchema = z.object({
-    content: contentSchema,
-    contentVersion: selectResourceInResourceSchema.shape.contentVersion,
-    id: selectResourceInResourceSchema.shape.id,
-  }) as unknown as z.ZodType<
+  const saveResourceContentInputSchema = createSaveResourceContentInputSchema(contentSchema) as unknown as z.ZodType<
     {
       content: ResourceContent<TType>;
       contentVersion: ResourceInResource["contentVersion"];
