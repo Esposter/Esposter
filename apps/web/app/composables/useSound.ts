@@ -1,20 +1,20 @@
 import { getOrCreate } from "@esposter/shared";
-import { Howl } from "howler";
 
-// One Howl per source for the app's lifetime: the same clip plays from every row of a list, and a Howl each
-// Would decode the file again per caller
-const howlMap = new Map<string, Howl>();
+// One element per source for the app's lifetime: the same clip plays from every row of a list, and an element each
+// Would fetch the file again per caller
+const audioMap = new Map<string, HTMLAudioElement>();
 
 export const useSound = (src: string) => {
-  const sound = ref<Howl>();
+  const sound = ref<HTMLAudioElement>();
 
   onMounted(() => {
-    sound.value = getOrCreate(howlMap, src, () => new Howl({ src }));
+    sound.value = getOrCreate(audioMap, src, () => new Audio(src));
   });
 
   return {
-    play: () => {
-      sound.value?.play();
+    play: async () => {
+      // A clone per play, so a clip overlaps itself as each play of a Howl does, rather than cutting the last one off
+      await sound.value?.cloneNode().play();
     },
   };
 };

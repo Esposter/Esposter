@@ -117,7 +117,6 @@ catalog:
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.1
-  "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/node": ^26.6.5
   "@types/sax": ^1.2.7
@@ -194,7 +193,6 @@ catalog:
   grid-layout-plus: ^1.1.1
   h3: ^2.0.2
   happy-dom: ^20.14.6
-  howler: ^2.2.4
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
   jscpd: ^5.4.1
