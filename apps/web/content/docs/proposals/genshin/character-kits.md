@@ -1,6 +1,6 @@
 ---
 title: Character kits
-description: Proposal — the framework work still left for character kits: the Traveler's kit taking the element its statue gives, the passives and constellations the modules leave out, the swap watchers and Hu Tao's Spirit Soother heal, all on the framework the built kits run on.
+description: Proposal — the framework work still left for character kits: the Traveler's kit taking the element its statue gives, the passives and constellations the modules leave out, the swap watchers, Hu Tao's Spirit Soother heal, Nefer's kit and the world's entry back under its size ceiling, all on the framework the built kits run on.
 model: claude-opus-5-5
 needs: [game-exports]
 touches: ["packages/genshin-world/src/services/kit/**"]
@@ -8,7 +8,7 @@ touches: ["packages/genshin-world/src/services/kit/**"]
 
 # Character kits
 
-Every character on the [character kits](/docs/genshin/kits) index has a module of its own, each built on the framework this page proposes to finish. What is left is the element a statue gives the Traveler, the passives and constellations the modules leave out, the swap watchers older modules keep, and Hu Tao's Spirit Soother heal under half HP with her Constellations 4 and 6. It comes before the rest of the game's systems that act through a kit, such as talents, constellations, weapons' and artifacts' effects, and every challenge after them. It builds on [character attributes](/docs/genshin/character-attributes), whose sums price a hit, and on the [character controller](/docs/genshin/character-controller), whose body a kit acts from.
+Every character on the [character kits](/docs/genshin/kits) index has a module of its own, each built on the framework this page proposes to finish. What is left is the element a statue gives the Traveler, the passives and constellations the modules leave out, the swap watchers older modules keep, Hu Tao's Spirit Soother heal under half HP with her Constellations 4 and 6, Nefer's kit, which gcsim has no folder for, and the world's entry back under its size ceiling. It comes before the rest of the game's systems that act through a kit, such as talents, constellations, weapons' and artifacts' effects, and every challenge after them. It builds on [character attributes](/docs/genshin/character-attributes), whose sums price a hit, and on the [character controller](/docs/genshin/character-controller), whose body a kit acts from.
 
 ## Decisions
 
@@ -44,6 +44,8 @@ flowchart TD
 3. **Hu Tao's Spirit Soother heal** under half HP, with her Constellations 4 and 6 and Blood Blossom, once a kit's actions can read party HP and an enemy's status at their start.
 4. **The swap watchers onto the kit events.** Klee's Sparks 'n' Splash, Xiao's Bane of All Evil, Ningguang's Star Jades and Razor's Wolf Within each end through a field that ticks on every step to see whether their character still holds the field, built before the [kit events](/docs/genshin/kits); each moves onto `CharacterSwapped`. Xingqiu's Raincutter, set going as a normal attack starts, moves onto the same channel once the delay gcsim gives each character's attack before it is read.
 5. **The rolls a hit's strike can now draw.** Klee's Explosive Spark at 50% and her Chained Reactions, and Yelan's Breakthrough Barb at 34% on each Lingering Lifeline hit, each roll from the world's random source as the hit strikes, which `KitContext.random` reaches.
+6. **Nefer's kit and its overlay.** gcsim has no folder for her at v2.47.2, so her record is built from the tables' groups 12231, 12232 and 12239 and the wiki, its frames, hitmarks and areas provisional until a recording measures them.
+7. **The world's entry back under its 1,350,000-byte ceiling.** It stands at 1,388,691 bytes since the traced skill icons left it, held by the shared glyph path maps (about 260 KB, `ElementMarkPathMap` 99 KB of it), the components (about 350 KB) and the kit framework (about 74 KB), so the cut is a split of one of those, never a change to how the figure is counted.
 
 ## Data and measures
 
