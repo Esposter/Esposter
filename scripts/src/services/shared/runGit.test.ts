@@ -1,5 +1,5 @@
 import { runGit } from "#src/services/shared/runGit";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -9,7 +9,8 @@ describe(runGit, () => {
   let otherDirectory: string;
 
   beforeEach(() => {
-    directory = mkdtempSync(join(tmpdir(), "run-git-"));
+    // The temporary directory is resolved, since macOS reaches it through a symlink git answers past
+    directory = realpathSync(mkdtempSync(join(tmpdir(), "run-git-")));
     otherDirectory = mkdtempSync(join(tmpdir(), "run-git-other-"));
     runGit(["init", "--quiet", directory]);
   });
