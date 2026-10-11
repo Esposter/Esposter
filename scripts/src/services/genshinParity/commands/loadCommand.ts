@@ -2,7 +2,7 @@ import type { SubCommandsDef } from "citty";
 
 import { buildParityPage } from "#src/services/genshinParity/load/buildParityPage";
 import { ScreenLoadBudgetMap } from "#src/services/genshinParity/load/ScreenLoadBudgetMap";
-import { startParityPreview } from "#src/services/genshinParity/load/startParityPreview";
+import { startParityServer } from "#src/services/genshinParity/load/startParityServer";
 import { loadScreen } from "#src/services/genshinParity/page/loadScreen";
 import { formatLoadMeter } from "#src/services/genshinParity/shared/formatLoadMeter";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -13,6 +13,12 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
   args: {
     screen: { description: "A screen with a fixture on the parity page", required: true, type: "positional" },
     width: { default: "1920", description: "Width to draw it at, in pixels", required: false, type: "positional" },
+    dev: {
+      default: false,
+      description: "Measure the dev server instead of a production build, to compare the two",
+      required: false,
+      type: "boolean",
+    },
     height: { default: "1080", description: "Height to draw it at, in pixels", required: false, type: "positional" },
   },
   meta: {
@@ -21,8 +27,8 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
     name: "load",
   },
   run: async ({ args }) => {
-    buildParityPage();
-    const { origin, stop } = await startParityPreview();
+    if (!args.dev) buildParityPage();
+    const { origin, stop } = await startParityServer(args.dev);
     const reading = await withFinalizerAsync(
       () =>
         loadScreen({
