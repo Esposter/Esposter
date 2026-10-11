@@ -50,10 +50,7 @@ flowchart TD
 - **Ranks past the fifth are lost**, and the result counts them. A weapon already at rank five is refused.
 - **A copy is never a wielded weapon.** A character's weapon sits on the character, outside the bag, so a copy or a material can only come from the bag.
 
-## Not built yet
-
-- **Passives.** A refinement's passive is its table's numbers and a module over the kits' shared effects, and the [character kits](/docs/proposals/genshin/character-kits) are still a proposal. The passive stays in the [proposal](/docs/proposals/genshin/weapon-enhancement).
-- **Callers.** No screen or bag entry calls these services yet. A bag weapon carries only its level, so the EXP and refinement it would hold wait on the bag entry and the Weapons tab of the [character screen](/docs/proposals/genshin/character-screen).
+No screen or bag entry calls these services yet. A bag weapon carries only its level, so the EXP and refinement it would hold wait on the bag entry and the Weapons tab of the [character screen](/docs/proposals/genshin/character-screen).
 
 ## Key files
 

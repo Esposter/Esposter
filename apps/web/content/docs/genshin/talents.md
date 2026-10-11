@@ -5,7 +5,7 @@ description: Each playable character's three combat talents levelled from 1 by t
 
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab that presses an upgrade is not built, and nothing calls `upgradeTalent` or `readTalentTables` yet; it stays in the [talents proposal](/docs/proposals/genshin/talents). A constellation's extra levels are added by the [constellations](/docs/genshin/constellations) page, which no kit reads yet.
 
 ## The tables
 
@@ -13,7 +13,7 @@ A character's three combat talents, the normal attack, the Elemental Skill and t
 - **A skill set names its talents by group.** A skill row names the proud skill group of the talent it is. A set's first slot is the normal attack, its second the Elemental Skill, and its energy skill the burst. The third slot is the alternate sprint, which has one row and no level, so it is never levelled.
 - **The first set that names all three is the character's.** That is its own form's set, and then the element forms' in the order the game lists them. The Traveler's own form names only its normal attack, so the Traveler reads its Anemo set, the form it takes by default, which the world's Traveler kit also reads. A statue's element will pick another set once the [statues page](/docs/proposals/genshin/statues-of-the-seven) holds the resonance, and until then the stats run puts the Anemo set first.
 - **Passives come from that same set.** The skill depot's inherent proud skill opens name each passive and the phase it opens at. Across the roster the phases are 0, 1 and 4: the utility passive comes with the character, and the first and fourth ascension passives open at phases 1 and 4. A passive has no level.
-- **The table is taken from the repository the dump came from.** The dump the game text is read from did not hold this table at its revision. The community repository's master had it, and its skill depot, skill and character tables matched the dump byte for byte, so the table is that revision's, fetched beside the dump as [genshin-parity](/docs/genshin/parity) does for any table the dump lacks. It is not committed.
+- **The table is fetched beside the dump.** The dump the game text is read from lacks this table at its revision. The community repository's master holds it, and its skill depot, skill and character tables match the dump byte for byte, so the table is taken from that revision, fetched as [genshin-parity](/docs/genshin/parity) does for any table the dump lacks. It is not committed.
 
 ```mermaid
 flowchart LR
@@ -46,11 +46,6 @@ flowchart TD
 ## Passives
 
 A passive has no level. It is open where the character's ascension phase has reached the phase its kit holds for it, and the kit keeps the phase beside the group. Nothing reads that yet: the passives' effects are a kit's modules, and the [character kits](/docs/proposals/genshin/character-kits) are still a proposal.
-
-## Not built yet
-
-- **The kit's read of the constellations' levels.** The levels a constellation adds are built, on the [constellations](/docs/genshin/constellations) page. The kit that plays a talent at its own level plus them is the [character kits](/docs/proposals/genshin/character-kits)' and is not built.
-- **The Talents tab's upgrade.** It is pressed on the character screen, whose tabs are a proposal. Nothing calls `upgradeTalent` or `readTalentTables` yet.
 
 ## Key files
 
