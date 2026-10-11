@@ -20,6 +20,13 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
       type: "boolean",
     },
     height: { default: "1080", description: "Height to draw it at, in pixels", required: false, type: "positional" },
+    paused: {
+      default: false,
+      description:
+        "Load the screen paused, as the app loads the world under its opening, drawing only the frames it asks for",
+      required: false,
+      type: "boolean",
+    },
   },
   meta: {
     description:
@@ -34,6 +41,7 @@ export const loadCommand: SubCommandsDef[string] = defineCommand({
         loadScreen({
           height: Number(args.height),
           pageRoot: `${origin}/parity/`,
+          ...(args.paused && { props: { isPaused: true } }),
           screen: args.screen,
           width: Number(args.width),
         }),

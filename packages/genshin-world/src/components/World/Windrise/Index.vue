@@ -81,7 +81,7 @@ import { createWindriseTerrainOptions } from "#src/services/windrise/createWindr
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { getResultAsync, noop } from "@esposter/shared";
-import { useLoop } from "@tresjs/core";
+import { useLoop, useTres } from "@tresjs/core";
 import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
@@ -248,6 +248,7 @@ const postUniforms = createPostUniforms();
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
+const { advance } = useTres();
 onBeforeRender(() => {
   sightScene.position.set(-origin.x, 0, -origin.z);
   if (!elementalSight) return;
@@ -338,7 +339,12 @@ whenever(
     // The view's pipelines, outlines included, compile before the world shows, so its first frame builds none. A compile
     // That fails is logged and the world shows anyway, drawn without the warm-up, rather than never being ready
     await getResultAsync(async () => {
-      if (postPipeline.value) await measureLoadStep("compile", postPipeline.value.compileAsync());
+      if (!postPipeline.value) return;
+      const compiled = postPipeline.value.compileAsync();
+      // The compile waits on the next frame, and a world paused under the opening draws only the frames it is asked for,
+      // So that frame is asked for here; a running world draws one more frame than it would have, behind the cover
+      advance();
+      await measureLoadStep("compile", compiled);
     }).match(noop, (error) => {
       console.error("The Windrise post pipeline failed to compile", error);
     });
