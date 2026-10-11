@@ -259,6 +259,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Mika](/docs/genshin/kits/mika)                     | Starfrost Swirl and Skyfeather Song                                  |
 | [Mona](/docs/genshin/kits/mona)                     | Mirror Reflection of Doom and Stellaris Phantasm                     |
 | [Nahida](/docs/genshin/kits/nahida)                 | All Schemes to Know's press and full hold                            |
+| [Navia](/docs/genshin/kits/navia)                   | Rosula Shardshot and As the Sunlit Sky's Singing Salute              |
 | [Nilou](/docs/genshin/kits/nilou)                   | Dance of Haftkarsvar's Pirouette and Dance of Abzendegi              |
 | [Neuvillette](/docs/genshin/kits/neuvillette)       | Hydro strikes, O Tears, I Shall Repay and O Tides, I Have Returned   |
 | [Ningguang](/docs/genshin/kits/ningguang)           | Star Jades, Jade Screen and Starshatter                              |
