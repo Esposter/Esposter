@@ -1,8 +1,7 @@
 import { pgTable } from "#src/pgTable";
-import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
-import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
-import { index, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { resourceUserColumns } from "#src/schema/resource/resourceUserColumns";
+import { index, primaryKey, timestamp } from "drizzle-orm/pg-core";
 
 // A row exists iff the user has opened the resource, and holds when they last did. Server-side rather than
 // Per-device, because Recent is a list surface of its own with a Last accessed column — a column that
@@ -12,15 +11,7 @@ import { index, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 // So the table stays bounded by what exists rather than growing with traffic.
 export const resourceAccessesInResource = pgTable(
   "resourceAccesses",
-  {
-    accessedAt: timestamp().notNull().defaultNow(),
-    resourceId: uuid()
-      .notNull()
-      .references(() => resourcesInResource.id, { onDelete: "cascade" }),
-    userId: text()
-      .notNull()
-      .references(() => usersInAuth.id, { onDelete: "cascade" }),
-  },
+  { accessedAt: timestamp().notNull().defaultNow(), ...resourceUserColumns },
   {
     extraConfig: ({ accessedAt, resourceId, userId }) => [
       primaryKey({ columns: [userId, resourceId] }),
