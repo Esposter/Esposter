@@ -1,10 +1,12 @@
 import type { Logger } from "drizzle-orm/logger";
 
+import { highlightSql } from "#server/services/db/highlightSql";
 import { dedent } from "@esposter/shared";
 
 export class DrizzleLogger implements Logger {
   logQuery(query: string, params: unknown[]) {
-    console.log(dedent`Query:
+    console.log(
+      highlightSql(dedent`Query:
     ${query}
 
     ${
@@ -12,6 +14,7 @@ export class DrizzleLogger implements Logger {
         ? `Parameters:
     ${params.map((parameter, index) => `$${index + 1} = ${String(parameter)}`).join(", ")}`
         : ""
-    }`);
+    }`),
+    );
   }
 }
