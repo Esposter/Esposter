@@ -128,4 +128,21 @@ describe("styledEmojiPickerPanel", () => {
       takeOne(categoryTitles),
     );
   });
+
+  // Search replaces the grid, but the rail stays live through it: picking a category is a pick of what to show, so it
+  // Clears the query and shows that category rather than leaving the results on screen
+  test("#136 picking a category during a search clears the search and shows that category", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(StyledEmojiPickerPanel);
+    await component.find("input").setValue("thumbs_up");
+    await component.find(`${RAIL_BUTTON_SELECTOR}[aria-label="${EmojiGroup.AnimalsAndNature}"]`).trigger("click");
+
+    expect((component.find("input").element as HTMLInputElement).value).toBe("");
+    expect(getGridEmojis(component)).toStrictEqual(
+      getEmojiIndex()
+        .groupEmojisMap.get(EmojiGroup.AnimalsAndNature)
+        ?.map(({ character }) => character),
+    );
+  });
 });
