@@ -11,7 +11,7 @@ Pulse draws no row above the prompt. Its one visible act is a prompt the session
 
 ## How it works
 
-Each minute, and once at session start, the plugin runs `scripts/machinePulse.mjs` with the session's directory. Outside the repository the script prints nothing, since the watcher's script is not there. Inside it, the script reads the watcher's latest reading from `~/.esposter/machine/state.json`, which the watcher writes each minute, and starts `pnpm ai:machine:watch` detached when that reading is missing, older than three minutes, or written by a process that has exited. The watcher's output is appended to `~/.esposter/machine/watch.log`. The script then prints the reading, and the plugin counts it.
+Each minute, and once at session start, the plugin runs `packages/genshin-mods/scripts/machinePulse.mjs` with the session's directory. Outside the repository the script prints nothing, since the watcher's script is not there. Inside it, the script reads the watcher's latest reading from `~/.esposter/machine/state.json`, which the watcher writes each minute, and starts `pnpm ai:machine:watch` detached when that reading is missing, older than three minutes, or written by a process that has exited. The watcher's output is appended to `~/.esposter/machine/watch.log`. The script then prints the reading, and the plugin counts it.
 
 A reading is idle when the CPU is under 80% and the GPU is under 80% or unread. Each new reading counts once, so the count is of readings, and a reading at or over the line starts the count again at zero. The session is woken when the count reaches twenty, no turn is running, and no usage reserve is winding down. A maintenance tier still wakes, since its instruction keeps the cleanup on haiku. The first wake of an idle episode is immediate once those hold, and while the machine stays idle the session is woken again at most every thirty minutes.
 
@@ -27,14 +27,14 @@ flowchart TD
   Start --> Reading
   Reading --> New{"A reading not yet counted?"}
   New -->|yes| Count["Idle readings in a row: one more under the line, else zero"]
-  Count --> Gate{"Twenty idle readings, no turn running, no wind-down, and no wake or thirty minutes since the last"}
+  Count --> Gate{"Twenty idle readings, no turn running, no wind-down, and no wake in thirty minutes"}
   New -->|no| Gate
   Gate -->|yes| Wake["Submit the idle prompt"]
 ```
 
 ## How to use it
 
-Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on. The setting is kept in the plugin's store, so it holds for every later session. With pulse off nothing starts the watcher, and `pnpm ai:resume` reports the watcher as not running until one is started by hand or a session with pulse on runs.
+Pulse is on by default, and `/pulse off` stops it; `/pulse on` turns it back on, and the switch is kept as every mod's is, on the [Genshin mods](/docs/infra/claude-interface/genshin-mods) page. With pulse off nothing starts the watcher, and `pnpm ai:resume` reports the watcher as not running until one is started by hand or a session with pulse on runs.
 
 `pnpm ai:resume` has a `watcher` row for this: it is satisfied while the watcher's reading is fresh and its process is alive, and otherwise names `pnpm ai:machine:watch`, or starting a session with the plugin, as its action.
 

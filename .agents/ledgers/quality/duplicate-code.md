@@ -3,7 +3,7 @@
 Every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes, with tests, generated
 output, declarations, import blocks, drawn assets and the Azure resource declarations left out (the finder's
 `constants.ts` says why for each). The sweep ends at zero findings, after which
-`scripts/src/workspace/duplicateCode.test.ts` holds it there.
+a zero test in the workspace suite holds it there.
 
 | Unit                                                             | Swept | Notes                                                                   |
 | ---------------------------------------------------------------- | ----- | ----------------------------------------------------------------------- |
