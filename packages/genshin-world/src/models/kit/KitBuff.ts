@@ -6,6 +6,8 @@ export interface KitBuff {
   amount: number;
   attribute: Attribute;
   characterId: number;
+  // Whether its character leaving the field ends it
+  isEndedOnSwap?: true;
   kind: "buff";
   secondsRemaining: number;
   source?: string;
