@@ -1,6 +1,7 @@
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
+import { UNIT_ID_SEPARATOR } from "#src/services/fleet/constants";
 import { parseKeyFilePaths } from "#src/services/fleet/parseKeyFilePaths";
 import { parseProposalFrontmatter } from "#src/services/fleet/parseProposalFrontmatter";
 import { PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
@@ -22,9 +23,10 @@ export const readProposalEntries = (): FleetEntry[] =>
     const { needs, touches, waiting } = parseProposalFrontmatter(text);
     return {
       area,
-      id: relativePath.replaceAll("/", "--"),
+      id: relativePath.replaceAll("/", UNIT_ID_SEPARATOR),
       kind: FleetEntryKind.Unit,
       lane: "",
+      line: "",
       needs,
       touches: [...parseKeyFilePaths(text), ...touches],
       waiting,

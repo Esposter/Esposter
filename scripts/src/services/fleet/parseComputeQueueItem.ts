@@ -30,6 +30,7 @@ export const parseComputeQueueItem = (line: string): FleetEntry | undefined => {
     id: groups.id ?? "",
     kind: FleetEntryKind.Queue,
     lane: groups.lane ?? "",
+    line,
     needs: groups.needs?.split(", ") ?? [],
     touches: readWrittenPaths(groups.rest ?? ""),
     waiting: "",

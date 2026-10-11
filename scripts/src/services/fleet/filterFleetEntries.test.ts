@@ -9,6 +9,7 @@ const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
   id: "first",
   kind: FleetEntryKind.Queue,
   lane: "cpu",
+  line: "",
   needs: [],
   touches: [],
   waiting: "",
