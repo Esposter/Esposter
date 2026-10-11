@@ -25,7 +25,7 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Natlan](/docs/genshin/compute/natlan)           | Natlan's region, from its base ground to its frame score                                |
 | [Nod-Krai](/docs/genshin/compute/nod-krai)       | Nod-Krai's region, from its base ground to its frame score                              |
 | [Paimon](/docs/genshin/compute/paimon)           | the quit prompt, the menu's open and close, and the reputation reward page              |
-| [Settings](/docs/genshin/compute/settings)       | the follow camera's defaults and the Graphics rows                                      |
+| [Settings](/docs/genshin/compute/settings)       | the follow camera's defaults                                                            |
 | [Snezhnaya](/docs/genshin/compute/snezhnaya)     | Snezhnaya's region, from its base ground to its frame score                             |
 | [Sumeru](/docs/genshin/compute/sumeru)           | Sumeru's region, from its base ground to its frame score                                |
 | [Text](/docs/genshin/compute/text)               | every language's text map, decoded from the install                                     |

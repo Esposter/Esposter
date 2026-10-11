@@ -1,9 +1,11 @@
 import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
+import type { SettingsTab } from "#src/models/menu/SettingsTab";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 
 import { MenuEntryIcon as EntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { MenuFrameIcon as FrameIcon } from "#src/models/menu/MenuFrameIcon";
+import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { GameTextKey } from "genshin-text";
 
@@ -54,3 +56,16 @@ export const PAIMON_MENU_EASING = "cubic-bezier(0.42, 0, 0.58, 1)";
 // The mirrorings over a dialog frame's middle that turn its top left ornament into each of its four corners', as CSS
 // Scales: the frame is symmetric, so one traced ornament stands for every corner
 export const MENU_DIALOG_CORNER_SCALES: readonly string[] = ["1 1", "-1 1", "1 -1", "-1 -1"];
+// The settings' tabs in the game's order down its side bar, as the English PC client's settings list them in the world
+// (`yt-5EmJX_RyuY8-menu-settings`)
+export const SETTINGS_TABS: readonly SettingsTab[] = [
+  Tab.Controls,
+  Tab.KeyBindings,
+  Tab.Graphics,
+  Tab.Audio,
+  Tab.Messages,
+  Tab.Language,
+  Tab.Account,
+  Tab.Resources,
+  Tab.Other,
+];

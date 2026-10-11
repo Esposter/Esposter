@@ -567,12 +567,83 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "ReputationScreen",
     seconds: 18,
   },
-  // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot, scored over its header
-  // Band alone: its rows are drawn over the blurred world, which the page has no copy of, and the Audio tab is not built
+  // The English PC client's settings opened in the world at 1920 wide, on the Audio tab, its four volumes and its other
+  // Settings, scored whole like the Graphics tab's below: the pointer rests over Dynamic Range and Output Settings,
+  // Whose rims the page does not draw
+  "settings-audio-rows": {
+    capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
+    isBackdrop: true,
+    plate: [
+      { height: 112, width: 1920, x: 0, y: 0 },
+      { height: 44, width: 186, x: 108, y: 130 },
+      { height: 50, width: 254, x: 108, y: 200 },
+      { height: 52, width: 190, x: 108, y: 270 },
+      { height: 62, width: 350, x: 100, y: 332 },
+      { height: 48, width: 197, x: 108, y: 410 },
+      { height: 50, width: 196, x: 108, y: 480 },
+      { height: 44, width: 180, x: 108, y: 550 },
+      { height: 44, width: 215, x: 108, y: 619 },
+      { height: 44, width: 142, x: 108, y: 688 },
+      { height: 46, width: 226, x: 472, y: 130 },
+      { height: 40, width: 222, x: 472, y: 255 },
+      { height: 46, width: 228, x: 472, y: 515 },
+      { height: 63, width: 1324, x: 478, y: 180 },
+      { height: 64, width: 1324, x: 478, y: 304 },
+      { height: 64, width: 1324, x: 478, y: 371 },
+      { height: 63, width: 1324, x: 478, y: 439 },
+      { height: 68, width: 1324, x: 478, y: 562 },
+      { height: 67, width: 1324, x: 478, y: 629 },
+      { height: 64, width: 1324, x: 478, y: 698 },
+    ],
+    props: { tab: "Audio" },
+    screen: "MenuSettings",
+    seconds: 178,
+  },
+  // The English PC client's settings on its Graphics tab at 1680 wide, from the wiki's screenshot of the login's, scored
+  // Over its header band alone, whose veil is drawn over the band filled from the blurred backdrop below it; the login's
+  // Settings list two tabs and its rows lie over a backdrop the band's fill does not reach
   "settings-graphics": {
+    isBackdrop: true,
+    plate: [{ height: 100, width: 1680, x: 0, y: 0 }],
     region: { height: 82, width: 1680, x: 0, y: 0 },
     screen: "MenuSettings",
     wikiTitle: "File:Login Menu Settings.png",
+  },
+  // The same settings opened in the world at 1920 wide, on the Graphics tab at its top, scored whole: the header, each
+  // Tab's words, the two headings, the twelve rows in sight and the scroll bar are filled from the blurred world around
+  // Them, which the page draws them over, so only what the page draws can differ
+  "settings-graphics-rows": {
+    capture: "yt-5EmJX_RyuY8-menu-settings.mp4",
+    isBackdrop: true,
+    plate: [
+      { height: 112, width: 1920, x: 0, y: 0 },
+      { height: 44, width: 186, x: 108, y: 130 },
+      { height: 50, width: 254, x: 108, y: 200 },
+      { height: 62, width: 350, x: 100, y: 262 },
+      { height: 44, width: 136, x: 108, y: 339 },
+      { height: 48, width: 197, x: 108, y: 410 },
+      { height: 50, width: 196, x: 108, y: 480 },
+      { height: 44, width: 180, x: 108, y: 550 },
+      { height: 44, width: 215, x: 108, y: 619 },
+      { height: 44, width: 142, x: 108, y: 688 },
+      { height: 46, width: 146, x: 472, y: 130 },
+      { height: 38, width: 126, x: 472, y: 390 },
+      { height: 63, width: 1324, x: 478, y: 180 },
+      { height: 64, width: 1324, x: 478, y: 247 },
+      { height: 63, width: 1324, x: 478, y: 315 },
+      { height: 63, width: 1324, x: 478, y: 439 },
+      { height: 64, width: 1324, x: 478, y: 506 },
+      { height: 63, width: 1324, x: 478, y: 574 },
+      { height: 64, width: 1324, x: 478, y: 641 },
+      { height: 63, width: 1324, x: 478, y: 709 },
+      { height: 64, width: 1324, x: 478, y: 776 },
+      { height: 63, width: 1324, x: 478, y: 844 },
+      { height: 64, width: 1324, x: 478, y: 911 },
+      { height: 63, width: 1324, x: 478, y: 979 },
+      { height: 914, width: 22, x: 1810, y: 114 },
+    ],
+    screen: "MenuSettings",
+    seconds: 144.5,
   },
   // Sumeru City from the wiki's location image of 2022, the only Sumeru City shot found: daylight with a clear sky and
   // Short shadows, so a provisional noon until the shadows solve reads its sun. Its landmarks are the terrace's spire
