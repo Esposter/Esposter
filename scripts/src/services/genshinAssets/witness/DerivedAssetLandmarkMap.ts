@@ -5,11 +5,11 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
-  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the
-  // Bridge's springs and the drum tower's roof) name no mesh, so all six are dropped: the extraction draws market
-  // Stalls, railings and vines within 600 metres of the capital, no arch, bridge or tower, and the Court's buildings its
-  // Layout dumps name (Area_Fd_Build_FDC_Chengqiang_B_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
+  // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the bridge's
+  // Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge mesh near the
+  // Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several instances with no
+  // Way to tell which is the reference's drum tower without the pose, which cannot run here (no parity page on
+  // Localhost:3011)
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
   // Inazuma City's four keep landmarks named: the top tier's eaves and the ledge under them, the silhouette edges of
@@ -93,10 +93,10 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // As water, planes and terrain tiles alone, and its layout dumps name sentry posts that no OBJ exports
   [DerivedAssetComponent.Natlan]: {},
   // Nasha Town's seven landmarks (ParityReferenceMap's nasha-town-location: the central tower's plinth, ledge struts,
-  // Collar and column edges) name no mesh, so all seven are dropped: the extraction draws floor plates, flat walls,
-  // Pipes, railings and festival props within 600 metres of the capital, no round stack or plinth, and the town's
-  // Buildings its layout dumps name (Area_Ndkl_Build_NXZ_House_01_Lod0) no OBJ exports, since its city blob roots only
-  // Single-mesh props
+  // Collar and column edges) are all dropped: the re-extraction exports 156 buildings, but the tower the reference shows
+  // Is a pink copper stack on its plinth with pods and pipes, and no exported mesh (Area_Ndkl_Build_NXZ_Shanghui_01 or
+  // _02, the tallest near the town, are halls 45 and 66 metres high) matches it with confidence; the pose cannot run
+  // Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
