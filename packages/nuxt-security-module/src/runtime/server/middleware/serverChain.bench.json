@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "src/runtime/server/middleware/serverChain.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.003398800000000644,
+              "name": "native — creating the event alone",
+              "p99": 0.010402000000004248,
+              "rme": 18.92474734707177,
+              "sampleCount": 2000
+            },
+            {
+              "mean": 0.011039849999999825,
+              "name": "a request through the app's chain",
+              "p99": 0.04250900000001763,
+              "rme": 5.730492238976146,
+              "sampleCount": 2000
+            }
+          ],
+          "fullName": "server middleware chain > the app's options"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.002593949999999467,
+              "name": "native — creating the event alone",
+              "p99": 0.010402000000004248,
+              "rme": 3.0572892768121864,
+              "sampleCount": 2000
+            },
+            {
+              "mean": 0.006225449999997773,
+              "name": "a request through a chain with most features off",
+              "p99": 0.020800000000008367,
+              "rme": 5.091836392605546,
+              "sampleCount": 2000
+            }
+          ],
+          "fullName": "server middleware chain > most features off"
+        }
+      ]
+    }
+  ]
+}
