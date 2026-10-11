@@ -49,7 +49,7 @@ While the pointer is locked to turn the camera, the browser keeps `Escape` for i
 ## Decisions
 
 - **The game's defaults, and only them.** No binding is remapped: the game's controls fix most of its defaults, and the ones a player can change are left at the game's own until a Settings row backs a change.
-- **Left Control stays the walk switch.** The free camera falls on left Shift as before, not on the Control the game crouches with, since a held Control with `W` is the browser's close-tab shortcut.
+- **Left Control is the walk switch.** The free camera falls on left Shift, not on the Control the game crouches with, since a held Control with `W` is the browser's close-tab shortcut.
 - **The pad's Back opens the chat.** A PlayStation pad's touchpad, the game's chat button there, is no button in the browser's standard layout, so the button left of centre (an Xbox pad's View, a PlayStation pad's Share) carries it on every pad.
 - **Bindings with nothing behind them are kept.** The normal attack, the elemental skill, the party switches and the rest are read every frame though no feature reads them yet, so each feature that lands finds its action already bound as the game binds it.
 
