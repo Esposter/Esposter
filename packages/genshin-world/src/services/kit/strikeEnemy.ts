@@ -19,6 +19,7 @@ import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { readKitStackedHit } from "#src/services/kit/readKitStackedHit";
 import { SHATTERING_ICE_CRITICAL_RATE_BONUS } from "#src/services/party/constants";
@@ -48,7 +49,7 @@ export const strikeEnemy = (
     combatant.elementalResonances.includes(Element.Cryo) &&
     (elementalState.auras.has(AuraType.Freeze) || elementalState.auras.has(AuraType.Cryo));
   const reactions: Reaction[] = isBlunt ? applyBluntHit(elementalState, poiseDamage) : [];
-  const element = kitHit.element ?? (gauge === undefined ? undefined : combatant.element);
+  const element = getKitHitElement(kitHit, combatant);
   if (gauge !== undefined && gauge > 0 && element !== undefined) {
     // A hit with no internal cooldown applies its whole gauge, and one under a cooldown shares it through the cooldown
     let share = 1;

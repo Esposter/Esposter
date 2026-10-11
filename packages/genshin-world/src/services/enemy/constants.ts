@@ -89,6 +89,9 @@ export const ENEMY_MATERIAL_TIER_SHARES: number[][] = [
 export const ENEMY_CAPSULE_RADIUS = 0.4;
 export const ENEMY_CAPSULE_HEIGHT = 1.6;
 export const ENEMY_CAPACITY = 64;
+// What a reaction on an enemy leaves, a Crystallize shard or a Dendro Core, drops half a metre out from its edge, as gcsim
+// Drops both
+export const ENEMY_DROP_OFFSET = 0.5;
 // Provisional: how long a hit tints an enemy's capsule, and how long a small flash stands at its middle, in seconds, with
 // The flash's radius in metres and the tint's colour, until a recording of a hit measures them
 export const ENEMY_HIT_TINT_SECONDS = 0.15;

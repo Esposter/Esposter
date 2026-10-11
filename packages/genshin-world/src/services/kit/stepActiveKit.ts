@@ -10,6 +10,7 @@ import type { KitStrikeContext } from "#src/models/kit/KitStrikeContext";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { readOreHits } from "#src/services/gathering/readOreHits";
+import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { getStancedKit } from "#src/services/kit/effects/getStancedKit";
@@ -29,11 +30,12 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // One fixed step of the kit of the character on the field, after its body has stepped, written in place: a swap since
 // The last step, the team's effects that run out and the statuses on the enemies that fall due are sent to the deployed
-// Team's kits, the Crystallize shards in reach of the body are picked up, the Electro-Charged ticks the enemies' elements
-// Brought since are struck, the kit plays the step's presses as its stance, if it holds one, plays them, an action that
-// Starts turns the body to the enemy it targets, or to the camera's aim for an aimed shot, and every hit the step lands
-// Strikes the ores and the enemies in its area, a normal or charged attack's that struck one rolling for its energy. A
-// Character whose combatant is not built yet, its talent multipliers still in flight, plays nothing until they arrive
+// Team's kits, the Crystallize shards in reach of the body are picked up, the ticks the enemies' elements brought since
+// Are struck and the Dendro Cores whose seconds ran out burst, the kit plays the step's presses as its stance, if it
+// Holds one, plays them, an action that starts turns the body to the enemy it targets, or to the camera's aim for an
+// Aimed shot, and every hit the step lands strikes the ores, the Dendro Cores and the enemies in its area, a normal or
+// Charged attack's that struck an enemy rolling for its energy. A character whose combatant is not built yet, its
+// Talent multipliers still in flight, plays nothing until they arrive
 export const stepActiveKit = (
   kitState: KitState,
   input: KitInput,
@@ -84,6 +86,7 @@ export const stepActiveKit = (
   for (const event of tickEnemyStatuses(enemyMap.values(), stepSeconds)) emit(event);
   const strikeContext: KitStrikeContext = { ...context, emit };
   strikeElementalTicks(strikeContext);
+  burstKitDendroCores(expiredEffects, strikeContext);
   const infusion = getKitInfusion(kitEffectState.effects, characterId);
   const landedStart = landedHits.length;
   const action = stepKit(

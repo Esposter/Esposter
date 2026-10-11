@@ -11,12 +11,11 @@ import {
   CRYSTALLIZE_EXCESS_SHARD_SECONDS,
   CRYSTALLIZE_SHARD_DROP_SECONDS,
   CRYSTALLIZE_SHARD_LIMIT,
-  CRYSTALLIZE_SHARD_OFFSET,
   CRYSTALLIZE_SHARD_SECONDS,
 } from "#src/services/combat/shield/constants";
 import { getCrystallizeShieldHealth } from "#src/services/combat/shield/getCrystallizeShieldHealth";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
-import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
+import { ENEMY_CAPSULE_RADIUS, ENEMY_DROP_OFFSET } from "#src/services/enemy/constants";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
@@ -59,7 +58,7 @@ describe(addCrystallizeShards, () => {
         element: Element.Hydro,
         health: getCrystallizeShieldHealth(LEVEL, 0),
         kind: "crystallizeShard",
-        position: { x: 3 + ENEMY_CAPSULE_RADIUS + CRYSTALLIZE_SHARD_OFFSET, z: expect.closeTo(4) },
+        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
         secondsRemaining: CRYSTALLIZE_SHARD_DROP_SECONDS + CRYSTALLIZE_SHARD_SECONDS,
       },
     ]);

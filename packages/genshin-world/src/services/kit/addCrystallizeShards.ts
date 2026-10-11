@@ -11,11 +11,10 @@ import {
   CRYSTALLIZE_EXCESS_SHARD_SECONDS,
   CRYSTALLIZE_SHARD_DROP_SECONDS,
   CRYSTALLIZE_SHARD_LIMIT,
-  CRYSTALLIZE_SHARD_OFFSET,
   CRYSTALLIZE_SHARD_SECONDS,
 } from "#src/services/combat/shield/constants";
 import { getCrystallizeShieldHealth } from "#src/services/combat/shield/getCrystallizeShieldHealth";
-import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
+import { getEnemyDropPoint } from "#src/services/enemy/getEnemyDropPoint";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 
 const checkIsKitCrystallizeShard = (effect: KitEffect): effect is KitCrystallizeShard =>
@@ -34,8 +33,6 @@ export const addCrystallizeShards = (
 ): void => {
   for (const { element, reactionType } of reactions) {
     if (reactionType !== ReactionType.Crystallize || element === undefined) continue;
-    const bearing = random() * 2 * Math.PI;
-    const distance = ENEMY_CAPSULE_RADIUS + CRYSTALLIZE_SHARD_OFFSET;
     addKitEffect(kitEffectState, {
       characterId: combatant.characterId,
       element,
@@ -44,7 +41,7 @@ export const addCrystallizeShards = (
         combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
       ),
       kind: "crystallizeShard",
-      position: { x: position.x + distance * Math.sin(bearing), z: position.z + distance * Math.cos(bearing) },
+      position: getEnemyDropPoint(position, random),
       secondsRemaining: CRYSTALLIZE_SHARD_DROP_SECONDS + CRYSTALLIZE_SHARD_SECONDS,
     });
     for (const shard of kitEffectState.effects.filter(checkIsKitCrystallizeShard).slice(0, -CRYSTALLIZE_SHARD_LIMIT))
