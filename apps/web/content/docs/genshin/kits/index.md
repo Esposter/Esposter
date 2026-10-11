@@ -212,6 +212,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | Page                                                | Covers                                                               |
 | :-------------------------------------------------- | :------------------------------------------------------------------- |
 | [Albedo](/docs/genshin/kits/albedo)                 | Solar Isotoma, Transient Blossoms and the Fatal Blossoms             |
+| [Alhaitham](/docs/genshin/kits/alhaitham)           | Universality's tap and hold, Particular Field and Projection Attacks |
 | [Aloy](/docs/genshin/kits/aloy)                     | Freeze Bomb and Rushing Ice                                          |
 | [Amber](/docs/genshin/kits/amber)                   | Explosive Puppet's Baron Bunny and Fiery Rain                        |
 | [Baizhu](/docs/genshin/kits/baizhu)                 | Universal Diagnosis and Holistic Revivification's seamless shield    |
