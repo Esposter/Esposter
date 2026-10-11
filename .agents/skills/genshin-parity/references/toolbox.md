@@ -57,7 +57,7 @@ What each pass's tools stand on, and the runner that checks them in order.
 | What a shader computes                       | `shaders`: the annotated disassembly, and HLSL where it decompiles                                          |
 | Where the open world places an object        | `parseStreamingPlacements` over its tile's or area's StreamGen blob                                         |
 | A placement's prefab                         | its 64-bit path hash looked up in the game's asset index, past 2.6 hashed from its folder's candidate paths |
-| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts                                    |
+| Whether every renderer is accounted for      | `passes`' inventory: the fixture's families, stand-ins and undrawn parts, over the layout's names alone     |
 
 ### Layout
 

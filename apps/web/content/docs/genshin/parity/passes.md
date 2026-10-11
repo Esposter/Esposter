@@ -35,6 +35,7 @@ flowchart TD
 
 - **`passes` names the next work.** `genshin:parity passes <component>` runs each pass's measure over the references naming the component against its gate. It prints a pass the scene has nothing for as not owed (Motion with no door a clip moves, Audio with no game sound matched to it), runs on past it, stops at the first pass that fails or has no measure yet, and rewrites the component's section of `ParityPasses.snapshot.md`, committed like the scores. The measures, in order:
 
+- **Inventory.** Each renderer of the exports, a mesh with its materials, against what of the scene claims it in the screen's fixture: a family, a stand-in, or a part named as not drawn yet (`claimWitnessRenderers`), holding once none goes unclaimed. The page is handed the layout's placements by name and loads none of the exports, so a capital's inventory costs no more than the login's.
 - **Layout.** The arrangement's cross-ratios (`DerivedAssetArrangementMap`), in metres, of each fitted family's furthest part, composed as the family stands them, and each family's places projected from the scene's camera at every current reference, compared in the reference's pixels. A family with no part on a reference's frame is skipped there with a note.
 - **Camera.** The landmarks of each current reference projected from the scene's camera, with the eye moved along the glide alone to where the reference stands it, and their root mean square in the reference's pixels.
 - **Shape.** Each family of ours drawn into the same targets as the exports it stands for, and the outlines compared where both draw: the depth gap as a share and the normals' angle. A family the two never both draw reads no overlap, which halts the pass.
@@ -44,7 +45,7 @@ flowchart TD
 - **Atmosphere.** The sky above the horizon that neither the exports nor the scene covers, compared by statistics blind to where the clouds stand (`readSkyComparison`): the cover band by band of height, the clouds' brightness over the clear sky, their edges' sharpness and spread, and the clear sky's and the clouds' mean colours.
 - **Sound.** Each sound effect `DerivedAssetSoundEffectMap` names, rendered against the game's sound it was fitted from, both channels every 5 milliseconds, gated on a second take of its own noise.
 
-`--pass <name>` runs one measure alone, printed and not written, for a pass taken up ahead of one before it that still fails. Each gate is the noise of the data it reads: a pixel or two of a recording's softness, the colour difference two patches side by side are just told apart at, the surface's structure what the exports' own family reads between two chequerboard halves of its blocks, and a family too thin to meet itself reads no gate.
+`--pass <name>` runs one measure alone, rewriting only that pass's rows of the section, for a pass taken up ahead of one before it that still fails. Each gate is the noise of the data it reads: a pixel or two of a recording's softness, the colour difference two patches side by side are just told apart at, the surface's structure what the exports' own family reads between two chequerboard halves of its blocks, and a family too thin to meet itself reads no gate.
 
 - **Every derived value cites its source.** A rect, a curve, a fitted shape or a constant names the key of the reference source it is taken from.
 
