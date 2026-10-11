@@ -60,7 +60,7 @@ the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
 sites, and a fixed-size window around one calls the ~40 whose body runs long a finding — the terminator sits
 after the closing paren, which is wherever the callback ends. So the scan **matches the bracket** and reads the
-code that follows it, through the same `scanCode` walker the `constantScope` scan uses, so a `)` inside a string
+code that follows it, through the syntax tree the `unterminatedResults` scan reads, so a `)` inside a string
 or a comment closes nothing:
 
 ```bash
