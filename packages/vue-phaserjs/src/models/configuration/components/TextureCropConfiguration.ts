@@ -1,8 +1,9 @@
 import type { BaseTextureConfiguration } from "#src/models/configuration/components/BaseTextureConfiguration";
-import type { ExcludeFunctionProperties } from "@esposter/shared";
+import type { FunctionLike } from "@esposter/shared";
 import type { GameObjects } from "phaser";
-import type { Except } from "type-fest";
+import type { ConditionalExcept, Except } from "type-fest";
 
-export interface TextureCropConfiguration extends ExcludeFunctionProperties<
-  BaseTextureConfiguration & Except<GameObjects.Components.TextureCrop, keyof BaseTextureConfiguration>
+export interface TextureCropConfiguration extends ConditionalExcept<
+  BaseTextureConfiguration & Except<GameObjects.Components.TextureCrop, keyof BaseTextureConfiguration>,
+  FunctionLike
 > {}

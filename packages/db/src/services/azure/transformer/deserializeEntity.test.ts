@@ -1,5 +1,6 @@
 import type { SerializableValue } from "@esposter/azure";
-import type { ExcludeFunctionProperties } from "@esposter/shared";
+import type { FunctionLike } from "@esposter/shared";
+import type { ConditionalExcept } from "type-fest";
 
 import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
 import { AzureEntity } from "@esposter/db-schema";
@@ -35,7 +36,7 @@ describe(deserializeEntity, () => {
       string: "",
       // oxlint-disable-next-line typescript/no-misused-spread -- the copy wants the instance's own fields, not its prototype
       ...new ItemMetadata(),
-    } as const satisfies Record<keyof ExcludeFunctionProperties<Entity>, SerializableValue>;
+    } as const satisfies Record<keyof ConditionalExcept<Entity, FunctionLike>, SerializableValue>;
     const deserializedEntity = deserializeEntity(serializedEntity, Entity);
 
     expect(deserializedEntity).toStrictEqual(

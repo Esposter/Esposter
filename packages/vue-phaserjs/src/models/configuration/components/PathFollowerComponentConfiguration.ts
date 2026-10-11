@@ -1,4 +1,8 @@
-import type { ExcludeFunctionProperties } from "@esposter/shared";
+import type { FunctionLike } from "@esposter/shared";
+import type { ConditionalExcept } from "type-fest";
 import type { GameObjects } from "phaser";
 
-export interface PathFollowerComponentConfiguration extends ExcludeFunctionProperties<GameObjects.Components.PathFollower> {}
+export interface PathFollowerComponentConfiguration extends ConditionalExcept<
+  GameObjects.Components.PathFollower,
+  FunctionLike
+> {}
