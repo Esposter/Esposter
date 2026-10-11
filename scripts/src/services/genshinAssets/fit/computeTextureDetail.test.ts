@@ -5,20 +5,6 @@ import { computeStatisticalStructure } from "#src/services/genshinParity/passes/
 import { computeSurfaceOctaves } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
-// The metres a texel of a test texture spans, a base map's
-const METRES_PER_TEXEL = 2;
-
-// The luminance of a texture whose texels are a sum of waves, each octave one cosine at its frequency in the world
-const createWaveLuminance =
-  (octaves: { amplitude: number; frequency: number; phase: number }[]) =>
-  (x: number, _y: number): number => {
-    const worldX = x * METRES_PER_TEXEL;
-    const variation = octaves.reduce(
-      (sum, { amplitude, frequency, phase }) => sum + amplitude * Math.cos(2 * Math.PI * frequency * worldX + phase),
-      0,
-    );
-    return 128 * (1 + variation);
-  };
 const toLuminance = (texture: Texture): Float32Array => Float32Array.from(texture.data, (byte) => byte / 128);
 
 describe(computeTextureDetail, () => {
@@ -36,9 +22,9 @@ describe(computeTextureDetail, () => {
     expect(
       computeTextureDetail(
         createTexture(() => 128),
-        METRES_PER_TEXEL,
+        2,
       ),
-    ).toStrictEqual({ bands: [0, 0, 0, 0], metresPerTexel: METRES_PER_TEXEL, variance: 0 });
+    ).toStrictEqual({ bands: [0, 0, 0, 0], metresPerTexel: 2, variance: 0 });
   });
 });
 
@@ -71,6 +57,20 @@ describe("detail closure", () => {
   const FULL_MASK = new Uint8Array(SIZE * SIZE).fill(1);
   // The structure error a surface matched in distribution is held to: a reproduction of its export within the gate
   const GATE = 0.25;
+  // The metres a texel of a test texture spans, a base map's
+  const METRES_PER_TEXEL = 2;
+
+  // The luminance of a texture whose texels are a sum of waves, each octave one cosine at its frequency in the world
+  const createWaveLuminance =
+    (octaves: { amplitude: number; frequency: number; phase: number }[]) =>
+    (x: number, _y: number): number => {
+      const worldX = x * METRES_PER_TEXEL;
+      const variation = octaves.reduce(
+        (sum, { amplitude, frequency, phase }) => sum + amplitude * Math.cos(2 * Math.PI * frequency * worldX + phase),
+        0,
+      );
+      return 128 * (1 + variation);
+    };
 
   // A grey texture of the luminance each texel is given, as bytes
   const createTexture = (luminance: (x: number, y: number) => number): Texture => {
