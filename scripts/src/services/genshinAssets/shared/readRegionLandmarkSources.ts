@@ -9,7 +9,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // What a region's landmarks are placed and checked from, read together: the landmarks the world names, the component's
-// placements and origin, the region's data file as it is, and the ground's height
+// Placements and origin, the region's data file as it is, and the ground's height
 export const readRegionLandmarkSources = async (component: DerivedAssetComponent, regionFile: string) => {
   const regionLandmarks = (await readWorldOptions(component))?.regionLandmarks ?? [];
   const [placements, origin, regionJson, getWorldHeight] = await Promise.all([

@@ -1,11 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 
-import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 
 // Each reference's measure taken on its own witness page, closed once its measure settles, and the notes and readings of
-// every measure gathered in order. The caller fetches the references first
+// Every measure gathered in order. The caller fetches the references first
 export const measureEachReference = async (
   component: DerivedAssetComponent,
   referenceIds: readonly string[],

@@ -34,8 +34,6 @@ import { resolvePrefabRoot } from "#src/services/genshinAssets/world/resolvePref
 import { selectCapitalPlacements } from "#src/services/genshinAssets/world/selectCapitalPlacements";
 import { selectCityAreasInView } from "#src/services/genshinAssets/world/selectCityAreasInView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // A region's open world block derived from its capital the way Windrise's is laid out, with no hand step: the tiles its
 // View and its architecture radius cover and the StreamGen blob of every city area they reach, all read by path hash,
