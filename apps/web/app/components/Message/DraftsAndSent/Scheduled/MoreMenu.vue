@@ -67,12 +67,12 @@ const items = computed<Item[]>(() => [
 
 <template>
   <UiOverflowMenu :items label="Scheduled message actions" />
-  <DraftsAndSentDeleteConfirmDialog
+  <MessageDraftsAndSentDeleteConfirmDialog
     v-if="isDeleteOpen"
     v-model="isDeleteOpen"
     title="Delete message"
     :confirm="() => cancelScheduledMessageJob(scheduledMessageJob.id)"
   >
     <p>Are you sure you want to delete this scheduled message?</p>
-  </DraftsAndSentDeleteConfirmDialog>
+  </MessageDraftsAndSentDeleteConfirmDialog>
 </template>
