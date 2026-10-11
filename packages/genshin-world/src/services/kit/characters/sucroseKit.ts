@@ -1,14 +1,11 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { Enemy } from "#src/models/enemy/Enemy";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AuraType } from "#src/models/combat/AuraType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -22,6 +19,7 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Sucrose's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -79,12 +77,6 @@ const ABSORB_CHECK_FIRST_FRAMES = 136;
 const ABSORB_CHECK_INTERVAL_FRAMES = 18;
 // The absorb check's box is 2.5 metres square, priced as the circle round its centre that reaches its far corner
 const ABSORB_CHECK_AREA: AttackArea = Object.freeze({ angle: 2 * Math.PI, height: 2, radius: Math.hypot(1.25, 1.25) });
-const ABSORBABLE_AURAS: readonly (readonly [Element, AuraType])[] = [
-  [Element.Pyro, AuraType.Pyro],
-  [Element.Hydro, AuraType.Hydro],
-  [Element.Electro, AuraType.Electro],
-  [Element.Cryo, AuraType.Cryo],
-];
 // A summon's hit lands a frame after the summon is cast, as its hits fall after its cast and a step's tick is its first
 const SUMMON_HIT_SECONDS = 1 / 60;
 // The field lives a tenth of a second past its last tick, so the step that runs it still has it
@@ -117,14 +109,6 @@ const ABSORBED_ELEMENT_CONSTELLATION = 6;
 const ABSORBED_ELEMENT_DAMAGE_BONUS = 0.2;
 const ABSORBED_ELEMENT_SECONDS = 10;
 const ABSORBED_ELEMENT_SOURCE = "sucrose-absorbed-element";
-
-// The element the field absorbs, from the first of the four an enemy within its reach carries, in the game's order
-const findAbsorbedElement = (enemyMap: Map<string, Enemy>, absorbBody: KitBody): Element | undefined => {
-  const reachedEnemies = [...enemyMap.values()].filter((enemy) =>
-    checkIsInAttackArea(ABSORB_CHECK_AREA, absorbBody, enemy),
-  );
-  return ABSORBABLE_AURAS.find(([, aura]) => reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)))?.[0];
-};
 
 export const SUCROSE_CHARACTER_ID = 10_000_043;
 
@@ -241,7 +225,9 @@ export const createSucroseKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
           onTick: ({ enemyMap, kitEffectState: tickState, party }) => {
             if (absorbedElement !== undefined) return;
-            absorbedElement = findAbsorbedElement(enemyMap, absorbBody);
+            absorbedElement = findAbsorbedElement(
+              [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(ABSORB_CHECK_AREA, absorbBody, enemy)),
+            );
             if (absorbedElement === undefined || combatant.constellationCount < ABSORBED_ELEMENT_CONSTELLATION) return;
             for (const characterId of party.teams[party.deployedTeamIndex]?.characterIds ?? [])
               addKitEffect(tickState, {
