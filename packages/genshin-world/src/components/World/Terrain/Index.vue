@@ -100,6 +100,8 @@ const workers = Array.from({ length: TERRAIN_WORKER_COUNT }, () => {
   return worker;
 });
 let requestCount = 0;
+// The worker each generating tile was asked of, so a worker's error fails only its own tiles
+const requestWorkerMap = new Map<number, Worker>();
 // The rings past the shadows' reach are one mesh a level, made as the level's first tile arrives: a far tile is written
 // Into its level's ring as it arrives and freed from it as it leaves, so the frame never rebuilds a ring, and the
 // Streamer holds the far tile by its key alone. Beside each ring, the tiles the view draws in it this frame
@@ -137,8 +139,11 @@ const tileStreamer = createTileStreamer<Mesh | number>({
       kind: TerrainWorkerMessageKind.Tile,
       request: { cellsPerSide, finestTileSize, key },
     };
-    workers[requestCount % workers.length]?.postMessage(message);
+    const worker = workers[requestCount % workers.length];
     requestCount++;
+    if (!worker) return;
+    requestWorkerMap.set(key, worker);
+    worker.postMessage(message);
   },
 });
 // A tile that cannot be built is released, so it is asked for again or given up, and the world is not held on it
@@ -146,8 +151,11 @@ const failTile = (key: number) => {
   if (tileStreamer.fail(key))
     console.error(`Terrain tile ${key} failed ${MAX_TILE_ATTEMPTS} times, so it is given up and drawn without`);
 };
+// A tile failed and asked of another worker can still arrive from the first, so a tile already held is dropped rather
+// Than replacing the one held
 const receiveTile = async (terrainTile: PlantedTerrainTile) => {
   const { key, plantColors, plantMatrices } = terrainTile;
+  if (tileStreamer.has(key)) return;
   if (!checkIsNear(key)) {
     getRing(getTerrainTileLevel(key)).add(terrainTile);
     tileStreamer.receive(key, key);
@@ -186,6 +194,10 @@ const receiveTile = async (terrainTile: PlantedTerrainTile) => {
       },
     );
     if (!isCompiled) return;
+    if (tileStreamer.has(key)) {
+      disposeTileMesh(mesh);
+      return;
+    }
   }
   mesh.visible = false;
   tileGroup.add(mesh);
@@ -193,18 +205,25 @@ const receiveTile = async (terrainTile: PlantedTerrainTile) => {
 };
 const receiveWorkerMessage = (event: MessageEvent<PlantedTerrainTile | TerrainWorkerFailure>) => {
   const { data } = event;
+  requestWorkerMap.delete(data.key);
   if ("kind" in data) {
     failTile(data.key);
     return;
   }
   receiveTile(data);
 };
-// A worker that errors, or cannot read a message, has lost the tiles it was asked for, so each pending tile is failed
-const failPendingTiles = (event: Event) => {
+// A worker that errors, or cannot read a message, has lost the tiles it was asked for, so each of its pending tiles is
+// Failed, and the other workers' are left generating
+const createPendingTilesFailer = (worker: Worker) => (event: Event) => {
   console.error("A terrain worker failed", event);
-  for (const key of tileStreamer.pendingKeys()) failTile(key);
+  for (const key of tileStreamer.pendingKeys()) {
+    if (requestWorkerMap.get(key) !== worker) continue;
+    requestWorkerMap.delete(key);
+    failTile(key);
+  }
 };
 for (const worker of workers) {
+  const failPendingTiles = createPendingTilesFailer(worker);
   worker.addEventListener("message", receiveWorkerMessage);
   worker.addEventListener("error", failPendingTiles);
   worker.addEventListener("messageerror", failPendingTiles);
