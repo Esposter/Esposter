@@ -1,12 +1,17 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 
+import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -85,8 +90,7 @@ const SKILL_POISE_DAMAGE = 0;
 
 // Measured: gcsim (MIT) kazuha/burst.go, Kazuha Slash's animation at 93 frames, its slash at 82 on a circle of radius 9 offset
 // A metre ahead, so it reaches 10 metres, and the Autumn Whirlwind's five ticks from 140 frames, 117 frames apart, each on the
-// Same circle round the body. The elemental ticks depend on the element Chihayaburu-style absorption takes, which the kit
-// Does not check, so they are not built
+// Same circle round the body
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kazuha/burst.go
 const BURST_FRAMES = 93;
 const BURST_HITMARK_FRAMES = 82;
@@ -96,6 +100,30 @@ const BURST_TICK_COUNT = 5;
 const BURST_REACH = 10;
 // Provisional: gcsim gives the burst no poise, so the slash and its ticks stand at 0 until a source gives them
 const BURST_POISE_DAMAGE = 0;
+// Measured: gcsim v2.47.2 (MIT) kazuha/burst.go, the Autumn Whirlwind's absorb check runs from 81 frames, the frame before
+// The slash, then every 18 frames for at most 17 checks, on a circle of radius 8 offset a metre ahead, so it reaches 9
+// Metres. It takes the first aura of Pyro, Hydro, Electro or Cryo an enemy within its reach carries, and each tick after
+// It lands its elemental tick in that element, 1U, just ahead of its Anemo tick
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/burst.go
+const ABSORB_CHECK_FIRST_FRAMES = 81;
+const ABSORB_CHECK_INTERVAL_FRAMES = 18;
+const ABSORB_CHECK_COUNT = 17;
+const ABSORB_CHECK_AREA = createFanReach(360, 9);
+const ABSORBABLE_AURAS: readonly (readonly [Element, AuraType])[] = [
+  [Element.Pyro, AuraType.Pyro],
+  [Element.Hydro, AuraType.Hydro],
+  [Element.Electro, AuraType.Electro],
+  [Element.Cryo, AuraType.Cryo],
+];
+// The absorb check's field lives a tenth of a second past its last check, so the step that runs it still has it
+const ABSORB_FIELD_LINGER_SECONDS = 0.1;
+
+// The element the Autumn Whirlwind absorbs, from the first of the four an enemy within its reach carries, in the game's
+// Order
+const findAbsorbedElement = (enemyMap: Map<string, Enemy>, body: KitBody): Element | undefined => {
+  const reachedEnemies = [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(ABSORB_CHECK_AREA, body, enemy));
+  return ABSORBABLE_AURAS.find(([, aura]) => reachedEnemies.some((enemy) => enemy.elementalState.auras.has(aura)))?.[0];
+};
 
 // Measured: gcsim (MIT) kazuha/cons.go, Chihayaburu's and Kazuha Slash's cooldowns each drop by a tenth from Constellation 1,
 // Which the table's 360 and 540 frames become 324 and 486 with
@@ -120,9 +148,9 @@ const addInfusion = ({ combatant, kitEffectState }: Parameters<NonNullable<KitAc
 export const KAZUHA_CHARACTER_ID = 10_000_047;
 
 // Kazuha's first kit, at talent level 1: five strikes, a charged attack, a collision and two plunges, Chihayaburu's press and
-// Hold, and Kazuha Slash with its Autumn Whirlwind. Constellation 1 shortens his skill cooldowns and Constellation 6 gives
-// Him the infusion. His Ascension passives are not built: the absorption of the Chihayaburu, the Swirl Elemental Mastery
-// Bonus and Constellation 2's field. Its multipliers are read from his proud skill groups
+// Hold, and Kazuha Slash with its Autumn Whirlwind and its elemental ticks. Constellation 1 shortens his skill cooldowns and
+// Constellation 6 gives him the infusion. His Ascension passives are not built: the absorption of the Chihayaburu, the
+// Swirl Elemental Mastery bonus and Constellation 2's field. Its multipliers are read from his proud skill groups
 export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackMultiplier = (index: number) =>
     getTalentMultiplier(talentMultiplierMap, KAZUHA_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
@@ -193,12 +221,40 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
       targetingArea: STRIKE_TARGETING_AREA,
     },
     chargedAttackStamina: attackMultiplier(8),
-    // The slash strikes where Kazuha stands, and its Autumn Whirlwind is a summon cast at his body that ticks from there
+    // The slash strikes where Kazuha stands, and its Autumn Whirlwind is a summon cast at his body that ticks from
+    // There. Its absorb check is a field set beside it, which takes an element only once and then lands that element's
+    // Tick ahead of each tick still to come
     elementalBurst: {
       hits: [slashHit],
       onStart: ({ body, combatant, kitEffectState, party }) => {
         addInfusion({ body, combatant, kitEffectState, party });
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits));
+        const whirlwind = createKitSummon(body, combatant, tickHits);
+        let isAbsorbed = false;
+        const absorbField: KitField = {
+          centre: { x: whirlwind.body.position.x, z: whirlwind.body.position.z },
+          characterId: combatant.characterId,
+          kind: "field",
+          nextTickSeconds: ABSORB_CHECK_FIRST_FRAMES / 60,
+          onTick: ({ enemyMap }) => {
+            if (isAbsorbed) return;
+            const element = findAbsorbedElement(enemyMap, whirlwind.body);
+            if (element === undefined) return;
+            isAbsorbed = true;
+            whirlwind.hits = whirlwind.hits.flatMap((hit) =>
+              hit.hitmarkSeconds > whirlwind.elapsedSeconds
+                ? [{ ...hit, element, talentMultiplier: burstMultiplier(2) }, hit]
+                : [hit],
+            );
+          },
+          radius: UNBOUNDED_FIELD_RADIUS,
+          secondsRemaining:
+            (ABSORB_CHECK_FIRST_FRAMES + ABSORB_CHECK_INTERVAL_FRAMES * (ABSORB_CHECK_COUNT - 1)) / 60 +
+            ABSORB_FIELD_LINGER_SECONDS,
+          tickIndex: 0,
+          tickIntervalSeconds: ABSORB_CHECK_INTERVAL_FRAMES / 60,
+        };
+        addKitEffect(kitEffectState, whirlwind);
+        addKitEffect(kitEffectState, absorbField);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
