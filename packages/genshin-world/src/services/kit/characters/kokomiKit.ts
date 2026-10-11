@@ -74,8 +74,8 @@ const BURST_REACH = createFanReach(360, 5);
 const BURST_GAUGE = 2;
 const GARMENT_SECONDS = 10;
 
-// Provisional: gcsim's burst consumes 57 energy where its own EnergyMax and the table's cost are 70, so the table's 70 is
-// Read until the Mac measures it. The charged attack's stamina is the table's flat value in its slot, until it is measured
+// The burst's energy cost is the table's 70, which gcsim's EnergyMax gives too, and the charged attack's stamina is the
+// Table's flat value in its slot
 export const createKokomiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => {
   const attackTalentMultiplier = (index: number): number =>
     getTalentMultiplier(talentMultiplierMap, KOKOMI_ATTACK_GROUP_ID, TALENT_START_LEVEL, index);
