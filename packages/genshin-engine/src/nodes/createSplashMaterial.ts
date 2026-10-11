@@ -8,6 +8,7 @@ import {
   SPLASH_RADIUS,
   SPLASH_SIZE,
 } from "#src/atmosphere/constants";
+import { sampleGroundCapture } from "#src/nodes/sampleGroundCapture";
 import { DoubleSide } from "three";
 import {
   float,
@@ -17,7 +18,6 @@ import {
   positionGeometry,
   smoothstep,
   step,
-  texture,
   time,
   varying,
   vec2,
@@ -45,15 +45,7 @@ export const createSplashMaterial = ({
       .sub(0.5)
       .mul(SPLASH_RADIUS * 2),
   );
-  const captureUV = vec2(
-    ground.x.sub(groundCapture.center.x).div(groundCapture.size).add(0.5),
-    float(0.5).sub(ground.y.sub(groundCapture.center.y).div(groundCapture.size)),
-  );
-  const captured = texture(groundCapture.renderTarget.texture, captureUV).level(float(0));
-  const isInsideCapture = step(0, captureUV.x)
-    .mul(step(captureUV.x, 1))
-    .mul(step(0, captureUV.y))
-    .mul(step(captureUV.y, 1));
+  const { captured, isInsideCapture } = sampleGroundCapture(groundCapture, ground);
   const isDrawn = isInsideCapture.mul(step(hash(index.add(6)), splashDensity));
   const size = age.mul(0.6).add(0.4).mul(SPLASH_SIZE).mul(isDrawn);
   const across = vec2(positionGeometry.x, positionGeometry.y.sub(0.5));

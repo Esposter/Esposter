@@ -1,6 +1,7 @@
 import type { LightningBolt } from "#src/models/atmosphere/LightningBolt";
 import type { LightningBoltOptions } from "#src/models/atmosphere/LightningBoltOptions";
 
+import { writeQuadIndices } from "#src/kits/writeQuadIndices";
 import { createSeededRandom } from "#src/random/createSeededRandom";
 
 const VERTICES_PER_SEGMENT = 4;
@@ -57,12 +58,7 @@ export const computeLightningBolt = ({
       sides[vertex] = side;
     }
     const indexStart = segment * INDICES_PER_SEGMENT;
-    indices[indexStart] = vertexStart;
-    indices[indexStart + 1] = vertexStart + 1;
-    indices[indexStart + 2] = vertexStart + 2;
-    indices[indexStart + 3] = vertexStart;
-    indices[indexStart + 4] = vertexStart + 2;
-    indices[indexStart + 5] = vertexStart + 3;
+    writeQuadIndices(indices, indexStart, vertexStart);
     segment++;
   };
   // The channel climbs from the strike, narrowing toward the cloud

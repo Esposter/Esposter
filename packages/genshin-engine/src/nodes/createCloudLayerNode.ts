@@ -2,6 +2,7 @@ import type { CloudLayerUniforms } from "#src/models/atmosphere/CloudLayerUnifor
 import type { SkyUniforms } from "#src/models/atmosphere/SkyUniforms";
 import type { Node } from "three/webgpu";
 
+import { getCloudSunColors } from "#src/nodes/getCloudSunColors";
 import {
   abs,
   acos,
@@ -150,9 +151,10 @@ export const createCloudLayerNode = (
     // The cloud colours, toward the sun by how far toward it the ray looks, cubed
     const sunCosine = dot(view, sun);
     const sunSide = sunCosine.mul(0.5).add(0.5);
-    const toward = pow(max(sunCosine.mul(cloudFrontBackBlend).add(float(1).sub(cloudFrontBackBlend)), 0), 3);
-    const lit = mix(cloudLitBackColor, cloudLitColor, toward);
-    const shade = mix(cloudShadeBackColor, cloudShadeColor, toward);
+    const { lit, shade } = getCloudSunColors(
+      { cloudFrontBackBlend, cloudLitBackColor, cloudLitColor, cloudShadeBackColor, cloudShadeColor },
+      sunCosine,
+    );
     const threshold = pow(float(1).sub(cloudCoverage.mul(0.7)), 3).sub(0.15);
     const clearing = smoothstepUnit(saturate(float(0.7).sub(cloudCoverage).mul(2.5)));
     const sunHalo = sunHaloColor.mul(saturate(pow(saturate(sunSide), sunHaloSize.mul(0.5).mul(abs(up))).mul(up)));

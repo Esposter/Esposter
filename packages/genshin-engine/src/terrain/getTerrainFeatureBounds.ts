@@ -3,17 +3,12 @@ import type { TerrainFeature } from "#src/models/terrain/TerrainFeature";
 
 import { TerrainFeatureKind } from "#src/models/terrain/TerrainFeatureKind";
 import { GAUSSIAN_REACH_WIDTHS } from "#src/terrain/constants";
+import { getSegmentBounds } from "#src/terrain/getSegmentBounds";
 
 const TerrainFeatureKindBoundsMap = {
   [TerrainFeatureKind.Cliff]: (feature) => {
     const { endX, endZ, falloff, startX, startZ, width } = feature;
-    const reach = width + falloff;
-    return {
-      maxX: Math.max(startX, endX) + reach,
-      maxZ: Math.max(startZ, endZ) + reach,
-      minX: Math.min(startX, endX) - reach,
-      minZ: Math.min(startZ, endZ) - reach,
-    };
+    return getSegmentBounds(startX, startZ, endX, endZ, width + falloff);
   },
   [TerrainFeatureKind.Plateau]: (feature) => {
     const { falloff, radius, x, z } = feature;
@@ -22,13 +17,7 @@ const TerrainFeatureKindBoundsMap = {
   },
   [TerrainFeatureKind.Ridge]: (feature) => {
     const { endX, endZ, startX, startZ, width } = feature;
-    const reach = GAUSSIAN_REACH_WIDTHS * width;
-    return {
-      maxX: Math.max(startX, endX) + reach,
-      maxZ: Math.max(startZ, endZ) + reach,
-      minX: Math.min(startX, endX) - reach,
-      minZ: Math.min(startZ, endZ) - reach,
-    };
+    return getSegmentBounds(startX, startZ, endX, endZ, GAUSSIAN_REACH_WIDTHS * width);
   },
 } as const satisfies {
   [K in TerrainFeatureKind]: (feature: Extract<TerrainFeature, { kind: K }>) => TerrainBounds;
