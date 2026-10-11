@@ -5,7 +5,7 @@ description: A refusal, before a Bash command runs, of any command that scans th
 
 # Disk-scan guard
 
-Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). A scan from a root reads every folder on the disk, and an agent that runs one holds a core and the disk for minutes, while the file it wants has a known home. The sessions in this repository ran about six such scans in a stretch, looking for a yt-dlp, a capture and a model's package, each with a home already written down. The rule that says so is in the throughput skill; the guard enforces it at the call, so a command that breaks it never starts.
+Part of [Genshin mods](/docs/infra/claude-interface/genshin-mods). A scan from a root reads every folder on the disk, and an agent that runs one holds a core and the disk for minutes, while the file it wants has a known home. A session that looks for a yt-dlp, a capture or a model's package can run several such scans in a row, each for a file with a home already written down. The rule that says so is in the throughput skill; the guard enforces it at the call, so a command that breaks it never starts.
 
 ## How it works
 
@@ -39,7 +39,7 @@ flowchart TD
 
 ## What it costs
 
-The check is a regular expression over the command's text, a few microseconds per call (3.2 µs, the median of twenty runs of a thousand calls, measured on this machine). It runs in the plugin's own process, so a call pays no start-up: a standalone script would cost about 90 ms per call here, most of it Node's start.
+The check is a regular expression over the command's text, a few microseconds per call. It runs in the plugin's own process, so a call pays no start-up: a standalone script would pay Node's start-up on every call, which would cost far more than the check.
 
 ## When it does not refuse
 
@@ -57,6 +57,6 @@ The check is a regular expression over the command's text, a few microseconds pe
 
 ## Notes
 
-- The guard covers the Bash tool. A PowerShell command that scans a drive (`Get-ChildItem C:\ -Recurse`) is not read yet.
+- The guard covers the Bash tool. A PowerShell command that scans a drive (`Get-ChildItem C:\ -Recurse`) is not read.
 - It has no command and no switch: it runs in every session where the plugin is enabled, as the delegation guard does.
 - A scan the guard misses is still caught by the machine watcher, which stops an orphaned `find`, `du`, `grep` or `rg` once it has burnt half a minute of CPU.
