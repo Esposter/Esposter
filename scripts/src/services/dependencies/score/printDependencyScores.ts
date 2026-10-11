@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 import type { DependencyScoreReport } from "#src/models/dependencies/score/DependencyScoreReport";
+import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";

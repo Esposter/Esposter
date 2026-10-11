@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { getSizePoints } from "#src/services/dependencies/score/getSizePoints";
+import { describe, expect, test } from "vitest";
 
 describe(getSizePoints, () => {
   test.each([

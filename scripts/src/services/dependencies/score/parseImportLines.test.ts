@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { parseImportLines } from "#src/services/dependencies/score/parseImportLines";
+import { describe, expect, test } from "vitest";
 
 describe(parseImportLines, () => {
   test("counts each importing file once per package, a scoped name and a subpath alike", () => {
@@ -13,8 +13,8 @@ describe(parseImportLines, () => {
 
     expect(parseImportLines(output)).toStrictEqual(
       new Map([
-        ["alpha", new Set(["apps/web/a.ts"])],
         ["@scope/beta", new Set(["packages/b.vue"])],
+        ["alpha", new Set(["apps/web/a.ts"])],
       ]),
     );
   });

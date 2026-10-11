@@ -1,7 +1,7 @@
 import type { DependencyScore } from "#src/models/dependencies/score/DependencyScore";
 
-import { describe, expect, test } from "vitest";
 import { getDisagreements } from "#src/services/dependencies/score/getDisagreements";
+import { describe, expect, test } from "vitest";
 
 const createScore = (packageName: string, verdict: string, total: number, shimCount = 0): DependencyScore => ({
   dependencyLines: 0,

@@ -1,7 +1,6 @@
 import type { InstalledPackage } from "#src/models/dependencies/score/InstalledPackage";
 
 import { countModuleGraphLines } from "#src/services/dependencies/score/countModuleGraphLines";
-
 import { readPackageAt } from "#src/services/dependencies/score/readPackageAt";
 import { realpathSync } from "node:fs";
 import { dirname, join } from "node:path";

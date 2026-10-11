@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { getSelfContainmentPoints } from "#src/services/dependencies/score/getSelfContainmentPoints";
+import { describe, expect, test } from "vitest";
 
 describe(getSelfContainmentPoints, () => {
   test.each([

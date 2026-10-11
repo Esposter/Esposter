@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
 import type { InstalledManifest } from "#src/models/dependencies/score/InstalledManifest";
 
 import { PackageFormat } from "#src/models/dependencies/score/PackageFormat";
 import { getPackageFormat } from "#src/services/dependencies/score/getPackageFormat";
+import { describe, expect, test } from "vitest";
 
 describe(getPackageFormat, () => {
   test.each<[string, InstalledManifest, PackageFormat]>([
@@ -17,7 +17,7 @@ describe(getPackageFormat, () => {
     ["a require-only exports map", { exports: { ".": { require: "./index.cjs" } } }, PackageFormat.Commonjs],
     ["a declarations-only scope", { name: "@types/alpha", types: "index.d.ts" }, PackageFormat.Types],
     ["a declarations-only entry", { types: "index.d.ts" }, PackageFormat.Types],
-  ])("%s is %s", (_, manifest, format) => {
+  ])("%s is %s", (_title, manifest, format) => {
     expect.hasAssertions();
 
     expect(getPackageFormat(manifest)).toBe(format);
