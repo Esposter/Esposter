@@ -20,8 +20,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Xinyan's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -206,8 +206,7 @@ const setShield = (
     nextTickSeconds: SHIELD_DOT_INTERVAL_SECONDS,
     onTick: ({ kitEffectState: tickState }) => {
       if (findShieldLevel(tickState.effects, characterId) !== SHIELD_LEVEL_THREE) return;
-      addKitEffect(tickState, {
-        ...createKitSummon({ facing: 0, height: 0, position: centre }, combatant, [shieldDotHit]),
+      castKitSummon(tickState, { facing: 0, height: 0, position: centre }, combatant, [shieldDotHit], {
         isFollowing: true,
       });
     },
@@ -332,7 +331,7 @@ export const createXinyanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         const hasShieldOnBurst = combatant.constellationCount >= SHIELD_ON_BURST_CONSTELLATION;
         if (hasShieldOnBurst) setShield(kitEffectState, combatant, body, SHIELD_LEVEL_THREE, talentMultiplierMap);
         const dotHits = hasShieldOnBurst ? [...riffDotHits, ...constellationPulseHits] : riffDotHits;
-        addKitEffect(kitEffectState, { ...createKitSummon(body, combatant, dotHits), isFollowing: true });
+        castKitSummon(kitEffectState, body, combatant, dotHits, { isFollowing: true });
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

@@ -11,7 +11,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Dori's proud skill groups, read at her talent level. The attack group holds her three strikes at 0, 1 and 2, the second
@@ -164,7 +164,7 @@ export const createDoriKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           kind: "field",
           nextTickSeconds: CONNECTOR_FIRST_TICK_FRAMES / 60,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            addKitEffect(tickEffectState, createKitSummon(spot, combatant, [connectorHit]));
+            castKitSummon(tickEffectState, spot, combatant, [connectorHit]);
           },
           radius: CONNECTOR_FIELD_RADIUS,
           secondsRemaining: (CONNECTOR_LAST_TICK_FRAMES + 1) / 60,

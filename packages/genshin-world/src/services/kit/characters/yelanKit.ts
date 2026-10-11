@@ -13,6 +13,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -97,15 +98,19 @@ export const createYelanKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   // An Exquisite Throw is three hits cast from the body that waved or struck it, priced by its caster's Max HP
   const createExquisiteThrowSummon = ({ facing, height, position }: KitBody, combatant: Combatant): KitSummon => {
     const throwBonus = createMaxHealthScaledBonus(burstTalentMultiplier(1));
-    const hits: KitHit[] = Array.from({ length: EXQUISITE_THROW_COUNT }, (_throw, index) => ({
-      additiveBaseDamageBonus: throwBonus,
-      element: Element.Hydro,
-      gauge: 1,
-      hitArea: EXQUISITE_THROW_HIT_AREA,
-      hitmarkSeconds: (EXQUISITE_THROW_TRAVEL_FRAMES + index * EXQUISITE_THROW_INTERVAL_FRAMES) / 60,
-      poiseDamage: 0,
-      talentMultiplier: 0,
-    }));
+    const hits: KitHit[] = createPeriodicKitHits(
+      {
+        additiveBaseDamageBonus: throwBonus,
+        element: Element.Hydro,
+        gauge: 1,
+        hitArea: EXQUISITE_THROW_HIT_AREA,
+        poiseDamage: 0,
+        talentMultiplier: 0,
+      },
+      EXQUISITE_THROW_COUNT,
+      EXQUISITE_THROW_TRAVEL_FRAMES,
+      EXQUISITE_THROW_INTERVAL_FRAMES,
+    );
     return createKitSummon({ facing, height, position }, combatant, hits);
   };
 

@@ -9,8 +9,8 @@ import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Lisa's proud skill groups, read at her talent level. The attack group holds the four strikes at 0 to 3, the charged
@@ -86,15 +86,19 @@ const createStrike = (
 
 // The discharges of Lightning Rose: each Electro under an Elemental Burst internal cooldown, the wiki's 1U and 10 poise
 const createDischarges = (talentMultiplierMap: TalentMultiplierMap): KitHit[] =>
-  Array.from({ length: LIGHTNING_ROSE_TICK_COUNT }, (_value, index) => ({
-    element: Element.Electro,
-    gauge: 1,
-    hitArea: LIGHTNING_ROSE_HIT_AREA,
-    hitmarkSeconds: (LIGHTNING_ROSE_FIRST_TICK_FRAMES + index * LIGHTNING_ROSE_TICK_INTERVAL_FRAMES) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    poiseDamage: 10,
-    talentMultiplier: getTalentMultiplier(talentMultiplierMap, LISA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
-  }));
+  createPeriodicKitHits(
+    {
+      element: Element.Electro,
+      gauge: 1,
+      hitArea: LIGHTNING_ROSE_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      poiseDamage: 10,
+      talentMultiplier: getTalentMultiplier(talentMultiplierMap, LISA_BURST_GROUP_ID, TALENT_START_LEVEL, 0),
+    },
+    LIGHTNING_ROSE_TICK_COUNT,
+    LIGHTNING_ROSE_FIRST_TICK_FRAMES,
+    LIGHTNING_ROSE_TICK_INTERVAL_FRAMES,
+  );
 
 // Lisa's kit at talent level 1: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and hold,
 // And Lightning Rose. Its multipliers are read from its proud skill groups. A4's effect is not built
@@ -152,10 +156,9 @@ export const createLisaKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
   elementalBurst: {
     hits: [{ hitArea: LIGHTNING_ROSE_HIT_AREA, hitmarkSeconds: 56 / 60, poiseDamage: 10, talentMultiplier: 0 }],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(body, combatant, createDischarges(talentMultiplierMap), LIGHTNING_ROSE_SECONDS),
-      ),
+      castKitSummon(kitEffectState, body, combatant, createDischarges(talentMultiplierMap), {
+        secondsRemaining: LIGHTNING_ROSE_SECONDS,
+      }),
     seconds: 88 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },

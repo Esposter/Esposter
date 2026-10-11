@@ -19,9 +19,10 @@ import {
 } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ineffa's proud skill groups, read at her talent level. The attack group holds her four strikes at 0 to 4, the charged
@@ -125,12 +126,12 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   // Birgitta is cast at the start of the action and appears on the field at her spawn frame. Her discharges count from her
   // Cast, each landing the gcsim frames after her spawn, on the schedule gcsim gives her
   const createBirgittaHits = (spawnFrames: number): KitHit[] =>
-    Array.from({ length: BIRGITTA_DISCHARGE_COUNT }, (_value, index) => ({
-      hitArea: BIRGITTA_HIT_AREA,
-      hitmarkSeconds: (spawnFrames + BIRGITTA_FIRST_DISCHARGE_FRAMES + index * BIRGITTA_DISCHARGE_INTERVAL_FRAMES) / 60,
-      poiseDamage: 0,
-      talentMultiplier: skillMultiplier(SKILL_INDEX_BIRGITTA_DAMAGE),
-    }));
+    createPeriodicKitHits(
+      { hitArea: BIRGITTA_HIT_AREA, poiseDamage: 0, talentMultiplier: skillMultiplier(SKILL_INDEX_BIRGITTA_DAMAGE) },
+      BIRGITTA_DISCHARGE_COUNT,
+      spawnFrames + BIRGITTA_FIRST_DISCHARGE_FRAMES,
+      BIRGITTA_DISCHARGE_INTERVAL_FRAMES,
+    );
   // Recasting Birgitta ends the one on the field, as gcsim starts a new discharge chain and cancels the old one's
   const summonBirgitta = (
     kitEffectState: KitEffectState,
@@ -140,9 +141,9 @@ export const createIneffaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   ): void => {
     for (const effect of kitEffectState.effects)
       if (effect.kind === "summon" && effect.id === BIRGITTA_ID) effect.secondsRemaining = 0;
-    addKitEffect(kitEffectState, {
-      ...createKitSummon(body, combatant, createBirgittaHits(spawnFrames), (spawnFrames + BIRGITTA_FRAMES) / 60),
+    castKitSummon(kitEffectState, body, combatant, createBirgittaHits(spawnFrames), {
       id: BIRGITTA_ID,
+      secondsRemaining: (spawnFrames + BIRGITTA_FRAMES) / 60,
       spawnSeconds: spawnFrames / 60,
     });
   };

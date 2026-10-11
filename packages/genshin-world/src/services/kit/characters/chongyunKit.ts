@@ -15,9 +15,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { MELEE_WEAPON_TYPES, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { selectAttackTarget } from "#src/services/kit/selectAttackTarget";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -219,14 +220,18 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
     poiseDamage: RIMECHASER_BLADE_POISE_DAMAGE,
     talentMultiplier: skillTalentMultiplier(0),
   };
-  const iceUnleashedHits: KitHit[] = Array.from({ length: ICE_UNLEASHED_BLADE_COUNT }, (_blade, index) => ({
-    element: Element.Cryo,
-    gauge: 1,
-    hitArea: FOURTH_STRIKE_HIT_AREA,
-    hitmarkSeconds: (index * ICE_UNLEASHED_INTERVAL_FRAMES + 1) / 60,
-    poiseDamage: ICE_UNLEASHED_POISE_DAMAGE,
-    talentMultiplier: ICE_UNLEASHED_TALENT_MULTIPLIER,
-  }));
+  const iceUnleashedHits: KitHit[] = createPeriodicKitHits(
+    {
+      element: Element.Cryo,
+      gauge: 1,
+      hitArea: FOURTH_STRIKE_HIT_AREA,
+      poiseDamage: ICE_UNLEASHED_POISE_DAMAGE,
+      talentMultiplier: ICE_UNLEASHED_TALENT_MULTIPLIER,
+    },
+    ICE_UNLEASHED_BLADE_COUNT,
+    1,
+    ICE_UNLEASHED_INTERVAL_FRAMES,
+  );
   // Cloud-Parting Star's blades, each 1U of Cryo with no internal cooldown: three from the cast, and a fourth from six
   // Constellations
   const createBurstBlade = (hitmarkFrames: number): KitHit => ({
@@ -287,7 +292,7 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
       hits: burstBladeHits,
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         if (combatant.constellationCount >= RALLY_OF_FOUR_BLADES_CONSTELLATION)
-          addKitEffect(kitEffectState, createKitSummon(body, combatant, [rallyOfFourBladesHit]));
+          castKitSummon(kitEffectState, body, combatant, [rallyOfFourBladesHit]);
       },
       seconds: BURST_ANIMATION_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,
@@ -371,19 +376,16 @@ export const createChongyunKit = (talentMultiplierMap: TalentMultiplierMap): Kit
           { facing: 0, height: 0, position: centre },
           enemyMap.values(),
         );
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing: 0, height: 0, position: enemy?.position ?? centre }, combatant, [
-            rimechaserBladeHit,
-          ]),
-        );
+        castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy?.position ?? centre }, combatant, [
+          rimechaserBladeHit,
+        ]);
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         if (
           activeCombatant.characterId === characterId &&
           constellationCount >= ICE_UNLEASHED_CONSTELLATION &&
           event.action === normalAttacks.at(-1)
         )
-          addKitEffect(kitEffectState, createKitSummon(body, combatant, iceUnleashedHits));
+          castKitSummon(kitEffectState, body, combatant, iceUnleashedHits);
       } else if (event.kind === KitEventKind.DamageTaken) {
         if (
           constellationCount < FROZEN_SKIES_CONSTELLATION ||

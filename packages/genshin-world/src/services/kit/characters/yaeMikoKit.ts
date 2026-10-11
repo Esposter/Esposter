@@ -10,6 +10,7 @@ import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -142,11 +143,11 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       for (const oldestTotem of standingTotems.slice(0, Math.max(0, standingTotems.length - MAXIMUM_TOTEMS + 1)))
         oldestTotem.secondsRemaining = 0;
       const level = Math.min(standingTotems.length + 1, MAXIMUM_TOTEMS);
-      const totem: KitSummon = {
-        ...createKitSummon(body, combatant, createTotemStrikes(level), TOTEM_SECONDS),
+      const totem: KitSummon = createKitSummon(body, combatant, createTotemStrikes(level), {
         id: SESSHOU_SAKURA_ID,
+        secondsRemaining: TOTEM_SECONDS,
         spawnSeconds: SKILL_SPAWN_FRAMES / 60,
-      };
+      });
       addKitEffect(kitEffectState, totem);
     },
     seconds: SKILL_ANIMATION_FRAMES / 60,
@@ -176,7 +177,7 @@ export const createYaeMikoKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         poiseDamage: NO_POISE_DAMAGE,
         talentMultiplier: burstTalentMultiplier(1),
       }));
-      addKitEffect(kitEffectState, createKitSummon(body, combatant, thunderbolts));
+      castKitSummon(kitEffectState, body, combatant, thunderbolts);
     },
     seconds: BURST_ANIMATION_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

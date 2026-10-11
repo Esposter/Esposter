@@ -15,7 +15,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/c
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Ganyu's proud skill groups, read at her talent level. The attack group holds the six strikes at 0 to 5, the aimed shot at
@@ -215,10 +215,7 @@ export const createGanyuKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });
-            addKitEffect(
-              tickEffectState,
-              createKitSummon({ facing, height, position }, combatant, [celestialShowerHit]),
-            );
+            castKitSummon(tickEffectState, { facing, height, position }, combatant, [celestialShowerHit]);
           },
           radius: CELESTIAL_SHOWER_RADIUS,
           secondsRemaining:

@@ -22,8 +22,8 @@ import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -258,7 +258,7 @@ const onNormalAttackStrike = ({ kitEffectState }: KitContext, { body, combatant 
         kind: "status",
         secondsRemaining: C6_ICD_SECONDS,
       });
-      addKitEffect(kitEffectState, createKitSummon(body, combatant, [createDuststalkerBoltHit(0)]));
+      castKitSummon(kitEffectState, body, combatant, [createDuststalkerBoltHit(0)]);
     }
   }
 };
@@ -406,14 +406,12 @@ export const createCynoKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
             (findKitStatus(kitEffectState.effects, characterId, C6_STATUS_ID)?.stacks ?? 0) + C6_STACKS_PER_TRIGGER,
           ),
         );
-      addKitEffect(
+      castKitSummon(
         kitEffectState,
-        createKitSummon(
-          body,
-          combatant,
-          Array.from({ length: DUSTSTALKER_BOLT_COUNT }, () =>
-            createDuststalkerBoltHit(MORTUARY_RITE_HITMARK_FRAMES / 60),
-          ),
+        body,
+        combatant,
+        Array.from({ length: DUSTSTALKER_BOLT_COUNT }, () =>
+          createDuststalkerBoltHit(MORTUARY_RITE_HITMARK_FRAMES / 60),
         ),
       );
     },

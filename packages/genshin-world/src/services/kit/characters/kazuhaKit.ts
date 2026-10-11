@@ -11,6 +11,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
@@ -185,14 +186,18 @@ export const createKazuhaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     talentMultiplier: burstMultiplier(0),
   };
   // Each tick is Anemo at 1U, as the slash's DoT gives it, on the same circle the slash reaches
-  const tickHits = Array.from({ length: BURST_TICK_COUNT }, (_tick, index): KitHit => ({
-    element: Element.Anemo,
-    gauge: 1,
-    hitArea: createFanReach(360, BURST_REACH),
-    hitmarkSeconds: (BURST_TICK_FIRST_FRAMES + BURST_TICK_INTERVAL_FRAMES * index) / 60,
-    poiseDamage: BURST_POISE_DAMAGE,
-    talentMultiplier: burstMultiplier(1),
-  }));
+  const tickHits = createPeriodicKitHits(
+    {
+      element: Element.Anemo,
+      gauge: 1,
+      hitArea: createFanReach(360, BURST_REACH),
+      poiseDamage: BURST_POISE_DAMAGE,
+      talentMultiplier: burstMultiplier(1),
+    },
+    BURST_TICK_COUNT,
+    BURST_TICK_FIRST_FRAMES,
+    BURST_TICK_INTERVAL_FRAMES,
+  );
   const hold: KitSkillHold = {
     action: { hits: [holdHit], onStart: addInfusion, seconds: HOLD_FRAMES / 60, targetingArea: SKILL_TARGETING_AREA },
     cooldownSeconds: skillMultiplier(3),

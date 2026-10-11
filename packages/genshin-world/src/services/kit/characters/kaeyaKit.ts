@@ -10,8 +10,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Kaeya's proud skill groups, read at his talent level. The attack group holds the five strikes at 0 to 4, the charged
@@ -106,10 +105,9 @@ export const createKaeyaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
   elementalBurst: {
     hits: [],
     onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(body, combatant, createIcicleHits(talentMultiplierMap), GLACIAL_WALTZ_SECONDS),
-      ),
+      castKitSummon(kitEffectState, body, combatant, createIcicleHits(talentMultiplierMap), {
+        secondsRemaining: GLACIAL_WALTZ_SECONDS,
+      }),
     seconds: 78 / 60,
     targetingArea: SKILL_TARGETING_AREA,
   },

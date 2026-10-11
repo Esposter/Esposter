@@ -18,7 +18,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -288,16 +288,15 @@ export const createRazorKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
           const isLightningFangLive = kitEffectState.effects.some((effect) =>
             checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
           );
-          if (isLightningFangLive) addKitEffect(kitEffectState, createKitSummon(body, combatant, [soulCompanionHit]));
+          if (isLightningFangLive) castKitSummon(kitEffectState, body, combatant, [soulCompanionHit]);
           if (
             combatant.constellationCount < LUPUS_FULGURIS_CONSTELLATION ||
             checkIsLupusFulgurisCharging(combatant.characterId, kitEffectState.effects)
           )
             return;
-          addKitEffect(
-            kitEffectState,
-            createKitSummon(body, combatant, [lupusFulgurisHit], hitmarkFrames / 60 + LUPUS_FULGURIS_RECHARGE_SECONDS),
-          );
+          castKitSummon(kitEffectState, body, combatant, [lupusFulgurisHit], {
+            secondsRemaining: hitmarkFrames / 60 + LUPUS_FULGURIS_RECHARGE_SECONDS,
+          });
           if (!isLightningFangLive) addElectroSigil(combatant.characterId, kitEffectState);
         },
         seconds: frames / 60,

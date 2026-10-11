@@ -10,6 +10,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -142,14 +143,18 @@ export const createKeqingKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
   };
 
   // Starward Sword's eight slashes, each Electro under the burst's internal cooldown, then its final strike
-  const slashHits: KitHit[] = Array.from({ length: BURST_SLASH_COUNT }, (_slash, index) => ({
-    element: Element.Electro,
-    hitArea: BURST_HIT_AREA,
-    hitmarkSeconds: (BURST_SLASH_FIRST_HITMARK_FRAMES + index * BURST_SLASH_INTERVAL_FRAMES) / 60,
-    internalCooldownTag: InternalCooldownTag.ElementalBurst,
-    poiseDamage: 0,
-    talentMultiplier: burstTalentMultiplier(1),
-  }));
+  const slashHits: KitHit[] = createPeriodicKitHits(
+    {
+      element: Element.Electro,
+      hitArea: BURST_HIT_AREA,
+      internalCooldownTag: InternalCooldownTag.ElementalBurst,
+      poiseDamage: 0,
+      talentMultiplier: burstTalentMultiplier(1),
+    },
+    BURST_SLASH_COUNT,
+    BURST_SLASH_FIRST_HITMARK_FRAMES,
+    BURST_SLASH_INTERVAL_FRAMES,
+  );
 
   return {
     burstCooldownSeconds: burstTalentMultiplier(3),

@@ -21,8 +21,10 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -194,10 +196,12 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
         poiseDamage: 200,
         talentMultiplier: getTalentMultiplier(talentMultiplierMap, ZHONGLI_SKILL_GROUP_ID, TALENT_START_LEVEL, 0),
       },
-      ...Array.from({ length: Math.floor(STELE_FRAMES / RESONANCE_INTERVAL_FRAMES) }, (_value, index): KitHit => ({
-        ...resonance,
-        hitmarkSeconds: (landingFrames + RESONANCE_INTERVAL_FRAMES * (index + 1)) / 60,
-      })),
+      ...createPeriodicKitHits(
+        resonance,
+        Math.floor(STELE_FRAMES / RESONANCE_INTERVAL_FRAMES),
+        landingFrames + RESONANCE_INTERVAL_FRAMES,
+        RESONANCE_INTERVAL_FRAMES,
+      ),
     ];
   };
   const pressSteleHits = createSteleHits(PRESS_STELE_FRAMES);
@@ -214,27 +218,17 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     const newestStele = steles.at(-1);
     if (newestStele && steles.length >= getMaxSteleCount(combatant))
       newestStele.secondsRemaining = Math.min(newestStele.secondsRemaining, PRESS_STELE_FRAMES / 60);
-    addKitEffect(
-      kitEffectState,
-      createKitSummon(
-        createAheadBody(body, STELE_OFFSET),
-        combatant,
-        pressSteleHits,
-        (PRESS_STELE_FRAMES + STELE_FRAMES) / 60,
-      ),
-    );
+    castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, pressSteleHits, {
+      secondsRemaining: (PRESS_STELE_FRAMES + STELE_FRAMES) / 60,
+    });
   };
   // The Jade Shield's RES cut, every 18 frames from a frame past the shield's cast, so the step after the cast lands the
   // First: each a hit of no damage and no poise, giving each enemy it reaches the cut for a second
-  const jadeShieldHits = Array.from(
-    { length: Math.floor((shieldSeconds * 60) / JADE_SHIELD_INTERVAL_FRAMES) + 1 },
-    (_value, index): KitHit => ({
-      enemyStatus: () => JADE_SHIELD_STATUS,
-      hitArea: JADE_SHIELD_HIT_AREA,
-      hitmarkSeconds: (1 + JADE_SHIELD_INTERVAL_FRAMES * index) / 60,
-      poiseDamage: 0,
-      talentMultiplier: 0,
-    }),
+  const jadeShieldHits = createPeriodicKitHits(
+    { enemyStatus: () => JADE_SHIELD_STATUS, hitArea: JADE_SHIELD_HIT_AREA, poiseDamage: 0, talentMultiplier: 0 },
+    Math.floor((shieldSeconds * 60) / JADE_SHIELD_INTERVAL_FRAMES) + 1,
+    1,
+    JADE_SHIELD_INTERVAL_FRAMES,
   );
   // The Jade Shield: a Geo shield on the team of the group's flat health and share of Zhongli's Max HP, for its seconds,
   // And its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends the summon
@@ -248,10 +242,10 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
       kind: "shield",
       secondsRemaining: shieldSeconds,
     };
-    const resistanceCut: KitSummon = {
-      ...createKitSummon(body, combatant, jadeShieldHits, shieldSeconds),
+    const resistanceCut: KitSummon = createKitSummon(body, combatant, jadeShieldHits, {
       isFollowing: true,
-    };
+      secondsRemaining: shieldSeconds,
+    });
     const end: KitField = {
       centre: { x: body.position.x, z: body.position.z },
       characterId,
@@ -278,15 +272,9 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
     const { facing, height, position } = body;
     const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
     if (steles.length < getMaxSteleCount(combatant))
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(
-          createAheadBody(body, STELE_OFFSET),
-          combatant,
-          holdSteleHits,
-          (HOLD_HITMARK_FRAMES + STELE_FRAMES) / 60,
-        ),
-      );
+      castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, holdSteleHits, {
+        secondsRemaining: (HOLD_HITMARK_FRAMES + STELE_FRAMES) / 60,
+      });
     addKitEffect(kitEffectState, {
       centre: { x: position.x, z: position.z },
       characterId: combatant.characterId,
@@ -317,7 +305,7 @@ export const createZhongliKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
   const castPlanetBefall = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     const { constellationCount } = combatant;
     const hit = constellationCount >= TOPAZ_UNBREAKABLE_AND_FEARLESS_CONSTELLATION ? topazMeteor : meteor;
-    addKitEffect(kitEffectState, createKitSummon(createAheadBody(body, METEOR_OFFSET), combatant, [hit]));
+    castKitSummon(kitEffectState, createAheadBody(body, METEOR_OFFSET), combatant, [hit]);
     if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION) castJadeShield(kitEffectState, body, combatant);
   };
   return {

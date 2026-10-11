@@ -17,6 +17,7 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
@@ -186,12 +187,16 @@ export const createGorouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       talentMultiplier: burstTalentMultiplier(1),
     };
     const tickCount = Math.floor((juugaSeconds * 60) / CRYSTAL_COLLAPSE_INTERVAL_FRAMES);
-    const hits = Array.from({ length: tickCount }, (_tick, index) => ({
-      ...crystalCollapseHit,
-      hitmarkSeconds:
-        (BURST_HITMARK_FRAMES + CRYSTAL_COLLAPSE_FIRST_FRAMES + index * CRYSTAL_COLLAPSE_INTERVAL_FRAMES) / 60,
-    }));
-    return { ...createKitSummon(body, combatant, hits, BURST_HITMARK_FRAMES / 60 + juugaSeconds), isFollowing: true };
+    const hits = createPeriodicKitHits(
+      crystalCollapseHit,
+      tickCount,
+      BURST_HITMARK_FRAMES + CRYSTAL_COLLAPSE_FIRST_FRAMES,
+      CRYSTAL_COLLAPSE_INTERVAL_FRAMES,
+    );
+    return createKitSummon(body, combatant, hits, {
+      isFollowing: true,
+      secondsRemaining: BURST_HITMARK_FRAMES / 60 + juugaSeconds,
+    });
   };
 
   const normalAttacks: KitAction[] = NORMAL_ATTACK_FRAMES.map(({ cancelFrames, hitmarkFrames }, index) => ({

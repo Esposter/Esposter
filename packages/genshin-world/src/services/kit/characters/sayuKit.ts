@@ -10,8 +10,9 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -244,15 +245,19 @@ export const createSayuKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           tickIndex: 0,
           tickIntervalSeconds: Number.POSITIVE_INFINITY,
         });
-        const tickHits = Array.from({ length: BURST_TICK_COUNT }, (_tick, index): KitHit => ({
-          element: Element.Anemo,
-          gauge: 1,
-          hitArea: BURST_TICK_REACH,
-          hitmarkSeconds: (BURST_TICK_FIRST_FRAMES + index * BURST_TICK_INTERVAL_FRAMES) / 60,
-          poiseDamage: 0,
-          talentMultiplier: burstTalentMultiplier(3),
-        }));
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, tickHits));
+        const tickHits = createPeriodicKitHits(
+          {
+            element: Element.Anemo,
+            gauge: 1,
+            hitArea: BURST_TICK_REACH,
+            poiseDamage: 0,
+            talentMultiplier: burstTalentMultiplier(3),
+          },
+          BURST_TICK_COUNT,
+          BURST_TICK_FIRST_FRAMES,
+          BURST_TICK_INTERVAL_FRAMES,
+        );
+        castKitSummon(kitEffectState, body, combatant, tickHits);
         const ahead = createAheadBody(body, BURST_FIELD_CENTRE_METRES);
         addKitEffect(kitEffectState, {
           centre: { x: ahead.position.x, z: ahead.position.z },

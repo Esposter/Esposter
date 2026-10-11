@@ -19,7 +19,7 @@ import {
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
 // Columbina's proud skill groups, read at her talent level. The attack group holds her three strikes at 0 to 2, the charged
@@ -103,10 +103,7 @@ export const createColumbinaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       kind: "field",
       nextTickSeconds: (SKILL_HITMARK_FRAMES + SKILL_DOT_INTERVAL_FRAMES) / 60,
       onTick: ({ kitEffectState }) =>
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing: 0, height: 0, position: field.centre }, combatant, [skillDotHit]),
-        ),
+        castKitSummon(kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [skillDotHit]),
       radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: skillDurationSeconds,
       tickIndex: 0,

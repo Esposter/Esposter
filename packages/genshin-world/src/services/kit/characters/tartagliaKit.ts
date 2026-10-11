@@ -22,7 +22,7 @@ import {
   UNBOUNDED_FIELD_RADIUS,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -171,7 +171,7 @@ const HAVOC_ANNIHILATION_STATUS_ID = "tartaglia-havoc-annihilation";
 
 // A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands
 const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void =>
-  addKitEffect(kitEffectState, createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, hits));
+  castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, hits);
 
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
 
@@ -338,13 +338,11 @@ export const createTartagliaKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     elementalBurst: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }, target) => {
-        addKitEffect(
+        castKitSummon(
           kitEffectState,
-          createKitSummon(
-            { facing: body.facing, height: body.height, position: target?.position ?? body.position },
-            combatant,
-            [flashOfHavocHit],
-          ),
+          { facing: body.facing, height: body.height, position: target?.position ?? body.position },
+          combatant,
+          [flashOfHavocHit],
         );
         const energySeconds = FLASH_OF_HAVOC_ENERGY_FRAMES / 60;
         addKitEffect(kitEffectState, {

@@ -19,8 +19,8 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
@@ -323,20 +323,17 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
             ),
         );
         const damageBonus = checkHasEye(kitEffectState.effects, characterId) ? eyeBurstDamageBonus : 0;
-        addKitEffect(
-          kitEffectState,
-          createKitSummon(body, combatant, [
-            {
-              damageBonus,
-              element: Element.Electro,
-              gauge: 2,
-              hitArea: BURST_HIT_AREA,
-              hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
-              poiseDamage: UNMEASURED_POISE_DAMAGE,
-              talentMultiplier: burstMultiplier(0) + burstMultiplier(1) * stacks,
-            },
-          ]),
-        );
+        castKitSummon(kitEffectState, body, combatant, [
+          {
+            damageBonus,
+            element: Element.Electro,
+            gauge: 2,
+            hitArea: BURST_HIT_AREA,
+            hitmarkSeconds: BURST_HITMARK_FRAMES / 60,
+            poiseDamage: UNMEASURED_POISE_DAMAGE,
+            talentMultiplier: burstMultiplier(0) + burstMultiplier(1) * stacks,
+          },
+        ]);
         enterKitStance(
           kitEffectState,
           combatant,
@@ -356,7 +353,7 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
     elementalSkill: {
       hits: [],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [skillHit]));
+        castKitSummon(kitEffectState, body, combatant, [skillHit]);
         addKitEffect(kitEffectState, {
           centre: { x: body.position.x, z: body.position.z },
           characterId: combatant.characterId,
@@ -532,10 +529,9 @@ export const createRaidenKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         kind: "status",
         secondsRemaining: COORDINATED_ATTACK_ICD_SECONDS,
       });
-      addKitEffect(
-        kitEffectState,
-        createKitSummon({ facing: 0, height: 0, position: enemy.position }, combatant, [coordinatedAttackHit]),
-      );
+      castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, [
+        coordinatedAttackHit,
+      ]);
     },
     plungeCollision: {
       hitArea: PLUNGE_COLLISION_HIT_AREA,

@@ -19,6 +19,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -231,16 +232,13 @@ export const createKujouSaraKit = (talentMultiplierMap: TalentMultiplierMap): Ki
         };
         addKitEffect(kitEffectState, cover);
         if (combatant.constellationCount >= C2_CONSTELLATION)
-          addKitEffect(
-            kitEffectState,
-            createKitSummon(body, combatant, [
-              createAmbushHit(
-                CONSTELLATION_CROWFEATHER_DAMAGE_SHARE * skillTalentMultiplier(0),
-                CONSTELLATION_CROWFEATHER_HIT_AREA,
-                CONSTELLATION_CROWFEATHER_HITMARK_FRAMES,
-              ),
-            ]),
-          );
+          castKitSummon(kitEffectState, body, combatant, [
+            createAmbushHit(
+              CONSTELLATION_CROWFEATHER_DAMAGE_SHARE * skillTalentMultiplier(0),
+              CONSTELLATION_CROWFEATHER_HIT_AREA,
+              CONSTELLATION_CROWFEATHER_HITMARK_FRAMES,
+            ),
+          ]);
       },
       seconds: SKILL_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

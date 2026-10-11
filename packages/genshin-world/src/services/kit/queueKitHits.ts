@@ -3,8 +3,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitState } from "#src/models/kit/KitState";
 
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
 // The hits of an action that ran its course still to land past the seconds it ran to, queued on the world's clock as
 // Gcsim queues each attack at its hitmark whatever its character does next: a summon cast at the body and running on from
@@ -17,14 +16,9 @@ export const queueKitHits = (
 ): void => {
   const lastHit = hits.at(-1);
   if (!lastHit || nextHitIndex === hits.length) return;
-  addKitEffect(kitEffectState, {
-    ...createKitSummon(
-      body,
-      activeCombatant,
-      hits.slice(nextHitIndex),
-      lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS,
-    ),
+  castKitSummon(kitEffectState, body, activeCombatant, hits.slice(nextHitIndex), {
     attackTag: lastHit.attackTag,
     elapsedSeconds: actionSeconds,
+    secondsRemaining: lastHit.hitmarkSeconds - actionSeconds + SUMMON_LINGER_SECONDS,
   });
 };

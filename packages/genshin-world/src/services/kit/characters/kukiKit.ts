@@ -19,9 +19,10 @@ import {
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -178,7 +179,7 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
           (skillTalentMultiplier(3) * combatant.attributes.maxHealth + skillTalentMultiplier(2) + ascensionHealing) /
             activeCombatant.attributes.maxHealth,
         );
-        addKitEffect(kitEffectState, createKitSummon({ facing, height, position }, combatant, [ringTickHit]));
+        castKitSummon(kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
       },
       radius: UNBOUNDED_FIELD_RADIUS,
       secondsRemaining: RING_START_FRAMES / 60 + ringSeconds + SUMMON_LINGER_SECONDS,
@@ -201,16 +202,20 @@ export const createKukiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const radius =
           combatant.constellationCount >= BURST_CONSTELLATION ? BURST_CONSTELLATION_HIT_RADIUS : BURST_HIT_RADIUS;
-        const hits: KitHit[] = Array.from({ length: BURST_HIT_COUNT }, (_hit, index) => ({
-          additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(0)),
-          element: Element.Electro,
-          gauge: 1,
-          hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, radius),
-          hitmarkSeconds: (BURST_FIRST_HITMARK_FRAMES + index * BURST_HIT_INTERVAL_FRAMES) / 60,
-          poiseDamage: 0,
-          talentMultiplier: 0,
-        }));
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, hits));
+        const hits: KitHit[] = createPeriodicKitHits(
+          {
+            additiveBaseDamageBonus: createMaxHealthScaledBonus(burstTalentMultiplier(0)),
+            element: Element.Electro,
+            gauge: 1,
+            hitArea: createTargetedHitArea(SKILL_TARGETING_AREA, radius),
+            poiseDamage: 0,
+            talentMultiplier: 0,
+          },
+          BURST_HIT_COUNT,
+          BURST_FIRST_HITMARK_FRAMES,
+          BURST_HIT_INTERVAL_FRAMES,
+        );
+        castKitSummon(kitEffectState, body, combatant, hits);
       },
       seconds: BURST_FRAMES / 60,
       targetingArea: SKILL_TARGETING_AREA,

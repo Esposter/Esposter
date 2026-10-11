@@ -23,7 +23,7 @@ import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -214,20 +214,18 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       const constellation6 = findKitStatus(effectState.effects, characterId, CONSTELLATION_6_STATUS_ID);
       if (!constellation6) return;
       constellation6.secondsRemaining = 0;
-      addKitEffect(
+      castKitSummon(
         effectState,
-        createKitSummon(
-          body,
-          combatant,
-          CONSTELLATION_6_HITMARK_FRAMES.map((frames) => ({
-            element: Element.Hydro,
-            gauge: 1,
-            hitArea: SHUNSUIKEN_HIT_AREA,
-            hitmarkSeconds: (frames - SHUNSUIKEN_HITMARK_FRAMES) / 60,
-            poiseDamage: 0,
-            talentMultiplier: CONSTELLATION_6_HIT_MULTIPLIER,
-          })),
-        ),
+        body,
+        combatant,
+        CONSTELLATION_6_HITMARK_FRAMES.map((frames) => ({
+          element: Element.Hydro,
+          gauge: 1,
+          hitArea: SHUNSUIKEN_HIT_AREA,
+          hitmarkSeconds: (frames - SHUNSUIKEN_HITMARK_FRAMES) / 60,
+          poiseDamage: 0,
+          talentMultiplier: CONSTELLATION_6_HIT_MULTIPLIER,
+        })),
       );
     },
     poiseDamage: 0,
@@ -252,10 +250,7 @@ export const createAyatoKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
       kind: "field",
       nextTickSeconds: BURST_FIRST_TICK_FRAMES / 60,
       onTick: ({ kitEffectState }) =>
-        addKitEffect(
-          kitEffectState,
-          createKitSummon({ facing, height, position: burstField.centre }, combatant, [burstHit]),
-        ),
+        castKitSummon(kitEffectState, { facing, height, position: burstField.centre }, combatant, [burstHit]),
       radius: BURST_AREA_RADIUS,
       secondsRemaining: BURST_FIRST_TICK_FRAMES / 60 + burstSeconds,
       tickIndex: 0,

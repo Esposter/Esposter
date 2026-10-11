@@ -26,8 +26,8 @@ import { createFanReach } from "#src/services/kit/createFanReach";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -394,7 +394,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           secondsRemaining: waves.secondsRemaining,
           stacks: (waves.stacks ?? 0) + 1,
         });
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [createWaveHit(waveShare)]));
+        castKitSummon(kitEffectState, body, combatant, [createWaveHit(waveShare)]);
         return;
       }
       if (
@@ -412,7 +412,7 @@ export const createCandaceKit = (talentMultiplierMap: TalentMultiplierMap): Kit 
           kind: "status",
           secondsRemaining: CONSTELLATION_6_COOLDOWN_SECONDS,
         });
-        addKitEffect(kitEffectState, createKitSummon(body, combatant, [createWaveHit(CONSTELLATION_6_DAMAGE_SHARE)]));
+        castKitSummon(kitEffectState, body, combatant, [createWaveHit(CONSTELLATION_6_DAMAGE_SHARE)]);
       }
     },
     plungeCollision: {

@@ -14,8 +14,9 @@ import { Element } from "#src/models/Element";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
 
@@ -173,28 +174,18 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         )
       )
         continue;
-      addKitEffect(
-        kitEffectState,
-        createKitSummon(
-          { facing, height, position },
-          combatant,
-          [discharge],
-          hit.hitmarkSeconds + DISCHARGE_INTERVAL_SECONDS,
-        ),
-      );
+      castKitSummon(kitEffectState, { facing, height, position }, combatant, [discharge], {
+        secondsRemaining: hit.hitmarkSeconds + DISCHARGE_INTERVAL_SECONDS,
+      });
     }
   };
   // From six constellations, the Targe lands Bane of Evil's cut every 30 frames for its seconds, a hit of no damage, poise
   // Or element that gives each enemy round the body on the field its Electro RES cut
-  const baneOfEvilTicks = Array.from(
-    { length: Math.floor((targeSeconds * 60) / BANE_OF_EVIL_INTERVAL_FRAMES) },
-    (_value, index): KitHit => ({
-      enemyStatus: () => BANE_OF_EVIL_STATUS,
-      hitArea: BANE_OF_EVIL_HIT_AREA,
-      hitmarkSeconds: (BANE_OF_EVIL_INTERVAL_FRAMES * (index + 1)) / 60,
-      poiseDamage: 0,
-      talentMultiplier: 0,
-    }),
+  const baneOfEvilTicks = createPeriodicKitHits(
+    { enemyStatus: () => BANE_OF_EVIL_STATUS, hitArea: BANE_OF_EVIL_HIT_AREA, poiseDamage: 0, talentMultiplier: 0 },
+    Math.floor((targeSeconds * 60) / BANE_OF_EVIL_INTERVAL_FRAMES),
+    BANE_OF_EVIL_INTERVAL_FRAMES,
+    BANE_OF_EVIL_INTERVAL_FRAMES,
   );
   const normalAttacks = BEIDOU_STRIKES.map(({ frames }, index): KitAction => {
     const hits = [takeOne(strikeHits, index)];
@@ -236,15 +227,13 @@ export const createBeidouKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
         },
       ],
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) =>
-        addKitEffect(kitEffectState, {
-          ...createKitSummon(
-            { facing, height, position },
-            combatant,
-            combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
-            targeSeconds,
-          ),
-          isFollowing: true,
-        }),
+        castKitSummon(
+          kitEffectState,
+          { facing, height, position },
+          combatant,
+          combatant.constellationCount >= BANE_OF_EVIL_CONSTELLATION ? baneOfEvilTicks : [],
+          { isFollowing: true, secondsRemaining: targeSeconds },
+        ),
       seconds: 58 / 60,
       targetingArea: SKILL_TARGETING_AREA,
     },

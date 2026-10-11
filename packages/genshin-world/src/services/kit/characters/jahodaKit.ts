@@ -19,7 +19,7 @@ import {
   UNBOUNDED_FIELD_RADIUS,
 } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 
@@ -147,7 +147,7 @@ export const createJahodaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =
           (effect.id === FLASK_GAUGE_STATUS_ID || effect.id.startsWith(FLASK_ABSORBED_STATUS_PREFIX))
         ),
     );
-    addKitEffect(kitEffectState, createKitSummon(body, combatant, [hit]));
+    castKitSummon(kitEffectState, body, combatant, [hit]);
   };
 
   const startPursuit = ({

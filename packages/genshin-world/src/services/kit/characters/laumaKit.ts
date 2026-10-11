@@ -14,8 +14,7 @@ import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { PLUNGE_HIT_AREAS, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
 
@@ -169,14 +168,12 @@ export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
 
   // The Frostgrove Sanctuary the press and the hold each plant where she stands
   const plantSanctuary = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
-    addKitEffect(
+    castKitSummon(
       kitEffectState,
-      createKitSummon(
-        body,
-        combatant,
-        Array.from({ length: SANCTUARY_TICK_COUNT }, (_tick, tickIndex) => createSanctuaryTick(tickIndex)),
-        SANCTUARY_SECONDS,
-      ),
+      body,
+      combatant,
+      Array.from({ length: SANCTUARY_TICK_COUNT }, (_tick, tickIndex) => createSanctuaryTick(tickIndex)),
+      { secondsRemaining: SANCTUARY_SECONDS },
     );
   };
 
@@ -226,10 +223,13 @@ export const createLaumaKit = (talentMultiplierMap: TalentMultiplierMap): Kit =>
     onStart: (context) => {
       plantSanctuary(context);
       const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
-      addKitEffect(context.kitEffectState, {
-        ...createKitSummon(context.body, context.activeCombatant, [createHoldLunarBloomHit(dewCount)]),
-        isFollowing: true,
-      });
+      castKitSummon(
+        context.kitEffectState,
+        context.body,
+        context.activeCombatant,
+        [createHoldLunarBloomHit(dewCount)],
+        { isFollowing: true },
+      );
     },
     seconds: SKILL_HOLD_FRAMES / 60,
     targetingArea: SKILL_TARGETING_AREA,

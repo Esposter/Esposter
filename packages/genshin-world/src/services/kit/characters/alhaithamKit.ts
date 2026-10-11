@@ -21,10 +21,11 @@ import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } f
 import { createBoxReach } from "#src/services/kit/createBoxReach";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { createFanReach } from "#src/services/kit/createFanReach";
+import { createPeriodicKitHits } from "#src/services/kit/createPeriodicKitHits";
 import { createTargetedHitArea } from "#src/services/kit/createTargetedHitArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { createDelayedKitField } from "#src/services/kit/effects/createDelayedKitField";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { takeOne } from "@esposter/shared";
@@ -340,22 +341,20 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
       secondsRemaining: PROJECTION_ICD_FRAMES / 60,
     });
     const { hitArea, hitmarkFrames } = takeOne(PROJECTION_ATTACK_SHAPES, count - 1);
-    addKitEffect(
+    castKitSummon(
       kitEffectState,
-      createKitSummon(
-        body,
-        combatant,
-        hitmarkFrames.map((frames): KitHit => ({
-          additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, skillMultiplier(4)),
-          element: Element.Dendro,
-          gauge: 1,
-          hitArea,
-          hitmarkSeconds: frames / 60,
-          internalCooldownTag: InternalCooldownTag.ElementalSkill,
-          poiseDamage: 0,
-          talentMultiplier: skillMultiplier(3),
-        })),
-      ),
+      body,
+      combatant,
+      hitmarkFrames.map((frames): KitHit => ({
+        additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, skillMultiplier(4)),
+        element: Element.Dendro,
+        gauge: 1,
+        hitArea,
+        hitmarkSeconds: frames / 60,
+        internalCooldownTag: InternalCooldownTag.ElementalSkill,
+        poiseDamage: 0,
+        talentMultiplier: skillMultiplier(3),
+      })),
     );
   };
 
@@ -390,16 +389,20 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
 
   // The burst's hits, four plus two per Mirror consumed, each on its hitmark, and Ascension 4's share of the Elemental Mastery
   const createBurstHits = (count: number): KitHit[] =>
-    Array.from({ length: count }, (_value, index): KitHit => ({
-      additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, burstMultiplier(1)),
-      element: Element.Dendro,
-      gauge: 1,
-      hitArea: BURST_HIT_AREA,
-      hitmarkSeconds: (BURST_FIRST_HITMARK_FRAMES + BURST_HIT_INTERVAL_FRAMES * index) / 60,
-      internalCooldownTag: InternalCooldownTag.ElementalBurst,
-      poiseDamage: 0,
-      talentMultiplier: burstMultiplier(0),
-    }));
+    createPeriodicKitHits(
+      {
+        additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, burstMultiplier(1)),
+        element: Element.Dendro,
+        gauge: 1,
+        hitArea: BURST_HIT_AREA,
+        internalCooldownTag: InternalCooldownTag.ElementalBurst,
+        poiseDamage: 0,
+        talentMultiplier: burstMultiplier(0),
+      },
+      count,
+      BURST_FIRST_HITMARK_FRAMES,
+      BURST_HIT_INTERVAL_FRAMES,
+    );
 
   const createSkillAction = (
     hitmarkFrames: number,
@@ -452,9 +455,11 @@ export const createAlhaithamKit = (talentMultiplierMap: TalentMultiplierMap): Ki
     onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
       const { characterId, constellationCount } = combatant;
       const consumed = getMirrorCount(kitEffectState.effects, characterId);
-      addKitEffect(
+      castKitSummon(
         kitEffectState,
-        createKitSummon(body, combatant, createBurstHits(BURST_BASE_HIT_COUNT + BURST_HIT_COUNT_PER_MIRROR * consumed)),
+        body,
+        combatant,
+        createBurstHits(BURST_BASE_HIT_COUNT + BURST_HIT_COUNT_PER_MIRROR * consumed),
       );
       setMirrorCount(kitEffectState, characterId, 0);
       // Constellation 4's loss is the team's Elemental Mastery for each Mirror consumed, to every member but Alhaitham

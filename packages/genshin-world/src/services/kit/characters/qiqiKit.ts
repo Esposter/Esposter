@@ -21,8 +21,8 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA, UNBOUNDED_FIELD_RADIUS } from "#src/services/kit/constants";
 import { createCircleReach } from "#src/services/kit/createCircleReach";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { getTalentMultiplier } from "#src/services/kit/getTalentMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { healPartyMember } from "#src/services/party/healPartyMember";
@@ -261,7 +261,7 @@ export const createQiqiKit = (talentMultiplierMap: TalentMultiplierMap): Kit => 
     };
   // Herald of Frost is cast where Qiqi stands: its swipes follow her, and its regeneration ticks from the press
   const castHerald = (body: KitBody, combatant: Combatant, kitEffectState: KitEffectState): void => {
-    addKitEffect(kitEffectState, { ...createKitSummon(body, combatant, heraldHits, skillSeconds), isFollowing: true });
+    castKitSummon(kitEffectState, body, combatant, heraldHits, { isFollowing: true, secondsRemaining: skillSeconds });
     addKitEffect(kitEffectState, {
       centre: { x: body.position.x, z: body.position.z },
       characterId: combatant.characterId,
