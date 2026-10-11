@@ -1,10 +1,11 @@
 // Every quest the world carries, by the game's own id: the inventory `pnpm -C scripts genshin:text quests` reads, writing
-// Each one's steps and talks and the words they show, so carrying a quest is a line here and a run of it. The prologue
-// Begins the game, so its first quests come first, in the order the Archon quests run
-
+// Each one's steps and talks and the words they show, so carrying a quest is a line here, its place in `QuestIds` and a
+// Run of it
 export enum QuestId {
   BirdsEyeView = "352",
   WanderersTrail = "351",
 }
 
-export const QuestIds: readonly QuestId[] = Object.values(QuestId);
+// The carried quests in the order the world reads them. The prologue begins the game, so its first quests come first, in
+// The order the Archon quests run, which the enum's members, sorted by name, do not keep
+export const QuestIds: readonly QuestId[] = [QuestId.WanderersTrail, QuestId.BirdsEyeView];
