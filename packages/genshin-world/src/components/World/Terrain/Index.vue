@@ -14,8 +14,13 @@ import type {
 import type { DataTexture } from "three";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
+import {
+  FINEST_TILE_LEVEL,
+  MAX_PENDING_TILE_COUNT,
+  TERRAIN_WORKER_COUNT,
+  TILE_SELECTION_CAPACITY,
+} from "#src/services/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
-import { MAX_PENDING_TILE_COUNT, TERRAIN_WORKER_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getResultAsync, noop } from "@esposter/shared";
 import { useLoop, useTres } from "@tresjs/core";
 import {
@@ -205,6 +210,9 @@ for (const worker of workers) {
 }
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
+// The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
+const checkIsFirstFrameSettled = (key: number): boolean =>
+  getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.isSettled(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);
@@ -261,7 +269,7 @@ onBeforeRender(() => {
   for (const [level, ring] of ringMap) ring.draw(ringDrawnKeysMap.get(level) ?? []);
   shown.keys.set(draws.keys.subarray(0, draws.count));
   shown.count = draws.count;
-  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => tileStreamer.isSettled(key))) return;
+  if (isReady || !wanted.keys.subarray(0, wanted.count).every((key) => checkIsFirstFrameSettled(key))) return;
   isReady = true;
   resolveTerrainReady();
   emit("ready");
