@@ -2,7 +2,7 @@
 title: Reputation
 description: Proposal — what puts each nation's Reputation in the world: the Reputation screen, the keeper placed in region data, requests run as world quests, bounties hunted with Elemental Sight, the shop discounts applied, and Natlan's tribes and supply notices.
 model: claude-haiku-5-5
-waiting: "Hertha's NPC member in the scene group record, which only the client's group scripts fill (the scene-groups unit, on the user's decision on the groups' source), and on her the requests and bounties she offers; bounties' trails on Elemental Sight (waiting on the puzzles unit); discounts on the shops' screen (the shops unit); later nations on their regions"
+waiting: "Hertha's NPC member in the scene group record, which only the client's group scripts fill (the scene-groups unit, now built on the PC), and on her the requests and bounties she offers; bounties' trails on Elemental Sight (waiting on the puzzles unit); discounts on the shops' screen (the shops unit); later nations on their regions"
 needs: [media-engine, game-exports]
 touches:
   [
