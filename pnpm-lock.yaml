@@ -713,6 +713,9 @@ catalogs:
     sharp:
       specifier: ^0.35.5
       version: 0.35.5
+    sirv:
+      specifier: ^3.0.2
+      version: 3.0.2
     superjson:
       specifier: ^2.2.6
       version: 2.2.6
@@ -1453,6 +1456,9 @@ importers:
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 7.1.1(rolldown@1.2.13)(rollup@4.64.5)
+      sirv:
+        specifier: 'catalog:'
+        version: 3.0.2
       trpc-msw:
         specifier: workspace:*
         version: link:../../packages/trpc-msw
